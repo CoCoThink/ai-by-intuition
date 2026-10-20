@@ -1,33 +1,28 @@
 \section*{参考与延伸阅读}
 \addcontentsline{toc}{section}{参考与延伸阅读}
 
-\textbf{讲解路线参考（用户提供的中文字幕资料）}
+\subsection*{公开视频与课程参考}
 
-\begin{enumerate}[leftmargin=2.5em]
-\item 《01 从函数到神经网络》
-\item 《02 计算神经网络的参数》
-\item 《03 调教神经网络的方法》
-\item 《04 从矩阵到 CNN》
-\item 《05 从词嵌入到 RNN》
-\item 《06 简单而强大的 Transformer》
-\item 《07 速览大模型 100 词》
-\end{enumerate}
+\textbf{Bilibili：AI 入门系列原始视频}\\
+\href{https://www.bilibili.com/video/BV1NCgVzoEG9/}{\texttt{https://www.bilibili.com/video/BV1NCgVzoEG9/}}
 
-这些字幕帮助本书确定了概念引入的\textbf{教学顺序}：从函数与参数开始，经过训练与泛化、CNN、Embedding、RNN，最后进入 Transformer 及大模型应用。书中的数值算例、推导过程、练习与编排为独立重新撰写，不是字幕逐句整理；个别口语化表述已根据数学定义加以辨析。
+这段公开视频涉及函数与神经网络、参数求解、训练方法、卷积网络、文本序列、Transformer 和大模型相关概念，为本书挑选知识主题提供了参考。本书没有逐段复述视频，而是按照\textbf{知识依赖、可手算性和计算目的}重新安排内容，并独立撰写推导、例子与练习。
 
-\textbf{联想记忆与 Transformer 的数学视角}
+\subsection*{进一步理解神经网络与 Attention}
 
 \begin{itemize}
-\item Alex Wang, \emph{You could have invented transformers from memory}:\\
+\item Alex Wang, \emph{You could have invented transformers from memory}：\\
 \url{https://alexwang.ai/posts/associative-memory}
-\item Vaswani et al., \emph{Attention Is All You Need}, 2017：\\
+\item Vaswani et al., \emph{Attention Is All You Need}（2017）：\\
 \url{https://arxiv.org/abs/1706.03762}
-\item Goodfellow, Bengio, Courville, \emph{Deep Learning}（公开在线教材）：\\
+\item Goodfellow, Bengio and Courville, \emph{Deep Learning}：\\
 \url{https://www.deeplearningbook.org/}
 \end{itemize}
 
-\textbf{阅读约定}
+其中，联想记忆视角是一种理解 Key--Value 和注意力权重的方式；它不代表每个神经元都对应一条独立的事实，也不意味着 Attention 与 MLP 是完全相同的模型。
 
-本文中 $=$ 是数学等式，$\approx$ 通常表示数值近似；讨论高维随机模型时出现的 $\sim$ 往往表示随维度或样本数变化的\textbf{典型数量级/尺度关系}，不必是严格的数值等式。在严谨的渐近分析中，$f(n)\sim g(n)$ 常特指二者比值趋于 $1$；若要表达相差常数因子而增长阶相同，可使用 $\Theta$ 记号。
+\subsection*{关于数学符号与示例}
 
-本书所有国家、词向量、卷积像素和函数拟合样例均为教学用的人工构造数据，不能当作实际模型的已学习参数或真实性能测试。涉及产品、许可与工具生态的内容具有时效性，具体使用应以正式文档为准。
+本文中 $=$ 表示数学等式，$\approx$ 表示数值近似；$\propto$ 表示成正比。讨论随机向量时的 $\sim$ 有时被用来表示\textbf{典型量级的变化趋势}。在严格数学文献中，$f(n)\sim g(n)$ 通常要求二者比值趋于 $1$；若仅表达常数因子意义下的同阶，通常使用 $\Theta$ 更准确。读到这类公式时要结合所列假设判断。
+
+本书中的词向量、像素、参数、概率与网络输出等数值例子均为方便教学而构造，不能当作真实模型的训练结果。涉及模型许可、工具生态和产品功能的内容可能随时间变化，具体细节应以原项目正式文档为准。
