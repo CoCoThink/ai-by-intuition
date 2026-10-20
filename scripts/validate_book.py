@@ -177,6 +177,28 @@ def validate_source() -> None:
         fail("The following chapter no longer builds on the same Attention example")
     print("Teaching-sequence QA passed: RNN intuition and Attention hand calculation")
 
+    # Inline concept back-links must land on a precise, previously taught explanation.
+    anchors: dict[str, int] = {}
+    usages: list[tuple[int, str, str]] = []
+    for index, chapter in enumerate(inputs):
+        body = (ROOT / "book" / (chapter + ".tex")).read_text(encoding="utf-8")
+        for target in re.findall(r"\\label\{concept:([a-z0-9-]+)\}", body):
+            if target in anchors:
+                fail("Duplicate concept explanation anchor: " + target)
+            anchors[target] = index
+        for target in re.findall(r"\\conceptlink\{([a-z0-9-]+)\}", body):
+            usages.append((index, target, chapter))
+    if len(anchors) < 25 or len(usages) < 35:
+        fail(f"Too few concept cross-references: {len(anchors)} anchors, {len(usages)} links")
+    for index, target, chapter in usages:
+        if target not in anchors:
+            fail(f"Broken concept hyperlink {target} in {chapter}")
+        if anchors[target] >= index:
+            fail(f"Concept hyperlink is not backward-looking: {target} in {chapter}")
+    if r"\newcommand{\conceptlink}" not in source:
+        fail("Concept hyperlink macro missing in book/main.tex")
+    print(f"Concept navigation QA passed: {len(usages)} in-text links to {len(anchors)} precise explanations")
+
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
 
