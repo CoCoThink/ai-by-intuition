@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - 'book/**/*.tex'
+      - 'scripts/validate_book.py'
       - '.github/workflows/build-latex.yml'
   pull_request:
     paths:
       - 'book/**/*.tex'
+      - 'scripts/validate_book.py'
       - '.github/workflows/build-latex.yml'
   workflow_dispatch:
 
@@ -26,7 +28,9 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
             latexmk texlive-xetex texlive-lang-chinese \
             texlive-latex-extra texlive-pictures texlive-fonts-recommended \
-            fonts-noto-cjk fonts-noto-core lmodern
+            fonts-noto-cjk fonts-noto-core lmodern poppler-utils
+      - name: Check chapter structure before compilation
+        run: python3 scripts/validate_book.py
       - name: Build one PDF
         working-directory: book
         run: |
@@ -34,6 +38,8 @@ jobs:
           latexmk -xelatex -interaction=nonstopmode -halt-on-error \
             -file-line-error -outdir=build main.tex
           cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
+      - name: Verify rendered PDF table of contents
+        run: python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Volume-01.pdf
       - name: Publish single PDF artifact
         uses: actions/upload-artifact@v4
         with:
