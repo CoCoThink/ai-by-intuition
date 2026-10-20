@@ -1,0 +1,119 @@
+\section{Transformer 怎样真正学会预测下一个 Token？}
+\label{intro:22c-language-training}
+
+你现在已经知道模型如何从一个 Token 得到另一组概率，
+也知道损失函数、反向传播和梯度下降。剩下一个常见断点：
+\textbf{一整段文字的训练目标，是怎样对应到每个位置的预测的？}
+
+\subsection{“错开一格”：一段文本同时产生许多训练目标}
+
+令完整 Token 序列为
+\[
+(t_1,t_2,t_3,t_4)=(7,3,9,2).
+\]
+把前面三项作为输入 $X_{\rm id}=(7,3,9)$，
+把后面三项作为目标 $Y_{\rm id}=(3,9,2)$：
+\[
+\begin{array}{c|ccc}
+\text{输入位置 }i&1&2&3\\\hline
+\text{当前 Token}&7&3&9\\
+\text{正确的下一 Token}&3&9&2
+\end{array}
+\]
+这是\textbf{自监督训练}的一种典型形式：标签来自文本本身，
+不需要额外人工为每个位置写一个分类标注。
+
+\subsection{为什么训练时不会偷看未来？}
+
+假设 $X$ 有三个 Token、形状 $3\times d_{\rm model}$。
+如果允许第一个位置通过 Attention 读到第三个位置，
+就可能让它在预测“第二个 Token”时偷看未来。
+所以解码器使用因果掩码：
+\[
+C=\begin{bmatrix}
+0&-\infty&-\infty\\
+0&0&-\infty\\
+0&0&0
+\end{bmatrix}.
+\]
+把它加到注意力分数上，再\textbf{逐行 Softmax}：
+\begin{equation}
+A=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}+C\right).
+\label{eq:masked-language-model}
+\end{equation}
+第一个 Query 只能看见第一个 Key；第二个可看见前两个；
+第三个可以看见前三个。图中的 $-\infty$ 是数学上的理想化表达，
+实现中会使用正确处理遮蔽位置的数值方案。
+
+\begin{idea}[title={为什么“训练并行”和“生成逐词”并不矛盾？}]
+训练时，整段文本的正确输入都已经给出。
+掩码确保每个位置只使用允许看到的历史信息，
+所以多个位置的预测可以在一次矩阵计算中并行得到。
+
+生成时，下一个真实 Token 还不知道，必须先产生一个，
+把它追加到序列末尾，才能继续生成下一个。
+这叫\textbf{自回归生成}。因此\textbf{训练的并行性}
+不等于\textbf{解码时所有未来 Token 可以同时确定}。
+\end{idea}
+
+\subsection{输出张量和目标怎样对齐？}
+
+设词表大小为 $|\mathcal V|=5$，
+模型输出 logits：
+\[
+Z\in\R^{3\times5}.
+\]
+三行分别给出三个位置对词表中五个候选的分数。
+逐行经过 Softmax，得到预测概率 $P_{i,j}$。
+
+第 $i$ 个位置的交叉熵损失取\textbf{正确 Token 所在列}：
+\begin{equation}
+L_i=-\log P_{i,t_{i+1}}.
+\end{equation}
+整个序列的平均损失是：
+\begin{equation}
+\boxed{L=-\frac{1}{3}\sum_{i=1}^3\log P_{i,t_{i+1}}.}
+\end{equation}
+如果三次正确 Token 的预测概率分别是
+$0.5$、$0.25$、$0.5$，则
+\[
+L=-\frac{\log0.5+\log0.25+\log0.5}{3}
+=\frac{4\log2}{3}\approx0.924.
+\]
+注意这是\textbf{一个人工算例}，不是实际模型的测试成绩。
+
+\subsection{哪些权重会因此而更新？}
+
+这份损失从词表输出头往回，经过每一层 Transformer Block，
+一路传到 Q/K/V 投影、FFN、归一化参数和 Embedding 表：
+\[
+\text{损失}\ \longrightarrow\
+\text{反向传播}\ \longrightarrow\
+\nabla_{\theta}L\
+\longrightarrow\
+\text{优化器更新 }\theta.
+\]
+$\theta$ 表示全部参与训练的可学习参数；
+实际是否更新某组参数，取决于它是否被冻结、是否参与计算以及训练设置。
+同一参数在多个 Token 位置上被复用，
+它的梯度要汇总这些路径的贡献。
+
+\subsection{训练时为什么有时需要忽略一些 Token？}
+
+真实批次可能含有填充（padding）或不需要参与训练的提示片段。
+因此实现中常定义\textbf{损失掩码}：仅对选定的目标位置累计损失。
+它与\textbf{因果注意力掩码}不是一回事：
+前者决定哪里\textbf{计分}，后者决定哪里\textbf{可读取}。
+
+\begin{warningbox}
+从下一个 Token 的损失最小化，
+不能直接推出模型会在所有任务上做对事实判断，
+也不能推出它已经学会遵循人类指令。
+后面的监督微调、偏好优化与系统工具能力解决的是不同层次的问题。
+\end{warningbox}
+
+\begin{conclusion}
+语言建模的训练闭环不是“随便把一段文字丢进网络”：
+它有\textbf{错位标签、因果掩码、逐位置概率、交叉熵、反向传播}
+五个明确步骤。把每一步的张量尺寸写清楚，模型训练就不再神秘。
+\end{conclusion}
