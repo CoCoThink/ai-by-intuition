@@ -1,7 +1,7 @@
 \section*{如何阅读这本书}
 \addcontentsline{toc}{section}{如何阅读这本书}
 
-\begin{idea}[title={我们真正想弄懂的五个问题}]
+\begin{idea}[title={从这些问题理解 Attention}]
 你不必先知道什么是 Transformer。本卷从以下困惑出发：
 \begin{enumerate}
 \item Key、Value 是两组数字，为什么可以排成矩阵？
@@ -29,8 +29,6 @@
 \textbf{重要约定：}本卷先使用列向量作为 Query，Key 按行存进 $K$，Value 按行存进 $V$，因此单个查询的公式写作 $V^\top\sigma(K\vect{x})$。标准 Transformer 常把多个 Token 的向量按行排列，公式中转置的位置会变化。不要只背转置符号；始终检查维度。
 \end{warningbox}
 
-\subsection*{本轮修订补齐了哪些跳步？}
-这本书已针对读者反馈补充了四个核心桥梁：\textbf{投影和余弦定理}、\textbf{Query 与输入的投影关系}、\textbf{K/V 的行列排布}，以及\textbf{单次查询到批量 Attention 的转置与形状检查}。请优先看第 2、8、11、12 章。
 \subsection*{学完后你应该会的计算}
 \[
 \vect{x}\ \xrightarrow{\ K\ }\ K\vect{x}\
