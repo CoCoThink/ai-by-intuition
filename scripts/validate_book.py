@@ -132,6 +132,17 @@ def validate_pdf(pdf_path: Path) -> None:
     for phrase in ["同一批向量", "为什么一会儿写"]:
         if re.sub(r"\s+", "", phrase) not in book_text:
             fail(f"Rendered PDF is missing a matrix-layout diagram title: {phrase}")
+    pages_text = text_proc.stdout.split("\f")
+    normalized_pages = [re.sub(r"\s+", "", page) for page in pages_text]
+    for title, contents in [
+        ("图解：同一批向量", ["每行一条向量", "每列一条向量"]),
+        ("图解：为什么一会儿写", ["每行一条Key", "每列一条Key", "Value同理"]),
+    ]:
+        if not any(title in page and all(piece in page for piece in contents)
+                   for page in normalized_pages):
+            fail(f"Matrix figure was split across pages: {title}")
+    print("Matrix layout pagination QA passed: both complete cards stay on a page")
+
     print("Matrix layout PDF QA passed: both diagram headings extracted")
 
     print(f"PDF QA passed: {pdf_path.name}; six uniquely numbered parts in rendered TOC")
