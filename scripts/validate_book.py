@@ -97,6 +97,32 @@ def validate_source() -> None:
             fail(f"Missing editable matrix diagram: {fig}")
     print("Matrix layout QA passed: introductory and QKV diagrams present")
 
+    expected_new = {
+        "20b-task-contract", "10b-ffn-output-head", "22c-language-training",
+        "22d-modern-transformers", "23c-post-training", "23d-agent-systems",
+        "24b-modern-lexicon", "25b-modern-practice",
+    }
+    chapter_names = {item.removeprefix("chapters/") for item in inputs}
+    if not expected_new.issubset(chapter_names):
+        fail("Advanced language model learning path is incomplete")
+    for filename in ("20b-task-contract", "22c-language-training"):
+        text = (ROOT / "book/chapters" / (filename + ".tex")).read_text(encoding="utf-8")
+        if "7,3,9" in text or "7,\\ 3,\\ 9" in text:
+            fail("Example token ID exceeds the five-token teaching vocabulary")
+    source_refs = (ROOT / "book/chapters/26-sources.tex").read_text(encoding="utf-8")
+    for video_id in ("BV1NCgVzoEG9", "BV15z4C6SEHT"):
+        if video_id not in source_refs:
+            fail("Original reference video is missing: " + video_id)
+    modern = (ROOT / "book/chapters/24b-modern-lexicon.tex").read_text(encoding="utf-8")
+    term_links = re.findall(r"\\termref\{(intro:[^}]+)\}", modern)
+    if len(term_links) < 20:
+        fail("Modern terminology index should have at least 20 linked concepts")
+    for target in term_links:
+        target_file = ROOT / "book/chapters" / (target.removeprefix("intro:") + ".tex")
+        if not target_file.is_file() or (r"\label{" + target + "}") not in target_file.read_text(encoding="utf-8"):
+            fail("Modern glossary destination is missing: " + target)
+    print(f"Advanced curriculum QA passed: 8 new chapters and {len(term_links)} internal index links")
+
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
 
@@ -142,6 +168,12 @@ def validate_pdf(pdf_path: Path) -> None:
                    for page in normalized_pages):
             fail(f"Matrix figure was split across pages: {title}")
     print("Matrix layout pagination QA passed: both complete cards stay on a page")
+
+    for topic in ("任务定义清楚", "前馈网络与输出头", "现代Transformer",
+                  "RLVR", "MoE", "Agent", "标签"):
+        if re.sub(r"\s+", "", topic) not in book_text:
+            fail("Rendered PDF does not include advanced curriculum topic: " + topic)
+    print("Advanced curriculum PDF QA passed: new topics are present")
 
     print("Matrix layout PDF QA passed: both diagram headings extracted")
 
