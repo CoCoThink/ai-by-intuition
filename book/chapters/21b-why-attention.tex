@@ -1,4 +1,5 @@
 \section{Attention 是什么？让一个词直接读取其他位置}
+\phantomsection\label{concept:attention}
 \label{intro:21b-why-attention}
 
 \begin{idea}[title={先给 Attention 一个能听懂的定义}]
@@ -52,6 +53,7 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 我们还没有说权重具体由什么决定，下面就设计这件事。
 
 \subsection{第一步：谁需要信息？谁能提供信息？}
+\phantomsection\label{concept:qkv}
 
 先给计算中的三个角色起名字，不急着写大矩阵：
 \begin{itemize}
@@ -104,6 +106,7 @@ s_3&=1\times1+0\times1=\boxed{1}.
 真实模型通过训练学习如何从 Token 表示生成 Q/K/V。
 
 \subsection{第三步：分数不是比例，怎样转换成读取权重？}
+\phantomsection\label{concept:softmax}
 
 分数 $2,0,1$ 不能直接当作“读取的百分比”：
 它们的总和不是 $1$，实际分数还可能出现负数。
