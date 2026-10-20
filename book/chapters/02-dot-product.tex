@@ -76,16 +76,18 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 \end{warningbox}
 
 \begin{center}
-\begin{tikzpicture}[>=Latex]
-\foreach \x/\ang/\score/\lab in {0/17/{\approx 1}/同向附近,4.2/90/{0}/垂直,8.4/165/{\approx -1}/反方向附近} {
+\begin{tikzpicture}[>=Latex,x=19mm,y=19mm]
+\foreach \x/\ang/\score/\lab in {0/17/{\approx 0.96}/同向附近,2.9/90/{0}/垂直,5.8/165/{\approx -0.97}/反方向附近} {
  \begin{scope}[shift={(\x,0)}]
- \draw[->,thick,blue] (0,0)--(2.2,0);
- \draw[->,thick,orange] (0,0)--({2.1*cos(\ang)},{2.1*sin(\ang)});
+ \draw[->,thick,blue] (0,0)--(1,0);
+ \draw[->,thick,orange] (0,0)--({cos(\ang)},{sin(\ang)});
  \fill (0,0) circle(1pt);
- \node[font=\footnotesize,align=center] at (1.05,-0.55) {\lab\\点积 $\score$};
+ \node[font=\footnotesize,align=center] at (.55,-.55) {\lab\\点积 $\score$};
  \end{scope}
 }
 \end{tikzpicture}
+
+{\footnotesize 三组箭头都按单位长度绘制；点积就是夹角的余弦。}
 \end{center}
 
 如果以后需要比较一条\textbf{查询向量} $\vect q$
