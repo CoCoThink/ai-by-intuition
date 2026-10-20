@@ -14,11 +14,11 @@
 这种有序数字列表叫作\textbf{向量（vector）}。$(1,0)$ 是二维向量；真实模型中的向量可以有几十、几百乃至几千维。这里的数字只是教学示意，并非语言模型真实的语义编码。
 
 \begin{center}
-\begin{tikzpicture}[scale=1.02,>=Latex]
-\draw[->,gray!70] (-.2,0)--(5.0,0) node[below] {$x$};
-\draw[->,gray!70] (0,-.2)--(0,3.0) node[left] {$y$};
-\draw[->,line width=1.6pt,blue] (0,0)--(2.6,0) node[above right] {春天 $(1,0)$};
-\draw[->,line width=1.6pt,orange] (0,0)--(0,2.6) node[right] {花 $(0,1)$};
+\begin{tikzpicture}[x=2.6cm,y=2.6cm,>=Latex]
+\draw[->,gray!70] (-.12,0)--(1.5,0) node[below] {$x$};
+\draw[->,gray!70] (0,-.12)--(0,1.42) node[left] {$y$};
+\draw[->,line width=1.6pt,blue] (0,0)--(1,0) node[above right] {春天 $(1,0)$};
+\draw[->,line width=1.6pt,orange] (0,0)--(0,1) node[right] {花 $(0,1)$};
 \fill[ink] (0,0) circle(1.2pt);\node[below left] at (0,0) {$0$};
 \end{tikzpicture}
 \end{center}
@@ -30,6 +30,7 @@
 例如 $(0.6,0.8)$ 的长度为 $\sqrt{0.6^2+0.8^2}=1$。长度等于 $1$ 的向量叫\textbf{单位向量}，后面很多计算会方便得多。
 
 \begin{idea}
-不要把向量想得太复杂。它就是一个可以进行几何和代数运算的\textbf{数字地址}。现在只需记住：\textbf{一列数字可以作为一个对象的计算表示}。
-等学到 Embedding 章，再来看词的向量是怎样通过训练获得的。
+\textbf{向量是一组有顺序的数字}，可以表示输入的多个特征，
+也能计算长度和方向；它本身不是一本已经写好语义的词典。
+但有了两条向量，怎样判断它们的方向或特征是否匹配？下一章从最简单的乘法开始。
 \end{idea}
