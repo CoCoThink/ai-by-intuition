@@ -1,0 +1,83 @@
+\section{从 RNN 走向 Attention：为什么要让信息直接相遇？}
+
+我们现在已经有了 Token 向量，也知道 RNN 如何逐个处理位置。但理解 Transformer 不能只背诵“RNN 不好，Attention 更好”。先看看两种模型究竟怎样让远距离的信息发生联系。
+
+\subsection{想解决什么问题：一个指代关系}
+
+考虑一句话：
+\begin{center}
+\emph{“小明把书放进书包，因为\textbf{它}很重。”}
+\end{center}
+其中“它”指什么，依赖上下文；把词逐个独立分类可能很困难。
+
+RNN 可以逐步带着隐藏状态往后读。这样早期信息有机会影响后面的词，但信息必须经过多个更新步骤。我们能不能允许当前位置\textbf{直接查看前面相关的位置}？
+
+\subsection{先设计一种没有 Key/Value 名字的直觉方案}
+
+假设模型需要从三个位置读取信息。我们给三个位置各算一个相关性分数：
+\[
+s=(2,0,1).
+\]
+直接按分数加权会遇到问题：分数可能是负数、大小也可能没有统一标准。于是先把它们经过 Softmax：
+\[
+a_i=\frac{e^{s_i}}{e^2+e^0+e^1}.
+\]
+数值近似为
+\[
+\vect a\approx(0.665,0.090,0.245).
+\]
+它们都是非负数，总和约为 $1$。
+
+如果三个位置可以提供二维信息：
+\[
+\vect v_1=(1,0),\quad
+\vect v_2=(0,1),\quad
+\vect v_3=(1,1),
+\]
+那么当前位置读到的信息是
+\begin{align*}
+\vect y&=a_1\vect v_1+a_2\vect v_2+a_3\vect v_3\\
+&\approx(0.910,0.335).
+\end{align*}
+
+\textbf{此处的核心创新不是指数函数本身，而是“根据当前位置对各信息源的相关性，动态分配读取权重”。}这套设计仍缺一个问题：相关性分数从哪里来？
+
+\subsection{Query、Key、Value：给计算中的三种角色命名}
+
+我们需要一个可以训练的匹配机制。给当前查询位置一个\textbf{Query} $\vect q$，给每个候选位置一个\textbf{Key} $\vect k_i$，让相似度分数由点积产生：
+\begin{equation}
+s_i=\vect q^\top\vect k_i.
+\end{equation}
+然后对所有 $s_i$ 做 Softmax，得到读取各个 Value $\vect v_i$ 的权重。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=7mm,
+ n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=107mm,minimum height=10mm,align=center,font=\small}]
+\node[n] (q) {Query 和每个 Key 做点积 $\longrightarrow$ 匹配分数};
+\node[n,below=of q] (s) {Softmax $\longrightarrow$ 一组非负、和为 1 的权重};
+\node[n,below=of s] (v) {权重 $\times$ 各个 Value，再相加 $\longrightarrow$ 输出};
+\draw[->,thick,blue] (q)--(s);
+\draw[->,thick,blue] (s)--(v);
+\end{tikzpicture}
+\end{center}
+
+这就是\textbf{注意力机制的基本读出过程}。你已经能理解它的核心数学，不需要先知道联想记忆的研究历史。
+
+\subsection{为什么还要学“联想记忆”那条路线？}
+
+前面的思路从\textbf{序列中的信息访问}出发；接下来我们换一个角度，从\textbf{一组 Key--Value 如何存储和检索}出发，重新推导相似的加权求和公式。
+
+这两条路线的价值不同：
+\begin{itemize}
+\item \textbf{序列路线：}解释为什么上下文位置需要动态相互访问。
+\item \textbf{联想记忆路线：}解释点积、外积、Key/Value 排列和激活函数之间的代数关系。
+\end{itemize}
+它们在数学上有相似结构，但并不是说所有 Attention 模型都按外积公式写入一块固定记忆。
+
+\subsection{为什么 Attention 不等于无限长记忆？}
+
+一次标准全量注意力需要让每个 Query 和很多 Key 比较；对 $T$ 个 Token，分数矩阵可达 $T\times T$。因此当 $T$ 增长时，注意力本身也可能带来显著计算和存储成本。它\textbf{缩短了信息交互路径}，并非免费解决所有长期依赖问题。
+
+\begin{conclusion}
+从 RNN 到 Attention，问题从“如何把过去信息逐步传下去”，变成“当前位置如何直接从上下文挑选需要的信息”。点积生成分数、Softmax 变成权重、Value 负责提供内容。
+\end{conclusion}
