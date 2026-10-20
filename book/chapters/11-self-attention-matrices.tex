@@ -1,0 +1,55 @@
+\section{真实 Self-Attention：为什么又变成 $QK^\top$？}
+
+前面的记忆公式只有\textbf{一个查询向量} $\vect{x}$。真实 Transformer 通常一次处理许多 Token，于是让每个 Token 产生一条 Query、Key 和 Value，再把它们分别排成矩阵。
+
+\subsection{给一句话里的每个 Token 一组 Q、K、V}
+
+假设句子里有 $T$ 个 Token，每条 Query 和 Key 都有 $d_k$ 个数字，而每条 Value 有 $d_v$ 个数字。用本节的\textbf{按行排列}约定：
+\[
+Q\in\R^{T\times d_k},\qquad
+K\in\R^{T\times d_k},\qquad
+V\in\R^{T\times d_v}.
+\]
+于是：
+\[
+\underbrace{Q}_{T\times d_k}
+\underbrace{K^\top}_{d_k\times T}
+=
+\underbrace{S}_{T\times T}.
+\]
+结果为什么是 $T\times T$？因为位置 $S_{ij}$ 就是\textbf{第 $i$ 个 Query 和第 $j$ 个 Key 的点积}。它记录了所有 Query 对所有 Key 的匹配程度。
+
+\subsection{Softmax 对每一行分别作用}
+
+对 $S$ 的每一行做 Softmax，相当于为每个 Query 分配一组加起来为 1 的检索权重。再与 Value 矩阵相乘：
+\[
+\underbrace{\softmax(S)}_{T\times T}
+\underbrace{V}_{T\times d_v}
+=
+\underbrace{Y}_{T\times d_v}.
+\]
+这时乘法的含义是：\textbf{每个 Query 的输出 = 所有 Value 行的加权平均}。
+
+于是就得到常见的缩放点积注意力：
+\begin{equation}
+\boxed{\operatorname{Attention}(Q,K,V)
+=\softmax\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.}
+\end{equation}
+
+\begin{example}[title={不是必须选出单独一条记忆}]
+假设一个 Query 对两个 Key 的权重已经算成 $(0.75,0.25)$，对应 Value 是 $(2,0)$ 和 $(0,4)$。输出为：
+\[
+0.75\begin{bmatrix}2\\0\end{bmatrix}
++0.25\begin{bmatrix}0\\4\end{bmatrix}
+=\begin{bmatrix}1.5\\1\end{bmatrix}.
+\]
+注意力通常是\textbf{混合}多条信息，而不是硬性只选一条。
+\end{example}
+
+\subsection{为什么前面的式子写 $V^\top$，这里却写 $V$？}
+
+前面的单查询公式把 Value \textbf{排成列后读取}，因此用 $V^\top\vect{a}$；这里把所有 Token 的 Value \textbf{排成行}，权重矩阵乘 $V$ 得到一组输出行。两种写法基于不同的数据摆放约定，\textbf{不是数学矛盾}。让矩阵形状替你判断：$(T\times T)(T\times d_v)=(T\times d_v)$。
+
+\begin{warningbox}
+重要边界：Self-Attention 的 Key/Value 来自\textbf{当前输入}的投影，而 MLP 的权重主要是训练时学到的固定参数。实际 Transformer 还有因果掩码、多个注意力头、位置编码、残差等模块，本卷只解释它们共同的相似度与加权求和核心。
+\end{warningbox}
