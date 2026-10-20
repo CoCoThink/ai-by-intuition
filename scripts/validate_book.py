@@ -58,6 +58,25 @@ def validate_source() -> None:
         if re.search(r"\\section\{改进[一二三四五六][：:]", text):
             fail(f"Editor-process heading leaked into chapter: {name}")
 
+    glossary = (ROOT / "book/chapters/24-lexicon.tex").read_text(encoding="utf-8")
+    core = glossary.split(r"\subsection*{不要混淆的五对概念}")[0]
+    entries = re.findall(r"\\item\s+\\textbf\{([^}]+)\}：", core)
+    targets = re.findall(r"\\termref\{(intro:[^}]+)\}", core)
+    if len(entries) != 100 or len(targets) != 100:
+        fail(f"Expected 100 glossary concepts and 100 links, got {len(entries)} and {len(targets)}")
+    if len(set(targets)) < 15:
+        fail("Glossary links are suspiciously concentrated in too few chapters")
+    for target in targets:
+        chapter = target.removeprefix("intro:")
+        path = ROOT / "book/chapters" / (chapter + ".tex")
+        if not path.is_file():
+            fail(f"Glossary destination is not a chapter: {target}")
+        if (r"\label{" + target + "}") not in path.read_text(encoding="utf-8"):
+            fail(f"Missing glossary destination label: {target}")
+    if r"\newcommand{\termref}" not in source:
+        fail("Glossary link macro is missing from book/main.tex")
+    print(f"Glossary QA passed: 100 internal links, {len(set(targets))} chapter destinations")
+
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
 

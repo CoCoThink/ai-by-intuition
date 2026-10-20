@@ -48,7 +48,7 @@
 ## Ⅵ · 选读、索引与综合练习
 
 29. [高维记忆容量（选读）](chapters/13-capacity.tex)：随机性和容量结论需要什么假设？
-30. [100 个 AI 术语](chapters/24-lexicon.tex)
+30. [100 个 AI 术语](chapters/24-lexicon.tex)：每个术语都能点击跳回对应章节，章节编号自动更新
 31. [综合练习及答案](chapters/25-integrated-practice.tex)
 32. [参考与延伸阅读](chapters/26-sources.tex)：[原始视频](https://www.bilibili.com/video/BV1NCgVzoEG9/)与研究资料
 

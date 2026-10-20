@@ -1,4 +1,5 @@
 \section{真实 Self-Attention：为什么又变成 $QK^\top$？}
+\label{intro:12-self-attention-matrices}
 
 前面的记忆公式只有\textbf{一个查询向量} $\vect{x}$。真实 Transformer 通常一次处理许多 Token，于是让每个 Token 产生一条 Query、Key 和 Value，再把它们分别排成矩阵。
 

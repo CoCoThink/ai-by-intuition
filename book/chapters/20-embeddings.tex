@@ -1,4 +1,5 @@
 \section{文字怎样进入神经网络？词表、One-hot 和 Embedding}
+\label{intro:20-embeddings}
 
 \subsection{为什么不能直接把汉字当成数字？}
 
@@ -54,6 +55,8 @@ E=\begin{bmatrix}
 因此\textbf{查表取一行}和\textbf{one-hot 乘嵌入矩阵}是同一回事；实际实现通常直接按 token ID 读取指定行，避免创建巨大的 one-hot 矩阵。
 
 \subsection{词、子词、Token 不完全一样}
+
+将文本拆成 Token 并映射成整数 ID 的程序或规则称为 \textbf{Tokenizer（分词器）}。其具体切分方式取决于词表和算法；同一句话在不同 Tokenizer 下可能得到不同的 Token 序列。
 
 现代语言模型通常处理的是\textbf{Token}，它可能是一个完整的词、词的一部分、汉字、标点或其他编码单元，具体取决于 tokenizer。Tokenization（分词/切分）把原始文本变成 Token ID；Embedding 再把 ID 映射成向量。
 
