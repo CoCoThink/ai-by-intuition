@@ -8,6 +8,7 @@
 \end{idea}
 
 \subsection{FFN 是“每个 Token 各做一次”的非线性计算}
+\phantomsection\label{concept:ffn}
 
 设有 $T$ 个 Token，隐藏状态为
 $X\in\R^{T\times d_{\rm model}}$。
@@ -65,6 +66,7 @@ Attention 才负责在 Token 之间混合信息。}
 输入向量本身就包含了其他 Token 的信息。
 
 \subsection{输出头不是 FFN 的“下投影”}
+\phantomsection\label{concept:output-head}
 
 FFN 的下投影将隐藏宽度还原为 $d_{\rm model}$，
 是为了继续堆叠后续 Block；
