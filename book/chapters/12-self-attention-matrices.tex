@@ -2,13 +2,17 @@
 \phantomsection\label{concept:self-attention}
 \label{intro:12-self-attention-matrices}
 
-我们已经用单次查询得到 $V^\top\softmax(K\vect q)$，又通过转置把它写成 $\softmax(QK^\top)V$。现在问：\textbf{一句话有多个 Token 时，每个位置的 Query、Key、Value 从哪里来？}
+前面先算过\textbf{一个 Query} 对三条 Key 的分数，
+又把同样的规则扩展成多行 Query 的公式 $\softmax(QK^\top)V$。
+但这些 Q/K/V 向量在例子里是\textbf{提前给定的数字}。
+真正处理一句话时，每个 Token 都有自己的隐藏表示：
+\textbf{怎样从这些表示中实际计算出 Query、Key 和 Value？}
 
 \subsection{首先回答：$Q$ 就是输入 $x$ 吗？}
 
-\textbf{上一章把 Query 当作已经准备好的向量}，
-先集中理解它怎样匹配 Key、组合 Value；
-但还没有回答\textbf{Query 由哪里产生}。
+\textbf{前两章把 Query 当作已经准备好的向量}，
+以便只关注匹配与读取；
+这时还没有回答\textbf{Query 由哪里产生}。
 在最简单的教学模型里可以直接令 $\vect q=\vect x$，
 真实 Transformer 则通常会先做可学习的投影。
 
