@@ -1,0 +1,88 @@
+\section{改进三：从指数函数走到 Softmax Attention}
+
+平方和立方都可以抑制弱匹配。如果想要更强的区分能力，可以考虑\textbf{指数函数}：
+\begin{equation}
+\sigma(s)=e^{\beta s},\qquad e\approx2.718.
+\end{equation}
+其中 $\beta$ 是“锐度”参数：越大，较高相似度相对于较低相似度的优势就越明显。
+
+\subsection{把指数分数变成权重}
+假设两条记忆的相似度仍然是：
+\[
+s_A=1,\qquad s_B=0.6.
+\]
+指数变换得到 $e^{\beta}$ 和 $e^{0.6\beta}$。为了让两个权重的总和等于 $1$，将每个指数值除以指数值之和：
+\begin{align}
+p_A&=\frac{e^{\beta}}{e^{\beta}+e^{0.6\beta}},\\
+p_B&=\frac{e^{0.6\beta}}{e^{\beta}+e^{0.6\beta}}.
+\end{align}
+这就是 \textbf{Softmax}。
+
+\begin{table}[H]
+\centering
+\caption{调整 $\beta$ 时的 Softmax 权重（两个分数为 $1$ 和 $0.6$）}
+\begin{tabular}{@{}rrr@{}}
+\toprule
+$\beta$ & $p_A$：正确记忆 & $p_B$：干扰记忆\\
+\midrule
+$0$ & $50.0\%$ & $50.0\%$\\
+$2$ & $69.0\%$ & $31.0\%$\\
+$5$ & $88.1\%$ & $11.9\%$\\
+$10$ & $98.2\%$ & $1.8\%$\\
+$15$ & $99.8\%$ & $0.2\%$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{idea}
+Softmax 没有“创造”新记忆，而是调整了\textbf{从已有记忆读取多少内容}。当 $\beta$ 很大时，权重越来越集中在相似度最高的 Key 上。
+\end{idea}
+
+\subsection{写出 Attention 的形式}
+给第 $i$ 条记忆的权重为：
+\begin{equation}
+p_i=\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{x}}}.
+\end{equation}
+最终输出就是各个 Value 的加权平均：
+\begin{equation}
+\boxed{f(\vect{x})=\sum_i p_i\vect{v}_i
+=\sum_i\vect{v}_i\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{x}}}.}
+\end{equation}
+矩阵写法：
+\begin{equation}
+\boxed{f(\vect{x})=V^\top\softmax(\beta K\vect{x}).}
+\end{equation}
+这就是\textbf{按相似度检索 Value} 的 Attention 核心公式。
+
+在标准 Transformer 中，对一批 Query 同时计算，并使用广为人知的形式：
+\begin{equation}
+\boxed{\operatorname{Attention}(Q,K,V)=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.}
+\end{equation}
+三个字母的含义非常直观：
+\begin{itemize}
+\item $Q$，Query：我正在找什么？
+\item $K$，Key：每条候选信息用什么线索被找到？
+\item $V$，Value：被找到以后实际取回什么内容？
+\end{itemize}
+标准 Transformer 中用 $1/\sqrt{d_k}$ 缩放\emph{未单位归一化}的点积；前面用 $\beta$ 的例子多在\emph{单位向量}的设定下讨论。两者不能在不同的向量尺度之间直接对比数字大小。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex, node distance=5mm,
+ block/.style={draw=linegray,rounded corners=3pt,fill=paper,align=center,minimum height=10mm,font=\small}]
+\node[block,minimum width=30mm] (q) {Query $Q$};
+\node[block,right=17mm of q,minimum width=30mm] (k) {Keys $K$};
+\node[block,right=17mm of k,minimum width=30mm] (v) {Values $V$};
+\node[block,below=13mm of k,minimum width=40mm] (dot) {相似度 $QK^\top$};
+\node[block,below=of dot,minimum width=40mm] (soft) {Softmax 权重};
+\node[block,below=of soft,minimum width=40mm] (out) {加权求和：输出};
+\draw[->,blue,thick] (q.south) |- (dot.west);
+\draw[->,blue,thick] (k.south)--(dot.north);
+\draw[->,blue,thick] (dot)--(soft);
+\draw[->,blue,thick] (soft)--(out);
+\draw[->,orange,thick] (v.south) |- (out.east);
+\end{tikzpicture}
+\end{center}
+
+\begin{warningbox}
+\textbf{一个重要区别：}MLP 的 Key/Value 视角通常来自\textbf{训练好的参数}；Self-Attention 的 Key/Value 则是由\textbf{当前上下文的 Token 表示动态产生}。所以两者虽然有相似的检索数学，但保存和更新信息的方式不同。
+\end{warningbox}
