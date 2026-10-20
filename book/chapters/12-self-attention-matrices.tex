@@ -36,7 +36,7 @@ W_Q=\begin{bmatrix}1&0\\0&2\end{bmatrix}.
 $\vect x$ 是\textbf{输入表示}；$\vect q$ / $Q$ 是扮演\textbf{查询角色}的向量 / 矩阵。简化推导中可以令 $q=x$，真实 Transformer 通常通过可训练参数投影得到 $Q$。二者角色有关，但不是恒等的概念。
 \end{conclusion}
 
-\subsection{跨三个章节的行列约定对照}
+\subsection{同一计算的三种行列写法}
 
 \begin{center}
 \small
@@ -45,14 +45,14 @@ $\vect x$ 是\textbf{输入表示}；$\vect q$ / $Q$ 是扮演\textbf{查询角�
 \toprule
 书中场景 & 输入、相似度与 Value 读出方式\\
 \midrule
-第 8 章（列） &
+单个 Query（列） &
 $\vect q:d_k\times1$；$K\vect q:M\times1$；
 $V^\top\vect a:d_v\times1$\\
-第 11 章（行） &
+单个 Query（行） &
 $\vect q^\top:1\times d_k$；
 $\vect q^\top K^\top:1\times M$；
 $\vect a^\top V:1\times d_v$\\
-本章（批量） &
+多个 Query（行） &
 $Q:N\times d_k$；
 $QK^\top:N\times M$；
 $\softmax(QK^\top)V:N\times d_v$\\
