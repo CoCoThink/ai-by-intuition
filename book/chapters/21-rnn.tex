@@ -19,7 +19,7 @@
 \text{“春天”}\ \to\ \text{“花”}\ \to\ \text{“开了”}
 \]
 假设模型正在读第三个 Token“开了”，并尝试预测接下来是什么。
-如果只让一个 MLP 看到“开了”的 Embedding，
+如果只让一个 \conceptlink{mlp}{MLP} 看到“开了”的 \conceptlink{embedding}{Embedding}，
 它无法直接区分前文是“春天，花”还是完全不同的句子。
 
 我们真正想要的是：\textbf{读到第三个词时，已经保留一些前两个词的信息。}
