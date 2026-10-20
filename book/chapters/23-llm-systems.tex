@@ -10,8 +10,8 @@
 \subsection{预测分数还不是最终文字}
 
 Transformer 的最后位置产生一条隐藏向量，
-通过词表输出头变成 $|\mathcal V|$ 个 logits。
-这些分数并不是概率，必须经过 Softmax 归一化。
+通过 \conceptlink{output-head}{词表输出头} 变成 $|\mathcal V|$ 个 \conceptlink{logits}{logits}。
+这些分数并不是概率，必须经过 \conceptlink{softmax}{Softmax} 归一化。
 比如只看三个候选，概率可能是
 \[
 p=(0.6,\ 0.3,\ 0.1).
@@ -21,6 +21,7 @@ p=(0.6,\ 0.3,\ 0.1).
 选出的 Token ID 再由分词器的解码规则转换成文字。
 
 \subsection{为什么有温度、Top-k 和 Top-p？}
+\phantomsection\label{concept:sampling}
 
 如果每次都只取最大概率的候选，
 结果相对确定，却可能缺乏多样性。
@@ -37,7 +38,7 @@ p=(0.6,\ 0.3,\ 0.1).
 \subsection{为什么训练能一次算多个位置，生成却通常要逐个产生？}
 
 训练时，“春天 / 花 / 开了 / 。”的正确 Token
-已经在数据中，因此因果掩码可以让各位置在同一次前向计算中
+已经在数据中，因此 \conceptlink{causal-mask}{因果掩码} 可以让各位置在同一次前向计算中
 \textbf{同时预测它们各自的下一 Token}。
 
 而生成时，模型先看“春天、花”，
@@ -54,6 +55,7 @@ p=(0.6,\ 0.3,\ 0.1).
 它不是重复训练，而是反复使用已经学好的参数做前向计算。
 
 \subsection{KV Cache：每生成一个 Token 都从头再算吗？}
+\phantomsection\label{concept:kv-cache}
 
 如果每生成一个 Token 都重新计算全部历史位置的 Key 和 Value，
 许多运算会重复。因果 Self-Attention 中，
