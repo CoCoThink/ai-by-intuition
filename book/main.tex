@@ -1,0 +1,123 @@
+% !TeX program = xelatex
+% Associative memory: a math-intuition-first Chinese tutorial.
+% Compile: cd book && latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex
+\documentclass[11pt,a4paper,UTF8]{ctexart}
+\usepackage[a4paper,top=22mm,bottom=23mm,left=23mm,right=23mm,headheight=22pt]{geometry}
+\usepackage{fontspec}
+\setCJKmainfont{Noto Serif CJK SC}
+\setCJKsansfont{Noto Sans CJK SC}
+\setCJKmonofont{Noto Sans CJK SC}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{booktabs,tabularx,array,multirow}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{needspace}
+\usepackage{float}
+
+\definecolor{ink}{HTML}{172A40}
+\definecolor{blue}{HTML}{147CA3}
+\definecolor{teal}{HTML}{078D82}
+\definecolor{orange}{HTML}{C27A31}
+\definecolor{paper}{HTML}{F3F7FA}
+\definecolor{linegray}{HTML}{D8E3EB}
+\definecolor{muted}{HTML}{5B6F80}
+\definecolor{blueback}{HTML}{EAF5F9}
+\definecolor{orangeback}{HTML}{FCF5E9}
+\definecolor{greenback}{HTML}{EAF7F3}
+\color{ink}
+\hypersetup{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition 第一卷：从矩阵乘法到 MLP 与 Attention},pdfauthor={AI by Intuition},pdfsubject={Associative Memory / Transformer 数学推导}}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{2.7pt}
+\linespread{1.19}
+\setlist[itemize]{leftmargin=2.0em,itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{leftmargin=2.0em,itemsep=2pt,topsep=4pt}
+\numberwithin{equation}{section}
+\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{\color{blue}\thesection}{0.7em}{}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{ink}}{\color{blue}\thesubsection}{0.7em}{}
+\titlespacing*{\section}{0pt}{15pt}{7pt}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\sffamily\footnotesize\color{muted} AI by Intuition · Chapter 01}
+\fancyhead[R]{\sffamily\footnotesize\color{muted}\nouppercase{\leftmark}}
+\fancyfoot[C]{\sffamily\footnotesize\color{muted}\thepage}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{linegray}\leaders\hrule height \headrulewidth\hfill}}
+\ctexset{section={name={,、},number=\chinese{section}}}
+
+\newtcolorbox{idea}[1][]{enhanced,breakable,colback=blueback,colframe=blueback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{blue},fonttitle=\sffamily\bfseries,coltitle=ink,title={数学直觉},#1}
+\newtcolorbox{example}[1][]{enhanced,breakable,colback=orangeback,colframe=orangeback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{orange},fonttitle=\sffamily\bfseries,coltitle=ink,title={具体例子},#1}
+\newtcolorbox{conclusion}[1][]{enhanced,breakable,colback=greenback,colframe=greenback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{teal},fonttitle=\sffamily\bfseries,coltitle=ink,title={这一节记住什么},#1}
+\newtcolorbox{warningbox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,#1}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\relu}{\operatorname{ReLU}}
+\newcommand{\softmax}{\operatorname{softmax}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\eyebrow}[1]{{\sffamily\bfseries\footnotesize\color{blue}#1}}
+
+\begin{document}
+\thispagestyle{empty}
+\vspace*{19mm}
+\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · 01}}\par
+\vspace{11mm}
+{\sffamily\bfseries\fontsize{26}{34}\selectfont 从矩阵乘法\\[4mm]到 MLP 与 Attention}\par
+\vspace{7mm}
+{\sffamily\fontsize{14}{21}\selectfont 从最简单的数字和行列出发，一步步理解神经网络与检索机制}\par
+\vspace{5mm}
+\noindent{\color{muted}\rule{\linewidth}{0.7pt}}\par
+\vspace{8mm}
+\begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
+\textbf{只需要这些预备知识：}加减乘除、平方与平方根、基本的勾股定理。\par
+\textbf{学习路线：} 向量 $\rightarrow$ 点积 $\rightarrow$ 矩阵乘法 $\rightarrow$ Key/Value $\rightarrow$ ReLU $\rightarrow$ MLP $\rightarrow$ Attention。\par
+\textbf{目标：} 看懂公式并知道\emph{为什么需要它}，而不是背诵符号。
+\end{tcolorbox}
+\vspace{9mm}
+\begin{center}
+\begin{tikzpicture}[>=Latex, node distance=1.15cm and 0.6cm,
+    n/.style={draw=linegray,fill=white,rounded corners=4pt,minimum width=35mm,minimum height=13mm,align=center,font=\sffamily\bfseries}]
+\node[n] (lin) {Linear\\[-1mm] $\vect{y}=W\vect{x}$};
+\node[n,right=of lin] (mlp) {MLP\\[-1mm] $\vect{y}=V^\top\sigma(K\vect{x})$};
+\node[n,right=of mlp] (att) {Attention\\[-1mm] $\vect{y}=V^\top\softmax(\beta K\vect{x})$};
+\draw[->,thick,blue] (lin)--(mlp) node[midway,above,font=\footnotesize,align=center]{压低干扰};
+\draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{选择更强};
+\end{tikzpicture}
+\end{center}
+\vfill
+\noindent\textbf{参考文章}\quad \textit{You could have invented transformers from memory}\par
+\noindent\href{https://alexwang.ai/posts/associative-memory}{https://alexwang.ai/posts/associative-memory}\par
+\vspace{3mm}
+\noindent {\color{muted}\small AI by Intuition · 第一卷（持续扩充） · 先有问题，再有直觉，然后才有公式。}\par
+\clearpage
+\tableofcontents
+\clearpage
+
+
+\input{chapters/00-guide}
+\input{chapters/01-vectors}
+\input{chapters/02-dot-product}
+\input{chapters/03-matrix-multiplication}
+\input{chapters/04-key-value-outer-product}
+\input{chapters/05-memory-interference}
+\input{chapters/06-better-linear-memory}
+\input{chapters/07-functions-relu}
+\input{chapters/08-stacking-key-value}
+\input{chapters/09-mlp}
+\input{chapters/10-nonlinearity-and-memory}
+\input{chapters/12-softmax-memory}
+\input{chapters/11-self-attention-matrices}
+\input{chapters/13-capacity}
+\input{chapters/14-summary}
+\input{chapters/15-practice}
+\end{document}
