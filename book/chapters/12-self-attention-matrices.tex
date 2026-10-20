@@ -63,7 +63,9 @@ $\softmax(QK^\top)V:N\times d_v$\\
 
 \subsection{给一句话里的每个 Token 一组 Q、K、V}
 
-假设句子里有 $T$ 个 Token，每条 Query 和 Key 都有 $d_k$ 个数字，而每条 Value 有 $d_v$ 个数字。用本节的\textbf{按行排列}约定：
+假设句子里有 $T$ 个 Token。上一节使用 $N$ 表示 Query 的数量、$M$ 表示 Key 的数量；\textbf{在这段 Self-Attention 的例子中，所有 Token 都各自提供 Query 与 Key，因此 $N=M=T$}。
+
+每条 Query 与 Key 都有 $d_k$ 个数字，而每条 Value 有 $d_v$ 个数字。按\textbf{每个 Token 一行}的约定：
 \[
 Q\in\R^{T\times d_k},\qquad
 K\in\R^{T\times d_k},\qquad
