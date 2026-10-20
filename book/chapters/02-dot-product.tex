@@ -1,0 +1,44 @@
+\section{点积：如何判断两条线索相不相似？}
+
+给定 $\vect{a}=(a_1,a_2)$ 和 $\vect{b}=(b_1,b_2)$，它们的\textbf{点积}定义为：
+\begin{equation}
+\boxed{\vect{a}\cdot\vect{b}=a_1b_1+a_2b_2.}
+\end{equation}
+只要把对应数字相乘再加起来即可。例如：
+\[
+(1,0)\cdot(0.6,0.8)=1\times0.6+0\times0.8=0.6.
+\]
+
+\subsection{为什么点积代表相似度？}
+点积还可以写成：
+\begin{equation}
+\vect{a}\cdot\vect{b}=\|\vect{a}\|\,\|\vect{b}\|\cos\theta,
+\end{equation}
+$\theta$ 是两个箭头的夹角。如果它们都是单位向量，就有：
+\begin{equation}
+\boxed{\vect{a}\cdot\vect{b}=\cos\theta.}
+\end{equation}
+方向越一致，点积越接近 $1$；垂直时点积等于 $0$；完全反方向时点积等于 $-1$。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex]
+\foreach \x/\ang/\score/\lab in {0/17/{\approx 1}/同向附近,4.2/90/{0}/垂直,8.4/165/{\approx -1}/反方向附近} {
+ \begin{scope}[shift={(\x,0)}]
+ \draw[->,thick,blue] (0,0)--(2.2,0);
+ \draw[->,thick,orange] (0,0)--({2.1*cos(\ang)},{2.1*sin(\ang)});
+ \fill (0,0) circle(1pt);
+ \node[font=\footnotesize,align=center] at (1.05,-0.55) {\lab\\点积 $\score$};
+ \end{scope}
+}
+\end{tikzpicture}
+\end{center}
+
+设某条记忆的 Key 是 $\vect{k}_i$，当前查询是 $\vect{x}$。最简单的匹配分数就是：
+\begin{equation}
+\boxed{s_i=\vect{k}_i^\top\vect{x}.}
+\end{equation}
+这里上标 $\top$ 表示转置；$\vect{k}_i^\top\vect{x}$ 与 $\vect{k}_i\cdot\vect{x}$ 都是点积。
+
+\begin{conclusion}
+点积就是最基础的\textbf{“匹配多少”}。Attention 中的 $QK^\top$，本质上也是在批量计算 Query 和各个 Key 的匹配程度。
+\end{conclusion}
