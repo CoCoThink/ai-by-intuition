@@ -1,81 +1,128 @@
-\section{文字怎样进入神经网络？词表、One-hot 和 Embedding}
+\section{从文字到向量：先分 Token，再查 Embedding}
 \label{intro:20-embeddings}
 
-前面的向量和矩阵已经能装下许多数字，但还缺少一步：
-\textbf{原来的文字究竟对应矩阵里的哪一行？}
-这就需要把文本划分为可识别的单位，并为它们建立可训练的数字表示。
-本章先用“猫、狗、跑、睡”的四词表方便演示；下一章再回到贯穿全书的“春天、花、开了”。
+前面学会了向量和矩阵，但还有一个问题：
+\textbf{文字不能直接参与点积，怎样让同一段文字成为一张数字表？}
+我们先认识每个输入位置的身份，再让每个身份对应一条可训练向量。
+这条转换链是\textbf{文本 $\to$ Token $\to$ ID $\to$ Embedding}。
 
-\subsection{为什么不能直接把汉字当成数字？}
-
-模型只能处理数字。我们先规定一个小词表：
-\[
-\mathcal V=\{\text{猫},\text{狗},\text{跑},\text{睡}\}.
-\]
-可以分别给四个词编号 $0,1,2,3$，但\textbf{编号只是身份标签}。不能因为“睡”的编号是 $3$、“猫”的编号是 $0$，就断言它们语义距离为 $3$。
-
-\subsection{One-hot：一个位置代表一个词}
-
-在四个词组成的词表中：
-\[
-\text{猫}\mapsto\begin{bmatrix}1\\0\\0\\0\end{bmatrix},
-\qquad
-\text{狗}\mapsto\begin{bmatrix}0\\1\\0\\0\end{bmatrix}.
-\]
-这叫\textbf{独热编码}（one-hot encoding）：向量长度等于词表大小，只有对应位置为 $1$。
-
-它的优点是没有混淆身份；但不同词的 one-hot 向量彼此正交，点积都是 $0$，不能直接反映词义相近。若词表有 $50{,}000$ 个词，每个 one-hot 向量也有 $50{,}000$ 维，存储和计算方式需要特别处理。
-
-\subsection{Embedding：把词的身份查成稠密向量}
-\phantomsection\label{concept:embedding}
-
-考虑一个可训练的嵌入矩阵
-\[
-E=\begin{bmatrix}
-1&0\\
-0.9&0.1\\
-0&1\\
-0.2&0.8
-\end{bmatrix}
-\in\R^{4\times2}.
-\]
-每\textbf{行}对应词表中的一个词，每行只含两个数。于是：
-\[
-\text{猫}\mapsto(1,0),\quad
-\text{狗}\mapsto(0.9,0.1),\quad
-\text{跑}\mapsto(0,1),\quad
-\text{睡}\mapsto(0.2,0.8).
-\]
-在这个\textbf{人为设计}的例子里，“猫”和“狗”的点积是 $0.9$，大于“猫”和“跑”的点积 $0$，表达了一种相近关系。
-
-\textbf{真实 Embedding 数值不是人工编出来的，而是训练时学得的。}即使向量之间在某些方向上有语义相关性，也不能保证每一维都对应可读的概念。
-
-\subsection{为什么说 Embedding 其实是一种矩阵乘法？}
-
-将猫的 one-hot 编码写作 $\vect e_{\rm cat}=(1,0,0,0)^\top$，计算：
-\[
-\underbrace{E^\top}_{2\times4}
-\underbrace{\vect e_{\rm cat}}_{4\times1}
-=\underbrace{\begin{bmatrix}1\\0\end{bmatrix}}_{2\times1}.
-\]
-因此\textbf{查表取一行}和\textbf{one-hot 乘嵌入矩阵}是同一回事；实际实现通常直接按 token ID 读取指定行，避免创建巨大的 one-hot 矩阵。
-
-\subsection{词、子词、Token 不完全一样}
+\subsection{第一步：Token 与 Tokenizer 是什么？}
 \phantomsection\label{concept:token}
 
-将文本拆成 Token 并映射成整数 ID 的程序或规则称为 \textbf{Tokenizer（分词器）}。其具体切分方式取决于词表和算法；同一句话在不同 Tokenizer 下可能得到不同的 Token 序列。
+\textbf{Token} 是模型处理文本时采用的离散单位，
+可以是一个字、一个词、词的一部分或标点。
+\textbf{Tokenizer（分词器）}规定怎样把原始文本拆成 Token，
+并从词表中查出对应的整数 ID；不同分词方案可能得到不同的切分结果。
 
-现代语言模型通常处理的是\textbf{Token}，它可能是一个完整的词、词的一部分、汉字、标点或其他编码单元，具体取决于 tokenizer。Tokenization（分词/切分）把原始文本变成 Token ID；Embedding 再把 ID 映射成向量。
+继续使用贯穿全书的\textbf{人工教学词表}，
+假设它只有五个编号，其中四个对应：
+\[
+\begin{array}{c|ccccc}
+\text{ID}&0&1&2&3&4\\\hline
+\text{Token}&\text{其他}&\text{春天}&\text{。}&\text{花}&\text{开了}
+\end{array}
+\]
+其中“其他”只是为编号 $0$ 放置的示意候选，
+并非真实分词器通用的特殊标记。
+于是
+\[
+\text{“春天 / 花 / 开了 / 。”}
+\quad\longmapsto\quad [1,3,4,2].
+\]
+\textbf{编号只回答“是哪一个 Token”}。
+不能因为 $4>1$，就说“开了”比“春天”更重要或语义更强。
+
+\subsection{第二步：One-hot 怎样表示 Token 的身份？}
+
+如果词表有五个候选，\textbf{One-hot（独热编码）}
+就用五个数字表示某个 ID，只有相应位置为 $1$，
+其余位置都是 $0$：
+\[
+\text{ID 1}\ \mapsto\
+\begin{bmatrix}0\\1\\0\\0\\0\end{bmatrix},
+\qquad
+\text{ID 3}\ \mapsto\
+\begin{bmatrix}0\\0\\0\\1\\0\end{bmatrix}.
+\]
+它能区分身份，但两条不同的 One-hot 向量点积都是 $0$；
+\textbf{光靠这个身份标签，还没学到词与词的关系。}
+而且真实词表可能很大，不会为了每次查词都显式创建这么长的稀疏列向量。
+
+\subsection{第三步：Embedding 表让每个 Token 有一条短向量}
+\phantomsection\label{concept:embedding}
+
+给每个 Token 学习一条长度为 $d$ 的向量；
+将它们\textbf{按行}堆起来，就是
+\textbf{Embedding（嵌入）表}。
+例如暂定 $d=2$，人工给出一张 $5\times2$ 的表：
+\[
+E=
+\begin{bmatrix}
+0&0\\
+1&0\\
+0&-1\\
+0&1\\
+1&1
+\end{bmatrix}
+\quad\in\R^{5\times2}.
+\]
+读第 $1$ 行（ID 1，春天）得到 $(1,0)$；
+读第 $3$ 行（ID 3，花）得到 $(0,1)$；
+读第 $4$ 行（ID 4，开了）得到 $(1,1)$。
+
+注意这里说的“第 $1$ 行”是\textbf{从编号 $0$ 开始的行索引}，
+即肉眼从上往下数的第二行。
+为了避免混淆，更准确的说法是
+\textbf{“读取 ID 为 1 的那一行”}。
+
+那么前三个输入 Token $[1,3,4]$ 查表后得到：
+\begin{equation}
+\boxed{X=
+\begin{bmatrix}
+1&0\\
+0&1\\
+1&1
+\end{bmatrix}\in\R^{3\times2}.}
+\label{eq:running-embedding}
+\end{equation}
+\textbf{三行对应三个位置，每行有两个数字。}
+后面讨论 RNN、Attention 和 Transformer 时，
+就沿着这份输入的思路继续。
+
+\subsection{为什么查 Embedding 与矩阵乘法是同一回事？}
+
+用 ID 3（“花”）的 One-hot 列向量 $\vect e_3$：
+\[
+\underbrace{E^\top}_{2\times5}
+\underbrace{\vect e_3}_{5\times1}
+=
+\underbrace{\begin{bmatrix}0\\1\end{bmatrix}}_{2\times1}.
+\]
+所以“按 ID 查一行”和“用 One-hot 选出一行”在数学上等价。
+实际程序通常直接查表，不必先造出一个长 One-hot 向量。
 
 \begin{warningbox}
-词向量之间的某些向量运算可能表现出有趣的类比，但不能把这种关系当成对所有词或所有模型都成立的精确定律。向量相近也不等于词义、事实和因果关系完全相同。
+这些二维数字是\textbf{为了教学而编的}，并非“春天”和“花”的真实语义。
+真实 Embedding 的表项是\textbf{训练中调整的参数}，
+向量相近也不能直接证明事实、语义关系或推理能力完全相同。
 \end{warningbox}
 
-\subsection{一句话为什么不只是几个词的简单相加？}
+\subsection{只有词向量够不够？还有顺序问题}
 
-“狗追猫”和“猫追狗”拥有相同的三个 Token，但语义中的角色不同。单纯把三个向量无序相加会得到相同结果。要理解句子的结构，就需要知道\textbf{顺序}以及\textbf{词与词之间的关系}。这也是后文讨论 RNN 与 Attention 的起点：单独的 Token 向量还不足以表达完整上下文。
+把“花 / 开了”与“开了 / 花”的两个向量\textbf{无序相加}，
+得到的数字相同，因为加法可以交换：
+\[
+\vect e_{\text{花}}+\vect e_{\text{开了}}
+=
+\vect e_{\text{开了}}+\vect e_{\text{花}}.
+\]
+但两段文本的顺序不同，意思也未必一样。
+因此除了知道\textbf{每个 Token 是什么}，
+还需要知道\textbf{它处在哪个位置、与别的位置怎样联系}。
 
 \begin{conclusion}
-现在有了\textbf{文字到 ID、ID 到向量}的通路，但还没有告诉网络应当学什么任务。
-下一章把“学习语言规律”变成\textbf{有输入、有答案的训练题}；等网络会训练后，再深入讨论不同位置怎样交换信息。
+从原始文字到可计算矩阵，我们已经有完整通路：
+\textbf{Tokenizer 切分 $\to$ ID 表示身份 $\to$ Embedding 查表 $\to$ 向量按行堆叠}。
+但我们还没有给网络规定\textbf{该用这些数字完成哪道练习题}。
+下一章就把“学习语言”变成有输入、有答案的训练任务。
 \end{conclusion}
