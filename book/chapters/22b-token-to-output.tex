@@ -1,6 +1,6 @@
 \section{贯通示例：两个 Token 如何通过 Attention 交换信息？}
 
-读到这里，你已经见过向量、矩阵、Softmax、ReLU、梯度和 Transformer 的基本结构。现在不引入新的模型术语，只用\textbf{两行数字}把一条计算链真正走完。
+读到这里，你已经见过向量、矩阵、\conceptlink{softmax}{Softmax}、ReLU、\conceptlink{gradient}{梯度}和 Transformer 的基本结构。现在不引入新的模型术语，只用\textbf{两行数字}把一条计算链真正走完。
 
 \subsection{先把两个 Token 表示成两个向量}
 
@@ -12,7 +12,7 @@
 \[
 X=\begin{bmatrix}1&0\\0&1\end{bmatrix}.
 \]
-真实模型会从 Token ID 查 Embedding，并加入或采用相应的位置表示；这里直接从简化的输入矩阵开始。
+真实模型会从 Token ID 查 \conceptlink{embedding}{Embedding}，并加入或采用相应的位置表示；这里直接从简化的输入矩阵开始。
 
 \subsection{为两个 Token 产生 Q、K、V}
 
@@ -58,7 +58,7 @@ Y=AV\approx
 
 上面是一个\textbf{双向的}例子，两个位置可以互相查看。而自回归语言模型预测后面的 Token 时，第一个位置不能看到第二个位置。
 
-如果加入\textbf{因果掩码}，第一个 Query 只能看到第一个 Key，因此它对应的权重变成 $(1,0)$。第二个 Query 可以看到两个位置，对应的权重仍为 $(0.330,0.670)$：
+如果加入\textbf{\conceptlink{causal-mask}{因果掩码}}，第一个 Query 只能看到第一个 Key，因此它对应的权重变成 $(1,0)$。第二个 Query 可以看到两个位置，对应的权重仍为 $(0.330,0.670)$：
 \[
 A_{\rm causal}\approx
 \begin{bmatrix}1&0\\0.330&0.670\end{bmatrix}.
@@ -72,7 +72,7 @@ Y_{\rm causal}\approx
 
 \subsection{从一个注意力模块到整个可训练模型}
 
-真实 Transformer 还会经过多个头、输出投影、残差、归一化和逐 Token 的 MLP。最终模型用输出投影把最后的隐藏向量变为\textbf{词表 logits}，再通过 Softmax 得到候选 Token 概率。
+真实 Transformer 还会经过多个头、输出投影、残差、归一化和逐 Token 的 MLP。最终模型用输出投影把最后的隐藏向量变为\textbf{词表 \conceptlink{logits}{logits}}，再通过 Softmax 得到候选 Token 概率。
 
 训练时，将正确 Token 的概率转成损失，例如 $L=-\log p_{\rm true}$；反向传播再根据梯度更新包含 $W_Q,W_K,W_V$ 在内的可训练参数。
 
