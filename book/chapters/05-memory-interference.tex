@@ -1,0 +1,73 @@
+\section{多条记忆：为什么会互相干扰？}
+
+如果有 $M$ 条 Key--Value 关系 $(\vect{k}_i,\vect{v}_i)$，最简单的存储办法是\textbf{把外积全部相加}：
+\begin{equation}
+\boxed{W=\sum_{i=1}^{M}\vect{v}_i\vect{k}_i^\top.}
+\end{equation}
+查询时：
+\begin{equation}
+\boxed{W\vect{x}=\sum_{i=1}^{M}\vect{v}_i(\vect{k}_i^\top\vect{x}).}
+\end{equation}
+也就是说：\textbf{所有记忆都会按照它们与输入的相似度，贡献一部分输出。}
+
+\subsection{一个完全算得出来的二维例子}
+假设我们有两条记忆：
+\begin{align*}
+\vect{k}_A&=\begin{bmatrix}1\\0\end{bmatrix}, &
+\vect{v}_A&=\begin{bmatrix}1\\0\end{bmatrix},\\
+\vect{k}_B&=\begin{bmatrix}0.6\\0.8\end{bmatrix}, &
+\vect{v}_B&=\begin{bmatrix}0\\1\end{bmatrix}.
+\end{align*}
+两条记忆分别形成一个矩阵：
+\[
+\vect{v}_A\vect{k}_A^\top=
+\begin{bmatrix}1&0\\0&0\end{bmatrix},\qquad
+\vect{v}_B\vect{k}_B^\top=
+\begin{bmatrix}0&0\\0.6&0.8\end{bmatrix}.
+\]
+把它们加起来：
+\begin{equation}
+\boxed{W=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}.}
+\end{equation}
+
+现在查询 A，即 $\vect{x}=\vect{k}_A$：
+\begin{equation}
+W\vect{k}_A=
+\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}
+\begin{bmatrix}1\\0\end{bmatrix}
+=\begin{bmatrix}1\\0.6\end{bmatrix}.
+\end{equation}
+然而我们真正想得到的结果是 $\vect{v}_A=(1,0)^\top$。
+
+\begin{example}
+计算结果分成两部分：
+\[
+W\vect{k}_A=\underbrace{\begin{bmatrix}1\\0\end{bmatrix}}_{\text{正确记忆}}
++\underbrace{\begin{bmatrix}0\\0.6\end{bmatrix}}_{\text{来自 B 的干扰}}.
+\]
+为何有 $0.6$？因为 $\vect{k}_B^\top\vect{k}_A=0.6$，即 B 的 Key 与查询 A 并不垂直，所以 B 也被激活了。
+\end{example}
+
+\begin{center}
+\begin{tikzpicture}
+\node[anchor=east,font=\small] at (0,0.65) {A（正确信号）};
+\node[anchor=east,font=\small] at (0,-.07) {B（干扰）};
+\fill[paper] (0,0.45) rectangle (7.5,0.8);
+\fill[paper] (0,-.25) rectangle (7.5,0.1);
+\fill[blue] (0,0.45) rectangle (7.5,0.8);
+\fill[orange] (0,-.25) rectangle (4.5,0.1);
+\node[anchor=west,font=\small] at (7.7,.62) {$1.0$};
+\node[anchor=west,font=\small] at (4.7,-.07) {$0.6$};
+\end{tikzpicture}
+\end{center}
+
+对第 $j$ 条单位 Key 进行查询时，通常可以写为：
+\begin{equation}
+W\vect{k}_j=
+\underbrace{\vect{v}_j}_{\text{正确信号}}
++\underbrace{\sum_{i\ne j}\vect{v}_i(\vect{k}_i^\top\vect{k}_j)}_{\text{其余记忆的干扰}}.
+\end{equation}
+
+\begin{conclusion}
+关键矛盾不是\textbf{能不能把记忆写进矩阵}，而是\textbf{取回其中一条时，其他记忆会不会一起冒出来}。后面的 MLP 和 Attention 都可以理解成对这个问题的不同改进。
+\end{conclusion}
