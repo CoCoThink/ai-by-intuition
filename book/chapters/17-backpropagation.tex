@@ -1,0 +1,95 @@
+\section{反向传播究竟在传什么？}
+
+\subsection{从一条计算链理解链式法则}
+
+看一台三级机器：
+\[
+x\xrightarrow{\times\,w_1}h
+\xrightarrow{\times\,w_2}\widehat y
+\xrightarrow{\text{算误差}}L.
+\]
+令 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。
+现在要问：\textbf{调整 $w_1$ 一点点，最后的损失 $L$ 会变多少？}
+
+最直接的做法是把整个函数展开，但神经网络可能有数十乃至更多层。更聪明的方法是沿着计算链，把每一小步的\textbf{局部变化率}相乘：
+\begin{equation}
+\boxed{\frac{\partial L}{\partial w_1}
+=\frac{\partial L}{\partial\widehat y}
+\frac{\partial\widehat y}{\partial h}
+\frac{\partial h}{\partial w_1}.}
+\label{eq:chain-three}
+\end{equation}
+这叫\textbf{链式法则}（chain rule）。
+
+\subsection{亲手算一次两层网络的梯度}
+
+取 $x=2$、真实目标 $y=5$、初始权重 $w_1=1$、$w_2=2$。
+前向过程：
+\[
+h=1\times2=2,\quad
+\widehat y=2\times2=4,\quad
+L=\tfrac12(4-5)^2=\tfrac12.
+\]
+
+从输出向输入反向算：
+\[
+\frac{\partial L}{\partial\widehat y}
+=\widehat y-y=-1,\qquad
+\frac{\partial\widehat y}{\partial h}=w_2=2,\qquad
+\frac{\partial h}{\partial w_1}=x=2.
+\]
+所以
+\[
+\boxed{\frac{\partial L}{\partial w_1}
+=(-1)\times2\times2=-4.}
+\]
+而对于最后一层权重：
+\[
+\frac{\partial L}{\partial w_2}
+=\frac{\partial L}{\partial\widehat y}
+\frac{\partial\widehat y}{\partial w_2}
+=(-1)\times h=-2.
+\]
+若学习率 $\eta=0.05$，同时使用\textbf{旧权重计算的梯度}更新：
+\[
+w_1'=1-0.05(-4)=1.2,\quad
+w_2'=2-0.05(-2)=2.1.
+\]
+新的预测为 $2.1\times(1.2\times2)=5.04$，新损失 $0.0008$，比原来 $0.5$ 小得多。
+
+\begin{idea}
+\textbf{反向传播（backpropagation）传的不是文字、答案或原始输入，而是损失对中间变量的梯度。}先算后面的局部变化率，再复用它们，避免每求一个权重都从头展开整条函数。
+\end{idea}
+
+\subsection{如果中间有 ReLU，怎样求导？}
+
+对 $z=w_1x+b_1$、$h=\relu(z)$、$\widehat y=w_2h+b_2$，有
+\[
+\frac{\partial L}{\partial w_1}
+=\frac{\partial L}{\partial\widehat y}
+\frac{\partial\widehat y}{\partial h}
+\frac{\partial h}{\partial z}
+\frac{\partial z}{\partial w_1}.
+\]
+ReLU 的导数在 $z>0$ 时为 $1$，在 $z<0$ 时为 $0$。因此某条计算路径如果被 ReLU 截断，这个样本沿着该路径传播的梯度也可能为零。$z=0$ 处不可导，实际优化实现通常约定一个次梯度值。
+
+\subsection{反向传播与梯度下降不要混淆}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}p{29mm}X@{}}\toprule
+概念 & 它负责什么\\\midrule
+前向传播 & 给定参数，算输出和损失\\
+反向传播 & 高效计算损失对每个参数的梯度\\
+梯度下降/优化器 & 根据梯度修改参数\\
+\bottomrule\end{tabularx}
+\end{center}
+
+更复杂的计算图会有分叉和相加：同一个参数影响损失的多条路径需要\textbf{把各条路径的梯度贡献相加}。自动微分框架正是在计算图上应用这个规则。
+
+\begin{warningbox}
+反向传播通常在一次前向传播后计算全部梯度，优化器再统一更新参数。不是“反向传到某一层就立刻修改那一层”，否则会在同一步中混用新旧权重。
+\end{warningbox}
+
+\begin{conclusion}
+网络的整体函数很复杂，但拆开每个节点都简单。链式法则负责把这些局部导数连接起来，反向传播负责高效复用计算结果。
+\end{conclusion}
