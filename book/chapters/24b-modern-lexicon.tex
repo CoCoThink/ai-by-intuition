@@ -1,0 +1,56 @@
+\section{现代架构与 Agent 术语补充索引}
+\label{intro:24b-modern-lexicon}
+
+前面的 100 个基础术语帮助我们搭建通用知识地图。
+进入现代语言模型之后，还会遇到一些\textbf{专门描述实现取舍}的新名字。
+下面不是另一套需要死记的名词表，而是把它们按\textbf{解决的问题}
+分成四组，每条都可点击回到对应的解释章节。
+
+\subsection*{模型输入、目标与训练}
+\begin{itemize}
+\item \textbf{任务契约（Task Contract）}：事先约定输入、目标、张量尺寸和结果的含义。 \termref{intro:20b-task-contract}
+\item \textbf{FFN 与输出头}：前者改变 Token 的隐藏特征，后者映射到词表 logits。 \termref{intro:10b-ffn-output-head}
+\item \textbf{Teacher Forcing}：训练时以已知真实序列作为条件，一次预测多个后续位置。 \termref{intro:22c-language-training}
+\item \textbf{标签错位（Shifted Targets）}：每个输入位置的目标为下一位置 Token。 \termref{intro:22c-language-training}
+\item \textbf{损失掩码}：选择哪些位置参与损失统计，区别于因果注意力掩码。 \termref{intro:22c-language-training}
+\item \textbf{SFT}：利用示范回答继续训练模型。 \termref{intro:23c-post-training}
+\item \textbf{RLHF}：使用人类偏好等评价信号优化模型行为。 \termref{intro:23c-post-training}
+\item \textbf{RLVR}：利用可程序化核验的任务奖励进行学习。 \termref{intro:23c-post-training}
+\item \textbf{CoT}：可能要求模型输出中间步骤的提示形式，不等同于直接观察内部计算。 \termref{intro:23c-post-training}
+\end{itemize}
+
+\subsection*{FFN、位置与归一化}
+\begin{itemize}
+\item \textbf{RoPE}：对 Q/K 中的分量对做位置相关旋转。 \termref{intro:22d-modern-transformers}
+\item \textbf{RMSNorm}：按特征的均方根控制数值尺度。 \termref{intro:22d-modern-transformers}
+\item \textbf{Pre-Norm}：在某个计算子层之前进行归一化。 \termref{intro:22d-modern-transformers}
+\item \textbf{SwiGLU}：使用两个投影分支与逐元素门控的 FFN 变体。 \termref{intro:22d-modern-transformers}
+\item \textbf{MoE}：让不同 Token 按路由选择少数专家网络进行计算。 \termref{intro:22d-modern-transformers}
+\item \textbf{Router（路由器）}：决定当前 Token 由哪些专家处理。 \termref{intro:22d-modern-transformers}
+\end{itemize}
+
+\subsection*{Attention 与长上下文}
+\begin{itemize}
+\item \textbf{MHA}：每个注意力头使用其对应的 Q/K/V 投影。 \termref{intro:22-transformer-architecture}
+\item \textbf{MQA}：让多个 Query 头共享一组 K/V 头。 \termref{intro:22d-modern-transformers}
+\item \textbf{GQA}：让一组 Query 头共享 K/V 头，降低缓存规模。 \termref{intro:22d-modern-transformers}
+\item \textbf{MLA}：通过潜在表示等机制尝试压缩注意力缓存。 \termref{intro:22d-modern-transformers}
+\item \textbf{KV Cache}：保存过去 Token 的 Key/Value 表示供自回归解码复用。 \termref{intro:22d-modern-transformers}
+\item \textbf{稀疏 Attention}：只计算选择的 Token 对，不要求全部两两比较。 \termref{intro:22d-modern-transformers}
+\item \textbf{线性 Attention}：通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 \termref{intro:22d-modern-transformers}
+\end{itemize}
+
+\subsection*{Agent 系统中的边界}
+\begin{itemize}
+\item \textbf{Tool Calling}：模型提出结构化请求，系统在检查后调用外部工具。 \termref{intro:23d-agent-systems}
+\item \textbf{MCP}：模型应用与工具/数据资源协作时使用的接口协议。 \termref{intro:23d-agent-systems}
+\item \textbf{Workflow}：由固定步骤或条件分支编排的可重复任务流程。 \termref{intro:23d-agent-systems}
+\item \textbf{Skill}：把一类任务的说明、约束和脚本包装为可复用能力。 \termref{intro:23d-agent-systems}
+\item \textbf{Subagent}：为某些子任务分配独立上下文或执行单元。 \termref{intro:23d-agent-systems}
+\end{itemize}
+
+\begin{conclusion}
+遇到新缩写，先问它改变了\textbf{数据、模型层、训练信号、
+计算复杂度、缓存，还是系统权限}。
+明确所属层级，再从这里点击回正文，远比背名称更有用。
+\end{conclusion}
