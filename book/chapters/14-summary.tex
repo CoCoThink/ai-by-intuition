@@ -1,0 +1,40 @@
+\section{回头看：Linear、MLP、Attention 究竟改变了什么？}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.45}
+\caption{三类模型的统一检索视角}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{21mm}X X@{}}
+\toprule
+模型 & 读出规则 & 直观意义 \\
+\midrule
+Linear & $\sum_i \vect{v}_i (\vect{k}_i^\top\vect{x})$ & 任何非零相似度都参与输出 \\
+MLP & $\sum_i \vect{v}_i\sigma(\vect{k}_i^\top\vect{x})$ & 非线性抑制弱匹配 \\
+Attention & $\sum_i \vect{v}_i\softmax(\beta K\vect{x})_i$ & 用归一化指数权重聚焦匹配项 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+三者都可以理解为下面这句话：
+\begin{equation}
+\boxed{\text{输出}=\sum_i\text{记忆内容}_i\times\text{匹配权重}_i.}
+\end{equation}
+差别在于\textbf{权重怎么计算}、\textbf{Key/Value 存在哪里}，以及\textbf{怎样更新记忆}。
+
+\subsection{MLP 和记忆型 Attention 不是同一个东西}
+\begin{table}[H]
+\centering\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{@{}p{28mm}XX@{}}
+\toprule
+ & MLP 的参数记忆视角 & Self-Attention 的上下文记忆视角 \\
+\midrule
+Key / Value 来源 & 训练得到的权重 & 当前输入的 Token 表示 \\
+更新方式 & 通常需要修改参数 & 可以通过加入上下文动态改变 \\
+主要成本 & 模型参数与训练 & 上下文长度、计算和 KV Cache \\
+数学关键 & 非线性门控、特征混合 & QK 相似度和 Softmax 加权 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+所以“Transformer 的每层都是记忆系统”是一个\textbf{强有力的理解视角}，而不是声称所有层都像数据库一样一条条存储事实。
