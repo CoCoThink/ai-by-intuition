@@ -2,7 +2,7 @@
 \label{intro:10b-ffn-output-head}
 
 \begin{idea}[title={这一章的核心问题}]
-我们刚刚看到完整 Transformer Block 中包含一个 FFN。把早先学过的两层 MLP 放进整个序列后，输入、输出尺寸怎么选择？
+我们刚刚看到完整 Transformer Block 中包含一个 FFN。把早先学过的两层 \conceptlink{mlp}{MLP} 放进整个序列后，输入、输出尺寸怎么选择？
 又为什么模型最后还要再乘一次矩阵才能输出词表概率？
 \textbf{同样是线性层，处在计算链上的位置不同，承担的任务就不同。}
 \end{idea}
@@ -61,7 +61,7 @@ Y=HW_{\rm down}=
 
 \textbf{观察关键事实：}第一行 FFN 不需要第二行参与就可以计算；
 第二行也一样。\textbf{标准 FFN 负责逐 Token 处理特征，
-Attention 才负责在 Token 之间混合信息。}
+\conceptlink{attention}{Attention} 才负责在 Token 之间混合信息。}
 这不是说 FFN 的输出没有上下文：如果它的输入已经经过 Attention，
 输入向量本身就包含了其他 Token 的信息。
 
