@@ -2,7 +2,7 @@
 \label{intro:22c-language-training}
 
 你现在已经知道模型如何从一个 Token 得到另一组概率，
-也知道损失函数、反向传播和梯度下降。剩下一个常见断点：
+也知道\conceptlink{loss}{损失函数}、\conceptlink{backprop}{反向传播}和\conceptlink{gradient}{梯度下降}。剩下一个常见断点：
 \textbf{一整段文字的训练目标，是怎样对应到每个位置的预测的？}
 
 \subsection{“错开一格”：一段文本同时产生许多训练目标}
@@ -29,7 +29,7 @@
 假设 $X$ 有三个 Token、形状 $3\times d_{\rm model}$。
 如果允许第一个位置通过 Attention 读到第三个位置，
 就可能让它在预测“第二个 Token”时偷看未来。
-所以解码器使用因果掩码：
+所以解码器使用\conceptlink{causal-mask}{因果掩码}：
 \[
 C=\begin{bmatrix}
 0&-\infty&-\infty\\
@@ -61,7 +61,7 @@ A=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}+C\right).
 \phantomsection\label{concept:cross-entropy}
 
 设词表大小为 $|\mathcal V|=5$，
-模型输出 logits：
+模型输出\conceptlink{logits}{logits}：
 \[
 Z\in\R^{3\times5}.
 \]
