@@ -1,4 +1,5 @@
 \section{从单 Query 到整段 Self-Attention}
+\phantomsection\label{concept:self-attention}
 \label{intro:12-self-attention-matrices}
 
 我们已经用单次查询得到 $V^\top\softmax(K\vect q)$，又通过转置把它写成 $\softmax(QK^\top)V$。现在问：\textbf{一句话有多个 Token 时，每个位置的 Query、Key、Value 从哪里来？}
