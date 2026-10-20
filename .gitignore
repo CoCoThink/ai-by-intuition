@@ -1,4 +1,4 @@
-# TeX-generated intermediate files
+# XeLaTeX intermediates
 *.aux
 *.bbl
 *.bcf
@@ -17,7 +17,9 @@
 *.snm
 *.vrb
 *.dvi
-# Compiled PDFs are published via CI artifacts; do not commit them by default
+# Only one compiled PDF released from CI
+/book/build/
+/book/main.pdf
 /chapters/**/main.pdf
 /chapters/**/build/
 # OS / IDE
