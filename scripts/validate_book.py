@@ -77,6 +77,26 @@ def validate_source() -> None:
         fail("Glossary link macro is missing from book/main.tex")
     print(f"Glossary QA passed: 100 internal links, {len(set(targets))} chapter destinations")
 
+    figures = {
+        "book/chapters/03-matrix-multiplication.tex": (
+            r"\input{figures/row-column-intuition}",
+            r"\label{sec:layout-matrix-card}",
+        ),
+        "book/chapters/12-self-attention-matrices.tex": (
+            r"\input{figures/key-value-layout}",
+            r"\label{sec:key-layout-card}",
+        ),
+    }
+    for chapter, (input_directive, label) in figures.items():
+        text = (ROOT / chapter).read_text(encoding="utf-8")
+        if input_directive not in text or label not in text:
+            fail(f"Missing matrix-layout figure or anchor in {chapter}")
+    for figure in ["row-column-intuition", "key-value-layout"]:
+        fig = ROOT / "book/figures" / (figure + ".tex")
+        if not fig.is_file() or r"\begin{tikzpicture}" not in fig.read_text(encoding="utf-8"):
+            fail(f"Missing editable matrix diagram: {fig}")
+    print("Matrix layout QA passed: introductory and QKV diagrams present")
+
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
 
@@ -103,6 +123,16 @@ def validate_pdf(pdf_path: Path) -> None:
         fail("Rendered TOC incorrectly contains a seventh part")
     if re.search(r"第[一二三四五六]部分[：:]", toc):
         fail("Rendered TOC contains a duplicated part prefix inside the title")
+
+    text_proc = subprocess.run(
+        ["pdftotext", str(pdf_path), "-"],
+        capture_output=True, text=True, check=True,
+    )
+    book_text = re.sub(r"\s+", "", text_proc.stdout)
+    for phrase in ["同一批向量", "为什么一会儿写"]:
+        if re.sub(r"\s+", "", phrase) not in book_text:
+            fail(f"Rendered PDF is missing a matrix-layout diagram title: {phrase}")
+    print("Matrix layout PDF QA passed: both diagram headings extracted")
 
     print(f"PDF QA passed: {pdf_path.name}; six uniquely numbered parts in rendered TOC")
 

@@ -102,6 +102,14 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 \]
 所以 $k^\top x$ 表示先把 Key 从一列变成一行，再与 Query 列向量做点积。
 
+\subsection{同一批向量如何从行变成列？}
+\label{sec:layout-matrix-card}
+
+学会矩阵的行、列之后，还需要知道：\textbf{同样的数字可以用两种方向排列}。
+在后面的 Key--Value 和记忆检索中，我们会不断遇到这种转置。先用一个没有 AI 术语的数字例子认清它。
+
+\input{figures/row-column-intuition}
+
 \begin{warningbox}
 不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），甚至 $BA$ 可能根本无法相乘；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
 \end{warningbox}

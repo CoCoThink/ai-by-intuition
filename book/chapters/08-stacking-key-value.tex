@@ -135,6 +135,8 @@ $d_v$ & 每条\textbf{Value 含多少个数字}；输出向量通常也有这个
 
 这不是 AI 特有的规则，而是\textbf{我们选择如何摆放数字}。在本卷，输入 Query 是一个列向量 $\vect x$。
 
+如果看到 $K$ 和 $K^\top$ 就容易迷失方向，可以先回看\hyperref[sec:layout-matrix-card]{矩阵乘法章的行列对照图}；进入 Self-Attention 后，再看\hyperref[sec:key-layout-card]{Key 与 Value 的完整并排图}。
+
 \textbf{Key 的任务是和 Query 做点积。}为了让一次乘法得到全部 $M$ 条 Key 的分数，就把 Key 依次放成行：
 \[
 \underbrace{K}_{M\times d_k}

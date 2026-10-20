@@ -8,7 +8,7 @@
 2. [从函数认识模型](chapters/00-functions.tex)：参数是什么、怎样拟合数据？
 3. [向量](chapters/01-vectors.tex)：一串数字能表示什么？
 4. [点积与几何意义](chapters/02-dot-product.tex)：余弦定理为什么出现在向量里？
-5. [矩阵乘法](chapters/03-matrix-multiplication.tex)：行乘列与列加权为什么是同一回事？
+5. [矩阵乘法](chapters/03-matrix-multiplication.tex)：行乘列、列加权，以及按行/按列的双色矩阵图卡
 6. [Embedding](chapters/20-embeddings.tex)：Token ID 如何变成向量？
 
 ## Ⅱ · 神经网络怎样学会预测
@@ -34,7 +34,7 @@
 19. [Key/Value 怎样堆成矩阵](chapters/08-stacking-key-value.tex)
 20. [从 MLP 视角看记忆检索](chapters/09-nonlinearity-and-memory.tex)
 21. [Softmax 与 Attention](chapters/11-softmax-memory.tex)：从单个列 Query 到批量行 Query
-22. [Self-Attention 的矩阵](chapters/12-self-attention-matrices.tex)：Q、K、V 的来源与形状
+22. [Self-Attention 的矩阵](chapters/12-self-attention-matrices.tex)：Q、K、V 的来源、两种行列摆放的图卡与形状
 23. [线性记忆、MLP 与 Attention 对照](chapters/14-summary.tex)
 24. [Key-Value 基础练习](chapters/15-practice.tex)
 25. [Transformer 架构](chapters/22-transformer-architecture.tex)：多头、残差、位置与 Mask

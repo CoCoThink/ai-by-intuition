@@ -37,30 +37,25 @@ W_Q=\begin{bmatrix}1&0\\0&2\end{bmatrix}.
 $\vect x$ 是\textbf{输入表示}；$\vect q$ / $Q$ 是扮演\textbf{查询角色}的向量 / 矩阵。简化推导中可以令 $q=x$，真实 Transformer 通常通过可训练参数投影得到 $Q$。二者角色有关，但不是恒等的概念。
 \end{conclusion}
 
-\subsection{同一计算的三种行列写法}
+\subsection{为什么 $K$ 和 $K^\top$ 可以表示同一批 Key？}
+\label{sec:key-layout-card}
 
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.32}
-\begin{tabularx}{\linewidth}{@{}p{27mm}X@{}}
-\toprule
-书中场景 & 输入、相似度与 Value 读出方式\\
-\midrule
-单个 Query（列） &
-$\vect q:d_k\times1$；$K\vect q:M\times1$；
-$V^\top\vect a:d_v\times1$\\
-单个 Query（行） &
-$\vect q^\top:1\times d_k$；
-$\vect q^\top K^\top:1\times M$；
-$\vect a^\top V:1\times d_v$\\
-多个 Query（行） &
-$Q:N\times d_k$；
-$QK^\top:N\times M$；
-$\softmax(QK^\top)V:N\times d_v$\\
-\bottomrule
-\end{tabularx}
-\end{center}
-\textbf{三行计算的本质没有变：算匹配分数、按匹配给权重、组合 Value。}
+\hyperref[sec:layout-matrix-card]{矩阵乘法章}已经用普通数字解释了按行排列与按列排列。
+现在把这一规则用于 Key、Query 和 Value。图中使用相同的数值和颜色，直观看清每次转置改变了什么。
+
+\input{figures/key-value-layout}
+
+\textbf{再向前一步：}如果只有一个 Query，用 $K\vect q$ 或
+$\vect q^\top K^\top$，得到的是同一组匹配分数的列/行表示。
+如果有 $N$ 个 Query，将它们按行组成 $Q$，便得到
+\[
+\underbrace{Q}_{N\times d_k}
+\underbrace{K^\top}_{d_k\times M}
+=\underbrace{S}_{N\times M}.
+\]
+此时第 $i$ 行对应第 $i$ 个 Query，对 $M$ 个 Key 的分数。
+在每一行上做 Softmax，再乘按行排列的 Value 矩阵 $V$，便得到
+$N$ 个 Query 对应的输出。
 
 \subsection{给一句话里的每个 Token 一组 Q、K、V}
 
