@@ -1,0 +1,121 @@
+\section{前馈网络与输出头：为什么它们都是矩阵，却不能混为一谈？}
+\label{intro:10b-ffn-output-head}
+
+\begin{idea}[title={这一章的核心问题}]
+学会两层 MLP 后，如果把它搬进语言模型，输入、输出尺寸怎么选择？
+又为什么模型最后还要再乘一次矩阵才能输出词表概率？
+\textbf{同样是线性层，处在计算链上的位置不同，承担的任务就不同。}
+\end{idea}
+
+\subsection{FFN 是“每个 Token 各做一次”的非线性计算}
+
+设有 $T$ 个 Token，隐藏状态为
+$X\in\R^{T\times d_{\rm model}}$。
+给每个 Token 应用\textbf{相同参数}的两层前馈网络（FFN）：
+\begin{equation}
+H=\relu(XW_{\rm up}+\vect b_{\rm up}),\qquad
+Y=HW_{\rm down}+\vect b_{\rm down}.
+\label{eq:ffn-batched}
+\end{equation}
+这里的偏置向量按行广播，意味着每一行加上同一组数。矩阵形状是：
+\[
+\underbrace{X}_{T\times d_{\rm model}}
+\underbrace{W_{\rm up}}_{d_{\rm model}\times d_{\rm ff}}
+=\underbrace{Z}_{T\times d_{\rm ff}},
+\quad
+\underbrace{H}_{T\times d_{\rm ff}}
+\underbrace{W_{\rm down}}_{d_{\rm ff}\times d_{\rm model}}
+=\underbrace{Y}_{T\times d_{\rm model}}.
+\]
+$d_{\rm ff}$ 是 FFN 的中间宽度。它可以大于 $d_{\rm model}$，
+但\textbf{不要求固定为四倍}。
+
+\subsection{手算一个两 Token 的 FFN}
+
+为简化例子，设偏置为零，$T=2$、
+$d_{\rm model}=2$、$d_{\rm ff}=3$：
+\[
+X=\begin{bmatrix}1&2\\0&1\end{bmatrix},\quad
+W_{\rm up}=\begin{bmatrix}1&0&1\\0&1&-1\end{bmatrix},
+\quad
+W_{\rm down}=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
+\]
+先上投影：
+\[
+XW_{\rm up}
+=\begin{bmatrix}1&2&-1\\0&1&-1\end{bmatrix}.
+\]
+逐元素 ReLU：
+\[
+H=\begin{bmatrix}1&2&0\\0&1&0\end{bmatrix}.
+\]
+再下投影：
+\begin{equation}
+Y=HW_{\rm down}=
+\boxed{\begin{bmatrix}1&2\\0&1\end{bmatrix}}.
+\end{equation}
+虽然这组人工参数恰好得到与输入相同的数字，
+但是中间确实做过 $2\to3\to2$ 的变换。
+换一组输入或参数，结果一般不相同。
+
+\textbf{观察关键事实：}第一行 FFN 不需要第二行参与就可以计算；
+第二行也一样。\textbf{标准 FFN 负责逐 Token 处理特征，
+Attention 才负责在 Token 之间混合信息。}
+这不是说 FFN 的输出没有上下文：如果它的输入已经经过 Attention，
+输入向量本身就包含了其他 Token 的信息。
+
+\subsection{输出头不是 FFN 的“下投影”}
+
+FFN 的下投影将隐藏宽度还原为 $d_{\rm model}$，
+是为了继续堆叠后续 Block；
+而\textbf{词表输出头}要把隐藏状态映射到候选 Token 分数：
+\begin{equation}
+Z_{\rm vocab}=YW_{\rm vocab}+\vect b_{\rm vocab},
+\quad
+W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.
+\end{equation}
+假设 $d_{\rm model}=2$，词表有五个 Token，
+则 $W_{\rm vocab}$ 是 $2\times5$，
+每个 Token 产生五个 logits。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=5mm,
+ n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=105mm,minimum height=10mm,align=center,font=\small}]
+\node[n] (x) {$T\times d_{\rm model}$：每个 Token 的隐藏表示};
+\node[n,below=of x] (up) {FFN 上投影 $T\times d_{\rm ff}$，激活，再下投影};
+\node[n,below=of up] (y) {$T\times d_{\rm model}$：供下一个 Block 使用};
+\node[n,below=of y] (out) {词表输出头 $T\times|\mathcal V|$：预测候选分数};
+\draw[->,blue,thick] (x)--(up);
+\draw[->,blue,thick] (up)--(y);
+\draw[->,teal,thick] (y)--(out);
+\end{tikzpicture}
+\end{center}
+
+\subsection{再与 Attention 对照一次}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}p{24mm}p{31mm}X@{}}
+\toprule
+组件 & 通常处理的轴 & 主要功能\\
+\midrule
+Attention & Token 与 Token & 动态决定读取哪些位置的信息\\
+FFN & 每个 Token 的特征 & 非线性变换当前表示\\
+词表输出头 & 特征到词表类别 & 计算下一 Token 的候选分数\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{warningbox}
+名字里的“前馈”不意味着每个 FFN 都包含时间上的上一词或下一词；
+它只表示计算中不存在像传统 RNN 那样的同层时间递推。
+真实模型可能使用门控 FFN、MoE 或权重绑定等变体，
+但这里的\textbf{输入输出角色区分}依然有用。
+\end{warningbox}
+
+\begin{conclusion}
+\textbf{同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
+词表投影则是把内部表示变成预测任务答案的接口。}
+不要因为它们都是矩阵乘法，就把 FFN 和输出头当成同一层。
+\end{conclusion}
