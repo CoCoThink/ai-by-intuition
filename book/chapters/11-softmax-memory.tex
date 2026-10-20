@@ -56,13 +56,61 @@ p_i=\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{
 
 \subsection{从单个列 Query 到标准 Attention：每一步都展开}
 
+\subsection*{本节符号：先知道数字代表什么}
+
+读接下来的公式时，先把下列符号与“数量”对应起来：
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}p{18mm}X p{37mm}@{}}
+\toprule
+符号 & 意思 & 数字例子\\
+\midrule
+$M$ & \textbf{Key--Value 记忆的条数} & 两条：$M=2$\\
+$d_k$ & \textbf{每个 Key 有几个数字}，Query 维度与它相同 & $(1,0)$：$d_k=2$\\
+$d_v$ & \textbf{每个 Value 有几个数字}，也是输出向量的维度 & $(2,1,0)$：$d_v=3$\\
+$N$ & \textbf{同时处理多少个 Query}；批量查询时使用 & 三个：$N=3$\\
+$\beta$ & 调整匹配分数的缩放系数 & 如 $\beta=1$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+注意：\textbf{$M$ 是条数，$d_k$ 和 $d_v$ 是一条向量的长度。}下标 $k$ 与 $v$ 分别代表 Key 和 Value，$d$ 来自 \emph{dimension}（维度）。
+
+
+
 前一个式子是\textbf{一个列向量}发出查询。标准 Transformer 会对\textbf{多个行向量}同时查询。看似完全不同的两条公式，实际上只隔着三步转置与批量化，再加一个缩放系数的选择。
 
 \textbf{第一步：把查询 $\vect x$ 重新命名为 $\vect q$。}在我们设计的简化模型中，令 $\vect q=\vect x$，因此
 \[
 \vect y=V^\top\softmax(\beta K\vect q).
 \]
-此时 $K$ 是 $M\times d_k$，$\vect q$ 是 $d_k\times1$，$V$ 是 $M\times d_v$，输出 $\vect y$ 是 $d_v\times1$。
+这里 $K$ 有 $M$ 行，每行 $d_k$ 个数字；$\vect q$ 有 $d_k$ 个数字；$V$ 有 $M$ 行，每行 $d_v$ 个数字。输出 $\vect y$ 最终有 $d_v$ 个数字。
+
+\begin{example}[title={字母换成数字后，究竟在算什么？}]
+设有\textbf{两条记忆}（$M=2$），每条 Key 是\textbf{二维}（$d_k=2$），每条 Value 是\textbf{三维}（$d_v=3$）：
+\[
+K=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
+\vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
+V=\begin{bmatrix}2&1&0\\0&3&4\end{bmatrix}.
+\]
+令 $\beta=1$，就得到
+\[
+K\vect q=\begin{bmatrix}1\\0\end{bmatrix},\qquad
+\softmax(K\vect q)\approx
+\begin{bmatrix}0.731\\0.269\end{bmatrix}.
+\]
+最后用匹配权重组合 Value：
+\[
+\vect y=V^\top\softmax(K\vect q)
+\approx
+\begin{bmatrix}2&0\\1&3\\0&4\end{bmatrix}
+\begin{bmatrix}0.731\\0.269\end{bmatrix}
+=\begin{bmatrix}1.462\\1.538\\1.076\end{bmatrix}.
+\]
+匹配分数有 \textbf{2 个}，是因为 $M=2$；最终输出有 \textbf{3 个数字}，是因为 $d_v=3$。两种数量不能混淆。
+\end{example}
 
 \textbf{第二步：统一改成行向量表示。}对矩阵转置，有
 \[
