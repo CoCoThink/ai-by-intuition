@@ -1,32 +1,40 @@
-# AI by Intuition · 用直觉理解 AI
+# AI by Intuition · 从函数到大语言模型
 
 > **先有问题，再有直觉；先算一个例子，再写一般公式。**
 
-面向数学基础较弱、非科班，以及想真正弄清 AI 底层数学的人。这里不要求先会线性代数：每个公式都从能手算的数值例子开始，逐步引入符号、矩阵维度和实际的模型结构。
+一份面向数学基础较弱、非科班读者的中文 AI 原理教材。从“函数为什么能够拟合数据”出发，逐步学习矩阵、MLP、梯度下降、反向传播、CNN、Embedding、RNN、Attention、Transformer 和大语言模型。
 
-## 读者从哪里开始？
+**唯一正式交付物是一本完整 PDF**；章节 LaTeX 源码拆开管理，只是为了便于校对和维护。
 
-### 第一卷｜从矩阵乘法到 MLP 与 Attention
+## 阅读与下载
 
-**[进入全书 LaTeX 源码](book/main.tex)** · **[查看章节目录](book/README.md)**
+- **[查看全书主文件（LaTeX）](book/main.tex)**
+- **[章节索引与学习目标](book/README.md)**
+- **[全书知识路线图](ROADMAP.md)**
+- **[GitHub Actions：下载最新完整 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**
 
-这是一本连续编排的教程，重点回答：
+打开最近一次成功的构建，在 Artifacts 中下载 `ai-by-intuition-volume-01`，其中只有 `AI-by-Intuition-Volume-01.pdf`。
 
-- 点积的几何公式怎样由投影和余弦定理推出来？
-- 矩阵乘法为什么既能看成「逐行点积」，又能看成「按列加权求和」？
-- 为什么 K 按行排列、V 需要转置？为什么 $Kx$ 恰好返回每个 Key 的分数？
-- 为什么可以对分数逐个应用 ReLU，再乘 $V^\top$？
-- Q 是不是原来的 x？从单次查询 $V^\top\mathrm{softmax}(\beta Kx)$ 如何变成标准 Attention 的 $\mathrm{softmax}(QK^\top/\sqrt{d_k})V$？
+## 六个部分
 
-**阅读时只需下载一份完整 PDF。** 仓库使用多个 `.tex` 文件维护章节，并由 `book/main.tex` 统一编译。
+| 部分 | 主要内容 | 关键问题 |
+|---|---|---|
+| I · 从函数到矩阵 | 函数、参数、向量、点积、矩阵乘法 | 不会公式也能先看懂计算在做什么吗？ |
+| II · 记忆与 MLP | 外积、关联记忆、激活函数、MLP | 为什么 K 与 V 堆成矩阵以后，还能插入 ReLU？ |
+| III · 模型训练 | 损失、导数、梯度下降、反向传播、泛化 | 网络怎么知道参数该改多少？ |
+| IV · 图像与序列 | CNN、One-hot、Embedding、RNN | 为什么图片需要局部特征，文字需要顺序？ |
+| V · Transformer | Softmax、Q/K/V、Self-Attention、多头与掩码 | 从单个 Query 怎样得到标准 Attention？ |
+| VI · LLM 与应用 | 预训练、生成策略、RAG、Agent、100 个术语、综合练习 | 一个能预测 Token 的模型怎样变成应用？ |
 
-### 下载 PDF
+## 教学原则
 
-打开 **[GitHub Actions → Build one PDF book](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**，进入最近一次成功的构建，在 **Artifacts** 下载 `ai-by-intuition-volume-01`。ZIP 中只有 `AI-by-Intuition-Volume-01.pdf`。
+每个新概念尽量按“**问题 → 手算数字 → 一般公式 → 维度检查 → 真实模型 → 局限与练习**”展开。特别强调矩阵的行列与转置：不把一个抽象符号视作“显然”。
 
-### 本地构建
+一些技巧属于普遍经验而非严格定理。书中会区别数学恒等式、统计直觉、模型设计选择和工程系统能力，避免过度类比。
 
-需要 XeLaTeX、中文字体、TikZ 和 PGFPlots。Ubuntu 建议安装：
+## 本地编译
+
+需要 XeLaTeX 和中文字体。Ubuntu 可使用：
 
 ```bash
 sudo apt-get install latexmk texlive-xetex texlive-lang-chinese \
@@ -36,24 +44,10 @@ cd book
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ```
 
-产物是 `book/build/main.pdf`。如果只想阅读，不需要安装 LaTeX，直接下载 GitHub Actions 产物即可。
+最终文件为 `book/build/main.pdf`。不需要安装 LaTeX 也可以直接从 Actions 下载 PDF。
 
-## 整套教程的学习方法
+## 教学资料与引用
 
-1. **先提出一个真实的困惑**，例如「为什么矩阵乘法就能查询记忆？」
-2. **先手算二维案例**，确认没有任何神秘步骤。
-3. **把算式写成一般矩阵形式**，在每个运算旁标明形状。
-4. **最后才引入模型术语**，例如 MLP、ReLU、Softmax、Self-Attention。
-5. **明确适用条件**，区分数学恒等式、理想模型和实际 LLM。
+内容组织参考了提供的七份《从函数到神经网络》《计算神经网络的参数》《调教神经网络的方法》《从矩阵到 CNN》《从词嵌入到 RNN》《简单而强大的 Transformer》《速览大模型 100 词》的中文字幕资料。教材使用独立重写的数学推导、图解与练习，**并未逐字转载字幕**。联想记忆部分的数学组织还参考了 Alex Wang 的文章 [You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/)；详细资料见 [参考章节](book/chapters/26-sources.tex)。
 
-## 后续内容
-
-见 [ROADMAP.md](ROADMAP.md)。优先补齐反向传播、概率、训练目标与 Transformer 其他模块，继续维护为单个整合版 PDF，而不是多份零散讲义。
-
-欢迎在 Issues 指出难懂的数学跳步。内容参与规范见 [CONTRIBUTING.md](CONTRIBUTING.md)。
-
-## 参考
-
-第一卷的「联想记忆」组织视角受到 Alex Wang 的 [*You could have invented transformers from memory*](https://alexwang.ai/posts/associative-memory/) 启发；本书针对初学者重新设计了章节顺序、手算例子和常见疑问的解释。
-
-**许可说明：** 目前尚未选定正式开源许可证，先保留版权；确定许可后再添加 LICENSE。
+欢迎通过 Issue 指出符号未解释、推导跳步和计算错误；贡献说明见 [CONTRIBUTING.md](CONTRIBUTING.md)。仓库目前尚未选定正式 LICENSE，请勿默认任意转载或再授权。
