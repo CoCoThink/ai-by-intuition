@@ -1,0 +1,26 @@
+# TeX-generated intermediate files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+*.nav
+*.snm
+*.vrb
+*.dvi
+# Compiled PDFs are published via CI artifacts; do not commit them by default
+/chapters/**/main.pdf
+/chapters/**/build/
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
