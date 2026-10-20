@@ -1,6 +1,10 @@
 \section{贯通示例：两个 Token 如何通过 Attention 交换信息？}
 
-读到这里，你已经见过向量、矩阵、\conceptlink{softmax}{Softmax}、ReLU、\conceptlink{gradient}{梯度}和 Transformer 的基本结构。现在不引入新的模型术语，只用\textbf{两行数字}把一条计算链真正走完。
+前两章已经看过 Transformer 的\textbf{结构图和组件职责}，
+但把它们画在一个框里不代表我们已经会计算。
+这一章不新增架构，改用两个可手算的 Token 向量，
+核对\textbf{Q/K/V 从哪里来、分数怎样归一化、Value 怎样混合、输出形状是否正确}。
+其中 \conceptlink{softmax}{Softmax}、ReLU 和 \conceptlink{gradient}{梯度} 都是前面已经学过的零件。
 
 \subsection{先把两个 Token 表示成两个向量}
 
@@ -98,5 +102,7 @@ Y_{\rm causal}\approx
 \end{warningbox}
 
 \begin{conclusion}
-从 Token 到下一词概率的整条路径，只用了本书已经建立的概念：\textbf{嵌入查表、矩阵点积、Softmax、加权求和、非线性、损失与梯度。}理解这条链后，再遇到陌生架构就可以先查它新增了哪一个步骤、解决了哪一个问题。
+从 Token 到下一词概率的整条路径，只用了本书已经建立的概念：\textbf{嵌入查表、矩阵点积、Softmax、加权求和、非线性、损失与梯度。}现在已经能沿着一次前向运算检查数字如何流动。
+但这组 Q/K/V 参数仍是人为指定的；\textbf{整段真实训练文本究竟如何产生目标、计算损失并更新这些参数？}
+下一章把此前学过的训练循环接到 Transformer 上。
 \end{conclusion}
