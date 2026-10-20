@@ -88,12 +88,17 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 \end{tikzpicture}
 \end{center}
 
-设某条记忆的 Key 是 $\vect{k}_i$，当前查询是 $\vect{x}$。最简单的匹配分数就是：
-\begin{equation}
-\boxed{s_i=\vect{k}_i^\top\vect{x}.}
-\end{equation}
-这里上标 $\top$ 表示转置；$\vect{k}_i^\top\vect{x}$ 与 $\vect{k}_i\cdot\vect{x}$ 都是点积。
+如果以后需要比较一条\textbf{查询向量} $\vect q$
+与一条\textbf{候选向量} $\vect k_i$，可以用点积定义匹配分数：
+\[
+s_i=\vect k_i^\top\vect q.
+\]
+上标 $\top$ 叫转置，把一列变成一行；
+下一章会专门说明这个记号。
+现在只需知道：它和刚才的 $\vect k_i\cdot\vect q$ 是同一次点积。
 
 \begin{conclusion}
-点积就是最基础的\textbf{“匹配多少”}。Attention 中的 $QK^\top$，本质上也是在批量计算 Query 和各个 Key 的匹配程度。
+点积就是\textbf{同位置相乘再求和}，既可以用数字算，
+也可以从两个向量之间的夹角理解。后面学习 Attention 时，
+我们会用它衡量不同位置之间的匹配程度。
 \end{conclusion}
