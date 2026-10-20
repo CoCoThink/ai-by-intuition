@@ -171,7 +171,7 @@ def validate_source() -> None:
     for phrase in ("Query（查询", "Key（索引", "Value（内容", "(2,0,1)", "0.665", "0.910", "0.335"):
         if phrase not in attn:
             fail("Attention beginner walkthrough is missing: " + phrase)
-    if not ("从 $K\\vect q$ 到 $QK^\\top$" in matrix_bridge and
+    if not ("从单次查询到批量计算" in matrix_bridge and
             "0.910" in matrix_bridge and
             "矩阵转置" in matrix_bridge):
         fail("The following chapter no longer builds on the same Attention example")
