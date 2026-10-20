@@ -76,7 +76,8 @@ W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.
 \end{equation}
 假设 $d_{\rm model}=2$，词表有五个 Token，
 则 $W_{\rm vocab}$ 是 $2\times5$，
-每个 Token 产生五个 logits。
+每个 Token 产生五个 \conceptlink{logits}{logits}，即还未经过 Softmax 的原始候选分数。
+这些数字可以为负，也不能直接当成概率。
 
 \begin{center}
 \begin{tikzpicture}[>=Latex,node distance=5mm,
