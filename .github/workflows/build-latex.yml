@@ -1,13 +1,13 @@
-name: Build LaTeX PDF
+name: Build one PDF book
 
 on:
   push:
     paths:
-      - 'chapters/**/*.tex'
+      - 'book/**/*.tex'
       - '.github/workflows/build-latex.yml'
   pull_request:
     paths:
-      - 'chapters/**/*.tex'
+      - 'book/**/*.tex'
       - '.github/workflows/build-latex.yml'
   workflow_dispatch:
 
@@ -15,23 +15,28 @@ permissions:
   contents: read
 
 jobs:
-  build-chapter-01:
-    name: Build Chapter 01 (XeLaTeX)
+  build-book:
+    name: Compile AI by Intuition Volume 01
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install TeX and Chinese fonts
+      - name: Install XeLaTeX, illustrations and Chinese fonts
         run: |
           sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y             latexmk texlive-xetex texlive-lang-chinese             texlive-latex-extra texlive-pictures texlive-fonts-recommended             fonts-noto-cjk fonts-noto-core lmodern
-      - name: Compile with XeLaTeX
-        working-directory: chapters/01-associative-memory
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            latexmk texlive-xetex texlive-lang-chinese \
+            texlive-latex-extra texlive-pictures texlive-fonts-recommended \
+            fonts-noto-cjk fonts-noto-core lmodern
+      - name: Build one PDF
+        working-directory: book
         run: |
           mkdir -p build
-          latexmk -xelatex -interaction=nonstopmode -halt-on-error             -file-line-error -outdir=build main.tex
-      - name: Upload PDF
+          latexmk -xelatex -interaction=nonstopmode -halt-on-error \
+            -file-line-error -outdir=build main.tex
+          cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
+      - name: Publish single PDF artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ai-by-intuition-chapter-01-pdf
-          path: chapters/01-associative-memory/build/main.pdf
+          name: ai-by-intuition-volume-01
+          path: book/build/AI-by-Intuition-Volume-01.pdf
           if-no-files-found: error
