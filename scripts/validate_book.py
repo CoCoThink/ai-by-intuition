@@ -72,9 +72,12 @@ def validate_pdf(pdf_path: Path) -> None:
         check=True,
     )
     toc = proc.stdout
+    # PDF extraction can insert or omit spaces around mixed Chinese/Latin titles.
+    # Compare whitespace-normalized labels, not typesetting line breaks.
+    toc_compact = re.sub(r"\s+", "", toc)
     for ordinal, title in zip(ORDINALS, PART_TITLES):
-        pattern = re.escape("第" + ordinal + "部分") + r"\s+" + re.escape(title)
-        if not re.search(pattern, toc):
+        expected = "第" + ordinal + "部分" + re.sub(r"\s+", "", title)
+        if expected not in toc_compact:
             fail(f"Rendered TOC is missing or mislabels part: 第{ordinal}部分 {title}")
 
     if "第七部分" in toc:
