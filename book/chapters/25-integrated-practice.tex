@@ -11,11 +11,11 @@
 \item 前向计算 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。若 $x=2,y=5,w_1=1,w_2=2$，求 $h,\widehat y,L$ 以及 $\partial L/\partial w_2$。
 \item 训练误差几乎为零，但验证误差持续变大，说明可能出现什么？至少说出两个改善办法。
 \item $4\times4$ 图片上使用 $2\times2$ 卷积核，stride 为 1、padding 为 0，输出图像宽高是多少？如果卷积核只有一个输入通道和一个输出通道，权重有几个？
-\item 小词表只有四个 Token，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
+\item 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
 \item 递推模型 $h_t=x_t+\frac12h_{t-1}$，初始 $h_0=0$，输入为 $(2,0,1)$。计算 $h_1,h_2,h_3$。
-\item Attention 中 $Q:3\times4$、$K:5\times4$、$V:5\times6$。写出 $QK^\top$、Softmax 权重及最终输出的形状。
+\item \conceptlink{attention}{Attention} 中 $Q:3\times4$、$K:5\times4$、$V:5\times6$。写出 $QK^\top$、\conceptlink{softmax}{Softmax} 权重及最终输出的形状。
 \item 一个头输出 $3\times2$ 的矩阵，两个头按特征列拼接后是什么尺寸？若要投影回 4 维，需要什么尺寸的 $W_O$？
-\item 若某 Token 的真实下一词概率为 $0.25$，交叉熵单位置损失 $-\log p$ 约为多少？
+\item 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\log p$ 约为多少？
 \item 给模型加一个私有知识库后，是否能保证它永远不会生成错误事实？解释检索与生成分别可能出什么问题。
 \end{enumerate}
 
