@@ -1,84 +1,208 @@
-\section{从 RNN 走向 Attention：为什么要让信息直接相遇？}
+\section{Attention 是什么？让一个词直接读取其他位置}
 \label{intro:21b-why-attention}
 
-我们现在已经有了 Token 向量，也知道 RNN 如何逐个处理位置。但理解 Transformer 不能只背诵“RNN 不好，Attention 更好”。先看看两种模型究竟怎样让远距离的信息发生联系。
+\begin{idea}[title={先给 Attention 一个能听懂的定义}]
+\textbf{Attention（注意力）是一种按相关性读取信息的方法：}
+当前这个位置先对\textbf{可读取的每个位置}算一个匹配分数，
+再把这些分数变成\textbf{权重}，
+最后把各位置提供的信息按权重\textbf{加起来}。
 
-\subsection{想解决什么问题：一个指代关系}
+它最核心的三个动作就是
+\textbf{比较 $\to$ 分配权重 $\to$ 加权读取}。
+这不是说模型像人一样拥有注意力意识，
+而是一个具体的可训练数学运算。
+\end{idea}
 
-考虑一句话：
-\begin{center}
-\emph{“小明把书放进书包，因为\textbf{它}很重。”}
-\end{center}
-其中“它”指什么，依赖上下文；把词逐个独立分类可能很困难。
+\subsection{为什么 RNN 已经能传信息，还需要另一个办法？}
 
-RNN 可以逐步带着隐藏状态往后读。这样早期信息有机会影响后面的词，但信息必须经过多个更新步骤。我们能不能允许当前位置\textbf{直接查看前面相关的位置}？
-
-\subsection{先设计一种没有 Key/Value 名字的直觉方案}
-
-假设模型需要从三个位置读取信息。我们给三个位置各算一个相关性分数：
+上一章让模型按顺序读：
 \[
-s=(2,0,1).
+\underbrace{\text{春天}}_{\text{第 1 词}}
+\ \to\
+\underbrace{\text{花}}_{\text{第 2 词}}
+\ \to\
+\underbrace{\text{开了}}_{\text{第 3 词}}.
 \]
-直接按分数加权会遇到问题：分数可能是负数、大小也可能没有统一标准。于是先把它们经过 Softmax：
-\[
-a_i=\frac{e^{s_i}}{e^2+e^0+e^1}.
-\]
-数值近似为
-\[
-\vect a\approx(0.665,0.090,0.245).
-\]
-它们都是非负数，总和约为 $1$。
+RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
+但如果想重点利用第 1 个词的信息，
+它必须依赖这份状态此前是否保留了相关内容。
 
-如果三个位置可以提供二维信息：
-\[
-\vect v_1=(1,0),\quad
-\vect v_2=(0,1),\quad
-\vect v_3=(1,1),
-\]
-那么当前位置读到的信息是
-\begin{align*}
-\vect y&=a_1\vect v_1+a_2\vect v_2+a_3\vect v_3\\
-&\approx(0.910,0.335).
-\end{align*}
-
-\textbf{此处的核心创新不是指数函数本身，而是“根据当前位置对各信息源的相关性，动态分配读取权重”。}这套设计仍缺一个问题：相关性分数从哪里来？
-
-\subsection{Query、Key、Value：给计算中的三种角色命名}
-
-我们需要一个可以训练的匹配机制。给当前查询位置一个\textbf{Query} $\vect q$，给每个候选位置一个\textbf{Key} $\vect k_i$，让相似度分数由点积产生：
-\begin{equation}
-s_i=\vect q^\top\vect k_i.
-\end{equation}
-然后对所有 $s_i$ 做 Softmax，得到读取各个 Value $\vect v_i$ 的权重。
+现在试想另一种设计：当我们读到第三个词“开了”时，
+\textbf{不必只能通过 $h_2$ 间接获得过去的信息；
+让第三个位置直接查看前三个位置，各自决定读多少。}
 
 \begin{center}
-\begin{tikzpicture}[>=Latex,node distance=7mm,
- n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=107mm,minimum height=10mm,align=center,font=\small}]
-\node[n] (q) {Query 和每个 Key 做点积 $\longrightarrow$ 匹配分数};
-\node[n,below=of q] (s) {Softmax $\longrightarrow$ 一组非负、和为 1 的权重};
-\node[n,below=of s] (v) {权重 $\times$ 各个 Value，再相加 $\longrightarrow$ 输出};
-\draw[->,thick,blue] (q)--(s);
-\draw[->,thick,blue] (s)--(v);
+\begin{tikzpicture}[>=Latex,
+  word/.style={draw=linegray,fill=paper,rounded corners=3pt,
+   minimum width=29mm,minimum height=10mm,align=center,font=\small},
+  reader/.style={draw=blue,fill=blueback,rounded corners=3pt,
+   minimum width=43mm,minimum height=12mm,align=center,font=\small}]
+\node[word] (a) at (0,0) {位置 1\\春天};
+\node[word] (b) at (4,0) {位置 2\\花};
+\node[word] (c) at (8,0) {位置 3\\开了};
+\node[reader] (r) at (8,-2.1) {位置 3 的读取结果};
+\draw[->,blue,thick] (a.south) to[out=-80,in=180] (r.west);
+\draw[->,teal,thick] (b.south) to[out=-75,in=145] (r.north west);
+\draw[->,orange,thick] (c.south)--(r.north);
 \end{tikzpicture}
 \end{center}
+\textbf{这几根箭头的意思：}在这个简化例子中，
+位置 3 可以直接从位置 1、2、3 读取信息，
+不同箭头并不要求权重相等。
+我们还没有说权重具体由什么决定，下面就设计这件事。
 
-这就是\textbf{注意力机制的基本读出过程}。你已经能理解它的核心数学，不需要先知道联想记忆的研究历史。
+\subsection{第一步：谁需要信息？谁能提供信息？}
 
-\subsection{先走完 Attention 主线，另一条数学路线留作选读}
+先给计算中的三个角色起名字，不急着写大矩阵：
+\begin{itemize}
+\item \textbf{Query（查询，记作 $\vect q$）：}
+当前这个位置想按什么特征\textbf{寻找信息}；
+\item \textbf{Key（索引，记作 $\vect k_i$）：}
+第 $i$ 个候选位置提供什么\textbf{可供匹配的特征}；
+\item \textbf{Value（内容，记作 $\vect v_i$）：}
+如果决定读取第 $i$ 个位置，\textbf{实际取出什么信息}。
+\end{itemize}
 
-我们的第一个问题已经解决了：\textbf{当前位置如何根据相关性直接读取上下文}。
-因此下一章不再重新从外积讲起，而是接着问：
-\textbf{同样的读取规则，怎样写成一个矩阵公式？}
+打个类比：你拿着问题查资料，
+问题是 Query，目录索引像 Key，查到的内容像 Value。
+\textbf{但这是理解角色的比喻：}
+真实 Attention 的 Query、Key、Value 都是网络中的数字向量，
+并不是在互联网搜索网页。
 
-如果你喜欢从“存入一条 Key--Value”的角度重新理解这套数学，
-可以在学完 Transformer 后阅读第六部分的\textbf{联想记忆选读专题}。
-它有助于研究记忆干扰、外积和非线性，却不是理解
-Self-Attention 的先修条件。
+我们先只做\textbf{一次查询}：
+位置 3 发出一个 Query，对前三个位置提供的 Key 逐一匹配。
 
-\subsection{为什么 Attention 不等于无限长记忆？}
+\subsection{第二步：从 Query 和 Key 算出匹配分数}
 
-一次标准全量注意力需要让每个 Query 和很多 Key 比较；对 $T$ 个 Token，分数矩阵可达 $T\times T$。因此当 $T$ 增长时，注意力本身也可能带来显著计算和存储成本。它\textbf{缩短了信息交互路径}，并非免费解决所有长期依赖问题。
+为什么能比较？因为前面已经学过\textbf{点积}：
+把两个长度相同的向量对应位置相乘，再把结果相加。
+假设这些都是教学用的\textbf{二维列向量}：
+\[
+\vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
+\vect k_1=\begin{bmatrix}2\\0\end{bmatrix},\quad
+\vect k_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
+\vect k_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\]
+第 $i$ 个位置的匹配分数定义为
+$s_i=\vect q^\top\vect k_i$，即 Query 和该 Key 的点积。
+一条条算：
+\[
+\begin{aligned}
+s_1&=1\times2+0\times0=\boxed{2},\\
+s_2&=1\times0+0\times1=\boxed{0},\\
+s_3&=1\times1+0\times1=\boxed{1}.
+\end{aligned}
+\]
+于是得到三个分数：
+\[
+\boxed{(s_1,s_2,s_3)=(2,0,1).}
+\]
+
+\textbf{请注意：这组分数不是凭空出现的。}
+它们是\textbf{一个 Query 和三条 Key 各做一次点积}算出来的。
+这些向量是人工挑选的，\textbf{不能把“春天”的语义天然等于 $(2,0)$}；
+真实模型通过训练学习如何从 Token 表示生成 Q/K/V。
+
+\subsection{第三步：分数不是比例，怎样转换成读取权重？}
+
+分数 $2,0,1$ 不能直接当作“读取的百分比”：
+它们的总和不是 $1$，实际分数还可能出现负数。
+我们希望得到三个\textbf{非负、加起来恰好为 $1$}的权重，
+就使用\textbf{Softmax}：
+\[
+a_i=\frac{e^{s_i}}{e^{s_1}+e^{s_2}+e^{s_3}},
+\qquad e\approx2.718.
+\]
+其中 $e$ 是一个数学常数，$e^{s_i}$ 表示指数运算，
+$a_i$ 是\textbf{第 $i$ 个位置的读取比例}。
+代入刚才的三个分数：
+\[
+\begin{array}{c|ccc}
+\text{位置}&1&2&3\\\hline
+\text{分数 }s_i&2&0&1\\
+\text{权重 }a_i&0.665&0.090&0.245
+\end{array}
+\]
+因为舍入，三个小数相加\textbf{约等于} $1$。
+位置 1 的匹配分数最高，所以当前 Query 对位置 1 的
+读取权重最大，但\textbf{其他位置并非完全被舍弃}。
+
+\begin{warningbox}
+Softmax 不是“找到唯一正确答案”，也不会验证文字事实。
+它只是根据给定分数\textbf{分配一组权重}。
+下一章会解释把 Softmax 批量写进矩阵时的形状与缩放规则。
+\end{warningbox}
+
+\subsection{第四步：按权重读取 Value，究竟得到什么？}
+
+现在才能回答 Attention 的输出是什么：
+它并不是“位置 1”，也不是那三个分数，而是一条\textbf{新的信息向量}。
+
+假设每个位置提供的 Value 也是两个数字：
+\[
+\vect v_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
+\vect v_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
+\vect v_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\]
+把权重乘到\textbf{对应的 Value} 上，然后相加：
+\begin{align*}
+\vect y
+&=a_1\vect v_1+a_2\vect v_2+a_3\vect v_3\\
+&\approx0.665\begin{bmatrix}1\\0\end{bmatrix}
++0.090\begin{bmatrix}0\\1\end{bmatrix}
++0.245\begin{bmatrix}1\\1\end{bmatrix}\\
+&=\boxed{\begin{bmatrix}0.910\\0.335\end{bmatrix}}.
+\end{align*}
+\textbf{这条二维向量就是本次 Attention 的读取结果。}
+位置 3 可以拿它继续计算下一层，最终用于预测下一个 Token。
+本章仅演示核心读取运算；真实 Transformer 还会处理投影、残差等步骤。
+
+\begin{example}[title={核对自己是不是理解了 Attention}]
+假设位置 3 的 Query 改变了，三个分数也可能随之变化。
+因此即使候选 Key/Value 没变，\textbf{不同 Query 得到的权重、
+读出的向量也可以不同}。
+
+思考：如果已经得到权重 $(0,1,0)$，
+输出会是什么？
+答案是\textbf{第二个 Value} $\vect v_2=(0,1)^\top$；
+而我们刚才真实算出的 $(0.665,0.090,0.245)$
+则把三个 Value 混合在一起。
+\end{example}
+
+\subsection{最后对照 RNN：差别究竟在哪里？}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{@{}p{33mm}XX@{}}
+\toprule
+比较的问题 & RNN & 本章的 Attention\\
+\midrule
+当前位置怎样利用前文？ & 接收上一时刻传来的状态 & 直接对多个候选位置匹配和读取\\
+输出是什么？ & 更新后的状态向量 & 多条 Value 的加权组合向量\\
+是否需要逐步传状态？ & 是 & 核心读取运算不需要这样递推\\
+是否使用可训练参数？ & 可以，且通常共享更新参数 & Q/K/V 的投影在真实模型中可学习\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+还有三条重要边界：
+\begin{enumerate}
+\item \textbf{普通注意力不等于任意偷看未来。}
+预测下一个 Token 时，只允许读取当前及此前可见的位置；
+后面的\textbf{因果 Mask} 将明确实现这个限制。
+\item \textbf{Attention 不等于无限长记忆。}
+如果每个位置都和很多位置比较，计算量和存储会增长。
+\item \textbf{本章只有一个 Query。}
+真实 Self-Attention 会让\textbf{每个 Token 都发出自己的 Query}，
+因此需要把重复运算写成矩阵形式。
+\end{enumerate}
 
 \begin{conclusion}
-从 RNN 到 Attention，问题从“如何把过去信息逐步传下去”，变成“当前位置如何直接从上下文挑选需要的信息”。\textbf{下一章把这个单次查询扩展为矩阵计算}，不需要先走联想记忆的支线。
+记住最短的定义：\textbf{Attention = Query 与 Key 匹配，
+Softmax 决定读取比例，然后把 Value 加权相加。}
+
+你已经亲手得到：三个候选位置 $\to$ 三个点积分数
+$\to$ 三个权重 $\to$ 一条输出向量。
+\textbf{下一章唯一要新增的，是如何把同一运算更高效地组织成矩阵。}
 \end{conclusion}
