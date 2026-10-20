@@ -95,6 +95,42 @@ K\vect{x}
 \]
 直觉是：第一条记忆保留权重 $1$；第二条记忆被压到 $0$。
 
+\subsection{三个重要符号：记忆数量与向量维度}
+
+后面会反复出现 $M$、$d_k$ 和 $d_v$。它们分别回答三个不同的问题：
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{@{}p{18mm}X p{40mm}@{}}
+\toprule
+符号 & 意思 & 一个例子\\
+\midrule
+$M$ & 有多少\textbf{条 Key--Value 记忆} & 2 条，则 $M=2$\\
+$d_k$ & 每条\textbf{Key 含多少个数字}；Query 也需要有同样的维度 & $(1,0)$ 是二维，$d_k=2$\\
+$d_v$ & 每条\textbf{Value 含多少个数字}；输出向量通常也有这个维度 & $(2,1,0)$ 是三维，$d_v=3$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+这里的 $d$ 是英文 \emph{dimension}（维度）的缩写；下标 $k$、$v$ 分别表示 Key、Value。\textbf{Key 和 Value 的维度不一定相同。}
+
+例如两条记忆的 Key 都有 2 个数字，而 Value 都有 3 个数字：
+\[
+\vect k_1=(1,0)^\top,\quad \vect k_2=(0,1)^\top;
+\qquad
+\vect v_1=(2,1,0)^\top,\quad \vect v_2=(0,3,4)^\top.
+\]
+此时 $M=2$、$d_k=2$、$d_v=3$，因而
+\[
+\underbrace{K}_{2\times2}
+=\begin{bmatrix}1&0\\0&1\end{bmatrix},
+\qquad
+\underbrace{V}_{2\times3}
+=\begin{bmatrix}2&1&0\\0&3&4\end{bmatrix}.
+\]
+这就是为什么不能把 $M$ 与 $d_k$ 混为一谈：前者\textbf{数记忆的条数}，后者\textbf{数每条 Key 有几个数字}。
+
 \subsection{为什么 Key 是行，而 Value 从列中读出？}
 
 这不是 AI 特有的规则，而是\textbf{我们选择如何摆放数字}。在本卷，输入 Query 是一个列向量 $\vect x$。
@@ -209,7 +245,7 @@ V^\top\relu(K\vect{x})
 
 前面两条记忆、二维 Key、二维 Value，所以恰好都是 $2\times2$ 方阵。但真实情况并不需要是方阵。
 
-假设共有 $M$ 条记忆；每个 Key 有 $d_k$ 个数字，每个 Value 有 $d_v$ 个数字。我们约定：
+沿用前文：$M$ 是记忆条数，$d_k$ 是 Key 的维度，$d_v$ 是 Value 的维度。于是：
 \[
 \underbrace{K}_{M\times d_k}
 \underbrace{\vect{x}}_{d_k\times1}
@@ -257,5 +293,5 @@ V^\top\relu(K\vect{x})
 前者保留了负匹配；后者把它滤掉了。这就是激活函数引入\textbf{非线性}的实际效果。
 
 \begin{warningbox}
-\textbf{再次提醒：}第 \ref{eq:two-value-orientations} 式已经说明，本讲义规定 $K$ 与 $V$ 的每一\textbf{行}是一条 Key、Value，所以公式使用 $V^\top\sigma(K\vect{x})$。有些教材直接把 Value 放在\textbf{列}中，记为 $\widetilde V$，便会写成 $\widetilde V\sigma(K\vect{x})$。只是摆放约定不同，内容相同。标准 Transformer 的批量 $Q,K,V$ 通常按 Token 放在行上。
+\textbf{行列约定：}这里规定 $K$ 与 $V$ 的每一\textbf{行}是一条 Key、Value，所以公式使用 $V^\top\sigma(K\vect{x})$。有些教材直接把 Value 放在\textbf{列}中，记为 $\widetilde V$，便会写成 $\widetilde V\sigma(K\vect{x})$。只是摆放约定不同，内容相同。标准 Transformer 的批量 $Q,K,V$ 通常按 Token 放在行上。
 \end{warningbox}
