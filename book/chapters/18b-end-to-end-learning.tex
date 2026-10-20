@@ -1,0 +1,92 @@
+\section{把前面的数学连成一次真正的学习}
+
+前面分别学了函数、矩阵、ReLU、损失和梯度。现在要把它们放在\textbf{同一个例子}里：模型先做预测，发现错误，再修改权重。只有把这个循环算通，后面看 CNN、RNN 和 Transformer 的训练才不会感到神秘。
+
+\subsection{先写一个只有一个隐藏单元的小网络}
+
+设
+\begin{equation}
+z=w_1x+b_1,\quad h=\relu(z),\quad
+\widehat y=w_2h+b_2,\quad
+L=\frac12(\widehat y-y)^2.
+\label{eq:small-network-full}
+\end{equation}
+从左到右分别是输入、第一层线性变换、激活函数、第二层线性变换、损失。虽然只有一个隐藏单元，但计算方式与更大 MLP 的局部结构相同。
+
+取一个训练样本 $x=2,y=5$，初始参数设为：
+\[
+w_1=1,\qquad b_1=0,\qquad w_2=2,\qquad b_2=0.
+\]
+
+\subsection{第一步：把预测算出来（前向传播）}
+
+\begin{align*}
+z&=1\times2+0=2,\\
+h&=\relu(2)=2,\\
+\widehat y&=2\times2+0=4,\\
+L&=\frac12(4-5)^2=\frac12.
+\end{align*}
+预测值 $4$ 比真实值 $5$ 小，损失是 $0.5$。但我们还不知道\textbf{究竟该调整哪一个参数}。
+
+\subsection{第二步：从损失倒着求每个参数的梯度}
+
+损失对预测值的导数是
+\[
+\frac{\partial L}{\partial\widehat y}=\widehat y-y=-1.
+\]
+再沿计算链逐个计算：
+\begin{align*}
+\frac{\partial L}{\partial w_2}
+&=\frac{\partial L}{\partial\widehat y}
+  \frac{\partial\widehat y}{\partial w_2}
+=(-1)\times h=-2,\\
+\frac{\partial L}{\partial b_2}&=-1,\\
+\frac{\partial L}{\partial w_1}
+&=\frac{\partial L}{\partial\widehat y}
+\frac{\partial\widehat y}{\partial h}
+\frac{\partial h}{\partial z}
+\frac{\partial z}{\partial w_1}\\
+&=(-1)\times2\times1\times2=-4,\\
+\frac{\partial L}{\partial b_1}
+&=(-1)\times2\times1\times1=-2.
+\end{align*}
+注意 $\relu'(2)=1$；只有在\textbf{当前激活为正}的情况下，这条 ReLU 路径才传递了非零梯度。
+
+\begin{idea}[title={为什么叫反向传播？}]
+计算损失时是 $x\to z\to h\to\widehat y\to L$；
+计算梯度时则从 $\partial L/\partial\widehat y$ 开始，沿原来的计算链\textbf{倒着复用局部导数}。每条路径的变化率相乘，分叉路径的贡献相加。
+\end{idea}
+
+\subsection{第三步：四个参数一起更新，再做一次预测}
+
+使用学习率 $\eta=0.05$，所有更新都依据\textbf{同一轮前向传播的旧梯度}：
+\begin{align*}
+w_1'&=1-0.05(-4)=1.2,&
+b_1'&=0-0.05(-2)=0.1,\\
+w_2'&=2-0.05(-2)=2.1,&
+b_2'&=0-0.05(-1)=0.05.
+\end{align*}
+
+用新参数重新预测：
+\begin{align*}
+z'&=1.2\times2+0.1=2.5,\\
+h'&=\relu(2.5)=2.5,\\
+\widehat y'&=2.1\times2.5+0.05=5.30,\\
+L'&=\frac12(5.30-5)^2=0.045.
+\end{align*}
+损失从 $0.5$ 降到 $0.045$，说明\textbf{这一步}更新改善了这个样本的预测。注意它不是保证每一步对所有样本都改进，更不是仅凭一个样本就能证明模型有泛化能力。
+
+\subsection{第四步：从一个数扩展到真正的矩阵网络}
+
+让输入有 $d_{\rm in}$ 个数字、隐藏层有 $m$ 个神经元、输出有 $d_{\rm out}$ 个数字：
+\begin{equation}
+\vect h=\sigma(W_1\vect x+\vect b_1),
+\qquad
+\widehat{\vect y}=W_2\vect h+\vect b_2.
+\label{eq:small-to-mlp}
+\end{equation}
+现在每个权重都仍有一个局部导数；训练框架用矩阵运算和自动微分同时计算它们，不需要你手工列出几十万次链式法则。
+
+\begin{conclusion}
+\textbf{学习就是一个可重复的闭环：预测 $\to$ 算损失 $\to$ 求梯度 $\to$ 更新参数。}从单个数字到高维矩阵，改变的是规模，不是这条计算逻辑。
+\end{conclusion}
