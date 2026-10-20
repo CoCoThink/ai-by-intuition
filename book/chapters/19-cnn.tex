@@ -1,0 +1,88 @@
+\section{为什么图片不能只靠大矩阵？从局部特征到 CNN}
+
+\subsection{直接把图片铺成一列，会出现什么问题？}
+
+一张 $30\times30$ 的灰度图片有 $900$ 个像素；每个像素是一个数字，当然可以把图片铺成长度 $900$ 的列向量，再送入全连接层：
+\[
+\vect h=\relu(W\vect x+\vect b).
+\]
+如果隐藏层有 $1000$ 个输出，那么
+\[
+W\in\R^{1000\times900}
+\]
+就需要\textbf{900,000 个权重}，还不包括偏置。更糟的是，单纯铺平会使图片中“相邻像素”的结构不再显式体现在模型里；为了在不同位置识别相同的边缘或图案，全连接层往往要重复学习类似模式。
+
+\subsection{小区域扫描：卷积核到底做了什么？}
+
+考虑一张 $4\times4$ 的极简图片：
+\[
+X=\begin{bmatrix}
+1&1&0&0\\
+1&1&0&0\\
+0&0&1&1\\
+0&0&1&1
+\end{bmatrix}.
+\]
+我们设计一个 $2\times2$ 的\textbf{卷积核（kernel）}
+\[
+F=\begin{bmatrix}1&0\\0&-1\end{bmatrix}.
+\]
+把它覆盖在图片左上角的 $2\times2$ 小区域，\textbf{对应元素相乘，再全部相加}：
+\[
+1\times1+1\times0+1\times0+1\times(-1)=0.
+\]
+若向右移动一格，看到的区域是
+\[
+\begin{bmatrix}1&0\\1&0\end{bmatrix},
+\]
+运算结果是 $1$。卷积核把局部模式转成了一个可供下一层使用的数值，这个数叫作\textbf{特征图}（feature map）的一个位置。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex, node distance=11mm,
+ n/.style={draw=linegray,fill=paper,rounded corners=4pt,minimum height=15mm,align=center,font=\small}]
+\node[n,minimum width=36mm] (a) {输入图像\\$4\times4$};
+\node[n,right=of a,minimum width=43mm] (b) {小卷积核\\$2\times2$ 局部扫描};
+\node[n,right=of b,minimum width=36mm] (c) {特征图\\$3\times3$};
+\draw[->,blue,thick] (a)--(b);
+\draw[->,blue,thick] (b)--(c);
+\end{tikzpicture}
+\end{center}
+
+当步幅（stride）为 $1$、没有补零（padding）时，沿每个方向可停放的位置数是 $4-2+1=3$，所以输出是 $3\times3$。
+
+\begin{warningbox}
+深度学习框架通常实现的是\textbf{互相关}（cross-correlation）：卷积核不翻转就直接做逐项乘积；很多教程也把它称为“卷积”。严格数学卷积会翻转核。两者在训练可学习卷积核时都能表征局部模式。
+\end{warningbox}
+
+\subsection{卷积为什么能减少参数？}
+
+$2\times2$ 的核只有\textbf{4 个可学习数字}，但可以在所有位置\textbf{共享}这 4 个数字；不必为每个位置另写一套参数。这叫\textbf{权重共享}。局部感受野让层先看到附近的像素，堆叠多个卷积层后可以逐步组合更大范围的模式。
+
+真实彩色图片还包含通道。若输入通道数为 $C_{\rm in}$，输出通道数为 $C_{\rm out}$，核宽度为 $k$，常规卷积层权重数量为：
+\[
+\boxed{k^2C_{\rm in}C_{\rm out}}
+\]
+（如有偏置，再加 $C_{\rm out}$）。这个数量\textbf{不依赖于图片的宽高}，这是卷积层在局部处理中的重要优势。
+
+\subsection{池化又是干什么的？}
+
+例如对 $2\times2$ 小块
+\[
+\begin{bmatrix}1&7\\3&2\end{bmatrix}
+\]
+做\textbf{最大池化}（max pooling），只保留最大值 $7$。池化可以缩小特征图并对一定范围内的微小位移增加稳定性；但它也会丢失空间信息，因此现代 CNN 并不一定每层都使用池化。
+
+\subsection{一个典型图像分类模型}
+
+\[
+\text{图像}\ \longrightarrow\
+\text{卷积+激活}\ \longrightarrow\
+\text{下采样}\ \longrightarrow\
+\text{更多卷积}\ \longrightarrow\
+\text{分类输出}.
+\]
+CNN 的优势不是“把矩阵乘法替换成另一个神秘公式”，而是\textbf{利用了空间数据的局部性与参数共享}。
+
+\begin{conclusion}
+图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。
+\end{conclusion}
