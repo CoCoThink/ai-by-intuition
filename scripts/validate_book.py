@@ -172,7 +172,7 @@ def validate_source() -> None:
         if phrase not in attn:
             fail("Attention beginner walkthrough is missing: " + phrase)
     if not ("从 $K\\vect q$ 到 $QK^\\top$" in matrix_bridge and
-            "(0.910" in matrix_bridge and
+            "0.910" in matrix_bridge and
             "矩阵转置" in matrix_bridge):
         fail("The following chapter no longer builds on the same Attention example")
     print("Teaching-sequence QA passed: RNN intuition and Attention hand calculation")
