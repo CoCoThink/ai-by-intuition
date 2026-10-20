@@ -34,6 +34,7 @@ S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 第 $i$ 行记录第 $i$ 个 Token 对三个 Key 的匹配程度；每行 Softmax 后和 $V$ 相乘，得到三个\textbf{带上下文信息}的新向量。
 
 \subsection{第三步：为什么要多头注意力？}
+\phantomsection\label{concept:multihead}
 
 同一段文本可能存在多种关系：指代、语法依赖、局部搭配等。只用一套 Q/K/V 投影，可能表达得不够灵活。多头注意力为第 $j$ 个头分别学习投影：
 \[
@@ -49,6 +50,7 @@ H_j=\operatorname{Attention}(Q_j,K_j,V_j).
 注意：\textbf{多头不是“把某条 Attention 算两遍然后平均”}，而是每个头具有可学习的不同投影。
 
 \subsection{第四步：残差、归一化和前馈网络}
+\phantomsection\label{concept:residual}
 
 一个简化的 Pre-Norm Transformer Block 可以写成：
 \begin{align}
@@ -77,6 +79,7 @@ Y&=H+\operatorname{MLP}(\operatorname{Norm}(H)).
 \end{center}
 
 \subsection{为什么需要 Mask（掩码）？}
+\phantomsection\label{concept:causal-mask}
 
 在\textbf{生成下一个 Token} 的解码器里，第 $i$ 个位置不应该偷看第 $i+1$ 个及更后面的目标 Token。因果掩码把这些位置的注意力分数设成非常小的值（实现中常为 $-\infty$），经 Softmax 后权重变成零。
 
