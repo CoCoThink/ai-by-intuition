@@ -162,7 +162,7 @@ def validate_source() -> None:
     if not (guide.find("为什么 AI 能接住我们说的话") >= 0 and
             guide.find("为什么 AI 能接住我们说的话") < guide.find("为什么偏偏练习") and
             "这是一种可训练的设计选择，而不是 AI 的终极目标" in guide and
-            "原始文字充当自己的练习题和答案" in guide):
+            "文字充当自己的练习题和答案" in guide):
         fail("Book opening must motivate the language-learning task before next-token exercises")
     cover = (ROOT / "book/main.tex").read_text(encoding="utf-8")
     if "下一 Token 预测" not in cover or "训练一类语言模型" not in cover:
