@@ -2,12 +2,13 @@
 \label{intro:22d-modern-transformers}
 
 \begin{idea}[title={不是背新缩写，而是问“改动想解决哪种成本？”}]
-上一章已经发现 KV Cache 会随着上下文增长，占用越来越多内存。回过头看 Transformer 的其他组件，也能提出类似的资源和质量问题：有的变化让模型利用位置信息更灵活，有的为了让深层网络更容易训练，
+上一章已经发现 \conceptlink{kv-cache}{KV Cache} 会随着上下文增长，占用越来越多内存。回过头看 Transformer 的其他组件，也能提出类似的资源和质量问题：有的变化让模型利用位置信息更灵活，有的为了让深层网络更容易训练，
 有的降低缓存或计算成本，还有的让总参数变多却不必每次全部计算。
 本章围绕五个\textbf{稳定问题}整理现代架构，不按品牌或年份排列“技术排行榜”。
 \end{idea}
 
 \subsection{问题一：位置信息怎么进入 Attention？}
+\phantomsection\label{concept:rope}
 
 经典 Transformer 可以把位置向量 $P$ 加在 Token 嵌入上：
 $X_0=X_{\rm token}+P$。另一些模型使用\textbf{旋转位置表示（RoPE）}：
@@ -56,8 +57,9 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 在所有模型中总比另一种更强。
 
 \subsection{问题三：FFN 除了 ReLU 还能做什么？}
+\phantomsection\label{concept:moe}
 
-常规 FFN 使用两次矩阵投影夹一个激活函数。
+常规 \conceptlink{ffn}{FFN} 使用两次矩阵投影夹一个激活函数。
 现代网络还常使用\textbf{门控 FFN}，例如 SwiGLU 形式：
 \begin{equation}
 \operatorname{FFN}(\vect x)
@@ -88,8 +90,9 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \end{warningbox}
 
 \subsection{问题四：多头 Attention 为什么开始共享 K/V？}
+\phantomsection\label{concept:gqa}
 
-标准多头注意力（MHA）可以为每个 Query 头保存自己的 Key/Value 头。
+标准 \conceptlink{multihead}{多头注意力}（MHA）可以为每个 Query 头保存自己的 Key/Value 头。
 在自回归生成中，过去 Token 的 K/V 需要反复使用，于是产生 KV Cache。
 \textbf{MQA} 让多个 Query 头共享一组 K/V；
 \textbf{GQA} 让每组 Query 头共享一组 K/V，
