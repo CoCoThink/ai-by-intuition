@@ -1,6 +1,6 @@
 # 全书目录 · AI by Intuition
 
-**本书围绕“怎样预测下一个 Token”构成一条完整教学主线。** 前五部分按顺序阅读，第六部分按兴趣选读或查阅。PDF 中的章节编号由 LaTeX 自动生成，不在此手动编号。
+**先问计算机怎样学会回应文字，再解释为什么用下一 Token 预测训练自回归语言模型。** 这是贯穿数学计算的教学任务，不是 AI 的唯一目标。前五部分连续阅读，第六部分为选读和查阅区。PDF 中章节号由 LaTeX 自动生成。
 
 **[唯一编译入口](main.tex)** · **[GitHub Actions 完整 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**
 
