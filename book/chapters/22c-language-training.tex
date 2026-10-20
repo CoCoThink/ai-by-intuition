@@ -6,6 +6,7 @@
 \textbf{一整段文字的训练目标，是怎样对应到每个位置的预测的？}
 
 \subsection{“错开一格”：一段文本同时产生许多训练目标}
+\phantomsection\label{concept:shifted-targets}
 
 令完整 Token 序列为
 \[
@@ -57,6 +58,7 @@ A=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}+C\right).
 \end{idea}
 
 \subsection{输出张量和目标怎样对齐？}
+\phantomsection\label{concept:cross-entropy}
 
 设词表大小为 $|\mathcal V|=5$，
 模型输出 logits：
