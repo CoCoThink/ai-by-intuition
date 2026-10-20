@@ -95,6 +95,51 @@ K\vect{x}
 \]
 直觉是：第一条记忆保留权重 $1$；第二条记忆被压到 $0$。
 
+\subsection{为什么 Key 是行，而 Value 从列中读出？}
+
+这不是 AI 特有的规则，而是\textbf{我们选择如何摆放数字}。在本卷，输入 Query 是一个列向量 $\vect x$。
+
+\textbf{Key 的任务是和 Query 做点积。}为了让一次乘法得到全部 $M$ 条 Key 的分数，就把 Key 依次放成行：
+\[
+\underbrace{K}_{M\times d_k}
+=\begin{bmatrix}
+\vect k_1^\top\\\vdots\\\vect k_M^\top
+\end{bmatrix},
+\quad
+K\vect x=
+\begin{bmatrix}\vect k_1^\top\vect x\\\vdots\\\vect k_M^\top\vect x\end{bmatrix}.
+\]
+
+\textbf{Value 的任务是被匹配分数加权相加。}如果权重向量是
+$\vect a=(a_1,\ldots,a_M)^\top$，希望得到：
+\[
+\vect y=a_1\vect v_1+\cdots+a_M\vect v_M.
+\]
+为了把它写成一次矩阵乘法，最方便的是把 Value \textbf{按列}放：
+\[
+\underbrace{\widetilde V}_{d_v\times M}
+=\begin{bmatrix}\vect v_1&\cdots&\vect v_M\end{bmatrix},
+\quad
+\boxed{\vect y=\widetilde V\vect a.}
+\]
+
+但如果最初约定把全部 Value \textbf{按行}存成一个叫 $V$ 的矩阵：
+\[
+V=\begin{bmatrix}\vect v_1^\top\\\vdots\\\vect v_M^\top\end{bmatrix}
+\in\mathbb R^{M\times d_v},
+\]
+那么按列排放的矩阵正好就是 $V^\top$：
+\begin{equation}
+\boxed{\widetilde V=V^\top,\qquad \vect y=V^\top\vect a.}
+\label{eq:two-value-orientations}
+\end{equation}
+
+\begin{idea}
+\textbf{最关键的不是记住转置符号，而是知道这一步要做什么。}
+$K\vect x$ 用逐行点积计算\textbf{匹配分数}；$V^\top\vect a$ 用按列加权求和形成\textbf{输出}。
+也可以从一开始就叫按列矩阵 $\widetilde V$，那根本不必写转置。
+\end{idea}
+
 \subsection{第二个矩阵：每列是一条 Value}
 
 我们希望的输出是\textbf{按照激活分数，将 Value 加权求和}：
@@ -212,5 +257,5 @@ V^\top\relu(K\vect{x})
 前者保留了负匹配；后者把它滤掉了。这就是激活函数引入\textbf{非线性}的实际效果。
 
 \begin{warningbox}
-\textbf{约定提醒：}本讲义规定 $K$ 与 $V$ 的每一\textbf{行}是一条 Key、Value，所以公式使用 $V^\top\sigma(K\vect{x})$。有些教材直接把 Value 放在\textbf{列}中，记为 $\widetilde V$，便会写成 $\widetilde V\sigma(K\vect{x})$。只是摆放约定不同，内容相同。标准 Transformer 的批量 $Q,K,V$ 通常按 Token 放在行上。
+\textbf{再次提醒：}第 \ref{eq:two-value-orientations} 式已经说明，本讲义规定 $K$ 与 $V$ 的每一\textbf{行}是一条 Key、Value，所以公式使用 $V^\top\sigma(K\vect{x})$。有些教材直接把 Value 放在\textbf{列}中，记为 $\widetilde V$，便会写成 $\widetilde V\sigma(K\vect{x})$。只是摆放约定不同，内容相同。标准 Transformer 的批量 $Q,K,V$ 通常按 Token 放在行上。
 \end{warningbox}

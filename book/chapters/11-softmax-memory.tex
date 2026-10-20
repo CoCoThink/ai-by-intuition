@@ -50,21 +50,74 @@ p_i=\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{
 \end{equation}
 矩阵写法：
 \begin{equation}
-\boxed{f(\vect{x})=V^\top\softmax(\beta K\vect{x}).}
+\boxed{f(\vect{x})=V^\top\softmax(\beta K\vect{x}).}\label{eq:column-attention}
 \end{equation}
 这就是\textbf{按相似度检索 Value} 的 Attention 核心公式。
 
-在标准 Transformer 中，对一批 Query 同时计算，并使用广为人知的形式：
+\subsection{从单个列 Query 到标准 Attention：每一步都展开}
+
+前一个式子是\textbf{一个列向量}发出查询。标准 Transformer 会对\textbf{多个行向量}同时查询。看似完全不同的两条公式，实际上只隔着三步转置与批量化，再加一个缩放系数的选择。
+
+\textbf{第一步：把查询 $\vect x$ 重新命名为 $\vect q$。}在我们设计的简化模型中，令 $\vect q=\vect x$，因此
+\[
+\vect y=V^\top\softmax(\beta K\vect q).
+\]
+此时 $K$ 是 $M\times d_k$，$\vect q$ 是 $d_k\times1$，$V$ 是 $M\times d_v$，输出 $\vect y$ 是 $d_v\times1$。
+
+\textbf{第二步：统一改成行向量表示。}对矩阵转置，有
+\[
+(AB)^\top=B^\top A^\top,\qquad
+(K\vect q)^\top=\vect q^\top K^\top.
+\]
+向量的一列分数和转置成一行的相同分数，Softmax 归一化值完全一样（只是排布方向变了）。于是对输出一起转置：
+\begin{align}
+\vect y^\top
+&=\bigl[V^\top\softmax(\beta K\vect q)\bigr]^\top\nonumber\\
+&=\bigl[\softmax(\beta K\vect q)\bigr]^\top V\nonumber\\
+&=\boxed{\softmax(\beta\vect q^\top K^\top)V.}
+\label{eq:single-row-attention}
+\end{align}
+\textbf{注意目前仍只有一个 Query！}左侧输出只是从列向量变为行向量。
+
+\textbf{第三步：许多 Query 依次堆成行。}令
+\[
+Q=\begin{bmatrix}
+\vect q_1^\top\\\vdots\\\vect q_N^\top
+\end{bmatrix}\in\R^{N\times d_k}.
+\]
+把刚才一个 Query 的计算重复 $N$ 次，便可一次写成
 \begin{equation}
-\boxed{\operatorname{Attention}(Q,K,V)=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.}
+\boxed{Y=\softmax(\beta QK^\top)V.}
+\label{eq:multi-query-attention}
 \end{equation}
-三个字母的含义非常直观：
-\begin{itemize}
-\item $Q$，Query：我正在找什么？
-\item $K$，Key：每条候选信息用什么线索被找到？
-\item $V$，Value：被找到以后实际取回什么内容？
-\end{itemize}
-标准 Transformer 中用 $1/\sqrt{d_k}$ 缩放\emph{未单位归一化}的点积；前面用 $\beta$ 的例子多在\emph{单位向量}的设定下讨论。两者不能在不同的向量尺度之间直接对比数字大小。
+相应维度如下：
+\[
+\underbrace{Q}_{N\times d_k}
+\underbrace{K^\top}_{d_k\times M}
+=\underbrace{S}_{N\times M},\qquad
+\underbrace{\softmax(\beta S)}_{N\times M}
+\underbrace{V}_{M\times d_v}
+=\underbrace{Y}_{N\times d_v}.
+\]
+此时 Softmax 是\textbf{每一行单独归一化}：每个 Query 都为 $M$ 条 Key 分配权重。
+
+\textbf{第四步：采用标准 Transformer 的缩放系数。}
+Transformer 通常对未单位归一化的 Q、K 使用 $1/\sqrt{d_k}$，写成
+\begin{equation}
+\boxed{\operatorname{Attention}(Q,K,V)=
+\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.}
+\label{eq:attention-transformer}
+\end{equation}
+
+\begin{warningbox}
+\textbf{严格区分这几件事：}
+从列向量变成行向量是\textbf{转置恒等式}；把一个 Query 变成多个 Query 是\textbf{批量计算}；把 $\beta$ 改为 $1/\sqrt{d_k}$ 是\textbf{缩放选择}，不是转置推导出来的结果。
+原文的随机单位向量记忆模型也可能采用另一种 $\beta$。比较两种公式的数值结果前，必须先统一向量归一化与缩放约定。
+\end{warningbox}
+
+\begin{idea}[title={一句话读懂两种式子}]
+列向量写法是\textbf{先匹配，再在左侧乘 $V^\top$}；行向量写法是\textbf{先匹配，再在右侧乘 $V$}。它们计算的是相同的加权 Value 组合，只是输出和输入各旋转了九十度。
+\end{idea}
 
 \begin{center}
 \begin{tikzpicture}[>=Latex, node distance=5mm,

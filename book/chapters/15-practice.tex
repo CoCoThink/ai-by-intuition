@@ -8,6 +8,10 @@
 \item Softmax 对两个分数 $[1,0.6]$ 做指数归一化。增大 $\beta$ 后，哪条记忆的权重上升？
 \item 若 $K=\begin{bmatrix}1&2\\3&4\end{bmatrix}$、$\vect{x}=\begin{bmatrix}1\\-1\end{bmatrix}$，计算 $\relu(K\vect{x})$。
 \item 若 $V^\top=\begin{bmatrix}2&0\\1&3\end{bmatrix}$、$\vect{a}=\begin{bmatrix}0\\2\end{bmatrix}$，计算 $V^\top\vect{a}$，并用「按列加权求和」解释结果。
+\item 已知 $\vect a=(4,0)$、$\vect b=(3,4)$，求点积、两个长度与 $\cos\theta$，并验证 $\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta$。
+\item 若 $\vect v_1=(2,1)^\top$、$\vect v_2=(0,3)^\top$、$\vect a=(0.8,0.2)^\top$，写出按行保存的 $V$ 与按列读取的 $V^\top$，计算 $V^\top\vect a$。
+\item 用一句话说明为什么简化模型可以取 $\vect q=\vect x$，而真实 Transformer 中两者往往不同。
+\item 若 $Q:2\times3$、$K:4\times3$、$V:4\times5$，求 $QK^\top$ 与 $\softmax(QK^\top)V$ 的尺寸；Softmax 沿哪一个方向归一化？
 \end{enumerate}
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案},fonttitle=\sffamily\bfseries,breakable]
@@ -19,6 +23,10 @@
 \item 第一条（分数为 $1$）的相对权重上升；当 $\beta$ 很大时趋近于 $1$。
 \item $K\vect{x}=(-1,-1)^\top$，所以 $\relu(K\vect{x})=(0,0)^\top$。
 \item $V^\top\vect{a}=(0,6)^\top$；这是两列 Value 按权重 $0$ 与 $2$ 求和。
+\item $\vect a\cdot\vect b=12$，$\|\vect a\|=4$，$\|\vect b\|=5$，$\cos\theta=3/5$，故 $4\times5\times3/5=12$。
+\item $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$V^\top=\begin{bmatrix}2&0\\1&3\end{bmatrix}$；$V^\top\vect a=(1.6,1.4)^\top$。
+\item 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q=W_Q\vect x$ 得到查询。
+\item $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
 \end{enumerate}
 \end{tcolorbox}
 

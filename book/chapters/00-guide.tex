@@ -9,11 +9,14 @@
 \item 矩阵乘完为什么可以套 ReLU，再乘一次矩阵？
 \item MLP 究竟是什么意思？网络为什么需要非线性？
 \item Attention 为什么和这些记忆运算长得如此相似？
+\item 点积的代数定义怎么能推导出余弦夹角公式？
+\item 查询 $q$ 和输入 $x$ 究竟是什么关系？
+\item 为什么 $K$ 堆成行、$V$ 需要转置？为什么单 Query 写法与 $QK^\top$ 的标准公式长得不一样？
 \end{enumerate}
 \end{idea}
 
 \subsection*{先读什么，后读什么？}
-顺序是\textbf{向量 $\to$ 点积 $\to$ 行列与矩阵乘法 $\to$ Key--Value $\to$ 记忆干扰 $\to$ ReLU $\to$ MLP $\to$ Softmax Attention}。每个概念会先用一组手算数字出现，再用字母表示一般情形。
+顺序是\textbf{向量 $\to$ 点积的几何推导 $\to$ 行列与矩阵乘法 $\to$ Key--Value 的排布 $\to$ ReLU $\to$ MLP $\to$ 单 Query Attention $\to$ 批量 Query Attention}。每个概念会先用一组手算数字出现，再用字母表示一般情形。
 
 \subsection*{每次见到公式，都问自己三个问题}
 \begin{enumerate}
@@ -26,6 +29,8 @@
 \textbf{重要约定：}本卷先使用列向量作为 Query，Key 按行存进 $K$，Value 按行存进 $V$，因此单个查询的公式写作 $V^\top\sigma(K\vect{x})$。标准 Transformer 常把多个 Token 的向量按行排列，公式中转置的位置会变化。不要只背转置符号；始终检查维度。
 \end{warningbox}
 
+\subsection*{本轮修订补齐了哪些跳步？}
+这本书已针对读者反馈补充了四个核心桥梁：\textbf{投影和余弦定理}、\textbf{Query 与输入的投影关系}、\textbf{K/V 的行列排布}，以及\textbf{单次查询到批量 Attention 的转置与形状检查}。请优先看第 2、8、11、12 章。
 \subsection*{学完后你应该会的计算}
 \[
 \vect{x}\ \xrightarrow{\ K\ }\ K\vect{x}\

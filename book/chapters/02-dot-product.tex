@@ -9,16 +9,70 @@
 (1,0)\cdot(0.6,0.8)=1\times0.6+0\times0.8=0.6.
 \]
 
-\subsection{为什么点积代表相似度？}
-点积还可以写成：
+\subsection{点积为什么与角度有关？先从投影开始}
+
+\textbf{先看一个可以手算的例子。}令
+\[
+\vect a=(4,0),\qquad \vect b=(3,4).
+\]
+$\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$ 垂直投影到 $\vect a$ 的水平方向，投影长度是 $3$。直角三角形告诉我们
+\[
+\cos\theta=\frac35,\qquad
+\|\vect b\|\cos\theta=5\times\frac35=3.
+\]
+于是$\vect a$ 的长度乘以$\vect b$ 在$\vect a$ 方向上的投影是 $4\times3=12$。
+而点积按坐标计算也等于 $4\times3+0\times4=12$。
+
+\begin{center}
+\begin{tikzpicture}[scale=.77,>=Latex]
+\draw[->,linegray,thick] (-.2,0)--(5.3,0);
+\draw[->,linegray,thick] (0,-.2)--(0,4.7);
+\draw[->,very thick,blue] (0,0)--(4,0) node[below right] {$\vect a=(4,0)$};
+\draw[->,very thick,orange] (0,0)--(3,4) node[above right] {$\vect b=(3,4)$};
+\draw[dashed,thick,muted] (3,4)--(3,0);
+\draw[linegray] (3,0) rectangle (3.18,.18);
+\draw[teal,thick] (.78,0) arc[start angle=0,end angle=53.13,radius=.78];
+\node[font=\small] at (1.12,.36) {$\theta$};
+\node[font=\small,below] at (1.5,0) {投影为 $3$};
+\end{tikzpicture}
+\end{center}
+
+\subsection{再用余弦定理，严格证明任意方向都成立}
+
+上面只是一个水平向量的例子。为了证明任意两个向量都成立，让它们从同一点出发，终点之间的距离是 $\|\vect a-\vect b\|$。
+
+一方面，根据初中学过的\textbf{余弦定理}：
 \begin{equation}
-\vect{a}\cdot\vect{b}=\|\vect{a}\|\,\|\vect{b}\|\cos\theta,
+\|\vect a-\vect b\|^2
+=\|\vect a\|^2+\|\vect b\|^2
+-2\|\vect a\|\|\vect b\|\cos\theta.
+\label{eq:cosine-law}
 \end{equation}
-$\theta$ 是两个箭头的夹角。如果它们都是单位向量，就有：
+另一方面，直接按坐标展开平方：
+\begin{align*}
+\|\vect a-\vect b\|^2
+&=(a_1-b_1)^2+(a_2-b_2)^2\\
+&=(a_1^2+a_2^2)+(b_1^2+b_2^2)
+-2(a_1b_1+a_2b_2)\\
+&=\|\vect a\|^2+\|\vect b\|^2
+-2(\vect a\cdot\vect b).
+\end{align*}
+比较两式，消去共同的项，就得到
 \begin{equation}
-\boxed{\vect{a}\cdot\vect{b}=\cos\theta.}
+\boxed{\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta.}
+\label{eq:dot-product-geometry}
 \end{equation}
-方向越一致，点积越接近 $1$；垂直时点积等于 $0$；完全反方向时点积等于 $-1$。
+
+\textbf{当两条向量都是单位向量时}，长度的乘积是 $1$，所以
+\[
+\boxed{\vect a\cdot\vect b=\cos\theta.}
+\]
+方向越接近，点积越接近 $1$；垂直为 $0$；方向相反为 $-1$。
+
+\begin{warningbox}
+\textbf{非单位向量的点积不等于纯粹的角度相似度。}
+例如 $(100,0)\cdot(1,0)=100$。真实 Transformer 中的 Query 和 Key 通常不要求单位归一化，所以点积分数也受向量长度影响。
+\end{warningbox}
 
 \begin{center}
 \begin{tikzpicture}[>=Latex]
