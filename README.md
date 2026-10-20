@@ -19,8 +19,8 @@
 | Ⅰ · 表示 | 怎样把一个问题变成可计算的数字？ | 函数、向量、点积、矩阵、Embedding |
 | Ⅱ · 学习 | 神经网络凭什么能从错误中改进？ | MLP、ReLU、Loss、梯度、反向传播、泛化 |
 | Ⅲ · 结构 | 图片和一串词有什么不同？ | 卷积扫描、序列隐藏状态、信息传递 |
-| Ⅳ · Attention | 为什么模型要直接读取上下文中的相关信息？ | Key-Value、Softmax、QKᵀ、完整 Transformer |
-| Ⅴ · 应用 | 预测下一个 Token 怎么变成可用的 AI 系统？ | 解码、KV Cache、RAG、Agent、部署 |
+| Ⅳ · Attention | 为什么模型要直接读取上下文中的相关信息？ | Key-Value、Softmax、QKᵀ、因果训练、现代 Transformer |
+| Ⅴ · 应用 | 预测下一个 Token 怎么变成可用的 AI 系统？ | 解码、后训练、RAG、Agent、部署与权限 |
 | Ⅵ · 巩固 | 哪些直觉有边界，怎样检查是否真正学会？ | 高维容量选读、术语表、综合练习 |
 
 这不是照视频分集顺序展开的逐字讲义，而是按**问题之间的依赖关系**重新组织：先学会计算，再学参数如何训练；理解序列信息的困难后，再引出 Attention 的两条推导路径（直接读取上下文与联想记忆）。
@@ -44,7 +44,8 @@ latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 
 ## 延伸阅读与来源
 
-- **[Bilibili：原始系列视频](https://www.bilibili.com/video/BV1NCgVzoEG9/)** — 提供主题启发与课程参考。
+- **[飞天闪客：从函数到 Transformer](https://www.bilibili.com/video/BV1NCgVzoEG9/)** — 数学与基本架构的参考。
+- **[飞天闪客：从 Transformer 到大模型](https://www.bilibili.com/video/BV15z4C6SEHT/)** — 现代架构与应用设计的参考。
 - [Alex Wang：You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/) — 联想记忆数学视角。
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — Transformer 原始论文。
 
