@@ -1,0 +1,81 @@
+\section{模型训练好了，怎样真正运行？部署、压缩与多模态}
+
+\subsection{训练代码、模型权重、推理程序是三件事}
+
+让一个大语言模型工作，至少需要区分：
+\begin{enumerate}
+\item \textbf{模型结构与代码}：决定矩阵和非线性如何排列、计算。
+\item \textbf{模型权重}：训练得到的大量参数数值。
+\item \textbf{推理运行时}：加载权重、完成 Tokenization、执行网络计算并生成输出的程序。
+\end{enumerate}
+例如你可以有一个完整的 Transformer 计算程序，却没有训练好的权重；此时它不能直接产生有用的语言回答。也可能只获得模型权重，却需要选择合适的推理框架才能实际部署。
+
+\textbf{私有化部署}一般是指在自有设备或受控制的基础设施上运行模型。它有助于控制数据流向，但并不自动带来安全保障：仍需考虑访问权限、日志、模型许可和升级流程。
+
+\subsection{模型为什么需要显存？}
+
+权重由许多数字组成。假设模型有 $10^9$（十亿）个参数，\textbf{如果每个参数用 2 字节存储}，仅权重就占约
+\[
+10^9\times2\ \text{bytes}\approx2\ \text{GB}.
+\]
+这是十进制粗略估计，还不包含 KV Cache、中间激活、运行时缓冲、框架开销等。
+
+\textbf{GPU} 擅长对大量数字并行计算；\textbf{TPU} 是面向机器学习工作负载设计的专用加速器；\textbf{NPU} 通常泛指神经网络计算加速单元。这些硬件不是模型的一部分，而是运行模型的计算基础设施。
+
+\begin{warningbox}
+训练时还常需保存梯度、优化器状态等额外数据，所需显存通常远高于只保存权重的粗略估计。即使模型权重能放入显存，运行长上下文或高并发时仍可能发生内存不足。
+\end{warningbox}
+
+\subsection{量化：为什么更少的位数可以降低成本？}
+
+原来每个权重使用较高数值精度保存；\textbf{量化}用更少位数表示近似的权重或激活。例如从每个参数 16 bit 变为 8 bit，权重存储理论上可下降到原来的一半左右。
+
+代价是近似误差：两个非常接近的权重数可能被映射为同一个表示。模型效果是否受影响，取决于量化方案、模型分布和任务，并不是位数越少越好。
+
+\subsection{蒸馏、剪枝、LoRA 不是同一种事}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}p{27mm}X@{}}
+\toprule
+技术 & 核心目的\\
+\midrule
+量化（Quantization） & 用低精度数值减少模型存储或计算成本\\
+蒸馏（Distillation） & 利用较大或较强模型的输出作为训练信号，帮助学生模型学习\\
+剪枝（Pruning） & 去除或稀疏化较不重要的权重、连接或结构\\
+LoRA & 在微调阶段用低秩增量参数，减少需要训练的参数量\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+这些技术可以结合，但并不能相互替代。例如 LoRA 的主要用途是\textbf{参数高效微调}，不能简单等同于“直接把最终模型文件压缩一半”。
+
+\subsection{从文本模型到多模态模型}
+
+\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。不同模态通常需要不同的输入编码器或表示方式；进入语言主干后，再用注意力、投影等机制融合信息。
+
+常见缩写：
+\begin{itemize}
+\item \textbf{ASR}（Automatic Speech Recognition）：语音识别，把声音转成文字。
+\item \textbf{TTS}（Text to Speech）：将文字转换为合成语音。
+\item \textbf{AIGC}（AI-Generated Content）：由 AI 生成或辅助生成内容的广义说法。
+\item \textbf{AGI}（Artificial General Intelligence）：通用人工智能，是仍在讨论的目标与概念，并非某个已有统一测试的产品类别。
+\end{itemize}
+
+\subsection{为什么还有框架、镜像、推理引擎和协议？}
+
+模型权重之外仍需要很多工程工具。一个典型流程是：
+\[
+\boxed{\text{模型权重}\longrightarrow
+\text{推理引擎}\longrightarrow
+\text{接口服务}\longrightarrow
+\text{应用与工具}}
+\]
+\textbf{框架}用于定义和执行训练/推理计算；\textbf{镜像}打包运行环境；\textbf{推理引擎}专注批处理、缓存和计算性能；\textbf{接口}让其他程序以约定的格式请求模型服务；\textbf{协议}帮助多种工具和系统建立协作规则。
+
+\textbf{API、Agent 和 MCP 等概念主要属于系统集成层。}即使它们带来显著的产品能力提升，也不等于基础模型的参数在每一次工具调用后发生了训练更新。
+
+\begin{conclusion}
+一个真实 AI 产品不止是一个函数：它还有数据、权重、加速器、推理引擎、接口、安全机制和外部工具。把\textbf{模型计算能力}与\textbf{系统工程能力}分开理解，才能清楚定位每一项技术真正解决的问题。
+\end{conclusion}
