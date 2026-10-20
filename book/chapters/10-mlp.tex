@@ -2,7 +2,11 @@
 \phantomsection\label{concept:mlp}
 \label{intro:10-mlp}
 
-\textbf{MLP} 是 \emph{Multi-Layer Perceptron}（多层感知机）。你可以先把它理解成由多个可训练的线性层与激活函数构成的函数。
+上一章发现：\textbf{一个矩阵层负责组合数字，ReLU 可以引入非线性。}
+把这些部件串起来，我们终于得到一个能根据输入算出预测结果的简单网络。
+这种结构叫\textbf{MLP}（Multi-Layer Perceptron，多层感知机），
+由多个可训练的线性层与激活函数组成。
+这一章先研究\textbf{给定参数怎样计算结果}，下一步再问\textbf{参数应该怎么学习}。
 
 \subsection{一个最常见的两层 MLP}
 
