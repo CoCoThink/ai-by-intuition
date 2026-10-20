@@ -1,0 +1,55 @@
+\section{为什么矩阵乘完以后能套 ReLU？}
+
+这里的疑问，实际上与矩阵乘法无关，而是和\textbf{函数}有关。所谓函数 $f$，就是把输入按固定规则变成输出。例如 $f(t)=t^2$，输入 $-3$ 就输出 $9$。
+
+\subsection{先把 ReLU 当成一个只处理单个数字的小机器}
+
+ReLU 定义为：
+\begin{equation}
+\relu(t)=\max(0,t)=
+\begin{cases}
+t,&t>0,\\
+0,&t\le0.
+\end{cases}
+\end{equation}
+所以 $\relu(3)=3$，而 $\relu(-2)=0$。
+
+对向量应用 ReLU，只需要把这个规则\textbf{逐个应用到每一个数字}：
+\begin{equation}
+\relu\!\left(\begin{bmatrix}1\\-0.2\\3\end{bmatrix}\right)
+=\begin{bmatrix}1\\0\\3\end{bmatrix}.
+\end{equation}
+
+\textbf{注意：这一步没有任何矩阵乘法。}它既不会增加元素个数，也不会用一个元素去乘另一个元素。
+
+\subsection{嵌套函数：先算括号里，再算外面}
+
+假设前一步算出：
+\[
+K\vect{x}=\begin{bmatrix}1\\-0.2\end{bmatrix}.
+\]
+那么
+\[
+\relu(K\vect{x})
+=\relu\!\left(\begin{bmatrix}1\\-0.2\end{bmatrix}\right)
+=\begin{bmatrix}1\\0\end{bmatrix}.
+\]
+读这个表达式时，请先读最里层：先乘 $K$ 得到两个分数；再读外层：把分数中的负数变为零。与 $f(2+3)$ 先算 $2+3$ 完全相同。
+
+\begin{example}[title={这两种操作完全不同}]
+$\relu(K\vect{x})$ 表示先乘 $K$，再逐个过滤输出分数；$\relu(K)\vect{x}$ 则表示先逐个修改矩阵里的权重，再做乘法。两者一般不相等。我们讨论的 MLP 使用的是第一种顺序。
+\end{example}
+
+\subsection{为什么说 ReLU 是非线性的？}
+
+没有激活函数的矩阵层满足线性叠加；ReLU 则不总满足。看一个最短的反例：
+\[
+\relu(1+(-2))=\relu(-1)=0,
+\]
+但
+\[
+\relu(1)+\relu(-2)=1+0=1.
+\]
+两边不一样，所以 ReLU 是\textbf{非线性函数}。
+
+直觉上，ReLU 让输入数值跨过 $0$ 时切换到不同的计算方式（正数保留，负数清零）。两次矩阵乘法之间插入这样的开关，网络就能实现单次线性乘法做不到的某些映射。
