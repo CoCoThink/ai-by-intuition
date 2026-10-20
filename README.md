@@ -18,7 +18,7 @@
 - 为什么可以对分数逐个应用 ReLU，再乘 $V^\top$？
 - Q 是不是原来的 x？从单次查询 $V^\top\mathrm{softmax}(\beta Kx)$ 如何变成标准 Attention 的 $\mathrm{softmax}(QK^\top/\sqrt{d_k})V$？
 
-**最终发布制品只有一个 PDF。** 多个 `.tex` 文件只是为了便于编辑、审阅与长期维护，不会分别发布章节 PDF。
+**阅读时只需下载一份完整 PDF。** 仓库使用多个 `.tex` 文件维护章节，并由 `book/main.tex` 统一编译。
 
 ### 下载 PDF
 
