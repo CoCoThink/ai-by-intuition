@@ -1,0 +1,28 @@
+\section{改进一：让线性记忆写得更聪明}
+
+我们刚才直接将外积相加，写入新记忆时没有考虑旧记忆。其实也可以寻找一个更好的矩阵 $W$，要求它尽可能满足所有配对关系：
+\begin{equation}
+\boxed{\min_W\sum_{i=1}^{M}\|W\vect{k}_i-\vect{v}_i\|^2.}
+\end{equation}
+这叫\textbf{最小二乘}：选择一个矩阵，使总平方误差尽可能小。
+
+在上面的二维例子中，外积相加给出：
+\[
+W_{\text{simple}}=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}.
+\]
+但我们也可以找到：
+\begin{equation}
+W_{\text{better}}=\begin{bmatrix}1&-0.75\\0&1.25\end{bmatrix}.
+\end{equation}
+直接代入就可以验证：
+\[
+W_{\text{better}}\vect{k}_A=\vect{v}_A,\qquad
+W_{\text{better}}\vect{k}_B=\vect{v}_B.
+\]
+两条记忆都可以精确召回！矩阵中的负数在这里扮演了\textbf{抵消交叉干扰}的角色。
+
+不过，线性映射的自由度有限。如果在 $d_k$ 维中放入很多\emph{任意且相互独立的} Key--Value 对，最终还是无法全部精确拟合。
+
+\begin{idea}
+提高记忆能力有两种思路：\textbf{写入时消除干扰}（优化矩阵），以及\textbf{检索时抑制干扰}（设计更好的权重函数）。接下来采用第二种。
+\end{idea}
