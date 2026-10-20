@@ -1,38 +1,47 @@
-\section*{如何阅读这本书}
-\addcontentsline{toc}{section}{如何阅读这本书}
+\section*{阅读指南：先理解问题，再认识公式}
+\addcontentsline{toc}{section}{阅读指南：先理解问题，再认识公式}
 
-\begin{idea}[title={从这些问题理解 Attention}]
-你不必先知道什么是 Transformer。本卷从以下困惑出发：
-\begin{enumerate}
-\item Key、Value 是两组数字，为什么可以排成矩阵？
-\item 为什么一个矩阵乘法能同时算出多个 Key 的相似度？
-\item 矩阵乘完为什么可以套 ReLU，再乘一次矩阵？
-\item MLP 究竟是什么意思？网络为什么需要非线性？
-\item Attention 为什么和这些记忆运算长得如此相似？
-\item 点积的代数定义怎么能推导出余弦夹角公式？
-\item 查询 $q$ 和输入 $x$ 究竟是什么关系？
-\item 为什么 $K$ 堆成行、$V$ 需要转置？为什么单 Query 写法与 $QK^\top$ 的标准公式长得不一样？
-\end{enumerate}
+\begin{idea}[title={这本书写给怎样的读者？}]
+你可能已经接触过 Python、使用过 AI 产品，或者只是对机器如何理解文字感到好奇。无论此前是否系统学习过线性代数，都可以从这里出发。我们选择\textbf{具体数字和手算例子}作为入口，再一步步推广到真正的数学公式。
+
+你不需要提前掌握神经网络。书中出现新符号时，我们会尽量说明\textbf{它是什么、为什么要出现、输入与输出有多少个数字}。
 \end{idea}
 
-\subsection*{先读什么，后读什么？}
-顺序是\textbf{向量 $\to$ 点积的几何推导 $\to$ 行列与矩阵乘法 $\to$ Key--Value 的排布 $\to$ ReLU $\to$ MLP $\to$ 单 Query Attention $\to$ 批量 Query Attention}。每个概念会先用一组手算数字出现，再用字母表示一般情形。
+\subsection*{一条贯穿全书的主线}
 
-\subsection*{每次见到公式，都问自己三个问题}
+与其按照模型发表的年份，或者按热词逐章罗列，不如围绕五个问题逐步建立知识：
+
 \begin{enumerate}
-\item \textbf{输入是什么？} 一个数、一列数、还是一张表？
-\item \textbf{为什么算得起来？} 乘法两边的尺寸对得上吗？
-\item \textbf{输出是什么？} 匹配分数、过滤后的权重，还是 Value 的组合？
+\item \textbf{表示：}怎样用函数和向量，把现实中的输入变成能计算的数字？
+\item \textbf{学习：}模型做出预测后，怎样根据错误调整权重？
+\item \textbf{结构：}面对图片的空间关系、文字的先后关系，为什么需要不同网络？
+\item \textbf{检索：}读到一个 Token 时，怎样找到上下文里真正相关的信息？
+\item \textbf{应用：}训练完成的 Transformer 如何生成内容，又如何结合资料和工具工作？
 \end{enumerate}
 
+从\textbf{函数与向量}开始，经过\textbf{神经网络和训练}、\textbf{CNN 与 RNN}，
+到\textbf{Attention 与 Transformer}，最后讨论\textbf{大语言模型的生成和应用}。联想记忆是帮助我们重新推导 Attention 的一条数学路线，而不是理解每个 AI 系统必须采用的同一种记忆结构。
+
+\subsection*{每遇到一个公式，请先问三个问题}
+
+\begin{enumerate}
+\item \textbf{输入和输出是什么？}一个数字、一列向量，还是很多行构成的矩阵？
+\item \textbf{每一步在做什么？}例如点积是匹配，ReLU 是逐元素变换，加权求和是组合信息。
+\item \textbf{为什么要这样设计？}不用它会遇到什么困难？它又有哪些限制？
+\end{enumerate}
+
+\subsection*{怎么读最有效？}
+
+先跟着例子手算一次，再看字母形式；第一次看到推导可以只抓住运算意义，不必立即记住所有符号。如果对矩阵尺寸没把握，就回到前面“逐行点积”和“按列加权”的两种视角。
+
 \begin{warningbox}
-\textbf{重要约定：}本卷先使用列向量作为 Query，Key 按行存进 $K$，Value 按行存进 $V$，因此单个查询的公式写作 $V^\top\sigma(K\vect{x})$。标准 Transformer 常把多个 Token 的向量按行排列，公式中转置的位置会变化。不要只背转置符号；始终检查维度。
+\textbf{行列约定：}在单次查询的记忆推导中，Query 写作列向量，Key、Value 分别按行存入 $K$ 和 $V$；因此 Value 读出写作 $V^\top\vect a$。在标准 Transformer 中，各 Token 通常按行存入矩阵，因而公式变为 $\softmax(QK^\top/\sqrt{d_k})V$。这两种写法的形状不同，但匹配并组合信息的直觉相同。
 \end{warningbox}
 
-\subsection*{学完后你应该会的计算}
-\[
-\vect{x}\ \xrightarrow{\ K\ }\ K\vect{x}\
-\xrightarrow{\ \relu\ }\ \relu(K\vect{x})\
-\xrightarrow{\ V^\top\ }\ \vect{y}.
-\]
-\textbf{这里是三步操作，不是一个必须死记的巨大公式。}
+\subsection*{本书的边界}
+
+为了建立直觉，部分例子会使用人为设计的 2--3 维向量和非常小的神经网络。它们是\textbf{教学模型}，而不是任何现成大语言模型的内部真实参数。高维容量与优化经验属于有条件的结果，不能当成对所有网络无条件成立的定理。
+
+\begin{conclusion}
+全书的核心方法是\textbf{先发现困难，再设计计算；先算具体数字，再写一般公式}。公式不是学习的起点，而是把理解过的计算压缩成简洁表达。
+\end{conclusion}
