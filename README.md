@@ -1,53 +1,53 @@
-# AI by Intuition · 从函数到大语言模型
+# AI by Intuition · 用直觉理解人工智能
 
-> **先有问题，再有直觉；先算一个例子，再写一般公式。**
+> **先提出问题，再计算例子，最后理解公式。**
 
-一份面向数学基础较弱、非科班读者的中文 AI 原理教材。从“函数为什么能够拟合数据”出发，逐步学习矩阵、MLP、梯度下降、反向传播、CNN、Embedding、RNN、Attention、Transformer 和大语言模型。
+一套适合希望从具体问题出发、逐步建立数学直觉的中文 AI 原理教材。你不需要先读完高等数学教材，也不需要记住一堆模型名称；我们会从几个数字、一小张矩阵、一条可训练的函数开始，逐步理解神经网络如何学习、怎样处理图像与文字，以及 Transformer 为什么使用 Attention。
 
-**唯一正式交付物是一本完整 PDF**；章节 LaTeX 源码拆开管理，只是为了便于校对和维护。
+**最终阅读制品只有一份完整 PDF。** LaTeX 分章节管理，主文件是 [`book/main.tex`](book/main.tex)。
 
-## 阅读与下载
+## 开始阅读
 
-- **[查看全书主文件（LaTeX）](book/main.tex)**
-- **[章节索引与学习目标](book/README.md)**
-- **[全书知识路线图](ROADMAP.md)**
-- **[GitHub Actions：下载最新完整 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**
+**[完整章节目录](book/README.md)** · **[全书学习路线图](ROADMAP.md)** · **[GitHub Actions：获取最新版 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**
 
-打开最近一次成功的构建，在 Artifacts 中下载 `ai-by-intuition-volume-01`，其中只有 `AI-by-Intuition-Volume-01.pdf`。
+在最近一次成功构建的页面下方，下载 `ai-by-intuition-volume-01` 构建产物，其中是一本完整 PDF。
 
-## 六个部分
+## 六个递进的问题
 
-| 部分 | 主要内容 | 关键问题 |
+| 阅读阶段 | 核心问题 | 你会真正算什么？ |
 |---|---|---|
-| I · 从函数到矩阵 | 函数、参数、向量、点积、矩阵乘法 | 不会公式也能先看懂计算在做什么吗？ |
-| II · 记忆与 MLP | 外积、关联记忆、激活函数、MLP | 为什么 K 与 V 堆成矩阵以后，还能插入 ReLU？ |
-| III · 模型训练 | 损失、导数、梯度下降、反向传播、泛化 | 网络怎么知道参数该改多少？ |
-| IV · 图像与序列 | CNN、One-hot、Embedding、RNN | 为什么图片需要局部特征，文字需要顺序？ |
-| V · Transformer | Softmax、Q/K/V、Self-Attention、多头与掩码 | 从单个 Query 怎样得到标准 Attention？ |
-| VI · LLM 与应用 | 预训练、生成策略、RAG、Agent、100 个术语、综合练习 | 一个能预测 Token 的模型怎样变成应用？ |
+| Ⅰ · 表示 | 怎样把一个问题变成可计算的数字？ | 函数、向量、点积、矩阵、Embedding |
+| Ⅱ · 学习 | 神经网络凭什么能从错误中改进？ | MLP、ReLU、Loss、梯度、反向传播、泛化 |
+| Ⅲ · 结构 | 图片和一串词有什么不同？ | 卷积扫描、序列隐藏状态、信息传递 |
+| Ⅳ · Attention | 为什么模型要直接读取上下文中的相关信息？ | Key-Value、Softmax、QKᵀ、完整 Transformer |
+| Ⅴ · 应用 | 预测下一个 Token 怎么变成可用的 AI 系统？ | 解码、KV Cache、RAG、Agent、部署 |
+| Ⅵ · 巩固 | 哪些直觉有边界，怎样检查是否真正学会？ | 高维容量选读、术语表、综合练习 |
 
-## 教学原则
+这不是照视频分集顺序展开的逐字讲义，而是按**问题之间的依赖关系**重新组织：先学会计算，再学参数如何训练；理解序列信息的困难后，再引出 Attention 的两条推导路径（直接读取上下文与联想记忆）。
 
-每个新概念尽量按“**问题 → 手算数字 → 一般公式 → 维度检查 → 真实模型 → 局限与练习**”展开。特别强调矩阵的行列与转置：不把一个抽象符号视作“显然”。
+## 写作约定
 
-一些技巧属于普遍经验而非严格定理。书中会区别数学恒等式、统计直觉、模型设计选择和工程系统能力，避免过度类比。
+每个关键概念尽量按“**问题 → 可手算的数字 → 一般公式 → 维度检查 → 现实模型 → 适用条件**”讲解。第一次出现的新符号必须解释；公式的转置与矩阵尺寸不能以“显然”为由跳过。
+
+练习与参考答案放在相应知识段落后，全书还有统一的术语表和综合复习题。书中例子使用人工构造的数据，旨在解释运算，不代表任何真实大模型的权重或性能。
 
 ## 本地编译
 
-需要 XeLaTeX 和中文字体。Ubuntu 可使用：
+在安装 XeLaTeX、中文字体、TikZ 等依赖之后：
 
 ```bash
-sudo apt-get install latexmk texlive-xetex texlive-lang-chinese \
-  texlive-latex-extra texlive-pictures texlive-fonts-recommended \
-  fonts-noto-cjk fonts-noto-core lmodern
 cd book
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ```
 
-最终文件为 `book/build/main.pdf`。不需要安装 LaTeX 也可以直接从 Actions 下载 PDF。
+生成 `book/build/main.pdf`。Ubuntu 可以安装 `latexmk texlive-xetex texlive-lang-chinese texlive-latex-extra texlive-pictures texlive-fonts-recommended fonts-noto-cjk fonts-noto-core lmodern`。
 
-## 教学资料与引用
+## 延伸阅读与来源
 
-内容组织参考了提供的七份《从函数到神经网络》《计算神经网络的参数》《调教神经网络的方法》《从矩阵到 CNN》《从词嵌入到 RNN》《简单而强大的 Transformer》《速览大模型 100 词》的中文字幕资料。教材使用独立重写的数学推导、图解与练习，**并未逐字转载字幕**。联想记忆部分的数学组织还参考了 Alex Wang 的文章 [You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/)；详细资料见 [参考章节](book/chapters/26-sources.tex)。
+- **[Bilibili：原始系列视频](https://www.bilibili.com/video/BV1NCgVzoEG9/)** — 提供主题启发与课程参考。
+- [Alex Wang：You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/) — 联想记忆数学视角。
+- [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — Transformer 原始论文。
 
-欢迎通过 Issue 指出符号未解释、推导跳步和计算错误；贡献说明见 [CONTRIBUTING.md](CONTRIBUTING.md)。仓库目前尚未选定正式 LICENSE，请勿默认任意转载或再授权。
+详细书目在 [参考与延伸阅读](book/chapters/26-sources.tex)。欢迎通过 Issue 反馈符号定义、数值计算和讲解跳步，参见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+**许可：** 当前尚未设置正式 LICENSE，请勿默认将内容视为可任意再授权的开源教材。
