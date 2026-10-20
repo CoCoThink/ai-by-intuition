@@ -1,9 +1,10 @@
 \section{Transformer 怎样真正学会预测下一个 Token？}
 \label{intro:22c-language-training}
 
-你现在已经知道模型如何从一个 Token 得到另一组概率，
-也知道\conceptlink{loss}{损失函数}、\conceptlink{backprop}{反向传播}和\conceptlink{gradient-descent}{梯度下降}。剩下一个常见断点：
-\textbf{一整段文字的训练目标，是怎样对应到每个位置的预测的？}
+阅读指南提出了一种可大量练习的办法：\textbf{用原始文字本身作为后续 Token 的答案}。
+前面已经学会网络如何计算分数，也学会 \conceptlink{loss}{损失函数}、\conceptlink{backprop}{反向传播} 和\conceptlink{gradient-descent}{梯度下降}。
+现在才具备足够工具回答：\textbf{一整段真实训练文本，怎样变成位置对齐的预测目标、损失和参数更新？}
+这里讲的是\textbf{一种自回归预训练任务}，不是说所有语言模型都只能这样学。
 
 \subsection{“错开一格”：一段文本同时产生许多训练目标}
 \phantomsection\label{concept:shifted-targets}
@@ -115,7 +116,8 @@ $\theta$ 表示全部参与训练的可学习参数；
 \end{warningbox}
 
 \begin{conclusion}
-语言建模的训练闭环不是“随便把一段文字丢进网络”：
-它有\textbf{错位标签、因果掩码、逐位置概率、交叉熵、反向传播}
-五个明确步骤。把每一步的张量尺寸写清楚，模型训练就不再神秘。
+对于本书的自回归训练任务，\textbf{错位标签}提供答案，\textbf{因果掩码}限制可见信息，
+\textbf{逐位置概率和交叉熵}定义误差，\textbf{反向传播}推动参数学习。
+但训练结束后，用户不会提供未来文本作为标签：
+下一章研究\textbf{没有标准答案在旁边时，模型怎样一步步生成自己的回答}。
 \end{conclusion}
