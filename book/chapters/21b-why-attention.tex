@@ -16,7 +16,7 @@
 
 \subsection{为什么 RNN 已经能传信息，还需要另一个办法？}
 
-上一章让模型按顺序读：
+上一章的 \conceptlink{rnn}{RNN} 让模型按顺序读：
 \[
 \underbrace{\text{春天}}_{\text{第 1 词}}
 \ \to\
@@ -76,7 +76,7 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 
 \subsection{第二步：从 Query 和 Key 算出匹配分数}
 
-为什么能比较？因为前面已经学过\textbf{点积}：
+为什么能比较？因为前面已经学过\textbf{\hyperref[intro:02-dot-product]{点积}}：
 把两个长度相同的向量对应位置相乘，再把结果相加。
 假设这些都是教学用的\textbf{二维列向量}：
 \[
