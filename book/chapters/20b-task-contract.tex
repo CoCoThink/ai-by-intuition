@@ -1,83 +1,80 @@
-\section{先把任务定义清楚：输入、输出与张量契约}
+\section{把问题固定下来：要预测的是下一个 Token}
 \label{intro:20b-task-contract}
 
-我们已经学会用向量表示一个 Token。但“一个 Token 变成一列数字”并不是最终目标：我们需要的是\textbf{给定前文，预测下一个 Token}。在发明网络结构之前，先把任务所需的数据形状说清楚。
+上一章已经知道：Token ID 不是有大小关系的语义数字，
+需要通过 Embedding 表转换为向量。
+但\textbf{我们究竟想让模型学会什么？}
+先把答案定义好，不必现在就研究完整网络。
 
-\subsection{先不要想网络：输入与答案到底是什么？}
+\subsection{贯穿全书的小例子}
 
-取一个人为构造的短序列：
+假设一个只有 $5$ 个 Token 的教学词表，
+其中四个 Token 对应
 \[
-\text{“春天 / 花 / 开了 / 。 ”}
+\text{春天 / 花 / 开了 / 。}
 \]
-假设 Tokenizer 把它切成四个 Token，它们的编号分别是 $[1,3,4,2]$。
-在语言建模任务中，一种常用的数据配对方式是：
+并约定编号为
 \[
-\underbrace{[1,\ 3,\ 4]}_{\text{输入}}\quad\longrightarrow\quad
-\underbrace{[3,\ 4,\ 2]}_{\text{每个位置的目标}}.
+(t_1,t_2,t_3,t_4)=(1,3,4,2).
 \]
-第一位置看见“春天”，目标是“花”；第二位置看见“春天、花”，目标是“开了”；第三位置看见前三个 Token，目标是句号。
+在实际模型中 Token 不一定按词切分，
+这些数字也不是某个分词器的真实编码。
 
-注意：\textbf{训练时不需要为每个位置重新运行一遍完整模型。}如果使用因果注意力，三个位置可以一次前向计算，分别产生预测，再一起求损失。后面会完整推导这一点。
+我们希望读到“春天”时能预测“花”，
+读到“春天、花”时能预测“开了”。
+因此把一段数据\textbf{错开一个位置}：
+\[
+\underbrace{[1,\ 3,\ 4]}_{\text{输入 Token}}
+\quad\longrightarrow\quad
+\underbrace{[3,\ 4,\ 2]}_{\text{对应的下一 Token}}.
+\]
+这三个对应关系都是训练题，
+但我们暂时只要看懂它们的含义。
+\textbf{为什么能在同一次前向计算中同时训练三个位置}，
+要等学会 Attention、因果掩码和损失函数后再解释。
 
-\subsection{一张形状表：每一步必须对得上}
+\subsection{将问题拆成两个阶段}
 
-假设词表大小 $|\mathcal V|=5$，输入有 $T=3$ 个位置，
-隐藏宽度 $d_{\rm model}=2$。为方便讲解，先使用这样一组尺寸：
+\textbf{阶段一：把文字表示成可计算的向量。}
+假设每个 Token 用 $2$ 个数字表示，
+那么 Embedding 表的形状是
+\[
+\underbrace{5}_{\text{词表大小}}
+\times
+\underbrace{2}_{\text{每个向量的数字数}}.
+\]
+三个输入 Token 查表后可以组成 $3\times2$ 矩阵：
+\textbf{三行表示三个位置，每行两个特征}。
+
+\textbf{阶段二：用这些向量预测下一个 Token。}
+无论网络内部进行了多少运算，最终都需要
+\textbf{为五个候选 Token 分别提供一个分数}，
+然后才能比较候选或选择结果。
+此时不用知道输出头如何实现，只需知道\textbf{任务目标}。
 
 \begin{center}
 \small
-\renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\linewidth}{@{}p{36mm}p{29mm}X@{}}
+\begin{tabularx}{\linewidth}{@{}p{30mm}p{30mm}X@{}}
 \toprule
-数据 & 形状 & 每个轴表示什么\\
+对象 & 示例尺寸 & 为什么是这个数\\
 \midrule
-Token ID & $T=3$ & 三个整数索引\\
-Embedding 表 & $5\times2$ & 五个 Token，每个两个数字\\
-隐藏状态 $X$ & $3\times2$ & 三个位置，每个两个特征\\
-词表投影权重 $W_{\rm out}$ & $2\times5$ & 从隐藏维度转换到词表维度\\
-Logits $Z=XW_{\rm out}$ & $3\times5$ & 每位置、对五个候选 Token 的分数\\
-预测概率 & $3\times5$ & 对每一行的五个候选做 Softmax\\
+输入 Token ID & $3$ 个整数 & 有 3 个已知位置\\
+Embedding 表 & $5\times2$ & 词表 5 项，每项 2 个特征\\
+输入向量矩阵 & $3\times2$ & 3 个位置，每行 2 个特征\\
+每个位置的候选 & $5$ 个 & 词表共有 5 个可能的输出\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-这里 $T$ 是当前输入序列长度，$|\mathcal V|$ 是词表大小，
-$d_{\rm model}$ 是网络在大多数 Block 之间传递的\textbf{隐藏向量宽度}；
-它们代表三种不同的数量，不能混为一谈。
-
-\subsection{为什么输出是“词表维度”，不是一个词编号？}
-
-模型先给每个候选一个\textbf{分数}（logit），例如某个位置有
-\[
-\vect z=(0,1,2,0,0).
-\]
-经过 Softmax 后，五个位置得到总和为 $1$ 的概率。最大 logit 对应第三个候选；
-如果使用贪心解码，就选取这个候选的 ID。
-
-将每个 Token 的候选都保留下来，模型才容易通过交叉熵比较“正确候选”
-与其他候选；选择具体 Token 发生在\textbf{解码策略}阶段，而不是
-Embedding 查表阶段。
-
-\subsection{注意区分三种“输出”}
-
-\begin{enumerate}
-\item \textbf{Block 输出：}每个 Token 都是一条 $d_{\rm model}$ 维隐藏向量，
-主要用于让下一层继续处理。
-\item \textbf{输出头的 logits：}每个 Token 得到一条 $|\mathcal V|$ 维分数，
-用于评价候选 Token。
-\item \textbf{用户看到的文字：}从概率分布选出 Token ID 后，
-由 Tokenizer 的解码规则还原成文本。
-\end{enumerate}
-
 \begin{warningbox}
-并非所有机器学习任务都要变成多分类。回归可以直接输出连续数值，
-分类也可以用不同的损失定义。本章只讨论\textbf{自回归语言建模}的常见设计。
-同样，也不是“任何函数都能由一个有限的神经网络精确表示”；通用近似结论
-具有网络形式、激活函数、定义域及近似精度等条件。
+“预测下一 Token”是本文为了学习自回归语言模型选定的任务，
+并非所有 AI 模型都这样训练。分类、回归、图像生成等任务
+有自己的输入输出与损失形式。
 \end{warningbox}
 
 \begin{conclusion}
-先约定输入是什么、答案是什么、张量有多大，
-才能知道下一步为何需要 FFN、Attention 和词表投影。
-\textbf{架构图是为满足输入输出契约而设计的计算流程，不是术语拼图。}
+现在我们有了\textbf{输入是什么、希望输出什么}，
+却还没有回答\textbf{如何计算预测、如何调整参数}。
+下一部分先学习一个最简单的可训练神经网络；
+等学会 Attention 后，我们再回来解决整段文本的训练问题。
 \end{conclusion}

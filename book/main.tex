@@ -81,8 +81,8 @@
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
 \textbf{只需要这些预备知识：}加减乘除、平方与平方根；导数、矩阵乘法将从直觉讲起。\par
-\textbf{学习路线：} 函数与向量 $\rightarrow$ MLP 与训练 $\rightarrow$ 图像与序列 $\rightarrow$ Attention $\rightarrow$ Transformer 与应用。\par
-\textbf{目标：} 理解模型\emph{如何表示、学习、检索、生成}，不是背诵术语。
+\textbf{学习路线：} 函数与向量 $\rightarrow$ MLP 与训练 $\rightarrow$ 上下文与 Attention $\rightarrow$ Transformer $\rightarrow$ 生成与应用。\par
+\textbf{目标：} 以\emph{预测下一个 Token} 为主线理解表示、学习、上下文、生成与应用；其他视角作为选读。
 \end{tcolorbox}
 \vspace{9mm}
 \begin{center}
@@ -96,7 +96,7 @@
 \end{tikzpicture}
 \end{center}
 \vfill
-\noindent{\color{muted}\small 建议从目录开始阅读；每章都包含一个问题、推导与边界。}\par
+\noindent{\color{muted}\small 先沿前五部分走完主线，再按需阅读第六部分的专题与术语地图。}\par
 \vspace{3mm}
 \noindent {\color{muted}\small AI by Intuition · 先提出问题，再算一个例子，最后理解公式。}\par
 \clearpage
@@ -109,7 +109,7 @@
 \endgroup
 
 
-\part{从问题到数字}
+\part{把文字变成可计算的数字}
 \input{chapters/00-guide}
 \input{chapters/00-functions}
 \input{chapters/01-vectors}
@@ -118,56 +118,52 @@
 \input{chapters/20-embeddings}
 \input{chapters/20b-task-contract}
 
-
 \clearpage
-\part{一个网络怎样学会预测}
+\part{让神经网络学会预测}
 \input{chapters/07-functions-relu}
 \input{chapters/10-mlp}
-\input{chapters/10b-ffn-output-head}
 \input{chapters/16-loss-gradient}
 \input{chapters/17-backpropagation}
 \input{chapters/18b-end-to-end-learning}
 \input{chapters/18-generalization}
 
-
 \clearpage
-\part{让模型利用图片和语言的结构}
-\input{chapters/19-cnn}
+\part{让词与词交换信息}
 \input{chapters/21-rnn}
 \input{chapters/21b-why-attention}
-
+\input{chapters/11-softmax-memory}
+\input{chapters/12-self-attention-matrices}
 
 \clearpage
-\part{重新理解 Attention 与 Transformer}
+\part{组装、训练并使用 Transformer}
+\input{chapters/22-transformer-architecture}
+\input{chapters/10b-ffn-output-head}
+\input{chapters/22b-token-to-output}
+\input{chapters/22c-language-training}
+\input{chapters/23-llm-systems}
+
+\clearpage
+\part{改进模型并构建可靠应用}
+\input{chapters/22d-modern-transformers}
+\input{chapters/23c-post-training}
+\input{chapters/23d-agent-systems}
+\input{chapters/23b-deployment-and-ecosystem}
+
+\clearpage
+\part{选读专题与知识回溯}
+\input{chapters/19-cnn}
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
 \input{chapters/06-better-linear-memory}
 \input{chapters/08-stacking-key-value}
 \input{chapters/09-nonlinearity-and-memory}
-\input{chapters/11-softmax-memory}
-\input{chapters/12-self-attention-matrices}
 \input{chapters/14-summary}
 \input{chapters/15-practice}
-\input{chapters/22-transformer-architecture}
-\input{chapters/22b-token-to-output}
-\input{chapters/22c-language-training}
-\input{chapters/22d-modern-transformers}
-
-
-\clearpage
-\part{模型怎样生成和使用信息}
-\input{chapters/23-llm-systems}
-\input{chapters/23c-post-training}
-\input{chapters/23d-agent-systems}
-\input{chapters/23b-deployment-and-ecosystem}
-
-
-\clearpage
-\part{进阶思考与学习工具}
 \input{chapters/13-capacity}
 \input{chapters/24-lexicon}
 \input{chapters/24b-modern-lexicon}
 \input{chapters/25-integrated-practice}
 \input{chapters/25b-modern-practice}
 \input{chapters/26-sources}
+
 \end{document}

@@ -1,54 +1,46 @@
-# AI by Intuition · 用直觉理解人工智能
+# AI by Intuition · 从函数到 Transformer 的直觉之旅
 
-> **先提出问题，再计算例子，最后理解公式。**
+> **先有问题，再有直觉，然后才有公式。**
 
-一套适合希望从具体问题出发、逐步建立数学直觉的中文 AI 原理教材。你不需要先读完高等数学教材，也不需要记住一堆模型名称；我们会从几个数字、一小张矩阵、一条可训练的函数开始，逐步理解神经网络如何学习、怎样处理图像与文字，以及 Transformer 为什么使用 Attention。
+一本以**“模型怎样根据前文预测下一个 Token？”**为主线的中文 AI 原理教程。阅读从函数、向量和矩阵开始，经过 MLP 的训练，发现上下文建模的需要，依次推导 Attention、Transformer、语言模型训练和自回归生成。最后学习现代架构、后训练与工具系统。
 
-**最终阅读制品只有一份完整 PDF。** LaTeX 分章节管理，主文件是 [`book/main.tex`](book/main.tex)。
+**读者阅读一个完整 PDF，作者维护分开的 LaTeX 章节源码。**
 
-## 开始阅读
+[**全书顺序与可点击目录**](book/README.md) · [学习路线设计](ROADMAP.md) · [GitHub Actions 下载最新版 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
 
-**[完整章节目录](book/README.md)** · **[全书学习路线图](ROADMAP.md)** · **[GitHub Actions：获取最新版 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**
+## 为什么这样组织？
 
-在最近一次成功构建的页面下方，下载 `ai-by-intuition-volume-01` 构建产物，其中是一本完整 PDF。
+| 学习阶段 | 自然产生的问题 |
+|---|---|
+| Ⅰ 表示 | 文字怎样成为可以计算的数字？ |
+| Ⅱ 学习 | 预测错了，网络怎样修改权重？ |
+| Ⅲ 上下文 | 词与词怎样交换信息，为什么要 Attention？ |
+| Ⅳ Transformer | 各个部件怎样连成完整的训练与生成过程？ |
+| Ⅴ 拓展到系统 | 为什么需要 KV Cache 优化、后训练和 Agent？ |
+| Ⅵ 选读与复习 | CNN、联想记忆和记忆容量可以提供什么其他直觉？ |
 
-## 六个递进的问题
+**前五部分连续阅读，第六部分不作为主线先修。** 以前放在 Attention 之前的外积、记忆干扰与最小二乘，现在完整保留为选读；让读者无需中途换数学视角就能从 RNN 直达 Self-Attention。
 
-| 阅读阶段 | 核心问题 | 你会真正算什么？ |
-|---|---|---|
-| Ⅰ · 表示 | 怎样把一个问题变成可计算的数字？ | 函数、向量、点积、矩阵、Embedding |
-| Ⅱ · 学习 | 神经网络凭什么能从错误中改进？ | MLP、ReLU、Loss、梯度、反向传播、泛化 |
-| Ⅲ · 结构 | 图片和一串词有什么不同？ | 卷积扫描、序列隐藏状态、信息传递 |
-| Ⅳ · Attention | 为什么模型要直接读取上下文中的相关信息？ | Key-Value、Softmax、QKᵀ、因果训练、现代 Transformer |
-| Ⅴ · 应用 | 预测下一个 Token 怎么变成可用的 AI 系统？ | 解码、后训练、RAG、Agent、部署与权限 |
-| Ⅵ · 巩固 | 哪些直觉有边界，怎样检查是否真正学会？ | 高维容量选读、术语表、综合练习 |
-
-这不是照视频分集顺序展开的逐字讲义，而是按**问题之间的依赖关系**重新组织：先学会计算，再学参数如何训练；理解序列信息的困难后，再引出 Attention 的两条推导路径（直接读取上下文与联想记忆）。
-
-## 写作约定
-
-每个关键概念尽量按“**问题 → 可手算的数字 → 一般公式 → 维度检查 → 现实模型 → 适用条件**”讲解。第一次出现的新符号必须解释；公式的转置与矩阵尺寸不能以“显然”为由跳过。
-
-练习与参考答案放在相应知识段落后，全书还有统一的术语表和综合复习题。书中例子使用人工构造的数据，旨在解释运算，不代表任何真实大模型的权重或性能。
+书中反复使用教学用序列“春天 / 花 / 开了 / 。”（假设 Token ID 为 `[1,3,4,2]`），再用小矩阵展示隐藏表示、预测目标、行列转置与损失计算。例子不是任何现成模型的真实参数。
 
 ## 本地编译
 
-在安装 XeLaTeX、中文字体、TikZ 等依赖之后：
+安装 XeLaTeX、中文字体、PGF/TikZ 等依赖后运行：
 
 ```bash
 cd book
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ```
 
-生成 `book/build/main.pdf`。Ubuntu 可以安装 `latexmk texlive-xetex texlive-lang-chinese texlive-latex-extra texlive-pictures texlive-fonts-recommended fonts-noto-cjk fonts-noto-core lmodern`。
+生成 `book/build/main.pdf`。CI 还会检查 PDF 目录、术语链接、教学图卡和章节结构。
 
-## 延伸阅读与来源
+## 原视频与研究参考
 
-- **[飞天闪客：从函数到 Transformer](https://www.bilibili.com/video/BV1NCgVzoEG9/)** — 数学与基本架构的参考。
-- **[飞天闪客：从 Transformer 到大模型](https://www.bilibili.com/video/BV15z4C6SEHT/)** — 现代架构与应用设计的参考。
-- [Alex Wang：You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/) — 联想记忆数学视角。
-- [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — Transformer 原始论文。
+- [飞天闪客：《一小时从函数到 Transformer》](https://www.bilibili.com/video/BV1NCgVzoEG9/)
+- [飞天闪客：《一小时从 Transformer 到大模型》](https://www.bilibili.com/video/BV15z4C6SEHT/)
+- [Alex Wang：You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/)
+- [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
-详细书目在 [参考与延伸阅读](book/chapters/26-sources.tex)。欢迎通过 Issue 反馈符号定义、数值计算和讲解跳步，参见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+视频启发了选题和问题意识；教材根据学习依赖重新安排内容，不按分集照抄。更多引文见 [参考与延伸阅读](book/chapters/26-sources.tex)。
 
-**许可：** 当前尚未设置正式 LICENSE，请勿默认将内容视为可任意再授权的开源教材。
+欢迎通过 Issue 提供计算核对、未解释的符号及跨章衔接建议。仓库尚未设置正式 LICENSE，请勿默认可任意再授权。

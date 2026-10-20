@@ -14,12 +14,12 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 PART_TITLES = [
-    "从问题到数字",
-    "一个网络怎样学会预测",
-    "让模型利用图片和语言的结构",
-    "重新理解 Attention 与 Transformer",
-    "模型怎样生成和使用信息",
-    "进阶思考与学习工具",
+    "把文字变成可计算的数字",
+    "让神经网络学会预测",
+    "让词与词交换信息",
+    "组装、训练并使用 Transformer",
+    "改进模型并构建可靠应用",
+    "选读专题与知识回溯",
 ]
 ORDINALS = "一二三四五六"
 
@@ -122,6 +122,42 @@ def validate_source() -> None:
         if not target_file.is_file() or (r"\label{" + target + "}") not in target_file.read_text(encoding="utf-8"):
             fail("Modern glossary destination is missing: " + target)
     print(f"Advanced curriculum QA passed: 8 new chapters and {len(term_links)} internal index links")
+
+    # Enforce pedagogical dependency order, not merely that the book compiles.
+    expected_groups = [
+        ["00-guide", "00-functions", "01-vectors", "02-dot-product",
+         "03-matrix-multiplication", "20-embeddings", "20b-task-contract"],
+        ["07-functions-relu", "10-mlp", "16-loss-gradient",
+         "17-backpropagation", "18b-end-to-end-learning", "18-generalization"],
+        ["21-rnn", "21b-why-attention", "11-softmax-memory",
+         "12-self-attention-matrices"],
+        ["22-transformer-architecture", "10b-ffn-output-head",
+         "22b-token-to-output", "22c-language-training", "23-llm-systems"],
+        ["22d-modern-transformers", "23c-post-training",
+         "23d-agent-systems", "23b-deployment-and-ecosystem"],
+        ["19-cnn", "04-key-value-outer-product", "05-memory-interference",
+         "06-better-linear-memory", "08-stacking-key-value",
+         "09-nonlinearity-and-memory", "14-summary", "15-practice",
+         "13-capacity", "24-lexicon", "24b-modern-lexicon",
+         "25-integrated-practice", "25b-modern-practice", "26-sources"],
+    ]
+    expected = [f"chapters/{name}" for group in expected_groups for name in group]
+    if inputs != expected:
+        fail("Chapter reading order breaks the representation-to-generation learning path")
+    if len(expected) != 40:
+        fail("Expected 40 unique chapter source files")
+    # Optional memory/CNN chapters must not interrupt the RNN-to-Attention path.
+    for core in ("21-rnn", "21b-why-attention", "11-softmax-memory",
+                 "12-self-attention-matrices", "22-transformer-architecture"):
+        if expected.index(f"chapters/{core}") >= expected.index("chapters/04-key-value-outer-product"):
+            fail("Optional memory chapter interrupts the core Transformer derivation")
+    guide = (ROOT / "book/chapters/00-guide.tex").read_text(encoding="utf-8")
+    task = (ROOT / "book/chapters/20b-task-contract.tex").read_text(encoding="utf-8")
+    training = (ROOT / "book/chapters/22c-language-training.tex").read_text(encoding="utf-8")
+    for document in (guide, task, training):
+        if "(1,3,4,2)" not in document and "[1,3,4,2]" not in document:
+            fail("Running Token ID example is inconsistent across teaching stages")
+    print("Learning-path QA passed: five linear learning parts, optional extensions last")
 
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 

@@ -1,5 +1,11 @@
 \section{外积与矩阵：如何真正“写入”一条记忆？}
 
+前五部分已经沿着\textbf{预测下一个 Token}的主线搭建并使用了 Transformer。
+接下来换一个角度，不再追着网络结构往前走，而是思考：
+\textbf{一个矩阵能否保存“遇到某种输入，就返回某个结果”的关联？}
+这条路线将解释为什么 MLP 和 Attention 有时都可以被看成不同的读取规则。
+它是\textbf{选读的数学视角}，不是每个 Transformer 必须按外积存储记忆的证明。
+
 现在为一条记忆指定两个向量：
 \[
 \text{Key }\vect{k}=\begin{bmatrix}1\\0\end{bmatrix},\qquad

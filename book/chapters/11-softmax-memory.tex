@@ -1,14 +1,19 @@
 \section{从相似度分数到 Softmax Attention}
 \label{intro:11-softmax-memory}
 
-平方和立方都可以抑制弱匹配。如果想要更强的区分能力，可以考虑\textbf{指数函数}：
-\begin{equation}
-\sigma(s)=e^{\beta s},\qquad e\approx2.718.
-\end{equation}
-其中 $\beta$ 是“锐度”参数：越大，较高相似度相对于较低相似度的优势就越明显。
+上一章已经用三个候选位置演示过：\textbf{先计算相关性分数，再将 Value 按权重组合}。
+那一章着重解释“为什么需要”，这一章把计算写成\textbf{可以检查尺寸的矩阵公式}，并回答一条最常见的疑问：
+\textbf{为什么一次查询写 $K\vect q$，多个查询却写 $QK^\top$？}
 
-\subsection{把指数分数变成权重}
-假设两条记忆的相似度仍然是：
+\subsection{Softmax 把相似度变成一组权重}
+
+假设一个 Query 对两条 Key 的匹配分数分别为 $1$ 和 $0.6$。
+指数函数 $e^{\beta s}$ 将分数转换成正数，
+再把它们除以总和，便能得到总和为 $1$ 的权重。
+$\beta$ 是缩放系数，它控制分数之间的相对差异，
+不是必须手工调节的“记忆开关”。
+
+先从两个已经给定的分数开始：
 \[
 s_A=1,\qquad s_B=0.6.
 \]
@@ -24,7 +29,7 @@ p_B&=\frac{e^{0.6\beta}}{e^{\beta}+e^{0.6\beta}}.
 \caption{调整 $\beta$ 时的 Softmax 权重（两个分数为 $1$ 和 $0.6$）}
 \begin{tabular}{@{}rrr@{}}
 \toprule
-$\beta$ & $p_A$：正确记忆 & $p_B$：干扰记忆\\
+$\beta$ & $p_A$：较高分数 & $p_B$：较低分数\\
 \midrule
 $0$ & $50.0\%$ & $50.0\%$\\
 $2$ & $69.0\%$ & $31.0\%$\\
@@ -36,11 +41,19 @@ $15$ & $99.8\%$ & $0.2\%$\\
 \end{table}
 
 \begin{idea}
-Softmax 没有“创造”新记忆，而是调整了\textbf{从已有记忆读取多少内容}。当 $\beta$ 很大时，权重越来越集中在相似度最高的 Key 上。
+Softmax 本身不改变或创造 Value；它只把分数转成\textbf{从每条 Value 读取多少}的比例。在本例中，$\beta$ 增大让权重向较高分数倾斜。
 \end{idea}
 
-\subsection{写出 Attention 的形式}
-给第 $i$ 条记忆的权重为：
+\subsection{给 Query、Key、Value 各自一个角色}
+
+先规定一个\textbf{单次查询}：Query 是列向量 $\vect x$，
+有 $M$ 个候选 Key/Value 对，每条 Key 含 $d_k$ 个数，每条 Value 含 $d_v$ 个数。
+所以 $K\in\R^{M\times d_k}$、$V\in\R^{M\times d_v}$，
+而查询 $\vect x\in\R^{d_k}$。第 $i$ 条 Key 与 Query 点积，
+得到第 $i$ 条匹配分数；将 $M$ 个分数做 Softmax，
+然后用所得权重组合对应 Value。
+
+给第 $i$ 条候选的权重为：
 \begin{equation}
 p_i=\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{x}}}.
 \end{equation}
@@ -53,7 +66,7 @@ p_i=\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{
 \begin{equation}
 \boxed{f(\vect{x})=V^\top\softmax(\beta K\vect{x}).}\label{eq:column-attention}
 \end{equation}
-这就是\textbf{按相似度检索 Value} 的 Attention 核心公式。
+这是\textbf{按匹配分数组合 Value} 的单 Query 写法。此时还没有使用 Transformer 中的多 Query 矩阵。
 
 \subsection{从单个列 Query 到标准 Attention：每一步都展开}
 
@@ -81,16 +94,16 @@ $\beta$ & 调整匹配分数的缩放系数 & 如 $\beta=1$\\
 
 
 
-前一个式子是\textbf{一个列向量}发出查询。标准 Transformer 会对\textbf{多个行向量}同时查询。看似完全不同的两条公式，实际上只隔着三步转置与批量化，再加一个缩放系数的选择。
+刚才只有\textbf{一个列向量 Query}。标准 Transformer 一次处理多个 Token，各自发出 Query。看似不同的两条公式，实际上只需要统一行列约定、扩展成多个 Query，再选用标准缩放系数。
 
-\textbf{第一步：把查询 $\vect x$ 重新命名为 $\vect q$。}在我们设计的简化模型中，令 $\vect q=\vect x$，因此
+\textbf{第一步：把查询 $\vect x$ 改写为 $\vect q$。}在这个单次查询的简化例子中，取 $\vect q=\vect x$，因此
 \[
 \vect y=V^\top\softmax(\beta K\vect q).
 \]
 这里 $K$ 有 $M$ 行，每行 $d_k$ 个数字；$\vect q$ 有 $d_k$ 个数字；$V$ 有 $M$ 行，每行 $d_v$ 个数字。输出 $\vect y$ 最终有 $d_v$ 个数字。
 
 \begin{example}[title={字母换成数字后，究竟在算什么？}]
-设有\textbf{两条记忆}（$M=2$），每条 Key 是\textbf{二维}（$d_k=2$），每条 Value 是\textbf{三维}（$d_v=3$）：
+设有\textbf{两个候选位置}（$M=2$），每条 Key 是\textbf{二维}（$d_k=2$），每条 Value 是\textbf{三维}（$d_v=3$）：
 \[
 K=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
 \vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
@@ -186,5 +199,5 @@ Transformer 通常对未单位归一化的 Q、K 使用 $1/\sqrt{d_k}$，写成
 \end{center}
 
 \begin{warningbox}
-\textbf{一个重要区别：}MLP 的 Key/Value 视角通常来自\textbf{训练好的参数}；Self-Attention 的 Key/Value 则是由\textbf{当前上下文的 Token 表示动态产生}。所以两者虽然有相似的检索数学，但保存和更新信息的方式不同。
+\textbf{一个重要区别：}我们这里只使用\textbf{当前可读的候选 Key/Value}；真实 Self-Attention 的 Key/Value 是根据当前 Token 表示动态投影出来的。第六部分的联想记忆专题还会讨论\textbf{固定权重形式的 Key/Value}，它只是另一条理解路径，并不表示两种模型完全相同。
 \end{warningbox}

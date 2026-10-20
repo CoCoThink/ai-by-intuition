@@ -1,11 +1,11 @@
-\section{真实 Self-Attention：为什么又变成 $QK^\top$？}
+\section{从单 Query 到整段 Self-Attention}
 \label{intro:12-self-attention-matrices}
 
-前面的记忆公式只有\textbf{一个查询向量} $\vect{x}$。真实 Transformer 通常一次处理许多 Token，于是让每个 Token 产生一条 Query、Key 和 Value，再把它们分别排成矩阵。
+我们已经用单次查询得到 $V^\top\softmax(K\vect q)$，又通过转置把它写成 $\softmax(QK^\top)V$。现在问：\textbf{一句话有多个 Token 时，每个位置的 Query、Key、Value 从哪里来？}
 
 \subsection{首先回答：$Q$ 就是输入 $x$ 吗？}
 
-\textbf{简化联想记忆模型里，可以直接把 Query 取为 $\vect q=\vect x$。}原来写的 $\vect k_i^\top\vect x$ 就是 $\vect k_i^\top\vect q$，只是更换了变量名称。
+\textbf{上一章为了手算，允许把 Query 直接设成 $\vect q=\vect x$。}那只是一个方便理解的简化约定。
 
 \textbf{真实 Transformer 中，Query 通常由当前输入表示经过一个可学习的线性变换得到，不必与原来的 $x$ 数值相同。}
 
@@ -60,7 +60,7 @@ $N$ 个 Query 对应的输出。
 
 \subsection{给一句话里的每个 Token 一组 Q、K、V}
 
-假设句子里有 $T$ 个 Token。上一节使用 $N$ 表示 Query 的数量、$M$ 表示 Key 的数量；\textbf{在这段 Self-Attention 的例子中，所有 Token 都各自提供 Query 与 Key，因此 $N=M=T$}。
+假设句子里有 $T$ 个 Token。前面用 $N$ 表示 Query 的数量、$M$ 表示 Key 的数量；\textbf{在当前的 Self-Attention 例子中，每个 Token 都各自提供 Query 与 Key，因此 $N=M=T$}。
 
 每条 Query 与 Key 都有 $d_k$ 个数字，而每条 Value 有 $d_v$ 个数字。按\textbf{每个 Token 一行}的约定：
 \[
@@ -106,8 +106,8 @@ V\in\R^{T\times d_v}.
 
 \subsection{为什么前面的式子写 $V^\top$，这里却写 $V$？}
 
-前面的单查询公式把 Value \textbf{排成列后读取}，因此用 $V^\top\vect{a}$；这里把所有 Token 的 Value \textbf{排成行}，权重矩阵乘 $V$ 得到一组输出行。两种写法基于不同的数据摆放约定，\textbf{不是数学矛盾}。让矩阵形状替你判断：$(T\times T)(T\times d_v)=(T\times d_v)$。
+前一章的单查询公式把 Value \textbf{排成列后读取}，因此用 $V^\top\vect{a}$；这里把所有 Token 的 Value \textbf{排成行}，权重矩阵乘 $V$ 得到一组输出行。两种写法基于不同的数据摆放约定，\textbf{不是数学矛盾}。让矩阵形状替你判断：$(T\times T)(T\times d_v)=(T\times d_v)$。
 
 \begin{warningbox}
-重要边界：Self-Attention 的 Key/Value 来自\textbf{当前输入}的投影，而 MLP 的权重主要是训练时学到的固定参数。实际 Transformer 还有因果掩码、多个注意力头、位置编码、残差等模块，本卷只解释它们共同的相似度与加权求和核心。
+重要边界：Self-Attention 的 Key/Value 来自\textbf{当前输入}的投影，而 MLP 的权重主要是训练时学到的固定参数。实际 Transformer 还有因果掩码、多个注意力头、位置编码、残差等模块，下一章开始把它组装成完整的网络模块，并明确这些部件各自解决什么问题。
 \end{warningbox}
