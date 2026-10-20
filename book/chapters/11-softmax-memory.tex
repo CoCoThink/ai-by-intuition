@@ -1,9 +1,9 @@
 \section{把一次 Attention 写成矩阵：从单次查询到批量计算}
 \label{intro:11-softmax-memory}
 
-上一章已经亲手完成了一次 Attention：
-\textbf{一个 Query} 与三个 Key 点积，得到 $(2,0,1)$；
-Softmax 把它们转为 $(0.665,0.090,0.245)$；
+上一章已经亲手完成了一次 \conceptlink{attention}{Attention}：
+\textbf{一个 \conceptlink{qkv}{Query}} 与三个 Key 点积，得到 $(2,0,1)$；
+\conceptlink{softmax}{Softmax} 把它们转为 $(0.665,0.090,0.245)$；
 最后按权重读出三个 Value，得到新向量。
 这次\textbf{不发明新的注意力算法}，
 只把刚才做过的计算写得更整齐，
