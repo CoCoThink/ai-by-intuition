@@ -1,0 +1,49 @@
+\section{为什么维度影响记忆容量？}
+
+接下来理解文章中看起来最神奇的数字：为什么一个 $64$ 维 Key，理论上可能在某些检索模型里对应远超 $64$ 条的记忆？
+
+\subsection{随机高维向量往往近似正交}
+如果两个独立随机单位向量在 $d_k$ 维空间中，那么它们点积的典型尺度为：
+\begin{equation}
+|\vect{k}_i^\top\vect{k}_j|\sim\frac{1}{\sqrt{d_k}},\qquad i\ne j.
+\end{equation}
+这个 $\sim$ 表示量级关系，不是每一对随机向量都恰好等于该值。
+
+当 $d_k=64$，典型干扰相似度量级为：
+\[
+\frac{1}{\sqrt{64}}=\frac18=0.125.
+\]
+空间维度越高，随机无关 Key 往往越接近垂直，单条记忆造成的干扰通常越小。
+
+\subsection{为什么有 \texorpdfstring{$\sqrt M$}{√M}？}
+想象随机向左或向右走，每一步长度为 $1$。走 $100$ 步，并不是必然离原点 $100$ 步；方向会互相抵消，最终位移的典型大小是 $\sqrt{100}=10$。
+
+如果各条干扰的方向、符号足够随机且近似独立，那么 $M$ 个小干扰的总波动规模通常不是 $M$ 倍，而是 $\sqrt M$ 倍。
+
+结合上一节：
+\begin{equation}
+\boxed{\frac{\text{干扰}}{\text{信号}}\ \sim\ \sqrt M\times\frac{1}{\sqrt{d_k}}
+=\sqrt{\frac{M}{d_k}}.}
+\end{equation}
+当干扰与信号处于同一量级时：
+\begin{equation}
+\sqrt{\frac{M}{d_k}}\sim1\quad\Rightarrow\quad M\sim d_k.
+\end{equation}
+因此在这个\textbf{随机 Key/Value、简单外积求和}的模型里，容量的标度大约是维度 $d_k$。
+
+\subsection{平方激活为何带来平方量级？}
+对于不相关 Key，原始相似度的典型大小是 $1/\sqrt{d_k}$；平方后，它变成约 $1/d_k$。在一些独立、均值抵消等条件成立的理想模型中，随机干扰的总体量级可以粗略看成：
+\[
+\frac{\text{干扰}}{\text{信号}}\ \sim\ \frac{\sqrt M}{d_k}.
+\]
+设这个量级达到 $1$：
+\begin{equation}
+\frac{\sqrt M}{d_k}\sim1
+\quad\Rightarrow\quad
+\boxed{M\sim d_k^2.}
+\end{equation}
+这就解释了\textbf{为什么改变相似度的非线性，可以改变理论容量对维度的增长规律}。一般的 $p$ 次选择性激活在相应理想假设下可产生 $M\sim d_k^p$ 这一类标度。
+
+\begin{warningbox}
+\textbf{请特别注意：}这些只是文章讨论的模型下的容量标度和噪声启发式解释。真实 ReLU 平方激活、非零均值、相关 Key、非独立 Value、非精确 Key 查询等因素都会改变结论。\textbf{“记得住的向量关联数”也不等于“LLM 可靠知道的事实数”。}
+\end{warningbox}
