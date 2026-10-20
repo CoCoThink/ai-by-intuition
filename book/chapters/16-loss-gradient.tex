@@ -6,6 +6,7 @@
 \end{idea}
 
 \subsection{预测值、真实值、误差与损失}
+\phantomsection\label{concept:loss}
 
 设一个模型 $\widehat y=wx$，先不考虑偏置。样本为：
 \[
@@ -62,6 +63,7 @@ w_2=0.5-0.1\times(-2.5)=0.75.
 损失也从 $2.5$ 变为 $0.625$，再变为 $0.15625$。这就是\textbf{迭代优化}：反复评估局部方向，逐渐逼近低损失区域。
 
 \subsection{同时调整多个参数：偏导数与梯度}
+\phantomsection\label{concept:gradient}
 
 假设模型是 $\widehat y=wx+b$，参数是 $w,b$ 两个数。损失写成 $L(w,b)$：
 \[
