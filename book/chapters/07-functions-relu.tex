@@ -1,48 +1,60 @@
-\section{为什么矩阵乘完以后能套 ReLU？}
+\section{为什么神经网络需要激活函数？}
 
-这里的疑问，实际上与矩阵乘法无关，而是和\textbf{函数}有关。所谓函数 $f$，就是把输入按固定规则变成输出。例如 $f(t)=t^2$，输入 $-3$ 就输出 $9$。
+矩阵乘法可以把输入的许多数字重新组合，但如果我们只把一个矩阵接着乘另一个矩阵，网络的能力并没有想象中那么强。要理解为什么，先认识一个非常简单的函数。
 
-\subsection{先把 ReLU 当成一个只处理单个数字的小机器}
+\subsection{函数可以作用在每一个数字上}
 
-ReLU 定义为：
+回想函数 $g(t)=t^2$：输入 $3$ 得 $9$，输入 $-2$ 得 $4$。如果把一列数字作为输入，约定对每个元素\textbf{分别应用同一函数}：
+\[
+g\!\left(\begin{bmatrix}3\\-2\end{bmatrix}\right)
+=\begin{bmatrix}9\\4\end{bmatrix}.
+\]
+
+神经网络常用的\textbf{激活函数} ReLU 定义为
 \begin{equation}
 \relu(t)=\max(0,t)=
-\begin{cases}
-t,&t>0,\\
-0,&t\le0.
-\end{cases}
+\begin{cases}t,&t>0,\\0,&t\le0.\end{cases}
 \end{equation}
-所以 $\relu(3)=3$，而 $\relu(-2)=0$。
-
-对向量应用 ReLU，只需要把这个规则\textbf{逐个应用到每一个数字}：
-\begin{equation}
+它的意思是：正数不变，负数变成零。所以
+\[
 \relu\!\left(\begin{bmatrix}1\\-0.2\\3\end{bmatrix}\right)
 =\begin{bmatrix}1\\0\\3\end{bmatrix}.
-\end{equation}
-
-\textbf{注意：这一步没有任何矩阵乘法。}它既不会增加元素个数，也不会用一个元素去乘另一个元素。
-
-\subsection{嵌套函数：先算括号里，再算外面}
-
-假设前一步算出：
-\[
-K\vect{x}=\begin{bmatrix}1\\-0.2\end{bmatrix}.
 \]
-那么
+\textbf{注意：应用 ReLU 时，没有进行新的矩阵乘法。}它只是分别处理上一步算出的各个数字。
+
+\subsection{为什么能够写成 $\relu(W\vect x+\vect b)$？}
+
+先计算矩阵层，例如
 \[
-\relu(K\vect{x})
-=\relu\!\left(\begin{bmatrix}1\\-0.2\end{bmatrix}\right)
-=\begin{bmatrix}1\\0\end{bmatrix}.
+W=\begin{bmatrix}1&2\\-1&1\end{bmatrix},\qquad
+\vect x=\begin{bmatrix}1\\1\end{bmatrix},\qquad
+\vect b=\begin{bmatrix}0\\0\end{bmatrix}.
 \]
-读这个表达式时，请先读最里层：先乘 $K$ 得到两个分数；再读外层：把分数中的负数变为零。与 $f(2+3)$ 先算 $2+3$ 完全相同。
+矩阵乘法产生两个分数：
+\[
+W\vect x+\vect b=
+\begin{bmatrix}1+2\\-1+1\end{bmatrix}
+=\begin{bmatrix}3\\0\end{bmatrix}.
+\]
+\textbf{接下来}才应用 ReLU：
+\[
+\relu(W\vect x+\vect b)
+=\begin{bmatrix}\relu(3)\\\relu(0)\end{bmatrix}
+=\begin{bmatrix}3\\0\end{bmatrix}.
+\]
+这和算 $g(1+2)$ 一样：先算括号里的值，之后再执行函数。
 
-\begin{example}[title={这两种操作完全不同}]
-$\relu(K\vect{x})$ 表示先乘 $K$，再逐个过滤输出分数；$\relu(K)\vect{x}$ 则表示先逐个修改矩阵里的权重，再做乘法。两者一般不相等。我们讨论的 MLP 使用的是第一种顺序。
-\end{example}
+\begin{warningbox}
+$\relu(W\vect x)$ 与 $\relu(W)\vect x$ 是不同的操作。前者\textbf{先乘矩阵再处理输出}；后者\textbf{先把权重中的负数变零再相乘}。这里讨论的是前者。
+\end{warningbox}
 
-\subsection{为什么说 ReLU 是非线性的？}
+\subsection{“非线性”到底是什么意思？}
 
-没有激活函数的矩阵层满足线性叠加；ReLU 则不总满足。看一个最短的反例：
+如果运算 $f$ 是线性的，就满足
+\[
+f(\vect x_1+\vect x_2)=f(\vect x_1)+f(\vect x_2)
+\]
+等叠加规则。对 ReLU，用两个数字就能证明它不是线性的：
 \[
 \relu(1+(-2))=\relu(-1)=0,
 \]
@@ -50,6 +62,10 @@ $\relu(K\vect{x})$ 表示先乘 $K$，再逐个过滤输出分数；$\relu(K)\ve
 \[
 \relu(1)+\relu(-2)=1+0=1.
 \]
-两边不一样，所以 ReLU 是\textbf{非线性函数}。
+两边不同，所以 ReLU 是\textbf{非线性}。
 
-直觉上，ReLU 让输入数值跨过 $0$ 时切换到不同的计算方式（正数保留，负数清零）。两次矩阵乘法之间插入这样的开关，网络就能实现单次线性乘法做不到的某些映射。
+两次矩阵乘法之间插入这种函数，相当于让不同输入触发不同的激活模式。下一章会把它们组成一个真正的 MLP。
+
+\begin{conclusion}
+\textbf{矩阵层负责组合数字，激活函数负责逐个改变数字。}非线性让网络能够表达单个固定线性变换做不到的映射。
+\end{conclusion}
