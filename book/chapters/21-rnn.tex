@@ -1,83 +1,181 @@
-\section{句子有顺序，模型怎样记住前面？从 RNN 到长期依赖}
+\section{RNN 是什么？让网络一个词一个词地读}
 \label{intro:21-rnn}
 
-\subsection{为什么逐个词独立分类不够？}
+\begin{idea}[title={先用一句话定义 RNN}]
+\textbf{RNN（循环神经网络）是一种按顺序处理输入的网络：}
+读到一个新 Token，就把\textbf{当前信息}和\textbf{上一步留下的状态}
+一起送进\textbf{同一个更新函数}，算出新的状态；
+再把这个状态交给下一步。
 
-“我\textbf{不}喜欢这个结果”和“我喜欢这个结果”，相近的词可能因为一个否定词而表达不同态度。只看某个 Token 自己的向量，容易漏掉上下文。我们希望处理第 $t$ 个 Token 时，能看到前面已经读过的信息。
+你可以先把状态理解成\textbf{读到此刻为止的压缩笔记}。
+它不是把整句话原样存下来，也不是模型在每一步重新训练权重。
+\end{idea}
 
-\subsection{增加一个隐藏状态，沿时间传递}
+\subsection{先发现问题：单独看一个 Token，缺了什么？}
 
-RNN（Recurrent Neural Network，循环神经网络）的核心是一个\textbf{会重复使用的更新函数}：
+回到我们的教学用句子：
+\[
+\text{“春天”}\ \to\ \text{“花”}\ \to\ \text{“开了”}
+\]
+假设模型正在读第三个 Token“开了”，并尝试预测接下来是什么。
+如果只让一个 MLP 看到“开了”的 Embedding，
+它无法直接区分前文是“春天，花”还是完全不同的句子。
+
+我们真正想要的是：\textbf{读到第三个词时，已经保留一些前两个词的信息。}
+一种最直观的方案，就是让模型\textbf{依次阅读}，每次带着上一份笔记。
+
+\subsection{RNN 有什么？只有“新输入、旧状态、更新后状态”}
+
+先不要看字母，用三个动作来理解：
+\begin{enumerate}
+\item 读第一个 Token，把它的信息写入一份状态（笔记）。
+\item 读第二个 Token，参考第一步的状态，得到\textbf{更新后的}状态。
+\item 读第三个 Token，参考第二步的状态，再得到新的状态。
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,
+    w/.style={draw=linegray,fill=paper,rounded corners=2pt,
+      minimum width=31mm,minimum height=9mm,align=center,font=\small},
+    h/.style={draw=blue,fill=blueback,rounded corners=3pt,
+      minimum width=31mm,minimum height=13mm,align=center,font=\small}]
+\node[w] (x1) at (0,0) {第 1 词：春天};
+\node[w] (x2) at (4.1,0) {第 2 词：花};
+\node[w] (x3) at (8.2,0) {第 3 词：开了};
+\node[h] (h1) at (0,-1.9) {同一个函数\\[-1mm]得到状态 $h_1$};
+\node[h] (h2) at (4.1,-1.9) {同一个函数\\[-1mm]得到状态 $h_2$};
+\node[h] (h3) at (8.2,-1.9) {同一个函数\\[-1mm]得到状态 $h_3$};
+\foreach \x/\h in {x1/h1,x2/h2,x3/h3}
+  \draw[->,thick,blue] (\x)--(\h);
+\draw[->,thick,orange] (h1)--node[above,font=\scriptsize]{传递笔记}(h2);
+\draw[->,thick,orange] (h2)--node[above,font=\scriptsize]{传递笔记}(h3);
+\end{tikzpicture}
+\end{center}
+
+\textbf{图中三个蓝框不是三个独立训练的网络。}
+它们表示\textbf{同一个更新函数，在三个时间位置重复使用}。
+箭头表示：第二步必须先等第一步的状态算好。
+
+\subsection{把更新函数缩到只有一个数字，真正手算一次}
+
+为减少符号，假设每个 Token 已经通过 Embedding 等处理，
+这次只提取出\textbf{一个示例特征值}：
+\[
+\text{春天：}x_1=1,\qquad
+\text{花：}x_2=2,\qquad
+\text{开了：}x_3=0.
+\]
+$x_1,x_2,x_3$ 是人为指定的\textbf{输入特征}，
+不是前面词表里的 Token ID。
+
+只用一个数字记录状态。规定：
+\[
+\boxed{\text{新状态}=\text{本次输入}+0.5\times\text{旧状态}.}
+\]
+用 $h_t$ 表示读完第 $t$ 个位置后的状态，初始 $h_0=0$，
+这条规则就是 $h_t=x_t+0.5h_{t-1}$。
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{@{}p{19mm}p{20mm}p{26mm}X@{}}
+\toprule
+这次读什么 & 本次输入 & 之前的状态 & 更新后的状态\\
+\midrule
+春天 & $x_1=1$ & $h_0=0$ & $h_1=1+0.5\times0=\mathbf1$\\
+花 & $x_2=2$ & $h_1=1$ & $h_2=2+0.5\times1=\mathbf{2.5}$\\
+开了 & $x_3=0$ & $h_2=2.5$ & $h_3=0+0.5\times2.5=\mathbf{1.25}$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{关键观察：}第三个输入是 $0$，但第三步的状态仍是 $1.25$。
+这说明\textbf{前文的信息经过状态传到了后面}。
+如果调换前两个输入，变成 $(2,1,0)$，
+同样的规则得到 $h_1=2,\ h_2=2,\ h_3=1$。
+输入数字相同，只是\textbf{顺序改变}，最后的状态就不同。
+
+当然，单个数字的状态无法完整记住一句话。
+我们只是用最简单的运算让你看清\textbf{信息如何逐步传递}。
+
+\subsection{这和普通 MLP 最大的区别是什么？}
+
+普通的逐 Token MLP 可以对三个输入\textbf{分别计算}；
+它不会自动把第一个位置的计算结果送给第二个位置。
+RNN 额外增加了\textbf{从上一步状态到下一步状态}的通路。
+
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{@{}p{33mm}XX@{}}
+\toprule
+问题 & 单独处理每个 Token 的 MLP & RNN\\
+\midrule
+第 3 步能得到前文吗？ & 不能仅凭当前 Token 自动得到 & 可从 $h_2$ 传来的信息间接得到\\
+三个位置共享参数吗？ & 可以共享 & 同一个状态更新函数通常共享\\
+第 3 步要等第 2 步吗？ & 不必 & 要先得到 $h_2$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{最后才把它写成真实网络常见的公式}
+
+刚才只有一个数字。真实输入通常是向量，
+状态也可以是一列有许多数字的向量。
+我们约定：
+\begin{itemize}
+\item $\vect x_t$：第 $t$ 个 Token 的输入特征列向量，长度为 $d_x$；
+\item $\vect h_{t-1}$：读完前一个 Token 的状态，长度为 $d_h$；
+\item $\vect h_t$：读完当前 Token 的新状态，仍为 $d_h$ 维；
+\item $W_x$ 和 $W_h$：分别处理当前输入与旧状态的\textbf{可学习矩阵}；
+$\vect b$ 是可学习偏置。
+\end{itemize}
+$d_x$ 表示输入特征数量，$d_h$ 表示状态特征数量。
+典型的简单 RNN 更新式是：
 \begin{equation}
 \boxed{\vect h_t=\tanh(W_x\vect x_t+W_h\vect h_{t-1}+\vect b).}
 \label{eq:rnn-hidden}
 \end{equation}
-其中：
-\begin{enumerate}
-\item $\vect x_t$：当前位置 $t$ 的输入向量；
-\item $\vect h_{t-1}$：前一个位置留下的隐藏状态；
-\item $\vect h_t$：融合了当前信息与过去信息的新状态；
-\item $W_x,W_h,\vect b$：\textbf{所有时间步共同使用}的一组可训练参数。
-\end{enumerate}
-输出可写成 $\vect y_t=W_y\vect h_t+\vect c$，按任务需要再接 Softmax 等函数。
+$\tanh$ 是\textbf{逐元素非线性函数}，
+它把每个输入值映射到 $-1$ 与 $1$ 之间。
+这里相当于\textbf{先组合本次输入和旧状态，再经过非线性函数}；
+它不改变“沿时间传递状态”的核心直觉。
 
-\begin{center}
-\begin{tikzpicture}[>=Latex,node distance=14mm and 12mm,
- every node/.style={font=\small},
- n/.style={draw=linegray,rounded corners=3pt,fill=paper,minimum width=22mm,minimum height=11mm,align=center}]
-\node[n] (h1) {$\vect h_1$};
-\node[n,right=of h1] (h2) {$\vect h_2$};
-\node[n,right=of h2] (h3) {$\vect h_3$};
-\node[below=9mm of h1] (x1) {$\vect x_1$};
-\node[below=9mm of h2] (x2) {$\vect x_2$};
-\node[below=9mm of h3] (x3) {$\vect x_3$};
-\draw[->,thick,blue] (x1)--(h1);
-\draw[->,thick,blue] (x2)--(h2);
-\draw[->,thick,blue] (x3)--(h3);
-\draw[->,thick,orange] (h1)--(h2);
-\draw[->,thick,orange] (h2)--(h3);
-\node[above=8mm of h1] (y1) {$\vect y_1$};
-\node[above=8mm of h2] (y2) {$\vect y_2$};
-\node[above=8mm of h3] (y3) {$\vect y_3$};
-\draw[->,teal] (h1)--(y1);
-\draw[->,teal] (h2)--(y2);
-\draw[->,teal] (h3)--(y3);
-\end{tikzpicture}
-\end{center}
-
-\subsection{把所有矩阵先缩成一个数，亲手算三步}
-
-为了看清信息如何传递，先暂时省略 $\tanh$，并令
+矩阵尺寸也能检查：
 \[
-h_t=x_t+0.5h_{t-1},\qquad h_0=0.
+\underbrace{W_x}_{d_h\times d_x}
+\underbrace{\vect x_t}_{d_x\times1}
++
+\underbrace{W_h}_{d_h\times d_h}
+\underbrace{\vect h_{t-1}}_{d_h\times1}
++\underbrace{\vect b}_{d_h\times1}
+\quad\longrightarrow\quad
+\underbrace{\vect h_t}_{d_h\times1}.
 \]
-如果 $x_1=2,x_2=0,x_3=1$：
-\begin{align*}
-h_1&=2+0.5\times0=2,\\
-h_2&=0+0.5\times2=1,\\
-h_3&=1+0.5\times1=1.5.
-\end{align*}
-第三个位置的状态 $1.5$，不仅包含当前输入的 $1$，还包含第一步留下来的影响 $0.5$。
+如果使用状态预测下一个 Token，
+还可以把 $\vect h_t$ 送进\textbf{输出层}得到候选分数。
+因此\textbf{状态不是模型最终输出的文字}，而是计算过程中使用的表示。
 
-这既是 RNN 的优势，也是它的局限：如果连续乘很多次 $0.5$，很久以前的信息影响就会变成 $0.5^n$，越来越小。
+\subsection{RNN 的限制，正好引出下一个问题}
 
-\subsection{为什么长句子可能让 RNN 为难？}
-
-传统 RNN 面临两个典型挑战：
-\begin{enumerate}
-\item \textbf{长距离依赖：}多步递推使早期信息的影响和梯度可能衰减，也可能因为某些参数而放大；并非所有 RNN 必然遗忘。
-\item \textbf{顺序依赖：}计算 $\vect h_t$ 必须先拿到 $\vect h_{t-1}$，所以沿时间步无法像一次大矩阵乘法那样完全并行。
-\end{enumerate}
-LSTM、GRU 使用门控机制改善信息保留，但它们仍以时间递推为核心。
-
-\subsection{一个自然产生的问题}
-
-如果每个 Token 都能\textbf{直接查询整段文本}的相关位置，而不必等信息从第一个位置逐步传到最后，能否更容易建模远距离关系？这正是 Attention 在序列建模中令人感兴趣的原因。
+上面的规则里，第一步的影响在第三步前就经过多次 $0.5$ 缩小。
+如果相隔很多个位置，早期信息可能衰减。
+真实 RNN 的问题不只这一种：
+长期依赖的训练还可能出现梯度消失或爆炸；
+沿时间的状态更新也有\textbf{必须依次计算}的依赖。
+LSTM 和 GRU 可以改善一部分信息保留问题，
+但仍然使用递推机制。
 
 \begin{warningbox}
-自注意力允许训练时对各 Token 的 Q/K/V 等计算做高度并行，但也会产生随序列长度增长的注意力矩阵和计算成本。它不是“长序列一定没有困难”的万能解法。
+RNN 不等于“记忆能力很差的网络”。它是一类\textbf{依次更新状态}的结构，
+不同门控设计的能力不同。上面乘 $0.5$ 的线性例子只是演示，
+不能用来断定真实 RNN 总会按 $0.5^n$ 遗忘。
 \end{warningbox}
 
 \begin{conclusion}
-RNN 用\textbf{共享权重 + 递推隐藏状态}处理可变长序列。理解了它为什么需要顺序、为什么长期信息可能衰减，就能理解直接访问上下文的 Attention 为什么重要。
+\textbf{RNN = 当前输入 + 上一步状态 $\to$ 同一个更新函数 $\to$ 下一步状态。}
+它解决“词与词如何沿顺序传递信息”，但每次必须经过中间状态。
+
+如果当前词想直接查看很早以前的某个词，
+\textbf{能不能绕过中间的一长串状态，直接读取那个位置？}
+这就是下一章 Attention 要解决的问题。
 \end{conclusion}
