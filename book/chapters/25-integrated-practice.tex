@@ -1,0 +1,54 @@
+\section{综合练习：从一个数字到完整神经网络}
+
+下面的练习按计算顺序排列。先独立算一遍；如果卡住，找到最早不懂的运算，不必硬记后面的公式。
+
+\subsection{先做这些题}
+
+\begin{enumerate}[label=\textbf{练习 \arabic*.},leftmargin=2.8em]
+\item 直线模型 $\widehat y=wx+b$，取 $w=2,b=1$。当 $x=-1,0,2$ 时，预测分别是多少？
+\item 对两个样本 $(1,1)$ 与 $(2,2)$，设 $\widehat y=wx$、$w=0.5$。求均方误差。
+\item 给定 $L(w)=\tfrac52(w-1)^2$、$w=0$、学习率 $\eta=0.1$。求导数与更新后的 $w$。
+\item 前向计算 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。若 $x=2,y=5,w_1=1,w_2=2$，求 $h,\widehat y,L$ 以及 $\partial L/\partial w_2$。
+\item 训练误差几乎为零，但验证误差持续变大，说明可能出现什么？至少说出两个改善办法。
+\item $4\times4$ 图片上使用 $2\times2$ 卷积核，stride 为 1、padding 为 0，输出图像宽高是多少？如果卷积核只有一个输入通道和一个输出通道，权重有几个？
+\item 小词表只有四个 Token，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
+\item 递推模型 $h_t=x_t+\frac12h_{t-1}$，初始 $h_0=0$，输入为 $(2,0,1)$。计算 $h_1,h_2,h_3$。
+\item Attention 中 $Q:3\times4$、$K:5\times4$、$V:5\times6$。写出 $QK^\top$、Softmax 权重及最终输出的形状。
+\item 一个头输出 $3\times2$ 的矩阵，两个头按特征列拼接后是什么尺寸？若要投影回 4 维，需要什么尺寸的 $W_O$？
+\item 若某 Token 的真实下一词概率为 $0.25$，交叉熵单位置损失 $-\log p$ 约为多少？
+\item 给模型加一个私有知识库后，是否能保证它永远不会生成错误事实？解释检索与生成分别可能出什么问题。
+\end{enumerate}
+
+\subsection{答案与检验}
+
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
+\begin{enumerate}[leftmargin=2.5em,itemsep=5pt]
+\item $(-1,1,5)$。
+\item 预测为 $(0.5,1)$，误差为 $(-0.5,-1)$，故 $\mathrm{MSE}=(0.25+1)/2=0.625$。
+\item $\mathrm dL/\mathrm dw=5(w-1)=-5$；更新为 $w'=0-0.1(-5)=0.5$。
+\item $h=2$，$\widehat y=4$，$L=0.5$；$\partial L/\partial w_2=(\widehat y-y)h=(-1)\times2=-2$。
+\item 可能过拟合；可考虑更多合适数据、数据增强、L2 惩罚、Dropout、提前停止等，需用独立验证数据评估。
+\item 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。
+\item $E:4\times3$；每个 Token 嵌入为 3 维。
+\item $h_1=2$，$h_2=1$，$h_3=1.5$。
+\item $QK^\top:3\times5$；权重仍为 $3\times5$；最终输出 $3\times6$。
+\item 拼接后 $3\times4$；若按行向量约定，$W_O:4\times4$。
+\item $-\log(0.25)=\log4\approx1.386$。
+\item 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。
+\end{enumerate}
+\end{tcolorbox}
+
+\subsection*{给自己画一条完整的路线}
+如果你能自己解释下列链条，就掌握了贯穿全书的核心：
+\[
+\boxed{\text{数据}\to\text{向量}\to\text{函数}\to\text{预测}\to
+\text{损失}\to\text{梯度}\to\text{训练}}
+\]
+\[
+\boxed{\text{Token}\to\text{Embedding}\to
+\text{Attention/MLP}\to\text{Softmax}\to\text{下一个 Token}}
+\]
+
+\begin{conclusion}
+\textbf{先解释问题，再手算一遍，最后用矩阵写短。}复杂网络并不是一套全新的算术规则，而是把简单的函数、矩阵乘法、概率和优化方法按任务组合起来。
+\end{conclusion}
