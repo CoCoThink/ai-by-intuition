@@ -1,59 +1,62 @@
 # 全书目录 · AI by Intuition
 
-**唯一编译入口：** [main.tex](main.tex)。LaTeX 的 `\input` 顺序决定读者看到的章节顺序；文件名中的数字只是源码标识。
+**唯一入口：** [`main.tex`](main.tex)；按知识依赖而非视频分集顺序排列。读者使用一本完整 PDF，作者按独立 `.tex` 源文件维护各主题。
 
-**交付格式：** 一本连续页码、带目录的中文 PDF。教材包含六部分、可手算的矩阵和训练例子、图示、100 个术语与两组练习。
+## Ⅰ · 把问题变成数字
 
-## I. 从函数到矩阵
+1. [阅读指南](chapters/00-guide.tex)：一本书回答哪五个问题？
+2. [从函数认识模型](chapters/00-functions.tex)：参数是什么、怎样拟合数据？
+3. [向量](chapters/01-vectors.tex)：一串数字能表示什么？
+4. [点积与几何意义](chapters/02-dot-product.tex)：余弦定理为什么出现在向量里？
+5. [矩阵乘法](chapters/03-matrix-multiplication.tex)：行乘列与列加权为什么是同一回事？
+6. [Embedding](chapters/20-embeddings.tex)：Token ID 如何变成向量？
 
-- [函数与模型](chapters/00-functions.tex)：选择函数、猜测参数与拟合数据
-- [向量](chapters/01-vectors.tex)：一列数字意味着什么
-- [点积](chapters/02-dot-product.tex)：投影、余弦定理和方向相似度
-- [矩阵乘法](chapters/03-matrix-multiplication.tex)：逐行点积、按列加权和与维度检查
+## Ⅱ · 神经网络怎样学会预测
 
-## II. 从联想记忆到 MLP
+7. [激活函数与 ReLU](chapters/07-functions-relu.tex)：为什么矩阵之间还要放函数？
+8. [MLP](chapters/10-mlp.tex)：两个矩阵和激活函数组成什么计算？
+9. [损失与梯度下降](chapters/16-loss-gradient.tex)：模型怎么知道参数朝哪里改？
+10. [反向传播](chapters/17-backpropagation.tex)：链式法则怎样传递梯度？
+11. [一次完整的学习过程](chapters/18b-end-to-end-learning.tex)：一个网络从预测到更新的手算。
+12. [泛化与训练技巧](chapters/18-generalization.tex)：为什么训练题做对了不代表新题会做？
 
-- [外积与关联记忆](chapters/04-key-value-outer-product.tex)：如何写入一条 Key--Value
-- [记忆干扰](chapters/05-memory-interference.tex)：其他 Key 如何影响召回
-- [更好的线性记忆](chapters/06-better-linear-memory.tex)：为什么可以优化权重
-- [函数与 ReLU](chapters/07-functions-relu.tex)：逐元素操作与非线性
-- [堆叠 K/V](chapters/08-stacking-key-value.tex)：**M、dk、dv、转置与完整数字例子**
-- [非线性与记忆](chapters/09-nonlinearity-and-memory.tex)：激活函数怎样改变干扰
-- [MLP](chapters/10-mlp.tex)：隐藏层、偏置与参数
+## Ⅲ · 不同数据为什么需要不同结构
 
-## III. 神经网络如何学习
+13. [CNN](chapters/19-cnn.tex)：局部卷积与权重共享如何利用图像的空间结构？
+14. [RNN](chapters/21-rnn.tex)：隐藏状态如何在序列中传递？
+15. [Attention 的问题来源](chapters/21b-why-attention.tex)：如果要直接读取上下文中的信息？
 
-- [损失与梯度下降](chapters/16-loss-gradient.tex)：MSE、导数、梯度与学习率
-- [反向传播](chapters/17-backpropagation.tex)：通过链式法则亲手算梯度
-- [泛化与训练技巧](chapters/18-generalization.tex)：过拟合、数据增强、正则化和 Dropout
+## Ⅳ · 从 Key-Value 到完整 Transformer
 
-## IV. 图片与序列
+16. [一条关联怎样写入矩阵](chapters/04-key-value-outer-product.tex)
+17. [为什么记忆会相互干扰](chapters/05-memory-interference.tex)
+18. [线性记忆怎样改善](chapters/06-better-linear-memory.tex)
+19. [Key/Value 怎样堆成矩阵](chapters/08-stacking-key-value.tex)
+20. [从 MLP 视角看记忆检索](chapters/09-nonlinearity-and-memory.tex)
+21. [Softmax 与 Attention](chapters/11-softmax-memory.tex)：从单个列 Query 到批量行 Query
+22. [Self-Attention 的矩阵](chapters/12-self-attention-matrices.tex)：Q、K、V 的来源与形状
+23. [线性记忆、MLP 与 Attention 对照](chapters/14-summary.tex)
+24. [Key-Value 基础练习](chapters/15-practice.tex)
+25. [Transformer 架构](chapters/22-transformer-architecture.tex)：多头、残差、位置与 Mask
+26. [两个 Token 的贯通计算](chapters/22b-token-to-output.tex)：从矩阵到注意力和下一词
 
-- [CNN](chapters/19-cnn.tex)：局部卷积、共享权重和池化
-- [Embedding](chapters/20-embeddings.tex)：One-hot、嵌入矩阵与 Token
-- [RNN](chapters/21-rnn.tex)：隐藏状态、时间步与长期依赖
+## Ⅴ · 模型生成与现实应用
 
-## V. Attention 与 Transformer
+27. [LLM 如何训练和生成](chapters/23-llm-systems.tex)：Loss、采样、RAG、Agent
+28. [部署和多模态](chapters/23b-deployment-and-ecosystem.tex)：量化、硬件、推理引擎
 
-- [Softmax Attention](chapters/11-softmax-memory.tex)：单列 Query 到多行 Query 的推导
-- [Self-Attention](chapters/12-self-attention-matrices.tex)：QKV 投影、矩阵形状与输出
-- [记忆容量](chapters/13-capacity.tex)：高维统计规律与限制
-- [记忆方法总结](chapters/14-summary.tex) 和 [基础练习](chapters/15-practice.tex)
-- [完整 Transformer](chapters/22-transformer-architecture.tex)：多头、位置编码、残差、FFN、Mask 和生成
+## Ⅵ · 选读、索引与综合练习
 
-## VI. 大模型与应用
+29. [高维记忆容量（选读）](chapters/13-capacity.tex)：随机性和容量结论需要什么假设？
+30. [100 个 AI 术语](chapters/24-lexicon.tex)
+31. [综合练习及答案](chapters/25-integrated-practice.tex)
+32. [参考与延伸阅读](chapters/26-sources.tex)：[原始视频](https://www.bilibili.com/video/BV1NCgVzoEG9/)与研究资料
 
-- [模型训练、解码与工具](chapters/23-llm-systems.tex)：交叉熵、温度、Top-k/Top-p、RAG 与 Agent
-- [模型部署与效率](chapters/23b-deployment-and-ecosystem.tex)：量化、蒸馏、剪枝、LoRA、GPU/TPU/NPU 与多模态
-- [AI 的 100 个基础术语](chapters/24-lexicon.tex)：十类按知识依赖组织的术语
-- [综合练习与答案](chapters/25-integrated-practice.tex)
-- [参考与阅读说明](chapters/26-sources.tex)
-
-## 如何编译
+## 单个 PDF 的构建方式
 
 ```bash
 cd book
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ```
 
-GitHub Actions 也自动编译全部章节，只上传一个 PDF 文件。若只需要阅读，请下载 [构建结果](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)。
+也可直接在 [Actions 构建记录](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载完整 PDF。源码文件名沿用稳定的主题标识；最终章节顺序以 `main.tex` 中的 `\input` 为准。
