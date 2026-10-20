@@ -157,6 +157,23 @@ def validate_source() -> None:
     for document in (guide, task, training):
         if "(1,3,4,2)" not in document and "[1,3,4,2]" not in document:
             fail("Running Token ID example is inconsistent across teaching stages")
+    # Pedagogical framing: the book must explain why we train the model,
+    # before treating next-token prediction as a concrete exercise.
+    if not (guide.find("为什么 AI 能接住我们说的话") >= 0 and
+            guide.find("为什么 AI 能接住我们说的话") < guide.find("为什么偏偏练习") and
+            "这是一种可训练的设计选择，而不是 AI 的终极目标" in guide and
+            "原始文字充当自己的练习题和答案" in guide):
+        fail("Book opening must motivate the language-learning task before next-token exercises")
+    cover = (ROOT / "book/main.tex").read_text(encoding="utf-8")
+    if "下一 Token 预测" not in cover or "训练一类语言模型" not in cover:
+        fail("Cover no longer distinguishes user motivation from the training objective")
+    matrix = (ROOT / "book/chapters/01-vectors.tex").read_text(encoding="utf-8")
+    if "x=2.6cm,y=2.6cm" not in matrix or "(0,0)--(1,0)" not in matrix:
+        fail("Vector diagram arrow coordinates do not match its stated unit vectors")
+    if "图解：同一批向量" not in (ROOT / "book/figures/row-column-intuition.tex").read_text(encoding="utf-8"):
+        fail("Original row/column intuition graphic is missing")
+    print("Pedagogy QA passed: reader motivation, next-token rationale and correct vector illustration")
+
     print("Learning-path QA passed: five linear learning parts, optional extensions last")
 
     # The two crucial first-time lessons must begin with an intuitive example.
@@ -245,7 +262,7 @@ def validate_pdf(pdf_path: Path) -> None:
             fail(f"Matrix figure was split across pages: {title}")
     print("Matrix layout pagination QA passed: both complete cards stay on a page")
 
-    for topic in ("把问题固定下来", "前馈网络与输出头", "现代Transformer",
+    for topic in ("把语言练习变成一道可计算的预测题", "前馈网络与输出头", "现代Transformer",
                   "RLVR", "MoE", "Agent", "标签"):
         if re.sub(r"\s+", "", topic) not in book_text:
             fail("Rendered PDF does not include advanced curriculum topic: " + topic)
