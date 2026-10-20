@@ -68,6 +68,12 @@
 \newcommand{\eyebrow}[1]{{\sffamily\bfseries\footnotesize\color{blue}#1}}
 \newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{见第\ref*{#1}章}}}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
+\newcommand{\learningbridge}[2]{%
+\par\noindent\begin{tcolorbox}[colback=paper,colframe=linegray,
+boxrule=.5pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2mm,bottom=2mm,
+before skip=3mm,after skip=4mm]
+{\small\textbf{承接：}#1\par\textbf{这一部分要解决：}#2}
+\end{tcolorbox}}
 
 \begin{document}
 \thispagestyle{empty}
@@ -111,6 +117,7 @@
 
 
 \part{把文字变成可计算的数字}
+\learningbridge{人类想要机器回应文字，但我们还不知道怎样把这种能力变成计算。}{先用函数理解“可调规则”，再将一段文字表示为数字，并确定可训练的任务。}
 \input{chapters/00-guide}
 \input{chapters/00-functions}
 \input{chapters/01-vectors}
@@ -121,6 +128,7 @@
 
 \clearpage
 \part{让神经网络学会预测}
+\learningbridge{我们有了输入向量和可核对的目标，却还没有能根据错误调整自己的计算函数。}{先搭起小网络，再用损失、梯度和反向传播真正修改一次参数。}
 \input{chapters/07-functions-relu}
 \input{chapters/10-mlp}
 \input{chapters/16-loss-gradient}
@@ -130,6 +138,7 @@
 
 \clearpage
 \part{让词与词交换信息}
+\learningbridge{网络已经能够学习，但一个位置若只看自己的向量，仍无法充分利用前文。}{先理解 RNN 如何传递状态，再寻找让当前位置直接读取上下文的 Attention。}
 \input{chapters/21-rnn}
 \input{chapters/21b-why-attention}
 \input{chapters/11-softmax-memory}
@@ -137,6 +146,7 @@
 
 \clearpage
 \part{组装、训练并使用 Transformer}
+\learningbridge{现在知道单个位置怎样读取上下文，也会把多个 Query 放进矩阵。}{加上位置、FFN、残差和输出头；接通整段训练与逐词生成，完成闭环。}
 \input{chapters/22-transformer-architecture}
 \input{chapters/10b-ffn-output-head}
 \input{chapters/22b-token-to-output}
@@ -145,6 +155,7 @@
 
 \clearpage
 \part{改进模型并构建可靠应用}
+\learningbridge{Transformer 能生成文本，却仍受缓存成本、回答行为与外部信息限制。}{逐一分析现代架构、后训练、检索、工具和部署解决了什么，又不能解决什么。}
 \input{chapters/22d-modern-transformers}
 \input{chapters/23c-post-training}
 \input{chapters/23d-agent-systems}
@@ -152,6 +163,7 @@
 
 \clearpage
 \part{选读专题与知识回溯}
+\learningbridge{前五部分已完成从语言问题到模型生成和应用的主线。}{按兴趣深入 CNN 与联想记忆，再通过术语索引和练习查缺补漏。}
 \input{chapters/19-cnn}
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
