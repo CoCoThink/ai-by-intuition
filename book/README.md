@@ -44,6 +44,7 @@
 ## VI. 大模型与应用
 
 - [模型训练、解码与工具](chapters/23-llm-systems.tex)：交叉熵、温度、Top-k/Top-p、RAG 与 Agent
+- [模型部署与效率](chapters/23b-deployment-and-ecosystem.tex)：量化、蒸馏、剪枝、LoRA、GPU/TPU/NPU 与多模态
 - [AI 的 100 个基础术语](chapters/24-lexicon.tex)：十类按知识依赖组织的术语
 - [综合练习与答案](chapters/25-integrated-practice.tex)
 - [参考与阅读说明](chapters/26-sources.tex)
