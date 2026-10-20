@@ -1,6 +1,6 @@
 % !TeX program = xelatex
 % Associative memory: a math-intuition-first Chinese tutorial.
-% Compile: xelatex -interaction=nonstopmode -halt-on-error -output-directory=/mnt/data/_latex_work associative_memory_math_intuition.tex
+% Compile: latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex
 \documentclass[11pt,a4paper,UTF8]{ctexart}
 \usepackage[a4paper,top=22mm,bottom=23mm,left=23mm,right=23mm,headheight=22pt]{geometry}
 \usepackage{fontspec}
@@ -70,9 +70,9 @@
 \begin{document}
 \thispagestyle{empty}
 \vspace*{19mm}
-\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries 从零开始 · 数学讲义}}\par
+\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · 01}}\par
 \vspace{11mm}
-{\sffamily\bfseries\fontsize{26}{34}\selectfont 从数学直觉理解\\[4mm]联想记忆、MLP 与 Attention}\par
+{\sffamily\bfseries\fontsize{26}{34}\selectfont 为什么矩阵乘法\\[4mm]可以检索记忆？}\par
 \vspace{7mm}
 {\sffamily\fontsize{14}{21}\selectfont 从二维点积、Key--Value 堆叠出发，一步步“重新发明” Transformer}\par
 \vspace{5mm}
@@ -80,7 +80,7 @@
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
 \textbf{只需要这些预备知识：}加减乘除、平方与平方根、基本的勾股定理。\par
-\textbf{学习路线：} 向量 $\rightarrow$ 点积 $\rightarrow$ 外积与矩阵 $\rightarrow$ 记忆干扰 $\rightarrow$ 非线性与 MLP $\rightarrow$ Softmax Attention $\rightarrow$ 记忆容量。\par
+\textbf{学习路线：} 向量 $\rightarrow$ 点积 $\rightarrow$ 外积 $\rightarrow$ Key/Value 堆叠 $\rightarrow$ ReLU 与 MLP $\rightarrow$ Attention $\rightarrow$ 记忆容量。\par
 \textbf{目标：} 看懂公式并知道\emph{为什么需要它}，而不是背诵符号。
 \end{tcolorbox}
 \vspace{9mm}
@@ -98,7 +98,7 @@
 \noindent\textbf{参考文章}\quad \textit{You could have invented transformers from memory}\par
 \noindent\href{https://alexwang.ai/posts/associative-memory}{https://alexwang.ai/posts/associative-memory}\par
 \vspace{3mm}
-\noindent {\color{muted}\small 本讲义为 AI by Intuition 系列第 01 篇；从能手算的矩阵例子逐步推导。}\par
+\noindent {\color{muted}\small AI by Intuition 第 01 篇 · 先有问题，再有直觉，然后才有公式。}\par
 \clearpage
 \tableofcontents
 \clearpage
