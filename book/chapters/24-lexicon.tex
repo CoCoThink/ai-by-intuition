@@ -124,9 +124,9 @@
 \item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{intro:22-transformer-architecture}
 \item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{intro:22-transformer-architecture}
 \item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{intro:23-llm-systems}
-\item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:23-llm-systems}
-\item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{intro:23-llm-systems}
-\item \textbf{RLHF}：用人类反馈相关的偏好信号辅助模型行为优化。 \termref{intro:23-llm-systems}
+\item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:23c-post-training}
+\item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{intro:23c-post-training}
+\item \textbf{RLHF}：用人类反馈相关的偏好信号辅助模型行为优化。 \termref{intro:23c-post-training}
 \item \textbf{LoRA}：冻结多数基础权重并训练低秩参数的微调方法。 \termref{intro:23b-deployment-and-ecosystem}
 \item \textbf{Logits}：进入 Softmax 前、还没归一化的分数。 \termref{intro:22-transformer-architecture}
 \item \textbf{温度}：通过缩放 logits 控制输出分布尖锐程度的参数。 \termref{intro:23-llm-systems}
@@ -140,9 +140,9 @@
 \item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23-llm-systems}
 \item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{intro:23-llm-systems}
 \item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{intro:23-llm-systems}
-\item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{intro:23-llm-systems}
-\item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{intro:23-llm-systems}
-\item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{intro:23-llm-systems}
+\item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{intro:23d-agent-systems}
+\item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{intro:23d-agent-systems}
+\item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{intro:23d-agent-systems}
 \item \textbf{量化}：用更低数值精度保存或计算部分权重与激活。 \termref{intro:23b-deployment-and-ecosystem}
 \item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:23-llm-systems}
 \end{enumerate}
