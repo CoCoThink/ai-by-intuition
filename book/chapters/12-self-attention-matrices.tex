@@ -12,7 +12,7 @@
 在最简单的教学模型里可以直接令 $\vect q=\vect x$，
 真实 Transformer 则通常会先做可学习的投影。
 
-\textbf{真实 Transformer 中，Query 通常由当前输入表示经过一个可学习的线性变换得到，不必与原来的 $x$ 数值相同。}
+\textbf{真实 Transformer 中，\conceptlink{qkv}{Query} 通常由当前输入表示经过一个可学习的线性变换得到，不必与原来的 $x$ 数值相同。}
 
 先沿用列向量记法，给单个 Token 一个隐藏表示：
 \[
@@ -60,7 +60,7 @@ $\vect q^\top K^\top$，得到的是同一组匹配分数的列/行表示。
 =\underbrace{S}_{N\times M}.
 \]
 此时第 $i$ 行对应第 $i$ 个 Query，对 $M$ 个 Key 的分数。
-在每一行上做 Softmax，再乘按行排列的 Value 矩阵 $V$，便得到
+在每一行上做 \conceptlink{softmax}{Softmax}，再乘按行排列的 Value 矩阵 $V$，便得到
 $N$ 个 Query 对应的输出。
 
 \subsection{给一句话里的每个 Token 一组 Q、K、V}
