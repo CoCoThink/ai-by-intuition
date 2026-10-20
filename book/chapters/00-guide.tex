@@ -1,0 +1,35 @@
+\section*{如何阅读这本书}
+\addcontentsline{toc}{section}{如何阅读这本书}
+
+\begin{idea}[title={我们真正想弄懂的五个问题}]
+你不必先知道什么是 Transformer。本卷从以下困惑出发：
+\begin{enumerate}
+\item Key、Value 是两组数字，为什么可以排成矩阵？
+\item 为什么一个矩阵乘法能同时算出多个 Key 的相似度？
+\item 矩阵乘完为什么可以套 ReLU，再乘一次矩阵？
+\item MLP 究竟是什么意思？网络为什么需要非线性？
+\item Attention 为什么和这些记忆运算长得如此相似？
+\end{enumerate}
+\end{idea}
+
+\subsection*{先读什么，后读什么？}
+顺序是\textbf{向量 $\to$ 点积 $\to$ 行列与矩阵乘法 $\to$ Key--Value $\to$ 记忆干扰 $\to$ ReLU $\to$ MLP $\to$ Softmax Attention}。每个概念会先用一组手算数字出现，再用字母表示一般情形。
+
+\subsection*{每次见到公式，都问自己三个问题}
+\begin{enumerate}
+\item \textbf{输入是什么？} 一个数、一列数、还是一张表？
+\item \textbf{为什么算得起来？} 乘法两边的尺寸对得上吗？
+\item \textbf{输出是什么？} 匹配分数、过滤后的权重，还是 Value 的组合？
+\end{enumerate}
+
+\begin{warningbox}
+\textbf{重要约定：}本卷先使用列向量作为 Query，Key 按行存进 $K$，Value 按行存进 $V$，因此单个查询的公式写作 $V^\top\sigma(K\vect{x})$。标准 Transformer 常把多个 Token 的向量按行排列，公式中转置的位置会变化。不要只背转置符号；始终检查维度。
+\end{warningbox}
+
+\subsection*{学完后你应该会的计算}
+\[
+\vect{x}\ \xrightarrow{\ K\ }\ K\vect{x}\
+\xrightarrow{\ \relu\ }\ \relu(K\vect{x})\
+\xrightarrow{\ V^\top\ }\ \vect{y}.
+\]
+\textbf{这里是三步操作，不是一个必须死记的巨大公式。}
