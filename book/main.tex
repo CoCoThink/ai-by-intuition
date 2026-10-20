@@ -76,14 +76,14 @@
 \vspace{11mm}
 {\sffamily\bfseries\fontsize{26}{34}\selectfont 从函数到 Transformer\\[4mm]的直觉之旅}\par
 \vspace{7mm}
-{\sffamily\fontsize{14}{21}\selectfont 先理解问题，再计算例子，最后自然推导出神经网络与 Attention}\par
+{\sffamily\fontsize{14}{21}\selectfont 从一个问题出发：计算机怎样学会理解并生成有用的文字？}\par
 \vspace{5mm}
 \noindent{\color{muted}\rule{\linewidth}{0.7pt}}\par
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
 \textbf{只需要这些预备知识：}加减乘除、平方与平方根；导数、矩阵乘法将从直觉讲起。\par
 \textbf{学习路线：} 函数与向量 $\rightarrow$ MLP 与训练 $\rightarrow$ 上下文与 Attention $\rightarrow$ Transformer $\rightarrow$ 生成与应用。\par
-\textbf{目标：} 以\emph{预测下一个 Token} 为主线理解表示、学习、上下文、生成与应用；其他视角作为选读。
+\textbf{学习任务：} 从回答问题出发，理解为何用\emph{下一 Token 预测}训练一类语言模型，再学它怎样生成、改进与使用工具。
 \end{tcolorbox}
 \vspace{9mm}
 \begin{center}
@@ -91,9 +91,9 @@
     n/.style={draw=linegray,fill=white,rounded corners=4pt,minimum width=35mm,minimum height=13mm,align=center,font=\sffamily\bfseries}]
 \node[n] (lin) {函数\\[-1mm] $\widehat y=wx+b$};
 \node[n,right=of lin] (mlp) {神经网络\\[-1mm] $W_2\sigma(W_1x)$};
-\node[n,right=of mlp] (att) {语言模型\\[-1mm] 下一 Token 预测};
+\node[n,right=of mlp] (att) {语言模型\\[-1mm] 学习语言与生成};
 \draw[->,thick,blue] (lin)--(mlp) node[midway,above,font=\footnotesize,align=center]{训练参数};
-\draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{理解上下文};
+\draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{利用上下文};
 \end{tikzpicture}
 \end{center}
 \vfill
