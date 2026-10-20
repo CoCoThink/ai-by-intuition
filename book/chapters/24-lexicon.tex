@@ -40,7 +40,7 @@
 \item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:16-loss-gradient}
 \item \textbf{损失函数}：用数字评估预测与目标之间的差距。 \termref{intro:16-loss-gradient}
 \item \textbf{均方误差}：误差平方再取平均，常用于回归。 \termref{intro:16-loss-gradient}
-\item \textbf{交叉熵}：衡量预测概率分布与目标之间差距的常用损失。 \termref{intro:23-llm-systems}
+\item \textbf{交叉熵}：衡量预测概率分布与目标之间差距的常用损失。 \termref{intro:22c-language-training}
 \item \textbf{导数}：衡量函数在某一点的局部变化率。 \termref{intro:16-loss-gradient}
 \item \textbf{偏导数}：多变量函数对某个变量求变化率，其他变量暂时固定。 \termref{intro:16-loss-gradient}
 \item \textbf{梯度}：将各个参数方向的偏导数组合起来。 \termref{intro:16-loss-gradient}
@@ -123,7 +123,7 @@
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=81]
 \item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{intro:22-transformer-architecture}
 \item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{intro:22-transformer-architecture}
-\item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{intro:23-llm-systems}
+\item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{intro:23c-post-training}
 \item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:23c-post-training}
 \item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{intro:23c-post-training}
 \item \textbf{RLHF}：用人类反馈相关的偏好信号辅助模型行为优化。 \termref{intro:23c-post-training}
@@ -137,14 +137,14 @@
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=91]
 \item \textbf{Top-p}：保留累积概率达到阈值的一组高概率候选。 \termref{intro:23-llm-systems}
 \item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
-\item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23-llm-systems}
-\item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{intro:23-llm-systems}
-\item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{intro:23-llm-systems}
+\item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23d-agent-systems}
+\item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{intro:23d-agent-systems}
+\item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{intro:23d-agent-systems}
 \item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{intro:23d-agent-systems}
 \item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{intro:23d-agent-systems}
 \item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{intro:23d-agent-systems}
 \item \textbf{量化}：用更低数值精度保存或计算部分权重与激活。 \termref{intro:23b-deployment-and-ecosystem}
-\item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:23-llm-systems}
+\item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:23b-deployment-and-ecosystem}
 \end{enumerate}
 
 \subsection*{不要混淆的五对概念}
