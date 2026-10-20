@@ -209,6 +209,18 @@ def validate_pdf(pdf_path: Path) -> None:
                   "RLVR", "MoE", "Agent", "标签"):
         if re.sub(r"\s+", "", topic) not in book_text:
             fail("Rendered PDF does not include advanced curriculum topic: " + topic)
+    # Page-break regression: a trailing sentence must not occupy its own page.
+    for page_no, page in enumerate(pages_text, start=1):
+        if page_no <= 3 or not page.strip():
+            continue
+        body = re.sub(r"AI\s+by\s+Intuition\s*[·・]\s*完整教材", "", page)
+        body = re.sub(r"从函数到\s*Transformer", "", body)
+        body = re.sub(r"(?m)^\s*\d+\s*$", "", body)
+        hanzi = re.findall(r"[\u4e00-\u9fff]", body)
+        if len(hanzi) < 22:
+            fail(f"Nearly blank body page (possible orphan): {page_no}, {len(hanzi)} Chinese characters")
+    print("Page-density QA passed: no nearly blank body pages")
+
     print("Advanced curriculum PDF QA passed: new topics are present")
 
     print("Matrix layout PDF QA passed: both diagram headings extracted")
