@@ -1,0 +1,49 @@
+\section{外积与矩阵：如何真正“写入”一条记忆？}
+
+现在为一条记忆指定两个向量：
+\[
+\text{Key }\vect{k}=\begin{bmatrix}1\\0\end{bmatrix},\qquad
+\text{Value }\vect{v}=\begin{bmatrix}2\\3\end{bmatrix}.
+\]
+我们的目标是设计函数 $f$，使输入 Key 时返回 Value，即 $f(\vect{k})=\vect{v}$。
+
+\subsection{先造出一个能工作的公式}
+考虑：
+\begin{equation}
+\boxed{f(\vect{x})=\vect{v}\bigl(\vect{k}^\top\vect{x}\bigr).}
+\end{equation}
+如果输入 $\vect{x}=\vect{k}$，那么两单位向量的点积等于 $1$，所以：
+\[
+f(\vect{k})=\vect{v}\times 1=\vect{v}.
+\]
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=1cm,n/.style={draw=linegray,fill=paper,rounded corners=4pt,align=center,minimum height=13mm,minimum width=34mm,font=\small}]
+\node[n] (a) {输入 $\vect{x}$};
+\node[n,right=of a] (b) {$\vect{k}^\top\vect{x}$\\算匹配分数};
+\node[n,right=of b] (c) {$\vect{v}(\vect{k}^\top\vect{x})$\\得到输出};
+\draw[->,thick,blue] (a)--(b);\draw[->,thick,blue] (b)--(c);
+\end{tikzpicture}
+\end{center}
+
+这个计算已经很像记忆检索：先看输入和哪条 Key 匹配，再按照匹配程度返回 Value。
+
+\subsection{把关系装进矩阵：外积}
+两向量的\textbf{外积（outer product）}是：
+\begin{equation}
+\vect{v}\vect{k}^\top=
+\begin{bmatrix}2\\3\end{bmatrix}
+\begin{bmatrix}1&0\end{bmatrix}
+=\begin{bmatrix}2&0\\3&0\end{bmatrix}.
+\end{equation}
+外积与点积的区别：点积产生\textbf{一个数}；外积产生\textbf{一个矩阵}。
+
+记这个矩阵为 $W=\vect{v}\vect{k}^\top$。根据矩阵乘法结合律：
+\begin{equation}
+\boxed{f(\vect{x})=\vect{v}(\vect{k}^\top\vect{x})=(\vect{v}\vect{k}^\top)\vect{x}=W\vect{x}.}
+\end{equation}
+这说明：我们可以把一条 Key--Value 关联“写入”权重矩阵 $W$，再用普通矩阵乘法取回来。
+
+\begin{idea}
+\textbf{一个线性层 $W\vect{x}$，可以被看作一个记忆检索器。}这正是文章把神经网络的线性层与联想记忆联系起来的第一步。
+\end{idea}
