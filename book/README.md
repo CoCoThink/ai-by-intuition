@@ -25,9 +25,9 @@
 
 ## Ⅲ · 让词与词交换信息
 
-- [序列的隐藏状态如何传递](chapters/21-rnn.tex)
-- [为什么当前位置要直接读取其他位置](chapters/21b-why-attention.tex)
-- [Softmax、一次 Query 与多次 Query](chapters/11-softmax-memory.tex)
+- [RNN 是什么：逐词读取、传递状态并手算三步](chapters/21-rnn.tex)
+- [Attention 是什么：算出 Query/Key 分数，再加权读取 Value](chapters/21b-why-attention.tex)
+- [把刚才的 Attention 写成矩阵：从单个 Query 到批量计算](chapters/11-softmax-memory.tex)
 - [Q/K/V 投影、行列图卡与整段 Self-Attention](chapters/12-self-attention-matrices.tex)
 
 ## Ⅳ · 组装、训练并使用 Transformer
