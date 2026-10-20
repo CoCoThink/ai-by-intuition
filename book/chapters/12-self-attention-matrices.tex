@@ -5,7 +5,11 @@
 
 \subsection{首先回答：$Q$ 就是输入 $x$ 吗？}
 
-\textbf{上一章为了手算，允许把 Query 直接设成 $\vect q=\vect x$。}那只是一个方便理解的简化约定。
+\textbf{上一章把 Query 当作已经准备好的向量}，
+先集中理解它怎样匹配 Key、组合 Value；
+但还没有回答\textbf{Query 由哪里产生}。
+在最简单的教学模型里可以直接令 $\vect q=\vect x$，
+真实 Transformer 则通常会先做可学习的投影。
 
 \textbf{真实 Transformer 中，Query 通常由当前输入表示经过一个可学习的线性变换得到，不必与原来的 $x$ 数值相同。}
 
