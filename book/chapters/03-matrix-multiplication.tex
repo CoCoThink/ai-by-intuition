@@ -1,0 +1,106 @@
+\section{矩阵乘法到底在算什么？}
+
+前面的点积只产生一个分数。如果有十条 Key，我们难道要手工写十次点积？矩阵就是把\textbf{许多类似的计算整齐地排在一起}。先不要把它当成神秘的 AI 运算。
+
+\subsection{矩阵就是一张有行和列的数字表}
+
+\[
+\vect{x}=\begin{bmatrix}4\\5\end{bmatrix},
+\qquad
+A=\begin{bmatrix}1&2\\3&4\end{bmatrix},
+\qquad
+B=\begin{bmatrix}1&2&3\\4&5&6\end{bmatrix}.
+\]
+$\vect{x}$ 有 2 行 1 列，尺寸是 $2\times1$；$A$ 是 $2\times2$；$B$ 是 $2\times3$。记尺寸时，\textbf{先数行，再数列}。
+
+\begin{example}[title={不要把行数与每行元素数搞反}]
+$\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以是 $3\times2$，不是 $2\times3$。
+\end{example}
+
+\subsection{第一种看法：每一行和输入列做一次点积}
+
+我们来手算：
+\begin{align}
+\begin{bmatrix}1&2\\3&4\end{bmatrix}
+\begin{bmatrix}5\\6\end{bmatrix}
+&=\begin{bmatrix}
+1\times5+2\times6\\
+3\times5+4\times6
+\end{bmatrix}\nonumber\\
+&=\boxed{\begin{bmatrix}17\\39\end{bmatrix}}.
+\end{align}
+
+发生了什么？第一行 $(1,2)$ 与 $(5,6)$ 点积得到 $17$，第二行 $(3,4)$ 与 $(5,6)$ 点积得到 $39$。把结果按行排成一列就完成了。
+
+\begin{idea}
+\textbf{矩阵 $\times$ 列向量 = 每一行与该列向量分别点积。}所以只要将 Key 排成矩阵的各行，一次 $K\vect{x}$ 就会得到所有 Key 对查询 $\vect{x}$ 的匹配分数。
+\end{idea}
+
+\subsection{第二种看法：把矩阵的每一列按权重加起来}
+
+\textbf{同一个乘法}还可以这样算：
+\begin{align}
+\begin{bmatrix}1&2\\3&4\end{bmatrix}
+\begin{bmatrix}5\\6\end{bmatrix}
+&=5\begin{bmatrix}1\\3\end{bmatrix}
++6\begin{bmatrix}2\\4\end{bmatrix}\nonumber\\
+&=\begin{bmatrix}5\\15\end{bmatrix}
++\begin{bmatrix}12\\24\end{bmatrix}
+=\boxed{\begin{bmatrix}17\\39\end{bmatrix}}.
+\end{align}
+
+我们将两列分别乘以 $5$、$6$，再相加。输出仍然是 $(17,39)^\top$。
+
+\begin{conclusion}[title={一条关键定理，两种直观解释}]
+\textbf{行的视角：}每行做点积，产生每一项输出。\\
+\textbf{列的视角：}输入里的系数，决定每一列要贡献多少。\\
+后面 $K\vect{x}$ 最适合用第一种看法理解；$V^\top\vect{a}$ 最适合用第二种看法理解。
+\end{conclusion}
+
+\subsection{矩阵和矩阵相乘，只是重复更多次}
+
+例如：
+\[
+\begin{bmatrix}1&2\\3&4\end{bmatrix}
+\begin{bmatrix}5&7\\6&8\end{bmatrix}
+=\begin{bmatrix}
+1\cdot5+2\cdot6 & 1\cdot7+2\cdot8\\
+3\cdot5+4\cdot6 & 3\cdot7+4\cdot8
+\end{bmatrix}
+=\begin{bmatrix}17&23\\39&53\end{bmatrix}.
+\]
+结果的第 $i$ 行、第 $j$ 列，恰好是\textbf{左边第 $i$ 行与右边第 $j$ 列的点积}。
+
+\subsection{为什么两个矩阵不是总能相乘？}
+\[
+\underbrace{A}_{m\times n}
+\underbrace{B}_{n\times p}
+=
+\underbrace{AB}_{m\times p}.
+\]
+中间两个 $n$ 必须相同，点积才能逐项配对：
+\begin{center}
+\begin{tabular}{@{}lll@{}}\toprule
+要计算的尺寸 & 能否相乘 & 输出尺寸\\\midrule
+$(3\times2)(2\times1)$ & 可以 & $3\times1$\\
+$(2\times3)(3\times4)$ & 可以 & $2\times4$\\
+$(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
+\end{tabular}
+\end{center}
+
+这叫\textbf{形状检查}（shape checking）：学习神经网络时，它比死背公式更有用。
+
+\subsection{转置：为什么 Key 有时写作 $k^\top$？}
+
+转置就是把行换成列：
+\[
+\begin{bmatrix}1\\2\end{bmatrix}^{\!\top}
+=\begin{bmatrix}1&2\end{bmatrix},\qquad
+\begin{bmatrix}1&2\\3&4\end{bmatrix}^{\!\top}
+=\begin{bmatrix}1&3\\2&4\end{bmatrix}.
+\]
+所以 $k^\top x$ 表示先把 Key 从一列变成一行，再与 Query 列向量做点积。
+
+\begin{warningbox}
+不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），甚至 $BA$ 可能根本无法相乘；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
+\end{warningbox}
