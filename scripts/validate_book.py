@@ -205,7 +205,7 @@ def validate_pdf(pdf_path: Path) -> None:
             fail(f"Matrix figure was split across pages: {title}")
     print("Matrix layout pagination QA passed: both complete cards stay on a page")
 
-    for topic in ("任务定义清楚", "前馈网络与输出头", "现代Transformer",
+    for topic in ("把问题固定下来", "前馈网络与输出头", "现代Transformer",
                   "RLVR", "MoE", "Agent", "标签"):
         if re.sub(r"\s+", "", topic) not in book_text:
             fail("Rendered PDF does not include advanced curriculum topic: " + topic)
