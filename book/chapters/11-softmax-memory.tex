@@ -1,203 +1,206 @@
-\section{从相似度分数到 Softmax Attention}
+\section{把一次 Attention 写成矩阵：从 $K\vect q$ 到 $QK^\top$}
 \label{intro:11-softmax-memory}
 
-上一章已经用三个候选位置演示过：\textbf{先计算相关性分数，再将 Value 按权重组合}。
-那一章着重解释“为什么需要”，这一章把计算写成\textbf{可以检查尺寸的矩阵公式}，并回答一条最常见的疑问：
-\textbf{为什么一次查询写 $K\vect q$，多个查询却写 $QK^\top$？}
+上一章已经亲手完成了一次 Attention：
+\textbf{一个 Query} 与三个 Key 点积，得到 $(2,0,1)$；
+Softmax 把它们转为 $(0.665,0.090,0.245)$；
+最后按权重读出三个 Value，得到新向量。
+这次\textbf{不发明新的注意力算法}，
+只把刚才做过的计算写得更整齐，
+让计算机能一次处理许多 Token。
 
-\subsection{Softmax 把相似度变成一组权重}
+\subsection{第一步：把三次点积排成一次矩阵乘法}
 
-假设一个 Query 对两条 Key 的匹配分数分别为 $1$ 和 $0.6$。
-指数函数 $e^{\beta s}$ 将分数转换成正数，
-再把它们除以总和，便能得到总和为 $1$ 的权重。
-$\beta$ 是缩放系数，它控制分数之间的相对差异，
-不是必须手工调节的“记忆开关”。
-
-先从两个已经给定的分数开始：
+先约定\textbf{单次查询}用列向量表示。
+延续上一章的\textbf{教学用数字}：
 \[
-s_A=1,\qquad s_B=0.6.
+\vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
+\vect k_1=\begin{bmatrix}2\\0\end{bmatrix},\quad
+\vect k_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
+\vect k_3=\begin{bmatrix}1\\1\end{bmatrix}.
 \]
-指数变换得到 $e^{\beta}$ 和 $e^{0.6\beta}$。为了让两个权重的总和等于 $1$，将每个指数值除以指数值之和：
-\begin{align}
-p_A&=\frac{e^{\beta}}{e^{\beta}+e^{0.6\beta}},\\
-p_B&=\frac{e^{0.6\beta}}{e^{\beta}+e^{0.6\beta}}.
-\end{align}
-这就是 \textbf{Softmax}。
+把三条 Key 一行一行排成矩阵：
+\[
+K=\begin{bmatrix}
+2&0\\0&1\\1&1
+\end{bmatrix}.
+\]
+刚才算过的\textbf{三个点积}现在可以一口气写成
+\[
+\underbrace{K}_{3\times2}
+\underbrace{\vect q}_{2\times1}
+=\underbrace{\begin{bmatrix}2\\0\\1\end{bmatrix}}_{3\times1}.
+\]
 
-\begin{table}[H]
-\centering
-\caption{调整 $\beta$ 时的 Softmax 权重（两个分数为 $1$ 和 $0.6$）}
-\begin{tabular}{@{}rrr@{}}
-\toprule
-$\beta$ & $p_A$：较高分数 & $p_B$：较低分数\\
-\midrule
-$0$ & $50.0\%$ & $50.0\%$\\
-$2$ & $69.0\%$ & $31.0\%$\\
-$5$ & $88.1\%$ & $11.9\%$\\
-$10$ & $98.2\%$ & $1.8\%$\\
-$15$ & $99.8\%$ & $0.2\%$\\
-\bottomrule
-\end{tabular}
-\end{table}
+这里 $K$ 每一行是一条 Key；
+矩阵乘法只是在\textbf{对三行分别与 Query 做点积}。
+Softmax 随后得到权重列向量
+\[
+\vect a=\softmax(K\vect q)\approx
+\begin{bmatrix}0.665\\0.090\\0.245\end{bmatrix}.
+\]
+这是上一章算过的同一组比例，而不是新答案。
 
-\begin{idea}
-Softmax 本身不改变或创造 Value；它只把分数转成\textbf{从每条 Value 读取多少}的比例。在本例中，$\beta$ 增大让权重向较高分数倾斜。
-\end{idea}
+\subsection{第二步：把 Value 的加权求和也变成矩阵乘法}
 
-\subsection{给 Query、Key、Value 各自一个角色}
+延续上一章的 Value：
+\[
+\vect v_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
+\vect v_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
+\vect v_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\]
+将三条 Value 一行一行排成
+\[
+V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
+\]
+因为权重是\textbf{列}、各 Value 是矩阵的\textbf{行}，
+为了得到输出列向量，需要转置 $V$：
+\begin{align*}
+\underbrace{\vect y}_{2\times1}
+&=\underbrace{V^\top}_{2\times3}
+  \underbrace{\vect a}_{3\times1}\\
+&\approx\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}
+\begin{bmatrix}0.665\\0.090\\0.245\end{bmatrix}
+=\boxed{\begin{bmatrix}0.910\\0.335\end{bmatrix}}.
+\end{align*}
 
-先规定一个\textbf{单次查询}：Query 是列向量 $\vect x$，
-有 $M$ 个候选 Key/Value 对，每条 Key 含 $d_k$ 个数，每条 Value 含 $d_v$ 个数。
-所以 $K\in\R^{M\times d_k}$、$V\in\R^{M\times d_v}$，
-而查询 $\vect x\in\R^{d_k}$。第 $i$ 条 Key 与 Query 点积，
-得到第 $i$ 条匹配分数；将 $M$ 个分数做 Softmax，
-然后用所得权重组合对应 Value。
-
-给第 $i$ 条候选的权重为：
+于是\textbf{上一章四个步骤}可以缩写为：
 \begin{equation}
-p_i=\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{x}}}.
+\boxed{\vect y=V^\top\softmax(K\vect q).}
+\label{eq:column-attention}
 \end{equation}
-最终输出就是各个 Value 的加权平均：
-\begin{equation}
-\boxed{f(\vect{x})=\sum_i p_i\vect{v}_i
-=\sum_i\vect{v}_i\frac{e^{\beta\vect{k}_i^\top\vect{x}}}{\sum_j e^{\beta\vect{k}_j^\top\vect{x}}}.}
-\end{equation}
-矩阵写法：
-\begin{equation}
-\boxed{f(\vect{x})=V^\top\softmax(\beta K\vect{x}).}\label{eq:column-attention}
-\end{equation}
-这是\textbf{按匹配分数组合 Value} 的单 Query 写法。此时还没有使用 Transformer 中的多 Query 矩阵。
+这句公式的意思依然只是
+\textbf{匹配 Key $\to$ 分配权重 $\to$ 读取 Value}。
 
-\subsection{从单个列 Query 到标准 Attention：每一步都展开}
+\subsection{换成字母之前：每个尺寸为什么是这样？}
 
-\subsection*{本节符号：先知道数字代表什么}
-
-读接下来的公式时，先把下列符号与“数量”对应起来：
-
+现在才换成一般记号：
 \begin{center}
 \small
-\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.25}
 \begin{tabularx}{\linewidth}{@{}p{18mm}X p{37mm}@{}}
 \toprule
-符号 & 意思 & 数字例子\\
+符号 & 含义 & 本章数字\\
 \midrule
-$M$ & \textbf{Key--Value 记忆的条数} & 两条：$M=2$\\
-$d_k$ & \textbf{每个 Key 有几个数字}，Query 维度与它相同 & $(1,0)$：$d_k=2$\\
-$d_v$ & \textbf{每个 Value 有几个数字}，也是输出向量的维度 & $(2,1,0)$：$d_v=3$\\
-$N$ & \textbf{同时处理多少个 Query}；批量查询时使用 & 三个：$N=3$\\
-$\beta$ & 调整匹配分数的缩放系数 & 如 $\beta=1$\\
+$M$ & \textbf{可供查询的 Key/Value 位置数} & $M=3$\\
+$d_k$ & 每条 Key 的数字数，也是 Query 的长度 & $d_k=2$\\
+$d_v$ & 每条 Value 的数字数，也是输出的长度 & $d_v=2$\\
+$N$ & 如果一次处理很多 Query，它们的数量 & 如 $N=3$\\
 \bottomrule
 \end{tabularx}
 \end{center}
+其中 $d$ 表示\emph{维度}，
+下标 $k,v$ 分别代表 Key、Value；
+\textbf{$M$ 是位置数，$d_k$、$d_v$ 是每条向量的长度。}
+它们不是同一个概念，$d_k$ 和 $d_v$ 也不必相等。
 
-注意：\textbf{$M$ 是条数，$d_k$ 和 $d_v$ 是一条向量的长度。}下标 $k$ 与 $v$ 分别代表 Key 和 Value，$d$ 来自 \emph{dimension}（维度）。
-
-
-
-刚才只有\textbf{一个列向量 Query}。标准 Transformer 一次处理多个 Token，各自发出 Query。看似不同的两条公式，实际上只需要统一行列约定、扩展成多个 Query，再选用标准缩放系数。
-
-\textbf{第一步：把查询 $\vect x$ 改写为 $\vect q$。}在这个单次查询的简化例子中，取 $\vect q=\vect x$，因此
+按照本章行列约定：
 \[
-\vect y=V^\top\softmax(\beta K\vect q).
+\underbrace{K}_{M\times d_k}
+\underbrace{\vect q}_{d_k\times1}
+\to
+\underbrace{\vect a}_{M\times1},
+\qquad
+\underbrace{V^\top}_{d_v\times M}
+\underbrace{\vect a}_{M\times1}
+\to
+\underbrace{\vect y}_{d_v\times1}.
 \]
-这里 $K$ 有 $M$ 行，每行 $d_k$ 个数字；$\vect q$ 有 $d_k$ 个数字；$V$ 有 $M$ 行，每行 $d_v$ 个数字。输出 $\vect y$ 最终有 $d_v$ 个数字。
 
-\begin{example}[title={字母换成数字后，究竟在算什么？}]
-设有\textbf{两个候选位置}（$M=2$），每条 Key 是\textbf{二维}（$d_k=2$），每条 Value 是\textbf{三维}（$d_v=3$）：
-\[
-K=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
-\vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
-V=\begin{bmatrix}2&1&0\\0&3&4\end{bmatrix}.
-\]
-令 $\beta=1$，就得到
-\[
-K\vect q=\begin{bmatrix}1\\0\end{bmatrix},\qquad
-\softmax(K\vect q)\approx
-\begin{bmatrix}0.731\\0.269\end{bmatrix}.
-\]
-最后用匹配权重组合 Value：
-\[
-\vect y=V^\top\softmax(K\vect q)
-\approx
-\begin{bmatrix}2&0\\1&3\\0&4\end{bmatrix}
-\begin{bmatrix}0.731\\0.269\end{bmatrix}
-=\begin{bmatrix}1.462\\1.538\\1.076\end{bmatrix}.
-\]
-匹配分数有 \textbf{2 个}，是因为 $M=2$；最终输出有 \textbf{3 个数字}，是因为 $d_v=3$。两种数量不能混淆。
-\end{example}
+\subsection{第三步：为什么教科书又写成 $q^\top K^\top$？}
 
-\textbf{第二步：统一改成行向量表示。}对矩阵转置，有
+目前的分数是一\textbf{列}：
 \[
-(AB)^\top=B^\top A^\top,\qquad
-(K\vect q)^\top=\vect q^\top K^\top.
+K\vect q=\begin{bmatrix}2\\0\\1\end{bmatrix}.
 \]
-向量的一列分数和转置成一行的相同分数，Softmax 归一化值完全一样（只是排布方向变了）。于是对输出一起转置：
-\begin{align}
-\vect y^\top
-&=\bigl[V^\top\softmax(\beta K\vect q)\bigr]^\top\nonumber\\
-&=\bigl[\softmax(\beta K\vect q)\bigr]^\top V\nonumber\\
-&=\boxed{\softmax(\beta\vect q^\top K^\top)V.}
+如果把这列横着摆成一\textbf{行}，数字不变：
+\[
+(K\vect q)^\top=\begin{bmatrix}2&0&1\end{bmatrix}.
+\]
+矩阵转置有一个规则：
+$(AB)^\top=B^\top A^\top$，因此
+\[
+\boxed{(K\vect q)^\top=\vect q^\top K^\top.}
+\]
+Value 输出也一样：
+\[
+(V^\top\vect a)^\top=\vect a^\top V.
+\]
+所以\textbf{同一个单 Query 的输出}，
+从列向量写成行向量就是
+\begin{equation}
+\boxed{\vect y^\top=\softmax(\vect q^\top K^\top)V.}
 \label{eq:single-row-attention}
-\end{align}
-\textbf{注意目前仍只有一个 Query！}左侧输出只是从列向量变为行向量。
+\end{equation}
+\textbf{没有换算法，只是方向从竖着排变成横着排。}
+不确定时可以返回\hyperref[sec:layout-matrix-card]{矩阵乘法章的双色转置图卡}。
 
-\textbf{第三步：许多 Query 依次堆成行。}令
+\subsection{第四步：很多 Query 为什么可以放在一起算？}
+
+一句话有多个 Token，通常每个 Token 都需要一次查询。
+如果有 $N$ 个 Query，就把每条 Query 当成一行，
+一起放入矩阵 $Q$：
 \[
-Q=\begin{bmatrix}
-\vect q_1^\top\\\vdots\\\vect q_N^\top
+Q=
+\begin{bmatrix}
+\vect q_1^\top\\
+\vdots\\
+\vect q_N^\top
 \end{bmatrix}\in\R^{N\times d_k}.
 \]
-把刚才一个 Query 的计算重复 $N$ 次，便可一次写成
-\begin{equation}
-\boxed{Y=\softmax(\beta QK^\top)V.}
-\label{eq:multi-query-attention}
-\end{equation}
-相应维度如下：
+这样一次计算就给每条 Query 产生 $M$ 个匹配分数：
 \[
 \underbrace{Q}_{N\times d_k}
 \underbrace{K^\top}_{d_k\times M}
-=\underbrace{S}_{N\times M},\qquad
-\underbrace{\softmax(\beta S)}_{N\times M}
+=\underbrace{S}_{N\times M}.
+\]
+接着\textbf{对 $S$ 的每一行分别做 Softmax}，
+每行都是当前 Query 在 $M$ 个 Key 上分配的权重。
+最后与 $V$ 相乘：
+\begin{equation}
+\boxed{Y=\softmax(QK^\top)V.}
+\label{eq:multi-query-attention}
+\end{equation}
+输出形状为
+\[
+\underbrace{\softmax(S)}_{N\times M}
 \underbrace{V}_{M\times d_v}
 =\underbrace{Y}_{N\times d_v}.
 \]
-此时 Softmax 是\textbf{每一行单独归一化}：每个 Query 都为 $M$ 条 Key 分配权重。
+这意味着\textbf{有 $N$ 个 Query，就能得到 $N$ 行输出}，
+每行对应一次读取结果。
 
-\textbf{第四步：采用标准 Transformer 的缩放系数。}
-Transformer 通常对未单位归一化的 Q、K 使用 $1/\sqrt{d_k}$，写成
+\subsection{标准 Transformer 为什么还要除以 $\sqrt{d_k}$？}
+
+真实 Transformer 通常会在 Softmax 前对点积分数缩放，
+得到著名的\textbf{缩放点积注意力}：
 \begin{equation}
 \boxed{\operatorname{Attention}(Q,K,V)=
 \softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.}
 \label{eq:attention-transformer}
 \end{equation}
 
-\begin{warningbox}
-\textbf{严格区分这几件事：}
-从列向量变成行向量是\textbf{转置恒等式}；把一个 Query 变成多个 Query 是\textbf{批量计算}；把 $\beta$ 改为 $1/\sqrt{d_k}$ 是\textbf{缩放选择}，不是转置推导出来的结果。
-原文的随机单位向量记忆模型也可能采用另一种 $\beta$。比较两种公式的数值结果前，必须先统一向量归一化与缩放约定。
-\end{warningbox}
-
-\begin{idea}[title={一句话读懂两种式子}]
-列向量写法是\textbf{先匹配，再在左侧乘 $V^\top$}；行向量写法是\textbf{先匹配，再在右侧乘 $V$}。它们计算的是相同的加权 Value 组合，只是输出和输入各旋转了九十度。
-\end{idea}
-
-\begin{center}
-\begin{tikzpicture}[>=Latex, node distance=5mm,
- block/.style={draw=linegray,rounded corners=3pt,fill=paper,align=center,minimum height=10mm,font=\small}]
-\node[block,minimum width=30mm] (q) {Query $Q$};
-\node[block,right=17mm of q,minimum width=30mm] (k) {Keys $K$};
-\node[block,right=17mm of k,minimum width=30mm] (v) {Values $V$};
-\node[block,below=13mm of k,minimum width=40mm] (dot) {相似度 $QK^\top$};
-\node[block,below=of dot,minimum width=40mm] (soft) {Softmax 权重};
-\node[block,below=of soft,minimum width=40mm] (out) {加权求和：输出};
-\draw[->,blue,thick] (q.south) |- (dot.west);
-\draw[->,blue,thick] (k.south)--(dot.north);
-\draw[->,blue,thick] (dot)--(soft);
-\draw[->,blue,thick] (soft)--(out);
-\draw[->,orange,thick] (v.south) |- (out.east);
-\end{tikzpicture}
-\end{center}
+$\sqrt{d_k}$ 是 Key 维度的平方根。
+这里的\textbf{缩放是一个额外设计选择}：
+当 Query/Key 的分量有适当统计假设时，
+点积的典型幅度会随维度增大，
+除以 $\sqrt{d_k}$ 有助于控制 Softmax 输入尺度。
+\textbf{它不是矩阵转置必然推导出来的。}
+所以前面的三位置数字例子没有做这一步，
+\textbf{缩放后的权重数值也不应和原例直接当作相同}。
 
 \begin{warningbox}
-\textbf{一个重要区别：}我们这里只使用\textbf{当前可读的候选 Key/Value}；真实 Self-Attention 的 Key/Value 是根据当前 Token 表示动态投影出来的。第六部分的联想记忆专题还会讨论\textbf{固定权重形式的 Key/Value}，它只是另一条理解路径，并不表示两种模型完全相同。
+\textbf{一次只改变一个概念：}
+$K\vect q\leftrightarrow\vect q^\top K^\top$ 是\textbf{转置}；
+从一个 Query 到 $Q$ 是\textbf{批量化}；
+除以 $\sqrt{d_k}$ 是\textbf{缩放}。
+真实 Self-Attention 还要学习产生 Q/K/V 的投影参数，
+并在语言预测中加入因果掩码——这些留给接下来的两章。
 \end{warningbox}
+
+\begin{conclusion}
+这一章没有增加第四种角色，也没有改变 Attention 的定义。
+我们只把\textbf{一个位置的“点积 $\to$ Softmax $\to$ 加权读取”}
+用矩阵一次算完，再扩展为多个位置。
+\textbf{下一章解释：Q、K、V 这些向量由当前 Token 怎样计算出来。}
+\end{conclusion}
