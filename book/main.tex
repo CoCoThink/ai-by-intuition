@@ -37,7 +37,7 @@
 \definecolor{orangeback}{HTML}{FCF5E9}
 \definecolor{greenback}{HTML}{EAF7F3}
 \color{ink}
-\hypersetup{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition 第一卷：从矩阵乘法到 MLP 与 Attention},pdfauthor={AI by Intuition},pdfsubject={Associative Memory / Transformer 数学推导}}
+\hypersetup{unicode=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition：从函数到大语言模型},pdfauthor={AI by Intuition},pdfsubject={从零开始理解函数、训练、CNN、RNN、Attention 与 Transformer}}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{2.7pt}
 \linespread{1.19}
@@ -70,44 +70,51 @@
 \begin{document}
 \thispagestyle{empty}
 \vspace*{19mm}
-\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · 01}}\par
+\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · Complete Guide}}\par
 \vspace{11mm}
-{\sffamily\bfseries\fontsize{26}{34}\selectfont 从矩阵乘法\\[4mm]到 MLP 与 Attention}\par
+{\sffamily\bfseries\fontsize{26}{34}\selectfont 从函数到神经网络\\[4mm]与大语言模型}\par
 \vspace{7mm}
-{\sffamily\fontsize{14}{21}\selectfont 从最简单的数字和行列出发，一步步理解神经网络与检索机制}\par
+{\sffamily\fontsize{14}{21}\selectfont 面向数学基础薄弱的读者：从可手算的例子走向 Transformer}\par
 \vspace{5mm}
 \noindent{\color{muted}\rule{\linewidth}{0.7pt}}\par
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
-\textbf{只需要这些预备知识：}加减乘除、平方与平方根、基本的勾股定理。\par
-\textbf{学习路线：} 向量 $\rightarrow$ 点积 $\rightarrow$ 矩阵乘法 $\rightarrow$ Key/Value $\rightarrow$ ReLU $\rightarrow$ MLP $\rightarrow$ Attention。\par
-\textbf{目标：} 看懂公式并知道\emph{为什么需要它}，而不是背诵符号。
+\textbf{只需要这些预备知识：}加减乘除、平方与平方根；导数、矩阵乘法将从直觉讲起。\par
+\textbf{学习路线：} 函数 $\rightarrow$ 矩阵 $\rightarrow$ MLP $\rightarrow$ 训练 $\rightarrow$ CNN/RNN $\rightarrow$ Attention $\rightarrow$ LLM。\par
+\textbf{目标：} 理解模型\emph{如何表示、学习、检索、生成}，不是背诵术语。
 \end{tcolorbox}
 \vspace{9mm}
 \begin{center}
 \begin{tikzpicture}[>=Latex, node distance=1.15cm and 0.6cm,
     n/.style={draw=linegray,fill=white,rounded corners=4pt,minimum width=35mm,minimum height=13mm,align=center,font=\sffamily\bfseries}]
-\node[n] (lin) {Linear\\[-1mm] $\vect{y}=W\vect{x}$};
-\node[n,right=of lin] (mlp) {MLP\\[-1mm] $\vect{y}=V^\top\sigma(K\vect{x})$};
-\node[n,right=of mlp] (att) {Attention\\[-1mm] $\vect{y}=V^\top\softmax(\beta K\vect{x})$};
-\draw[->,thick,blue] (lin)--(mlp) node[midway,above,font=\footnotesize,align=center]{压低干扰};
-\draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{选择更强};
+\node[n] (lin) {函数\\[-1mm] $\widehat y=wx+b$};
+\node[n,right=of lin] (mlp) {神经网络\\[-1mm] $W_2\sigma(W_1x)$};
+\node[n,right=of mlp] (att) {语言模型\\[-1mm] 下一 Token 预测};
+\draw[->,thick,blue] (lin)--(mlp) node[midway,above,font=\footnotesize,align=center]{训练参数};
+\draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{理解上下文};
 \end{tikzpicture}
 \end{center}
 \vfill
-\noindent\textbf{参考文章}\quad \textit{You could have invented transformers from memory}\par
+\noindent\textbf{部分数学视角参考}\quad \textit{You could have invented transformers from memory}\par
 \noindent\href{https://alexwang.ai/posts/associative-memory}{https://alexwang.ai/posts/associative-memory}\par
 \vspace{3mm}
-\noindent {\color{muted}\small AI by Intuition · 第一卷（持续扩充） · 先有问题，再有直觉，然后才有公式。}\par
+\noindent {\color{muted}\small AI by Intuition · 从零开始的完整学习路线 · 先有问题，再有直觉，然后才有公式。}\par
 \clearpage
 \tableofcontents
 \clearpage
 
 
+\part{从函数到矩阵：让知识变成计算}
+
 \input{chapters/00-guide}
+\input{chapters/00-functions}
 \input{chapters/01-vectors}
 \input{chapters/02-dot-product}
 \input{chapters/03-matrix-multiplication}
+
+\clearpage
+\part{联想记忆与 MLP：为什么需要非线性}
+
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
 \input{chapters/06-better-linear-memory}
@@ -115,9 +122,36 @@
 \input{chapters/08-stacking-key-value}
 \input{chapters/09-nonlinearity-and-memory}
 \input{chapters/10-mlp}
+
+\clearpage
+\part{训练一个神经网络：损失、梯度与泛化}
+
+\input{chapters/16-loss-gradient}
+\input{chapters/17-backpropagation}
+\input{chapters/18-generalization}
+
+\clearpage
+\part{图像和序列：CNN、Embedding 与 RNN}
+
+\input{chapters/19-cnn}
+\input{chapters/20-embeddings}
+\input{chapters/21-rnn}
+
+\clearpage
+\part{直接查询上下文：Attention 与 Transformer}
+
 \input{chapters/11-softmax-memory}
 \input{chapters/12-self-attention-matrices}
 \input{chapters/13-capacity}
 \input{chapters/14-summary}
 \input{chapters/15-practice}
+\input{chapters/22-transformer-architecture}
+
+\clearpage
+\part{大语言模型：生成、应用和知识地图}
+
+\input{chapters/23-llm-systems}
+\input{chapters/24-lexicon}
+\input{chapters/25-integrated-practice}
+\input{chapters/26-sources}
 \end{document}
