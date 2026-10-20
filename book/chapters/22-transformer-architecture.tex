@@ -2,7 +2,12 @@
 \label{intro:22-transformer-architecture}
 
 \begin{idea}[title={从“所有词都能互相查看”到完整网络}]
-前面的 \conceptlink{attention}{Attention} 公式解决的是\textbf{某个位置怎样按相关度读取其他位置的信息}。但真实语言模型还需要输入 Token、位置、多个注意力头、非线性变换、稳定训练，以及预测下一个 Token 的输出层。
+上一章已经知道：每个 Token 可以产生自己的 Query、Key、Value，
+并用矩阵一次读取上下文。
+但\textbf{只会 Attention 还不能直接变成一个会生成文字的模型}：
+我们还需要表示词的位置、处理读取后的特征、稳定地堆叠许多层，
+最后把隐藏向量转成对下一 Token 的预测分数。
+这一章先看\textbf{部件如何连接}，后两章再拆解 FFN 与两个 Token 的完整算例。
 \end{idea}
 
 \subsection{第一步：Token ID 转成向量，再加位置信息}
@@ -113,5 +118,7 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 得到下一 Token 的概率分布。生成时按一定策略选择 Token，再把它加入上下文，重复计算。
 
 \begin{conclusion}
-Transformer = \textbf{Token 表示 + 位置信息 + 注意力 + MLP + 残差和归一化}，再按任务选择编码器、解码器、Mask 和输出头。Attention 是核心组件，但不是模型的全部。
+一个常见的 Transformer Block 由\textbf{注意力、逐 Token 的前馈网络、残差与归一化}构成，
+整个语言模型还需要 Token 表示与输出头。
+现在网络的\textbf{组件清单}已经齐了，下一章先辨清\textbf{Block 内的 FFN 与最终输出头为何不是一回事}。
 \end{conclusion}
