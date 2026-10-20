@@ -2,12 +2,12 @@
 \label{intro:22-transformer-architecture}
 
 \begin{idea}[title={从“所有词都能互相查看”到完整网络}]
-前面的 Attention 公式解决的是\textbf{某个位置怎样按相关度读取其他位置的信息}。但真实语言模型还需要输入 Token、位置、多个注意力头、非线性变换、稳定训练，以及预测下一个 Token 的输出层。
+前面的 \conceptlink{attention}{Attention} 公式解决的是\textbf{某个位置怎样按相关度读取其他位置的信息}。但真实语言模型还需要输入 Token、位置、多个注意力头、非线性变换、稳定训练，以及预测下一个 Token 的输出层。
 \end{idea}
 
 \subsection{第一步：Token ID 转成向量，再加位置信息}
 
-给一句话的 Token ID 序列 $(t_1,\ldots,t_T)$ 查嵌入矩阵，得到
+给一句话的 \conceptlink{token}{Token} ID 序列 $(t_1,\ldots,t_T)$ 查嵌入矩阵，得到
 \[
 X_{\rm token}\in\R^{T\times d_{\rm model}}.
 \]
@@ -31,7 +31,7 @@ Q,K:3\times2,\qquad V:3\times4.
 \[
 S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 \]
-第 $i$ 行记录第 $i$ 个 Token 对三个 Key 的匹配程度；每行 Softmax 后和 $V$ 相乘，得到三个\textbf{带上下文信息}的新向量。
+第 $i$ 行记录第 $i$ 个 Token 对三个 Key 的匹配程度；每行 \conceptlink{softmax}{Softmax} 后和 $V$ 相乘，得到三个\textbf{带上下文信息}的新向量。
 
 \subsection{第三步：为什么要多头注意力？}
 \phantomsection\label{concept:multihead}
