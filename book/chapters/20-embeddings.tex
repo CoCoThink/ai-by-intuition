@@ -22,6 +22,7 @@
 它的优点是没有混淆身份；但不同词的 one-hot 向量彼此正交，点积都是 $0$，不能直接反映词义相近。若词表有 $50{,}000$ 个词，每个 one-hot 向量也有 $50{,}000$ 维，存储和计算方式需要特别处理。
 
 \subsection{Embedding：把词的身份查成稠密向量}
+\phantomsection\label{concept:embedding}
 
 考虑一个可训练的嵌入矩阵
 \[
@@ -55,6 +56,7 @@ E=\begin{bmatrix}
 因此\textbf{查表取一行}和\textbf{one-hot 乘嵌入矩阵}是同一回事；实际实现通常直接按 token ID 读取指定行，避免创建巨大的 one-hot 矩阵。
 
 \subsection{词、子词、Token 不完全一样}
+\phantomsection\label{concept:token}
 
 将文本拆成 Token 并映射成整数 ID 的程序或规则称为 \textbf{Tokenizer（分词器）}。其具体切分方式取决于词表和算法；同一句话在不同 Tokenizer 下可能得到不同的 Token 序列。
 
