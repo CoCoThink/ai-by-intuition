@@ -159,6 +159,24 @@ def validate_source() -> None:
             fail("Running Token ID example is inconsistent across teaching stages")
     print("Learning-path QA passed: five linear learning parts, optional extensions last")
 
+    # The two crucial first-time lessons must begin with an intuitive example.
+    rnn = (ROOT / "book/chapters/21-rnn.tex").read_text(encoding="utf-8")
+    attn = (ROOT / "book/chapters/21b-why-attention.tex").read_text(encoding="utf-8")
+    matrix_bridge = (ROOT / "book/chapters/11-softmax-memory.tex").read_text(encoding="utf-8")
+    if not (rnn.find("RNN（循环神经网络）") >= 0 and
+            rnn.find("RNN（循环神经网络）") < rnn.find(r"\boxed{\vect h_t") and
+            "h_t=x_t+0.5h_{t-1}" in rnn and
+            rnn.find("h_1=1+0.5") < rnn.find(r"\boxed{\vect h_t")):
+        fail("RNN chapter must explain state and compute three steps before general matrix notation")
+    for phrase in ("Query（查询", "Key（索引", "Value（内容", "(2,0,1)", "0.665", "0.910", "0.335"):
+        if phrase not in attn:
+            fail("Attention beginner walkthrough is missing: " + phrase)
+    if not ("从 $K\\vect q$ 到 $QK^\\top$" in matrix_bridge and
+            "(0.910" in matrix_bridge and
+            "矩阵转置" in matrix_bridge):
+        fail("The following chapter no longer builds on the same Attention example")
+    print("Teaching-sequence QA passed: RNN intuition and Attention hand calculation")
+
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
 
