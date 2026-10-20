@@ -10,10 +10,11 @@
 \end{idea}
 
 \subsection{预训练与监督微调：看起来都是预测 Token}
+\phantomsection\label{concept:sft}
 
 预训练使用文本中的后续 Token 作为目标；
 监督微调（SFT）使用特定任务的输入和示范答案。
-数学上，两者都可能继续使用 Token 级交叉熵，
+数学上，两者都可能继续使用 Token 级 \conceptlink{cross-entropy}{交叉熵}，
 但\textbf{数据如何构造、哪些位置计入损失}不同。
 
 例如训练对话数据为：
@@ -28,6 +29,7 @@
 \textbf{在给定指令和角色约束下如何回应}。
 
 \subsection{偏好学习：一个问题可能有很多语法正确的答案}
+\phantomsection\label{concept:rlhf}
 
 面对“请解释什么是梯度”，回答 A 可能准确、循序渐进，
 回答 B 虽流畅却有明显错误。
@@ -41,6 +43,7 @@
 偏好模型也会出现偏差。
 
 \subsection{可验证奖励：让模型在能自动检查的任务中尝试改进}
+\phantomsection\label{concept:rlvr}
 
 对于一部分题目，我们可以编写\textbf{自动核验结果}的程序。
 例如问题是计算 $17+25$，提交答案 $42$ 可以得奖励 $1$，
