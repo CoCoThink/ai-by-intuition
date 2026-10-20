@@ -1,0 +1,70 @@
+\section{文字怎样进入神经网络？词表、One-hot 和 Embedding}
+
+\subsection{为什么不能直接把汉字当成数字？}
+
+模型只能处理数字。我们先规定一个小词表：
+\[
+\mathcal V=\{\text{猫},\text{狗},\text{跑},\text{睡}\}.
+\]
+可以分别给四个词编号 $0,1,2,3$，但\textbf{编号只是身份标签}。不能因为“睡”的编号是 $3$、“猫”的编号是 $0$，就断言它们语义距离为 $3$。
+
+\subsection{One-hot：一个位置代表一个词}
+
+在四个词组成的词表中：
+\[
+\text{猫}\mapsto\begin{bmatrix}1\\0\\0\\0\end{bmatrix},
+\qquad
+\text{狗}\mapsto\begin{bmatrix}0\\1\\0\\0\end{bmatrix}.
+\]
+这叫\textbf{独热编码}（one-hot encoding）：向量长度等于词表大小，只有对应位置为 $1$。
+
+它的优点是没有混淆身份；但不同词的 one-hot 向量彼此正交，点积都是 $0$，不能直接反映词义相近。若词表有 $50{,}000$ 个词，每个 one-hot 向量也有 $50{,}000$ 维，存储和计算方式需要特别处理。
+
+\subsection{Embedding：把词的身份查成稠密向量}
+
+考虑一个可训练的嵌入矩阵
+\[
+E=\begin{bmatrix}
+1&0\\
+0.9&0.1\\
+0&1\\
+0.2&0.8
+\end{bmatrix}
+\in\R^{4\times2}.
+\]
+每\textbf{行}对应词表中的一个词，每行只含两个数。于是：
+\[
+\text{猫}\mapsto(1,0),\quad
+\text{狗}\mapsto(0.9,0.1),\quad
+\text{跑}\mapsto(0,1),\quad
+\text{睡}\mapsto(0.2,0.8).
+\]
+在这个\textbf{人为设计}的例子里，“猫”和“狗”的点积是 $0.9$，大于“猫”和“跑”的点积 $0$，表达了一种相近关系。
+
+\textbf{真实 Embedding 数值不是人工编出来的，而是训练时学得的。}即使向量之间在某些方向上有语义相关性，也不能保证每一维都对应可读的概念。
+
+\subsection{为什么说 Embedding 其实是一种矩阵乘法？}
+
+将猫的 one-hot 编码写作 $\vect e_{\rm cat}=(1,0,0,0)^\top$，计算：
+\[
+\underbrace{E^\top}_{2\times4}
+\underbrace{\vect e_{\rm cat}}_{4\times1}
+=\underbrace{\begin{bmatrix}1\\0\end{bmatrix}}_{2\times1}.
+\]
+因此\textbf{查表取一行}和\textbf{one-hot 乘嵌入矩阵}是同一回事；实际实现通常直接按 token ID 读取指定行，避免创建巨大的 one-hot 矩阵。
+
+\subsection{词、子词、Token 不完全一样}
+
+现代语言模型通常处理的是\textbf{Token}，它可能是一个完整的词、词的一部分、汉字、标点或其他编码单元，具体取决于 tokenizer。Tokenization（分词/切分）把原始文本变成 Token ID；Embedding 再把 ID 映射成向量。
+
+\begin{warningbox}
+词向量之间的某些向量运算可能表现出有趣的类比，但不能把这种关系当成对所有词或所有模型都成立的精确定律。向量相近也不等于词义、事实和因果关系完全相同。
+\end{warningbox}
+
+\subsection{一句话为什么不只是几个词的简单相加？}
+
+“狗追猫”和“猫追狗”拥有相同的三个 Token，但语义中的角色不同。单纯把三个向量无序相加会得到相同结果。要理解句子的结构，就需要知道\textbf{顺序}以及\textbf{词与词之间的关系}。这引出了下一章的 RNN，以及后面的 Attention。
+
+\begin{conclusion}
+Token ID 解决“这是什么符号”；Embedding 解决“让符号变成可以学习的连续向量”；序列模型则进一步解决“不同位置的向量怎样交换信息”。
+\end{conclusion}
