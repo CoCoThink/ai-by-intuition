@@ -1,0 +1,102 @@
+\section{贯通示例：两个 Token 如何通过 Attention 交换信息？}
+
+读到这里，你已经见过向量、矩阵、Softmax、ReLU、梯度和 Transformer 的基本结构。现在不引入新的模型术语，只用\textbf{两行数字}把一条计算链真正走完。
+
+\subsection{先把两个 Token 表示成两个向量}
+
+假设一句话里有两个 Token。为了能手算，暂时把每个 Token 的向量缩成二维：
+\[
+\vect x_1=(1,0),\qquad \vect x_2=(0,1).
+\]
+按 Transformer 常见的“每个 Token 一行”排列：
+\[
+X=\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\]
+真实模型会从 Token ID 查 Embedding，并加入或采用相应的位置表示；这里直接从简化的输入矩阵开始。
+
+\subsection{为两个 Token 产生 Q、K、V}
+
+为了让计算简单，假设三组投影矩阵都恰好是单位矩阵：
+\[
+W_Q=W_K=W_V=I_2,\qquad Q=K=V=X.
+\]
+\textbf{这只是教学上的参数选择}。真实 Transformer 的三组矩阵通常不同，而且是训练得到的。
+
+现在每个 Query 和 Key 都是二维，所以 $d_k=2$。点积得分矩阵：
+\begin{equation}
+S=\frac{QK^\top}{\sqrt{2}}
+=\frac{1}{\sqrt{2}}
+\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\label{eq:two-token-scores}
+\end{equation}
+观察 $S$ 的第一行：第一个 Token 与自己的匹配分数是 $1/\sqrt{2}$，与第二个 Token 的分数是 $0$。第二行则恰好反过来。
+
+\subsection{把分数变成权重，再读 Value}
+
+Softmax \textbf{对每一行}分别计算。由于 $e^{1/\sqrt2}\approx2.028$，
+\[
+a=\frac{e^{1/\sqrt2}}{e^{1/\sqrt2}+1}\approx0.670,
+\qquad 1-a\approx0.330.
+\]
+注意力权重矩阵为
+\[
+A=\softmax(S)\approx
+\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}.
+\]
+再乘 Value 矩阵：
+\begin{equation}
+Y=AV\approx
+\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}
+\begin{bmatrix}1&0\\0&1\end{bmatrix}
+=
+\boxed{\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}}.
+\label{eq:two-token-output}
+\end{equation}
+第一行 $(0.670,0.330)$ 不只包含自己的 $(1,0)$，也包含第二个 Token 的 $(0,1)$；第二行同理。这就是\textbf{上下文信息混合}的一个最小模型。
+
+\subsection{为什么实际语言生成还需要掩码？}
+
+上面是一个\textbf{双向的}例子，两个位置可以互相查看。而自回归语言模型预测后面的 Token 时，第一个位置不能看到第二个位置。
+
+如果加入\textbf{因果掩码}，第一个 Query 只能看到第一个 Key，因此它对应的权重变成 $(1,0)$。第二个 Query 可以看到两个位置，对应的权重仍为 $(0.330,0.670)$：
+\[
+A_{\rm causal}\approx
+\begin{bmatrix}1&0\\0.330&0.670\end{bmatrix}.
+\]
+于是得到
+\[
+Y_{\rm causal}\approx
+\begin{bmatrix}1&0\\0.330&0.670\end{bmatrix}.
+\]
+这不是两个相同的“Attention 公式”，而是\textbf{在计算 Softmax 之前约束了哪些位置允许匹配}。
+
+\subsection{从一个注意力模块到整个可训练模型}
+
+真实 Transformer 还会经过多个头、输出投影、残差、归一化和逐 Token 的 MLP。最终模型用输出投影把最后的隐藏向量变为\textbf{词表 logits}，再通过 Softmax 得到候选 Token 概率。
+
+训练时，将正确 Token 的概率转成损失，例如 $L=-\log p_{\rm true}$；反向传播再根据梯度更新包含 $W_Q,W_K,W_V$ 在内的可训练参数。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=5mm,
+ n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum height=9.8mm,minimum width=103mm,align=center,font=\small}]
+\node[n] (in) {Token ID $\to$ Embedding $\to$ 输入矩阵 $X$};
+\node[n,below=of in] (qkv) {$X\to Q,K,V\to$ 分数矩阵 $QK^\top/\sqrt{d_k}$};
+\node[n,below=of qkv] (att) {Mask 与 Softmax $\to$ 加权组合 $AV$};
+\node[n,below=of att] (block) {输出投影 + 残差/归一化 + MLP};
+\node[n,below=of block] (out) {Logits $\to$ 下一 Token 的概率};
+\node[n,below=of out] (train) {训练：损失 $\to$ 反向传播 $\to$ 权重更新};
+\draw[->,blue,thick] (in)--(qkv);
+\draw[->,blue,thick] (qkv)--(att);
+\draw[->,blue,thick] (att)--(block);
+\draw[->,blue,thick] (block)--(out);
+\draw[->,orange,thick] (out)--(train);
+\end{tikzpicture}
+\end{center}
+
+\begin{warningbox}
+这个例子中两个二维 Token 的权重被特意选得容易计算，没有包含真实模型所需的多头、位置、复杂嵌入和大规模训练。它的价值是展示\textbf{一次模型前向计算的结构}，不是模拟真实 LLM 的预测质量。
+\end{warningbox}
+
+\begin{conclusion}
+从 Token 到下一词概率的整条路径，只用了本书已经建立的概念：\textbf{嵌入查表、矩阵点积、Softmax、加权求和、非线性、损失与梯度。}理解这条链后，再遇到陌生架构就可以先查它新增了哪一个步骤、解决了哪一个问题。
+\end{conclusion}
