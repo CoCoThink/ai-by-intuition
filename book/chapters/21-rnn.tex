@@ -1,0 +1,82 @@
+\section{句子有顺序，模型怎样记住前面？从 RNN 到长期依赖}
+
+\subsection{为什么逐个词独立分类不够？}
+
+“我\textbf{不}喜欢这个结果”和“我喜欢这个结果”，相近的词可能因为一个否定词而表达不同态度。只看某个 Token 自己的向量，容易漏掉上下文。我们希望处理第 $t$ 个 Token 时，能看到前面已经读过的信息。
+
+\subsection{增加一个隐藏状态，沿时间传递}
+
+RNN（Recurrent Neural Network，循环神经网络）的核心是一个\textbf{会重复使用的更新函数}：
+\begin{equation}
+\boxed{\vect h_t=\tanh(W_x\vect x_t+W_h\vect h_{t-1}+\vect b).}
+\label{eq:rnn-hidden}
+\end{equation}
+其中：
+\begin{enumerate}
+\item $\vect x_t$：当前位置 $t$ 的输入向量；
+\item $\vect h_{t-1}$：前一个位置留下的隐藏状态；
+\item $\vect h_t$：融合了当前信息与过去信息的新状态；
+\item $W_x,W_h,\vect b$：\textbf{所有时间步共同使用}的一组可训练参数。
+\end{enumerate}
+输出可写成 $\vect y_t=W_y\vect h_t+\vect c$，按任务需要再接 Softmax 等函数。
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=14mm and 12mm,
+ every node/.style={font=\small},
+ n/.style={draw=linegray,rounded corners=3pt,fill=paper,minimum width=22mm,minimum height=11mm,align=center}]
+\node[n] (h1) {$\vect h_1$};
+\node[n,right=of h1] (h2) {$\vect h_2$};
+\node[n,right=of h2] (h3) {$\vect h_3$};
+\node[below=9mm of h1] (x1) {$\vect x_1$};
+\node[below=9mm of h2] (x2) {$\vect x_2$};
+\node[below=9mm of h3] (x3) {$\vect x_3$};
+\draw[->,thick,blue] (x1)--(h1);
+\draw[->,thick,blue] (x2)--(h2);
+\draw[->,thick,blue] (x3)--(h3);
+\draw[->,thick,orange] (h1)--(h2);
+\draw[->,thick,orange] (h2)--(h3);
+\node[above=8mm of h1] (y1) {$\vect y_1$};
+\node[above=8mm of h2] (y2) {$\vect y_2$};
+\node[above=8mm of h3] (y3) {$\vect y_3$};
+\draw[->,teal] (h1)--(y1);
+\draw[->,teal] (h2)--(y2);
+\draw[->,teal] (h3)--(y3);
+\end{tikzpicture}
+\end{center}
+
+\subsection{把所有矩阵先缩成一个数，亲手算三步}
+
+为了看清信息如何传递，先暂时省略 $\tanh$，并令
+\[
+h_t=x_t+0.5h_{t-1},\qquad h_0=0.
+\]
+如果 $x_1=2,x_2=0,x_3=1$：
+\begin{align*}
+h_1&=2+0.5\times0=2,\\
+h_2&=0+0.5\times2=1,\\
+h_3&=1+0.5\times1=1.5.
+\end{align*}
+第三个位置的状态 $1.5$，不仅包含当前输入的 $1$，还包含第一步留下来的影响 $0.5$。
+
+这既是 RNN 的优势，也是它的局限：如果连续乘很多次 $0.5$，很久以前的信息影响就会变成 $0.5^n$，越来越小。
+
+\subsection{为什么长句子可能让 RNN 为难？}
+
+传统 RNN 面临两个典型挑战：
+\begin{enumerate}
+\item \textbf{长距离依赖：}多步递推使早期信息的影响和梯度可能衰减，也可能因为某些参数而放大；并非所有 RNN 必然遗忘。
+\item \textbf{顺序依赖：}计算 $\vect h_t$ 必须先拿到 $\vect h_{t-1}$，所以沿时间步无法像一次大矩阵乘法那样完全并行。
+\end{enumerate}
+LSTM、GRU 使用门控机制改善信息保留，但它们仍以时间递推为核心。
+
+\subsection{一个自然产生的问题}
+
+如果每个 Token 都能\textbf{直接查询整段文本}的相关位置，而不必等信息从第一个位置逐步传到最后，能否更容易建模远距离关系？这正是 Attention 在序列建模中令人感兴趣的原因。
+
+\begin{warningbox}
+自注意力允许训练时对各 Token 的 Q/K/V 等计算做高度并行，但也会产生随序列长度增长的注意力矩阵和计算成本。它不是“长序列一定没有困难”的万能解法。
+\end{warningbox}
+
+\begin{conclusion}
+RNN 用\textbf{共享权重 + 递推隐藏状态}处理可变长序列。理解了它为什么需要顺序、为什么长期信息可能衰减，就能理解直接访问上下文的 Attention 为什么重要。
+\end{conclusion}
