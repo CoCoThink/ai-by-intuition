@@ -36,8 +36,8 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 ## 图形与内容验收
 
 - 每次修改公式，核对维度、样例数字和最终答案，并运行 `scripts/validate_book.py`。
-- 新增有语义的 TikZ 图时，在现有图形标签方案下补充准确的中文替代文字，并核查图与图注的阅读顺序。
-- 新增表格时检查列标题、合并单元格和读屏语义；“编译成功”不代表表格标签已符合 PDF/UA。
+- 新增有语义的 TikZ 图时，补充中文替代文字，并由结构检查确认 `/Figure` 与 `/Caption` 的嵌套关系。
+- 新增数据表格时设置 `TH` 表头并检查单元格结构；CI 的 veraPDF PDF/UA-2 验证为发布门槛。
 - 不要随意删除 `\DocumentMetadata`、回退编译引擎，或重新使用旧版 `latex-lab-testphase-table` 兼容补丁。
 - 图表和文字不得超出版心；复杂页面仍需人工目视检查。
 

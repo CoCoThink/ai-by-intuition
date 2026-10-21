@@ -68,8 +68,8 @@
 
 - **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)为 99 页。
 - **已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,472 个 Formula、21 张 Table／59 个 TH、16 个 Figure／16 处替代文字、48 个 H1／180 个 H2。
-- **已修复：**正文标题 H1/H2 与图注父子标签的缺失／非法关系；保留继续抽查辅助技术标题导航和图注读序。
-- **机器验收已通过：** [最新 veraPDF PDF/UA-2 验证](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412) 报告 1,727 项规则、736,481 项检查全部通过，CI 已提升为失败阻断。**全书 MathML 已通过机器验收并合入 `main`**：[集成 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415) 检查 1,472 个 Formula 的 MathML 关联完整性（933 份不同的 MathML），同时保留 veraPDF PDF/UA-2 严格门槛。**仍未完成**实际读屏验收、数学朗读效果、复杂表格关系与阅读顺序；不能把机器合规报告当作人工无障碍验收结论。
-- **下一阶段：**持续运行独立 PDF/UA-2 机器验证，持续回归检查 MathML 关联的完整性与实际读屏表现，复核跨页图文阅读顺序，再开展辅助技术人工验收。
+- **已修复：**正文标题 H1/H2 与图注父子标签的缺失／非法关系；保留 CI 标题层级和图注结构回归检查。
+- **机器验收已通过：** [最新 veraPDF PDF/UA-2 验证](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412) 报告 1,727 项规则、736,481 项检查全部通过，CI 已提升为失败阻断。**全书 MathML 已通过机器验收并合入 `main`**：[集成 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415) 检查 1,472 个 Formula 的 MathML 关联完整性（933 份不同的 MathML），同时保留 veraPDF PDF/UA-2 严格门槛。机器合规结果仅代表验证器覆盖的规则，不作为具体屏读效果保证。
+- **后续维护范围：**持续运行独立 PDF/UA-2 机器验证，自动检查 MathML 关联、标题层级、表格/图形结构、PDF 页面边界及回归；不开展真实屏读或人工无障碍验收。
 
 工程细节、目前已知限制与复现命令见 [无障碍现状及验收](docs/ACCESSIBILITY.md)；构建命令见 [README](README.md)。
