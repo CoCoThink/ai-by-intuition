@@ -8,7 +8,14 @@
 \usepackage{booktabs,tabularx}
 \usepackage{tikz}
 \usepackage{caption}
+\usepackage{latex-lab-testphase-table}
 \begin{document}
+\ExplSyntaxOn
+\keys_if_exist:nnTF {__tag/setup} {table/tagging}
+  {\tagpdfsetup{table/tagging=false}}
+  {\keys_if_exist:nnT {__tag/setup} {table-tagging}
+    {\tagpdfsetup{table-tagging=false}}}
+\ExplSyntaxOff
 \section{标签支持自测}
 本页用于验证中文、公式、表格与图像替代文本：$L=-\log p$。
 \begin{center}
