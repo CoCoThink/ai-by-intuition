@@ -138,7 +138,11 @@ $W_Q:d_{\rm model}\times d_k$。若改写为列向量，
 
 为什么能比较？因为前面已经学过\textbf{\hyperref[intro:02-dot-product]{点积}}：
 把两个长度相同的向量对应位置相乘，再把结果相加。
-假设这些都是教学用的\textbf{二维列向量}：
+这一步只为学习检索计算，\textbf{单独指定一组二维 Query/Key}，
+没有指定生成它们的投影矩阵。特别是下方
+$\vect k_1=(2,0)^\top$ \textbf{不是}前面“春天”的
+Embedding $(1,0)^\top$：若要从 Embedding 计算 Key，
+必须另外给出同一层共享的 $W_K$，不能直接把两组数当作同一张表。
 \[
 \vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
 \vect k_1=\begin{bmatrix}2\\0\end{bmatrix},\quad
