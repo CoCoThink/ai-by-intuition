@@ -1,4 +1,4 @@
-# XeLaTeX intermediates
+# LaTeX intermediate files (LuaLaTeX / XeLaTeX)
 *.aux
 *.bbl
 *.bcf

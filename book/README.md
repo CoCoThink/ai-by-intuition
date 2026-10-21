@@ -57,22 +57,38 @@
 - [集中参考答案](chapters/27-answer-key.tex)及[分章随堂自测解答](chapters/28-chapter-checks.tex)：所有题目先做后查
 - [参考与延伸阅读](chapters/26-sources.tex)
 
-## 一次构建，一本 PDF
+## 一次构建，一本 Tagged PDF
+
+CI 使用 **TeX Live 2026 + LuaLaTeX**，启动时要求 Noto 中文及西文字体。可以从仓库根目录先检查源码，再构建整本书：
+
+```bash
+python3 scripts/validate_book.py
+cd book
+latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex
+cd ..
+python3 -m pip install pypdf==5.9.0
+python3 scripts/validate_book.py --pdf book/build/main.pdf
+```
+
+生成文件为 `book/build/main.pdf`。CI 将唯一正式成品作为 `ai-by-intuition-volume-01` 工件发布，可从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
+
+2026 年 10 月 21 日的[成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界检查，并核验 `Tagged: yes` 及真实 PDF 结构树。
+
+## Tagged PDF 与尚待完成的无障碍验收
+
+目前 `book/main.tex` 采用 `\\DocumentMetadata{lang=zh-CN,tagging=on}`，不再使用旧版 `testphase` 或为 `tabularx` 关闭表格标签的实验性兼容补丁。
+
+CI 用 `pypdf==5.9.0` 验证 `/MarkInfo /Marked true`、`/StructTreeRoot`、`/Document` 根节点和公式／图像／替代文字节点。最新成功构建含 1,471 个公式节点、17 个图像节点及 17 处替代文字。**Tagged PDF 结构存在，并不等于通过 PDF/UA 或读屏体验审核。**
+
+### 最小回归测试
+
+`book/smoke-tagging.tex` 检验中文、公式、`tabularx` 和带中文替代文字的 TikZ 图。CI 先构建最小文件并检查 `Tagged: yes`，再构建整本书。手动复现：
 
 ```bash
 cd book
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
+mkdir -p build/smoke
+latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build/smoke smoke-tagging.tex
+pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 ```
 
-最新版本也可以在 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
-构建会检查目录、课程序列、交叉引用、公式数值和独立答案。
-
-## 无障碍与视觉验收
-
-正式构建已转为 LuaLaTeX 并启用 `DocumentMetadata` 的结构标签试验模式。CI 严格要求 `pdfinfo` 显示 `Tagged: yes`，并检查页面文字边界；TikZ 图有中文替代描述。**Tagged: yes 不等于通过 PDF/UA 验证**，数学公式的语义朗读、嵌套表格和读屏顺序仍需专项审核。
-
-### Tagged PDF 最小回归测试
-
-`book/smoke-tagging.tex` 独立检验 LuaLaTeX 在当前 CI 环境下对中文、公式、`tabularx` 与带替代文本的 TikZ 图的支持。CI 首先构建这个小文件，确认 `pdfinfo` 的 `Tagged: yes`，然后才构建全书；全书另做独立验收。
-\nCI tagged-PDF 构建固定使用 **TeX Live 2026** 容器，并分别检查最小样例、全书标签及文字边界。\n
-正式无障碍验收通过 `pypdf` 检查 PDF 目录的 `/MarkInfo /Marked true`、`/StructTreeRoot` 和真实的公式/图像/替代文本结构节点，不再把一个 `Tagged:` 字符串作为唯一判据；`Tagged: yes` 仍不代表已通过 PDF/UA 和读屏检查。
+最新 CI 日志仍有数学 MathML 依赖提示及图注结构父子关系警告。表格标题单元格关联、数学可朗读性、复杂图的文本替代准确性和读屏顺序须继续审核；详见仓库根目录的 [无障碍现状及验收清单](../docs/ACCESSIBILITY.md)。

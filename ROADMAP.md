@@ -64,6 +64,11 @@
 
 这些资源提供学习问题和参考背景；正文独立组织并独立推导。
 
-## Tagged-PDF 兼容性说明
+## 工程构建与 Tagged PDF 验收（2026-10-21）
 
-已为正文教学插图补充替代文本，并在 CI 检查页面文字边界。全书采用 LuaLaTeX、`DocumentMetadata` 开启结构标签，CI 对 `Tagged: no` 实施失败阻断；PDF/UA 仍须独立评估，不应仅凭 LaTeX 配置声明支持读屏。最终 PDF/UA 适配应以可验证的真实结构树、朗读顺序、表格和数学标记为验收条件。
+- **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)为 99 页。
+- **已通过：**CI 验证七部分和 47 个 `\\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,471 个 Formula、17 个 Figure、17 处替代文字。
+- **尚未完成：**PDF/UA 正式验收，包括读屏顺序、标题层级、表格结构、数学表达式 MathML、图注父子关系等。成功的 `Tagged: yes` **不能**替代合规性检验。
+- **下一阶段：**消除 `tagpdf` 图注父子结构警告，验证/补齐数学语义与表格表头关系，使用独立 PDF/UA 检查器及实际辅助技术验收，记录可复现的缺陷和页面。
+
+工程细节、目前已知限制与复现命令见 [无障碍现状及验收](docs/ACCESSIBILITY.md)；构建命令见 [README](README.md)。
