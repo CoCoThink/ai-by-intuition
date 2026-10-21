@@ -14,8 +14,8 @@
 $X\in\R^{T\times d_{\rm model}}$。
 给每个 Token 应用\textbf{相同参数}的两层前馈网络（FFN）：
 \begin{equation}
-H=\relu(XW_{\rm up}+\vect b_{\rm up}),\qquad
-Y=HW_{\rm down}+\vect b_{\rm down}.
+F_{\rm mid}=\relu(XW_{\rm up}+\vect b_{\rm up}),\qquad
+F_{\rm out}=F_{\rm mid}W_{\rm down}+\vect b_{\rm down}.
 \label{eq:ffn-batched}
 \end{equation}
 这里的偏置向量按行广播，意味着每一行加上同一组数。矩阵形状是：
@@ -24,9 +24,9 @@ Y=HW_{\rm down}+\vect b_{\rm down}.
 \underbrace{W_{\rm up}}_{d_{\rm model}\times d_{\rm ff}}
 =\underbrace{Z}_{T\times d_{\rm ff}},
 \quad
-\underbrace{H}_{T\times d_{\rm ff}}
+\underbrace{F_{\rm mid}}_{T\times d_{\rm ff}}
 \underbrace{W_{\rm down}}_{d_{\rm ff}\times d_{\rm model}}
-=\underbrace{Y}_{T\times d_{\rm model}}.
+=\underbrace{F_{\rm out}}_{T\times d_{\rm model}}.
 \]
 $d_{\rm ff}$ 是 FFN 的中间宽度。它可以大于 $d_{\rm model}$，
 但\textbf{不要求固定为四倍}。
@@ -39,7 +39,7 @@ $d_{\rm model}=2$、$d_{\rm ff}=3$：
 X=\begin{bmatrix}1&2\\0&1\end{bmatrix},\quad
 W_{\rm up}=\begin{bmatrix}1&0&1\\0&1&-1\end{bmatrix},
 \quad
-W_{\rm down}=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
+W_{\rm down}=\begin{bmatrix}2&0\\0&1\\1&1\end{bmatrix}.
 \]
 先上投影：
 \[
@@ -48,16 +48,16 @@ XW_{\rm up}
 \]
 逐元素 ReLU：
 \[
-H=\begin{bmatrix}1&2&0\\0&1&0\end{bmatrix}.
+F_{\rm mid}=\begin{bmatrix}1&2&0\\0&1&0\end{bmatrix}.
 \]
 再下投影：
 \begin{equation}
-Y=HW_{\rm down}=
-\boxed{\begin{bmatrix}1&2\\0&1\end{bmatrix}}.
+F_{\rm out}=F_{\rm mid}W_{\rm down}=
+\boxed{\begin{bmatrix}2&2\\0&1\end{bmatrix}}.
 \end{equation}
-虽然这组人工参数恰好得到与输入相同的数字，
-但是中间确实做过 $2\to3\to2$ 的变换。
-换一组输入或参数，结果一般不相同。
+这次第一条 Token 从 $(1,2)$ 变成了 $(2,2)$，
+第二条在这组权重下恰好不变。由此可见 FFN 确实进行了变换，
+不是仅把输入原样抄回。
 
 \textbf{观察关键事实：}第一行 FFN 不需要第二行参与就可以计算；
 第二行也一样。\textbf{标准 FFN 负责逐 Token 处理特征，
@@ -72,7 +72,7 @@ FFN 的下投影将隐藏宽度还原为 $d_{\rm model}$，
 是为了继续堆叠后续 Block；
 而\textbf{词表输出头}要把隐藏状态映射到候选 Token 分数：
 \begin{equation}
-Z_{\rm vocab}=YW_{\rm vocab}+\vect b_{\rm vocab},
+Z_{\rm vocab}=F_{\rm out}W_{\rm vocab}+\vect b_{\rm vocab},
 \quad
 W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.
 \end{equation}
