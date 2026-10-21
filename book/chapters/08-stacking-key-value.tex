@@ -65,13 +65,13 @@ K\vect{x}
 
 \begin{center}
 \begin{tikzpicture}[>=Latex,
- box/.style={draw=linegray,rounded corners=3pt,fill=paper,minimum height=11mm,align=center,font=\small},
- node distance=8mm]
-\node[box,minimum width=38mm] (key) {$K$：两行 Key};
-\node[box,right=of key,minimum width=33mm] (query) {$\vect{x}$：一列 Query};
-\node[box,right=of query,minimum width=41mm] (score) {$K\vect{x}$：两项分数};
-\draw[->,very thick,blue] (key)--(query);
-\draw[->,very thick,blue] (query)--(score);
+box/.style={draw=linegray,rounded corners=3pt,fill=paper,
+ minimum height=12mm,align=center,font=\small}]
+\node[box,minimum width=32mm] (key) at (0,0) {$K$\\两行 Key};
+\node[font=\LARGE,color=blue] at (2.8,0) {$\times$};
+\node[box,minimum width=32mm] (query) at (5.6,0) {$\vect{x}$\\一列 Query};
+\node[font=\LARGE,color=teal] at (8.4,0) {$=$};
+\node[box,minimum width=35mm] (score) at (11.2,0) {$K\vect{x}$\\两项分数};
 \end{tikzpicture}
 \end{center}
 
