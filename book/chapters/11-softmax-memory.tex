@@ -69,7 +69,7 @@ $V:M\times d_v$；Self-Attention 中 $N=M=T$。
 \label{eq:attention-transformer}
 \end{equation}
 \phantomsection\label{eq:multi-query-attention}
-Softmax \textbf{对每个 Query 的一行单独归一化}，输出 $N\times d_v$。
+Softmax 对每个 Query 的一行单独归一化，输出 $N\times d_v$。
 除以 $\sqrt{d_k}$ 用于控制高维点积分数的典型量级；
 之前的三位置数值\textbf{未缩放}，不能在这里直接沿用旧概率。
 

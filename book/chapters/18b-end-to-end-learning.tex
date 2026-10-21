@@ -1,7 +1,7 @@
 \section{把前面的数学连成一次真正的学习}
 
 到这里，每一个零件都已经见过：函数负责计算，MLP 组合层，损失衡量错误，反向传播求出梯度。
-但\textbf{这些步骤连接起来究竟是什么样}？
+但这些步骤连接起来究竟是什么样？
 本章不再介绍新的模块，只选一个有四个可训练参数的小网络，
 从\textbf{预测}一直算到\textbf{修改权重后的再预测}。
 它不是直接模拟一整个语言模型，而是先练习所有可训练网络共同使用的局部计算流程。
@@ -56,14 +56,16 @@ L&=\frac12(4-5)^2=\frac12.
 \end{align*}
 注意 $\relu'(2)=1$；只有在\textbf{当前激活为正}的情况下，这条 ReLU 路径才传递了非零梯度。
 
-\begin{idea}[title={为什么叫反向传播？}]
+\begin{idea}
+\noindent\emph{为什么叫反向传播？}\par
+
 计算损失时是 $x\to z\to h\to\widehat y\to L$；
 计算梯度时则从 $\partial L/\partial\widehat y$ 开始，沿原来的计算链\textbf{倒着复用局部导数}。每条路径的变化率相乘，分叉路径的贡献相加。
 \end{idea}
 
 \subsection{第三步：四个参数一起更新，再做一次预测}
 
-使用学习率 $\eta=0.05$，所有更新都依据\textbf{同一轮前向传播的旧梯度}：
+使用学习率 $\eta=0.05$，所有更新都依据同一轮前向传播的旧梯度：
 \begin{align*}
 w_1'&=1-0.05(-4)=1.2,&
 b_1'&=0-0.05(-2)=0.1,\\
@@ -94,7 +96,7 @@ L'&=\frac12(5.30-5)^2=0.045.
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18b-end-to-end-learning}为什么一次 SGD 中不能先更新 $w_2$ 再用新的 $w_2$ 计算同一步的 $w_1$ 梯度？\quad{\footnotesize\hyperref[answer:18b-end-to-end-learning]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-\textbf{训练的基本循环是：预测 $\to$ 算损失 $\to$ 求梯度 $\to$ 更新参数。}
-我们已经看到这套算法如何调整权重，但\textbf{一个样本预测得更准，并不代表新样本一定也对}。
+训练的基本循环是：预测 $\to$ 算损失 $\to$ 求梯度 $\to$ 更新参数。
+我们已经看到这套算法如何调整权重，但一个样本预测得更准，并不代表新样本一定也对。
 下一章解释什么叫泛化，以及为什么训练得太贴合已有样本也可能出问题。
 \end{conclusion}
