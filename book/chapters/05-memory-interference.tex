@@ -8,7 +8,7 @@
 \begin{equation}
 \boxed{W\vect{x}=\sum_{i=1}^{M}\vect{v}_i(\vect{k}_i^\top\vect{x}).}
 \end{equation}
-也就是说：\textbf{所有记忆都会按照它们与输入的相似度，贡献一部分输出。}
+也就是说：所有记忆都会按照它们与输入的相似度，贡献一部分输出。
 
 \subsection{一个完全算得出来的二维例子}
 假设我们有两条记忆：
@@ -71,6 +71,6 @@ W\vect{k}_j=
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:05-memory-interference}为什么把多条外积记忆相加后，读取一条 Key 时会混入别的 Value？\quad{\footnotesize\hyperref[answer:05-memory-interference]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-关键矛盾不是\textbf{能不能把记忆写进矩阵}，而是\textbf{取回其中一条时，其他记忆会不会一起冒出来}。在这个\textbf{联想记忆模型}中，可以尝试两类办法：优化写入矩阵，或改变检索权重。
-后面的选读章节会依次探索；它们\textbf{不是标准 MLP 或 Self-Attention 的历史发明步骤}。
+关键矛盾不是\textbf{能不能把记忆写进矩阵}，而是取回其中一条时，其他记忆会不会一起冒出来。在这个\textbf{联想记忆模型}中，可以尝试两类办法：优化写入矩阵，或改变检索权重。
+后面的选读章节会依次探索；它们不是标准 MLP 或 Self-Attention 的历史发明步骤。
 \end{conclusion}
