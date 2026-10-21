@@ -1,7 +1,7 @@
 \section{矩阵乘法到底在算什么？}
 \label{intro:03-matrix-multiplication}
 
-前面的点积只产生一个分数。如果要同时处理很多个输入向量，难道要把相同的计算手写几十次？\textbf{矩阵可以把许多相似计算排在一起}，并清楚地标出输入输出各有多少个数字。先把它当成一张数字表，先学会运算，不必提前记住后面模型的术语。
+前面的点积只产生一个分数。如果要同时处理很多个输入向量，难道要把相同的计算手写几十次？矩阵可以把许多相似计算排在一起，并清楚地标出输入输出各有多少个数字。先把它当成一张数字表，先学会运算，不必提前记住后面模型的术语。
 
 \subsection{矩阵就是一张有行和列的数字表}
 
@@ -14,7 +14,9 @@ B=\begin{bmatrix}1&2&3\\4&5&6\end{bmatrix}.
 \]
 $\vect{x}$ 有 2 行 1 列，尺寸是 $2\times1$；$A$ 是 $2\times2$；$B$ 是 $2\times3$。记尺寸时，\textbf{先数行，再数列}。
 
-\begin{example}[title={不要把行数与每行元素数搞反}]
+\begin{example}
+\noindent\emph{不要把行数与每行元素数搞反}\par
+
 $\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以是 $3\times2$，不是 $2\times3$。
 \end{example}
 
@@ -34,7 +36,7 @@ $\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以
 发生了什么？第一行 $(1,2)$ 与 $(5,6)$ 点积得到 $17$，第二行 $(3,4)$ 与 $(5,6)$ 点积得到 $39$。把结果按行排成一列就完成了。
 
 \begin{idea}
-\textbf{矩阵 $\times$ 列向量 = 每一行与该列向量分别点积。}
+矩阵 $\times$ 列向量 = 每一行与该列向量分别点积。
 例如把许多二维向量排成不同行，再乘一条二维列向量，就能一次算出许多个点积分数。
 \end{idea}
 
@@ -55,10 +57,12 @@ $\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:03-matrix-multiplication}若 $A:2\times3$、$B:3\times4$，$AB$ 有几行几列？\quad{\footnotesize\hyperref[answer:03-matrix-multiplication]{核对解答。}}\par\medskip
 
-\begin{conclusion}[title={一条关键定理，两种直观解释}]
+\begin{conclusion}
+\noindent\emph{一条关键定理，两种直观解释}\par
+
 \textbf{行的视角：}每行做点积，产生每一项输出。\\
 \textbf{列的视角：}输入里的系数，决定每一列要贡献多少。\\
-先记住\textbf{相同的结果，可以从“行做点积”或“列作加权组合”两种方向解释}。
+先记住相同的结果，可以从“行做点积”或“列作加权组合”两种方向解释。
 后面学习 Attention 时，再给这些向量取 Query、Key 和 Value 的名字。
 \end{conclusion}
 
@@ -86,7 +90,7 @@ $\vect x^\top W=(A\vect x)^\top$。
 \end{bmatrix}
 =\begin{bmatrix}17&23\\39&53\end{bmatrix}.
 \]
-结果的第 $i$ 行、第 $j$ 列，恰好是\textbf{左边第 $i$ 行与右边第 $j$ 列的点积}。
+结果的第 $i$ 行、第 $j$ 列，恰好是左边第 $i$ 行与右边第 $j$ 列的点积。
 
 \subsection{为什么两个矩阵不是总能相乘？}
 \[
@@ -122,7 +126,7 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 \subsection{同一批向量如何从行变成列？}
 \label{sec:layout-matrix-card}
 
-学会矩阵的行、列之后，还需要知道：\textbf{同样的数字可以用两种方向排列}。
+学会矩阵的行、列之后，还需要知道：同样的数字可以用两种方向排列。
 在后面的神经网络与 Attention 中，我们会不断遇到这种转置。先用一个没有 AI 术语的数字例子认清它。
 
 \input{figures/row-column-intuition}

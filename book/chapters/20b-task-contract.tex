@@ -1,7 +1,7 @@
 \section{把语言练习变成一道可计算的预测题}
 \label{intro:20b-task-contract}
 
-阅读指南已经解释了\textbf{为什么选择下一 Token 预测来学习语言模式}：
+阅读指南已经解释了为什么选择下一 Token 预测来学习语言模式：
 原始文字自身能提供下一位置的训练答案，而把新 Token 接在后面，
 又可以一步步生成较长的文本。
 现在我们已有 Token ID 和 Embedding 向量，
@@ -30,14 +30,14 @@
 \quad\longrightarrow\quad
 \underbrace{[3,\ 4,\ 2]}_{\text{对应的下一 Token}}.
 \]
-这三个对应关系就是三道\textbf{由原始文本自动构造的练习题}。
+这三个对应关系就是三道由原始文本自动构造的练习题。
 例如第一题的输入是“春天”，期望候选是“花”；
 第二题的输入已经多了“花”，希望预测“开了”。
 这和前一章那张 $5\times2$ 的 Embedding 表连接起来了：
 模型现在可以把输入 $[1,3,4]$ 查成三行二维向量，
-接下来要学的是\textbf{怎样通过可训练的网络把每一行变成词表候选分数}。
+接下来要学的是怎样通过可训练的网络把每一行变成词表候选分数。
 此时比较的是\textbf{预测是否符合真实文本}，而不是机器是否理解了春天。
-\textbf{为什么能在同一次前向计算中同时训练三个位置}，
+为什么能在同一次前向计算中同时训练三个位置，
 要等学会 Attention、因果掩码和损失函数后再解释。
 
 \subsection{先约定输入，再约定预测的输出}
@@ -51,11 +51,11 @@
 \underbrace{2}_{\text{每个向量的数字数}}.
 \]
 三个输入 Token 查表后可以组成 $3\times2$ 矩阵：
-\textbf{三行表示三个位置，每行两个特征}。
+三行表示三个位置，每行两个特征。
 
 \textbf{输出：}针对下一位置的候选给出预测分数。
 无论网络内部进行了多少运算，最终都需要
-\textbf{为五个候选 Token 分别提供一个分数}，
+为五个候选 Token 分别提供一个分数，
 然后才能比较候选或选择结果。
 此时不用知道输出头如何实现，只需知道\textbf{任务目标}。
 
@@ -82,7 +82,7 @@ Embedding 表 & $5\times2$ & 词表 5 项，每项 2 个特征\\
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:20b-task-contract}输入 ID 为 $(1,3,4)$，对应的下一 Token 标签怎样错位排列？\quad{\footnotesize\hyperref[answer:20b-task-contract]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-我们已经把“学习语言”这个大问题缩成一个\textbf{有输入、有答案、能量化错误的练习任务}。
-下一部分从一个小网络开始，解释\textbf{有参数的计算函数怎样根据答案逐步改进}；
+我们已经把“学习语言”这个大问题缩成一个有输入、有答案、能量化错误的练习任务。
+下一部分从一个小网络开始，解释有参数的计算函数怎样根据答案逐步改进；
 至于怎样利用整段上下文，要等学完 Attention 再回来。
 \end{conclusion}

@@ -2,7 +2,7 @@
 \label{intro:20-embeddings}
 
 前面学会了向量和矩阵，但还有一个问题：
-\textbf{文字不能直接参与点积，怎样让同一段文字成为一张数字表？}
+文字不能直接参与点积，怎样让同一段文字成为一张数字表？
 我们先认识每个输入位置的身份，再让每个身份对应一条可训练向量。
 这条转换链是\textbf{文本 $\to$ Token $\to$ ID $\to$ Embedding}。
 
@@ -45,7 +45,7 @@
 \begin{bmatrix}0\\0\\0\\1\\0\end{bmatrix}.
 \]
 它能区分身份，但两条不同的 One-hot 向量点积都是 $0$；
-\textbf{光靠这个身份标签，还没学到词与词的关系。}
+光靠这个身份标签，还没学到词与词的关系。
 而且真实词表可能很大，不会为了每次查词都显式创建这么长的稀疏列向量。
 
 \subsection{第三步：Embedding 表让每个 Token 有一条短向量}
@@ -85,7 +85,7 @@ E=
 \end{bmatrix}\in\R^{3\times2}.}
 \label{eq:running-embedding}
 \end{equation}
-\textbf{三行对应三个位置，每行有两个数字。}
+三行对应三个位置，每行有两个数字。
 
 \input{figures/embedding-lookup}
 后面讨论 RNN、Attention 和 Transformer 时，
@@ -120,13 +120,13 @@ E=
 \]
 但两段文本的顺序不同，意思也未必一样。
 因此除了知道\textbf{每个 Token 是什么}，
-还需要知道\textbf{它处在哪个位置、与别的位置怎样联系}。
+还需要知道它处在哪个位置、与别的位置怎样联系。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:20-embeddings}词表大小为 $5$、向量维度为 $2$ 时，Embedding 表是什么形状？\quad{\footnotesize\hyperref[answer:20-embeddings]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 从原始文字到可计算矩阵，我们已经有完整通路：
-\textbf{Tokenizer 切分 $\to$ ID 表示身份 $\to$ Embedding 查表 $\to$ 向量按行堆叠}。
-但我们还没有给网络规定\textbf{该用这些数字完成哪道练习题}。
+Tokenizer 切分 $\to$ ID 表示身份 $\to$ Embedding 查表 $\to$ 向量按行堆叠。
+但我们还没有给网络规定该用这些数字完成哪道练习题。
 下一章就把“学习语言”变成有输入、有答案的训练任务。
 \end{conclusion}
