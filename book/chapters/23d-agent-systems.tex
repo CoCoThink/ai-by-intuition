@@ -54,23 +54,54 @@ Agent 是组织模型决策与工具动作的系统方式。}
 \subsection{一次工具调用实际发生了什么？}
 
 \begin{center}
-\begin{tikzpicture}[>=Latex,node distance=5mm,
- n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=108mm,minimum height=10mm,align=center,font=\small}]
-\node[n] (u) {用户目标 + 约束};
-\node[n,below=of u] (m) {模型输出结构化的工具调用请求};
-\node[n,below=of m] (p) {应用程序检查权限、参数与调用策略};
-\node[n,below=of p] (t) {工具执行读取/计算，返回结果或错误};
-\node[n,below=of t] (a) {模型结合结果回答；系统再次校验};
-\draw[->,thick,blue] (u)--(m);
-\draw[->,thick,blue] (m)--(p);
-\draw[->,thick,teal] (p)--(t);
-\draw[->,thick,orange] (t)--(a);
+\begin{tikzpicture}[>=Latex,scale=.94,transform shape,
+ lane/.style={rounded corners=3pt,draw=linegray,thick},
+ n/.style={rounded corners=3pt,draw=linegray,fill=white,minimum width=30mm,minimum height=10mm,align=center,font=\small}]
+\fill[blueback] (0,0) rectangle (4.1,7.0);
+\fill[greenback] (4.3,0) rectangle (8.4,7.0);
+\fill[orangeback] (8.6,0) rectangle (12.7,7.0);
+\draw[lane] (0,0) rectangle (4.1,7.0);
+\draw[lane] (4.3,0) rectangle (8.4,7.0);
+\draw[lane] (8.6,0) rectangle (12.7,7.0);
+\node[font=\bfseries\small,blue] at (2.05,6.65) {应用与权限系统};
+\node[font=\bfseries\small,teal] at (6.35,6.65) {语言模型};
+\node[font=\bfseries\small,orange] at (10.65,6.65) {外部工具};
+\node[n] (request) at (2.05,5.65) {用户提供目标与范围};
+\node[n] (plan) at (6.35,4.85) {输出结构化请求\\（不是执行）};
+\node[n] (auth) at (2.05,4.00) {验证参数、授权\\与资源边界};
+\node[n] (exec) at (10.65,3.20) {真实读取与计算\\返回结果或错误};
+\node[n] (check) at (2.05,2.15) {检查工具结果\\作为数据加入上下文};
+\node[n] (answer) at (6.35,1.20) {生成带来源的回答};
+\node[n] (final) at (2.05,.55) {输出复核与交付};
+\draw[->,thick,blue] (request.east)--(plan.north west);
+\draw[->,thick,teal] (plan.south west)--(auth.north east);
+\draw[->,thick,orange] (auth.east) to[out=0,in=170] (exec.west);
+\draw[->,thick,orange] (exec.south) to[out=-100,in=0] (check.east);
+\draw[->,thick,blue] (check.east)--(answer.north west);
+\draw[->,thick,teal] (answer.south west)--(final.east);
 \end{tikzpicture}
+\captionof{figure}{模型／应用／工具三泳道：请求与执行属于不同主体}
+\label{fig:tool-swimlanes}
 \end{center}
 
 \textbf{重要：模型提出调用，并不等于模型自己执行了代码。}
 真正的文件修改、搜索和网络请求由外部程序完成，
 可否执行取决于系统的工具配置、授权和安全控制。
+
+\subsection{请求和返回值长什么样？}
+
+例如要读取一份允许访问的报表，模型可以\textbf{提出}下述 JSON 请求；
+应用程序仍需验证参数并决定是否执行：
+\begin{verbatim}
+{"tool":"read_reports","arguments":{"quarter":"2026Q3"}}
+\end{verbatim}
+工具返回的可能是
+\begin{verbatim}
+{"ok":true,"revenue":120,"unit":"million_CNY"}
+\end{verbatim}
+模型只能根据应用转交的结果组织回答；
+\textbf{这两段 JSON 本身不证明发生了真实调用}。
+对真实业务数据还要验证来源、单位与授权范围。
 
 \subsection{什么时候用固定工作流，什么时候用 Agent？}
 

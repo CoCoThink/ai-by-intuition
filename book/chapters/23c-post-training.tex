@@ -45,6 +45,21 @@
 \textbf{偏好数据不等于客观真理}：标注者可能有分歧，
 偏好模型也会出现偏差。
 
+\subsection{用一个数值理解“偏好比较”}
+把回答 A 与回答 B 的奖励分数分别设为 $r_A=1$、$r_B=0$。
+一种用于\textbf{成对偏好建模}的简单概率是
+\[
+P(A\succ B)=\sigma(r_A-r_B)
+=\frac{1}{1+e^{-1}}\approx\boxed{0.731}.
+\]
+若偏好标签是“A 优于 B”，负对数损失为
+\[
+-\log P(A\succ B)\approx\boxed{0.313}.
+\]
+这里示范的是\textbf{奖励差经 Logistic 映射的比较损失}，
+不是说所有 RLHF 算法的训练目标都等于这一个式子；
+实际 RLHF 的策略优化还可能包含采样、优势估计与约束。
+
 \subsection{可验证奖励：让模型在能自动检查的任务中尝试改进}
 \phantomsection\label{concept:rlvr}
 

@@ -17,6 +17,13 @@
 \item 一个头输出 $3\times2$ 的矩阵，两个头按特征列拼接后是什么尺寸？若要投影回 4 维，需要什么尺寸的 $W_O$？
 \item 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\log p$ 约为多少？
 \item 给模型加一个私有知识库后，是否能保证它永远不会生成错误事实？解释检索与生成分别可能出什么问题。
+\item \textbf{综合数值题（Attention + Softmax + 损失）：}
+设单 Query 行向量 $q=(1,1)$，
+$K=V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}$。
+不使用缩放与掩码。求三个点积分数、Softmax 权重、读取向量；
+若输出头给三个候选的 logits 恰好是 $(2,1,0)$，
+真实标签是第 2 个候选（从 1 开始计数），求交叉熵
+$L=-\log p_2$。说明这个损失是否因 Attention 权重本身而被确定。
 \end{enumerate}
 
 \noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}，不要先翻答案。}

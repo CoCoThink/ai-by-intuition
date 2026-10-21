@@ -68,6 +68,17 @@ $2\times2$ 的核只有\textbf{4 个可学习数字}，但可以在所有位置\
 \]
 做\textbf{最大池化}（max pooling），只保留最大值 $7$。池化可以缩小特征图并对一定范围内的微小位移增加稳定性；但它也会丢失空间信息，因此现代 CNN 并不一定每层都使用池化。
 
+\subsection{CNN 和 Transformer 之间的桥：ViT}
+Transformer 并不限于文字输入。Vision Transformer（ViT）可以把图片
+分成固定大小的 Patch（图像块），把每个 Patch 映射成向量，
+再像 Token 一样按行排成序列，并加入位置信息：
+\[
+\text{图片}\ \longrightarrow\ \text{Patch}\ \longrightarrow\
+\text{Token 向量}\ \longrightarrow\ \text{Transformer}.
+\]
+CNN 偏向局部卷积与权重共享；ViT 通过图像块表示与 Attention
+建模图像位置之间的关系。它们是处理图像的不同设计，不是互相排斥。
+
 \subsection{一个典型图像分类模型}
 
 \[

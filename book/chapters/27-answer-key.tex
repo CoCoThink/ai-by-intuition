@@ -41,6 +41,13 @@
 \item 拼接后 $3\times4$；若按行向量约定，$W_O:4\times4$。
 \item $-\log(0.25)=\log4\approx1.386$。
 \item 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。
+\item $qK^\top=(1,1,2)$；Softmax 为
+$(e,e,e^2)/(2e+e^2)\approx(0.212,0.212,0.576)$，
+读取 $(0.788,0.788)$。另外 logits $(2,1,0)$ 的
+Softmax 是 $(0.665,0.245,0.090)$；
+第 2 类为真时损失 $-\log0.245\approx1.408$。
+\textbf{两段概率来自不同运算}：题目没有指定如何从 Attention 输出映射成 logits，
+所以不能由读取权重独立决定损失。
 \end{enumerate}
 \end{tcolorbox}
 
