@@ -64,6 +64,7 @@ $x_1,x_2,x_3$ 是人为指定的\textbf{输入特征}，
 \begin{center}
 \small
 \renewcommand{\arraystretch}{1.35}
+\tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}p{19mm}p{20mm}p{26mm}X@{}}
 \toprule
 这次读什么 & 本次输入 & 之前的状态 & 更新后的状态\\
@@ -94,6 +95,7 @@ RNN 额外增加了从上一步状态到下一步状态的通路。
 
 \begin{center}
 \small
+\tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}p{33mm}XX@{}}
 \toprule
 问题 & 单独处理每个 Token 的 MLP & RNN\\
