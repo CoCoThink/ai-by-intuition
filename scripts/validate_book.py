@@ -309,7 +309,7 @@ def validate_pdf(path: Path) -> None:
     for num, title in zip("一二三四五六七", PARTS):
         # pdftotext can interleave the page number before the title.
         # Permit a 1-3 digit TOC folio between the part marker and title.
-        pattern = rf"第{num}部分\\d{{0,3}}{re.escape(normalized(title))}"
+        pattern = rf"第{num}部分\d{{0,3}}{re.escape(normalized(title))}"
         if not re.search(pattern, toc):
             fail(f"Rendered TOC missing part 第{num}部分: {title}")
     if "第八部分" in toc:
