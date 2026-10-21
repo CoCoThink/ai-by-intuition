@@ -1,0 +1,37 @@
+\begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,
+  boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=3mm,
+  fonttitle=\sffamily\bfseries,coltitle=ink,
+  title={从“按需要读取”到 Q/K/V：每个字母都有工作}]
+\small
+\begin{center}
+\begin{tikzpicture}[>=Latex,
+  b/.style={draw=linegray,fill=white,rounded corners=3pt,
+             minimum width=52mm,minimum height=12mm,align=center,font=\small},
+  head/.style={draw=blue,fill=blueback,rounded corners=3pt,
+             minimum width=118mm,minimum height=10mm,align=center,font=\small},
+  end/.style={draw=teal,fill=greenback,rounded corners=3pt,
+             minimum width=118mm,minimum height=11mm,align=center,font=\small}]
+\node[head] (goal) at (0,1.95) {目标：让当前位置按相关性读取三个位置的信息};
+\node[b] (find) at (-3.15,.6) {先决定读谁、读多少};
+\node[b] (read) at (3.15,.6) {再决定实际取回什么};
+\node[b] (match) at (-3.15,-.85)
+  {Query $\vect q_3$ 与 Key $\vect k_i$\\点积得到分数 $s_i$};
+\node[b] (value) at (3.15,-.85)
+  {每个位置提供 Value $\vect v_i$\\它是被读取的内容};
+\node[b] (weight) at (-3.15,-2.35) {Softmax：分数 $\to$ 权重 $a_i$};
+\node[end] (out) at (0,-3.85)
+  {结果：$\displaystyle\vect y_3=\sum_{i=1}^{3}a_i\vect v_i$};
+\draw[->,blue,thick] (goal.south) to[out=-115,in=90] (find.north);
+\draw[->,teal,thick] (goal.south) to[out=-65,in=90] (read.north);
+\draw[->,blue,thick] (find)--(match);
+\draw[->,teal,thick] (read)--(value);
+\draw[->,blue,thick] (match)--(weight);
+\draw[->,blue,thick] (weight.south) to[out=-90,in=150] (out.north west);
+\draw[->,teal,thick] (value.south) to[out=-90,in=30] (out.north east);
+\end{tikzpicture}
+\end{center}
+\textbf{注意：}这里 $i=1,2,3$ 是\textbf{候选位置编号}。
+第三个位置既能发出 Query，也会提供自己的 Key 和 Value。
+Q/K/V 是\textbf{每个位置参与计算时扮演的角色}，
+不是把三个词分别命名为 Q、K、V。
+\end{tcolorbox}

@@ -217,6 +217,17 @@ def validate_source() -> None:
             "0.910" in matrix_bridge and
             "矩阵转置" in matrix_bridge):
         fail("The following chapter no longer builds on the same Attention example")
+    if not (attn.find("先不提 QKV") < attn.find("Query（查询") <
+            attn.find("(2,0,1)") < attn.find("0.910")):
+        fail("Attention must motivate weighted reading before QKV labels and arithmetic")
+    for needle in (r"\label{eq:attention-design-goal}",
+                   r"\input{figures/attention-why-qkv}",
+                   r"W_Q\vect x_i", r"W_K\vect x_i", r"W_V\vect x_i",
+                   "0.245", "1.665"):
+        if needle not in attn:
+            fail("Missing Attention-to-QKV reasoning checkpoint: " + needle)
+    print("Attention-to-QKV QA passed: why weights, Q/K matching, V reading, and counterexample")
+
     print("Teaching-sequence QA passed: RNN intuition and Attention hand calculation")
 
     # Inline concept back-links must land on a precise, previously taught explanation.
@@ -244,7 +255,7 @@ def validate_source() -> None:
     teaching_figures = {
         "book/chapters/21-rnn.tex": ("rnn-unrolled-flow",),
         "book/chapters/21b-why-attention.tex": (
-            "attention-rnn-bridge", "attention-three-step-weights"
+            "attention-rnn-bridge", "attention-why-qkv", "attention-three-step-weights"
         ),
     }
     for chapter, figure_names in teaching_figures.items():
@@ -261,7 +272,7 @@ def validate_source() -> None:
     for number in ("0.665", "0.090", "0.245", "0.910", "0.335"):
         if number not in weights:
             fail(f"Attention teaching chart missing hand-calculated value: {number}")
-    print("RNN/Attention vector figure QA passed: 3 diagrams and 5 numerical checks")
+    print("RNN/Attention vector figure QA passed: 4 diagrams and 5 numerical checks")
 
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
@@ -329,6 +340,11 @@ def validate_pdf(pdf_path: Path) -> None:
         if proof not in book_text:
             fail("Rendered PDF missing the end-to-end running example: " + proof)
     print("Running-example PDF QA passed: tokenization through predicted probability")
+
+    for item in ("先不提QKV", "读谁、读多少", "为什么Key和Value必须区分角色"):
+        if re.sub(r"\s+", "", item) not in book_text:
+            fail("Rendered PDF omits the Attention-to-QKV explanation: " + item)
+    print("Attention/QKV PDF QA passed: motivation, computation, and role counterexample")
 
     print("Advanced curriculum PDF QA passed: new topics are present")
 

@@ -2,6 +2,13 @@
 \phantomsection\label{concept:self-attention}
 \label{intro:12-self-attention-matrices}
 
+上一章先从“为什么不平均读取所有位置”出发，
+将任务拆成\textbf{按 Query 与 Key 决定读取比例}、
+以及\textbf{把 Value 按比例组合}两部分。
+随后才用一个 Query 手算了三条 Key 的分数，
+并得到 Attention 输出。
+现在仍使用同样的三种角色。
+
 前面先算过\textbf{一个 Query} 对三条 Key 的分数，
 又把同样的规则扩展成多行 Query 的公式 $\softmax(QK^\top)V$。
 但这些 Q/K/V 向量在例子里是\textbf{提前给定的数字}。

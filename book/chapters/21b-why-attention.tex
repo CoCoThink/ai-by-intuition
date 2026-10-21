@@ -38,29 +38,98 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 不同箭头并不要求权重相等。
 我们还没有说权重具体由什么决定，下面就设计这件事。
 
-\subsection{第一步：谁需要信息？谁能提供信息？}
+\subsection{先不提 QKV：一次“读取”到底要算什么？}
+
+如果前面有三个可以读取的位置，
+每个位置都保存一条\textbf{内容向量}。
+为了便于手算，假设三条内容分别是
+\[
+\vect c_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
+\vect c_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
+\vect c_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\]
+最简单的方法是把它们\textbf{平均}：
+\[
+\vect y_{\rm avg}
+=\frac13(\vect c_1+\vect c_2+\vect c_3)
+=\begin{bmatrix}2/3\\2/3\end{bmatrix}.
+\]
+但无论当前位置想查找什么，只要内容不变，
+平均结果就不变。\textbf{它没有考虑当前的查找需要。}
+
+不妨先给三条内容分配权重 $a_1,a_2,a_3$，
+且规定权重非负、总和为 $1$：
+\begin{equation}
+\boxed{\vect y=a_1\vect c_1+a_2\vect c_2+a_3\vect c_3,\qquad
+a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
+\label{eq:attention-design-goal}
+\end{equation}
+刚才的平均，只是 $a_1=a_2=a_3=1/3$ 的特例。
+真正缺少的东西是：
+\textbf{这些权重该由谁决定？不同位置该读不同内容时怎么办？}
+
+于是我们把任务拆成两件事：
+\begin{enumerate}
+\item \textbf{先算“读谁、读多少”。}
+当前位置有一个\textbf{查找需求}，每个候选位置需要提供
+能与这个需求比较的\textbf{匹配特征}。
+\item \textbf{再算“读到什么”。}
+一旦知道读取比例，就按这些比例组合各位置保存的内容。
+\end{enumerate}
+现在才有必要引入三个名称：查找需求叫 Query，
+候选位置的匹配特征叫 Key，
+被实际加权读取的内容叫 Value。
+
+\subsection{三种角色是怎样从这两个任务长出来的？}
 \phantomsection\label{concept:qkv}
 
-先给计算中的三个角色起名字，不急着写大矩阵：
+把上面两个任务落实到数值计算，就得到三个角色：
 \begin{itemize}
 \item \textbf{Query（查询，记作 $\vect q$）：}
-当前这个位置想按什么特征\textbf{寻找信息}；
+当前这个位置\textbf{拿什么条件来查}？它用于发起匹配。
 \item \textbf{Key（索引，记作 $\vect k_i$）：}
-第 $i$ 个候选位置提供什么\textbf{可供匹配的特征}；
+第 $i$ 个位置\textbf{凭什么被找到}？它与 Query 比较，
+产生一个\textbf{匹配分数}。
 \item \textbf{Value（内容，记作 $\vect v_i$）：}
-如果决定读取第 $i$ 个位置，\textbf{实际取出什么信息}。
+第 $i$ 个位置\textbf{被找到后交出什么}？
+它不是匹配分数，而是最终\textbf{被加权相加}的向量。
 \end{itemize}
 
-打个类比：你拿着问题查资料，
-问题是 Query，目录索引像 Key，查到的内容像 Value。
-\textbf{但这是理解角色的比喻：}
-真实 Attention 的 Query、Key、Value 都是网络中的数字向量，
-并不是在互联网搜索网页。
+因此\textbf{Q 和 K 是为了得到权重，V 是为了形成输出}。
+刚才暂时写的“内容” $\vect c_i$，现在就改名为 Value $\vect v_i$；
+\textbf{不是凭空新添了第三种数据}。
 
-我们先只做\textbf{一次查询}：
-位置 3 发出一个 Query，对前三个位置提供的 Key 逐一匹配。
+\input{figures/attention-why-qkv}
 
-\subsection{第二步：从 Query 和 Key 算出匹配分数}
+\textbf{三个名字不代表三个 Token。}在 Self-Attention 中，
+第 3 个 Token 一方面能发出自己的 Query，
+另一方面也像其他位置一样提供 Key 和 Value。
+每个位置原本有一条输入表示 $\vect x_i$，
+在真实网络中可以经过\textbf{不同的可训练投影}，得到
+\[
+\vect q_i=W_Q\vect x_i,\qquad
+\vect k_i=W_K\vect x_i,\qquad
+\vect v_i=W_V\vect x_i.
+\]
+这三组参数以后才通过训练确定；
+这里提前展示它们的来源，下一部分再亲自算投影矩阵。
+
+\textbf{为什么不干脆只用一种向量？}
+当然可以设计让 Query、Key、Value 使用相同表示的简化注意力；
+但\textbf{用于判断相关性的特征}和\textbf{希望读出的内容}
+不必一样，且 Value 的维度也不要求等于 Key 的维度。
+把两项任务分开，是采用 Q/K/V 投影的重要理由，
+\textbf{不是数学上必须使用三个不同矩阵的定理}。
+
+打个类比：查资料时，问题像 Query、索引像 Key、
+正文内容像 Value。但这只帮助区分\textbf{功能}；
+真实模型读写的都是数字向量，不是在互联网搜索网页。
+
+现在只进行\textbf{一次查询}：
+位置 3 发出 Query，分别与位置 1、2、3 的 Key 匹配，
+得到三条权重，再从这三个位置的 Value 读取内容。
+
+\subsection{匹配：从 Query 和 Key 算出三个分数}
 
 为什么能比较？因为前面已经学过\textbf{\hyperref[intro:02-dot-product]{点积}}：
 把两个长度相同的向量对应位置相乘，再把结果相加。
@@ -91,7 +160,7 @@ s_3&=1\times1+0\times1=\boxed{1}.
 这些向量是人工挑选的，\textbf{不能把“春天”的语义天然等于 $(2,0)$}；
 真实模型通过训练学习如何从 Token 表示生成 Q/K/V。
 
-\subsection{第三步：分数不是比例，怎样转换成读取权重？}
+\subsection{分配：怎样把分数变成读取比例？}
 \phantomsection\label{concept:softmax}
 
 分数 $2,0,1$ 不能直接当作“读取的百分比”：
@@ -122,7 +191,7 @@ Softmax 不是“找到唯一正确答案”，也不会验证文字事实。
 下一章会解释把 Softmax 批量写进矩阵时的形状与缩放规则。
 \end{warningbox}
 
-\subsection{第四步：按权重读取 Value，究竟得到什么？}
+\subsection{读出：Value 怎么组合成一条新向量？}
 
 现在才能回答 Attention 的输出是什么：
 它并不是“位置 1”，也不是那三个分数，而是一条\textbf{新的信息向量}。
@@ -145,6 +214,25 @@ Softmax 不是“找到唯一正确答案”，也不会验证文字事实。
 \textbf{这条二维向量就是本次 Attention 的读取结果。}
 位置 3 可以拿它继续计算下一层，最终用于预测下一个 Token。
 本章仅演示核心读取运算；真实 Transformer 还会处理投影、残差等步骤。
+
+\begin{example}[title={为什么 Key 和 Value 必须区分角色？}]
+保持 $\vect q,\vect k_1,\vect k_2,\vect k_3$ 完全不变，
+\textbf{只}把位置 1 提供的内容改成
+$\vect v'_1=(0,2)^\top$。
+匹配分数依然是 $(2,0,1)$，
+因此 Softmax 权重也\textbf{完全不变}；
+但新的读取结果却变成
+\[
+\vect y'\approx
+0.665\begin{bmatrix}0\\2\end{bmatrix}
++0.090\begin{bmatrix}0\\1\end{bmatrix}
++0.245\begin{bmatrix}1\\1\end{bmatrix}
+=\boxed{\begin{bmatrix}0.245\\1.665\end{bmatrix}}.
+\]
+所以\textbf{Key 决定一条内容有多相关，
+Value 决定最终取回什么数字}。
+二者可以来自同一个 Token，但职责不能混淆。
+\end{example}
 
 \begin{example}[title={核对自己是不是理解了 Attention}]
 假设位置 3 的 Query 改变了，三个分数也可能随之变化。
@@ -190,8 +278,11 @@ $0.1\vect v_1+0.8\vect v_2+0.1\vect v_3=(0.2,0.9)^\top$。
 \end{enumerate}
 
 \begin{conclusion}
-记住最短的定义：\textbf{Attention = Query 与 Key 匹配，
-Softmax 决定读取比例，然后把 Value 加权相加。}
+先记住\textbf{为什么}：
+\textbf{要按当前需要读取前文，就得决定“读谁多少”和“取出什么”。}
+在本书使用的点积 Attention 中，
+Query 和 Key 产生相关性分数，Softmax 分配比例，
+Value 是真正加权求和的内容。
 
 你已经亲手得到：三个候选位置 $\to$ 三个点积分数
 $\to$ 三个权重 $\to$ 一条输出向量。
