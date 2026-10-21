@@ -91,10 +91,10 @@ E=
 
 \subsection{为什么查 Embedding 与矩阵乘法是同一回事？}
 
-用 ID 3（“花”）的 One-hot 列向量 $\vect e_3$：
+用 ID 3（“花”）的 One-hot 向量 $\vect u_3$；按行排列时计算 $\vect u_3^\top E$，如为了手算暂时竖写，它的转置形式才是 $E^\top\vect u_3$：
 \[
 \underbrace{E^\top}_{2\times5}
-\underbrace{\vect e_3}_{5\times1}
+\underbrace{\vect u_3}_{5\times1}
 =
 \underbrace{\begin{bmatrix}0\\1\end{bmatrix}}_{2\times1}.
 \]
@@ -112,9 +112,9 @@ E=
 把“花 / 开了”与“开了 / 花”的两个向量\textbf{无序相加}，
 得到的数字相同，因为加法可以交换：
 \[
-\vect e_{\text{花}}+\vect e_{\text{开了}}
+\vect x_{\text{花}}+\vect x_{\text{开了}}
 =
-\vect e_{\text{开了}}+\vect e_{\text{花}}.
+\vect x_{\text{开了}}+\vect x_{\text{花}}.
 \]
 但两段文本的顺序不同，意思也未必一样。
 因此除了知道\textbf{每个 Token 是什么}，
