@@ -19,10 +19,11 @@
 \draw[->,thick,blue] (ff)--(add2);
 \draw[->,thick,teal] (add2)--(out);
 \draw[->,thick,orange,rounded corners=3pt]
-  (x.east)--++(3.0cm,0)--(3.0cm,-3.35)--(add1.east)
-  node[pos=.28,right,font=\footnotesize]{残差捷径};
+  (x.east)--++(3.0cm,0)--(3.0cm,-3.35)--(add1.east);
 \draw[->,thick,orange,rounded corners=3pt]
-  (add1.west)--++(-3.0cm,0)--(-3.0cm,-6.73)--(add2.west)
-  node[pos=.30,left,font=\footnotesize]{残差捷径};
+  (add1.west)--++(-3.0cm,0)--(-3.0cm,-6.73)--(add2.west);
+% Labels sit beside the vertical detours, not on top of the shortcut arrows.
+\node[anchor=west,font=\footnotesize,text=orange] at (3.13,-1.65) {残差捷径};
+\node[anchor=east,font=\footnotesize,text=orange] at (-3.13,-5.25) {残差捷径};
 \end{tikzpicture}
 \end{center}
