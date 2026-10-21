@@ -1,0 +1,50 @@
+\section{一张图串起来：从文字到可验证的应用}
+\label{app:concept-map}
+
+这一页不是按背诵次序罗列缩写，而是展示\textbf{信息流}与\textbf{学习信号}：
+上方沿前向计算生成概率；中间由正确标签形成梯度；
+下方是模型生成结果后可接入的系统工具。点击旁边章页索引可回到推导。
+
+\begin{center}
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=6mm,
+  unit/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=25mm,minimum height=13mm,align=center,font=\sffamily\small},
+  signal/.style={draw=teal,fill=greenback,rounded corners=3pt,minimum width=31mm,minimum height=12mm,align=center,font=\sffamily\small},
+  app/.style={draw=orange,fill=orangeback,rounded corners=3pt,minimum width=31mm,minimum height=12mm,align=center,font=\sffamily\small},
+]
+\node[unit] (tok) at (0,0) {Token/ID};
+\node[unit] (emb) at (3.2,0) {Embedding};
+\node[unit] (att) at (6.4,0) {Attention};
+\node[unit] (ffn) at (9.6,0) {FFN/输出头};
+\foreach \a/\b in {tok/emb,emb/att,att/ffn}{\draw[->,thick,blue] (\a)--(\b);}
+\node[signal] (loss) at (9.6,-2.15) {概率与交叉熵\\[-1mm]$\displaystyle L=-\log p_y$};
+\node[signal] (grad) at (6.4,-2.15) {反向传播\\[-1mm]$p-\mathrm{onehot}$};
+\node[signal] (upd) at (3.2,-2.15) {更新参数\\[-1mm]$\theta\gets\theta-\eta\nabla L$};
+\draw[->,thick,teal] (ffn)--(loss);
+\draw[->,thick,teal] (loss)--(grad);
+\draw[->,thick,teal] (grad)--(upd);
+\draw[->,thick,teal] (upd.north) |- ([yshift=4mm]emb.north) -- (emb.north);
+\node[app] (gen) at (1.65,-4.45) {推理生成\\温度/缓存};
+\node[app] (post) at (5.0,-4.45) {后训练\\行为目标};
+\node[app] (tools) at (8.7,-4.45) {RAG/工具/Agent\\系统边界};
+\draw[->,thick,orange] (gen)--(post);
+\draw[->,thick,orange] (post)--(tools);
+\draw[->,dashed,orange] (ffn.east) -- ++(.5,0) |- (tools.east);
+\end{tikzpicture}
+\captionof{figure}{模型内部的前向计算、损失反传与外部工具链是三个不同层次}
+\end{center}
+
+\noindent
+\textbf{顺着图回读：}
+\hyperref[intro:20-embeddings]{Embedding} $\rightarrow$
+\hyperref[intro:11-softmax-memory]{Attention} $\rightarrow$
+\hyperref[intro:22-transformer-architecture]{Transformer Block} $\rightarrow$
+\hyperref[intro:22c-language-training]{训练} $\rightarrow$
+\hyperref[intro:23-llm-systems]{生成} $\rightarrow$
+\hyperref[intro:23d-agent-systems]{应用系统}。
+
+\begin{warningbox}
+工具调用属于应用层工作流，除非显式进入新的训练过程，
+它本身不会实时修改模型权重。反向传播也不是把自然语言原样反向输送。
+\end{warningbox}

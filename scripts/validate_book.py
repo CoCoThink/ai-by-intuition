@@ -37,7 +37,7 @@ REQUIRED = [
     "06-better-linear-memory", "08-stacking-key-value",
     "09-nonlinearity-and-memory", "14-summary", "13-capacity",
     "25-integrated-practice", "25b-modern-practice", "15-practice",
-    "24-lexicon", "24b-modern-lexicon", "27-answer-key", "26-sources",
+    "24-lexicon", "24b-modern-lexicon", "24c-concept-map", "24d-english-index", "27-answer-key", "26-sources",
 ]
 
 
