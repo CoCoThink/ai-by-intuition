@@ -56,6 +56,7 @@ Agent 是组织模型决策与工具动作的系统方式。
 \subsection{一次工具调用实际发生了什么？}
 
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={工具调用的三泳道：用户目标进入模型，模型输出请求；应用系统校验权限并调用外部工具；工具返回数据后由应用检查并供模型生成回答，最终再经复核交付}}
 \begin{tikzpicture}[>=Latex,scale=.94,transform shape,
  lane/.style={rounded corners=3pt,draw=linegray,thick},
  n/.style={rounded corners=3pt,draw=linegray,fill=white,minimum width=30mm,minimum height=10mm,align=center,font=\small}]
@@ -84,6 +85,7 @@ Agent 是组织模型决策与工具动作的系统方式。
 \end{tikzpicture}
 \captionof{figure}{模型／应用／工具三泳道：请求与执行属于不同主体}
 \label{fig:tool-swimlanes}
+\tagstructend
 \end{center}
 
 重要：模型提出调用，并不等于模型自己执行了代码。
