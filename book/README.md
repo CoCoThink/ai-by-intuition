@@ -76,7 +76,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 ## Tagged PDF 与尚待完成的无障碍验收
 
-目前 `book/main.tex` 采用 `\\DocumentMetadata{lang=zh-CN,tagging=on}`，不再使用旧版 `testphase` 或为 `tabularx` 关闭表格标签的实验性兼容补丁。
+目前 `book/main.tex` 采用 `\DocumentMetadata{lang=zh-CN,tagging=on}`，不再使用旧版 `testphase` 或为 `tabularx` 关闭表格标签的实验性兼容补丁。
 
 CI 用 `pypdf==5.9.0` 验证 `/MarkInfo /Marked true`、`/StructTreeRoot`、`/Document` 根节点和公式／图像／替代文字节点。最新成功构建含 1,471 个公式节点、17 个图像节点及 17 处替代文字。**Tagged PDF 结构存在，并不等于通过 PDF/UA 或读屏体验审核。**
 

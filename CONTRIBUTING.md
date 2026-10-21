@@ -13,7 +13,7 @@
 
 ## 目录与编译
 
-新增教程文件写入 `book/chapters/NN-name.tex`，并将 `\\input{chapters/NN-name}` 加入 `book/main.tex` 的正确阅读顺序。主线保留五个必读部分，CNN 与联想记忆分别位于第六、七选读部分；练习和答案集中到附录。
+新增教程文件写入 `book/chapters/NN-name.tex`，并将 `\input{chapters/NN-name}` 加入 `book/main.tex` 的正确阅读顺序。主线保留五个必读部分，CNN 与联想记忆分别位于第六、七选读部分；练习和答案集中到附录。
 
 全书唯一 PDF 由 `book/main.tex` 使用 **TeX Live 2026 + LuaLaTeX** 构建。安装 `latexmk`、Noto 中文/西文字体、`poppler-utils`、相应 TeX Live 宏包后，从仓库根目录运行：
 
@@ -38,7 +38,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 - 每次修改公式，核对维度、样例数字和最终答案，并运行 `scripts/validate_book.py`。
 - 新增有语义的 TikZ 图时，在现有图形标签方案下补充准确的中文替代文字，并核查图与图注的阅读顺序。
 - 新增表格时检查列标题、合并单元格和读屏语义；“编译成功”不代表表格标签已符合 PDF/UA。
-- 不要随意删除 `\\DocumentMetadata`、回退编译引擎，或重新使用旧版 `latex-lab-testphase-table` 兼容补丁。
+- 不要随意删除 `\DocumentMetadata`、回退编译引擎，或重新使用旧版 `latex-lab-testphase-table` 兼容补丁。
 - 图表和文字不得超出版心；复杂页面仍需人工目视检查。
 
 ## Issue / PR

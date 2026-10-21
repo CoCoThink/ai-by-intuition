@@ -5,7 +5,7 @@
 **问题：**一套数字运算为什么能学到语言中的规律并生成回答？
 
 **学习方法：**提出问题 → 用小数字亲手计算 → 写出可推广公式 → 检查限制。
-将自回归下一 Token 预测用作\textbf{贯穿的可训练任务}，并不将它当作所有 AI 的终极目标。
+将自回归下一 Token 预测用作**贯穿的可训练任务**，并不将它当作所有 AI 的终极目标。
 
 **先修知识：**建议具备高中代数基础；三角函数、导数、链式法则、
 求和符号、指数对数和矩阵形状在数学速查页补充，并在正文反复配算例。
@@ -21,16 +21,16 @@
 | V 架构与系统 | RoPE、MoE、GQA、SFT、Agent、LoRA、量化与蒸馏 | 旋转、缓存、参数与概率 |
 
 第六部分为 CNN/ViT 选读，第七部分为联想记忆/高维容量选读，两者可独立阅读。
-所有习题、术语、英文索引、概念关系图与答案位于选读部分之后的\textbf{附录}，不要因为跳过选读而漏掉复习。
+所有习题、术语、英文索引、概念关系图与答案位于选读部分之后的**附录**，不要因为跳过选读而漏掉复习。
 
 ## 全书采用明确的矩阵约定
 
-- Transformer、RNN 和 FFN 的主线：\textbf{每个 Token 占一行}，$X:T\times d$。
-- 同一投影：$\vect q^\top=\vect x^\top W_Q$，
-  改写为列向量必须写 $\vect q=W_Q^\top\vect x$。
+- Transformer、RNN 和 FFN 的主线：**每个 Token 占一行**，$X:T\times d$。
+- 同一投影：$\boldsymbol q^\top=\boldsymbol x^\top W_Q$，
+  改写为列向量必须写 $\boldsymbol q=W_Q^\top\boldsymbol x$。
 - 输出头：$W_{\rm vocab}:d_{\rm model}\times|\mathcal V|$，
   logits 始终是隐藏表示乘这个矩阵。
-- 联想记忆的选读部分可能采用\textbf{列向量检索}，必须显式说明是
+- 联想记忆的选读部分可能采用**列向量检索**，必须显式说明是
   同一计算的转置表达，而不是把两种权重方向直接混用。
 - 对 Block 统一使用 $X_{\rm att},X_{\rm block}$；
   单头输出、FFN 中层不再复用同一字母；符号与形状总表在数学速查之后。
@@ -66,8 +66,8 @@
 
 ## 工程构建与 Tagged PDF 验收（2026-10-21）
 
-- **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)为 99 页。
-- **已通过：**CI 验证七部分和 47 个 `\\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,471 个 Formula、17 个 Figure、17 处替代文字。
+- **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)为 99 页。
+- **已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,471 个 Formula、17 个 Figure、17 处替代文字。
 - **尚未完成：**PDF/UA 正式验收，包括读屏顺序、标题层级、表格结构、数学表达式 MathML、图注父子关系等。成功的 `Tagged: yes` **不能**替代合规性检验。
 - **下一阶段：**消除 `tagpdf` 图注父子结构警告，验证/补齐数学语义与表格表头关系，使用独立 PDF/UA 检查器及实际辅助技术验收，记录可复现的缺陷和页面。
 
