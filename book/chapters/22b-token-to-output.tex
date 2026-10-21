@@ -1,108 +1,178 @@
-\section{贯通示例：两个 Token 如何通过 Attention 交换信息？}
+\section{贯通算例：从“春天、花”算到下一个 Token 的概率}
 
-前两章已经看过 Transformer 的\textbf{结构图和组件职责}，
-但把它们画在一个框里不代表我们已经会计算。
-这一章不新增架构，改用两个可手算的 Token 向量，
-核对\textbf{Q/K/V 从哪里来、分数怎样归一化、Value 怎样混合、输出形状是否正确}。
-其中 \conceptlink{softmax}{Softmax}、ReLU 和 \conceptlink{gradient}{梯度} 都是前面已经学过的零件。
+前两章说明了 Transformer 的各个组件。
+但读者最终想知道的不是一串模块名称，而是：
+\textbf{这些矩阵串起来，能不能真的算出“下一个 Token 是谁”？}
 
-\subsection{先把两个 Token 表示成两个向量}
+这次选一个只有两个输入位置、每条向量两个数字的\textbf{人工网络}，
+从输入一直算到五个候选 Token 的概率。
+为让数字能手算，我们只保留\textbf{单头因果 Attention、
+一次残差、一个极简 FFN 和词表输出头}，
+暂时省略位置编码、归一化、偏置和多层堆叠。
+真实模型不是这个大小，也不会使用本例预先指定的参数。
 
-假设一句话里有两个 Token。为了能手算，暂时把每个 Token 的向量缩成二维：
+\subsection{第一步：从文本查表，得到两行数字}
+
+延续 Embedding 章的词表：
 \[
-\vect x_1=(1,0),\qquad \vect x_2=(0,1).
+\begin{array}{c|ccccc}
+\text{Token ID}&0&1&2&3&4\\\hline
+\text{文本}&\text{其他}&\text{春天}&\text{。}&\text{花}&\text{开了}
+\end{array}
 \]
-按 Transformer 常见的“每个 Token 一行”排列：
+用户已经给出“春天、花”，对应 ID $[1,3]$。
+\hyperref[intro:20-embeddings]{前面那张教学 Embedding 表}中，
+ID 1 的向量是 $(1,0)$，ID 3 的向量是 $(0,1)$。
+把两个位置\textbf{按行}排起来：
 \[
-X=\begin{bmatrix}1&0\\0&1\end{bmatrix}.
-\]
-真实模型会从 Token ID 查 \conceptlink{embedding}{Embedding}，并加入或采用相应的位置表示；这里直接从简化的输入矩阵开始。
-
-\subsection{为两个 Token 产生 Q、K、V}
-
-为了让计算简单，假设三组投影矩阵都恰好是单位矩阵：
-\[
-W_Q=W_K=W_V=I_2,\qquad Q=K=V=X.
-\]
-\textbf{这只是教学上的参数选择}。真实 Transformer 的三组矩阵通常不同，而且是训练得到的。
-
-现在每个 Query 和 Key 都是二维，所以 $d_k=2$。点积得分矩阵：
-\begin{equation}
-S=\frac{QK^\top}{\sqrt{2}}
-=\frac{1}{\sqrt{2}}
+\underbrace{X}_{2\times2}=
 \begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\]
+
+\subsection{第二步：计算 Q/K/V，但不能偷看未来}
+
+为了专注计算，假设 $W_Q=W_K=W_V=I_2$，
+因此 $Q=K=V=X$；真实投影权重一般不同，需要通过训练学习。
+每个 Key 的维度 $d_k=2$，分数矩阵是
+\[
+\frac{QK^\top}{\sqrt{d_k}}
+=\frac{1}{\sqrt2}
+\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\]
+因为我们在\textbf{预测下一 Token}，
+第一个位置不能读到第二个位置，加入因果掩码：
+\begin{equation}
+S=
+\begin{bmatrix}
+1/\sqrt2&-\infty\\
+0&1/\sqrt2
+\end{bmatrix}.
 \label{eq:two-token-scores}
 \end{equation}
-观察 $S$ 的第一行：第一个 Token 与自己的匹配分数是 $1/\sqrt{2}$，与第二个 Token 的分数是 $0$。第二行则恰好反过来。
+这就是整个算例中的\textbf{可见性约束}：
+第一行只能看见“春天”，第二行可以看“春天”和“花”。
 
-\subsection{把分数变成权重，再读 Value}
+\subsection{第三步：Softmax 分配权重，读取 Value}
 
-Softmax \textbf{对每一行}分别计算。由于 $e^{1/\sqrt2}\approx2.028$，
+对 $S$ \textbf{逐行做 Softmax}。
+第一行只能读取自己，权重是 $(1,0)$。
+第二行两个候选的分数分别是 $0$ 和 $1/\sqrt2$。
+由于 $e^{1/\sqrt2}\approx2.028$，第二行的权重为
 \[
-a=\frac{e^{1/\sqrt2}}{e^{1/\sqrt2}+1}\approx0.670,
-\qquad 1-a\approx0.330.
+\left(\frac{1}{1+2.028},\frac{2.028}{1+2.028}\right)
+\approx(0.330,0.670).
 \]
-注意力权重矩阵为
+因此整个注意力权重矩阵是
 \[
-A=\softmax(S)\approx
-\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}.
+A\approx
+\begin{bmatrix}
+1&0\\
+0.330&0.670
+\end{bmatrix}
+\quad (2\times2).
 \]
-再乘 Value 矩阵：
-\begin{equation}
-Y=AV\approx
-\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}
-\begin{bmatrix}1&0\\0&1\end{bmatrix}
-=
-\boxed{\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}}.
-\label{eq:two-token-output}
-\end{equation}
-第一行 $(0.670,0.330)$ 不只包含自己的 $(1,0)$，也包含第二个 Token 的 $(0,1)$；第二行同理。这就是\textbf{上下文信息混合}的一个最小模型。
-
-\subsection{为什么实际语言生成还需要掩码？}
-
-上面是一个\textbf{双向的}例子，两个位置可以互相查看。而自回归语言模型预测后面的 Token 时，第一个位置不能看到第二个位置。
-
-如果加入\textbf{\conceptlink{causal-mask}{因果掩码}}，第一个 Query 只能看到第一个 Key，因此它对应的权重变成 $(1,0)$。第二个 Query 可以看到两个位置，对应的权重仍为 $(0.330,0.670)$：
+Value 也按行摆放，计算 $AV$：
 \[
-A_{\rm causal}\approx
+\underbrace{Y}_{2\times2}
+=\underbrace{A}_{2\times2}\underbrace{V}_{2\times2}
+\approx
 \begin{bmatrix}1&0\\0.330&0.670\end{bmatrix}.
 \]
-于是得到
+\textbf{观察第二行：}它不再只是“花”的原始向量 $(0,1)$，
+还读取了“春天”的一部分信息。
+
+\subsection{第四步：经残差和一个很小的 FFN}
+
+真实 Transformer Block 还要对特征继续加工。
+为了保留可手算性，这里用最简单的\textbf{残差}，
+先把输入 $X$ 加回注意力输出 $Y$：
 \[
-Y_{\rm causal}\approx
-\begin{bmatrix}1&0\\0.330&0.670\end{bmatrix}.
+H=X+Y\approx
+\begin{bmatrix}
+2&0\\
+0.330&1.670
+\end{bmatrix}.
 \]
-这不是两个相同的“Attention 公式”，而是\textbf{在计算 Softmax 之前约束了哪些位置允许匹配}。
+它仍是 $2\times2$：\textbf{位置数和隐藏宽度都没变}。
 
-\subsection{从一个注意力模块到整个可训练模型}
+再人为选一个极简 FFN：
+\[
+\operatorname{FFN}(\vect h)=0.5\,\relu(\vect h)
+\quad\text{（逐行作用）}.
+\]
+这相当于本例中上投影用 $I_2$、下投影用 $0.5I_2$，
+是为了把乘法缩到最简单，\textbf{不是所有 FFN 的通用公式}。
+FFN 后再加一次残差，得到
+\[
+R=H+\operatorname{FFN}(H)
+\approx
+\begin{bmatrix}
+3&0\\
+0.495&2.505
+\end{bmatrix}.
+\]
+这样最后一个位置的隐藏向量就是
+$\vect r_2=(0.495,2.505)^\top$。
 
-真实 Transformer 还会经过多个头、输出投影、残差、归一化和逐 Token 的 MLP。最终模型用输出投影把最后的隐藏向量变为\textbf{词表 \conceptlink{logits}{logits}}，再通过 Softmax 得到候选 Token 概率。
+\subsection{第五步：把隐藏向量转换成词表分数}
 
-训练时，将正确 Token 的概率转成损失，例如 $L=-\log p_{\rm true}$；反向传播再根据梯度更新包含 $W_Q,W_K,W_V$ 在内的可训练参数。
+\textbf{现在才真正回答“下一 Token 是什么”。}
+设词表有 $5$ 个候选，输出头需要把二维特征转换成五个分数。
+我们故意选一个容易核对的输出投影：
+\[
+W_{\rm vocab}=
+\begin{bmatrix}
+0&1&0&0&0\\
+0&0&0&0&1
+\end{bmatrix}
+\in\R^{2\times5}.
+\]
+由于这里的隐藏状态是\textbf{行向量}，
+做 $\vect r_2^\top W_{\rm vocab}$，
+得到五个还没归一化的 \conceptlink{logits}{logits}：
+\[
+\vect z^\top\approx
+(0,\ 0.495,\ 0,\ 0,\ 2.505).
+\]
+注意这\textbf{不是概率}。对五个分数再做 Softmax：
+\[
+p_i=\frac{e^{z_i}}{\sum_{j=0}^{4}e^{z_j}}.
+\]
+结果大约为
+\[
+\underbrace{(0.059,\ 0.097,\ 0.059,\ 0.059,\ 0.725)}_{\text{ID }0,1,2,3,4}.
+\]
+因为第 $4$ 个 ID（从 $0$ 开始计数）的概率约为 $0.725$，
+是所有候选里最高的，
+\textbf{贪心解码会选 ID 4：教学词表中的“开了”。}
+这是事先选定参数得到的\textbf{示范结果}，
+不是模型自动学会中文的实验。
 
 \begin{center}
-\begin{tikzpicture}[>=Latex,node distance=5mm,
- n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum height=9.8mm,minimum width=103mm,align=center,font=\small}]
-\node[n] (in) {Token ID $\to$ Embedding $\to$ 输入矩阵 $X$};
-\node[n,below=of in] (qkv) {$X\to Q,K,V\to$ 分数矩阵 $QK^\top/\sqrt{d_k}$};
-\node[n,below=of qkv] (att) {Mask 与 Softmax $\to$ 加权组合 $AV$};
-\node[n,below=of att] (block) {输出投影 + 残差/归一化 + MLP};
-\node[n,below=of block] (out) {Logits $\to$ 下一 Token 的概率};
-\node[n,below=of out] (train) {训练：损失 $\to$ 反向传播 $\to$ 权重更新};
-\draw[->,blue,thick] (in)--(qkv);
-\draw[->,blue,thick] (qkv)--(att);
-\draw[->,blue,thick] (att)--(block);
-\draw[->,blue,thick] (block)--(out);
-\draw[->,orange,thick] (out)--(train);
-\end{tikzpicture}
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=2mm]
+\small
+\textbf{本次数值链条：}\par
+\texttt{[1,3]} $\to$ $X:2\times2$
+$\to$ 因果 Attention $AV:2\times2$
+$\to$ FFN $R:2\times2$
+$\to$ 词表 logits $1\times5$
+$\to$ 预测 ID 4。
+\end{tcolorbox}
 \end{center}
 
 \begin{warningbox}
-这个例子中两个二维 Token 的权重被特意选得容易计算，没有包含真实模型所需的多头、位置、复杂嵌入和大规模训练。它的价值是展示\textbf{一次模型前向计算的结构}，不是模拟真实 LLM 的预测质量。
+这里只使用两步输入“春天、花”，\textbf{没有把未来的“开了”放入输入矩阵}；
+否则预测时就会有泄漏。
+为了突出计算逻辑，示例故意省略了一些实际网络部件，
+不能将它当作完整工业 Transformer 的实现说明。
 \end{warningbox}
 
 \begin{conclusion}
-从 Token 到下一词概率的整条路径，只用了本书已经建立的概念：\textbf{嵌入查表、矩阵点积、Softmax、加权求和、非线性、损失与梯度。}现在已经能沿着一次前向运算检查数字如何流动。
-但这组 Q/K/V 参数仍是人为指定的；\textbf{整段真实训练文本究竟如何产生目标、计算损失并更新这些参数？}
-下一章把此前学过的训练循环接到 Transformer 上。
+从文字到下一 Token 的概率，我们已经真正算通：
+\textbf{查 Embedding $\to$ 因果 Attention 读取上下文
+$\to$ FFN 改变特征 $\to$ 输出头得到 logits
+$\to$ Softmax 产生预测概率}。
+但这些权重仍是人为指定的：
+\textbf{真实训练中，它们怎样利用文本本身的答案进行更新？}
+下一章用同一组 Token 完成训练目标与损失的推导。
 \end{conclusion}
