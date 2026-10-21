@@ -1,0 +1,34 @@
+\section*{全书符号与张量形状速览}
+\phantomsection\label{app:symbols}
+\addcontentsline{toc}{section}{符号与张量形状速览}
+
+从本页开始，主线统一\textbf{每个 Token 占一行}。
+单条输入写作 $\vect x^\top$，整段输入为 $X$；
+投影写作 $\vect x^\top W$ 或 $XW$。
+仅在点积、求梯度或显式说明转置时，用 $\vect x$ 表示同一向量的列形式。
+第六部分联想记忆另有列向量约定。
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{27mm}p{39mm}X@{}}
+\toprule
+符号 & 含义 & 典型形状\\\midrule
+$T$ & 当前序列 Token 数 & $X:T\times d_{\rm model}$\\
+$N$ & Query 位置数 & $Q:N\times d_k$\\
+$M$ & Key/Value 位置数 & $K:M\times d_k$，$V:M\times d_v$\\
+$d_{\rm model}$ & 每个 Token 的隐藏宽度 & $W_Q:d_{\rm model}\times d_k$\\
+$d_k$ & Query 与 Key 的匹配宽度 & $QK^\top:N\times M$\\
+$d_v$ & Value 的特征数 & $AV:N\times d_v$\\
+$d_{\rm ff}$ & FFN 内部宽度 & $W_{\rm up}:d_{\rm model}\times d_{\rm ff}$\\
+$|\mathcal V|$ & 词表大小 & $W_{\rm vocab}:d_{\rm model}\times|\mathcal V|$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+Self-Attention 中 $N=M=T$；跨序列读取时 $N$ 与 $M$ 可以不同。
+$\softmax$ 对矩阵默认逐行归一化。
+温度 $\tau>0$ 与逆温度 $\beta=1/\tau$ 会在采样章继续出现。
+
+\begin{warningbox}
+$QK^\top$ 是匹配分数，$\softmax(QK^\top)V$ 才是读取结果。
+矩阵乘法顺序不能任意交换。
+\end{warningbox}

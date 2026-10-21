@@ -25,6 +25,11 @@
 \usepackage{hyperref}
 \usepackage{needspace}
 \usepackage{float}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,justification=centering,skip=5pt}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\emergencystretch=2em
 
 \definecolor{ink}{HTML}{172A40}
 \definecolor{blue}{HTML}{147CA3}
@@ -75,7 +80,7 @@
 \newcommand{\softmax}{\operatorname{softmax}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\eyebrow}[1]{{\sffamily\bfseries\footnotesize\color{blue}#1}}
-\newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{见第\ref*{#1}章}}}
+\newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{第 \ref*{#1} 章 · 第 \pageref*{#1} 页}}}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
 \newcommand{\learningbridge}[2]{%
 \par\medskip
@@ -89,8 +94,8 @@
 
 \begin{document}
 \thispagestyle{empty}
-\vspace*{19mm}
-\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries AI by Intuition}}\par
+\vspace*{10mm}
+\noindent\colorbox{blue}{\parbox{47mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · Volume 01}}\par
 \vspace{11mm}
 \noindent\begin{minipage}{\linewidth}
 {\sffamily\bfseries\fontsize{26}{34}\selectfont
@@ -102,7 +107,7 @@
 \noindent{\color{muted}\rule{\linewidth}{0.7pt}}\par
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
-\textbf{只需要这些预备知识：}能进行加减乘除、平方与平方根即可开始；高中三角函数、指数对数和导数可随数学速查页逐步补充。\par
+\textbf{只需要这些预备知识：}建议具备高中代数基础；余弦、指数、对数可以边读边查。导数、链式法则与方差会在相关章节现学现用。\par
 \textbf{学习路线：} 函数与向量 $\rightarrow$ MLP 与训练 $\rightarrow$ 上下文与 Attention $\rightarrow$ Transformer $\rightarrow$ 生成与应用。\par
 \textbf{学习任务：} 从回答问题出发，理解为何用\emph{下一 Token 预测}训练一类语言模型，再学它怎样生成、改进与使用工具。
 \end{tcolorbox}
@@ -111,16 +116,16 @@
 \begin{tikzpicture}[>=Latex, node distance=1.15cm and 0.6cm,
     n/.style={draw=linegray,fill=white,rounded corners=4pt,minimum width=35mm,minimum height=13mm,align=center,font=\sffamily\bfseries}]
 \node[n] (lin) {函数\\[-1mm] $\widehat y=wx+b$};
-\node[n,right=of lin] (mlp) {神经网络\\[-1mm] $W_2\sigma(W_1x)$};
+\node[n,right=of lin] (mlp) {神经网络\\[-1mm] $\sigma(xW_1)W_2$};
 \node[n,right=of mlp] (att) {语言模型\\[-1mm] 学习语言与生成};
 \draw[->,thick,blue] (lin)--(mlp) node[midway,above,font=\footnotesize,align=center]{训练参数};
 \draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{利用上下文};
 \end{tikzpicture}
 \end{center}
 \vfill
-\noindent{\color{muted}\small 前五部分是必读主线；第六部分仅供选读，练习与术语索引见附录。}\par
+\noindent{\color{muted}\small 第 I–V 部分为主线；第 VI 部分为选读，联想记忆适合读完 Transformer Block 后再看。}\par
 \vspace{3mm}
-\noindent {\color{muted}\small 项目维护：CoCoThink \quad｜\quad 2026 年 10 月修订版}\par
+\noindent {\color{muted}\small 项目维护：CoCoThink \quad｜\quad 2026 年 10 月修订版 · Volume 01（后续卷册暂无确定计划）}\par
 \vspace{1.5mm}
 \noindent {\color{muted}\small AI by Intuition · 先提出问题，再算一个例子，最后理解公式。}\par
 \clearpage
@@ -137,6 +142,7 @@
 \learningbridge{人类想要机器回应文字，但我们还不知道怎样把这种能力变成计算。}{先用函数理解“可调规则”，再将一段文字表示为数字，并确定可训练的任务。}
 \input{chapters/00-guide}
 \input{chapters/00b-math-tools}
+\input{chapters/00c-symbols}
 \input{chapters/00-functions}
 \input{chapters/01-vectors}
 \input{chapters/02-dot-product}
