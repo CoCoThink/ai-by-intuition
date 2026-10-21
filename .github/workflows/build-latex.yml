@@ -22,11 +22,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install XeLaTeX, illustrations and Chinese fonts
+      - name: Install LuaLaTeX, illustrations and Chinese fonts
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-            latexmk texlive-xetex texlive-lang-chinese \
+            latexmk texlive-luatex texlive-lang-chinese \
             texlive-latex-extra texlive-pictures texlive-fonts-recommended \
             fonts-noto-cjk fonts-noto-core lmodern poppler-utils
       - name: Check chapter structure before compilation
@@ -35,7 +35,7 @@ jobs:
         working-directory: book
         run: |
           mkdir -p build
-          latexmk -xelatex -interaction=nonstopmode -halt-on-error \
+          latexmk -lualatex -interaction=nonstopmode -halt-on-error \
             -file-line-error -outdir=build main.tex
           cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
       - name: Verify rendered PDF table of contents

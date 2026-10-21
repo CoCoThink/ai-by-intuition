@@ -256,7 +256,7 @@ def validate_pdf(path: Path) -> None:
                           text=True, check=True).stdout
     tagged = bool(re.search(r"(?m)^Tagged:\\s+yes\\s*$", info))
     if not tagged:
-        print("ACCESSIBILITY WARNING: XeLaTeX output is not tagged; PDF/UA remains unverified")
+        fail("Tagged PDF structure missing (PDF reports Tagged: no)")
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
