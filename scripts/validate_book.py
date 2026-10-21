@@ -223,6 +223,14 @@ def validate_source() -> None:
     if total < 30:
         fail("Suspiciously few concept links after restructuring")
 
+    # All textbook tabular/tabularx data tables must declare their first row as TH.
+    table_envs = sum(len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", body))
+                     for body in sources.values())
+    marked_headers = sum(body.count(r"\tagpdfsetup{table/header-rows={1}}")
+                         for body in sources.values())
+    if table_envs != 21 or marked_headers != table_envs:
+        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (expected 21)")
+
     # The prominent diagram and teaching resources are all editable TikZ.
     for figure in ("row-column-intuition", "key-value-layout", "pre-norm-block",
                    "attention-why-qkv"):
@@ -277,6 +285,8 @@ def validate_pdf(path: Path) -> None:
         fail("Tagged structure root is missing the /Document element")
     counts = {}
     alt_count = 0
+    table_nodes = []
+    figure_nodes = []
     stack = [top]
     while stack:
         node = stack.pop()
@@ -288,13 +298,59 @@ def validate_pdf(path: Path) -> None:
         if isinstance(node, dict):
             role = str(node.get("/S", ""))
             counts[role] = counts.get(role, 0) + 1
+            if role == "/Table":
+                table_nodes.append(node)
+            elif role == "/Figure":
+                figure_nodes.append(node)
             if node.get("/Alt"):
                 alt_count += 1
             if node.get("/K") is not None:
                 stack.append(node["/K"])
-    # These four instructional tables explicitly declare their first rows as headers.
-    if counts.get("/TH", 0) < 8:
-        fail(f"Tagged data table headers missing: only {counts.get('/TH', 0)} TH cells")
+    # Walk structural tables: each textbook data table has one heading row.
+    # Counting TH alone is too weak: all TH nodes could belong to one table.
+    def struct_children(node):
+        kid = node.get("/K", [])
+        if hasattr(kid, "get_object"):
+            kid = kid.get_object()
+        if not isinstance(kid, list):
+            kid = [kid]
+        result = []
+        for child in kid:
+            if hasattr(child, "get_object"):
+                child = child.get_object()
+            if isinstance(child, dict):
+                result.append(child)
+        return result
+
+    if len(table_nodes) != 21:
+        fail(f"Expected 21 tagged data tables, found {len(table_nodes)}")
+    for index, table_node in enumerate(table_nodes, 1):
+        rows = [n for n in struct_children(table_node) if n.get("/S") == "/TR"]
+        if len(rows) < 2:
+            fail(f"Data table {index}: at least a header and data row are required")
+        header = struct_children(rows[0])
+        if len(header) < 2 or any(cell.get("/S") != "/TH" for cell in header):
+            fail(f"Data table {index}: first row must contain only TH cells")
+        for row in rows[1:]:
+            cells = struct_children(row)
+            if not cells or any(cell.get("/S") not in ("/TD", "/TH") for cell in cells):
+                fail(f"Data table {index}: invalid data row structure")
+
+    if len(figure_nodes) < 16:
+        fail(f"Expected at least 16 tagged figures, found {len(figure_nodes)}")
+    for index, fig in enumerate(figure_nodes, 1):
+        if not fig.get("/Alt"):
+            fail(f"Figure {index}: missing alternative description")
+        pending = list(struct_children(fig))
+        has_caption = False
+        while pending:
+            child = pending.pop()
+            if child.get("/S") == "/Caption":
+                has_caption = True
+                break
+            pending.extend(struct_children(child))
+        if not has_caption:
+            fail(f"Figure {index}: caption is not nested in Figure")
     if counts.get("/Formula", 0) < 20 or counts.get("/Figure", 0) < 8 or alt_count < 8:
         fail(f"Insufficient tagged math/figures/alt text: {counts}, alt={alt_count}")
     if len(reader.pages) < 50:
@@ -302,7 +358,7 @@ def validate_pdf(path: Path) -> None:
     poppler_tagged = bool(re.search(r"(?m)^Tagged:\s+yes\s*$", info))
     if not poppler_tagged:
         print("PDFINFO WARNING: pdfinfo disagrees with Catalog Marked=true and populated StructTreeRoot")
-    print(f"Structure QA: {counts.get('/Formula', 0)} formulas; {counts.get('/TH', 0)} table header cells; "
+    print(f"Structure QA: {len(table_nodes)} tables; {counts.get('/Formula', 0)} formulas; {counts.get('/TH', 0)} table header cells; "
           f"{counts.get('/Figure', 0)} figures; {alt_count} alternative descriptions")
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout

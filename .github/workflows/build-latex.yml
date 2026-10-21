@@ -42,6 +42,23 @@ jobs:
             pdfinfo build/smoke/smoke-tagging.pdf | grep -Eq '^Tagged:[[:space:]]+yes'
             latexmk -lualatex -interaction=nonstopmode -halt-on-error \
               -file-line-error -outdir=build main.tex
+            # Production must not regress to the earlier bad figure hierarchy or overflow.
+            if grep -Eq 'Package tagpdf Warning: Parent-Child|Overfull \\hbox' build/main.log; then
+              echo "::error::Invalid tagpdf parent-child relation or overfull box in book"
+              grep -E 'Package tagpdf Warning: Parent-Child|Overfull \\hbox' build/main.log
+              exit 1
+            fi
+            # MathML is experimental. Keep a failing LuaMML test from blocking the
+            # stable tagged production PDF until the amsmath assertion is resolved.
+            mkdir -p build/mathml
+            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+              -file-line-error -outdir=build/mathml smoke-mathml.tex; then
+              echo 'MathML experiment: isolated align test compiled'
+            else
+              echo '::warning::MathML experiment failed; stable book PDF unaffected'
+              grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
+                build/mathml/smoke-mathml.log | tail -n 25 || true
+            fi
             cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
             echo '=== Smoke tagged state ==='
             pdfinfo build/smoke/smoke-tagging.pdf | grep -E '^(Tagged|PDF version|Pages):'

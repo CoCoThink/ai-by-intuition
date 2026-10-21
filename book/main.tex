@@ -28,7 +28,8 @@
 \usepackage{needspace}
 \usepackage{float}
 \usepackage{caption}
-\captionsetup{font=small,labelfont=bf,justification=centering,skip=5pt}
+% Non-floating captions have no float-top anchor; use the caption anchor explicitly.
+\captionsetup{font=small,labelfont=bf,justification=centering,skip=5pt,hypcap=false}
 \hyphenpenalty=10000
 \exhyphenpenalty=10000
 \emergencystretch=2em

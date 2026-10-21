@@ -7,7 +7,7 @@
 - 使用 **TeX Live 2026 + LuaLaTeX**；`book/main.tex` 的入口为 `\\DocumentMetadata{lang=zh-CN,tagging=on}`。
 - [成功的 GitHub Actions 运行](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381) 生成 **99 页** `AI-by-Intuition-Volume-01.pdf`；正式下载工件为 `ai-by-intuition-volume-01`。
 - 最小样例（中文、数学、`tabularx`、带替代文字的 TikZ）和整本书均可编译；CI 容器的 `pdfinfo` 显示 `Tagged: yes`。
-- 验收器使用固定版 `pypdf==5.9.0`，确认 PDF Catalog 中 `/MarkInfo` 的 `/Marked=true`、`/StructTreeRoot` 和 `/Document` 结构根。最新统计为 **1,471** 个 `/Formula`、**17** 个 `/Figure`、**17** 个带替代文字的节点。
+- 验收器使用固定版 `pypdf==5.9.0`，确认 PDF Catalog 中 `/MarkInfo` 的 `/Marked=true`、`/StructTreeRoot` 和 `/Document` 结构根。最新统计为 **1,471** 个 `/Formula`、**16** 个 `/Figure`、**16** 个带替代文字的节点。
 - `scripts/validate_book.py` 还检查七个部分、47 个章节输入文件、数值算例、目录页、目标内容、可疑空页以及全书文字边界。
 
 这些计数是**该次成功构建的快照**；以后修改文稿、引擎和标签选项，需重新核验。
@@ -17,10 +17,10 @@
 | 项目 | 当前情况 | 下一步验收 |
 |---|---|---|
 | 文档结构标签 | 已有真实结构树、Document 根及正文/公式/图像节点 | 审核各级标题和段落标签，检查跳转顺序 |
-| 图形替代文本 | 17 处标签有替代描述 | 检查信息完整度及与可视图对应关系 |
-| 表格无障碍 | `tabularx` 在 TeX Live 2026 上已能编译 | 检查表头 `TH` / 行列关联、跨行跨列与实际朗读 |
-| 数学语义 | 结构树含 Formula 节点 | 最新 CI 有 `unicode-math` / `lua-unicode-math` 缺失时无法生成 MathML 的警告；应验证可用的 MathML 或可靠的辅助阅读方式 |
-| 图注结构 | 能生成 PDF | `tagpdf` 仍出现 Document 到 Caption 的父子关系警告；应调整宏包交互并复核结构树 |
+| 图形替代文本 | 16 个主要图形结构有替代描述 | 检查信息完整度及与可视图对应关系 |
+| 表格无障碍 | 21 张教学数据表均设置首行 `TH`，最近 CI 验证 59 个表头节点 | 检查表头 `TH` / 行列关联、跨行跨列与实际朗读 |
+| 数学语义 | 结构树含 Formula 节点 | 完整启用 `unicode-math` 曾在 `align*` 触发 `luamml-amsmath.lua` 断言；保留经典数学字体的稳定出版配置，通过 `book/smoke-mathml.tex` 独立实验，不得将 Formula 节点等同于 MathML |
+| 图注结构 | 能生成 PDF | 最新完整构建无 Document 到 Caption 非法父子警告；仍应核验图注及链接锚点 |
 | 读屏顺序 | 尚无端到端辅助技术验收记录 | 用至少一种主流 PDF 阅读器／读屏器检查目录、表格、公式和跨页提示框 |
 | PDF/UA 标准 | **尚未认证** | 使用独立 PDF/UA 验证器并修复报告中的结构、语言、字体或注释问题 |
 
@@ -55,3 +55,9 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 5. PDF 工件从 Actions 获取，不把编译文件或中间文件提交到 Git。
 
 相关入口：[仓库说明](../README.md) · [阅读顺序](../book/README.md) · [教学与工程规划](../ROADMAP.md) · [贡献指南](../CONTRIBUTING.md)。
+
+## 2026-10-21 后续结构回归
+
+- [成功的表格/图注/版面修复 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39581822953) 验证了 **21 张数据表**、**59 个 TH 表头单元格**、**16 张语义图形及其中文替代文字**；所有页均无文字越界，编译日志不再有非法图注父子关系或溢出盒子警告。
+- 现在在 `scripts/validate_book.py` 检查每张表的首行 TH 结构和 Figure→Caption 层级，并在 CI 检查编译日志，防止后续回归。
+- `book/smoke-mathml.tex` 用同一段点积推导复现潜在 LuaMML 断言；该测试**允许失败**且不能用来证明 PDF/UA 合规。正式教材仍优先稳定生成 Tagged PDF。
