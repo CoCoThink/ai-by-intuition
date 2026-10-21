@@ -59,6 +59,20 @@ jobs:
               grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
                 build/mathml/smoke-mathml.log | tail -n 25 || true
             fi
+            # Alternate aligned-inside-display case; isolated from production.
+            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+              -file-line-error -outdir=build/mathml smoke-mathml-aligned.tex; then
+              if [ -f build/mathml/smoke-mathml-aligned-luamml-mathml.html ] && \
+                grep -q '<math' build/mathml/smoke-mathml-aligned-luamml-mathml.html; then
+                echo 'MathML experiment: aligned variant produced MathML'
+              else
+                echo '::warning::MathML aligned variant compiled without verified MathML file'
+              fi
+            else
+              echo '::warning::MathML aligned experiment failed; stable book PDF unaffected'
+              grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
+                build/mathml/smoke-mathml-aligned.log | tail -n 25 || true
+            fi
             cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
             echo '=== Smoke tagged state ==='
             pdfinfo build/smoke/smoke-tagging.pdf | grep -E '^(Tagged|PDF version|Pages):'
@@ -66,6 +80,15 @@ jobs:
             pdfinfo build/AI-by-Intuition-Volume-01.pdf | grep -E '^(Tagged|PDF version|Pages):'
             echo '=== Book structure tree first lines ==='
             pdfinfo -struct build/AI-by-Intuition-Volume-01.pdf | head -n 12 || true
+      - name: Upload experimental MathML logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: experimental-mathml-logs
+          path: |
+            book/build/mathml/*.log
+            book/build/mathml/*mathml.html
+          if-no-files-found: warn
       - name: Upload PDF for tagging diagnostics
         if: always()
         uses: actions/upload-artifact@v4

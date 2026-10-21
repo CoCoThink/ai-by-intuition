@@ -1,0 +1,29 @@
+% !TeX program = lualatex
+% Alternative isolated MathML experiment; the production book remains on classic math fonts
+% until LuaMML's amsmath integration is confirmed for this worked derivation.
+\DocumentMetadata{
+  lang=zh-CN,
+  tagging=on,
+  tagging-setup={math/setup=mathml-SE}
+}
+\documentclass[11pt,a4paper,UTF8]{ctexart}
+\usepackage{fontspec}
+\setCJKmainfont{Noto Serif CJK SC}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\begin{document}
+\section{MathML aligned 内联对齐公式测试}
+这里检查 LuaMML 能否解析含有范数、点积的多行推导：
+\[
+\begin{aligned}
+\|\vect a-\vect b\|^2
+&=(a_1-b_1)^2+(a_2-b_2)^2\\
+&=(a_1^2+a_2^2)+(b_1^2+b_2^2)
+-2(a_1b_1+a_2b_2)\\
+&=\|\vect a\|^2+\|\vect b\|^2
+-2(\vect a\cdot\vect b).
+\end{aligned}
+\]
+\end{document}

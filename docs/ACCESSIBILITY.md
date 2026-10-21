@@ -61,3 +61,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 - [成功的表格/图注/版面修复 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39581822953) 验证了 **21 张数据表**、**59 个 TH 表头单元格**、**16 张语义图形及其中文替代文字**；所有页均无文字越界，编译日志不再有非法图注父子关系或溢出盒子警告。
 - 现在在 `scripts/validate_book.py` 检查每张表的首行 TH 结构和 Figure→Caption 层级，并在 CI 检查编译日志，防止后续回归。
 - `book/smoke-mathml.tex` 用同一段点积推导复现潜在 LuaMML 断言；该测试**允许失败**且不能用来证明 PDF/UA 合规。正式教材仍优先稳定生成 Tagged PDF。
+
+## LuaMML 对齐公式复现实验
+
+[成功的 CI（正式出版不受影响）](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39583710518) 证实 `smoke-mathml.tex` 在 `\\end{align*}` 复现 `luamml-amsmath.lua:63: assertion failed`。这是独立精简文件中的错误，不再假定来自整书排版；`smoke-mathml-aligned.tex` 继续验证 `\\[\\begin{aligned}...\\end{aligned}\\]` 变体。两项实验均不会阻断稳定成书，日志作为 `experimental-mathml-logs` 工件保存。
