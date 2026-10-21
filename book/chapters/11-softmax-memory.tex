@@ -15,10 +15,12 @@ K=V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},
 \]
 \begin{example}
 \[
-\vect q^\top K^\top=(1,1,2),\quad
-\vect a^\top=\softmax(\vect q^\top K^\top)\approx(0.212,0.212,0.576),
-\quad
-\boxed{\vect y^\top=\vect a^\top V=(0.788,0.788).}
+\begin{aligned}
+\vect q^\top K^\top&=(1,1,2),\\
+\vect a^\top&=\softmax(\vect q^\top K^\top)\\
+&\approx(0.212,0.212,0.576),\\
+\vect y^\top&=\vect a^\top V=\boxed{(0.788,0.788).}
+\end{aligned}
 \]
 \end{example}
 注意 Key/Value 都是每个位置一行。

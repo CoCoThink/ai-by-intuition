@@ -5,6 +5,9 @@
 \usepackage{fontspec}
 \setCJKmainfont{Noto Serif CJK SC}
 \usepackage{amsmath}
+% OpenType math glyph mapping enables LuaMML to generate accessible MathML.
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
 \usepackage{booktabs,tabularx}
 \usepackage{tikz}
 \usepackage{caption}
@@ -33,4 +36,16 @@ Embedding & 可以学习的向量\\\bottomrule
 \tagstructend
 \caption{两步流程示例}
 \end{figure}
+% Regression for non-floating captions attached to an explicit Figure element.
+% The caption must be a child of the Figure, not a direct child of Document.
+\begin{center}
+\tagstructbegin{tag=Figure,alttext={示意箭头连接输入和输出两个节点}}
+\begin{tikzpicture}
+\node[draw] (u) at (0,0) {输入};
+\node[draw] (v) at (2.8,0) {输出};
+\draw[->] (u)--(v);
+\end{tikzpicture}
+\captionof{figure}{非浮动图注结构回归测试}
+\tagstructend
+\end{center}
 \end{document}
