@@ -1,5 +1,7 @@
 % The Figure structure intentionally includes the non-floating caption.
 \tagstructbegin{tag=Figure,alttext={Key 与 Value 的存储、查询和按权重读取}}
+% Caption first in the PDF/UA-2 Figure structure; remaining prose follows.
+\begin{center}\captionof{figure}{Key 的按行存放与转置：两个视图是一组相同数据}\label{fig:key-layout}\end{center}
 \begin{tcolorbox}[
   enhanced,breakable,colback=paper,colframe=linegray,
   boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=3mm,
@@ -85,5 +87,4 @@ $V:3\times4$、$V^\top:4\times3$。
 \par % Flush the final box paragraph before the Figure caption tag.
 \end{tcolorbox}
 
-\begin{center}\captionof{figure}{Key 的按行存放与转置：两个视图是一组相同数据}\label{fig:key-layout}\end{center}
 \tagstructend
