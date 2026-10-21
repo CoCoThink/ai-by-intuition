@@ -1,0 +1,22 @@
+% !TeX program = lualatex
+% Experiment: article supplies the tagged heading machinery; ctex handles
+% Chinese text without its heading=true replacement of \@startsection.
+\DocumentMetadata{lang=zh-CN,tagging=on}
+\documentclass[11pt,a4paper]{article}
+\usepackage[UTF8,heading=false]{ctex}
+\setCJKmainfont{Noto Serif CJK SC}
+\setCJKsansfont{Noto Sans CJK SC}
+\usepackage{fontspec}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\usepackage{hyperref}
+\begin{document}
+\tableofcontents
+\part{把文字变成可计算的数字}
+\section{从函数开始}
+\subsection{输入与输出}
+这是第一段中文正文，用于验证 H1 和 H2 以及可点击目录。
+\section{把向量排成矩阵}
+\subsection{行与列}
+这是第二段中文正文，用于验证重复章节标签。
+\end{document}

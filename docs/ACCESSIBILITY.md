@@ -71,3 +71,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 直接遍历 [99 页成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39581822953) 的 PDF 结构树，发现 `/Sect` 分组与正常目录的 `/TOCI`，但没有生成正文的 `/H1`、`/H2` 或预期的 `/section`、`/subsection` 角色。结构树 `RoleMap` 尽管包含 `/section → /H1` 映射，仍没有实际节点使用它。这个问题会影响读屏器标题导航，**不能因 Tagged: yes 而忽略**。
 
 上游已确认 [ctex 相关类重写标题命令导致标题标签丢失](https://github.com/latex3/tagging-project/issues/673)，[titlesec 当前也标记为 Tagged PDF 不兼容](https://www.ctan.org/pkg/titlesec)。因此不能只删除 `titlesec` 就假定问题解决。下一步在实验分支验证 `article + ctex(heading=false)` 与 LaTeX 2026 标题模板接口，并同时保持中文排版、章节编号、目录和页面版式。问题跟踪：[仓库 Issue #3](https://github.com/CoCoThink/ai-by-intuition/issues/3)。
+
+## 独立标题结构标签实验（2026-10-21）
+
+CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（标准 `article` 基线）与 `smoke-heading-chinese.tex`（`article + ctex[heading=false]` 中文组合）。`scripts/inspect_heading_tags.py` 遍历真实 PDF 结构树，核查 H1/H2 或 section/subsection 节点，而不是仅看目录或 RoleMap。结果归档在 `experimental-heading-results` 工件中。只有确认中文方案确实生成结构标题并通过布局与交叉引用回归，才应考虑切换全书文档类。
