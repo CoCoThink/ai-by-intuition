@@ -90,6 +90,8 @@ CNN 偏向局部卷积与权重共享；ViT 通过图像块表示与 Attention
 \]
 CNN 的优势不是“把矩阵乘法替换成另一个神秘公式”，而是\textbf{利用了空间数据的局部性与参数共享}。
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:19-cnn}核为 $3\times3$、输入 3 通道、输出 8 通道时，常规卷积权重数是多少（不计偏置）？\quad{\footnotesize\hyperref[answer:19-cnn]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。
 \end{conclusion}

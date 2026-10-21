@@ -111,6 +111,8 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 \]
 得到下一 Token 的概率分布。生成时按一定策略选择 Token，再把它加入上下文，重复计算。
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22-transformer-architecture}一个 $T\times d$ 的隐藏矩阵加上同形状残差后，输出形状会改变吗？\quad{\footnotesize\hyperref[answer:22-transformer-architecture]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 一个常见的 Transformer Block 由\textbf{注意力、逐 Token 的前馈网络、残差与归一化}构成，
 整个语言模型还需要 Token 表示与输出头。
