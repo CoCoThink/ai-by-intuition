@@ -15,14 +15,14 @@ $d_{\rm ff}=18$，词表大小 $|\mathcal V|=100$。
 \conceptlink{ffn}{FFN} 上投影、下投影和最终输出 \conceptlink{logits}{logits} 分别是什么形状？
 \item 给定输入行向量 $(1,2)$，上投影
 $\begin{bmatrix}1&0&1\\0&1&-1\end{bmatrix}$，
-下投影 $\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}$。
+下投影 $\begin{bmatrix}2&0\\0&1\\1&1\end{bmatrix}$。
 不计偏置，算 ReLU 后的隐藏向量及最终 FFN 输出。
 \item 一个因果注意力层处理 $T=4$ 个 Token。
 第 2 个位置能注意到哪些位置？第 1 个位置能看到第 4 个位置吗？
 \item 模型为正确 Token 分配的概率为 $0.2$。
 该位置的交叉熵 $L=-\log p_{\rm true}$ 约为多少？
-\item 只有一层 Attention，序列长度 $T=100$，
-每个 K/V 头 $d_h=8$ 个数字；MHA 有 $8$ 个 K/V 头，
+\item 只有一层 Attention，序列长度 $T=120$，
+每个 K/V 头 $d_h=4$ 个数字；MHA 有 $6$ 个 K/V 头，
 \conceptlink{gqa}{GQA} 只有 $2$ 个 K/V 头。两者各需缓存几个数？
 若每个数占两字节，GQA 的这些数需要多少字节（不计其他开销）？
 \item \conceptlink{rope}{RoPE} 的简化二维推导中，Query 在位置 $m=2$，
@@ -41,35 +41,7 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 哪几个通常涉及模型训练时的参数更新？
 \end{enumerate}
 
-\subsection{答案与检查}
-
-\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,
- title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
-\begin{enumerate}[leftmargin=2.5em,itemsep=5pt]
-\item 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
-\item $W_{\rm up}:6\times18$，$W_{\rm down}:18\times6$；
-FFN 输出为 $4\times6$，词表 logits 为 $4\times100$。
-\item 上投影是 $(1,2,-1)$，ReLU 后为 $(1,2,0)$，
-下投影结果是 $(1,2)$。
-\item 第 2 个位置能看到位置 $1,2$；第 1 个位置不能看到位置 $4$。
-\item $-\log(0.2)=\log5\approx1.609$。
-\item MHA：$2\times100\times8\times8=12{,}800$ 个数；
-GQA：$2\times100\times2\times8=3{,}200$ 个数；
-每个两字节时是 $6{,}400$ 字节（仅本层这些缓存数值）。
-\item 相对角为 $(5-2)\theta=3\theta$。
-\item Top-1 选专家 2；Top-2 选专家 2 和 3。
-只激活选中的专家，并不代表每次都运行全部专家。
-\item 因果掩码限制当前位置能够读取的 Key；
-损失掩码决定哪些位置的预测误差参加训练目标的统计。
-\item 那句话是\textbf{不可信外部内容}而非用户授权指令；
-未经适当验证和明确授权，不应执行向陌生外部地址发送文件的动作。
-\item 示例：固定格式的发票字段抽取可以使用确定工作流并做字段校验；
-跨多种格式的资料比较可以用 Agent 选择读取工具，
-最终均需核对来源、单位与输出内容。
-\item SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；
-CoT 提示改变输入或生成形式，本身通常不更新参数。
-\end{enumerate}
-\end{tcolorbox}
+\noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}。}
 
 \begin{conclusion}
 如果能独立回答这十二题，
