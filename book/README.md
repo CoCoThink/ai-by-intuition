@@ -72,13 +72,13 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 生成文件为 `book/build/main.pdf`。CI 将唯一正式成品作为 `ai-by-intuition-volume-01` 工件发布，可从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
 
-2026 年 10 月 21 日的[成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39596178812)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界检查，并核验 `Tagged: yes` 及真实 PDF 结构树。
+2026 年 10 月 21 日的[成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界检查，并核验 `Tagged: yes` 及真实 PDF 结构树。
 
 ## Tagged PDF 与尚待完成的无障碍验收
 
-目前 `book/main.tex` 采用 `\DocumentMetadata{lang=zh-CN,tagging=on}`，不再使用旧版 `testphase` 或为 `tabularx` 关闭表格标签的实验性兼容补丁。
+目前 `book/main.tex` 采用 `\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2}`，不再使用旧版 `testphase` 或为 `tabularx` 关闭表格标签的实验性兼容补丁。
 
-CI 用 `pypdf==5.9.0` 验证 `/MarkInfo /Marked true`、`/StructTreeRoot`、`/Document` 根节点和公式／图像／替代文字节点。最新成功构建含 1,471 个公式节点、21 张表格与 59 个 TH 表头、16 个图像节点及 16 处替代文字、48 个 H1 与 180 个 H2 标题。**Tagged PDF 结构存在，并不等于通过 PDF/UA 或读屏体验审核。**
+CI 用 `pypdf==5.9.0` 验证 `/MarkInfo /Marked true`、`/StructTreeRoot`、`/Document` 根节点和公式／图像／替代文字节点。最新成功构建含 1,471 个公式节点、21 张表格与 59 个 TH 表头、16 个图像节点及 16 处替代文字、48 个 H1 与 180 个 H2 标题。**当前 PDF 已通过 veraPDF 的 PDF/UA-2 机器验证；这并不等于完成读屏器人工审核。**
 
 ### 最小回归测试
 
