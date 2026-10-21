@@ -4,6 +4,7 @@ title={三条 Key 的匹配分数与读取权重}]
 \small
 Query 为 $(1,1)$；Key 与 Value 来自同一张 Embedding 表。
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={三个 Key 的分数经过 Softmax 后用来读取 Value}}
 \begin{tikzpicture}[x=1cm,y=.9cm,>=Latex]
 \node[anchor=west,font=\small\bfseries] at (0,.5) {Token};
 \node[anchor=west,font=\small\bfseries] at (2.6,.5) {点积分数};
@@ -25,6 +26,7 @@ Query 为 $(1,1)$；Key 与 Value 来自同一张 Embedding 表。
 \node[anchor=west,font=\small] at (.1,-2.9)
  {$0.212(1,0)+0.212(0,1)+0.576(1,1)=(0.788,0.788)$};
 \end{tikzpicture}
+\tagstructend
 \end{center}
 \end{tcolorbox}
 

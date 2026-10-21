@@ -4,6 +4,7 @@
   title={从“按需要读取”到 Q/K/V：每个字母都有工作}]
 \small
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={Query 匹配 Key，按得到的权重对 Value 加权求和}}
 \begin{tikzpicture}[>=Latex,
   b/.style={draw=linegray,fill=white,rounded corners=3pt,
              minimum width=52mm,minimum height=12mm,align=center,font=\small},
@@ -29,6 +30,7 @@
 \draw[->,blue,thick] (weight.south) to[out=-90,in=150] (out.north west);
 \draw[->,orange,thick] (value.south) to[out=-90,in=30] (out.north east);
 \end{tikzpicture}
+\tagstructend
 \end{center}
 \textbf{注意：}这里 $i=1,2,3$ 是\textbf{候选位置编号}。
 第三个位置既能发出 Query，也会提供自己的 Key 和 Value。

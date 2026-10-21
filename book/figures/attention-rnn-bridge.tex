@@ -3,6 +3,7 @@
   fonttitle=\sffamily\bfseries,coltitle=ink,
   title={图解：顺序传递与直接读取，是两种不同的信息路径}]
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={RNN 顺次传递状态，而 Attention 能直接访问较早位置}}
 \begin{tikzpicture}[>=Latex,
  smallnode/.style={draw=linegray,fill=white,rounded corners=2pt,
   minimum width=19mm,minimum height=9mm,align=center,font=\scriptsize},
@@ -30,6 +31,7 @@
 \node[font=\footnotesize,align=left,anchor=west] at (9.2,-2.3)
   {不同路径可分配\\不同的读取权重};
 \end{tikzpicture}
+\tagstructend
 \end{center}
 \small\noindent
 左图的橙色箭头是\textbf{必须依次计算的状态传递}。

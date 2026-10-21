@@ -1,4 +1,5 @@
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={二乘二卷积核在四乘四图像上滑动产生三乘三特征图}}
 \begin{tikzpicture}[>=Latex,x=9mm,y=9mm]
 \foreach \rr/\cc/\val in {
 0/0/1,0/1/1,0/2/0,0/3/0,
@@ -18,6 +19,7 @@
 \node[align=center,font=\small] at (11,2.15)
  {$\begin{bmatrix}0&1&0\\1&0&-1\\0&-1&0\end{bmatrix}$\\$3\times3$ 特征图};
 \end{tikzpicture}
+\tagstructend
 
 {\footnotesize 首格结果为 $1-1=0$；右移一格后为 $1-0=1$。
 其余位置使用同一 $2\times2$ 核，步幅 1、不补零。}

@@ -13,6 +13,7 @@
 \begin{minipage}[t]{.49\linewidth}
 \centering
 \textbf{列向量 Query 的写法}\\[2mm]
+\tagstructbegin{tag=Figure,alttext={Key 与 Value 的存储、查询和按权重读取}}
 \begin{tikzpicture}[x=10mm,y=9mm]
 \foreach \r/\shade in {1/blueback,2/orangeback,3/greenback}{
   \foreach \c in {1,2}{
@@ -23,13 +24,15 @@
 \node at (.5,-.5){1}; \node at (1.5,-.5){0};
 \node at (.5,-1.5){0}; \node at (1.5,-1.5){1};
 \node at (.5,-2.5){1}; \node at (1.5,-2.5){1};
-\end{tikzpicture}\\[1mm]
+\end{tikzpicture}
+\tagstructend\\[1mm]
 $K\in\R^{M\times d_k}$\\
 {\footnotesize 每行一条 Key}
 \end{minipage}%
 \begin{minipage}[t]{.49\linewidth}
 \centering
 \textbf{行向量 Query 的写法}\\[2mm]
+\tagstructbegin{tag=Figure,alttext={Key 与 Value 的存储、查询和按权重读取}}
 \begin{tikzpicture}[x=10mm,y=9mm]
 \foreach \c/\shade in {1/blueback,2/orangeback,3/greenback}{
   \foreach \r in {1,2}{
@@ -39,7 +42,8 @@ $K\in\R^{M\times d_k}$\\
 }
 \node at (.5,-.5){1}; \node at (1.5,-.5){0}; \node at (2.5,-.5){1};
 \node at (.5,-1.5){0}; \node at (1.5,-1.5){1}; \node at (2.5,-1.5){1};
-\end{tikzpicture}\\[1mm]
+\end{tikzpicture}
+\tagstructend\\[1mm]
 $K^\top\in\R^{d_k\times M}$\\
 {\footnotesize 每列一条 Key}
 \end{minipage}
