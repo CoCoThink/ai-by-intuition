@@ -5,9 +5,9 @@
 ## 已确认的构建结果
 
 - 使用 **TeX Live 2026 + LuaLaTeX**；`book/main.tex` 的入口为 `\\DocumentMetadata{lang=zh-CN,tagging=on}`。
-- [成功的 GitHub Actions 运行](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381) 生成 **99 页** `AI-by-Intuition-Volume-01.pdf`；正式下载工件为 `ai-by-intuition-volume-01`。
+- [成功的 GitHub Actions 运行](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39596178812) 生成 **99 页** `AI-by-Intuition-Volume-01.pdf`；正式下载工件为 `ai-by-intuition-volume-01`。
 - 最小样例（中文、数学、`tabularx`、带替代文字的 TikZ）和整本书均可编译；CI 容器的 `pdfinfo` 显示 `Tagged: yes`。
-- 验收器使用固定版 `pypdf==5.9.0`，确认 PDF Catalog 中 `/MarkInfo` 的 `/Marked=true`、`/StructTreeRoot` 和 `/Document` 结构根。最新统计为 **1,471** 个 `/Formula`、**16** 个 `/Figure`、**16** 个带替代文字的节点。
+- 验收器使用固定版 `pypdf==5.9.0`，确认 PDF Catalog 中 `/MarkInfo` 的 `/Marked=true`、`/StructTreeRoot` 和 `/Document` 结构根。最新统计为 **48 个 H1、180 个 H2、21 个 Table、59 个 TH、1,471 个 Formula、16 个 Figure、16 个带替代文字的节点**。
 - `scripts/validate_book.py` 还检查七个部分、47 个章节输入文件、数值算例、目录页、目标内容、可疑空页以及全书文字边界。
 
 这些计数是**该次成功构建的快照**；以后修改文稿、引擎和标签选项，需重新核验。
@@ -16,10 +16,10 @@
 
 | 项目 | 当前情况 | 下一步验收 |
 |---|---|---|
-| 文档结构标签与标题 | **已修复并在实验分支验证**：正文包含 48 个 H1、180 个 H2，保留中文章节显示与目录；见 [成功的构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39590129153) | 持续检查标题层级和辅助技术的真实导航体验（[#3](https://github.com/CoCoThink/ai-by-intuition/issues/3)） |
+| 文档结构标签与标题 | **已修复并合并 `main`**：正文包含 48 个 H1、180 个 H2，保留中文章节显示与目录；见 [成功的构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39596178812) | 持续检查标题层级和辅助技术的真实导航体验（[#3](https://github.com/CoCoThink/ai-by-intuition/issues/3)） |
 | 图形替代文本 | 16 个主要图形结构有替代描述 | 检查信息完整度及与可视图对应关系 |
 | 表格无障碍 | 21 张教学数据表均设置首行 `TH`，最近 CI 验证 59 个表头节点 | 检查表头 `TH` / 行列关联、跨行跨列与实际朗读 |
-| 数学语义 | 结构树含 Formula 节点 | 完整启用 `unicode-math` 曾在 `align*` 触发 `luamml-amsmath.lua` 断言；保留经典数学字体的稳定出版配置，通过 `book/smoke-mathml.tex` 独立实验，不得将 Formula 节点等同于 MathML |
+| 数学语义 | 结构树含 Formula 节点 | 经典字体的 `main` 构建稳定；`align`/`align*` 的 LuaMML 断言可通过改为 `aligned` 避开，但实验全书的 `mathml-SE` 方案仍报告非法 MathML 父子结构，正在 `experiment/full-book-mathml` 分支测试 `mathml-AF`；不能将 Formula 节点等同于 MathML |
 | 图注结构 | 能生成 PDF | 最新完整构建无 Document 到 Caption 非法父子警告；仍应核验图注及链接锚点 |
 | 读屏顺序 | 尚无端到端辅助技术验收记录 | 用至少一种主流 PDF 阅读器／读屏器检查目录、表格、公式和跨页提示框 |
 | PDF/UA 标准 | **尚未认证** | 使用独立 PDF/UA 验证器并修复报告中的结构、语言、字体或注释问题 |
@@ -64,18 +64,22 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 ## LuaMML 对齐公式复现实验
 
-[成功的 CI（正式出版不受影响）](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39583710518) 证实 `smoke-mathml.tex` 在 `\\end{align*}` 复现 `luamml-amsmath.lua:63: assertion failed`。这是独立精简文件中的错误，不再假定来自整书排版；`smoke-mathml-aligned.tex` 继续验证 `\\[\\begin{aligned}...\\end{aligned}\\]` 变体。两项实验均不会阻断稳定成书，日志作为 `experimental-mathml-logs` 工件保存。
+[成功的 CI（正式出版不受影响）](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39583710518) 证实 `smoke-mathml.tex` 在 `\\end{align*}` 复现 `luamml-amsmath.lua:63: assertion failed`。这是独立精简文件中的错误，不再假定来自整书排版；`smoke-mathml-aligned.tex` 继续验证 `\\[\\begin{aligned}...\\end{aligned}\\]` 变体。这些实验均不会阻断稳定成书，日志作为 `experimental-mathml-logs` 工件保存。
 
-## 标题语义修复（已通过实验分支 CI）
+## 标题语义修复（已通过 main 分支 CI）
 
-此前 99 页 PDF 虽有目录，却缺少正文 H1/H2。根因是 `titlesec` 的标题命令覆盖使语义结构丢失，而不是中文字体本身。实验分支移除 `titlesec`，改用 `\\ctexset` 配合 `\\EditInstance{heading}{section/subsection}` 的原生标题模板，并保留“第 X 部分／第 X 章／附录”等视觉编号。独立 [CI #39590129153](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39590129153) 的**全书**结构检查确认 **48 个 H1、180 个 H2**，99 页、21 张语义表格与全部图形均通过。该改动已并入 `main`，并由 `scripts/validate_book.py` 强制检查 H1/H2 数量。
+此前 99 页 PDF 虽有目录，却缺少正文 H1/H2。根因是 `titlesec` 的标题命令覆盖使语义结构丢失，而不是中文字体本身。实验分支移除 `titlesec`，改用 `\\ctexset` 配合 `\\EditInstance{heading}{section/subsection}` 的原生标题模板，并保留“第 X 部分／第 X 章／附录”等视觉编号。[main CI #39596178812](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39596178812) 的**全书**结构检查确认 **48 个 H1、180 个 H2**，99 页、21 张语义表格与全部图形均通过。该改动已并入 `main`，并由 `scripts/validate_book.py` 强制检查 H1/H2 数量。
 
 注意：H1/H2 存在并不等于阅读顺序正确，更不能代表 PDF/UA 已通过。下一步仍需检查标题嵌套、目录与实际读屏导航，并独立跑 PDF/UA 验证器。上游兼容性分析：[latex3/tagging-project #673](https://github.com/latex3/tagging-project/issues/673)。问题跟踪：[Issue #3](https://github.com/CoCoThink/ai-by-intuition/issues/3)。
 
 ## 独立标题结构标签实验（2026-10-21）
 
-CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（标准 `article` 基线）与 `smoke-heading-chinese.tex`（`article + ctex[heading=false]` 中文组合）。`scripts/inspect_heading_tags.py` 遍历真实 PDF 结构树，核查 H1/H2 或 section/subsection 节点，而不是仅看目录或 RoleMap。结果归档在 `experimental-heading-results` 工件中。只有确认中文方案确实生成结构标题并通过布局与交叉引用回归，才应考虑切换全书文档类。
+CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（标准 `article` 基线）与 `smoke-heading-chinese.tex`（`article + ctex[heading=false]` 中文组合）。`scripts/inspect_heading_tags.py` 遍历真实 PDF 结构树，核查 H1/H2 或 section/subsection 节点，而不是仅看目录或 RoleMap。结果归档在 `experimental-heading-results` 工件中。`main` 已直接采用经过完整 CI 验证的 `ctexart` 原生标题模板方案，无需为了此问题切换到 `article` 文档类；这些独立实验保留作为回归对照。
 
 ## 数学字体替代方案实验（2026-10-21）
 
-新增非阻断 `book/smoke-mathml-lua-unicode.tex`，将传统 `unicode-math` 换成 TeX Live 2026 支持的 `lua-unicode-math`，保留同一段 `align*` 点积公式，比较是否能够生成 MathML 而不触发 LuaMML 断言。此方案仍属于**隔离测试**；即便最小文件成功，也必须确认全书 99 页数值、公式外观、结构标签及阅读顺序后才可切换正式构建。
+新增非阻断 `book/smoke-mathml-lua-unicode.tex`，将传统 `unicode-math` 换成 TeX Live 2026 支持的 `lua-unicode-math`，保留同一段 `align*` 点积公式，比较是否能够生成 MathML 而不触发 LuaMML 断言。CI #39596178812 已证明该方案仍在 `align*` 触发 `luamml-amsmath.lua:63` 断言；不要误以为改用 `lua-unicode-math` 可以单独修复问题。
+
+## 全书 MathML 可行性分支
+
+实验分支 [`experiment/full-book-mathml`](https://github.com/CoCoThink/ai-by-intuition/tree/experiment/full-book-mathml) 已将所有触发断言的 `align`／`align*` 推导转换为 `aligned`，对需要编号的展示公式使用 `equation` 包裹；原先 LuaMML 的致命断言不再触发，CI #39598374009 能输出 99 页实验 PDF，但 `mathml-SE` 结构产生 **56 条 `mathml:mo → mathml:math` 父子关系警告**，因此**并未通过无障碍验收**。随后单独测试 `mathml-AF` 关联文件输出，不阻断 `main` 的稳定发布。只有检查公式的实际关联文件、结构规范性、版面和辅助技术读序后才考虑合并。

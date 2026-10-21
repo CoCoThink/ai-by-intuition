@@ -66,9 +66,10 @@
 
 ## 工程构建与 Tagged PDF 验收（2026-10-21）
 
-- **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)为 99 页。
-- **已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,471 个 Formula、17 个 Figure、17 处替代文字。
-- **尚未完成：**PDF/UA 正式验收，包括读屏顺序、标题层级、表格结构、数学表达式 MathML、图注父子关系等。成功的 `Tagged: yes` **不能**替代合规性检验。
-- **下一阶段：**消除 `tagpdf` 图注父子结构警告，验证/补齐数学语义与表格表头关系，使用独立 PDF/UA 检查器及实际辅助技术验收，记录可复现的缺陷和页面。
+- **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39596178812)为 99 页。
+- **已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,471 个 Formula、21 张 Table／59 个 TH、16 个 Figure／16 处替代文字、48 个 H1／180 个 H2。
+- **已修复：**正文标题 H1/H2 与图注父子标签的缺失／非法关系；保留继续抽查辅助技术标题导航和图注读序。
+- **尚未完成：**完整 PDF/UA 认证、数学公式 MathML、复杂表格读屏与实际阅读顺序。全书 MathML 在 `experiment/full-book-mathml` 分支隔离尝试，生产 `main` 仍采用已通过的经典数学字体，**不能**将 `Tagged: yes` 当作 PDF/UA 合规。
+- **下一阶段：**检查实验数学语义的实际嵌入与 PDF/UA 结构、复核跨页图文阅读顺序，并用独立验证器和辅助技术验收。
 
 工程细节、目前已知限制与复现命令见 [无障碍现状及验收](docs/ACCESSIBILITY.md)；构建命令见 [README](README.md)。

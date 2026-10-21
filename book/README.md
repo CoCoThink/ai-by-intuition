@@ -72,13 +72,13 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 生成文件为 `book/build/main.pdf`。CI 将唯一正式成品作为 `ai-by-intuition-volume-01` 工件发布，可从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
 
-2026 年 10 月 21 日的[成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界检查，并核验 `Tagged: yes` 及真实 PDF 结构树。
+2026 年 10 月 21 日的[成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39596178812)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界检查，并核验 `Tagged: yes` 及真实 PDF 结构树。
 
 ## Tagged PDF 与尚待完成的无障碍验收
 
 目前 `book/main.tex` 采用 `\DocumentMetadata{lang=zh-CN,tagging=on}`，不再使用旧版 `testphase` 或为 `tabularx` 关闭表格标签的实验性兼容补丁。
 
-CI 用 `pypdf==5.9.0` 验证 `/MarkInfo /Marked true`、`/StructTreeRoot`、`/Document` 根节点和公式／图像／替代文字节点。最新成功构建含 1,471 个公式节点、17 个图像节点及 17 处替代文字。**Tagged PDF 结构存在，并不等于通过 PDF/UA 或读屏体验审核。**
+CI 用 `pypdf==5.9.0` 验证 `/MarkInfo /Marked true`、`/StructTreeRoot`、`/Document` 根节点和公式／图像／替代文字节点。最新成功构建含 1,471 个公式节点、21 张表格与 59 个 TH 表头、16 个图像节点及 16 处替代文字、48 个 H1 与 180 个 H2 标题。**Tagged PDF 结构存在，并不等于通过 PDF/UA 或读屏体验审核。**
 
 ### 最小回归测试
 
@@ -91,4 +91,4 @@ latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outd
 pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 ```
 
-最新 CI 日志仍有数学 MathML 依赖提示及图注结构父子关系警告。表格标题单元格关联、数学可朗读性、复杂图的文本替代准确性和读屏顺序须继续审核；详见仓库根目录的 [无障碍现状及验收清单](../docs/ACCESSIBILITY.md)。
+最新 `main` CI 已修复图注父子结构警告、超宽盒子和标题层级缺失。数学 MathML 仍需额外验证，当前在 `experiment/full-book-mathml` 分支独立实验；复杂表格单元格关联、图像描述质量和真实读屏顺序仍需审核；详见仓库根目录的 [无障碍现状及验收清单](../docs/ACCESSIBILITY.md)。
