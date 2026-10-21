@@ -1,0 +1,26 @@
+\begin{center}
+\begin{tikzpicture}[x=7.5mm,y=8mm]
+\foreach \dx/\lab in {0/欠拟合,4.8/合适拟合,9.6/过拟合}{
+  \begin{scope}[shift={(\dx,0)}]
+    \draw[->,linegray] (0,0)--(3.8,0);
+    \draw[->,linegray] (0,0)--(0,3);
+    \foreach \px/\py in {.4/.48,1/.92,1.6/1.15,2.25/1.92,2.95/2.08,3.45/2.66}
+      \fill[orange] (\px,\py) circle(2pt);
+    \node[font=\small\bfseries] at (1.9,-.55) {\lab};
+  \end{scope}
+}
+\draw[blue,very thick] (.25,1.52)--(3.52,1.52);
+\begin{scope}[shift={(4.8,0)}]
+ \draw[blue,very thick] (.28,.32)--(3.52,2.66);
+\end{scope}
+\begin{scope}[shift={(9.6,0)}]
+ \draw[blue,very thick] plot[smooth] coordinates {
+ (.2,.1) (.4,.48) (.72,1.65) (1,.92) (1.32,.2)
+ (1.6,1.15) (1.93,2.85) (2.25,1.92) (2.6,1.05)
+ (2.95,2.08) (3.2,2.95) (3.45,2.66) (3.65,1.3)};
+\end{scope}
+\end{tikzpicture}
+
+{\footnotesize 橙点是带测量噪声的训练样本，蓝线是三种示意模型：
+左边没有抓住趋势；中间保留了主规律；右边过度追随偶然波动。}
+\end{center}

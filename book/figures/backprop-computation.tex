@@ -1,0 +1,20 @@
+\begin{center}
+\begin{tikzpicture}[>=Latex,
+  block/.style={draw=linegray,fill=paper,rounded corners=2pt,
+  minimum width=34mm,minimum height=15mm,align=center,font=\small}]
+\node[block] (h) at (0,0) {$h=w_1x$\\前向：$1\times2=2$};
+\node[block] (out) at (4.25,0) {$\widehat y=w_2h$\\前向：$2\times2=4$};
+\node[block] (loss) at (8.5,0) {$L=\frac12(\widehat y-5)^2$\\前向：$0.5$};
+\draw[->,thick,blue] (h)--(out);
+\draw[->,thick,blue] (out)--(loss);
+\node[font=\footnotesize,teal,align=center] (g1) at (0,-1.45)
+ {$\partial L/\partial h=(-1)\times2=-2$\\$\partial L/\partial w_1=(-2)\times2=-4$};
+\node[font=\footnotesize,teal,align=center] (g2) at (4.25,-1.45)
+ {$\partial L/\partial\widehat y=-1$\\$\partial L/\partial w_2=(-1)\times2=-2$};
+\draw[->,teal,thick] (loss.south) |- (g2.east);
+\draw[->,teal,thick] (g2.west) -- (g1.east);
+\end{tikzpicture}
+
+{\footnotesize 蓝箭头是前向值，青色箭头表示从损失回传梯度；
+参数在梯度全部算完以后统一更新。}
+\end{center}

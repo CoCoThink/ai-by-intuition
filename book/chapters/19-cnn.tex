@@ -42,18 +42,9 @@ F=\begin{bmatrix}1&0\\0&-1\end{bmatrix}.
 \]
 运算结果是 $1$。卷积核把局部模式转成了一个可供下一层使用的数值，这个数叫作\textbf{特征图}（feature map）的一个位置。
 
-\begin{center}
-\begin{tikzpicture}[>=Latex, node distance=11mm,
- n/.style={draw=linegray,fill=paper,rounded corners=4pt,minimum height=15mm,align=center,font=\small}]
-\node[n,minimum width=36mm] (a) {输入图像\\$4\times4$};
-\node[n,right=of a,minimum width=43mm] (b) {小卷积核\\$2\times2$ 局部扫描};
-\node[n,right=of b,minimum width=36mm] (c) {特征图\\$3\times3$};
-\draw[->,blue,thick] (a)--(b);
-\draw[->,blue,thick] (b)--(c);
-\end{tikzpicture}
-\end{center}
+\input{figures/cnn-window}
 
-当步幅（stride）为 $1$、没有补零（padding）时，沿每个方向可停放的位置数是 $4-2+1=3$，所以输出是 $3\times3$。
+当步幅（stride）为 $1$、没有补零（padding）时，沿每个方向可停放的位置数是 $4-2+1=3$，所以输出是 $3\times3$。上图的九个数字都由同一组参数反复扫描得到，并非九套不同的核。
 
 \begin{warningbox}
 深度学习框架通常实现的是\textbf{互相关}（cross-correlation）：卷积核不翻转就直接做逐项乘积；很多教程也把它称为“卷积”。严格数学卷积会翻转核。两者在训练可学习卷积核时都能表征局部模式。

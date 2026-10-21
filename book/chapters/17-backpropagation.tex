@@ -64,6 +64,8 @@ w_2'=2-0.05(-2)=2.1.
 \]
 新的预测为 $2.1\times(1.2\times2)=5.04$，新损失 $0.0008$，比原来 $0.5$ 小得多。
 
+\input{figures/backprop-computation}
+
 \begin{idea}
 \textbf{反向传播（backpropagation）传的不是文字、答案或原始输入，而是损失对中间变量的梯度。}先算后面的局部变化率，再复用它们，避免每求一个权重都从头展开整条函数。
 \end{idea}

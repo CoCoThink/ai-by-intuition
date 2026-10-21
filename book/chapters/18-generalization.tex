@@ -17,6 +17,8 @@
 \end{enumerate}
 \textbf{泛化能力}就是模型面对训练时没见过的数据的表现。
 
+\input{figures/generalization-three-fits}
+
 \subsection{为什么需要训练、验证和测试三份数据？}
 
 \begin{center}
@@ -56,6 +58,8 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 
 \textbf{办法 D：提前停止（early stopping）。}
 不只看训练损失，还关注验证损失。若训练损失持续下降，而验证损失开始恶化，就可以在验证表现较好的检查点停止训练。
+
+\input{figures/validation-early-stop}
 
 \subsection{Dropout 到底丢弃了什么？}
 

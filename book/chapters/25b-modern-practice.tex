@@ -13,7 +13,7 @@
 \item 当前有 $T=4$ 个 Token、$d_{\rm model}=6$、
 $d_{\rm ff}=18$，词表大小 $|\mathcal V|=100$。
 \conceptlink{ffn}{FFN} 上投影、下投影和最终输出 \conceptlink{logits}{logits} 分别是什么形状？
-\item 给定输入行向量 $(1,2)$，上投影
+\item 给定输入行向量 $(2,1)$，上投影
 $\begin{bmatrix}1&0&1\\0&1&-1\end{bmatrix}$，
 下投影 $\begin{bmatrix}2&0\\0&1\\1&1\end{bmatrix}$。
 不计偏置，算 ReLU 后的隐藏向量及最终 FFN 输出。
