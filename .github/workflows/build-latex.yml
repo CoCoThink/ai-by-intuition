@@ -56,6 +56,11 @@ jobs:
           name: tagged-pdf-diagnostics
           path: book/build/AI-by-Intuition-Volume-01.pdf
           if-no-files-found: warn
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install PDF structure inspector
+        run: python -m pip install --disable-pip-version-check pypdf==5.9.0
       - name: Verify rendered PDF tags, structure and layout
         run: |
           sudo apt-get update -qq

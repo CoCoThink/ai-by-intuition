@@ -75,3 +75,4 @@ latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 
 `book/smoke-tagging.tex` 独立检验 LuaLaTeX 在当前 CI 环境下对中文、公式、`tabularx` 与带替代文本的 TikZ 图的支持。CI 首先构建这个小文件，确认 `pdfinfo` 的 `Tagged: yes`，然后才构建全书；全书另做独立验收。
 \nCI tagged-PDF 构建固定使用 **TeX Live 2026** 容器，并分别检查最小样例、全书标签及文字边界。\n
+正式无障碍验收通过 `pypdf` 检查 PDF 目录的 `/MarkInfo /Marked true`、`/StructTreeRoot` 和真实的公式/图像/替代文本结构节点，不再把一个 `Tagged:` 字符串作为唯一判据；`Tagged: yes` 仍不代表已通过 PDF/UA 和读屏检查。

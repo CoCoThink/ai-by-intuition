@@ -254,9 +254,53 @@ def validate_pdf(path: Path) -> None:
         fail(f"Final PDF missing or suspiciously small: {path}")
     info = subprocess.run(["pdfinfo", str(path)], capture_output=True,
                           text=True, check=True).stdout
-    tagged = bool(re.search(r"(?m)^Tagged:\\s+yes\\s*$", info))
+    # Inspect the PDF Catalog rather than inferring structural accessibility
+    # from pdfinfo's human-readable status alone. This also catches missing
+    # MarkInfo and empty structure trees that a "Tagged: yes" flag may miss.
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        fail("pypdf==5.9.0 is required for PDF structure verification")
+    reader = PdfReader(str(path))
+    catalog = reader.trailer["/Root"]
+    markinfo = catalog.get("/MarkInfo")
+    struct_root = catalog.get("/StructTreeRoot")
+    tagged = bool(markinfo and markinfo.get("/Marked") and struct_root)
     if not tagged:
-        fail("Tagged PDF structure missing (PDF reports Tagged: no)")
+        fail("PDF catalog must contain /MarkInfo /Marked true and /StructTreeRoot")
+    if hasattr(struct_root, "get_object"):
+        struct_root = struct_root.get_object()
+    top = struct_root.get("/K")
+    if hasattr(top, "get_object"):
+        top = top.get_object()
+    if not top or top.get("/S") != "/Document":
+        fail("Tagged structure root is missing the /Document element")
+    counts = {}
+    alt_count = 0
+    stack = [top]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, list):
+            stack.extend(node)
+            continue
+        if hasattr(node, "get_object"):
+            node = node.get_object()
+        if isinstance(node, dict):
+            role = str(node.get("/S", ""))
+            counts[role] = counts.get(role, 0) + 1
+            if node.get("/Alt"):
+                alt_count += 1
+            if node.get("/K") is not None:
+                stack.append(node["/K"])
+    if counts.get("/Formula", 0) < 20 or counts.get("/Figure", 0) < 8 or alt_count < 8:
+        fail(f"Insufficient tagged math/figures/alt text: {counts}, alt={alt_count}")
+    if len(reader.pages) < 50:
+        fail("Suspiciously short tagged book")
+    poppler_tagged = bool(re.search(r"(?m)^Tagged:\s+yes\s*$", info))
+    if not poppler_tagged:
+        print("PDFINFO WARNING: pdfinfo disagrees with Catalog Marked=true and populated StructTreeRoot")
+    print(f"Structure QA: {counts.get('/Formula', 0)} formulas; "
+          f"{counts.get('/Figure', 0)} figures; {alt_count} alternative descriptions")
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
