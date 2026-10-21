@@ -1,78 +1,68 @@
-# 全书目录 · AI by Intuition
+# 全书阅读顺序 · AI by Intuition
 
-**先问计算机怎样学会回应文字，再解释为什么用下一 Token 预测训练自回归语言模型。** 这是贯穿数学计算的教学任务，不是 AI 的唯一目标。前五部分连续阅读，第六部分为选读和查阅区。PDF 中章节号由 LaTeX 自动生成。
+**唯一入口：** [book/main.tex](main.tex)。读者只需要阅读一个 PDF；
+源码按章节维护，正文编号由 LaTeX 自动生成，目录与书内引用应以编译 PDF 为准。
 
-**[唯一编译入口](main.tex)** · **[GitHub Actions 完整 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)**
+## 前五部分：必读主线
 
-## Ⅰ · 把文字变成可计算的数字
+### I · 把文字变成可计算的数字
+- [阅读指南](chapters/00-guide.tex)：先明确要解决什么问题
+- [数学速查](chapters/00b-math-tools.tex)：高中三角函数、导数、指数对数与矩阵
+- [函数](chapters/00-functions.tex)、[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)
+- [Token、One-hot 与 Embedding](chapters/20-embeddings.tex)
+- [输入、目标与形状契约](chapters/20b-task-contract.tex)
 
-- [阅读指南：先有贯穿问题，再看公式](chapters/00-guide.tex)
-- [函数是怎样的可调计算规则](chapters/00-functions.tex)
-- [为什么一个对象需要一列数字](chapters/01-vectors.tex)
-- [点积怎样表示方向与匹配](chapters/02-dot-product.tex)
-- [矩阵与行列转置图卡](chapters/03-matrix-multiplication.tex)
-- [Token → ID → One-hot → Embedding：把文字变成向量](chapters/20-embeddings.tex)
-- [用“春天 / 花 / 开了 / 。”固定下一 Token 预测任务](chapters/20b-task-contract.tex)
+### II · 让神经网络学会预测
+- [ReLU 与非线性](chapters/07-functions-relu.tex)
+- [MLP](chapters/10-mlp.tex)
+- [损失与梯度下降](chapters/16-loss-gradient.tex)
+- [反向传播](chapters/17-backpropagation.tex)
+- [完整的两层学习例子](chapters/18b-end-to-end-learning.tex)
+- [泛化与训练技巧](chapters/18-generalization.tex)
 
-## Ⅱ · 让神经网络学会预测
+### III · 让词与词交换信息
+- [RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)
+- [单查询到批量矩阵](chapters/11-softmax-memory.tex)
+- [Self-Attention](chapters/12-self-attention-matrices.tex)，并比较 Linear / MLP / Attention
 
-- [线性运算为什么需要非线性](chapters/07-functions-relu.tex)
-- [两层 MLP 的手算和尺寸](chapters/10-mlp.tex)
-- [损失、导数与梯度下降](chapters/16-loss-gradient.tex)
-- [怎样沿计算图求梯度](chapters/17-backpropagation.tex)
-- [一次完整参数更新](chapters/18b-end-to-end-learning.tex)
-- [训练题做得好不等于泛化](chapters/18-generalization.tex)
+### IV · 组装、训练并使用 Transformer
+- [位置、缩放与双头注意力的数字例子](chapters/22a-position-multihead.tex)
+- [Pre-Norm Block、残差图与 LayerNorm](chapters/22-transformer-architecture.tex)
+- [FFN 与词表输出头](chapters/10b-ffn-output-head.tex)
+- [两个 Token 完整前向计算](chapters/22b-token-to-output.tex)
+- [因果训练与一次输出头梯度更新](chapters/22c-language-training.tex)
+- [推理、缓存与生成](chapters/23-llm-systems.tex)
 
-## Ⅲ · 让词与词交换信息
+### V · 改进模型并构建可靠应用
+- [现代 Transformer 架构](chapters/22d-modern-transformers.tex)
+- [后训练与推理策略](chapters/23c-post-training.tex)
+- [Agent 系统设计](chapters/23d-agent-systems.tex)
+- [量化、蒸馏、LoRA 与部署](chapters/23b-deployment-and-ecosystem.tex)
 
-- [RNN 是什么：逐词读取、传递状态并手算三步](chapters/21-rnn.tex)
-- [Attention 是什么：算出 Query/Key 分数，再加权读取 Value](chapters/21b-why-attention.tex)
-- [把刚才的 Attention 写成矩阵：从单个 Query 到批量计算](chapters/11-softmax-memory.tex)
-- [Q/K/V 投影、行列图卡与整段 Self-Attention](chapters/12-self-attention-matrices.tex)
+## 第六部分：选读专题（不影响必读主线）
 
-## Ⅳ · 组装、训练并使用 Transformer
+- [CNN](chapters/19-cnn.tex)
+- [联想记忆与外积](chapters/04-key-value-outer-product.tex)、[记忆干扰](chapters/05-memory-interference.tex)、[改善](chapters/06-better-linear-memory.tex)
+- [Key/Value 行列堆叠](chapters/08-stacking-key-value.tex) 与 [非线性记忆](chapters/09-nonlinearity-and-memory.tex)
+- [Linear / MLP / Attention 关系](chapters/14-summary.tex)
+- [高维容量假设](chapters/13-capacity.tex)
 
-- [位置、多头、残差、归一化与 Mask](chapters/22-transformer-architecture.tex)
-- [FFN 与词表输出头不是同一层](chapters/10b-ffn-output-head.tex)
-- [从“春天、花”完整算到下一 Token 的概率](chapters/22b-token-to-output.tex)
-- [错位标签、因果掩码和交叉熵](chapters/22c-language-training.tex)
-- [从候选概率到自回归生成与 KV Cache](chapters/23-llm-systems.tex)
+## 附录：练习、查阅与集中解答（建议完成）
 
-## Ⅴ · 改进模型并构建可靠应用
+- [数学与神经网络练习](chapters/25-integrated-practice.tex)
+- [现代模型与 Agent 练习](chapters/25b-modern-practice.tex)
+- [联想记忆练习](chapters/15-practice.tex)
+- [100 词术语地图](chapters/24-lexicon.tex)
+- [现代架构术语导航](chapters/24b-modern-lexicon.tex)
+- [集中参考答案](chapters/27-answer-key.tex)：所有题目先做后查
+- [参考与延伸阅读](chapters/26-sources.tex)
 
-- [生成成本引出 GQA、RoPE、MoE 等取舍](chapters/22d-modern-transformers.tex)
-- [SFT、RLHF、RLVR 与推理策略](chapters/23c-post-training.tex)
-- [RAG、工具、工作流、权限和验证](chapters/23d-agent-systems.tex)
-- [量化、硬件、部署与多模态](chapters/23b-deployment-and-ecosystem.tex)
-
-## Ⅵ · 选读专题与知识回溯
-
-- [选读：图片的局部结构与卷积](chapters/19-cnn.tex)
-- [选读：从外积写入一条关联](chapters/04-key-value-outer-product.tex)
-- [选读：多条记忆为什么互相干扰](chapters/05-memory-interference.tex)
-- [选读：用最小二乘改善线性记忆](chapters/06-better-linear-memory.tex)
-- [选读：堆叠 Key/Value 与维度](chapters/08-stacking-key-value.tex)
-- [选读：从记忆角度重新看 MLP](chapters/09-nonlinearity-and-memory.tex)
-- [选读：Linear、MLP 和 Attention 的联系与边界](chapters/14-summary.tex)
-- [联想记忆手算练习](chapters/15-practice.tex)
-- [选读：高维记忆的统计假设](chapters/13-capacity.tex)
-- [100 个可点击回溯的基础术语](chapters/24-lexicon.tex)
-- [现代模型与 Agent 的术语索引](chapters/24b-modern-lexicon.tex)
-- [整书计算复习题](chapters/25-integrated-practice.tex)
-- [现代模型和工具系统综合题](chapters/25b-modern-practice.tex)
-- [原始视频与参考文献](chapters/26-sources.tex)
-
-## 本书的阅读约定
-
-读者先在主线中完成`Embedding → MLP → 训练 → RNN 的问题 → Attention → Transformer → 语言模型训练与生成`。联想记忆的外积推导、CNN 与高维记忆容量是独立拓展，**不会作为进入 Attention 的前置要求**。
-
-文字、向量、张量和公式尽量用同一组可手算示例联系起来；重要的行列方向在矩阵章与 Self-Attention 章均有彩色对照图卡。术语地图保留正文内跳转，并随章节重新排序自动更新编号。
-
-## 编译
+## 一次构建，一本 PDF
 
 ```bash
 cd book
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ```
 
-最终始终生成**一份连续的中文 PDF**，不为章节分别发布 PDF。
+最新版本也可以在 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
+构建会检查目录、课程序列、交叉引用、公式数值和独立答案。
