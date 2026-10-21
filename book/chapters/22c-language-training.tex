@@ -97,6 +97,84 @@ L=-\frac{\log0.5+\log0.25+\log0.5}{3}
 \]
 注意这是\textbf{一个人工算例}，不是实际模型的测试成绩。
 
+\subsection{手算一轮 Transformer 输出头的梯度更新}
+\label{sec:transformer-gradient-step}
+
+继续使用\hyperref[intro:22b-token-to-output]{两个 Token 的例子}：
+最后位置的行向量是
+$\vect h_{\rm last}^\top=(0.495,2.505)$，
+五个 logits 为 $(0,0.495,0,0,2.505)$，
+正确标签为 ID 4（“开了”）。
+先\textbf{仅训练词表输出头}，冻结 Attention、FFN 和 Embedding，
+这样可以把一次链式法则完整算出来。
+
+原预测分布（四舍五入）为
+\[
+\vect p^\top=(0.059,0.097,0.059,0.059,0.725),
+\qquad
+\vect y_{\rm target}^\top=(0,0,0,0,1).
+\]
+单位置损失 $L=-\log p_4$；
+其中 $\log$ 是以 $e$ 为底的\textbf{自然对数}。
+因为 $p_4=e^{z_4}/\sum_j e^{z_j}$，
+\[
+L=-z_4+\log\sum_j e^{z_j},
+\]
+对第 $j$ 个 logit 求偏导就是
+$p_j-\mathbb 1[j=4]$。因此
+\begin{equation}
+\boxed{\frac{\partial L}{\partial \vect z^\top}
+=\vect p^\top-\vect y_{\rm target}^\top
+\approx(0.059,0.097,0.059,0.059,-0.275).}
+\end{equation}
+\textbf{为什么用负对数概率？}它是最大化正确目标似然的等价最小化目标，
+且给出上述易于反传的梯度。
+例如 $p_{\rm true}=0.8$ 时损失约 $0.223$，
+$p_{\rm true}=0.1$ 时约 $2.303$，
+对低置信度的正确目标惩罚更大。
+
+由
+$\vect z^\top=\vect h_{\rm last}^\top W_{\rm vocab}$，
+链式法则得到\textbf{外积梯度}：
+\begin{equation}
+\boxed{\frac{\partial L}{\partial W_{\rm vocab}}
+=\vect h_{\rm last}(\vect p-\vect y_{\rm target})^\top
+\in\R^{2\times5}.}
+\end{equation}
+左边的 $\vect h_{\rm last}$ 为 $2\times1$ 列形式，
+右侧因子为 $1\times5$，所以结果与原始权重
+$W_{\rm vocab}:2\times5$ 尺寸完全相同。
+
+只看正确 Token ID 4 对应的权重列，
+旧值为 $(0,1)^\top$，梯度约为
+\[
+\begin{bmatrix}0.495\\2.505\end{bmatrix}(-0.275)
+=\begin{bmatrix}-0.136\\-0.689\end{bmatrix}.
+\]
+选择学习率 $\eta=0.1$，该列变为
+\[
+\begin{bmatrix}0\\1\end{bmatrix}
+-0.1\begin{bmatrix}-0.136\\-0.689\end{bmatrix}
+\approx\boxed{\begin{bmatrix}0.0136\\1.0689\end{bmatrix}}.
+\]
+\textbf{其他四列也必须更新。}若用未四舍五入的概率同时更新五列，
+新 logits 约为
+\[
+(-0.0386,\,0.4316,\,-0.0386,\,-0.0386,\,2.6842).
+\]
+再做一次 Softmax，正确 Token 的概率
+从约 $0.725$ 提高到 $\boxed{0.768}$，
+负对数损失从约 $0.321$ 下降到 $\boxed{0.264}$。
+这些变化可以直接代入验证，不是凭口头断言“学会了”。
+
+此处是\textbf{固定先前特征，仅更新输出头的一步训练}。
+端到端训练还需要将
+$\partial L/\partial \vect h_{\rm last}^\top
+=(\vect p-\vect y_{\rm target})^\top W_{\rm vocab}^\top$
+继续传向 FFN、Attention 和 Embedding。
+若一次计算包含多个预测位置，
+共享参数的梯度还要汇总这些位置的贡献。
+
 \subsection{哪些权重会因此而更新？}
 
 这份损失从词表输出头往回，经过每一层 Transformer Block，
