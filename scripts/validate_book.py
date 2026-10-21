@@ -23,11 +23,11 @@ PARTS = [
     "选读：图像与联想记忆",
 ]
 REQUIRED = [
-    "00-guide", "00b-math-tools", "00-functions", "01-vectors", "02-dot-product",
+    "00-guide", "00b-math-tools", "00c-symbols", "00-functions", "01-vectors", "02-dot-product",
     "03-matrix-multiplication", "20-embeddings", "20b-task-contract",
     "07-functions-relu", "10-mlp", "16-loss-gradient", "17-backpropagation",
     "18b-end-to-end-learning", "18-generalization",
-    "21-rnn", "21b-why-attention", "11-softmax-memory", "12-self-attention-matrices",
+    "21-rnn", "21b-why-attention", "11-softmax-memory",
     "22a-position-multihead", "22-transformer-architecture",
     "10b-ffn-output-head", "22b-token-to-output", "22c-language-training",
     "23-llm-systems", "22d-modern-transformers", "23c-post-training",
@@ -61,21 +61,26 @@ def includes(haystack: str, needle: str, where: str) -> None:
 
 
 def test_numeric_examples() -> None:
-    # End-to-end two-token model: last hidden row and designed vocabulary head.
+    # Training begins with a wrong ID 3 prediction and flips to ID 4.
     h = [0.495, 2.505]
-    z = [0., h[0], 0., 0., h[1]]
-    exps = [math.exp(v) for v in z]
-    p = [v / sum(exps) for v in exps]
-    assert abs(p[4] - 0.725155) < 0.0001
-    grad_z = [p[i] - int(i == 4) for i in range(5)]
-    # W_vocab has columns [0, h0, 0, 0, h1] before update.
-    step = 0.1
-    norm_sq = sum(x*x for x in h)
-    z_new = [z[i] - step * norm_sq * grad_z[i] for i in range(5)]
-    new_e = [math.exp(v) for v in z_new]
-    p_new = [v / sum(new_e) for v in new_e]
-    assert abs(p_new[4] - 0.767932) < 0.0001
-    assert -math.log(p_new[4]) < -math.log(p[4])
+    W = [[0., 1., 0., 0., 0.], [0., 0., 0., 1., 0.]]
+    probs = []
+    for step in range(4):
+        z = [sum(h[k] * W[k][j] for k in range(2)) for j in range(5)]
+        ex = [math.exp(v - max(z)) for v in z]
+        p = [v / sum(ex) for v in ex]
+        probs.append((p[3], p[4], -math.log(p[4])))
+        if step < 3:
+            g = [p[j] - (j == 4) for j in range(5)]
+            for k in range(2):
+                for j in range(5):
+                    W[k][j] -= 0.1 * h[k] * g[j]
+    assert probs[0][0] > probs[0][1]
+    assert probs[3][1] > probs[3][0]
+    assert abs(probs[0][1] - .05923) < .0002
+    assert abs(probs[3][1] - .42704) < .0002
+    assert abs(probs[3][2] - .85089) < .0002
+    assert all(probs[i+1][2] < probs[i][2] for i in range(3))
     assert math.isclose(1000 * 8 + 8 * 1000, 16000)
     assert 2 * 120 * 6 * 4 == 5760
     assert 2 * 120 * 2 * 4 == 1920
@@ -96,7 +101,7 @@ def test_numeric_examples() -> None:
     assert response == [[0, 1, 0], [1, 0, -1], [0, -1, 0]]
     # Answer key exercise: (6,0) · (5,12) = 30, cos = 5/13.
     assert math.isclose(6 * 13 * (5 / 13), 30)
-    print("Numerical QA passed: SGD improves correct probability; LoRA and KV math checked")
+    print("Numerical QA passed: SGD corrects an initial wrong guess; LoRA and KV math checked")
 
 
 def validate_source() -> None:
@@ -106,7 +111,7 @@ def validate_source() -> None:
         fail(f"Expected six reading parts; found {parts!r}")
     inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
-        fail(f"Reading order/appendix differs from the reviewed 43-file curriculum: {inputs!r}")
+        fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
     sources = {name: chapter(name) for name in REQUIRED}
     includes(main, r"\appendix", "main")
     includes(main, r"\part*{附录：练习、术语与答案}", "main")
@@ -117,9 +122,9 @@ def validate_source() -> None:
         fail("Six sections need six minimal part introductions")
 
     # Explicit vector and architecture consistency.
-    for name in ("21b-why-attention", "12-self-attention-matrices"):
+    for name in ("21b-why-attention", "11-softmax-memory"):
         includes(sources[name], r"\vect x_i^\top W_Q" if name.startswith("21b") else r"\vect x^\top W_Q", name)
-    includes(sources["12-self-attention-matrices"], r"W_Q^\top\vect x", "row/column explanation")
+    includes(sources["11-softmax-memory"], r"W_Q^\top\vect x", "row/column explanation")
     includes(sources["22-transformer-architecture"], r"\vect h_T^\top W_{\rm vocab}", "row vocabulary projection")
     includes(sources["22-transformer-architecture"], r"\input{figures/pre-norm-block}", "true Pre-Norm figure")
     includes(sources["22-transformer-architecture"], r"X_{\rm block}", "distinct Block output")
@@ -128,9 +133,9 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], "位置", "positional example")
     includes(sources["22a-position-multihead"], r"\vect x_{\text{春天}}^\top=(1,0)", "position example uses embedding table")
     includes(sources["22a-position-multihead"], r"\vect x_{\text{花}}^\top=(0,1)", "position example uses embedding table")
-    includes(sources["21b-why-attention"], "没有指定生成它们的投影矩阵", "independent Q/K example")
+    includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "Embedding-based Q/K example")
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
-    includes(sources["22c-language-training"], "0.768", "measured SGD improvement")
+    includes(sources["22c-language-training"], "0.427", "3-step prediction flip")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
@@ -203,6 +208,13 @@ def validate_source() -> None:
         file = BOOK / "figures" / f"{figure}.tex"
         if not file.is_file() or r"\begin{tikzpicture}" not in file.read_text(encoding="utf-8"):
             fail(f"Missing editable figure {figure}")
+    includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
+    includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
+    includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")
+    includes(sources["11-softmax-memory"], r"\label{concept:self-attention}", "merged chapter")
+    for name, body in sources.items():
+        if re.search(r"(?<!\\)extbf\{", body) or "\textbf{" in body:
+            fail(f"Broken bold escape in {name}")
     for editorial in ("这正是文章把", "这些只是文章讨论", "没有沿用字幕中",
                       "章节号会随全书编排自动更新", "根据初中学过的",
                       "两单位向量的点积", "是本文为了学习",
@@ -229,8 +241,8 @@ def validate_pdf(path: Path) -> None:
             fail(f"Rendered TOC missing part 第{num}部分: {title}")
     if "第七部分" in toc:
         fail("Rendered table of contents has an extra part")
-    for item in ("数学速查", "位置编码与多头注意力", "Pre-Norm",
-                 "LayerNorm", "0.768", "LoRA", "16,000",
+    for item in ("数学速查", "符号与张量形状速览", "位置编码", "Pre-Norm",
+                 "LayerNorm", "0.427", "LoRA", "16,000",
                  "附录", "集中参考答案", "Key", "Value"):
         if normalized(item) not in compact:
             fail(f"Rendered PDF does not contain required material: {item}")
