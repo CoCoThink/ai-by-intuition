@@ -82,7 +82,7 @@ CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（�
 
 ## 全书 MathML 可行性分支
 
-早期实验分支 [`experiment/full-book-mathml`](https://github.com/CoCoThink/ai-by-intuition/tree/experiment/full-book-mathml) 把引起 LuaMML 断言的 `align`／`align*` 改为 `aligned`，编号推导使用 `equation` 包裹。最初 `mathml-SE` 方案触发 56 条非法父子结构警告，**未获通过**；改用 `mathml-AF` 后，实验版实现 99 页正常构建、1,472 个有效公式关联、veraPDF 零失败。经过与最新版 `main` 合并的集成分支复测，修改已并入正式源码：[成功 CI #39613800415](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)。辅助技术人工验收仍未完成。
+早期实验分支 [`experiment/full-book-mathml`](https://github.com/CoCoThink/ai-by-intuition/tree/experiment/full-book-mathml) 把引起 LuaMML 断言的 `align`／`align*` 改为 `aligned`，编号推导使用 `equation` 包裹。最初 `mathml-SE` 方案触发 56 条非法父子结构警告，**未获通过**；改用 `mathml-AF` 后，实验版实现 99 页正常构建、1,472 个有效公式关联、veraPDF 零失败。经过与最新版 `main` 合并的集成分支复测，修改已并入正式源码：[成功 CI #39613800415](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)。辅助技术人工验收仍未完成，验收项目统一跟踪于 [Issue #4](https://github.com/CoCoThink/ai-by-intuition/issues/4)。
 
 ## PDF/UA-2 自动验收（已达到零失败）
 
