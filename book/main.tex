@@ -44,7 +44,7 @@
 \setlist[itemize]{leftmargin=2.0em,itemsep=2pt,topsep=4pt}
 \setlist[enumerate]{leftmargin=2.0em,itemsep=2pt,topsep=4pt}
 \numberwithin{equation}{section}
-\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{\color{blue}\thesection}{0.7em}{}
+\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{\color{blue}第\thesection 章}{0.7em}{}
 \titleformat{\subsection}{\sffamily\large\bfseries\color{ink}}{\color{blue}\thesubsection}{0.7em}{}
 \titlespacing*{\section}{0pt}{15pt}{7pt}
 \titlespacing*{\subsection}{0pt}{12pt}{6pt}
@@ -55,7 +55,8 @@
 \fancyfoot[C]{\sffamily\footnotesize\color{muted}\thepage}
 \renewcommand{\headrulewidth}{0.35pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{linegray}\leaders\hrule height \headrulewidth\hfill}}
-\ctexset{section={name={,、},number=\chinese{section}}}
+\ctexset{section={name={,},number=\arabic{section}}}
+\renewcommand{\thesection}{\arabic{section}}
 
 \newtcolorbox{idea}[1][]{enhanced,breakable,colback=blueback,colframe=blueback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{blue},fonttitle=\sffamily\bfseries,coltitle=ink,title={数学直觉},#1}
 \newtcolorbox{example}[1][]{enhanced,breakable,colback=orangeback,colframe=orangeback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{orange},fonttitle=\sffamily\bfseries,coltitle=ink,title={具体例子},#1}
@@ -69,11 +70,7 @@
 \newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{见第\ref*{#1}章}}}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
 \newcommand{\learningbridge}[2]{%
-\par\noindent\begin{tcolorbox}[colback=paper,colframe=linegray,
-boxrule=.5pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2mm,bottom=2mm,
-before skip=3mm,after skip=4mm]
-{\small\textbf{承接：}#1\par\textbf{这一部分要解决：}#2}
-\end{tcolorbox}}
+\par\medskip\noindent{\small\color{muted}#2}\par\medskip}
 
 \begin{document}
 \thispagestyle{empty}
@@ -87,7 +84,7 @@ before skip=3mm,after skip=4mm]
 \noindent{\color{muted}\rule{\linewidth}{0.7pt}}\par
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
-\textbf{只需要这些预备知识：}加减乘除、平方与平方根；导数、矩阵乘法将从直觉讲起。\par
+\textbf{只需要这些预备知识：}能进行加减乘除、平方与平方根即可开始；高中三角函数、指数对数和导数可随数学速查页逐步补充。\par
 \textbf{学习路线：} 函数与向量 $\rightarrow$ MLP 与训练 $\rightarrow$ 上下文与 Attention $\rightarrow$ Transformer $\rightarrow$ 生成与应用。\par
 \textbf{学习任务：} 从回答问题出发，理解为何用\emph{下一 Token 预测}训练一类语言模型，再学它怎样生成、改进与使用工具。
 \end{tcolorbox}
@@ -103,7 +100,7 @@ before skip=3mm,after skip=4mm]
 \end{tikzpicture}
 \end{center}
 \vfill
-\noindent{\color{muted}\small 先沿前五部分走完主线，再按需阅读第六部分的专题与术语地图。}\par
+\noindent{\color{muted}\small 前五部分是必读主线；第六部分仅供选读，练习与术语索引见附录。}\par
 \vspace{3mm}
 \noindent {\color{muted}\small AI by Intuition · 先提出问题，再算一个例子，最后理解公式。}\par
 \clearpage
@@ -119,6 +116,7 @@ before skip=3mm,after skip=4mm]
 \part{把文字变成可计算的数字}
 \learningbridge{人类想要机器回应文字，但我们还不知道怎样把这种能力变成计算。}{先用函数理解“可调规则”，再将一段文字表示为数字，并确定可训练的任务。}
 \input{chapters/00-guide}
+\input{chapters/00b-math-tools}
 \input{chapters/00-functions}
 \input{chapters/01-vectors}
 \input{chapters/02-dot-product}
@@ -147,6 +145,7 @@ before skip=3mm,after skip=4mm]
 \clearpage
 \part{组装、训练并使用 Transformer}
 \learningbridge{现在知道单个位置怎样读取上下文，也会把多个 Query 放进矩阵。}{加上位置、FFN、残差和输出头；接通整段训练与逐词生成，完成闭环。}
+\input{chapters/22a-position-multihead}
 \input{chapters/22-transformer-architecture}
 \input{chapters/10b-ffn-output-head}
 \input{chapters/22b-token-to-output}
@@ -162,8 +161,8 @@ before skip=3mm,after skip=4mm]
 \input{chapters/23b-deployment-and-ecosystem}
 
 \clearpage
-\part{选读专题与知识回溯}
-\learningbridge{前五部分已完成从语言问题到模型生成和应用的主线。}{按兴趣深入 CNN 与联想记忆，再通过术语索引和练习查缺补漏。}
+\part{选读：图像与联想记忆}
+\learningbridge{主线已经完整。}{这一部分仅供有兴趣的读者选读：用 CNN 和联想记忆重新理解局部结构与检索计算。}
 \input{chapters/19-cnn}
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
@@ -171,12 +170,21 @@ before skip=3mm,after skip=4mm]
 \input{chapters/08-stacking-key-value}
 \input{chapters/09-nonlinearity-and-memory}
 \input{chapters/14-summary}
-\input{chapters/15-practice}
 \input{chapters/13-capacity}
-\input{chapters/24-lexicon}
-\input{chapters/24b-modern-lexicon}
+
+\clearpage
+\appendix
+\ctexset{section={name={,},number=\Alph{section}}}
+\renewcommand{\thesection}{\Alph{section}}
+\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{\color{blue}附录~\thesection}{0.7em}{}
+\part*{附录：练习、术语与答案}
+\addcontentsline{toc}{part}{附录：练习、术语与答案}
 \input{chapters/25-integrated-practice}
 \input{chapters/25b-modern-practice}
+\input{chapters/15-practice}
+\input{chapters/24-lexicon}
+\input{chapters/24b-modern-lexicon}
+\input{chapters/27-answer-key}
 \input{chapters/26-sources}
 
 \end{document}
