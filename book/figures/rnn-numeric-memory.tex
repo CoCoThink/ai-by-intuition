@@ -1,0 +1,26 @@
+\begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,boxrule=.7pt,arc=2mm,
+left=3mm,right=3mm,top=3mm,bottom=2mm,title={图解：同一更新规则，三个时刻的数字如何传递},
+fonttitle=\sffamily\bfseries,coltitle=ink]
+\centering
+\begin{tikzpicture}[>=Latex,
+ cell/.style={draw=blue,fill=blueback,rounded corners=3pt,minimum width=31mm,
+ minimum height=16mm,align=center,font=\small},
+ input/.style={draw=linegray,fill=white,rounded corners=2pt,
+ minimum width=26mm,minimum height=9mm,align=center,font=\small}]
+\node[cell] (a) at (0,0) {$h_1=1$\\$1+0.5\times0$};
+\node[cell] (b) at (4.5,0) {$h_2=2.5$\\$2+0.5\times1$};
+\node[cell] (c) at (9,0) {$h_3=1.25$\\$0+0.5\times2.5$};
+\node[input] (x1) at (0,-1.65) {春天：$x_1=1$};
+\node[input] (x2) at (4.5,-1.65) {花：$x_2=2$};
+\node[input] (x3) at (9,-1.65) {开了：$x_3=0$};
+\draw[->,very thick,blue] (x1)--(a);
+\draw[->,very thick,blue] (x2)--(b);
+\draw[->,very thick,blue] (x3)--(c);
+\draw[->,very thick,orange] (-2,0)--node[above,font=\scriptsize]{$h_0=0$}(a);
+\draw[->,very thick,orange] (a)--node[above,font=\scriptsize]{$\times0.5$}(b);
+\draw[->,very thick,orange] (b)--node[above,font=\scriptsize]{$\times0.5$}(c);
+\end{tikzpicture}
+\par\smallskip
+{\small\raggedright\textbf{读图：}第三次输入是零，但前两次输入留下的状态仍让 $h_3=1.25$。
+这是一条教学用的线性更新规则，不是所有 RNN 的固定遗忘率。\par}
+\end{tcolorbox}
