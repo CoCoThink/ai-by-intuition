@@ -292,6 +292,9 @@ def validate_pdf(path: Path) -> None:
                 alt_count += 1
             if node.get("/K") is not None:
                 stack.append(node["/K"])
+    # These four instructional tables explicitly declare their first rows as headers.
+    if counts.get("/TH", 0) < 8:
+        fail(f"Tagged data table headers missing: only {counts.get('/TH', 0)} TH cells")
     if counts.get("/Formula", 0) < 20 or counts.get("/Figure", 0) < 8 or alt_count < 8:
         fail(f"Insufficient tagged math/figures/alt text: {counts}, alt={alt_count}")
     if len(reader.pages) < 50:
@@ -299,7 +302,7 @@ def validate_pdf(path: Path) -> None:
     poppler_tagged = bool(re.search(r"(?m)^Tagged:\s+yes\s*$", info))
     if not poppler_tagged:
         print("PDFINFO WARNING: pdfinfo disagrees with Catalog Marked=true and populated StructTreeRoot")
-    print(f"Structure QA: {counts.get('/Formula', 0)} formulas; "
+    print(f"Structure QA: {counts.get('/Formula', 0)} formulas; {counts.get('/TH', 0)} table header cells; "
           f"{counts.get('/Figure', 0)} figures; {alt_count} alternative descriptions")
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
