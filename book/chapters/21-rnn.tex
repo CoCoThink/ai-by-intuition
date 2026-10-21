@@ -104,10 +104,10 @@ RNN 额外增加了\textbf{从上一步状态到下一步状态}的通路。
 \subsection{最后才把它写成真实网络常见的公式}
 
 刚才只有一个数字。真实输入通常是向量，
-状态也可以是一列有许多数字的向量。
+状态也可以是含有许多数字的向量。
 我们约定：
 \begin{itemize}
-\item $\vect x_t$：第 $t$ 个 Token 的输入特征列向量，长度为 $d_x$；
+\item $\vect x_t$：第 $t$ 个 Token 的输入特征向量，长度为 $d_x$；
 \item $\vect h_{t-1}$：读完前一个 Token 的状态，长度为 $d_h$；
 \item $\vect h_t$：读完当前 Token 的新状态，仍为 $d_h$ 维；
 \item $W_x$ 和 $W_h$：分别处理当前输入与旧状态的\textbf{可学习矩阵}；
@@ -116,7 +116,8 @@ $\vect b$ 是可学习偏置。
 $d_x$ 表示输入特征数量，$d_h$ 表示状态特征数量。
 典型的简单 RNN 更新式是：
 \begin{equation}
-\boxed{\vect h_t=\tanh(W_x\vect x_t+W_h\vect h_{t-1}+\vect b).}
+\boxed{\vect h_t^\top=\tanh(\vect x_t^\top W_x+
+\vect h_{t-1}^\top W_h+\vect b^\top).}
 \label{eq:rnn-hidden}
 \end{equation}
 $\tanh$ 是\textbf{逐元素非线性函数}，
@@ -124,20 +125,19 @@ $\tanh$ 是\textbf{逐元素非线性函数}，
 这里相当于\textbf{先组合本次输入和旧状态，再经过非线性函数}；
 它不改变“沿时间传递状态”的核心直觉。
 
-矩阵尺寸也能检查：
+矩阵尺寸也能检查，依照主线的\textbf{每 Token 一行}约定：
 \[
-\underbrace{W_x}_{d_h\times d_x}
-\underbrace{\vect x_t}_{d_x\times1}
+\underbrace{\vect x_t^\top}_{1\times d_x}
+\underbrace{W_x}_{d_x\times d_h}
 +
+\underbrace{\vect h_{t-1}^\top}_{1\times d_h}
 \underbrace{W_h}_{d_h\times d_h}
-\underbrace{\vect h_{t-1}}_{d_h\times1}
-+\underbrace{\vect b}_{d_h\times1}
++\underbrace{\vect b^\top}_{1\times d_h}
 \quad\longrightarrow\quad
-\underbrace{\vect h_t}_{d_h\times1}.
+\underbrace{\vect h_t^\top}_{1\times d_h}.
 \]
-如果使用状态预测下一个 Token，
-还可以把 $\vect h_t$ 送进\textbf{输出层}得到候选分数。
-因此\textbf{状态不是模型最终输出的文字}，而是计算过程中使用的表示。
+若使用状态预测下一个 Token，
+再乘以 $d_h\times|\mathcal V|$ 的词表权重就能得到候选分数。
 
 \subsection{RNN 的限制，正好引出下一个问题}
 
