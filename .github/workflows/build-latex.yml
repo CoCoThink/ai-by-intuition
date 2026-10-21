@@ -22,31 +22,32 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install LuaLaTeX, illustrations and Chinese fonts
-        run: |
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-            latexmk texlive-luatex texlive-lang-chinese \
-            texlive-latex-extra texlive-pictures texlive-fonts-recommended \
-            fonts-noto-cjk fonts-noto-core lmodern poppler-utils
       - name: Check chapter structure before compilation
         run: python3 scripts/validate_book.py
-      - name: Smoke-test tagged PDF support
-        working-directory: book
+      - name: Build tagged PDF with TeX Live 2026
+        uses: xu-cheng/texlive-action@v3
+        with:
+          texlive_version: 2026
+          os: debian
+          run: |
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq
+            apt-get install -y -qq fonts-noto-cjk fonts-noto-core poppler-utils
+            fc-cache -f
+            lualatex --version | head -1
+            cd book
+            mkdir -p build/smoke
+            latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+              -file-line-error -outdir=build/smoke smoke-tagging.tex
+            pdfinfo build/smoke/smoke-tagging.pdf | grep -Eq '^Tagged:[[:space:]]+yes'
+            latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+              -file-line-error -outdir=build main.tex
+            cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
+      - name: Verify rendered PDF tags, structure and layout
         run: |
-          mkdir -p build/smoke
-          latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-            -file-line-error -outdir=build/smoke smoke-tagging.tex
-          pdfinfo build/smoke/smoke-tagging.pdf | grep -Eq '^Tagged:[[:space:]]+yes'
-      - name: Build one PDF
-        working-directory: book
-        run: |
-          mkdir -p build
-          latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-            -file-line-error -outdir=build main.tex
-          cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
-      - name: Verify rendered PDF table of contents
-        run: python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Volume-01.pdf
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Volume-01.pdf
       - name: Publish single PDF artifact
         uses: actions/upload-artifact@v4
         with:

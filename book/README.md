@@ -74,3 +74,4 @@ latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ### Tagged PDF 最小回归测试
 
 `book/smoke-tagging.tex` 独立检验 LuaLaTeX 在当前 CI 环境下对中文、公式、`tabularx` 与带替代文本的 TikZ 图的支持。CI 首先构建这个小文件，确认 `pdfinfo` 的 `Tagged: yes`，然后才构建全书；全书另做独立验收。
+\nCI tagged-PDF 构建固定使用 **TeX Live 2026** 容器，并分别检查最小样例、全书标签及文字边界。\n

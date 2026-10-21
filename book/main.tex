@@ -1,6 +1,6 @@
 % !TeX program = lualatex
 % LuaLaTeX tagging: structured headings, text and alternative descriptions on TikZ figures.
-\DocumentMetadata{testphase={phase-III},lang=zh-CN}
+\DocumentMetadata{lang=zh-CN,tagging=on}
 % An intuition-first journey from functions and matrix algebra to learning and transformers.
 % Compile: cd book && latexmk -lualatex -interaction=nonstopmode -halt-on-error main.tex
 \documentclass[11pt,a4paper,UTF8]{ctexart}
@@ -28,8 +28,6 @@
 \usepackage{needspace}
 \usepackage{float}
 \usepackage{caption}
-% Enable LaTeX's experimental table hooks, then disable only unstable table tagging.
-\usepackage{latex-lab-testphase-table}
 \captionsetup{font=small,labelfont=bf,justification=centering,skip=5pt}
 \hyphenpenalty=10000
 \exhyphenpenalty=10000
@@ -97,16 +95,6 @@
 \end{tcolorbox}\medskip}
 
 \begin{document}
-% In TeX Live 2023 tabularx's measurement passes can define duplicate
-% structure nodes with tagpdf's experimental table tagging. Keep real
-% document/headings/Figure tags; table semantics require later PDF/UA QA.
-% The table key was renamed; accept both old and new LaTeX releases.
-\ExplSyntaxOn
-\keys_if_exist:nnTF {__tag/setup} {table/tagging}
-  {\tagpdfsetup{table/tagging=false}}
-  {\keys_if_exist:nnT {__tag/setup} {table-tagging}
-    {\tagpdfsetup{table-tagging=false}}}
-\ExplSyntaxOff
 \thispagestyle{empty}
 \vspace*{10mm}
 \noindent\colorbox{blue}{\parbox{56mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · Volume 01}}\par
