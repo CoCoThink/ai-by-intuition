@@ -1,20 +1,31 @@
 \begin{center}
 \begin{tikzpicture}[>=Latex,
-  block/.style={draw=linegray,fill=paper,rounded corners=2pt,
-  minimum width=34mm,minimum height=15mm,align=center,font=\small}]
+ block/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=33mm,
+ minimum height=14mm,align=center,font=\small},
+ param/.style={draw=orange,fill=orangeback,rounded corners=2pt,
+ minimum width=20mm,minimum height=8mm,align=center,font=\small}]
 \node[block] (h) at (0,0) {$h=w_1x$\\前向：$1\times2=2$};
-\node[block] (out) at (4.25,0) {$\widehat y=w_2h$\\前向：$2\times2=4$};
-\node[block] (loss) at (8.5,0) {$L=\frac12(\widehat y-5)^2$\\前向：$0.5$};
-\draw[->,thick,blue] (h)--(out);
-\draw[->,thick,blue] (out)--(loss);
-\node[font=\footnotesize,teal,align=center] (g1) at (0,-1.45)
- {$\partial L/\partial h=(-1)\times2=-2$\\$\partial L/\partial w_1=(-2)\times2=-4$};
-\node[font=\footnotesize,teal,align=center] (g2) at (4.25,-1.45)
- {$\partial L/\partial\widehat y=-1$\\$\partial L/\partial w_2=(-1)\times2=-2$};
-\draw[->,teal,thick] (loss.south) |- (g2.east);
-\draw[->,teal,thick] (g2.west) -- (g1.east);
+\node[block] (out) at (4.3,0) {$\widehat y=w_2h$\\前向：$2\times2=4$};
+\node[block] (loss) at (8.6,0) {$L=\frac12(\widehat y-5)^2$\\前向：$L=0.5$};
+\node[param] (w1) at (0,1.6) {$w_1=1$};
+\node[param] (w2) at (4.3,1.6) {$w_2=2$};
+\draw[->,blue,thick] (w1)--(h);
+\draw[->,blue,thick] (w2)--(out);
+\draw[->,blue,thick] (h)--node[above,font=\scriptsize]{$h=2$}(out);
+\draw[->,blue,thick] (out)--node[above,font=\scriptsize]{$\widehat y=4$}(loss);
+\node[font=\footnotesize,teal,align=center] (g1) at (0,-1.65)
+ {$\frac{\partial L}{\partial h}=-2$\\$\frac{\partial L}{\partial w_1}=-4$};
+\node[font=\footnotesize,teal,align=center] (g2) at (4.3,-1.65)
+ {$\frac{\partial L}{\partial\widehat y}=-1$\\$\frac{\partial L}{\partial w_2}=-2$};
+\node[font=\footnotesize,teal,align=center] (g3) at (8.6,-1.65)
+ {从损失开始反传\\$\frac{\partial L}{\partial\widehat y}=4-5$};
+\draw[->,teal,thick] (g3.west)--(g2.east);
+\draw[->,teal,thick] (g2.west)--(g1.east);
+\node[font=\footnotesize,align=center] at (4.3,-2.65)
+ {以 $\eta=0.05$ 更新：$w_1:1\to1.2$，$w_2:2\to2.1$（偏置更新见正文）};
 \end{tikzpicture}
-
-{\footnotesize 蓝箭头是前向值，青色箭头表示从损失回传梯度；
-参数在梯度全部算完以后统一更新。}
+\end{center}
+\begin{center}
+\captionof{figure}{上方是前向值和参数节点，下方是反向梯度及一次参数更新}
+\label{fig:backprop}
 \end{center}

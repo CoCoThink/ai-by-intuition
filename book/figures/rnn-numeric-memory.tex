@@ -16,7 +16,8 @@ fonttitle=\sffamily\bfseries,coltitle=ink]
 \draw[->,very thick,blue] (x1)--(a);
 \draw[->,very thick,blue] (x2)--(b);
 \draw[->,very thick,blue] (x3)--(c);
-\draw[->,very thick,orange] (-2,0)--node[above,font=\scriptsize]{$h_0=0$}(a);
+\node[font=\scriptsize,anchor=south] at (-1.55,.58) {$h_0=0$};
+\draw[->,very thick,orange] (-2,0)--(a);
 \draw[->,very thick,orange] (a)--node[above,font=\scriptsize]{$\times0.5$}(b);
 \draw[->,very thick,orange] (b)--node[above,font=\scriptsize]{$\times0.5$}(c);
 \end{tikzpicture}
@@ -24,3 +25,4 @@ fonttitle=\sffamily\bfseries,coltitle=ink]
 {\small\raggedright\textbf{读图：}第三次输入是零，但前两次输入留下的状态仍让 $h_3=1.25$。
 这是一条教学用的线性更新规则，不是所有 RNN 的固定遗忘率。\par}
 \end{tcolorbox}
+\begin{center}\captionof{figure}{RNN 共享状态更新规则的三个时间步}\label{fig:rnn-memory}\end{center}

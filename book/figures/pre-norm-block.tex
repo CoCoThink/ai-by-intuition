@@ -3,14 +3,14 @@
   every node/.style={font=\small},
   f/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=39mm,minimum height=8mm,align=center},
   sum/.style={draw=blue,thick,circle,fill=white,inner sep=0.7pt,minimum size=7mm}]
-\node[f] (x) at (0,0) {$X$：输入隐藏状态};
+\node[f] (x) at (0,0) {$X$：输入隐藏状态\\[-.5mm]$\scriptstyle T\times d_{\rm model}$};
 \node[f] (ln1) at (0,-1.12) {Norm};
 \node[f] (att) at (0,-2.24) {多头 Attention};
 \node[sum] (add1) at (0,-3.35) {$+$};
 \node[f] (ln2) at (0,-4.50) {Norm};
 \node[f] (ff) at (0,-5.62) {逐 Token FFN};
 \node[sum] (add2) at (0,-6.73) {$+$};
-\node[f] (out) at (0,-7.80) {输出 $X_{\rm block}$};
+\node[f] (out) at (0,-7.80) {输出 $X_{\rm block}$\\[-.5mm]$\scriptstyle T\times d_{\rm model}$};
 \draw[->,thick,blue] (x)--(ln1);
 \draw[->,thick,blue] (ln1)--(att);
 \draw[->,thick,blue] (att)--(add1);
@@ -23,7 +23,9 @@
 \draw[->,thick,orange,rounded corners=3pt]
   (add1.west)--++(-3.0cm,0)--(-3.0cm,-6.73)--(add2.west);
 % Labels sit beside the vertical detours, not on top of the shortcut arrows.
-\node[anchor=west,font=\footnotesize,text=orange] at (3.13,-1.65) {残差捷径};
-\node[anchor=east,font=\footnotesize,text=orange] at (-3.13,-5.25) {残差捷径};
+\node[anchor=west,font=\footnotesize,text=orange] at (3.48,-1.65) {残差捷径};
+\node[anchor=east,font=\footnotesize,text=orange] at (-3.48,-5.25) {残差捷径};
 \end{tikzpicture}
 \end{center}
+
+\begin{center}\captionof{figure}{Pre-Norm Block 的两条残差恒等捷径；各节点保持 $T\times d_{\rm model}$ 形状}\label{fig:pre-norm}\end{center}
