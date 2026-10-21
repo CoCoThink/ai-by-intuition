@@ -95,6 +95,9 @@
 \end{tcolorbox}\medskip}
 
 \begin{document}
+% The LaTeX tagpdf table prototype conflicts with repeated tabularx passes on XeTeX.
+% Keep document and headings tagged; table tagging requires a future audited pass.
+\tagpdfsetup{table/tagging=false}
 \thispagestyle{empty}
 \vspace*{10mm}
 \noindent\colorbox{blue}{\parbox{56mm}{\centering\color{white}\sffamily\bfseries AI by Intuition · Volume 01}}\par
