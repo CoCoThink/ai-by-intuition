@@ -125,10 +125,6 @@ V\in\R^{T\times d_v}.
 注意力通常是\textbf{混合}多条信息，而不是硬性只选一条。
 \end{example}
 
-\subsection{为什么前面的式子写 $V^\top$，这里却写 $V$？}
-
-前一章的单查询公式为了手算曾临时使用列向量。对应的行向量版本满足 $(V^\top\vect a)^\top=\vect a^\top V$。该公式把 Value \textbf{排成列后读取}，因此用 $V^\top\vect{a}$；这里把所有 Token 的 Value \textbf{排成行}，权重矩阵乘 $V$ 得到一组输出行。两种写法基于不同的数据摆放约定，\textbf{不是数学矛盾}。让矩阵形状替你判断：$(T\times T)(T\times d_v)=(T\times d_v)$。
-
 \subsection{把三种计算放在同一张表里}
 
 \begin{center}
@@ -147,6 +143,8 @@ Self-Attention & $\softmax(QK^\top/\sqrt{d_k})V$：按当前输入决定各行�
 这三类运算可以组合成 Transformer，但\textbf{不能仅靠外形都是矩阵乘法，就认为它们具有同一种参数或上下文机制}。
 希望从联想记忆角度继续深入时，再读第六部分的选读专题。
 
-\begin{warningbox}
-重要边界：Self-Attention 的 Key/Value 来自\textbf{当前输入}的投影，而 MLP 的权重主要是训练时学到的固定参数。实际 Transformer 还有因果掩码、多个注意力头、位置编码、残差等模块，下一章开始把它组装成完整的网络模块，并明确这些部件各自解决什么问题。
-\end{warningbox}
+\noindent\textbf{区分参数与输入：}Self-Attention 的 Key/Value 来自当前输入的投影，
+而普通 MLP 权重由训练得到并在推理时固定。
+其他 Block 组成与因果掩码留给下一部分。
+
+
