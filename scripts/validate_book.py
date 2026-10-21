@@ -213,7 +213,7 @@ def validate_source() -> None:
     includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")
     includes(sources["11-softmax-memory"], r"\label{concept:self-attention}", "merged chapter")
     for name, body in sources.items():
-        if re.search(r"(?<!\\)extbf\{", body) or "\textbf{" in body:
+        if re.search(r"(?<![a-zA-Z\\])extbf\{", body) or "\textbf{" in body:
             fail(f"Broken bold escape in {name}")
     for editorial in ("这正是文章把", "这些只是文章讨论", "没有沿用字幕中",
                       "章节号会随全书编排自动更新", "根据初中学过的",
