@@ -63,3 +63,7 @@
 - [联想记忆数学视角](https://alexwang.ai/posts/associative-memory/)
 
 这些资源提供学习问题和参考背景；正文独立组织并独立推导。
+
+## Tagged-PDF 兼容性说明
+
+逐图添加替代文本、检查文字边界和主要阅读导航。XeTeX 对复杂 `tabularx` 的实验性表格标签不稳定，当前禁用表格标记细节以维持可生成的 tagged-PDF 正文；发布前仍应进行 PDF/UA 与辅助技术人工测试，不以 `Tagged: yes` 代替合规认证。

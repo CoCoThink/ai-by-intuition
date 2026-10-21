@@ -66,3 +66,7 @@ latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 
 最新版本也可以在 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
 构建会检查目录、课程序列、交叉引用、公式数值和独立答案。
+
+## 无障碍与视觉验收
+
+XeLaTeX 使用实验性的 tagged-PDF 文本结构；TikZ 图形配有中文替代描述。CI 会检查 `pdfinfo` 标记状态与页面文字边界。复杂表格的结构标签仍需专门的 PDF/UA 审核，`Tagged: yes` **不代表**完整符合 PDF/UA。

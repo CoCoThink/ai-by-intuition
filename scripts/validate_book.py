@@ -252,6 +252,10 @@ def validate_source() -> None:
 def validate_pdf(path: Path) -> None:
     if not path.exists() or path.stat().st_size < 70_000:
         fail(f"Final PDF missing or suspiciously small: {path}")
+    info = subprocess.run(["pdfinfo", str(path)], capture_output=True,
+                          text=True, check=True).stdout
+    if not re.search(r"(?m)^Tagged:\\s+yes\\s*$", info):
+        fail("PDF must include tagged document structure")
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
@@ -275,7 +279,20 @@ def validate_pdf(path: Path) -> None:
         body = re.sub(r"(?m)^\s*\d+\s*$", "", body)
         if len(re.findall(r"[\u4e00-\u9fff]", body)) < 18:
             fail(f"Likely orphan/blank page: {i}")
-    print(f"PDF QA passed: {len(pages)-1} pages; sections, numbers and appendix present")
+    # Layout regression: text extraction boxes must stay within the PDF media box.
+    import xml.etree.ElementTree as ET
+    bbox = subprocess.run(["pdftotext", "-bbox-layout", str(path), "-"],
+                          capture_output=True, text=True, check=True).stdout
+    xml_root = ET.fromstring(bbox)
+    ns = {"h": "http://www.w3.org/1999/xhtml"}
+    for pageno, page in enumerate(xml_root.findall(".//h:page", ns), 1):
+        width = float(page.get("width"))
+        height = float(page.get("height"))
+        for word in page.findall(".//h:word", ns):
+            xmin, ymin, xmax, ymax = [float(word.get(key)) for key in ("xMin", "yMin", "xMax", "yMax")]
+            if not (-2 <= xmin <= xmax <= width + 2 and -2 <= ymin <= ymax <= height + 2):
+                fail(f"Text outside page bounds on PDF page {pageno}: {word.text!r}")
+    print(f"PDF QA passed: {len(pages)-1} tagged pages; text boxes stay within page bounds")
 
 
 if __name__ == "__main__":

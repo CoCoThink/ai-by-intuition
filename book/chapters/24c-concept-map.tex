@@ -6,6 +6,7 @@
 下方是模型生成结果后可接入的系统工具。点击旁边章页索引可回到推导。
 
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={从 Token 到 Embedding、注意力、输出、损失、梯度、参数更新，再到推理和 Agent 工具链的概念关系图}}
 \begin{tikzpicture}[
   >=Latex,
   node distance=6mm,
@@ -32,6 +33,7 @@
 \draw[->,thick,orange] (post)--(tools);
 \draw[->,dashed,orange] (ffn.east) -- ++(.5,0) |- (tools.east);
 \end{tikzpicture}
+\tagstructend
 \captionof{figure}{模型内部的前向计算、损失反传与外部工具链是三个不同层次}
 \end{center}
 

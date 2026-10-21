@@ -1,4 +1,5 @@
 \begin{center}
+\tagstructbegin{tag=Figure,alttext={Transformer 的 Pre-Norm Block：Attention 与 FFN 前有归一化，两个子层都保留残差捷径}}
 \begin{tikzpicture}[>=Latex,
   every node/.style={font=\small},
   f/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=39mm,minimum height=8mm,align=center},
@@ -26,6 +27,7 @@
 \node[anchor=west,font=\footnotesize,text=orange] at (3.48,-1.65) {残差捷径};
 \node[anchor=east,font=\footnotesize,text=orange] at (-3.48,-5.25) {残差捷径};
 \end{tikzpicture}
+\tagstructend
 \end{center}
 
 \begin{center}\captionof{figure}{Pre-Norm Block 的两条残差恒等捷径；各节点保持 $T\times d_{\rm model}$ 形状}\label{fig:pre-norm}\end{center}
