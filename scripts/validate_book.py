@@ -280,19 +280,32 @@ def validate_pdf(path: Path) -> None:
         body = re.sub(r"(?m)^\s*\d+\s*$", "", body)
         if len(re.findall(r"[\u4e00-\u9fff]", body)) < 18:
             fail(f"Likely orphan/blank page: {i}")
-    # Layout regression: text extraction boxes must stay within the PDF media box.
-    import xml.etree.ElementTree as ET
+    # Read only tag attributes: PDF text can contain literal control chars
+    # that make pdftotext's XHTML *text nodes* invalid XML.
     bbox = subprocess.run(["pdftotext", "-bbox-layout", str(path), "-"],
                           capture_output=True, text=True, check=True).stdout
-    xml_root = ET.fromstring(bbox)
-    ns = {"h": "http://www.w3.org/1999/xhtml"}
-    for pageno, page in enumerate(xml_root.findall(".//h:page", ns), 1):
-        width = float(page.get("width"))
-        height = float(page.get("height"))
-        for word in page.findall(".//h:word", ns):
-            xmin, ymin, xmax, ymax = [float(word.get(key)) for key in ("xMin", "yMin", "xMax", "yMax")]
+    pages_with_boxes = re.findall(r"<page\b([^>]*)>(.*?)</page>", bbox, re.S)
+    if len(pages_with_boxes) != len(pages)-1:
+        fail(f"PDF bbox page count mismatch: {len(pages_with_boxes)}")
+    words_checked = 0
+    for pageno, (attrs, body) in enumerate(pages_with_boxes, 1):
+        size = re.search(r'width="([\d.]+)"\s+height="([\d.]+)"', attrs)
+        if not size:
+            fail(f"PDF page {pageno} has no width/height")
+        width, height = map(float, size.groups())
+        for word_attrs in re.findall(r"<word\s+([^>]*)>", body):
+            vals = []
+            for key in ("xMin", "yMin", "xMax", "yMax"):
+                m = re.search(key + r'="([\d.+-]+)"', word_attrs)
+                if not m:
+                    fail(f"Malformed word bounding box on page {pageno}")
+                vals.append(float(m.group(1)))
+            xmin, ymin, xmax, ymax = vals
+            words_checked += 1
             if not (-2 <= xmin <= xmax <= width + 2 and -2 <= ymin <= ymax <= height + 2):
-                fail(f"Text outside page bounds on PDF page {pageno}: {word.text!r}")
+                fail(f"Text outside PDF page bounds on page {pageno}: {vals}")
+    if words_checked < 1000:
+        fail(f"Suspiciously few PDF words checked: {words_checked}")
     print(f"PDF QA passed: {len(pages)-1} pages (tagged={tagged}); text boxes stay within page bounds")
 
 
