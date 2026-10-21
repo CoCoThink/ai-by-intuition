@@ -69,4 +69,4 @@ latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 
 ## 无障碍与视觉验收
 
-XeLaTeX 使用实验性的 tagged-PDF 文本结构；TikZ 图形配有中文替代描述。CI 会检查 `pdfinfo` 标记状态与页面文字边界。复杂表格的结构标签仍需专门的 PDF/UA 审核，`Tagged: yes` **不代表**完整符合 PDF/UA。
+XeLaTeX 源码含实验性 PDF 标签结构及 TikZ 图中文替代描述；但该 TeX 工具链生成的 PDF 经 `pdfinfo` 仍可能显示 `Tagged: no`。CI 记录这一状态并核查页面文字边界，但**不会将未打标签的 PDF 宣称符合无障碍要求**。完整 PDF/UA 合规需要另行使用支持结构标签的引擎，并实测阅读顺序、表格、数学公式和读屏器。
