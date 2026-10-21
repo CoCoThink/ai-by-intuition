@@ -241,6 +241,28 @@ def validate_source() -> None:
         fail("Concept hyperlink macro missing in book/main.tex")
     print(f"Concept navigation QA passed: {len(usages)} in-text links to {len(anchors)} precise explanations")
 
+    teaching_figures = {
+        "book/chapters/21-rnn.tex": ("rnn-unrolled-flow",),
+        "book/chapters/21b-why-attention.tex": (
+            "attention-rnn-bridge", "attention-three-step-weights"
+        ),
+    }
+    for chapter, figure_names in teaching_figures.items():
+        body = (ROOT / chapter).read_text(encoding="utf-8")
+        for figure in figure_names:
+            directive = r"\input{figures/" + figure + "}"
+            file = ROOT / "book/figures" / (figure + ".tex")
+            if directive not in body or not file.is_file():
+                fail(f"Missing RNN/Attention teaching figure {figure} in {chapter}")
+            graphic = file.read_text(encoding="utf-8")
+            if r"\begin{tikzpicture}" not in graphic or r"\end{tikzpicture}" not in graphic:
+                fail(f"Teaching figure is not editable vector TikZ: {file}")
+    weights = (ROOT / "book/figures/attention-three-step-weights.tex").read_text(encoding="utf-8")
+    for number in ("0.665", "0.090", "0.245", "0.910", "0.335"):
+        if number not in weights:
+            fail(f"Attention teaching chart missing hand-calculated value: {number}")
+    print("RNN/Attention vector figure QA passed: 3 diagrams and 5 numerical checks")
+
     print(f"Source QA passed: {len(parts)} parts, {len(inputs)} unique chapter files")
 
 
@@ -309,6 +331,13 @@ def validate_pdf(pdf_path: Path) -> None:
     print("Running-example PDF QA passed: tokenization through predicted probability")
 
     print("Advanced curriculum PDF QA passed: new topics are present")
+
+    for caption in ("RNN将同一个更新函数沿时间展开",
+                    "顺序传递与直接读取",
+                    "从三个点积分数"):
+        if caption not in book_text:
+            fail("Rendered PDF missing RNN/Attention diagram title: " + caption)
+    print("RNN/Attention PDF QA passed: all three diagrams appear in rendered text")
 
     print("Matrix layout PDF QA passed: both diagram headings extracted")
 

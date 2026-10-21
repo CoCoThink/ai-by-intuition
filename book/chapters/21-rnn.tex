@@ -34,24 +34,7 @@
 \item 读第三个 Token，参考第二步的状态，再得到新的状态。
 \end{enumerate}
 
-\begin{center}
-\begin{tikzpicture}[>=Latex,
-    w/.style={draw=linegray,fill=paper,rounded corners=2pt,
-      minimum width=31mm,minimum height=9mm,align=center,font=\small},
-    h/.style={draw=blue,fill=blueback,rounded corners=3pt,
-      minimum width=31mm,minimum height=13mm,align=center,font=\small}]
-\node[w] (x1) at (0,0) {第 1 词：春天};
-\node[w] (x2) at (4.1,0) {第 2 词：花};
-\node[w] (x3) at (8.2,0) {第 3 词：开了};
-\node[h] (h1) at (0,-1.9) {同一个函数\\[-1mm]得到状态 $h_1$};
-\node[h] (h2) at (4.1,-1.9) {同一个函数\\[-1mm]得到状态 $h_2$};
-\node[h] (h3) at (8.2,-1.9) {同一个函数\\[-1mm]得到状态 $h_3$};
-\foreach \x/\h in {x1/h1,x2/h2,x3/h3}
-  \draw[->,thick,blue] (\x)--(\h);
-\draw[->,thick,orange] (h1)--node[above,font=\scriptsize]{传递笔记}(h2);
-\draw[->,thick,orange] (h2)--node[above,font=\scriptsize]{传递笔记}(h3);
-\end{tikzpicture}
-\end{center}
+\input{figures/rnn-unrolled-flow}
 
 \textbf{图中三个蓝框不是三个独立训练的网络。}
 它们表示\textbf{同一个更新函数，在三个时间位置重复使用}。

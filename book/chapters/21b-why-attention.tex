@@ -32,21 +32,7 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 \textbf{不必只能通过 $h_2$ 间接获得过去的信息；
 让第三个位置直接查看前三个位置，各自决定读多少。}
 
-\begin{center}
-\begin{tikzpicture}[>=Latex,
-  word/.style={draw=linegray,fill=paper,rounded corners=3pt,
-   minimum width=29mm,minimum height=10mm,align=center,font=\small},
-  reader/.style={draw=blue,fill=blueback,rounded corners=3pt,
-   minimum width=43mm,minimum height=12mm,align=center,font=\small}]
-\node[word] (a) at (0,0) {位置 1\\春天};
-\node[word] (b) at (4,0) {位置 2\\花};
-\node[word] (c) at (8,0) {位置 3\\开了};
-\node[reader] (r) at (8,-2.1) {位置 3 的读取结果};
-\draw[->,blue,thick] (a.south) to[out=-80,in=180] (r.west);
-\draw[->,teal,thick] (b.south) to[out=-75,in=145] (r.north west);
-\draw[->,orange,thick] (c.south)--(r.north);
-\end{tikzpicture}
-\end{center}
+\input{figures/attention-rnn-bridge}
 \textbf{这几根箭头的意思：}在这个简化例子中，
 位置 3 可以直接从位置 1、2、3 读取信息，
 不同箭头并不要求权重相等。
@@ -171,6 +157,8 @@ $0.1\vect v_1+0.8\vect v_2+0.1\vect v_3=(0.2,0.9)^\top$。
 它和刚才的 $(0.910,0.335)^\top$ 不一样：
 \textbf{Query 改变，读取比例和结果就可能改变。}
 \end{example}
+
+\input{figures/attention-three-step-weights}
 
 \subsection{最后对照 RNN：差别究竟在哪里？}
 
