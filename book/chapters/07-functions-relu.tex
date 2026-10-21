@@ -26,30 +26,18 @@ g\!\left(\begin{bmatrix}3\\-2\end{bmatrix}\right)
 \]
 \textbf{注意：应用 ReLU 时，没有进行新的矩阵乘法。}它只是分别处理上一步算出的各个数字。
 
-\subsection{为什么能够写成 $\relu(W\vect x+\vect b)$？}
+\subsection{为什么能够写成 $\relu(\vect x^\top W+\vect b^\top)$？}
 
-先计算矩阵层，例如
+先计算行向量与矩阵相乘，例如
 \[
-W=\begin{bmatrix}1&2\\-1&1\end{bmatrix},\qquad
-\vect x=\begin{bmatrix}1\\1\end{bmatrix},\qquad
-\vect b=\begin{bmatrix}0\\0\end{bmatrix}.
+\vect x^\top=(1,1),\quad W=\begin{bmatrix}1&-1\\2&1\end{bmatrix},
+\quad \vect b^\top=(0,0).
 \]
-矩阵乘法产生两个分数：
-\[
-W\vect x+\vect b=
-\begin{bmatrix}1+2\\-1+1\end{bmatrix}
-=\begin{bmatrix}3\\0\end{bmatrix}.
-\]
-\textbf{接下来}才应用 ReLU：
-\[
-\relu(W\vect x+\vect b)
-=\begin{bmatrix}\relu(3)\\\relu(0)\end{bmatrix}
-=\begin{bmatrix}3\\0\end{bmatrix}.
-\]
-这和算 $g(1+2)$ 一样：先算括号里的值，之后再执行函数。
+第一步：$\vect x^\top W+\vect b^\top=(3,0)$；
+第二步：$\relu(3,0)=(3,0)$。ReLU 并没有进行新的矩阵乘法。
 
 \begin{warningbox}
-$\relu(W\vect x)$ 与 $\relu(W)\vect x$ 是不同的操作。前者\textbf{先乘矩阵再处理输出}；后者\textbf{先把权重中的负数变零再相乘}。这里讨论的是前者。
+$\relu(\vect x^\top W)$ 与 $\vect x^\top\relu(W)$ 是不同的操作。前者\textbf{先乘矩阵再处理输出}；后者\textbf{先把权重中的负数变零再相乘}。这里讨论的是前者。
 \end{warningbox}
 
 \subsection{“非线性”到底是什么意思？}

@@ -1,92 +1,48 @@
-\section{MLP：把矩阵和激活函数组合成网络}
+\section{MLP：把矩阵与激活函数组成两层网络}
 \phantomsection\label{concept:mlp}
 \label{intro:10-mlp}
 
-上一章发现：\textbf{一个矩阵层负责组合数字，ReLU 可以引入非线性。}
-把这些部件串起来，我们终于得到一个能根据输入算出预测结果的简单网络。
-这种结构叫\textbf{MLP}（Multi-Layer Perceptron，多层感知机），
-由多个可训练的线性层与激活函数组成。
-这一章先研究\textbf{给定参数怎样计算结果}，下一步再问\textbf{参数应该怎么学习}。
+前面已经学会行向量右乘矩阵。MLP（多层感知机）把\textbf{两个可训练线性层与一个非线性激活}串联起来。
 
-\subsection{一个最常见的两层 MLP}
+\subsection{按行向量约定，手算一次}
+令 $\vect x^\top=(2,-1)$，取
+\[
+W_1=\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix},\quad
+W_2=\begin{bmatrix}1&0\\0&2\\1&1\end{bmatrix}.
+\]
+\begin{example}
+\[
+\vect z^\top=\vect x^\top W_1=(2,-1,1),\qquad
+\vect h^\top=\relu(\vect z^\top)=(2,0,1),
+\]
+\[
+\boxed{\widehat{\vect y}^\top=\vect h^\top W_2=(3,1).}
+\]
+输入、隐藏和输出形状依次为 $1\times2$、
+$1\times3$ 和 $1\times2$。
+\end{example}
 
-输入是列向量 $\vect x$，先用矩阵 $W_1$ 和偏置 $\vect b_1$ 计算隐藏分数，再应用激活函数，最后使用第二个矩阵 $W_2$ 读出：
+\subsection{加上偏置后，一般公式是什么？}
 \begin{equation}
-\boxed{\vect y=W_2\,\sigma(W_1\vect x+\vect b_1)+\vect b_2.}
+\boxed{\widehat{\vect y}^\top
+=\sigma(\vect x^\top W_1+\vect b_1^\top)W_2+\vect b_2^\top,}
 \label{eq:mlp-standard}
 \end{equation}
-注意这里的“两层”通常指\textbf{两次可训练的线性变换}，并不把输入层计入层数。
+其中 $W_1:d_{\rm in}\times d_{\rm ff}$，
+$W_2:d_{\rm ff}\times d_{\rm out}$，偏置在相应层的行上相加。
+多 Token 情况下，逐行使用\textbf{同一组参数}。
 
-把过程拆开：
-\[
-\underbrace{\vect z=W_1\vect x+\vect b_1}_{\text{第一层：组合输入}},
-\qquad
-\underbrace{\vect h=\sigma(\vect z)}_{\text{激活：逐个处理}},
-\qquad
-\underbrace{\vect y=W_2\vect h+\vect b_2}_{\text{第二层：组合结果}}.
-\]
+\subsection{为什么夹在中间的非线性不可少？}
+去掉偏置和 ReLU，就有
+$\vect x^\top(W_1W_2)$，两层可以合并成一层；
+插入激活函数后，哪些中间分量为零随输入改变，不再能用一个固定矩阵普遍代替。
 
-\subsection{直接手算一次二维 MLP}
-
-为了看清每一步，先令偏置为零，并给出
-\[
-W_1=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},
-\qquad
-\vect x=\begin{bmatrix}2\\-1\end{bmatrix},
-\qquad
-W_2=\begin{bmatrix}1&0&1\\0&2&1\end{bmatrix}.
-\]
-第一层先算匹配分数：
-\[
-W_1\vect x
-=\begin{bmatrix}2\\-1\\1\end{bmatrix}.
-\]
-ReLU 逐个过滤分数：
-\[
-\vect h=\relu(W_1\vect x)
-=\begin{bmatrix}2\\0\\1\end{bmatrix}.
-\]
-第二层加权组合：
-\begin{align*}
-\vect y&=W_2\vect h
-=\begin{bmatrix}1&0&1\\0&2&1\end{bmatrix}
- \begin{bmatrix}2\\0\\1\end{bmatrix}\\
-&=\boxed{\begin{bmatrix}3\\1\end{bmatrix}}.
-\end{align*}
-\textbf{这一切依然只是矩阵乘法和逐元素函数。}
-
-\subsection{网络的矩阵尺寸从哪里来？}
-
-刚才输入有两个数字；第一层有三个输出单元；最终想输出两个数字。于是：
-\[
-\underbrace{W_1}_{3\times2}
-\underbrace{\vect x}_{2\times1}
-=\underbrace{\vect z}_{3\times1},
-\qquad
-\underbrace{W_2}_{2\times3}
-\underbrace{\vect h}_{3\times1}
-=\underbrace{\vect y}_{2\times1}.
-\]
-ReLU 不改变中间向量的维度；它只是改变里面的值。
-
-如果换成一般尺寸：输入 $d_{\rm in}$、隐藏宽度 $m$、输出 $d_{\rm out}$，那么
-\[
-W_1\in\R^{m\times d_{\rm in}},\qquad
-W_2\in\R^{d_{\rm out}\times m}.
-\]
-
-\subsection{为什么只堆矩阵还不够？}
-
-暂时忽略偏置，把激活函数去掉：
-\[
-\vect y=W_2(W_1\vect x)=(W_2W_1)\vect x.
-\]
-括号里两个矩阵可以\textbf{直接相乘合并}，因此这还是一个线性变换。加入 ReLU 后，不同输入使不同分量变成零，通常就无法用一个固定矩阵在所有输入上复现同样的函数。
-
-\subsection{神经元与“记忆”有什么关系？}
-
-这一章先把 MLP 看作一个\textbf{可计算、可训练的函数}。在后面讲关联记忆时，我们还会发现：第一层的矩阵行也可以被解释成不同的匹配模式，第二层的矩阵列可以被解释成读出的信息。\textbf{这是一种解释方式，而不是每个神经元都对应一条事实的证明。}
+\subsection{这与 Transformer FFN、联想记忆有何关联？}
+Transformer 的 FFN 也是逐 Token 使用相同两层计算的网络；
+它本身不会跨 Token 读取信息。第六部分才会将权重矩阵
+重新解释成关联记忆，这只是有条件成立的数学视角。
 
 \begin{conclusion}
-MLP 的骨架是\textbf{线性变换 $\to$ 逐元素非线性 $\to$ 线性变换}。先学会前向计算，然后才能继续问：这些矩阵的权重怎么从数据中学出来？
+你现在可以用行向量手算两层 MLP，并核对每一步的形状。
+接下来研究如何根据预测误差调整可学习权重。
 \end{conclusion}
