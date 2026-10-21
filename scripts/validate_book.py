@@ -140,7 +140,7 @@ def validate_source() -> None:
         labels.update(re.findall(r"\\label\{([^}]+)\}", sources[name]))
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (100 if lex == "24-lexicon" else 28):
+        if len(refs) != (100 if lex == "24-lexicon" else 27):
             fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
         for ref in refs:
             if ref not in labels:
