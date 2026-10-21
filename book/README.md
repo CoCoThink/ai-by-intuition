@@ -54,7 +54,7 @@
 - [100 词术语地图](chapters/24-lexicon.tex)
 - [现代架构术语导航](chapters/24b-modern-lexicon.tex)
 - [知识关系图](chapters/24c-concept-map.tex)与[英中文术语 A–Z 索引](chapters/24d-english-index.tex)
-- [集中参考答案](chapters/27-answer-key.tex)：所有题目先做后查
+- [集中参考答案](chapters/27-answer-key.tex)及[分章随堂自测解答](chapters/28-chapter-checks.tex)：所有题目先做后查
 - [参考与延伸阅读](chapters/26-sources.tex)
 
 ## 一次构建，一本 PDF

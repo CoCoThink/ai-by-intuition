@@ -239,6 +239,8 @@ V^\top\relu(K\vect{x})
 \end{tikzpicture}
 \end{center}
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:08-stacking-key-value}$K:3\times2$、$V:3\times4$，用三个 Key 的读取权重按行加权 Value 后输出几维？\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 一定要分开理解：\textbf{$K\vect{x}$ 是批量点积；ReLU 是逐元素函数；$V^\top\vect{a}$ 是按列加权求和。}每一步的输出都恰好是下一步能够接收的输入。
 \end{conclusion}

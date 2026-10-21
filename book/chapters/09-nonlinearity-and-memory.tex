@@ -63,6 +63,8 @@
 
 你现在可以认出熟悉的\textbf{两层 MLP} 结构：第一次矩阵乘法得到隐藏层分数，非线性逐个处理，第二次矩阵乘法组合输出。相比前面一般的 MLP 写法，这里为了看清关联记忆省略了偏置。
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:09-nonlinearity-and-memory}$0.5^2$ 与 $0.5^3$ 哪个更小？这与抑制弱匹配有什么联系？\quad{\footnotesize\hyperref[answer:09-nonlinearity-and-memory]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 从记忆角度看，MLP 的第一层可以被解释为\textbf{匹配模式}，激活函数负责\textbf{筛选}，第二层负责\textbf{读出内容}。这是一种有启发性的解释，并不意味着每个真实神经元都恰好对应一条可分离的事实。
 \end{conclusion}
