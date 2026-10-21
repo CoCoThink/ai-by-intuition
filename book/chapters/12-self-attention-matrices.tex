@@ -25,22 +25,27 @@
 
 \textbf{真实 Transformer 中，\conceptlink{qkv}{Query} 通常由当前输入表示经过一个可学习的线性变换得到，不必与原来的 $x$ 数值相同。}
 
-先沿用列向量记法，给单个 Token 一个隐藏表示：
+从现在开始，Transformer 主线统一使用\textbf{行向量}：
 \[
-\vect x=\begin{bmatrix}2\\3\end{bmatrix},\qquad
-W_Q=\begin{bmatrix}1&0\\0&2\end{bmatrix}.
+\vect x^\top=\begin{bmatrix}2&3\end{bmatrix},\qquad
+W_Q=\begin{bmatrix}1&1\\0&2\end{bmatrix}.
 \]
-计算 Query：
-\begin{equation}
-\vect q=W_Q\vect x
-=\begin{bmatrix}1&0\\0&2\end{bmatrix}
+所以
+\[
+\boxed{\vect q^\top=\vect x^\top W_Q
+=\begin{bmatrix}2&8\end{bmatrix}.}
+\]
+特意使用非对称权重，避免恰好看不出转置。
+\textbf{同一映射若用列向量表达，权重也必须转置}：
+\[
+\boxed{\vect q=W_Q^\top\vect x
+=\begin{bmatrix}1&0\\1&2\end{bmatrix}
 \begin{bmatrix}2\\3\end{bmatrix}
-=\boxed{\begin{bmatrix}2\\6\end{bmatrix}}.
-\end{equation}
-它在这个例子中仍是二维，却不是原来的 $(2,3)^\top$。Key 和 Value 同理：
-\[
-\vect k=W_K\vect x,\qquad \vect v=W_V\vect x.
+=\begin{bmatrix}2\\8\end{bmatrix}.}
 \]
+Key 与 Value 同样遵循
+$\vect k_i^\top=\vect x_i^\top W_K$、
+$\vect v_i^\top=\vect x_i^\top W_V$。
 
 如果将许多 Token 的输入表示按\textbf{行}排成矩阵 $X$，就得到标准 Transformer 常用的批量写法：
 \begin{equation}
@@ -100,7 +105,7 @@ V\in\R^{T\times d_v}.
 \underbrace{\softmax(S)}_{T\times T}
 \underbrace{V}_{T\times d_v}
 =
-\underbrace{Y}_{T\times d_v}.
+\underbrace{O_{\rm att}}_{T\times d_v}.
 \]
 这时乘法的含义是：\textbf{每个 Query 的输出 = 所有 Value 行的加权平均}。
 
@@ -122,7 +127,7 @@ V\in\R^{T\times d_v}.
 
 \subsection{为什么前面的式子写 $V^\top$，这里却写 $V$？}
 
-前一章的单查询公式把 Value \textbf{排成列后读取}，因此用 $V^\top\vect{a}$；这里把所有 Token 的 Value \textbf{排成行}，权重矩阵乘 $V$ 得到一组输出行。两种写法基于不同的数据摆放约定，\textbf{不是数学矛盾}。让矩阵形状替你判断：$(T\times T)(T\times d_v)=(T\times d_v)$。
+前一章的单查询公式为了手算曾临时使用列向量。对应的行向量版本满足 $(V^\top\vect a)^\top=\vect a^\top V$。该公式把 Value \textbf{排成列后读取}，因此用 $V^\top\vect{a}$；这里把所有 Token 的 Value \textbf{排成行}，权重矩阵乘 $V$ 得到一组输出行。两种写法基于不同的数据摆放约定，\textbf{不是数学矛盾}。让矩阵形状替你判断：$(T\times T)(T\times d_v)=(T\times d_v)$。
 
 \begin{warningbox}
 重要边界：Self-Attention 的 Key/Value 来自\textbf{当前输入}的投影，而 MLP 的权重主要是训练时学到的固定参数。实际 Transformer 还有因果掩码、多个注意力头、位置编码、残差等模块，下一章开始把它组装成完整的网络模块，并明确这些部件各自解决什么问题。
