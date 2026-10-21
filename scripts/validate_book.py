@@ -136,7 +136,10 @@ def validate_source() -> None:
     sources = {name: chapter(name) for name in REQUIRED}
     includes(main, r"\appendix", "main")
     includes(main, r"\part*{附录：练习、术语与答案}", "main")
-    includes(main, r"\ctexset{section={name={,},number=\arabic{section}}}", "main")
+    includes(main, r"\ctexset{", "native CTeX heading styling")
+    includes(main, "name={第,章}", "visible chapter number format")
+    if r"\usepackage{titlesec}" in main or r"\titleformat" in main:
+        fail("titlesec must not override tagged section headings")
     if main.find(r"\appendix") <= main.find(r"\part{选读专题二：联想记忆与高维检索}"):
         fail("Appendices must follow optional part VII")
     if main.count(r"\learningbridge{") != 7:
@@ -353,6 +356,18 @@ def validate_pdf(path: Path) -> None:
             fail(f"Figure {index}: caption is not nested in Figure")
     if counts.get("/Formula", 0) < 20 or counts.get("/Figure", 0) < 8 or alt_count < 8:
         fail(f"Insufficient tagged math/figures/alt text: {counts}, alt={alt_count}")
+    # Resolve custom heading names against the PDF RoleMap. Native ctexart
+    # headings can be /section and /subsection that map to standard H1/H2.
+    roles = struct_root.get("/RoleMap", {})
+    heading_counts = {"/H1": 0, "/H2": 0}
+    for role, count in counts.items():
+        normalized_role = str(roles.get(role, role))
+        if normalized_role in heading_counts:
+            heading_counts[normalized_role] += count
+    if heading_counts["/H1"] < 20 or heading_counts["/H2"] < 40:
+        fail(f"Accessible heading hierarchy incomplete: {heading_counts}")
+    print(f"Heading QA: {heading_counts['/H1']} H1 headings; {heading_counts['/H2']} H2 headings")
+
     if len(reader.pages) < 50:
         fail("Suspiciously short tagged book")
     poppler_tagged = bool(re.search(r"(?m)^Tagged:\s+yes\s*$", info))

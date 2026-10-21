@@ -28,9 +28,9 @@
 
 ## 最新 PDF 与构建状态
 
-2026 年 10 月 21 日的[成功 CI 运行](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39575409381)构建了 **99 页 Tagged PDF**，在 PDF 结构树中检测到 **1,471 个公式节点、17 个图形节点及 17 处替代文字**，并通过章节、数值、目录和全部页面文字边界检查。PDF 请从 [Actions 工作流](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 的成功运行中下载 `ai-by-intuition-volume-01`；仓库不提交编译后的 PDF。
+2026 年 10 月 21 日的[标题语义修复实验构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39590129153)构建了 **99 页 Tagged PDF**，在 PDF 结构树中检测到 **1,471 个公式节点、16 个图形节点、16 处替代文字，以及 48 个 H1、180 个 H2 标题节点**，并通过章节、数值、目录和全部页面文字边界检查。PDF 请从 [Actions 工作流](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 的成功运行中下载 `ai-by-intuition-volume-01`；仓库不提交编译后的 PDF。
 
-**注意：`Tagged: yes` 不等于 PDF/UA 认证。** 表格、数学 MathML、图注结构和实际读屏顺序仍需进一步验收，详见[无障碍现状](docs/ACCESSIBILITY.md)。
+**注意：`Tagged: yes` 不等于 PDF/UA 认证。** 数学 MathML、复杂表格关联、真实读屏顺序仍需进一步验收，详见[无障碍现状](docs/ACCESSIBILITY.md)。
 
 ## 本地编译
 

@@ -16,7 +16,7 @@
 
 | 项目 | 当前情况 | 下一步验收 |
 |---|---|---|
-| 文档结构标签与标题 | 已有 Document 根和正文结构，但逐节点核验**没有发现 H1/H2 或 section/subsection 标记**，正文标题导航不合格（[#3](https://github.com/CoCoThink/ai-by-intuition/issues/3)） | 在实验分支验证替代 ctexart/titlesec 的标题实现，再核验语义和版式 |
+| 文档结构标签与标题 | **已修复并在实验分支验证**：正文包含 48 个 H1、180 个 H2，保留中文章节显示与目录；见 [成功的构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39590129153) | 持续检查标题层级和辅助技术的真实导航体验（[#3](https://github.com/CoCoThink/ai-by-intuition/issues/3)） |
 | 图形替代文本 | 16 个主要图形结构有替代描述 | 检查信息完整度及与可视图对应关系 |
 | 表格无障碍 | 21 张教学数据表均设置首行 `TH`，最近 CI 验证 59 个表头节点 | 检查表头 `TH` / 行列关联、跨行跨列与实际朗读 |
 | 数学语义 | 结构树含 Formula 节点 | 完整启用 `unicode-math` 曾在 `align*` 触发 `luamml-amsmath.lua` 断言；保留经典数学字体的稳定出版配置，通过 `book/smoke-mathml.tex` 独立实验，不得将 Formula 节点等同于 MathML |
@@ -66,11 +66,11 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 [成功的 CI（正式出版不受影响）](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39583710518) 证实 `smoke-mathml.tex` 在 `\\end{align*}` 复现 `luamml-amsmath.lua:63: assertion failed`。这是独立精简文件中的错误，不再假定来自整书排版；`smoke-mathml-aligned.tex` 继续验证 `\\[\\begin{aligned}...\\end{aligned}\\]` 变体。两项实验均不会阻断稳定成书，日志作为 `experimental-mathml-logs` 工件保存。
 
-## 已确认的标题标签缺口（高优先级）
+## 标题语义修复（已通过实验分支 CI）
 
-直接遍历 [99 页成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39581822953) 的 PDF 结构树，发现 `/Sect` 分组与正常目录的 `/TOCI`，但没有生成正文的 `/H1`、`/H2` 或预期的 `/section`、`/subsection` 角色。结构树 `RoleMap` 尽管包含 `/section → /H1` 映射，仍没有实际节点使用它。这个问题会影响读屏器标题导航，**不能因 Tagged: yes 而忽略**。
+此前 99 页 PDF 虽有目录，却缺少正文 H1/H2。根因是 `titlesec` 的标题命令覆盖使语义结构丢失，而不是中文字体本身。实验分支移除 `titlesec`，改用 `\\ctexset` 配合 `\\EditInstance{heading}{section/subsection}` 的原生标题模板，并保留“第 X 部分／第 X 章／附录”等视觉编号。独立 [CI #39590129153](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39590129153) 的**全书**结构检查确认 **48 个 H1、180 个 H2**，99 页、21 张语义表格与全部图形均通过。该改动已并入 `main`，并由 `scripts/validate_book.py` 强制检查 H1/H2 数量。
 
-上游已确认 [ctex 相关类重写标题命令导致标题标签丢失](https://github.com/latex3/tagging-project/issues/673)，[titlesec 当前也标记为 Tagged PDF 不兼容](https://www.ctan.org/pkg/titlesec)。因此不能只删除 `titlesec` 就假定问题解决。下一步在实验分支验证 `article + ctex(heading=false)` 与 LaTeX 2026 标题模板接口，并同时保持中文排版、章节编号、目录和页面版式。问题跟踪：[仓库 Issue #3](https://github.com/CoCoThink/ai-by-intuition/issues/3)。
+注意：H1/H2 存在并不等于阅读顺序正确，更不能代表 PDF/UA 已通过。下一步仍需检查标题嵌套、目录与实际读屏导航，并独立跑 PDF/UA 验证器。上游兼容性分析：[latex3/tagging-project #673](https://github.com/latex3/tagging-project/issues/673)。问题跟踪：[Issue #3](https://github.com/CoCoThink/ai-by-intuition/issues/3)。
 
 ## 独立标题结构标签实验（2026-10-21）
 
