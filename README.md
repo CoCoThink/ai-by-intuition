@@ -28,9 +28,9 @@
 
 ## 最新 PDF 与构建状态
 
-2026 年 10 月 21 日的[main 分支最新验证构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)构建了 **99 页 Tagged PDF**，在 PDF 结构树中检测到 **1,471 个公式节点、21 张表格（59 个 TH 表头单元格）、16 个图形节点与 16 处替代文字，以及 48 个 H1、180 个 H2 标题节点**，并通过章节、数值、目录和全部页面文字边界检查。PDF 请从 [Actions 工作流](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 的成功运行中下载 `ai-by-intuition-volume-01`；仓库不提交编译后的 PDF。
+2026 年 10 月 21 日的[全书 MathML 集成验证](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)构建了 **99 页 Tagged PDF**，在 PDF 结构树中检测到 **1,472 个公式节点、21 张表格（59 个 TH 表头单元格）、16 个图形节点与 16 处替代文字，以及 48 个 H1、180 个 H2 标题节点**，并通过章节、数值、目录和全部页面文字边界检查。PDF 请从 [Actions 工作流](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 的成功运行中下载 `ai-by-intuition-volume-01`；仓库不提交编译后的 PDF。
 
-**PDF/UA-2 机器验证已通过：**veraPDF 1.30.2 检查 1,727 项规则、736,481 项检查，均无失败；CI 将以此阻断不合规的 PDF 发布。**机器通过不代表实际读屏体验已验证**：数学 MathML、复杂表格关联、读屏顺序仍须人工验收，详见[无障碍现状](docs/ACCESSIBILITY.md)。
+**PDF/UA-2 与 MathML 机器验收均已通过：**正式构建使用 `mathml-AF`，CI 验证 **1,472 个 Formula 均带有效的 MathML 关联文件**（933 种不同内容），veraPDF 1.30.2 的 PDF/UA-2 检查报告零失败。两项检查都阻断不达标的 PDF 发布。**机器通过不等于已完成读屏验收**：公式的实际朗读、复杂表格关系与内容阅读顺序仍须人工检查，详见[无障碍现状](docs/ACCESSIBILITY.md)。
 
 ## 本地编译
 

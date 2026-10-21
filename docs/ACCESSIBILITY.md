@@ -4,10 +4,10 @@
 
 ## 已确认的构建结果
 
-- 使用 **TeX Live 2026 + LuaLaTeX**；`book/main.tex` 的入口为 `\\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2}`。
+- 使用 **TeX Live 2026 + LuaLaTeX**；`book/main.tex` 的入口为 `\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2,tagging-setup={math/setup=mathml-AF}}`。
 - [成功的 GitHub Actions 运行](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412) 生成 **99 页** `AI-by-Intuition-Volume-01.pdf`；正式下载工件为 `ai-by-intuition-volume-01`。
 - 最小样例（中文、数学、`tabularx`、带替代文字的 TikZ）和整本书均可编译；CI 容器的 `pdfinfo` 显示 `Tagged: yes`。
-- 验收器使用固定版 `pypdf==5.9.0`，确认 PDF Catalog 中 `/MarkInfo` 的 `/Marked=true`、`/StructTreeRoot` 和 `/Document` 结构根。最新统计为 **48 个 H1、180 个 H2、21 个 Table、59 个 TH、1,471 个 Formula、16 个 Figure、16 个带替代文字的节点**。
+- 验收器使用固定版 `pypdf==5.9.0`，确认 PDF Catalog 中 `/MarkInfo` 的 `/Marked=true`、`/StructTreeRoot` 和 `/Document` 结构根。最新统计为 **48 个 H1、180 个 H2、21 个 Table、59 个 TH、1,472 个 Formula、16 个 Figure、16 个带替代文字的节点**。
 - `scripts/validate_book.py` 还检查七个部分、47 个章节输入文件、数值算例、目录页、目标内容、可疑空页以及全书文字边界。
 
 这些计数是**该次成功构建的快照**；以后修改文稿、引擎和标签选项，需重新核验。
@@ -19,7 +19,7 @@
 | 文档结构标签与标题 | **已修复并合并 `main`**：正文包含 48 个 H1、180 个 H2，保留中文章节显示与目录；见 [成功的构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412) | 持续检查标题层级和辅助技术的真实导航体验（[#3](https://github.com/CoCoThink/ai-by-intuition/issues/3)） |
 | 图形替代文本 | 16 个主要图形结构有替代描述 | 检查信息完整度及与可视图对应关系 |
 | 表格无障碍 | 21 张教学数据表均设置首行 `TH`，最近 CI 验证 59 个表头节点 | 检查表头 `TH` / 行列关联、跨行跨列与实际朗读 |
-| 数学语义 | 结构树含 Formula 节点 | 经典字体的 `main` 构建稳定；`align`/`align*` 的 LuaMML 断言可通过改为 `aligned` 避开，但实验全书的 `mathml-SE` 方案仍报告非法 MathML 父子结构，正在 `experiment/full-book-mathml` 分支测试 `mathml-AF`；不能将 Formula 节点等同于 MathML |
+| 数学语义 | **已合入 `main`：1,472 个 Formula 均关联可解析的 MathML 文件**（933 份不同 MathML，关系类型 `/Supplement`），CI 逐一强制检查 | 抽查公式语义是否准确，使用实际读屏器检查函数、矩阵、分式与多行推导的朗读表现 |
 | 图注结构 | 能生成 PDF | 最新完整构建无 Document 到 Caption 非法父子警告；仍应核验图注及链接锚点 |
 | 读屏顺序 | 尚无端到端辅助技术验收记录 | 用至少一种主流 PDF 阅读器／读屏器检查目录、表格、公式和跨页提示框 |
 | PDF/UA-2 机器验证 | **veraPDF 1.30.2 已通过全部 1,727 项规则和 736,481 项检查；失败数为 0** | CI 将报告作为阻断门槛，继续人工审查与读屏器测试 |
@@ -82,7 +82,7 @@ CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（�
 
 ## 全书 MathML 可行性分支
 
-实验分支 [`experiment/full-book-mathml`](https://github.com/CoCoThink/ai-by-intuition/tree/experiment/full-book-mathml) 已将所有触发断言的 `align`／`align*` 推导转换为 `aligned`，对需要编号的展示公式使用 `equation` 包裹；原先 LuaMML 的致命断言不再触发，CI #39598374009 能输出 99 页实验 PDF，但 `mathml-SE` 结构产生 **56 条 `mathml:mo → mathml:math` 父子关系警告**，因此**并未通过无障碍验收**。随后单独测试 `mathml-AF` 关联文件输出，不阻断 `main` 的稳定发布。只有检查公式的实际关联文件、结构规范性、版面和辅助技术读序后才考虑合并。
+早期实验分支 [`experiment/full-book-mathml`](https://github.com/CoCoThink/ai-by-intuition/tree/experiment/full-book-mathml) 把引起 LuaMML 断言的 `align`／`align*` 改为 `aligned`，编号推导使用 `equation` 包裹。最初 `mathml-SE` 方案触发 56 条非法父子结构警告，**未获通过**；改用 `mathml-AF` 后，实验版实现 99 页正常构建、1,472 个有效公式关联、veraPDF 零失败。经过与最新版 `main` 合并的集成分支复测，修改已并入正式源码：[成功 CI #39613800415](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)。辅助技术人工验收仍未完成。
 
 ## PDF/UA-2 自动验收（已达到零失败）
 
@@ -96,6 +96,13 @@ CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（�
 
 CI 的独立 veraPDF 规则已经由“仅报告”升级为**发布失败阻断**，XML 结果仍作为 `pdfua2-machine-audit` 工件上传。若验证器报告失败，`scripts/summarize_verapdf.py` 将返回非零状态，使正式发布失败。
 
-**仍未完成：**数学 MathML 的完整语义转换与朗读效果、表格行列阅读顺序、跨页盒子阅读顺序，以及读屏器实际体验；应持续核验，而非因为机器报告为零失败就视为完全解决。
+**仍未完成：**MathML 表达准确性与实际朗读效果、表格行列阅读顺序、跨页盒子阅读顺序，以及读屏器人工体验；应持续核验，而非因为机器报告为零失败就视为完全解决。
 
 验证工具：[veraPDF CLI 官方文档](https://docs.verapdf.org/cli/validation/)。
+
+## MathML-AF 正式集成（2026-10-21）
+
+- [集成 CI #39613800415](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415) 在保留正式标题、图注、表格与 PDF/UA-2 门槛的基础上，成功生成 99 页含 MathML 的 PDF。
+- `scripts/validate_mathml_af.py` 在发布前遍历所有公式结构节点，逐一检查 PDF 的 `/AF`、`/AFRelationship /Supplement`、嵌入的 MathML XML 及其根节点；**1,472/1,472** 全部通过，933 份不同 MathML 内容。任何公式缺失或损坏都会使 CI 失败。
+- `book/main.tex` 使用 `unicode-math`、Latin Modern Math 与 `math/setup=mathml-AF`。源码中的多行公式由 `align`／`align*` 转成 `aligned` 组合，以绕开 TeX Live 2026 的 LuaMML 断言。
+- 完整集成构建的 veraPDF 1.30.2 PDF/UA-2 为 `isCompliant=true`，零失败；完整文字边界检查和版面溢出检查也通过。机器验证不代表公式朗读质量或教学语义已被人工认可。
