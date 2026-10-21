@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Summarize independent veraPDF machine-verifiable PDF/UA reports.
 
-Advisory means failing PDF/UA checks don't fail the release workflow.
-Do not confuse this machine report with human PDF/UA/assistive-tech review.
+The production CI runs in strict mode: a non-compliant report fails the build.
+--advisory is an explicit opt-in for non-release diagnostics only.
+Machine verification is not an assistive-technology or human review.
 """
 from __future__ import annotations
 

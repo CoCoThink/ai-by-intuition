@@ -4,14 +4,12 @@ on:
   push:
     paths:
       - 'book/**/*.tex'
-      - 'scripts/validate_book.py'
-      - 'scripts/validate_mathml_af.py'
+      - 'scripts/**/*.py'
       - '.github/workflows/build-latex.yml'
   pull_request:
     paths:
       - 'book/**/*.tex'
-      - 'scripts/validate_book.py'
-      - 'scripts/validate_mathml_af.py'
+      - 'scripts/**/*.py'
       - '.github/workflows/build-latex.yml'
   workflow_dispatch:
 
@@ -23,11 +21,11 @@ jobs:
     name: Compile AI by Intuition Volume 01
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Check chapter structure before compilation
         run: python3 scripts/validate_book.py
       - name: Build tagged PDF with TeX Live 2026
-        uses: xu-cheng/texlive-action@v3
+        uses: xu-cheng/texlive-action@22c04326a5d855880f9d39bb955138bf11c6df80 # v3
         with:
           texlive_version: 2026
           os: debian
@@ -36,6 +34,14 @@ jobs:
             apt-get update -qq
             apt-get install -y -qq fonts-noto-cjk fonts-noto-core poppler-utils
             fc-cache -f
+            mkdir -p pdfua-audit
+            {
+              echo 'TeX Live 2026, Debian (xu-cheng/texlive-action v3)'
+              lualatex --version | head -n 1
+              latexmk -v | head -n 2
+              dpkg-query -W -f='${binary:Package}=${Version}\n' fonts-noto-cjk fonts-noto-core poppler-utils
+              fc-match -f '%{family}: %{style}\n' 'Noto Serif CJK SC' | head -n 1
+            } > pdfua-audit/texlive-environment.txt
             lualatex --version | head -1
             cd book
             mkdir -p build/smoke
@@ -50,14 +56,18 @@ jobs:
               grep -E 'Package tagpdf Warning: Parent-Child|Overfull \\hbox' build/main.log
               exit 1
             fi
-            # MathML is experimental. Keep a failing LuaMML test from blocking the
-            # stable tagged production PDF until the amsmath assertion is resolved.
+            # Only native align* is a known-incompatible LuaMML probe.
+            # Production already uses unicode-math + mathml-AF and verifies every Formula.
             mkdir -p build/mathml
             if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
               -file-line-error -outdir=build/mathml smoke-mathml.tex; then
-              echo 'MathML experiment: isolated align test compiled'
+              echo '::notice::Native align* now compiles; reassess known LuaMML incompatibility'
             else
-              echo '::warning::MathML experiment failed; stable book PDF unaffected'
+              if grep -q 'assertion failed' build/mathml/smoke-mathml.log; then
+                echo '::notice::Expected native align* LuaMML assertion (nonblocking diagnostic)'
+              else
+                echo '::warning::Unexpected native align* diagnostic failure (nonblocking)'
+              fi
               grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
                 build/mathml/smoke-mathml.log | tail -n 25 || true
             fi
@@ -66,7 +76,7 @@ jobs:
               -file-line-error -outdir=build/mathml smoke-mathml-aligned.tex; then
               if [ -f build/mathml/smoke-mathml-aligned-luamml-mathml.html ] && \
                 grep -q '<math' build/mathml/smoke-mathml-aligned-luamml-mathml.html; then
-                echo 'MathML experiment: aligned variant produced MathML'
+                echo 'Production-compatible aligned variant produced MathML'
               else
                 echo '::warning::MathML aligned variant compiled without verified MathML file'
               fi
@@ -92,12 +102,16 @@ jobs:
               -file-line-error -outdir=build/mathml smoke-mathml-lua-unicode.tex; then
               if [ -f build/mathml/smoke-mathml-lua-unicode-luamml-mathml.html ] && \
                 grep -q '<math' build/mathml/smoke-mathml-lua-unicode-luamml-mathml.html; then
-                echo 'MathML experiment: lua-unicode-math align* produced MathML'
+                echo '::notice::lua-unicode-math native align* now produces MathML'
               else
                 echo '::warning::lua-unicode-math compiled without verified MathML'
               fi
             else
-              echo '::warning::lua-unicode-math align* experiment failed; stable PDF unaffected'
+              if grep -q 'assertion failed' build/mathml/smoke-mathml-lua-unicode.log; then
+                echo '::notice::Expected lua-unicode-math align* assertion (nonblocking diagnostic)'
+              else
+                echo '::warning::Unexpected lua-unicode-math diagnostic failure (nonblocking)'
+              fi
               grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
                 build/mathml/smoke-mathml-lua-unicode.log | tail -n 25 || true
             fi
@@ -110,7 +124,7 @@ jobs:
             pdfinfo -struct build/AI-by-Intuition-Volume-01.pdf | head -n 12 || true
       - name: Upload experimental MathML logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: experimental-mathml-logs
           path: |
@@ -119,7 +133,7 @@ jobs:
           if-no-files-found: warn
       - name: Upload heading experiment artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: experimental-heading-results
           path: |
@@ -128,16 +142,25 @@ jobs:
           if-no-files-found: warn
       - name: Upload PDF for tagging diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: tagged-pdf-diagnostics
           path: book/build/AI-by-Intuition-Volume-01.pdf
           if-no-files-found: warn
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
       - name: Install PDF structure inspector
         run: python -m pip install --disable-pip-version-check pypdf==5.9.0
+      - name: Record Python and host runtime
+        run: |
+          mkdir -p pdfua-audit
+          {
+            echo "runner_image=${ImageOS:-unknown}/${ImageVersion:-unknown}"
+            python --version
+            python -m pip show pypdf | grep -E '^(Name|Version):'
+            pdftotext -v 2>&1 | head -n 1
+          } > pdfua-audit/runner-environment.txt
       - name: Inspect experimental heading structure
         run: |
           for name in smoke-heading-article smoke-heading-chinese; do
@@ -161,12 +184,16 @@ jobs:
             book/build/AI-by-Intuition-Volume-01.pdf \
             --minimum 1000 --json-output pdfua-audit/mathml-af-summary.json
       # Machine-verifiable PDF/UA-2 compliance is now mandatory for publication.
-      # This does not replace manual inspection or assistive technology testing.
+      # The release gate is intentionally limited to machine-verifiable rules.
       - name: Validate PDF/UA-2 with veraPDF
         timeout-minutes: 12
         run: |
           test -s book/build/AI-by-Intuition-Volume-01.pdf
           mkdir -p pdfua-audit
+          docker pull verapdf/cli:v1.30.2
+          docker image inspect verapdf/cli:v1.30.2 \
+            --format 'image_id={{.Id}} repo_digests={{json .RepoDigests}}' \
+            > pdfua-audit/verapdf-image.txt
           docker run --rm --mount "type=bind,src=$PWD,dst=/data,readonly" \
             verapdf/cli:v1.30.2 \
             --flavour ua2 --format xml --maxfailuresdisplayed 5 \
@@ -176,15 +203,16 @@ jobs:
             pdfua-audit/verapdf-pdfua2.xml
       - name: Upload PDF/UA-2 machine audit
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pdfua2-machine-audit
           path: |
             pdfua-audit/verapdf-pdfua2.xml
             pdfua-audit/mathml-af-summary.json
+            pdfua-audit/*.txt
           if-no-files-found: warn
       - name: Publish single PDF artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ai-by-intuition-volume-01
           path: book/build/AI-by-Intuition-Volume-01.pdf

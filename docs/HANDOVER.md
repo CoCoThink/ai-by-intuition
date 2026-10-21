@@ -66,3 +66,13 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 ---
 
 最后核对：交接时公开 GitHub Issues **0 个开放项**。本文件为核查后的遗留事项清单，不假定已经存在对应的 Issue 或已有人负责。
+
+## 7. 接手处理记录（2026-10-22；待新一轮 CI 核验）
+
+- **H-01**：构建工作流已覆盖 `scripts/**/*.py`，新增仅对 Markdown/检查器变更触发的轻量站内链接检查；全量 CI 保留手动触发入口。
+- **H-02 / H-03**：修订旧 MathML 与 veraPDF 注释，并将原生 `align*` 的已知断言标为非阻断的**预期兼容失败**；实际机器验收仍由正式 `mathml-AF` 和 veraPDF 严格检查执行。
+- **H-04**：锁定四种 GitHub Action 的当前提交 SHA，新增构建工具、字体软件包与 veraPDF 镜像标识审计工件。TeX Live 镜像、apt 软件包与 veraPDF tag 仍需按 [依赖复核策略](BUILD-REPRODUCIBILITY.md) 定期核验，不宣称它们已被不可变摘要完全固定。
+- **H-05**：修复点积章节重复标题；源码数值与最终 PDF 结构是否持续通过，以本次变更关联的 GitHub Actions 结果为准。
+- **H-06（可选）**：新增 [出版视觉抽检与版本归档流程](PUBLISHING.md)；**尚未进行逐页视觉复核，也未创建正式 Release**，不得将流程文件误当成完成出版的证据。
+
+本节记述待合并变更的实施内容，不覆盖前文已经成功的 2026-10-21 基线。新一轮全量验证成功后方可宣布更新后的 PDF 验收通过。

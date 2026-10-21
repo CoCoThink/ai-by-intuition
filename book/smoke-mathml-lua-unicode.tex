@@ -1,7 +1,7 @@
 % !TeX program = lualatex
-% Try LuaTeX-native OpenType math loader as a replacement for unicode-math.
-% Nonblocking experiment: compare its amsmath align* behavior with the
-% existing smoke-mathml.tex reproduction of luamml-amsmath.lua:63 failure.
+% Nonblocking compatibility experiment: lua-unicode-math + native align*
+% still reproduces the LuaMML assertion. This is NOT the production math path.
+% Production uses unicode-math + mathml-AF and the aligned workaround.
 \DocumentMetadata{
   lang=zh-CN,
   tagging=on,
