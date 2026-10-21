@@ -1,5 +1,6 @@
-\begin{center}
+% The Figure structure intentionally includes the non-floating caption.
 \tagstructbegin{tag=Figure,alttext={梯度下降在损失函数图像上的多次迭代}}
+\begin{center}
 \begin{tikzpicture}
 \begin{axis}[
  width=118mm,height=65mm,
@@ -23,9 +24,9 @@
 \node[anchor=north west,font=\footnotesize,teal] at (axis cs:1.03,.02) {最小值};
 \end{axis}
 \end{tikzpicture}
-\tagstructend
 
 {\footnotesize 同一个损失函数 $L(w)=\tfrac52(w-1)^2$：
 橙点依次为 $2.5\to0.625\to0.15625$，绿色点为理论最小值。}
 \end{center}
 \begin{center}\captionof{figure}{一维平方损失函数中三次参数位置与损失下降}\label{fig:loss-descent}\end{center}
+\tagstructend

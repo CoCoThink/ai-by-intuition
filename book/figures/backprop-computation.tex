@@ -1,5 +1,6 @@
-\begin{center}
+% The Figure structure intentionally includes the non-floating caption.
 \tagstructbegin{tag=Figure,alttext={两层神经网络的前向计算和参数梯度回传路线}}
+\begin{center}
 \begin{tikzpicture}[>=Latex,
  block/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=33mm,
  minimum height=14mm,align=center,font=\small},
@@ -25,9 +26,9 @@
 \node[font=\footnotesize,align=center] at (4.3,-2.65)
  {以 $\eta=0.05$ 更新：$w_1:1\to1.2$，$w_2:2\to2.1$（偏置更新见正文）};
 \end{tikzpicture}
-\tagstructend
 \end{center}
 \begin{center}
 \captionof{figure}{上方是前向值和参数节点，下方是反向梯度及一次参数更新}
 \label{fig:backprop}
 \end{center}
+\tagstructend

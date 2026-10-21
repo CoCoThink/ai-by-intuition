@@ -1,5 +1,6 @@
-\begin{center}
+% The Figure structure intentionally includes the non-floating caption.
 \tagstructbegin{tag=Figure,alttext={根据 Token ID 从五行二维向量表中取出对应行}}
+\begin{center}
 \begin{tikzpicture}[>=Latex,x=11mm,y=7.7mm]
 \node[font=\small\bfseries,anchor=south] at (1,1.36) {Embedding 表 $E$（$5\times2$）};
 \foreach \rr/\aa/\bb in {0/0/0,1/1/0,2/0/-1,3/0/1,4/1/1}{
@@ -21,6 +22,6 @@
 \node[font=\footnotesize,anchor=west] at (0,-4.65)
  {编号从 0 开始；这是选择表中一行，不是将 ID 数字当作特征。};
 \end{tikzpicture}
-\tagstructend
 \end{center}
 \begin{center}\captionof{figure}{Embedding 表：根据 Token ID 查找对应的行向量}\label{fig:embedding-table}\end{center}
+\tagstructend

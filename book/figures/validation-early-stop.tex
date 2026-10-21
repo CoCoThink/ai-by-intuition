@@ -1,5 +1,6 @@
-\begin{center}
+% The Figure structure intentionally includes the non-floating caption.
 \tagstructbegin{tag=Figure,alttext={训练与验证损失曲线不同步，提前停止选择验证误差较低时的参数}}
+\begin{center}
 \begin{tikzpicture}
 \begin{axis}[
  width=112mm,height=61mm,
@@ -21,9 +22,9 @@
 \node[teal,anchor=south west,font=\footnotesize] at (axis cs:4.12,.23) {最佳验证轮次};
 \end{axis}
 \end{tikzpicture}
-\tagstructend
 
 {\footnotesize 人工示意数据：训练损失持续下降，
 验证损失在第 4 轮后反而上升；选检查点应看验证集。}
 \end{center}
 \begin{center}\captionof{figure}{训练损失与验证损失走势及最优验证轮次}\label{fig:early-stopping}\end{center}
+\tagstructend

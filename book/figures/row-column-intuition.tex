@@ -1,3 +1,5 @@
+% The Figure structure intentionally includes the non-floating caption.
+\tagstructbegin{tag=Figure,alttext={三条二维向量按行放置形成三乘二矩阵，转置后按列排列得到二乘三矩阵}}
 \begin{tcolorbox}[
   enhanced,breakable,colback=paper,colframe=linegray,
   boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=3mm,
@@ -14,7 +16,6 @@ $(1,0)$、$(0,1)$、$(1,1)$。
 \begin{minipage}[t]{.49\linewidth}
 \centering
 \textbf{按行排：三行、两列}\\[2mm]
-\tagstructbegin{tag=Figure,alttext={三条二维向量按行放置形成三乘二矩阵，转置后按列排列得到二乘三矩阵}}
 \begin{tikzpicture}[x=10mm,y=9mm]
 \foreach \r/\shade in {1/blueback,2/orangeback,3/greenback}{
   \foreach \c in {1,2}{
@@ -26,14 +27,13 @@ $(1,0)$、$(0,1)$、$(1,1)$。
 \node at (.5,-1.5){\sffamily 0}; \node at (1.5,-1.5){\sffamily 1};
 \node at (.5,-2.5){\sffamily 1}; \node at (1.5,-2.5){\sffamily 1};
 \end{tikzpicture}
-\tagstructend\\[1mm]
+\\[1mm]
 $A:\ 3\times2$\\[-1mm]
 {\footnotesize 每行一条向量}
 \end{minipage}%
 \begin{minipage}[t]{.49\linewidth}
 \centering
 \textbf{按列排：两行、三列}\\[2mm]
-\tagstructbegin{tag=Figure,alttext={三条二维向量按行放置形成三乘二矩阵，转置后按列排列得到二乘三矩阵}}
 \begin{tikzpicture}[x=10mm,y=9mm]
 \foreach \c/\shade in {1/blueback,2/orangeback,3/greenback}{
   \foreach \r in {1,2}{
@@ -46,7 +46,7 @@ $A:\ 3\times2$\\[-1mm]
 \node at (.5,-1.5){\sffamily 0}; \node at (1.5,-1.5){\sffamily 1};
 \node at (2.5,-1.5){\sffamily 1};
 \end{tikzpicture}
-\tagstructend\\[1mm]
+\\[1mm]
 $A^\top:\ 2\times3$\\[-1mm]
 {\footnotesize 每列一条向量}
 \end{minipage}
@@ -62,3 +62,4 @@ $\underbrace{d\times M}_{\text{一条向量占一列}}$。
 \end{tcolorbox}
 
 \begin{center}\captionof{figure}{行向量与列向量的转置关系}\label{fig:row-column}\end{center}
+\tagstructend

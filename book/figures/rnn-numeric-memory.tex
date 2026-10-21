@@ -1,8 +1,9 @@
+% The Figure structure intentionally includes the non-floating caption.
+\tagstructbegin{tag=Figure,alttext={RNN 的隐藏状态沿三个时间步递推的数值示意}}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,boxrule=.7pt,arc=2mm,
 left=3mm,right=3mm,top=3mm,bottom=2mm,title={图解：同一更新规则，三个时刻的数字如何传递},
 fonttitle=\sffamily\bfseries,coltitle=ink]
 \centering
-\tagstructbegin{tag=Figure,alttext={RNN 的隐藏状态沿三个时间步递推的数值示意}}
 \begin{tikzpicture}[>=Latex,
  cell/.style={draw=blue,fill=blueback,rounded corners=3pt,minimum width=31mm,
  minimum height=16mm,align=center,font=\small},
@@ -22,9 +23,9 @@ fonttitle=\sffamily\bfseries,coltitle=ink]
 \draw[->,very thick,orange] (a)--node[above,font=\scriptsize]{$\times0.5$}(b);
 \draw[->,very thick,orange] (b)--node[above,font=\scriptsize]{$\times0.5$}(c);
 \end{tikzpicture}
-\tagstructend
 \par\smallskip
 {\small\raggedright\textbf{读图：}第三次输入是零，但前两次输入留下的状态仍让 $h_3=1.25$。
 这是一条教学用的线性更新规则，不是所有 RNN 的固定遗忘率。\par}
 \end{tcolorbox}
 \begin{center}\captionof{figure}{RNN 共享状态更新规则的三个时间步}\label{fig:rnn-memory}\end{center}
+\tagstructend
