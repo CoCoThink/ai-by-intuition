@@ -75,3 +75,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 ## 独立标题结构标签实验（2026-10-21）
 
 CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（标准 `article` 基线）与 `smoke-heading-chinese.tex`（`article + ctex[heading=false]` 中文组合）。`scripts/inspect_heading_tags.py` 遍历真实 PDF 结构树，核查 H1/H2 或 section/subsection 节点，而不是仅看目录或 RoleMap。结果归档在 `experimental-heading-results` 工件中。只有确认中文方案确实生成结构标题并通过布局与交叉引用回归，才应考虑切换全书文档类。
+
+## 数学字体替代方案实验（2026-10-21）
+
+新增非阻断 `book/smoke-mathml-lua-unicode.tex`，将传统 `unicode-math` 换成 TeX Live 2026 支持的 `lua-unicode-math`，保留同一段 `align*` 点积公式，比较是否能够生成 MathML 而不触发 LuaMML 断言。此方案仍属于**隔离测试**；即便最小文件成功，也必须确认全书 99 页数值、公式外观、结构标签及阅读顺序后才可切换正式构建。

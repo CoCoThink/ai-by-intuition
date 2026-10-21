@@ -85,6 +85,20 @@ jobs:
                   "build/headings/${name}.log" | tail -n 20 || true
               fi
             done
+            # LuaTeX-native OpenType math loader; isolated from production.
+            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+              -file-line-error -outdir=build/mathml smoke-mathml-lua-unicode.tex; then
+              if [ -f build/mathml/smoke-mathml-lua-unicode-luamml-mathml.html ] && \
+                grep -q '<math' build/mathml/smoke-mathml-lua-unicode-luamml-mathml.html; then
+                echo 'MathML experiment: lua-unicode-math align* produced MathML'
+              else
+                echo '::warning::lua-unicode-math compiled without verified MathML'
+              fi
+            else
+              echo '::warning::lua-unicode-math align* experiment failed; stable PDF unaffected'
+              grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
+                build/mathml/smoke-mathml-lua-unicode.log | tail -n 25 || true
+            fi
             cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
             echo '=== Smoke tagged state ==='
             pdfinfo build/smoke/smoke-tagging.pdf | grep -E '^(Tagged|PDF version|Pages):'

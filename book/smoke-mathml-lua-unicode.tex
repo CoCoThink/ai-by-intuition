@@ -1,0 +1,28 @@
+% !TeX program = lualatex
+% Try LuaTeX-native OpenType math loader as a replacement for unicode-math.
+% Nonblocking experiment: compare its amsmath align* behavior with the
+% existing smoke-mathml.tex reproduction of luamml-amsmath.lua:63 failure.
+\DocumentMetadata{
+  lang=zh-CN,
+  tagging=on,
+  tagging-setup={math/setup=mathml-SE}
+}
+\documentclass[11pt,a4paper,UTF8]{ctexart}
+\usepackage{fontspec}
+\setCJKmainfont{Noto Serif CJK SC}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{lua-unicode-math}
+\setmathfont{Latin Modern Math}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\begin{document}
+\section{Lua Unicode Math 与 align* 隔离测试}
+与全书点积推导相同的公式用于检验 LuaMML：
+\begin{align*}
+\|\vect a-\vect b\|^2
+&=(a_1-b_1)^2+(a_2-b_2)^2\\
+&=(a_1^2+a_2^2)+(b_1^2+b_2^2)
+-2(a_1b_1+a_2b_2)\\
+&=\|\vect a\|^2+\|\vect b\|^2
+-2(\vect a\cdot\vect b).
+\end{align*}
+\end{document}
