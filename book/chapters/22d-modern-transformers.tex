@@ -19,7 +19,7 @@ $X_0=X_{\rm token}+P$。另一些模型使用\textbf{旋转位置表示（RoPE�
 不是简单地在 Token 向量上增加某组固定数字，
 而是对 Query 和 Key 的部分二维分量施加\textbf{与位置相关的旋转}。
 
-从一个二维向量开始：
+先用	extbf{两个整数位置}和二维旋转矩阵算一遍：
 \[
 R(\phi)=
 \begin{bmatrix}\cos\phi&-\sin\phi\\
@@ -40,6 +40,25 @@ $m\theta$ 和 $n\theta$，则
 高维 RoPE 会对多个分量对使用不同角频率，
 并不是每个 Token 只绕一个二维圆周旋转。
 长上下文扩展仍可能需要额外设计与实测，不能从这个恒等式直接保证无限外推。
+
+\begin{example}[title={真实旋转一次，而不只背恒等式}]
+取 $\vect q^\top=\vect k^\top=(1,0)$，
+Query 位于 $m=0$，Key 位于 $n=1$，
+选择角频率 $\theta=\pi/2$。
+将两个向量以列形式代入旋转定义，
+得到
+\[
+R(0)\begin{bmatrix}1\\0\end{bmatrix}
+=\begin{bmatrix}1\\0\end{bmatrix},
+\qquad
+R(\pi/2)\begin{bmatrix}1\\0\end{bmatrix}
+=\begin{bmatrix}0\\1\end{bmatrix}.
+\]
+两者点积等于 $0$。
+若 $m=n=0$，两个向量都为 $(1,0)$，
+点积为 $1$。因此\textbf{即使内容特征不变，
+相对位置也能改变 Q/K 分数}。
+\end{example}
 
 \subsection{问题二：归一化为什么从 LayerNorm 变成 RMSNorm？}
 
@@ -67,9 +86,9 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 现代网络还常使用\textbf{门控 FFN}，例如 SwiGLU 形式：
 \begin{equation}
 \operatorname{FFN}(\vect x)
-=W_{\rm down}\left[
-\operatorname{SiLU}(W_g\vect x)
-\odot(W_u\vect x)\right],
+=\left[
+\operatorname{SiLU}(\vect x^\top W_g)
+\odot(\vect x^\top W_u)\right]W_{\rm down},
 \label{eq:swiglu-illustration}
 \end{equation}
 其中 $\odot$ 是\textbf{对应位置逐元素相乘}，
