@@ -1,0 +1,28 @@
+\begin{center}
+\begin{tikzpicture}[>=Latex,
+  every node/.style={font=\small},
+  f/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=39mm,minimum height=8mm,align=center},
+  sum/.style={draw=blue,thick,circle,fill=white,inner sep=0.7pt,minimum size=7mm}]
+\node[f] (x) at (0,0) {$X$：输入隐藏状态};
+\node[f] (ln1) at (0,-1.12) {Norm};
+\node[f] (att) at (0,-2.24) {多头 Attention};
+\node[sum] (add1) at (0,-3.35) {$+$};
+\node[f] (ln2) at (0,-4.50) {Norm};
+\node[f] (ff) at (0,-5.62) {逐 Token FFN};
+\node[sum] (add2) at (0,-6.73) {$+$};
+\node[f] (out) at (0,-7.80) {输出 $X_{\rm block}$};
+\draw[->,thick,blue] (x)--(ln1);
+\draw[->,thick,blue] (ln1)--(att);
+\draw[->,thick,blue] (att)--(add1);
+\draw[->,thick,blue] (add1)--(ln2);
+\draw[->,thick,blue] (ln2)--(ff);
+\draw[->,thick,blue] (ff)--(add2);
+\draw[->,thick,teal] (add2)--(out);
+\draw[->,thick,orange,rounded corners=3pt]
+  (x.east)--++(3.0cm,0)--(3.0cm,-3.35)--(add1.east)
+  node[pos=.28,right,font=\footnotesize]{残差捷径};
+\draw[->,thick,orange,rounded corners=3pt]
+  (add1.west)--++(-3.0cm,0)--(-3.0cm,-6.73)--(add2.west)
+  node[pos=.30,left,font=\footnotesize]{残差捷径};
+\end{tikzpicture}
+\end{center}
