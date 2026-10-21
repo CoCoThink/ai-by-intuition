@@ -45,14 +45,16 @@
 
 \textbf{办法 C：正则化。}
 把\textbf{参数大小的惩罚}加到原来的任务损失：
-\begin{align}
+\begin{equation}
+\begin{aligned}
 L_{\rm total}(\vect w)
 &=L_{\rm data}(\vect w)
 +\lambda\sum_i|w_i| &&\text{（L1）},\\
 L_{\rm total}(\vect w)
 &=L_{\rm data}(\vect w)
 +\lambda\sum_iw_i^2 &&\text{（平方 L2 惩罚）}.
-\end{align}
+\end{aligned}
+\end{equation}
 $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大，模型越倾向较小的参数，但也可能导致欠拟合。
 
 \begin{warningbox}

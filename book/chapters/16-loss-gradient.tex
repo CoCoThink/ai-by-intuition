@@ -21,10 +21,10 @@ L(w)=\frac1n\sum_{i=1}^{n}(\widehat y_i-y_i)^2.
 其中 $n$ 是样本数，$L$ 是\textbf{损失（loss）}。平方避免正负误差相互抵消，还使误差较大的样本被更多惩罚。
 
 把两个样本代入：
-\begin{align*}
+\[\begin{aligned}
 L(w)&=\tfrac12[(w-1)^2+(2w-2)^2]\\
 &=\tfrac52(w-1)^2.
-\end{align*}
+\end{aligned}\]
 于是 $L(0)=2.5$、$L(0.5)=0.625$、$L(1)=0$。
 训练的目标变成寻找让损失尽可能小的参数。
 

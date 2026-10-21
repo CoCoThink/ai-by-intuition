@@ -34,14 +34,14 @@ S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 
 在这里选择\textbf{Pre-Norm（先归一化）}，每个子层都是
 先 Norm、再计算、最后把尚未经过子层的输入加回来：
-\begin{align}
-X_{\rm att}
-&=X+\operatorname{MHA}(\operatorname{Norm}(X)),
-\label{eq:pre-norm-att}\\
-X_{\rm block}
-&=X_{\rm att}+\operatorname{FFN}(\operatorname{Norm}(X_{\rm att})).
+\begin{equation}
+\label{eq:pre-norm-att}
+X_{\rm att}=X+\operatorname{MHA}(\operatorname{Norm}(X)).
+\end{equation}
+\begin{equation}
 \label{eq:pre-norm-ffn}
-\end{align}
+X_{\rm block}=X_{\rm att}+\operatorname{FFN}(\operatorname{Norm}(X_{\rm att})).
+\end{equation}
 $X_{\rm att}$ 表示第一次残差后的隐藏状态；
 $X_{\rm block}$ 是第二次残差后的输出。
 两个残差相加各有自己的输入旁路，保留特征宽度

@@ -11,21 +11,21 @@ V^\top\sigma(K\vect{x}).
 \subsection{两条记忆，各用两个数字表示}
 
 先约定两条 Key--Value 关系：
-\begin{align*}
+\[\begin{aligned}
 \vect{k}_1&=\begin{bmatrix}1\\0\end{bmatrix},
 & \vect{v}_1&=\begin{bmatrix}2\\1\end{bmatrix},\\
 \vect{k}_2&=\begin{bmatrix}0.6\\0.8\end{bmatrix},
 & \vect{v}_2&=\begin{bmatrix}0\\3\end{bmatrix}.
-\end{align*}
+\end{aligned}\]
 给出查询：
 \[
 \vect{x}=\begin{bmatrix}1\\-1\end{bmatrix}.
 \]
 \textbf{不使用矩阵}时，分别计算两个匹配分数：
-\begin{align*}
+\[\begin{aligned}
 s_1&=\vect{k}_1^\top\vect{x}=1\cdot1+0\cdot(-1)=1,\\
 s_2&=\vect{k}_2^\top\vect{x}=0.6\cdot1+0.8\cdot(-1)=-0.2.
-\end{align*}
+\end{aligned}\]
 所以两个 Key 的匹配程度为 $1$ 和 $-0.2$。现在我们只想把\textbf{这两次点积合并计算}。
 
 \subsection{第一个矩阵：每行是一条 Key}
@@ -42,7 +42,7 @@ K=\begin{bmatrix}
 \begin{example}
 \noindent\emph{用一行乘一列，亲手算两次}\par
 
-\begin{align*}
+\[\begin{aligned}
 K\vect{x}
 &=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}
   \begin{bmatrix}1\\-1\end{bmatrix}\\
@@ -51,7 +51,7 @@ K\vect{x}
 0.6\cdot1+0.8\cdot(-1)
 \end{bmatrix}
 =\boxed{\begin{bmatrix}1\\-0.2\end{bmatrix}}.
-\end{align*}
+\end{aligned}\]
 第一行的结果恰好是 $s_1$，第二行的结果恰好是 $s_2$。
 \end{example}
 
@@ -204,7 +204,7 @@ V^\top=
 \begin{example}
 \noindent\emph{矩阵乘向量 = 按列加权求和}\par
 
-\begin{align*}
+\[\begin{aligned}
 V^\top\vect{a}
 &=\begin{bmatrix}2&0\\1&3\end{bmatrix}
   \begin{bmatrix}1\\0\end{bmatrix}\\
@@ -212,14 +212,15 @@ V^\top\vect{a}
 &=1\begin{bmatrix}2\\1\end{bmatrix}
  +0\begin{bmatrix}0\\3\end{bmatrix}
 =\boxed{\begin{bmatrix}2\\1\end{bmatrix}}.
-\end{align*}
+\end{aligned}\]
 我们取回了第一条 Value，第二条因为激活为 $0$ 而没有参与。
 \end{example}
 
 \subsection{整个过程连在一起}
 
 现在把刚才三个独立步骤写在同一张纸上：
-\begin{align}
+\begin{equation}
+\begin{aligned}
 \text{匹配：}\quad
 K\vect{x}
 &=\begin{bmatrix}1\\-0.2\end{bmatrix},\\
@@ -229,7 +230,8 @@ K\vect{x}
 \text{读出：}\quad
 V^\top\relu(K\vect{x})
 &=\begin{bmatrix}2\\1\end{bmatrix}.
-\end{align}
+\end{aligned}
+\end{equation}
 
 \begin{center}
 \begin{tikzpicture}[>=Latex,node distance=5mm,
@@ -291,14 +293,14 @@ V^\top\relu(K\vect{x})
 W\vect{x}=(V^\top K)\vect{x}=V^\top(K\vect{x}).
 \]
 一旦把 ReLU 放在中间，通常就不能合并成一个固定的 $W$。以本节数字为例：
-\begin{align*}
+\[\begin{aligned}
 V^\top K\vect{x}
 &=1\vect{v}_1-0.2\vect{v}_2
 =\begin{bmatrix}2\\0.4\end{bmatrix},\\
 V^\top\relu(K\vect{x})
 &=1\vect{v}_1+0\vect{v}_2
 =\begin{bmatrix}2\\1\end{bmatrix}.
-\end{align*}
+\end{aligned}\]
 前者保留了负匹配；后者把它滤掉了。这就是激活函数引入\textbf{非线性}的实际效果。
 
 \begin{warningbox}

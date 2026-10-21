@@ -5,11 +5,13 @@ on:
     paths:
       - 'book/**/*.tex'
       - 'scripts/validate_book.py'
+      - 'scripts/validate_mathml_af.py'
       - '.github/workflows/build-latex.yml'
   pull_request:
     paths:
       - 'book/**/*.tex'
       - 'scripts/validate_book.py'
+      - 'scripts/validate_mathml_af.py'
       - '.github/workflows/build-latex.yml'
   workflow_dispatch:
 
@@ -152,6 +154,12 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
           python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Volume-01.pdf
+      - name: Verify associated MathML for every displayed and inline Formula
+        run: |
+          mkdir -p pdfua-audit
+          python3 scripts/validate_mathml_af.py \
+            book/build/AI-by-Intuition-Volume-01.pdf \
+            --minimum 1000 --json-output pdfua-audit/mathml-af-summary.json
       # Machine-verifiable PDF/UA-2 compliance is now mandatory for publication.
       # This does not replace manual inspection or assistive technology testing.
       - name: Validate PDF/UA-2 with veraPDF
@@ -171,7 +179,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pdfua2-machine-audit
-          path: pdfua-audit/verapdf-pdfua2.xml
+          path: |
+            pdfua-audit/verapdf-pdfua2.xml
+            pdfua-audit/mathml-af-summary.json
           if-no-files-found: warn
       - name: Publish single PDF artifact
         uses: actions/upload-artifact@v4

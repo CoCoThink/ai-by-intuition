@@ -1,6 +1,6 @@
 % !TeX program = lualatex
 % LuaLaTeX tagging: structured headings, text and alternative descriptions on TikZ figures.
-\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2}
+\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2,tagging-setup={math/setup=mathml-AF}}
 % An intuition-first journey from functions and matrix algebra to learning and transformers.
 % Compile: cd book && latexmk -lualatex -interaction=nonstopmode -halt-on-error main.tex
 \documentclass[11pt,a4paper,UTF8]{ctexart}
@@ -12,6 +12,9 @@
 \setmainfont{Noto Serif}
 \setsansfont{Noto Sans}
 \usepackage{amsmath,amssymb,mathtools}
+% Full-book LuaMML MathML associated files; CI verifies every Formula /AF.
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
 \usepackage{microtype}
 \usepackage{booktabs,tabularx,longtable,array,multirow}
 \usepackage{enumitem}

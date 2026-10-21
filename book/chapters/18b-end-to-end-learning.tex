@@ -24,12 +24,12 @@ w_1=1,\qquad b_1=0,\qquad w_2=2,\qquad b_2=0.
 
 \subsection{第一步：把预测算出来（前向传播）}
 
-\begin{align*}
+\[\begin{aligned}
 z&=1\times2+0=2,\\
 h&=\relu(2)=2,\\
 \widehat y&=2\times2+0=4,\\
 L&=\frac12(4-5)^2=\frac12.
-\end{align*}
+\end{aligned}\]
 预测值 $4$ 比真实值 $5$ 小，损失是 $0.5$。但我们还不知道\textbf{究竟该调整哪一个参数}。
 
 \subsection{第二步：从损失倒着求每个参数的梯度}
@@ -39,7 +39,7 @@ L&=\frac12(4-5)^2=\frac12.
 \frac{\partial L}{\partial\widehat y}=\widehat y-y=-1.
 \]
 再沿计算链逐个计算：
-\begin{align*}
+\[\begin{aligned}
 \frac{\partial L}{\partial w_2}
 &=\frac{\partial L}{\partial\widehat y}
   \frac{\partial\widehat y}{\partial w_2}
@@ -53,7 +53,7 @@ L&=\frac12(4-5)^2=\frac12.
 &=(-1)\times2\times1\times2=-4,\\
 \frac{\partial L}{\partial b_1}
 &=(-1)\times2\times1\times1=-2.
-\end{align*}
+\end{aligned}\]
 注意 $\relu'(2)=1$；只有在\textbf{当前激活为正}的情况下，这条 ReLU 路径才传递了非零梯度。
 
 \begin{idea}
@@ -66,20 +66,20 @@ L&=\frac12(4-5)^2=\frac12.
 \subsection{第三步：四个参数一起更新，再做一次预测}
 
 使用学习率 $\eta=0.05$，所有更新都依据同一轮前向传播的旧梯度：
-\begin{align*}
+\[\begin{aligned}
 w_1'&=1-0.05(-4)=1.2,&
 b_1'&=0-0.05(-2)=0.1,\\
 w_2'&=2-0.05(-2)=2.1,&
 b_2'&=0-0.05(-1)=0.05.
-\end{align*}
+\end{aligned}\]
 
 用新参数重新预测：
-\begin{align*}
+\[\begin{aligned}
 z'&=1.2\times2+0.1=2.5,\\
 h'&=\relu(2.5)=2.5,\\
 \widehat y'&=2.1\times2.5+0.05=5.30,\\
 L'&=\frac12(5.30-5)^2=0.045.
-\end{align*}
+\end{aligned}\]
 损失从 $0.5$ 降到 $0.045$，说明\textbf{这一步}更新改善了这个样本的预测。注意它不是保证每一步对所有样本都改进，更不是仅凭一个样本就能证明模型有泛化能力。
 
 \subsection{第四步：从一个数扩展到真正的矩阵网络}
