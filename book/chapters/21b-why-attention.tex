@@ -134,126 +134,61 @@ $W_Q:d_{\rm model}\times d_k$。若改写为列向量，
 位置 3 发出 Query，分别与位置 1、2、3 的 Key 匹配，
 得到三条权重，再从这三个位置的 Value 读取内容。
 
-\subsection{匹配：从 Query 和 Key 算出三个分数}
+\subsection{匹配：沿用 Embedding 表算三个分数}
 
-为什么能比较？因为前面已经学过\textbf{\hyperref[intro:02-dot-product]{点积}}：
-把两个长度相同的向量对应位置相乘，再把结果相加。
-这一步只为学习检索计算，\textbf{单独指定一组二维 Query/Key}，
-没有指定生成它们的投影矩阵。特别是下方
-$\vect k_1=(2,0)^\top$ \textbf{不是}前面“春天”的
-Embedding $(1,0)^\top$：若要从 Embedding 计算 Key，
-必须另外给出同一层共享的 $W_K$，不能直接把两组数当作同一张表。
+“春天、花、开了”的 Embedding 行向量分别是
+$(1,0)$、$(0,1)$、$(1,1)$。
+用“开了”作为 Query，暂设 $W_Q=W_K=I_2$，
+所以 Query 与 Key 直接来自同一张 Embedding 表：
 \[
-\vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
-\vect k_1=\begin{bmatrix}2\\0\end{bmatrix},\quad
-\vect k_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
-\vect k_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\vect q^\top=(1,1),\quad
+K=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
 \]
-第 $i$ 个位置的匹配分数定义为
-$s_i=\vect q^\top\vect k_i$，即 Query 和该 Key 的点积。
-一条条算：
+\begin{example}
 \[
-\begin{aligned}
-s_1&=1\times2+0\times0=\boxed{2},\\
-s_2&=1\times0+0\times1=\boxed{0},\\
-s_3&=1\times1+0\times1=\boxed{1}.
-\end{aligned}
+\underbrace{\vect s^\top}_{1\times3}
+=\underbrace{\vect q^\top}_{1\times2}
+\underbrace{K^\top}_{2\times3}
+=\boxed{(1,1,2)}.
 \]
-于是得到三个分数：
-\[
-\boxed{(s_1,s_2,s_3)=(2,0,1).}
-\]
+三项是分别点积，例如“开了”的 Key 得分为 $1\cdot1+1\cdot1=2$。
+\end{example}
+这里只用\textbf{未缩放点积}演示机制；
+真实 Transformer 还会除以 $\sqrt{d_k}$，
+Softmax 概率会随之改变。
 
-\textbf{请注意：这组分数不是凭空出现的。}
-它们是\textbf{一个 Query 和三条 Key 各做一次点积}算出来的。
-这些向量是人工挑选的，\textbf{不能把“春天”的语义天然等于 $(2,0)$}；
-真实模型通过训练学习如何从 Token 表示生成 Q/K/V。
-
-\subsection{分配：怎样把分数变成读取比例？}
+\subsection{分配：Softmax 产生读取比例}
 \phantomsection\label{concept:softmax}
-
-分数 $2,0,1$ 不能直接当作“读取的百分比”：
-它们的总和不是 $1$，实际分数还可能出现负数。
-我们希望得到三个\textbf{非负、加起来恰好为 $1$}的权重，
-就使用\textbf{Softmax}：
 \[
-a_i=\frac{e^{s_i}}{e^{s_1}+e^{s_2}+e^{s_3}},
-\qquad e\approx2.718.
+a_i=\frac{e^{s_i}}{\sum_{j=1}^3e^{s_j}},
+\qquad
+\vect a^\top=\softmax(1,1,2)
+\approx\boxed{(0.212,0.212,0.576)}.
 \]
-其中 $e$ 是一个数学常数，$e^{s_i}$ 表示指数运算，
-$a_i$ 是\textbf{第 $i$ 个位置的读取比例}。
-代入刚才的三个分数：
+“春天”和“花”的匹配分数相同，得到相同权重；
+“开了”得到较大的权重。
+
+\subsection{读出：按权重组合 Value}
+
+让 $W_V=I_2$，继续使用 Embedding 表的三行：
 \[
-\begin{array}{c|ccc}
-\text{位置}&1&2&3\\\hline
-\text{分数 }s_i&2&0&1\\
-\text{权重 }a_i&0.665&0.090&0.245
-\end{array}
+V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
 \]
-因为舍入，三个小数相加\textbf{约等于} $1$。
-位置 1 的匹配分数最高，所以当前 Query 对位置 1 的
-读取权重最大，但\textbf{其他位置并非完全被舍弃}。
-
-\begin{warningbox}
-Softmax 不是“找到唯一正确答案”，也不会验证文字事实。
-它只是根据给定分数\textbf{分配一组权重}。
-下一章会解释把 Softmax 批量写进矩阵时的形状与缩放规则。
-\end{warningbox}
-
-\subsection{读出：Value 怎么组合成一条新向量？}
-
-现在才能回答 Attention 的输出是什么：
-它并不是“位置 1”，也不是那三个分数，而是一条\textbf{新的信息向量}。
-
-假设每个位置提供的 Value 也是两个数字：
+\begin{example}
 \[
-\vect v_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
-\vect v_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
-\vect v_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\underbrace{\vect y^\top}_{1\times2}
+=\underbrace{\vect a^\top}_{1\times3}\underbrace{V}_{3\times2}
+\approx(0.212,0.212,0.576)V
+=\boxed{(0.788,0.788)}.
 \]
-把权重乘到\textbf{对应的 Value} 上，然后相加：
-\begin{align*}
-\vect y
-&=a_1\vect v_1+a_2\vect v_2+a_3\vect v_3\\
-&\approx0.665\begin{bmatrix}1\\0\end{bmatrix}
-+0.090\begin{bmatrix}0\\1\end{bmatrix}
-+0.245\begin{bmatrix}1\\1\end{bmatrix}\\
-&=\boxed{\begin{bmatrix}0.910\\0.335\end{bmatrix}}.
-\end{align*}
-\textbf{这条二维向量就是本次 Attention 的读取结果。}
-位置 3 可以拿它继续计算下一层，最终用于预测下一个 Token。
-本章仅演示核心读取运算；真实 Transformer 还会处理投影、残差等步骤。
-
-\begin{example}[title={为什么 Key 和 Value 必须区分角色？}]
-保持 $\vect q,\vect k_1,\vect k_2,\vect k_3$ 完全不变，
-\textbf{只}把位置 1 提供的内容改成
-$\vect v'_1=(0,2)^\top$。
-匹配分数依然是 $(2,0,1)$，
-因此 Softmax 权重也\textbf{完全不变}；
-但新的读取结果却变成
-\[
-\vect y'\approx
-0.665\begin{bmatrix}0\\2\end{bmatrix}
-+0.090\begin{bmatrix}0\\1\end{bmatrix}
-+0.245\begin{bmatrix}1\\1\end{bmatrix}
-=\boxed{\begin{bmatrix}0.245\\1.665\end{bmatrix}}.
-\]
-所以\textbf{Key 决定一条内容有多相关，
-Value 决定最终取回什么数字}。
-二者可以来自同一个 Token，但职责不能混淆。
 \end{example}
 
-\begin{example}[title={核对自己是不是理解了 Attention}]
-假设位置 3 的 Query 改变了，三个分数也可能随之变化。
-因此即使候选 Key/Value 没变，\textbf{不同 Query 得到的权重、
-读出的向量也可以不同}。
-
-思考：如果另一组权重是 $(0.1,0.8,0.1)$，
-输出会是什么？根据同样的三个 Value，可以算出
-$0.1\vect v_1+0.8\vect v_2+0.1\vect v_3=(0.2,0.9)^\top$。
-它和刚才的 $(0.910,0.335)^\top$ 不一样：
-\textbf{Query 改变，读取比例和结果就可能改变。}
-\end{example}
+\begin{idea}
+Key 负责匹配，Value 负责提供内容：
+\textbf{只把第一条 Value 改成 $(0,2)$} 时，
+Key 与 Softmax 权重不变，但输出变成 $(0.576,1.212)$。
+因此这两个角色可以分开；这不要求三种投影权重一定不同。
+\end{idea}
 
 \input{figures/attention-three-step-weights}
 

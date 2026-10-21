@@ -1,206 +1,91 @@
-\section{把一次 Attention 写成矩阵：从单次查询到批量计算}
+\section{从单 Query 到批量 Self-Attention}
 \label{intro:11-softmax-memory}
+\phantomsection\label{intro:12-self-attention-matrices}
+\phantomsection\label{concept:self-attention}
 
-上一章已经亲手完成了一次 \conceptlink{attention}{Attention}：
-\textbf{一个 \conceptlink{qkv}{Query}} 与三个 Key 点积，得到 $(2,0,1)$；
-\conceptlink{softmax}{Softmax} 把它们转为 $(0.665,0.090,0.245)$；
-最后按权重读出三个 Value，得到新向量。
-这次\textbf{不发明新的注意力算法}，
-只把刚才做过的计算写得更整齐，
-让计算机能一次处理许多 Token。
+上一章算出了一个“开了” Query 对三条 Key 的分数 $(1,1,2)$，
+对应权重 $(0.212,0.212,0.576)$。
+现在\textbf{不换算法、不换向量约定}，只把同一计算写成矩阵，
+再把多个 Query 放在一起算。
 
-\subsection{第一步：把三次点积排成一次矩阵乘法}
-
-先约定\textbf{单次查询}用列向量表示。
-延续上一章的\textbf{教学用数字}：
+\subsection{单次查询：匹配、归一化、读取}
 \[
-\vect q=\begin{bmatrix}1\\0\end{bmatrix},\quad
-\vect k_1=\begin{bmatrix}2\\0\end{bmatrix},\quad
-\vect k_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
-\vect k_3=\begin{bmatrix}1\\1\end{bmatrix}.
+K=V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},
+\qquad\vect q^\top=(1,1).
 \]
-把三条 Key 一行一行排成矩阵：
+\begin{example}
 \[
-K=\begin{bmatrix}
-2&0\\0&1\\1&1
-\end{bmatrix}.
+\vect q^\top K^\top=(1,1,2),\quad
+\vect a^\top=\softmax(\vect q^\top K^\top)\approx(0.212,0.212,0.576),
+\quad
+\boxed{\vect y^\top=\vect a^\top V=(0.788,0.788).}
 \]
-刚才算过的\textbf{三个点积}现在可以一口气写成
-\[
-\underbrace{K}_{3\times2}
-\underbrace{\vect q}_{2\times1}
-=\underbrace{\begin{bmatrix}2\\0\\1\end{bmatrix}}_{3\times1}.
-\]
+\end{example}
+注意 Key/Value 都是每个位置一行。
+$K^\top$ 只是在\textbf{计算分数时转置 Key 矩阵}，
+不是重新存储一份不同的 Key。
 
-这里 $K$ 每一行是一条 Key；
-矩阵乘法只是在\textbf{对三行分别与 Query 做点积}。
-Softmax 随后得到权重列向量
-\[
-\vect a=\softmax(K\vect q)\approx
-\begin{bmatrix}0.665\\0.090\\0.245\end{bmatrix}.
-\]
-这是上一章算过的同一组比例，而不是新答案。
+\subsection{为什么是 $K^\top$ 而不是 $K$？}
+\label{sec:key-layout-card}
+\input{figures/key-value-layout}
+$K:M\times d_k$，$\vect q^\top:1\times d_k$。
+因此 $\vect q^\top K^\top:1\times M$ 才能相乘；
+权重乘 $V:M\times d_v$ 才有输出 $1\times d_v$。
+列向量写法只是对\textbf{整个等式转置}，不是另一种算法。
 
-\subsection{第二步：把 Value 的加权求和也变成矩阵乘法}
-
-延续上一章的 Value：
-\[
-\vect v_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
-\vect v_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
-\vect v_3=\begin{bmatrix}1\\1\end{bmatrix}.
-\]
-将三条 Value 一行一行排成
-\[
-V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
-\]
-因为权重是\textbf{列}、各 Value 是矩阵的\textbf{行}，
-为了得到输出列向量，需要转置 $V$：
-\begin{align*}
-\underbrace{\vect y}_{2\times1}
-&=\underbrace{V^\top}_{2\times3}
-  \underbrace{\vect a}_{3\times1}\\
-&\approx\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}
-\begin{bmatrix}0.665\\0.090\\0.245\end{bmatrix}
-=\boxed{\begin{bmatrix}0.910\\0.335\end{bmatrix}}.
-\end{align*}
-
-于是\textbf{上一章四个步骤}可以缩写为：
+\subsection{从一个 Query 到整句：Q/K/V 如何生成？}
+主线把 Token 放在输入矩阵 $X:T\times d_{\rm model}$ 的每一行。
+可训练投影：
 \begin{equation}
-\boxed{\vect y=V^\top\softmax(K\vect q).}
-\label{eq:column-attention}
+\boxed{Q=XW_Q,\qquad K=XW_K,\qquad V=XW_V.}
+\label{eq:qkv-from-x}
 \end{equation}
-这句公式的意思依然只是
-\textbf{匹配 Key $\to$ 分配权重 $\to$ 读取 Value}。
-
-\subsection{换成字母之前：每个尺寸为什么是这样？}
-
-现在才换成一般记号：
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\linewidth}{@{}p{18mm}X p{37mm}@{}}
-\toprule
-符号 & 含义 & 本章数字\\
-\midrule
-$M$ & \textbf{可供查询的 Key/Value 位置数} & $M=3$\\
-$d_k$ & 每条 Key 的数字数，也是 Query 的长度 & $d_k=2$\\
-$d_v$ & 每条 Value 的数字数，也是输出的长度 & $d_v=2$\\
-$N$ & 如果一次处理很多 Query，它们的数量 & 如 $N=3$\\
-\bottomrule
-\end{tabularx}
-\end{center}
-其中 $d$ 表示\emph{维度}，
-下标 $k,v$ 分别代表 Key、Value；
-\textbf{$M$ 是位置数，$d_k$、$d_v$ 是每条向量的长度。}
-它们不是同一个概念，$d_k$ 和 $d_v$ 也不必相等。
-
-按照本章行列约定：
 \[
-\underbrace{K}_{M\times d_k}
-\underbrace{\vect q}_{d_k\times1}
-\to
-\underbrace{\vect a}_{M\times1},
-\qquad
-\underbrace{V^\top}_{d_v\times M}
-\underbrace{\vect a}_{M\times1}
-\to
-\underbrace{\vect y}_{d_v\times1}.
+W_Q,W_K:d_{\rm model}\times d_k,\qquad
+W_V:d_{\rm model}\times d_v.
 \]
+例如 $\vect x^\top=(2,3)$，
+$W_Q=\begin{bmatrix}1&1\\0&2\end{bmatrix}$，
+则 $\vect q^\top=\vect x^\top W_Q=(2,8)$。
+如果用列向量写同一映射，必须写
+$\vect q=W_Q^\top\vect x$；不能只转置输入、不转置权重。
 
-\subsection{第三步：为什么教科书又写成 $q^\top K^\top$？}
-
-目前的分数是一\textbf{列}：
-\[
-K\vect q=\begin{bmatrix}2\\0\\1\end{bmatrix}.
-\]
-如果把这列横着摆成一\textbf{行}，数字不变：
-\[
-(K\vect q)^\top=\begin{bmatrix}2&0&1\end{bmatrix}.
-\]
-矩阵转置有一个规则：
-$(AB)^\top=B^\top A^\top$，因此
-\[
-\boxed{(K\vect q)^\top=\vect q^\top K^\top.}
-\]
-Value 输出也一样：
-\[
-(V^\top\vect a)^\top=\vect a^\top V.
-\]
-所以\textbf{同一个单 Query 的输出}，
-从列向量写成行向量就是
-\begin{equation}
-\boxed{\vect y^\top=\softmax(\vect q^\top K^\top)V.}
-\label{eq:single-row-attention}
-\end{equation}
-\textbf{没有换算法，只是方向从竖着排变成横着排。}
-不确定时可以返回\hyperref[sec:layout-matrix-card]{矩阵乘法章的双色转置图卡}。
-
-\subsection{第四步：很多 Query 为什么可以放在一起算？}
-
-一句话有多个 Token，通常每个 Token 都需要一次查询。
-如果有 $N$ 个 Query，就把每条 Query 当成一行，
-一起放入矩阵 $Q$：
-\[
-Q=
-\begin{bmatrix}
-\vect q_1^\top\\
-\vdots\\
-\vect q_N^\top
-\end{bmatrix}\in\R^{N\times d_k}.
-\]
-这样一次计算就给每条 Query 产生 $M$ 个匹配分数：
+若一次有 $N$ 个 Query 和 $M$ 个 Key，
+$Q:N\times d_k$、$K:M\times d_k$、
+$V:M\times d_v$；Self-Attention 中 $N=M=T$。
+第 $i$ 行 Query 与每条 Key 依次匹配，
+一次矩阵乘法即可完成全部 Query 的匹配：
 \[
 \underbrace{Q}_{N\times d_k}
 \underbrace{K^\top}_{d_k\times M}
 =\underbrace{S}_{N\times M}.
 \]
-接着\textbf{对 $S$ 的每一行分别做 Softmax}，
-每行都是当前 Query 在 $M$ 个 Key 上分配的权重。
-最后与 $V$ 相乘：
-\begin{equation}
-\boxed{Y=\softmax(QK^\top)V.}
-\label{eq:multi-query-attention}
-\end{equation}
-输出形状为
-\[
-\underbrace{\softmax(S)}_{N\times M}
-\underbrace{V}_{M\times d_v}
-=\underbrace{Y}_{N\times d_v}.
-\]
-这意味着\textbf{有 $N$ 个 Query，就能得到 $N$ 行输出}，
-每行对应一次读取结果。
 
-\subsection{标准 Transformer 为什么还要除以 $\sqrt{d_k}$？}
-
-真实 Transformer 通常会在 Softmax 前对点积分数缩放，
-得到著名的\textbf{缩放点积注意力}：
+\subsection{缩放点积 Attention 的通用式}
 \begin{equation}
-\boxed{\operatorname{Attention}(Q,K,V)=
-\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.}
+\boxed{\operatorname{Attention}(Q,K,V)
+=\underbrace{\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)}_{A:N\times M}
+\underbrace{V}_{M\times d_v}.}
 \label{eq:attention-transformer}
 \end{equation}
+\phantomsection\label{eq:multi-query-attention}
+Softmax \textbf{对每个 Query 的一行单独归一化}，输出 $N\times d_v$。
+除以 $\sqrt{d_k}$ 用于控制高维点积分数的典型量级；
+之前的三位置数值\textbf{未缩放}，不能在这里直接沿用旧概率。
 
-$\sqrt{d_k}$ 是 Key 维度的平方根。
-这里的\textbf{缩放是一个额外设计选择}：
-当 Query/Key 的分量有适当统计假设时，
-点积的典型幅度会随维度增大，
-除以 $\sqrt{d_k}$ 有助于控制 Softmax 输入尺度。
-\textbf{它不是矩阵转置必然推导出来的。}
-所以前面的三位置数字例子没有做这一步，
-\textbf{缩放后的权重数值也不应和原例直接当作相同}。
+\begin{example}
+若权重为 $(0.75,0.25)$、两条 Value 是 $(2,0)$、$(0,4)$，
+则读取结果为
+$(0.75,0.25)\begin{bmatrix}2&0\\0&4\end{bmatrix}=(1.5,1)$。
+\end{example}
 
-\begin{warningbox}
-\textbf{一次只改变一个概念：}
-$K\vect q\leftrightarrow\vect q^\top K^\top$ 是\textbf{转置}；
-从一个 Query 到 $Q$ 是\textbf{批量化}；
-除以 $\sqrt{d_k}$ 是\textbf{缩放}。
-真实 Self-Attention 还要学习产生 Q/K/V 的投影参数，
-并在语言预测中加入因果掩码——这些留给接下来的两章。
-\end{warningbox}
+\subsection{为什么 FFN 不等于 Attention？}
+$XW$ 对每个 Token 行做固定特征组合，
+$\sigma(XW_1)W_2$ 对每个 Token 行再施加非线性；
+$AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
+语言预测还必须借助因果掩码阻止读取未来 Token。
 
 \begin{conclusion}
-这一章没有增加第四种角色，也没有改变 Attention 的定义。
-我们只把\textbf{一个位置的“点积 $\to$ Softmax $\to$ 加权读取”}
-用矩阵一次算完，再扩展为多个位置。
-\textbf{下一章解释：Q、K、V 这些向量由当前 Token 怎样计算出来。}
+现在你能从单次 Query 的点积与加权求和，直接写出
+$QK^\top\to\softmax\to AV$，并核对 $N,M,d_k,d_v$ 的形状。
 \end{conclusion}

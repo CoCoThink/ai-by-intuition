@@ -1,43 +1,29 @@
 \begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,
-  boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=2.5mm,
-  fonttitle=\sffamily\bfseries,coltitle=ink,
-  title={图解：从三个点积分数，到读取三个 Value}]
+boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=3mm,
+title={三条 Key 的匹配分数与读取权重}]
 \small
-\noindent 本次查询是 $q=(1,0)^\top$；
-下图严格使用本章手算的\textbf{未缩放点积分数}
-$(2,0,1)$。权重条越长，表示该位置的 Value 贡献比例越高。
+Query 为 $(1,1)$；Key 与 Value 来自同一张 Embedding 表。
 \begin{center}
 \begin{tikzpicture}[x=1cm,y=.9cm,>=Latex]
-\node[font=\sffamily\bfseries\scriptsize,anchor=west] at (0,.4) {位置};
-\node[font=\sffamily\bfseries\scriptsize,anchor=west] at (2.9,.4) {点积分数};
-\node[font=\sffamily\bfseries\scriptsize,anchor=west] at (5.3,.4) {Softmax 读取权重};
-\node[font=\sffamily\bfseries\scriptsize,anchor=west] at (11.1,.4) {Value};
-\draw[linegray] (0,.08)--(13.7,.08);
-\foreach \yy/\word/\s/\weight/\n/\vv/\shade in {
- -0.65/春天/2/0.665/1.995/{(1,0)}/blueback,
- -1.75/花/0/0.090/.270/{(0,1)}/greenback,
- -2.85/开了/1/0.245/.735/{(1,1)}/orangeback%
+\node[anchor=west,font=\small\bfseries] at (0,.5) {Token};
+\node[anchor=west,font=\small\bfseries] at (2.6,.5) {点积分数};
+\node[anchor=west,font=\small\bfseries] at (5.1,.5) {Softmax 权重};
+\node[anchor=west,font=\small\bfseries] at (10.5,.5) {Value};
+\foreach \yy/\word/\s/\weight/\len/\vv in {
+ 0/春天/1/0.212/1.06/{(1,0)},
+ -1.0/花/1/0.212/1.06/{(0,1)},
+ -2.0/开了/2/0.576/2.88/{(1,1)}
 }{
- \filldraw[draw=linegray,fill=\shade,rounded corners=2pt]
-   (.02,\yy-.30) rectangle (2.12,\yy+.27);
- \node[font=\small] at (1.07,\yy) {\word};
- \node[font=\small] at (3.75,\yy) {$\s$};
- \fill[blue!7] (5.3,\yy-.17) rectangle (8.3,\yy+.17);
- \fill[teal] (5.3,\yy-.17) rectangle ({5.3+\n},\yy+.17);
- \draw[linegray] (5.3,\yy-.17) rectangle (8.3,\yy+.17);
- \node[font=\footnotesize,anchor=west] at (8.48,\yy) {$\weight$};
- \node[font=\small,anchor=west] at (11.3,\yy) {$\vv$};
+ \node[anchor=west,font=\small] at (.1,\yy) {\word};
+ \node[font=\small] at (3.5,\yy) {$\s$};
+ \fill[blueback] (5.1,\yy-.18) rectangle (8.1,\yy+.18);
+ \fill[teal] (5.1,\yy-.18) rectangle ({5.1+\len},\yy+.18);
+ \draw[linegray] (5.1,\yy-.18) rectangle (8.1,\yy+.18);
+ \node[anchor=west,font=\small] at (8.25,\yy) {$\weight$};
+ \node[anchor=west,font=\small] at (10.65,\yy) {$\vv$};
 }
-\draw[linegray] (0,-3.45)--(13.7,-3.45);
-\node[font=\footnotesize,anchor=west] at (.1,-4.02)
- {$\displaystyle \sum_{i=1}^{3}a_i\vect v_i
- \approx 0.665(1,0)+0.090(0,1)+0.245(1,1)
- =(0.910,\,0.335)$};
+\node[anchor=west,font=\small] at (.1,-2.9)
+ {$0.212(1,0)+0.212(0,1)+0.576(1,1)=(0.788,0.788)$};
 \end{tikzpicture}
 \end{center}
-\small\noindent
-\textbf{三个步骤：}点积算\textbf{分数} $\to$
-Softmax 得到\textbf{读取比例} $\to$
-按比例汇总 Value，得到\textbf{新的二维向量}。
-三组数只为教学构造，不代表模型天然知道这些词的语义。
 \end{tcolorbox}

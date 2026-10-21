@@ -7,7 +7,7 @@
 
 ### I · 把文字变成可计算的数字
 - [阅读指南](chapters/00-guide.tex)：先明确要解决什么问题
-- [数学速查](chapters/00b-math-tools.tex)：高中三角函数、导数、指数对数与矩阵
+- [数学速查](chapters/00b-math-tools.tex)和[全书符号表](chapters/00c-symbols.tex)：高中三角函数、导数、指数对数与矩阵
 - [函数](chapters/00-functions.tex)、[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)
 - [Token、One-hot 与 Embedding](chapters/20-embeddings.tex)
 - [输入、目标与形状契约](chapters/20b-task-contract.tex)
@@ -22,8 +22,7 @@
 
 ### III · 让词与词交换信息
 - [RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)
-- [单查询到批量矩阵](chapters/11-softmax-memory.tex)
-- [Self-Attention](chapters/12-self-attention-matrices.tex)，并比较 Linear / MLP / Attention
+- [从单 Query 到批量 Self-Attention](chapters/11-softmax-memory.tex)，并比较 Linear / MLP / Attention
 
 ### IV · 组装、训练并使用 Transformer
 - [位置、缩放与双头注意力的数字例子](chapters/22a-position-multihead.tex)
