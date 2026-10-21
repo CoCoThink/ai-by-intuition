@@ -18,7 +18,7 @@
 - [损失与梯度下降](chapters/16-loss-gradient.tex)
 - [反向传播](chapters/17-backpropagation.tex)
 - [完整的两层学习例子](chapters/18b-end-to-end-learning.tex)
-- [泛化与训练技巧](chapters/18-generalization.tex)
+- [泛化、过拟合与正则化](chapters/18-generalization.tex)、[小批次与训练工程](chapters/18c-training-engineering.tex)
 
 ### III · 让词与词交换信息
 - [RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)
@@ -38,7 +38,7 @@
 - [Agent 系统设计](chapters/23d-agent-systems.tex)
 - [量化、蒸馏、LoRA 与部署](chapters/23b-deployment-and-ecosystem.tex)
 
-## 第六部分：选读专题（不影响必读主线）
+## 第六、七部分：独立选读专题（不影响必读主线）
 
 - [CNN](chapters/19-cnn.tex)
 - [联想记忆与外积](chapters/04-key-value-outer-product.tex)、[记忆干扰](chapters/05-memory-interference.tex)、[改善](chapters/06-better-linear-memory.tex)

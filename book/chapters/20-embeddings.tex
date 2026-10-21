@@ -93,13 +93,13 @@ E=
 
 \subsection{为什么查 Embedding 与矩阵乘法是同一回事？}
 
-用 ID 3（“花”）的 One-hot 向量 $\vect u_3$；按行排列时计算 $\vect u_3^\top E$，如为了手算暂时竖写，它的转置形式才是 $E^\top\vect u_3$：
+用 ID 3（“花”）的 One-hot \emph{行向量}，直接选取 Embedding 表中的一行：
 \[
-\underbrace{E^\top}_{2\times5}
-\underbrace{\vect u_3}_{5\times1}
-=
-\underbrace{\begin{bmatrix}0\\1\end{bmatrix}}_{2\times1}.
+\underbrace{\begin{bmatrix}0&0&0&1&0\end{bmatrix}}_{1\times5}
+\underbrace{E}_{5\times2}
+=\underbrace{\begin{bmatrix}0&1\end{bmatrix}}_{1\times2}.
 \]
+这与主线中 $X: T\times d$、每个 Token 占一行的约定一致。若改用列向量，才需要同时转置两个因子，写成 $E^\top\vect u_3=(0,1)^\top$。
 所以“按 ID 查一行”和“用 One-hot 选出一行”在数学上等价。
 实际程序通常直接查表，不必先造出一个长 One-hot 向量。
 
