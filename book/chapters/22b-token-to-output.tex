@@ -114,41 +114,32 @@ X_{\rm block}=X_{\rm att}+\operatorname{FFN}(X_{\rm att})
 \end{bmatrix}.
 \]
 这样最后位置的输出行向量就是
-$\vect r_2=(0.495,2.505)^\top$。
+$\vect h_{\rm last}^\top=(0.495,2.505)$。
 
-\subsection{第五步：把隐藏向量转换成词表分数}
+\subsection{第五步：让输出头先犯错，训练才有意义}
 
-\textbf{现在才真正回答“下一 Token 是什么”。}
-设词表有 $5$ 个候选，输出头需要把二维特征转换成五个分数。
-为了让“开了”的得分最高，我们\textbf{有意选择}了下面一组容易复算的输出权重；这不是模型已经训练得出的词语规律：
+最后位置的隐藏行向量是 $\vect h_{\rm last}^\top=(0.495,2.505)$。
+取一个\textbf{尚未训练好的输出头}，故意让“花”（ID 3）得分最高：
 \[
 W_{\rm vocab}=
 \begin{bmatrix}
 0&1&0&0&0\\
-0&0&0&0&1
-\end{bmatrix}
-\in\R^{2\times5}.
+0&0&0&1&0
+\end{bmatrix}\in\R^{2\times5}.
 \]
-由于这里的隐藏状态是\textbf{行向量}，
-做 $\vect h_{\rm last}^\top W_{\rm vocab}$，
-得到五个还没归一化的 \conceptlink{logits}{logits}：
+得到五个 logits（尚非概率）：
 \[
-\vect z^\top\approx
-(0,\ 0.495,\ 0,\ 0,\ 2.505).
+\underbrace{\vect z^\top}_{1\times5}
+=\vect h_{\rm last}^\top W_{\rm vocab}
+=(0,0.495,0,2.505,0).
 \]
-注意这\textbf{不是概率}。对五个分数再做 Softmax：
+Softmax 后，从 ID 0 到 4 的概率为
 \[
-p_i=\frac{e^{z_i}}{\sum_{j=0}^{4}e^{z_j}}.
+\boxed{\vect p^\top\approx(0.059,0.097,0.059,0.725,0.059).}
 \]
-结果大约为
-\[
-\underbrace{(0.059,\ 0.097,\ 0.059,\ 0.059,\ 0.725)}_{\text{ID }0,1,2,3,4}.
-\]
-因为第 $4$ 个 ID（从 $0$ 开始计数）的概率约为 $0.725$，
-是所有候选里最高的，
-\textbf{贪心解码会选 ID 4：教学词表中的“开了”。}
-这是事先选定参数得到的\textbf{示范结果}，
-不是模型自动学会中文的实验。
+贪心预测是 ID 3“花”，而真实下一 Token 是 ID 4“开了”。
+\textbf{模型此刻确实预测错了。}
+下一章从这组参数出发，观察训练能否把正确 Token 的概率升到第一名。
 
 \begin{example}[title={换一组 Value 会怎样？}]
 保持 $Q,K$ 不变，最后位置的注意力权重仍为 $(0.330,0.670)$。
@@ -171,7 +162,7 @@ $\begin{bmatrix}2&0\\0&1\end{bmatrix}$，
 $\to$ 因果 Attention $AV:2\times2$
 $\to$ FFN $X_{\rm block}:2\times2$
 $\to$ 词表 logits $1\times5$
-$\to$ 预测 ID 4。
+$\to$ 初始预测 ID 3（错误，下一章纠正）。
 \end{tcolorbox}
 \end{center}
 
@@ -183,11 +174,6 @@ $\to$ 预测 ID 4。
 \end{warningbox}
 
 \begin{conclusion}
-从文字到下一 Token 的概率，我们已经真正算通：
-\textbf{查 Embedding $\to$ 因果 Attention 读取上下文
-$\to$ FFN 改变特征 $\to$ 输出头得到 logits
-$\to$ Softmax 产生预测概率}。
-但这些权重仍是人为指定的：
-\textbf{真实训练中，它们怎样利用文本本身的答案进行更新？}
-下一章用同一组 Token 完成训练目标与损失的推导。
+你已经沿 Embedding、因果 Attention、FFN 算到了词表概率。
+当前最高概率是错误的“花”，下章将用正确标签推动预测翻转。
 \end{conclusion}
