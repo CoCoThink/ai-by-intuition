@@ -43,6 +43,19 @@ jobs:
             latexmk -lualatex -interaction=nonstopmode -halt-on-error \
               -file-line-error -outdir=build main.tex
             cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
+            echo '=== Smoke tagged state ==='
+            pdfinfo build/smoke/smoke-tagging.pdf | grep -E '^(Tagged|PDF version|Pages):'
+            echo '=== Book tagged state in TeX Live 2026 container ==='
+            pdfinfo build/AI-by-Intuition-Volume-01.pdf | grep -E '^(Tagged|PDF version|Pages):'
+            echo '=== Book structure tree first lines ==='
+            pdfinfo -struct build/AI-by-Intuition-Volume-01.pdf | head -n 12 || true
+      - name: Upload PDF for tagging diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tagged-pdf-diagnostics
+          path: book/build/AI-by-Intuition-Volume-01.pdf
+          if-no-files-found: warn
       - name: Verify rendered PDF tags, structure and layout
         run: |
           sudo apt-get update -qq
