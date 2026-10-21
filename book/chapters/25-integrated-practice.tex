@@ -8,7 +8,7 @@
 \item 直线模型 $\widehat y=wx+b$，取 $w=2,b=1$。当 $x=-1,0,2$ 时，预测分别是多少？
 \item 对两个样本 $(1,1)$ 与 $(2,2)$，设 $\widehat y=wx$、$w=0.5$。求均方误差。
 \item 给定 $L(w)=\tfrac52(w-1)^2$、$w=0$、学习率 $\eta=0.1$。求导数与更新后的 $w$。
-\item 前向计算 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。若 $x=2,y=5,w_1=1,w_2=2$，求 $h,\widehat y,L$ 以及 $\partial L/\partial w_2$。
+\item 前向计算 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。若 $x=3,y=8,w_1=2,w_2=1$，求 $h,\widehat y,L$ 以及 $\partial L/\partial w_2$。
 \item 训练误差几乎为零，但验证误差持续变大，说明可能出现什么？至少说出两个改善办法。
 \item $4\times4$ 图片上使用 $2\times2$ 卷积核，stride 为 1、padding 为 0，输出图像宽高是多少？如果卷积核只有一个输入通道和一个输出通道，权重有几个？
 \item 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
@@ -19,24 +19,7 @@
 \item 给模型加一个私有知识库后，是否能保证它永远不会生成错误事实？解释检索与生成分别可能出什么问题。
 \end{enumerate}
 
-\subsection{答案与检验}
-
-\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
-\begin{enumerate}[leftmargin=2.5em,itemsep=5pt]
-\item $(-1,1,5)$。
-\item 预测为 $(0.5,1)$，误差为 $(-0.5,-1)$，故 $\mathrm{MSE}=(0.25+1)/2=0.625$。
-\item $\mathrm dL/\mathrm dw=5(w-1)=-5$；更新为 $w'=0-0.1(-5)=0.5$。
-\item $h=2$，$\widehat y=4$，$L=0.5$；$\partial L/\partial w_2=(\widehat y-y)h=(-1)\times2=-2$。
-\item 可能过拟合；可考虑更多合适数据、数据增强、L2 惩罚、Dropout、提前停止等，需用独立验证数据评估。
-\item 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。
-\item $E:4\times3$；每个 Token 嵌入为 3 维。
-\item $h_1=2$，$h_2=1$，$h_3=1.5$。
-\item $QK^\top:3\times5$；权重仍为 $3\times5$；最终输出 $3\times6$。
-\item 拼接后 $3\times4$；若按行向量约定，$W_O:4\times4$。
-\item $-\log(0.25)=\log4\approx1.386$。
-\item 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。
-\end{enumerate}
-\end{tcolorbox}
+\noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}，不要先翻答案。}
 
 \subsection*{给自己画一条完整的路线}
 如果你能自己解释下列链条，就掌握了贯穿全书的核心：
