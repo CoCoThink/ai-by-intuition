@@ -9,7 +9,7 @@
 模型 & 读出规则 & 直观意义 \\
 \midrule
 Linear & $\sum_i \vect{v}_i (\vect{k}_i^\top\vect{x})$ & 任何非零相似度都参与输出 \\
-MLP & $\sum_i \vect{v}_i\sigma(\vect{k}_i^\top\vect{x})$ & 非线性抑制弱匹配 \\
+MLP & $\sum_i \vect{v}_i\sigma(\vect{k}_i^\top\vect{x})$ & 非线性改变各匹配分数的响应 \\
 Attention & $\sum_i \vect{v}_i\softmax(\beta K\vect{x})_i$ & 用归一化指数权重聚焦匹配项 \\
 \bottomrule
 \end{tabularx}
@@ -19,6 +19,10 @@ Attention & $\sum_i \vect{v}_i\softmax(\beta K\vect{x})_i$ & 用归一化指数�
 \begin{equation}
 \boxed{\text{输出}=\sum_i\text{记忆内容}_i\times\text{匹配权重}_i.}
 \end{equation}
+\textbf{这张表提供的是一种数学重写视角，并非三种网络实际实现的全部定义。}
+特别是 ReLU 在正分数区间不会自动把弱匹配变得更弱；
+只有针对给定输入范围和激活函数，才能谈抑制或放大哪些响应。
+
 差别在于\textbf{权重怎么计算}、\textbf{Key/Value 存在哪里}，以及\textbf{怎样更新记忆}。
 
 \subsection{MLP 和记忆型 Attention 不是同一个东西}

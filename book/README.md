@@ -11,7 +11,7 @@
 - [为什么一个对象需要一列数字](chapters/01-vectors.tex)
 - [点积怎样表示方向与匹配](chapters/02-dot-product.tex)
 - [矩阵与行列转置图卡](chapters/03-matrix-multiplication.tex)
-- [Token ID 怎样查成向量](chapters/20-embeddings.tex)
+- [Token → ID → One-hot → Embedding：把文字变成向量](chapters/20-embeddings.tex)
 - [用“春天 / 花 / 开了 / 。”固定下一 Token 预测任务](chapters/20b-task-contract.tex)
 
 ## Ⅱ · 让神经网络学会预测
@@ -34,7 +34,7 @@
 
 - [位置、多头、残差、归一化与 Mask](chapters/22-transformer-architecture.tex)
 - [FFN 与词表输出头不是同一层](chapters/10b-ffn-output-head.tex)
-- [从两个 Token 到上下文化向量的手算](chapters/22b-token-to-output.tex)
+- [从“春天、花”完整算到下一 Token 的概率](chapters/22b-token-to-output.tex)
 - [错位标签、因果掩码和交叉熵](chapters/22c-language-training.tex)
 - [从候选概率到自回归生成与 KV Cache](chapters/23-llm-systems.tex)
 
