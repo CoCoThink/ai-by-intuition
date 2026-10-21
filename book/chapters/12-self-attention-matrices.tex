@@ -2,9 +2,9 @@
 \phantomsection\label{concept:self-attention}
 \label{intro:12-self-attention-matrices}
 
-前面先用一个 Query 完成了“匹配、分配、读取”，
-再把多个 Query 的计算压成矩阵公式 $\softmax(QK^\top)V$。
-但那时 Query、Key、Value 都是\textbf{提前给定的数字}。
+前面先手算一次 Query 的匹配与读取，
+再用 $\softmax(QK^\top)V$ 一次处理多个 Query。
+那时的 Q、K、V 都是\textbf{提前给定的数字}。
 现在要回答新问题：真正处理一句话时，
 \textbf{怎样从每个 Token 的隐藏表示中计算这些向量？}
 
