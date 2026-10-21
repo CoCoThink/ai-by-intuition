@@ -221,6 +221,8 @@ Key 与 Softmax 权重不变，但输出变成 $(0.576,1.212)$。
 因此需要把重复运算写成矩阵形式。
 \end{enumerate}
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:21b-why-attention}两条 Value 为 $(1,0)$、$(0,1)$，Attention 权重 $(0.2,0.8)$，输出是什么？\quad{\footnotesize\hyperref[answer:21b-why-attention]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 先记住\textbf{为什么}：
 \textbf{要按当前需要读取前文，就得决定“读谁多少”和“取出什么”。}

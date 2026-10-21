@@ -71,6 +71,8 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 
 注意：Dropout 在通常意义上不是永久删掉训练参数；它主要随机屏蔽激活或连接对本次前向传播的贡献。
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18-generalization}训练损失继续下降，但验证损失开始上升，首先应怀疑什么？\quad{\footnotesize\hyperref[answer:18-generalization]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 训练误差与验证误差回答不同问题。独立测试集、正则化和提前停止帮助我们判断学到的模式能否迁移到新数据。
 \end{conclusion}

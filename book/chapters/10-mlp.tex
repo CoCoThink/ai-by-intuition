@@ -42,6 +42,8 @@ Transformer 的 FFN 也是逐 Token 使用相同两层计算的网络；
 它本身不会跨 Token 读取信息。第六部分才会将权重矩阵
 重新解释成关联记忆，这只是有条件成立的数学视角。
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:10-mlp}为什么两层纯线性映射间没有激活函数时，仍等价于一个线性映射？\quad{\footnotesize\hyperref[answer:10-mlp]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 你现在可以用行向量手算两层 MLP，并核对每一步的形状。
 接下来研究如何根据预测误差调整可学习权重。

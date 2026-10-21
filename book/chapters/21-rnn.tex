@@ -157,6 +157,8 @@ RNN 不等于“记忆能力很差的网络”。它是一类\textbf{依次更�
 不能用来断定真实 RNN 总会按 $0.5^n$ 遗忘。
 \end{warningbox}
 
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:21-rnn}$h_t=x_t+0.5h_{t-1}$、$h_0=0$，输入 $x_1=2,x_2=0$ 时 $h_2$ 是多少？\quad{\footnotesize\hyperref[answer:21-rnn]{核对解答。}}\par\medskip
+
 \begin{conclusion}
 \textbf{RNN = 当前输入 + 上一步状态 $\to$ 同一个更新函数 $\to$ 下一步状态。}
 它解决“词与词如何沿顺序传递信息”，但每次必须经过中间状态。
