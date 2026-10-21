@@ -172,6 +172,31 @@ def validate_source() -> None:
         fail("Vector diagram arrow coordinates do not match its stated unit vectors")
     if "图解：同一批向量" not in (ROOT / "book/figures/row-column-intuition.tex").read_text(encoding="utf-8"):
         fail("Original row/column intuition graphic is missing")
+    # A curriculum is only coherent if the same toy data survives the explanation chain.
+    embedding = (ROOT / "book/chapters/20-embeddings.tex").read_text(encoding="utf-8")
+    forward = (ROOT / "book/chapters/22b-token-to-output.tex").read_text(encoding="utf-8")
+    modern = (ROOT / "book/chapters/22d-modern-transformers.tex").read_text(encoding="utf-8")
+    if not (embedding.index("Token 与 Tokenizer 是什么") <
+            embedding.index("One-hot 怎样表示") <
+            embedding.index("Embedding 表让每个 Token")):
+        fail("Embedding chapter must define Token and IDs before one-hot and lookup")
+    if not (r"\label{concept:token}" in embedding and
+            r"\label{concept:embedding}" in embedding and
+            "[1,3,4,2]" in embedding and
+            "3\\times2" in embedding):
+        fail("Embedding walkthrough no longer matches the book-wide teaching vocabulary")
+    for required in ("[1,3]", "0.330", "0.670", "0.495", "2.505",
+                     "0.725", r"\conceptlink{logits}{logits}"):
+        if required not in forward:
+            fail("Two-token end-to-end prediction is incomplete: " + required)
+    if forward.find("因果掩码") > forward.find("0.725"):
+        fail("Causal visibility must be explained before the toy forward pass")
+    if "有的变化让模型利用位置信息更灵活，有的为了让深层网络更容易训练，有的变化" in modern:
+        fail("Repeated editorial sentence leaked into the architecture chapter")
+    if source.count(r"\learningbridge{") != 6:
+        fail("Six parts must each explain why the next learning stage is necessary")
+    print("Narrative QA passed: consistent toy vocabulary, five-stage forward pass and six transitions")
+
     print("Pedagogy QA passed: reader motivation, next-token rationale and correct vector illustration")
 
     print("Learning-path QA passed: five linear learning parts, optional extensions last")
@@ -277,6 +302,11 @@ def validate_pdf(pdf_path: Path) -> None:
         if len(hanzi) < 22:
             fail(f"Nearly blank body page (possible orphan): {page_no}, {len(hanzi)} Chinese characters")
     print("Page-density QA passed: no nearly blank body pages")
+
+    for proof in ("Tokenizer", "春天", "开了", "0.725", "FFN", "logits"):
+        if proof not in book_text:
+            fail("Rendered PDF missing the end-to-end running example: " + proof)
+    print("Running-example PDF QA passed: tokenization through predicted probability")
 
     print("Advanced curriculum PDF QA passed: new topics are present")
 
