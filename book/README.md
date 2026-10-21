@@ -70,3 +70,7 @@ latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 ## 无障碍与视觉验收
 
 正式构建已转为 LuaLaTeX 并启用 `DocumentMetadata` 的结构标签试验模式。CI 严格要求 `pdfinfo` 显示 `Tagged: yes`，并检查页面文字边界；TikZ 图有中文替代描述。**Tagged: yes 不等于通过 PDF/UA 验证**，数学公式的语义朗读、嵌套表格和读屏顺序仍需专项审核。
+
+### Tagged PDF 最小回归测试
+
+`book/smoke-tagging.tex` 独立检验 LuaLaTeX 在当前 CI 环境下对中文、公式、`tabularx` 与带替代文本的 TikZ 图的支持。CI 首先构建这个小文件，确认 `pdfinfo` 的 `Tagged: yes`，然后才构建全书；全书另做独立验收。

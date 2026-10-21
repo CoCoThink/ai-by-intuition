@@ -1,0 +1,35 @@
+% !TeX program = lualatex
+% Minimal reusable regression for tagged-PDF on the CI TeX installation.
+\DocumentMetadata{testphase={phase-III},lang=zh-CN}
+\documentclass[11pt,a4paper,UTF8]{ctexart}
+\usepackage{fontspec}
+\setCJKmainfont{Noto Serif CJK SC}
+\usepackage{amsmath}
+\usepackage{booktabs,tabularx}
+\usepackage{tikz}
+\usepackage{caption}
+\begin{document}
+\section{标签支持自测}
+本页用于验证中文、公式、表格与图像替代文本：$L=-\log p$。
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}p{25mm}X@{}}
+\toprule
+术语 & 意义\\\midrule
+Token & 最小输入单位\\
+Embedding & 可以学习的向量\\\bottomrule
+\end{tabularx}
+\end{center}
+\[
+\frac{\partial L}{\partial w}=2(w-1).
+\]
+\begin{center}
+\tagstructbegin{tag=Figure,alttext={一条由输入指向输出的箭头}}
+\begin{tikzpicture}
+\node[draw] (a) at (0,0) {输入};
+\node[draw] (b) at (3,0) {输出};
+\draw[->] (a)--(b);
+\end{tikzpicture}
+\tagstructend
+\captionof{figure}{两步流程示例}
+\end{center}
+\end{document}

@@ -31,6 +31,13 @@ jobs:
             fonts-noto-cjk fonts-noto-core lmodern poppler-utils
       - name: Check chapter structure before compilation
         run: python3 scripts/validate_book.py
+      - name: Smoke-test tagged PDF support
+        working-directory: book
+        run: |
+          mkdir -p build/smoke
+          latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+            -file-line-error -outdir=build/smoke smoke-tagging.tex
+          pdfinfo build/smoke/smoke-tagging.pdf | grep -Eq '^Tagged:[[:space:]]+yes'
       - name: Build one PDF
         working-directory: book
         run: |
