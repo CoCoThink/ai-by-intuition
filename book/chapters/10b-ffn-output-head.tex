@@ -1,10 +1,12 @@
 \section{前馈网络与输出头：为什么它们都是矩阵，却不能混为一谈？}
 \label{intro:10b-ffn-output-head}
 
-\begin{idea}[title={这一章的核心问题}]
+\begin{idea}
+\noindent\emph{这一章的核心问题}\par
+
 我们刚刚看到完整 Transformer Block 中包含一个 FFN。把早先学过的两层 \conceptlink{mlp}{MLP} 放进整个序列后，输入、输出尺寸怎么选择？
 又为什么模型最后还要再乘一次矩阵才能输出词表概率？
-\textbf{同样是线性层，处在计算链上的位置不同，承担的任务就不同。}
+同样是线性层，处在计算链上的位置不同，承担的任务就不同。
 \end{idea}
 
 \subsection{FFN 是“每个 Token 各做一次”的非线性计算}
@@ -121,8 +123,8 @@ FFN & 每个 Token 的特征 & 非线性变换当前表示\\
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:10b-ffn-output-head}若 $T=4,d_{\rm model}=6,d_{\rm ff}=18$，FFN 上投影和下投影矩阵形状分别是什么？\quad{\footnotesize\hyperref[answer:10b-ffn-output-head]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-\textbf{同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
-词表投影则是把内部表示变成预测任务答案的接口。}
+同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
+词表投影则是把内部表示变成预测任务答案的接口。
 不要因为它们都是矩阵乘法，就把 FFN 和输出头当成同一层。
 下一章选择\textbf{两个很小的 Token 向量}，亲手检查这些模块接起来时的数据流，
 然后才讨论怎样训练完整语言模型。

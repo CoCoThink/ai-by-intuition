@@ -1,9 +1,9 @@
 \section{为什么图片不能只靠大矩阵？从局部特征到 CNN}
 \label{intro:19-cnn}
 
-\textbf{这是选读专题，不是 Transformer 的必备前置知识。}
+这是选读专题，不是 Transformer 的必备前置知识。
 前五部分都在研究文本的上下文；现在换成有宽度和高度的图片，
-看看另一种重要的设计思路：\textbf{利用输入数据原有的空间结构，减少不必要的参数}。
+看看另一种重要的设计思路：利用输入数据原有的空间结构，减少不必要的参数。
 
 \subsection{直接把图片铺成一列，会出现什么问题？}
 
@@ -32,7 +32,7 @@ X=\begin{bmatrix}
 \[
 F=\begin{bmatrix}1&0\\0&-1\end{bmatrix}.
 \]
-把它覆盖在图片左上角的 $2\times2$ 小区域，\textbf{对应元素相乘，再全部相加}：
+把它覆盖在图片左上角的 $2\times2$ 小区域，对应元素相乘，再全部相加：
 \[
 1\times1+1\times0+1\times0+1\times(-1)=0.
 \]
@@ -88,7 +88,7 @@ CNN 偏向局部卷积与权重共享；ViT 通过图像块表示与 Attention
 \text{更多卷积}\ \longrightarrow\
 \text{分类输出}.
 \]
-CNN 的优势不是“把矩阵乘法替换成另一个神秘公式”，而是\textbf{利用了空间数据的局部性与参数共享}。
+CNN 的优势不是“把矩阵乘法替换成另一个神秘公式”，而是利用了空间数据的局部性与参数共享。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:19-cnn}核为 $3\times3$、输入 3 通道、输出 8 通道时，常规卷积权重数是多少（不计偏置）？\quad{\footnotesize\hyperref[answer:19-cnn]{核对解答。}}\par\medskip
 

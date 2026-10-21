@@ -1,10 +1,12 @@
 \section{把 Attention 组装起来：Transformer 不只是一个公式}
 \label{intro:22-transformer-architecture}
 
-\begin{idea}[title={从“所有词都能互相查看”到完整网络}]
+\begin{idea}
+\noindent\emph{从“所有词都能互相查看”到完整网络}\par
+
 上一章已经知道：每个 Token 可以产生自己的 Query、Key、Value，
 并用矩阵一次读取上下文。
-但\textbf{只会 Attention 还不能直接变成一个会生成文字的模型}：
+但只会 Attention 还不能直接变成一个会生成文字的模型：
 我们还需要表示词的位置、处理读取后的特征、稳定地堆叠许多层，
 最后把隐藏向量转成对下一 Token 的预测分数。
 上一章已手算位置编码和双头 Attention；现在专心把这些部件装成一个有清楚数据流的 Block。
@@ -31,7 +33,7 @@ S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 \phantomsection\label{concept:residual}
 
 在这里选择\textbf{Pre-Norm（先归一化）}，每个子层都是
-\textbf{先 Norm、再计算、最后把尚未经过子层的输入加回来}：
+先 Norm、再计算、最后把尚未经过子层的输入加回来：
 \begin{align}
 X_{\rm att}
 &=X+\operatorname{MHA}(\operatorname{Norm}(X)),
@@ -61,7 +63,9 @@ FFN 中间层将记为 $F_{\rm mid}$；
 而不是在模块里偷偷执行“残差”。
 \input{figures/pre-norm-block}
 
-\begin{example}[title={LayerNorm：一个 Token 的两个特征怎么算？}]
+\begin{example}
+\noindent\emph{LayerNorm：一个 Token 的两个特征怎么算？}\par
+
 忽略数值稳定项 $\varepsilon$、可学习缩放和平移。
 输入行向量 $(2,4)$，均值 $\mu=3$，
 总体方差为 $\bigl((2-3)^2+(4-3)^2\bigr)/2=1$，
@@ -93,7 +97,7 @@ FFN 中间层将记为 $F_{\rm mid}$；
 
 \subsection{原始 Transformer 与现代 Decoder-only LLM}
 
-经典 Encoder--Decoder Transformer 包含：编码器自注意力、解码器被掩码的自注意力，以及\textbf{解码器对编码器输出的交叉注意力}。交叉注意力的 Query 来自解码器，Key 和 Value 来自编码器。
+经典 Encoder--Decoder Transformer 包含：编码器自注意力、解码器被掩码的自注意力，以及解码器对编码器输出的交叉注意力。交叉注意力的 Query 来自解码器，Key 和 Value 来自编码器。
 
 很多生成式 LLM 使用\textbf{Decoder-only} 架构：以因果自注意力和 MLP 堆叠为主，逐步预测下一个 Token。不能把所有 Transformer 都说成完全相同的结构。
 
@@ -114,7 +118,7 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22-transformer-architecture}一个 $T\times d$ 的隐藏矩阵加上同形状残差后，输出形状会改变吗？\quad{\footnotesize\hyperref[answer:22-transformer-architecture]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-一个常见的 Transformer Block 由\textbf{注意力、逐 Token 的前馈网络、残差与归一化}构成，
+一个常见的 Transformer Block 由注意力、逐 Token 的前馈网络、残差与归一化构成，
 整个语言模型还需要 Token 表示与输出头。
-现在网络的\textbf{组件清单}已经齐了，下一章先辨清\textbf{Block 内的 FFN 与最终输出头为何不是一回事}。
+现在网络的\textbf{组件清单}已经齐了，下一章先辨清Block 内的 FFN 与最终输出头为何不是一回事。
 \end{conclusion}
