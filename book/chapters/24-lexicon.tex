@@ -1,6 +1,6 @@
 \section{建立自己的 AI 术语地图：100 个基础概念}
 
-这一章是一张\textbf{可以点击回溯的知识地图}。每个术语后面的蓝色“见第×章”都可以直接跳转到相关概念首次得到明确解释的章节；章节号会随全书编排自动更新。
+这一章是一张\textbf{可以点击回溯的知识地图}。遇到陌生概念，可沿“见第×章”回到相关解释、例子和公式。
 
 \begin{idea}[title={用法建议}]
 遇到陌生词时，点击“见第×章”，回到该概念的直觉解释和算例。阅读完后，可使用 PDF 阅读器的“返回上一视图”功能回到术语表。链接指向\textbf{正文中的主要讲解位置}，而不是这个字符串在全文第一次被提及的位置；部分扩展术语仍仅提供概念级解释。
@@ -119,7 +119,7 @@
 \item \textbf{Transformer}：把注意力、逐位置 MLP、残差和归一化等组合的架构。 \termref{intro:22-transformer-architecture}
 \end{enumerate}
 
-\subsection{第九组：训练与生成大模型}
+\subsection{第九组：训练与采样生成}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=81]
 \item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{intro:22-transformer-architecture}
 \item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{intro:22-transformer-architecture}
@@ -131,11 +131,11 @@
 \item \textbf{Logits}：进入 Softmax 前、还没归一化的分数。 \termref{intro:22-transformer-architecture}
 \item \textbf{温度}：通过缩放 logits 控制输出分布尖锐程度的参数。 \termref{intro:23-llm-systems}
 \item \textbf{Top-k}：只在概率最高的若干候选中继续采样。 \termref{intro:23-llm-systems}
+\item \textbf{Top-p}：保留累积概率达到阈值的一组高概率候选。 \termref{intro:23-llm-systems}
 \end{enumerate}
 
 \subsection{第十组：大模型应用与边界}
-\begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=91]
-\item \textbf{Top-p}：保留累积概率达到阈值的一组高概率候选。 \termref{intro:23-llm-systems}
+\begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=92]
 \item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
 \item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23d-agent-systems}
 \item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{intro:23d-agent-systems}
@@ -157,5 +157,5 @@
 \end{itemize}
 
 \begin{warningbox}
-本章对工具、产品和行业做法只给出\textbf{稳定的概念性定义}，没有沿用字幕中带有时效性的市场排名、企业评价或产品预测。工具与开放许可政策会变化，应以各项目的正式文档为准。
+工具与开放许可政策会变化，具体使用和授权应以各项目正式文档为准。这里提供的是概念与数学关系，不是产品排名。
 \end{warningbox}
