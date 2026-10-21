@@ -2,18 +2,11 @@
 \phantomsection\label{concept:self-attention}
 \label{intro:12-self-attention-matrices}
 
-上一章先从“为什么不平均读取所有位置”出发，
-将任务拆成\textbf{按 Query 与 Key 决定读取比例}、
-以及\textbf{把 Value 按比例组合}两部分。
-随后才用一个 Query 手算了三条 Key 的分数，
-并得到 Attention 输出。
-现在仍使用同样的三种角色。
-
-前面先算过\textbf{一个 Query} 对三条 Key 的分数，
-又把同样的规则扩展成多行 Query 的公式 $\softmax(QK^\top)V$。
-但这些 Q/K/V 向量在例子里是\textbf{提前给定的数字}。
-真正处理一句话时，每个 Token 都有自己的隐藏表示：
-\textbf{怎样从这些表示中实际计算出 Query、Key 和 Value？}
+前面先手算一次 Query 的匹配与读取，
+再用 $\softmax(QK^\top)V$ 一次处理多个 Query。
+那时的 Q、K、V 都是\textbf{提前给定的数字}。
+现在要回答新问题：真正处理一句话时，
+\textbf{怎样从每个 Token 的隐藏表示中计算这些向量？}
 
 \subsection{首先回答：$Q$ 就是输入 $x$ 吗？}
 
@@ -49,10 +42,11 @@ $\vect v_i^\top=\vect x_i^\top W_V$。
 
 如果将许多 Token 的输入表示按\textbf{行}排成矩阵 $X$，就得到标准 Transformer 常用的批量写法：
 \begin{equation}
-\boxed{Q=XW_Q,\qquad K=XW_K,\qquad V=XW_V.}
+\boxed{\Qrole=XW_Q,\qquad \Krole=XW_K,\qquad \Vrole=XW_V.}
 \label{eq:qkv-from-x}
 \end{equation}
 这里 $W_Q,W_K,W_V$ 的具体形状由输入维度和投影后的维度决定。
+\begin{center}\QKVlegend\end{center}
 
 \begin{conclusion}
 $\vect x$ 是\textbf{输入表示}；$\vect q$ / $Q$ 是扮演\textbf{查询角色}的向量 / 矩阵。简化推导中可以令 $q=x$，真实 Transformer 通常通过可训练参数投影得到 $Q$。二者角色有关，但不是恒等的概念。

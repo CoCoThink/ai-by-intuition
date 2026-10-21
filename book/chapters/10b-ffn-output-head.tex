@@ -39,7 +39,7 @@ $d_{\rm model}=2$、$d_{\rm ff}=3$：
 X=\begin{bmatrix}1&2\\0&1\end{bmatrix},\quad
 W_{\rm up}=\begin{bmatrix}1&0&1\\0&1&-1\end{bmatrix},
 \quad
-W_{\rm down}=\begin{bmatrix}2&0\\0&1\\1&1\end{bmatrix}.
+W_{\rm down}=\begin{bmatrix}2&0\\1&1\\1&1\end{bmatrix}.
 \]
 先上投影：
 \[
@@ -53,10 +53,11 @@ F_{\rm mid}=\begin{bmatrix}1&2&0\\0&1&0\end{bmatrix}.
 再下投影：
 \begin{equation}
 F_{\rm out}=F_{\rm mid}W_{\rm down}=
-\boxed{\begin{bmatrix}2&2\\0&1\end{bmatrix}}.
+\boxed{\begin{bmatrix}4&2\\1&1\end{bmatrix}}.
 \end{equation}
-这次第一条 Token 从 $(1,2)$ 变成了 $(2,2)$，
-第二条在这组权重下恰好不变。由此可见 FFN 确实进行了变换，
+这次第一条 Token 从 $(1,2)$ 变成 $(4,2)$，
+第二条从 $(0,1)$ 变成 $(1,1)$。两行都发生了变换，
+且它们无需互相读取即可算出。由此可见 FFN 确实进行了变换，
 不是仅把输入原样抄回。
 
 \textbf{观察关键事实：}第一行 FFN 不需要第二行参与就可以计算；

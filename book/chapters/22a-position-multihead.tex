@@ -1,10 +1,11 @@
 \section{位置编码与多头注意力：不用跳过的两次手算}
 \label{intro:22a-position-multihead}
 
-\subsection{如果交换“花”和“开了”，没有位置的 Attention 会怎样？}
+\subsection{如果交换“春天”和“花”，没有位置的 Attention 会怎样？}
 
-设词“花”的向量为 $\vect x_{\text{花}}^\top=(1,0)$，
-“开了”为 $\vect x_{\text{开了}}^\top=(0,1)$。
+沿用前面 Embedding 表的数值：
+“春天”的向量为 $\vect x_{\text{春天}}^\top=(1,0)$，
+“花”的向量为 $\vect x_{\text{花}}^\top=(0,1)$。
 忽略位置，按行堆成 $X=\begin{bmatrix}1&0\\0&1\end{bmatrix}$，
 让 $Q=K=V=X$，两个 Token 可以互相读取：
 \[
@@ -25,13 +26,13 @@ $\operatorname{Attention}(\Pi X)=\Pi\operatorname{Attention}(X)$
 \[
 P=\begin{bmatrix}1&0\\0&1\end{bmatrix},\qquad X_+=X+P.
 \]
-顺序为“花、开了”时，
+顺序为“春天、花”时，
 $X_+=\begin{bmatrix}2&0\\0&2\end{bmatrix}$。
 两个 Token 的自匹配分数为 $4/\sqrt2\approx2.828$，
 交叉匹配是 $0$，第一行权重约 $(0.944,0.056)$，
 所以第一行读取结果约为 $(1.888,0.112)$。
 
-交换成“开了、花”后，保持位置向量\textbf{不随内容交换}：
+交换成“花、春天”后，保持位置向量\textbf{不随内容交换}：
 \[
 X'=\begin{bmatrix}0&1\\1&0\end{bmatrix},\quad
 X'_+=X'+P=\begin{bmatrix}1&1\\1&1\end{bmatrix}.

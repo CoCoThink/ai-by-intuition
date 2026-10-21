@@ -1,0 +1,28 @@
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+ width=118mm,height=65mm,
+ xmin=-.08,xmax=1.57,ymin=-.1,ymax=3.05,
+ axis lines=left,xlabel={$w$},ylabel={$L(w)$},
+ xtick={0,.5,.75,1,1.5},ytick={0,.625,2.5},
+ tick label style={font=\footnotesize},
+ label style={font=\small},
+ clip=false,
+]
+\addplot[blue,very thick,domain=0:1.54,samples=80] {2.5*(x-1)^2};
+\addplot[orange,only marks,mark=*,mark size=2.8pt]
+ coordinates {(0,2.5) (.5,.625) (.75,.15625)};
+\addplot[teal,only marks,mark=*,mark size=2.5pt]
+ coordinates {(1,0)};
+\draw[-{Latex},orange,thick] (axis cs:.1,2.3) -- (axis cs:.43,.82);
+\draw[-{Latex},orange,thick] (axis cs:.53,.61) -- (axis cs:.72,.22);
+\node[anchor=south west,font=\footnotesize] at (axis cs:0,2.5) {$w_0=0$};
+\node[anchor=south west,font=\footnotesize] at (axis cs:.5,.68) {$w_1=0.5$};
+\node[anchor=north west,font=\footnotesize] at (axis cs:.79,.2) {$w_2=0.75$};
+\node[anchor=north west,font=\footnotesize,teal] at (axis cs:1.03,.02) {最小值};
+\end{axis}
+\end{tikzpicture}
+
+{\footnotesize 同一个损失函数 $L(w)=\tfrac52(w-1)^2$：
+橙点依次为 $2.5\to0.625\to0.15625$，绿色点为理论最小值。}
+\end{center}

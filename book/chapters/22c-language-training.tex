@@ -100,13 +100,14 @@ L=-\frac{\log0.5+\log0.25+\log0.5}{3}
 \subsection{手算一轮 Transformer 输出头的梯度更新}
 \label{sec:transformer-gradient-step}
 
-继续使用\hyperref[intro:22b-token-to-output]{两个 Token 的例子}：
-最后位置的行向量是
-$\vect h_{\rm last}^\top=(0.495,2.505)$，
-五个 logits 为 $(0,0.495,0,0,2.505)$，
-正确标签为 ID 4（“开了”）。
-先\textbf{仅训练词表输出头}，冻结 Attention、FFN 和 Embedding，
-这样可以把一次链式法则完整算出来。
+沿用\hyperref[intro:22b-token-to-output]{前一章}的两 Token 算例。
+最后位置的隐藏行向量为
+$\vect h_{\rm last}^\top=(0.495,2.505)$。
+它产生五个 logits：$(0,0.495,0,0,2.505)$，
+而正确标签是 ID 4（“开了”）。
+
+为了看清链式法则，先只更新\textbf{词表输出头}，
+暂时冻结 Attention、FFN 与 Embedding。
 
 原预测分布（四舍五入）为
 \[

@@ -14,8 +14,9 @@
 
 设当前层输入为 $X$，每个 Token 是一行：
 \[
-Q=XW_Q,\qquad K=XW_K,\qquad V=XW_V.
+\Qrole=XW_Q,\qquad \Krole=XW_K,\qquad \Vrole=XW_V.
 \]
+\begin{center}\QKVlegend\end{center}
 例如 $T=3$，每条 Query/Key 为 $2$ 维，Value 为 $4$ 维，那么
 \[
 Q,K:3\times2,\qquad V:3\times4.
@@ -70,14 +71,10 @@ FFN 中间层将记为 $F_{\rm mid}$；
 
 在\textbf{生成下一个 Token} 的解码器里，第 $i$ 个位置不应该偷看第 $i+1$ 个及更后面的目标 Token。因果掩码把这些位置的注意力分数设成非常小的值（实现中常为 $-\infty$），经 Softmax 后权重变成零。
 
-例如 3 个 Token 的可见性：
-\[
-\begin{bmatrix}
-\checkmark&\times&\times\\
-\checkmark&\checkmark&\times\\
-\checkmark&\checkmark&\checkmark
-\end{bmatrix}.
-\]
+例如 3 个 Token 的可见性（行是 Query，列是 Key）：
+
+\input{figures/causal-mask-heatmap}
+
 这能使\textbf{训练时的并行计算}保持“只能利用当前位置之前内容”的条件。
 
 \subsection{原始 Transformer 与现代 Decoder-only LLM}

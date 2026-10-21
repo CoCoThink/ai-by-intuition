@@ -79,6 +79,23 @@ def test_numeric_examples() -> None:
     assert math.isclose(1000 * 8 + 8 * 1000, 16000)
     assert 2 * 120 * 6 * 4 == 5760
     assert 2 * 120 * 2 * 4 == 1920
+    # FFN illustration: both Token rows are transformed.
+    x = [[1, 2], [0, 1]]
+    up = [[1, 0, 1], [0, 1, -1]]
+    down = [[2, 0], [1, 1], [1, 1]]
+    hidden = [[max(0, sum(row[k] * up[k][j] for k in range(2)))
+               for j in range(3)] for row in x]
+    ffn = [[sum(row[k] * down[k][j] for k in range(3))
+            for j in range(2)] for row in hidden]
+    assert ffn == [[4, 2], [1, 1]]
+    # Cross-correlation with a 2x2 kernel on a 4x4 image.
+    image = [[1, 1, 0, 0], [1, 1, 0, 0],
+             [0, 0, 1, 1], [0, 0, 1, 1]]
+    response = [[image[i][j] - image[i + 1][j + 1] for j in range(3)]
+                for i in range(3)]
+    assert response == [[0, 1, 0], [1, 0, -1], [0, -1, 0]]
+    # Answer key exercise: (6,0) · (5,12) = 30, cos = 5/13.
+    assert math.isclose(6 * 13 * (5 / 13), 30)
     print("Numerical QA passed: SGD improves correct probability; LoRA and KV math checked")
 
 
@@ -109,12 +126,34 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], "0.990", "two-head worked example")
     includes(sources["22a-position-multihead"], "0.9997", "scaled-dot-product example")
     includes(sources["22a-position-multihead"], "位置", "positional example")
+    includes(sources["22a-position-multihead"], r"\vect x_{\text{春天}}^\top=(1,0)", "position example uses embedding table")
+    includes(sources["22a-position-multihead"], r"\vect x_{\text{花}}^\top=(0,1)", "position example uses embedding table")
+    includes(sources["21b-why-attention"], "没有指定生成它们的投影矩阵", "independent Q/K example")
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
     includes(sources["22c-language-training"], "0.768", "measured SGD improvement")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
+    includes(sources["27-answer-key"], r"\|\vect a\|=6", "corrected cosine exercise")
+    includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
+    includes(sources["10b-ffn-output-head"], r"\begin{bmatrix}4&2\\1&1\end{bmatrix}", "nonidentity FFN")
+    includes(sources["25b-modern-practice"], "输入行向量 $(2,1)$", "independent FFN exercise")
+    for category in ("title={直觉}", "title={动手算}", "title={易错}", "title={小结}"):
+        includes(main, category, "four consistent note classes")
+    for figure_name, chapter_name in (
+        ("loss-descent", "16-loss-gradient"),
+        ("backprop-computation", "17-backpropagation"),
+        ("generalization-three-fits", "18-generalization"),
+        ("validation-early-stop", "18-generalization"),
+        ("cnn-window", "19-cnn"),
+        ("embedding-lookup", "20-embeddings"),
+        ("causal-mask-heatmap", "22-transformer-architecture"),
+    ):
+        includes(sources[chapter_name], f"\\input{{figures/{figure_name}}}", chapter_name)
+        figure = BOOK / "figures" / f"{figure_name}.tex"
+        if not figure.is_file() or r"\begin{tikzpicture}" not in figure.read_text(encoding="utf-8"):
+            fail(f"Missing instructional figure {figure_name}")
     for video in ("BV1NCgVzoEG9", "BV15z4C6SEHT"):
         includes(sources["26-sources"], video, "source bibliography")
 
@@ -165,7 +204,9 @@ def validate_source() -> None:
         if not file.is_file() or r"\begin{tikzpicture}" not in file.read_text(encoding="utf-8"):
             fail(f"Missing editable figure {figure}")
     for editorial in ("这正是文章把", "这些只是文章讨论", "没有沿用字幕中",
-                      "章节号会随全书编排自动更新"):
+                      "章节号会随全书编排自动更新", "根据初中学过的",
+                      "两单位向量的点积", "是本文为了学习",
+                      "在本卷，输入 Query", "全书用\\textbf{本书}统一指代"):
         for name, body in sources.items():
             if editorial in body:
                 fail(f"Editorial residue {editorial!r} in {name}")

@@ -1,0 +1,24 @@
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=9mm,y=9mm]
+\foreach \rr/\cc/\val in {
+0/0/1,0/1/1,0/2/0,0/3/0,
+1/0/1,1/1/1,1/2/0,1/3/0,
+2/0/0,2/1/0,2/2/1,2/3/1,
+3/0/0,3/1/0,3/2/1,3/3/1}{
+ \filldraw[fill=paper,draw=linegray] (\cc,{3-\rr}) rectangle ++(1,1);
+ \node[font=\small] at ({\cc+.5},{3.5-\rr}) {$\val$};
+}
+\draw[very thick,orange,rounded corners=1pt] (0,2) rectangle (2,4);
+\draw[very thick,teal,dashed,rounded corners=1pt] (1,2) rectangle (3,4);
+\node[font=\footnotesize,anchor=west] at (0,-.52) {橙框：首个窗口；青色虚框：右移一格};
+\draw[->,blue,very thick] (4.25,2.1)--(5.22,2.1);
+\node[align=center,font=\small] at (6.9,2.1)
+ {$F=\begin{bmatrix}1&0\\0&-1\end{bmatrix}$\\逐格乘加};
+\draw[->,blue,very thick] (8.3,2.1)--(9.1,2.1);
+\node[align=center,font=\small] at (11,2.15)
+ {$\begin{bmatrix}0&1&0\\1&0&-1\\0&-1&0\end{bmatrix}$\\$3\times3$ 特征图};
+\end{tikzpicture}
+
+{\footnotesize 首格结果为 $1-1=0$；右移一格后为 $1-0=1$。
+其余位置使用同一 $2\times2$ 核，步幅 1、不补零。}
+\end{center}

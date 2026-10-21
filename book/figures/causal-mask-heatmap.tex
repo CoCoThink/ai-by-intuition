@@ -1,0 +1,26 @@
+\begin{center}
+\begin{tikzpicture}[x=10mm,y=10mm]
+\foreach \rr in {0,1,2}{
+ \foreach \cc in {0,1,2}{
+  \ifnum\cc>\rr
+   \filldraw[fill=orangeback,draw=linegray]
+    (\cc,{2-\rr}) rectangle ++(1,1);
+   \node[orange,font=\large] at ({\cc+.5},{2.5-\rr}) {$\times$};
+  \else
+   \filldraw[fill=greenback,draw=linegray]
+    (\cc,{2-\rr}) rectangle ++(1,1);
+   \node[teal,font=\large] at ({\cc+.5},{2.5-\rr}) {$\checkmark$};
+  \fi
+ }
+ \node[font=\footnotesize,anchor=east] at (-.15,{2.5-\rr}) {Query \number\numexpr\rr+1\relax};
+}
+\foreach \cc in {0,1,2}{
+ \node[font=\footnotesize,anchor=south] at ({\cc+.5},3.08)
+ {Key \number\numexpr\cc+1\relax};
+}
+\node[font=\small,anchor=west] at (3.4,2.2) {绿色：允许读取};
+\node[font=\small,anchor=west] at (3.4,1.35) {橙色：未来位置被遮蔽};
+\node[font=\small,anchor=west,align=left] at (3.4,.45)
+ {行是当前位置的 Query；\\列是候选位置的 Key。};
+\end{tikzpicture}
+\end{center}
