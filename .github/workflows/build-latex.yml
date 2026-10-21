@@ -152,6 +152,29 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
           python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Volume-01.pdf
+      # veraPDF checks the machine-verifiable PDF/UA-2 rules. This is an
+      # independent advisory audit, not yet a publication gate or human review.
+      - name: Audit PDF/UA-2 with veraPDF (advisory)
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 12
+        run: |
+          test -s book/build/AI-by-Intuition-Volume-01.pdf
+          mkdir -p book/build/audits
+          docker run --rm --mount "type=bind,src=$PWD,dst=/data,readonly" \
+            verapdf/cli:v1.30.2 \
+            --flavour ua2 --format xml --maxfailuresdisplayed 5 \
+            /data/book/build/AI-by-Intuition-Volume-01.pdf \
+            > book/build/audits/verapdf-pdfua2.xml
+          python3 scripts/summarize_verapdf.py \
+            book/build/audits/verapdf-pdfua2.xml --advisory
+      - name: Upload PDF/UA-2 machine audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdfua2-machine-audit
+          path: book/build/audits/verapdf-pdfua2.xml
+          if-no-files-found: warn
       - name: Publish single PDF artifact
         uses: actions/upload-artifact@v4
         with:

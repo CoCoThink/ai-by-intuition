@@ -83,3 +83,7 @@ CI 增加两份不阻断正式出版的测试：`smoke-heading-article.tex`（�
 ## 全书 MathML 可行性分支
 
 实验分支 [`experiment/full-book-mathml`](https://github.com/CoCoThink/ai-by-intuition/tree/experiment/full-book-mathml) 已将所有触发断言的 `align`／`align*` 推导转换为 `aligned`，对需要编号的展示公式使用 `equation` 包裹；原先 LuaMML 的致命断言不再触发，CI #39598374009 能输出 99 页实验 PDF，但 `mathml-SE` 结构产生 **56 条 `mathml:mo → mathml:math` 父子关系警告**，因此**并未通过无障碍验收**。随后单独测试 `mathml-AF` 关联文件输出，不阻断 `main` 的稳定发布。只有检查公式的实际关联文件、结构规范性、版面和辅助技术读序后才考虑合并。
+
+## 独立 PDF/UA-2 机器验收
+
+在稳定的 99 页发布工作流中新增非阻断审计：固定 `verapdf/cli:v1.30.2`，使用 `--flavour ua2` 检查实际 PDF，并上传 `pdfua2-machine-audit` XML 工件。机器报告通过 `scripts/summarize_verapdf.py` 输出失败规则和数量，便于逐项修复。该检查**不替代**人工校对及实际读屏测试，且在消除全部机器规则告警前不会宣称 PDF/UA-2 合规。工具参见 [veraPDF CLI 官方说明](https://docs.verapdf.org/cli/validation/)。
