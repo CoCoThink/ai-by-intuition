@@ -82,6 +82,13 @@ GQA：$2\times120\times2\times4=1{,}920$ 个数；
 最终均需核对来源、单位与输出内容。
 \item SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；
 CoT 提示改变输入或生成形式，本身通常不更新参数。
+\item 因 $h=u+\relu(u)W_{\rm down}$ 且 $u$ 两个分量均为正，
+$\partial L/\partial W_{\rm down}=u^\top g_h
+\approx\begin{bmatrix}0.03206&0.23930\\0.16226&1.21101\end{bmatrix}$。
+上游梯度 $g_u=g_h(I_2+0.5I_2)=1.5g_h$，
+故 $\partial L/\partial W_V=a^\top g_u
+\approx\begin{bmatrix}0.04810&0.35895\\0.09765&0.72878\end{bmatrix}$。
+
 \end{enumerate}
 \end{tcolorbox}
 

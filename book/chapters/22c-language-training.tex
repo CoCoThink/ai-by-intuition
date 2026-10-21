@@ -163,6 +163,67 @@ W_{:,4}&:(0,0)^\top\ \mapsto\ (0.0466,0.2357)^\top.
 也会经过 Attention 的 Value 读出与 Query/Key Softmax 的分数路径。
 多条路径对同一参数的梯度需要\textbf{求和}，
 才能更新 FFN、Q/K/V 和相关 Embedding 行。
+\subsection{真正向前层更新：同时改 FFN 和 Value 投影}
+
+前面三轮 SGD 只训练了输出头。现在保留\textbf{初始}的输出头，
+沿同一计算图再走一个\textbf{不同的单步实验}：
+同时更新 FFN 的下投影 $W_{\rm down}$ 与 Attention 的 $W_V$。
+所有梯度都从\textbf{更新前}的权重计算，不混用新旧参数。
+
+第二个位置在残差后为
+$u=(0.330,1.670)$，ReLU 后仍是 $u$；
+此时 $W_{\rm down}=0.5I_2$，
+$h=u+\relu(u)W_{\rm down}=(0.495,2.505)$。
+从词表头反传的梯度
+$g_h=\partial L/\partial h=(0.09716,0.72516)$。
+因此下投影参数梯度为
+\[
+\frac{\partial L}{\partial W_{\rm down}}
+=\underbrace{u^\top}_{2\times1}
+\underbrace{g_h}_{1\times2}
+\approx
+\begin{bmatrix}
+0.03206&0.23930\\
+0.16226&1.21101
+\end{bmatrix}.
+\]
+为了继续传回 Attention，FFN 加残差对 $u$ 的导数
+在本例两个正分量处是 $I_2+W_{\rm down}=1.5I_2$，
+所以 $g_u=1.5g_h\approx(0.14574,1.08773)$。
+上一章给出的注意力行是 $a=(0.330,0.670)$，
+原输入矩阵 $X=I_2$；保持 Q/K 不变，
+$O_{\rm att,last}=aXW_V=aW_V$。
+链式法则再次给出一个\textbf{真正可训练参数}的梯度：
+\[
+\frac{\partial L}{\partial W_V}
+=\underbrace{a^\top}_{2\times1}
+\underbrace{g_u}_{1\times2}
+\approx
+\begin{bmatrix}
+0.04810&0.35895\\
+0.09765&0.72878
+\end{bmatrix}.
+\]
+让两组矩阵\textbf{同时}按学习率 $0.1$ 更新，
+重新前向计算最后位置（所有其它矩阵不变），得到
+\[
+W_V'\approx\begin{bmatrix}
+0.99519&-0.03590\\-0.00976&0.92712
+\end{bmatrix},\quad
+W_{\rm down}'\approx\begin{bmatrix}
+0.49679&-0.02393\\-0.01623&0.37890
+\end{bmatrix}.
+\]
+\[
+h_{\rm last}'\approx(0.45566,2.21140),\qquad
+p_{\rm true}':0.05923\longrightarrow\boxed{0.07296},
+\qquad L:2.826\longrightarrow\boxed{2.618}.
+\]
+这仍然只是单样本单步训练；但梯度确实经过 FFN、残差、
+Attention 的 Value 分支，修改了\textbf{两组中间层权重}并降低损失。
+Q/K 和 Embedding 的梯度仍可依同样规则继续推导，
+不能把本例称作训练了全部参数。
+
 \subsection{哪些权重会因此而更新？}
 
 这份损失从词表输出头往回，经过每一层 Transformer Block，

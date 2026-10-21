@@ -17,7 +17,7 @@
 | I 表示与数据契约 | 从 Token ID 到行向量、形状、目标 | 矩阵乘法和标签对齐 |
 | II 参数学习 | ReLU、MLP、误差、梯度、反向传播 | 一次梯度下降 |
 | III 上下文读取 | RNN、Attention、Q/K/V | 三条 Key 的权重与读出 |
-| IV Transformer 闭环 | 位置、多头、Pre-Norm Block、输出头、训练 | 双头、LayerNorm、p−onehot 与一次输出头 SGD |
+| IV Transformer 闭环 | 位置、多头、Pre-Norm Block、输出头、训练 | 双头、LayerNorm、p−onehot 与输出头 SGD 与一次 Value/FFN 共同更新 |
 | V 架构与系统 | RoPE、MoE、GQA、SFT、Agent、LoRA、量化与蒸馏 | 旋转、缓存、参数与概率 |
 
 第六部分为 CNN/ViT 选读，第七部分为联想记忆/高维容量选读，两者可独立阅读。

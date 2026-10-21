@@ -39,6 +39,13 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 并分别说明如何验证结果。
 \item 用一句话区分 \conceptlink{sft}{SFT}、\conceptlink{rlvr}{RLVR} 和“让模型把步骤写出来”的 CoT 提示；
 哪几个通常涉及模型训练时的参数更新？
+\item \textbf{端到端梯度：}设某位置的注意力读取权重为
+$a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，
+FFN 下投影为 $W_{\rm down}=0.5I_2$，残差后向量
+$u=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为
+$g_h=(0.09716,0.72516)$。计算
+$\partial L/\partial W_{\rm down}$ 和
+$\partial L/\partial W_V$ 的 $2\times2$ 数值矩阵。
 \end{enumerate}
 
 \noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}。}

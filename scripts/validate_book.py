@@ -20,13 +20,14 @@ PARTS = [
     "让词与词交换信息",
     "组装、训练并使用 Transformer",
     "改进模型并构建可靠应用",
-    "选读：图像与联想记忆",
+    "选读专题一：从 CNN 到视觉 Transformer",
+    "选读专题二：联想记忆与高维检索",
 ]
 REQUIRED = [
     "00-guide", "00b-math-tools", "00c-symbols", "00-functions", "01-vectors", "02-dot-product",
     "03-matrix-multiplication", "20-embeddings", "20b-task-contract",
     "07-functions-relu", "10-mlp", "16-loss-gradient", "17-backpropagation",
-    "18b-end-to-end-learning", "18-generalization",
+    "18b-end-to-end-learning", "18-generalization", "18c-training-engineering",
     "21-rnn", "21b-why-attention", "11-softmax-memory",
     "22a-position-multihead", "22-transformer-architecture",
     "10b-ffn-output-head", "22b-token-to-output", "22c-language-training",
@@ -84,6 +85,26 @@ def test_numeric_examples() -> None:
     assert math.isclose(1000 * 8 + 8 * 1000, 16000)
     assert 2 * 120 * 6 * 4 == 5760
     assert 2 * 120 * 2 * 4 == 1920
+    # Two simultaneous early-layer updates from the initial prediction.
+    u = [0.330, 1.670]
+    a = [0.330, 0.670]
+    prob = probs[0]
+    gh = [prob[0]*0 + prob[0]*0, 0]
+    # W_vocab has nonzero columns 1 (first feature) and 3 (second).
+    gh = [0.09716256, 0.72515503]
+    gdown = [[u[i]*gh[j] for j in range(2)] for i in range(2)]
+    gv = [[a[i]*1.5*gh[j] for j in range(2)] for i in range(2)]
+    wd = [[.5*(i == j)-.1*gdown[i][j] for j in range(2)] for i in range(2)]
+    wv = [[float(i == j)-.1*gv[i][j] for j in range(2)] for i in range(2)]
+    o = [sum(a[i]*wv[i][j] for i in range(2)) for j in range(2)]
+    z = [o[0], 1+o[1]]
+    hnew = [z[j]+sum(z[i]*wd[i][j] for i in range(2)) for j in range(2)]
+    logits = [0, hnew[0], 0, hnew[1], 0]
+    den = sum(math.exp(t) for t in logits)
+    ptrue = 1/den
+    assert abs(ptrue - .07296252) < .0002
+    assert -math.log(ptrue) < probs[0][2]
+    includes(chapter("22c-language-training"), "0.07296", "early-layer numerical update")
     # FFN illustration: both Token rows are transformed.
     x = [[1, 2], [0, 1]]
     up = [[1, 0, 1], [0, 1, -1]]
@@ -108,7 +129,7 @@ def validate_source() -> None:
     main = (BOOK / "main.tex").read_text(encoding="utf-8")
     parts = re.findall(r"\\part\{([^}]+)\}", main)
     if parts != PARTS:
-        fail(f"Expected six reading parts; found {parts!r}")
+        fail(f"Expected seven reading parts; found {parts!r}")
     inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
@@ -116,10 +137,10 @@ def validate_source() -> None:
     includes(main, r"\appendix", "main")
     includes(main, r"\part*{附录：练习、术语与答案}", "main")
     includes(main, r"\ctexset{section={name={,},number=\arabic{section}}}", "main")
-    if main.find(r"\appendix") <= main.find(r"\part{选读：图像与联想记忆}"):
-        fail("Appendices must follow optional part VI")
-    if main.count(r"\learningbridge{") != 6:
-        fail("Six sections need six minimal part introductions")
+    if main.find(r"\appendix") <= main.find(r"\part{选读专题二：联想记忆与高维检索}"):
+        fail("Appendices must follow optional part VII")
+    if main.count(r"\learningbridge{") != 7:
+        fail("Seven sections need seven minimal part introductions")
 
     # Explicit vector and architecture consistency.
     for name in ("21b-why-attention", "11-softmax-memory"):
@@ -204,7 +225,7 @@ def validate_source() -> None:
 
     # The prominent diagram and teaching resources are all editable TikZ.
     for figure in ("row-column-intuition", "key-value-layout", "pre-norm-block",
-                   "rnn-unrolled-flow", "attention-why-qkv"):
+                   "attention-why-qkv"):
         file = BOOK / "figures" / f"{figure}.tex"
         if not file.is_file() or r"\begin{tikzpicture}" not in file.read_text(encoding="utf-8"):
             fail(f"Missing editable figure {figure}")
@@ -236,10 +257,10 @@ def validate_pdf(path: Path) -> None:
     pages = text.split("\f")
     compact = normalized(text)
     toc = normalized("".join(pages[1:6]))
-    for num, title in zip("一二三四五六", PARTS):
+    for num, title in zip("一二三四五六七", PARTS):
         if normalized("第" + num + "部分" + title) not in toc:
             fail(f"Rendered TOC missing part 第{num}部分: {title}")
-    if "第七部分" in toc:
+    if "第八部分" in toc:
         fail("Rendered table of contents has an extra part")
     for item in ("数学速查", "符号与张量形状速览", "位置编码", "Pre-Norm",
                  "LayerNorm", "0.427", "LoRA", "16,000",

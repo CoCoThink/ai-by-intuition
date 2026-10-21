@@ -29,7 +29,7 @@
 - [Pre-Norm Block、残差图与 LayerNorm](chapters/22-transformer-architecture.tex)
 - [FFN 与词表输出头](chapters/10b-ffn-output-head.tex)
 - [两个 Token 完整前向计算](chapters/22b-token-to-output.tex)
-- [因果训练与一次输出头梯度更新](chapters/22c-language-training.tex)
+- [因果训练、输出头与前层参数的梯度更新](chapters/22c-language-training.tex)
 - [推理、缓存与生成](chapters/23-llm-systems.tex)
 
 ### V · 改进模型并构建可靠应用
