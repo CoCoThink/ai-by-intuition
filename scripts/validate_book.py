@@ -116,6 +116,15 @@ def test_numeric_examples() -> None:
     assert abs(probs[3][1] - .42704) < .0002
     assert abs(probs[3][2] - .85089) < .0002
     assert all(probs[i+1][2] < probs[i][2] for i in range(3))
+    # Hand-checked two-step Adam example: gradients 2, 1; beta1=beta2=.5.
+    m = v = 0.0
+    moments = []
+    for t, grad in enumerate([2.0, 1.0], 1):
+        m = .5 * m + .5 * grad
+        v = .5 * v + .5 * grad * grad
+        moments.append((m / (1 - .5 ** t), v / (1 - .5 ** t)))
+    assert moments == [(2.0, 4.0), (4.0 / 3.0, 2.0)]
+    assert math.isclose((4.0 / 3.0) / math.sqrt(2), 0.94280904158, rel_tol=1e-10)
     assert math.isclose(1000 * 8 + 8 * 1000, 16000)
     assert 2 * 120 * 6 * 4 == 5760
     assert 2 * 120 * 2 * 4 == 1920
@@ -325,6 +334,7 @@ def validate_source() -> None:
     includes(weight_figure, "coltitle=ink", "figure 10 dark title on light background")
     includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
     includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
+    includes(sources["18c-training-engineering"], "0.943", "two-step Adam example")
     includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")
     includes(sources["11-softmax-memory"], r"\label{concept:self-attention}", "merged chapter")
     for name, body in sources.items():

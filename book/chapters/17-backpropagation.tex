@@ -57,12 +57,10 @@ L=\tfrac12(4-5)^2=\tfrac12.
 \frac{\partial\widehat y}{\partial w_2}
 =(-1)\times h=-2.
 \]
-若学习率 $\eta=0.05$，同时使用\textbf{旧权重计算的梯度}更新：
-\[
-w_1'=1-0.05(-4)=1.2,\quad
-w_2'=2-0.05(-2)=2.1.
-\]
-新的预测为 $2.1\times(1.2\times2)=5.04$，新损失 $0.0008$，比原来 $0.5$ 小得多。
+本章先只算出两条梯度：$\partial L/\partial w_1=-4$，
+$\partial L/\partial w_2=-2$，\textbf{暂不更新参数}。
+下一章在同一个例子上增加两项偏置，使用同一次前向得到的所有梯度，
+然后让四个参数一起更新。这样先把\textbf{求梯度}与\textbf{更新参数}分清。
 
 \input{figures/backprop-computation}
 
