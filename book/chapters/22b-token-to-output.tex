@@ -106,6 +106,13 @@ S=\frac{QK^\top}{\sqrt3}+C
 \label{eq:three-token-attention}
 \end{equation}
 例如第三行只在前三个已知位置中分配权重；第二行不能读取“开了”。
+下图显示的是\textbf{实际计算出的 $A$ 权重}，
+与先前只画“可见/不可见”的 Mask 图不同。
+画成热图后，第二行读取第二个位置约 $88\%$ 的信息，
+而第三行主要读取第三个位置。
+
+\par\medskip
+\input{figures/attention-weight-heatmap}
 按权重读出 Value，$R_{\rm raw}=AV$：
 \[
 R_{\rm raw}\approx\begin{bmatrix}
@@ -195,6 +202,13 @@ Z\approx
 \end{bmatrix}\in\R^{3\times5}.}
 \label{eq:three-token-probabilities}
 \end{equation}
+把 $3\times5$ 的概率表变成三组柱形图：
+青色标出\textbf{正确答案所在的列}，并不意味着它是最大概率。
+这样可以直接看出哪些位置已经猜对、哪些位置还需要学习。
+
+\par\medskip
+\input{figures/three-position-probabilities}
+
 第一行最大候选是 ID 1“春天”，目标却是 ID 3“花”；
 第二行最大候选是 ID 3“花”，目标却是 ID 4“开了”；
 第三行最大候选是 ID 2“。”，恰好等于目标。
