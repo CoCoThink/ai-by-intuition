@@ -4,7 +4,7 @@
 
 上一章已经学会用导数判断\textbf{一个参数}怎样影响损失。
 可 MLP 的第一层参数不仅会影响当前层，还会经过后面的层才改变预测。
-怎样不必对每个参数重新展开一整条复杂公式，就能高效计算所有梯度？
+怎样避免为每个参数反复展开整条计算链，并高效求出所有梯度？
 这就是反向传播要解决的问题。
 
 \subsection{从一条计算链理解链式法则}
@@ -18,7 +18,7 @@ x\xrightarrow{\times\,w_1}h
 令 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。
 现在要问：调整 $w_1$ 一点点，最后的损失 $L$ 会变多少？
 
-最直接的做法是把整个函数展开，但神经网络可能有数十乃至更多层。更聪明的方法是沿着计算链，把每一小步的\textbf{局部变化率}相乘：
+最直接的做法是把整个函数展开，但神经网络可能有数十乃至更多层。链式法则沿着计算路径，把各步的\textbf{局部变化率}相乘：
 \begin{equation}
 \boxed{\frac{\partial L}{\partial w_1}
 =\frac{\partial L}{\partial\widehat y}
@@ -82,7 +82,7 @@ w_2'=2-0.05(-2)=2.1.
 \]
 ReLU 的导数在 $z>0$ 时为 $1$，在 $z<0$ 时为 $0$。因此某条计算路径如果被 ReLU 截断，这个样本沿着该路径传播的梯度也可能为零。$z=0$ 处不可导，实际优化实现通常约定一个次梯度值。
 
-\subsection{反向传播与梯度下降不要混淆}
+\subsection{反向传播负责求梯度，优化器负责更新}
 
 \begin{center}
 \tagpdfsetup{table/header-rows={1}}
@@ -103,6 +103,6 @@ ReLU 的导数在 $z>0$ 时为 $1$，在 $z<0$ 时为 $0$。因此某条计算�
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:17-backpropagation}若 $h=w_1x$、$\widehat y=w_2h$，则 $\partial\widehat y/\partial w_1$ 是什么？\quad{\footnotesize\hyperref[answer:17-backpropagation]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-反向传播没有神秘的“学习方向”，它只是沿计算图复用局部导数来求所有梯度。
+反向传播沿计算图复用局部导数，高效得到各参数的梯度。
 下一章把前向预测、损失、求梯度、参数更新放进同一个小网络，完整走一遍。
 \end{conclusion}

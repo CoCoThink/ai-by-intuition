@@ -37,13 +37,13 @@
 
 \subsection{四种常见的抗过拟合办法}
 
-办法 A：数据更多，或者合理的数据增强。
+\textbf{一是增加数据并合理增强。}
 对图片适度旋转、平移、裁剪，可以增加训练模式；但不能任意增强。例如识别数字 $6$ 时，随便旋转 $180^\circ$ 可能改变标签。增强必须符合任务所需的不变性。
 
-办法 B：适当控制模型复杂度。
+\textbf{二是适当控制模型复杂度。}
 不是“网络越大一定越坏”；实际泛化还取决于数据规模、优化方法和架构。可以先从一个简单的模型作为基线，逐渐增加复杂度。
 
-\textbf{办法 C：正则化。}
+\textbf{三是正则化。}
 把\textbf{参数大小的惩罚}加到原来的任务损失：
 \begin{equation}
 \begin{aligned}
@@ -58,10 +58,11 @@ L_{\rm total}(\vect w)
 $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大，模型越倾向较小的参数，但也可能导致欠拟合。
 
 \begin{warningbox}
-严格地说，向量的 L2 范数是 $\|\vect w\|_2=\sqrt{\sum_iw_i^2}$；上面的平方和是\textbf{L2 范数的平方}，常被宽泛称作 L2 正则化。注意区别于 L1 的绝对值和。
+常见的 L2 正则化使用范数的平方 $\|\vect w\|_2^2=\sum_iw_i^2$；
+L1 则使用绝对值之和 $\sum_i|w_i|$。
 \end{warningbox}
 
-\textbf{办法 D：提前停止（early stopping）。}
+\textbf{四是提前停止（early stopping）。}
 不只看训练损失，还关注验证损失。若训练损失持续下降，而验证损失开始恶化，就可以在验证表现较好的检查点停止训练。
 
 \input{figures/validation-early-stop}
@@ -74,7 +75,7 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 \]
 一次随机掩码可能得到 $(2,0,3,0)$，下一次又可能得到 $(0,1,3,4)$。常见\textbf{反向缩放 Dropout}还会把保留值除以保留概率，以控制期望大小。推理时通常\textbf{关闭} Dropout。
 
-注意：Dropout 在通常意义上不是永久删掉训练参数；它主要随机屏蔽激活或连接对本次前向传播的贡献。
+Dropout 只在当前计算中屏蔽部分激活，不会永久删除模型参数。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18-generalization}训练损失继续下降，但验证损失开始上升，首先应怀疑什么？\quad{\footnotesize\hyperref[answer:18-generalization]{核对解答。}}\par\medskip
 

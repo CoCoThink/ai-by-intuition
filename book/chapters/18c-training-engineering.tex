@@ -1,7 +1,8 @@
 \section{训练如何组织？小批次、优化器与稳定性}
 \label{intro:18c-training-engineering}
 
-训练不仅需要损失函数，还需要决定每次用多少样本、怎样使用梯度以及如何避免数值不稳定。本章把这些\emph{优化工程}问题与上一章的\emph{泛化}分开讨论。
+训练除了定义损失函数，还要安排每次使用的数据量、更新参数的方法以及数值稳定措施。
+这些设置会影响训练速度和收敛行为。
 
 \subsection{Mini-batch、Batch Size 与 Epoch 是什么？}
 
@@ -11,7 +12,7 @@
 
 若梯度特别大，\textbf{梯度裁剪}可以在更新前限制其幅度。例如梯度向量的长度超过设定阈值时，可以将其整体按比例缩小。裁剪不能取代合理的学习率和数据检查。
 
-\subsection{其他训练问题：不是全都叫过拟合}
+\subsection{常见训练故障与应对方法}
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
