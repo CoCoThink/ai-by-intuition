@@ -115,6 +115,7 @@
 \newtcolorbox{example}[1][]{enhanced,breakable,colback=orangeback,colframe=orangeback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{orange},fonttitle=\sffamily\bfseries,coltitle=ink,title={动手算},#1}
 \newtcolorbox{conclusion}[1][]{enhanced,breakable,colback=greenback,colframe=greenback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{teal},fonttitle=\sffamily\bfseries,coltitle=ink,title={小结},#1}
 \newtcolorbox{warningbox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={易错},#1}
+\newtcolorbox{boundarybox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={边界},#1}
 \newcommand{\vect}[1]{\boldsymbol{#1}}
 \newcommand{\relu}{\operatorname{ReLU}}
 \newcommand{\softmax}{\operatorname{softmax}}
@@ -169,6 +170,9 @@
 \noindent {\color{muted}\small 项目维护：CoCoThink \quad｜\quad 2026 年 10 月修订 · 单册教材}\par
 \vspace{1.5mm}
 \noindent {\color{muted}\small AI by Intuition · 先提出问题，再算一个例子，最后理解公式。}\par
+\clearpage
+% Reader routes precede the TOC; front matter does not add numbered chapters.
+\input{chapters/00g-reading-routes}
 \clearpage
 \setcounter{tocdepth}{1} % show parts and chapters; omit subsection clutter
 \begingroup
@@ -239,6 +243,7 @@
 \learningbridge{可用的模型与系统会受到计算、显存、延迟和可靠性的限制；新模型的名字也不断变化。}{用位置、归一化、专家、KV Cache 与长上下文五问理解架构选择，再用证据、成本和条件判断新技术。}
 \input{chapters/22d-modern-transformers}
 \input{chapters/23e-tech-judgement}
+\input{chapters/23f-foundation-recap}
 
 \clearpage
 \part{选读专题一：从 CNN 到视觉 Transformer}
