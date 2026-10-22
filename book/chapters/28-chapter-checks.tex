@@ -10,8 +10,8 @@
 \item \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 把用户问题和助手前缀视为上下文，模型逐个产生回答的 Token；每生成一个就追加。预测形式本身不保证事实正确。
 \item \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 遮挡、角度、光照和不同姿态让固定检查表无法覆盖所有照片；并不表示没有可学规律。
 \item \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace $2\times3+1=7$。
-\item \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace $L(w)=\tfrac52(w-1)^2$ 在 $w=1$ 时为 $0$，两个训练样本都能准确预测；这只是一道具有简单解析解的教学问题。
-\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace $L'(w)=2(w-1)$，代入 $w=0$ 得 $-2$，梯度下降更新时应增大 $w$。
+\item \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 固定 $b=1$ 时，$L(w,1)=\frac23(w-2)^2$ 在 $w=2$ 处取到最小值 $0$；使用的仍是正文三点数据。
+\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace $\nabla L(1,0)=(-4/3,-2)$，同步更新至 $(1.4,0.6)$；三点数据的 MSE 从 $5/3$ 降为 $0.4$。
 \item \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace ReLU 把负数置零、正数保留，故为 $0$ 和 $1$。
 \item \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{链式法则与反向传播}}\enspace 链式法则：$\partial\widehat y/\partial w_1=w_2x$。
 \item \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{一次四参数更新}}\enspace 同一步反向传播需基于同一组旧权重计算梯度，然后再统一更新；混用新旧值改变了梯度对应的函数。
