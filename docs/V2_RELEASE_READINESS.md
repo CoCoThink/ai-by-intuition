@@ -9,7 +9,7 @@
 | --- | --- |
 | 正式历史版本 | [v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，历史工件保留，不覆盖 |
 | P0 修订 | [PR #12](https://github.com/CoCoThink/ai-by-intuition/pull/12) 已合入 `main` |
-| P1 / P2 内容 | [P1 完成记录](P1_COMPLETION.md)、[P2 完成记录](P2_COMPLETION.md)，均已直接合入 `main` |
+| P1 / P2 内容 | 已直接合入 `main`；变更内容见 [教材阅读顺序](../book/README.md)、[勘误与版本记录](ERRATA.md)，验证结果见下方的最终 CI |
 | 已签核候选的机器构建 | **教材源码 SHA `2cad92cdca4fa9f9bf773015afb4195b143cc842`**；[Build one PDF book #39816203928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928)，全部 CI 步骤成功，PDF 与机器审计两份工件均已上传（*机器通过不代表作者签核*） |
 | 该次 PDF 统计 | **126 页**、Tagged PDF 2.0；MathML-AF **1,836 / 1,836**，独立 MathML 文档 1,128 |
 | 该次 veraPDF | **PDF/UA-2 compliant**；`passedRules=1727`、`failedRules=0`、`passedChecks=949653`、`failedChecks=0`，veraPDF 1.30.2 |
