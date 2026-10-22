@@ -1,9 +1,9 @@
 \section{一张图串起来：从文字到可验证的应用}
 \label{app:concept-map}
 
-这一页不是按背诵次序罗列缩写，而是展示\textbf{信息流}与\textbf{学习信号}：
-上方沿前向计算生成概率；中间由正确标签形成梯度；
-下方分开呈现后训练、推理生成与应用工具：后训练会再次更新参数，工具调用本身不会实时反传。点击章页索引可回到推导。
+这张图把模型的\textbf{信息流}与\textbf{学习信号}放在一起：
+上方沿前向计算得到概率，中间由训练目标形成梯度，
+下方展示后训练、推理生成和外部工具各自的位置。点击章页索引可回读对应推导。
 
 \begin{center}
 \tagstructbegin{tag=Figure,alttext={从 Token 到 Embedding、注意力、输出、损失、梯度、参数更新，再到推理和 Agent 工具链的概念关系图}}
@@ -50,7 +50,4 @@
 \hyperref[intro:23-llm-systems]{生成} $\rightarrow$
 \hyperref[intro:23d-agent-systems]{应用系统}。
 
-\begin{warningbox}
-工具调用属于应用层工作流，除非显式进入新的训练过程，
-它本身不会实时修改模型权重。反向传播也不是把自然语言原样反向输送。
-\end{warningbox}
+
