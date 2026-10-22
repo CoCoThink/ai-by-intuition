@@ -42,12 +42,12 @@
 \item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:16-loss-gradient}
 \item \textbf{损失函数}：用数字评估预测与目标之间的差距。 \termref{intro:16-loss-gradient}
 \item \textbf{均方误差}：误差平方再取平均，常用于回归。 \termref{intro:16-loss-gradient}
-\item \textbf{交叉熵}：衡量预测概率分布与目标之间差距的常用损失。 \termref{intro:22c-language-training}
+\item \textbf{交叉熵}：衡量预测概率分布与目标之间差距的常用损失。 \termref{concept:cross-entropy}
 \item \textbf{导数}：衡量函数在某一点的局部变化率。 \termref{intro:16-loss-gradient}
 \item \textbf{偏导数}：多变量函数对某个变量求变化率，其他变量暂时固定。 \termref{intro:16-loss-gradient}
 \item \textbf{梯度}：将各个参数方向的偏导数组合起来。 \termref{intro:16-loss-gradient}
 \item \textbf{学习率}：控制每次梯度更新步长的系数。 \termref{intro:16-loss-gradient}
-\item \textbf{梯度下降}：沿梯度反方向逐步调整参数，尝试降低损失。 \termref{intro:16-loss-gradient}
+\item \textbf{梯度下降}：沿梯度反方向逐步调整参数，尝试降低损失。 \termref{intro:16a-gradient-descent}
 \item \textbf{反向传播}：利用链式法则高效计算计算图中全部参数的梯度。 \termref{intro:17-backpropagation}
 \end{enumerate}
 
@@ -75,7 +75,7 @@
 \item \textbf{梯度裁剪}：限制梯度幅度，减少过大更新的风险。 \termref{intro:18c-training-engineering}
 \item \textbf{梯度消失}：反向传播到较早层时梯度变得过小。 \termref{intro:18c-training-engineering}
 \item \textbf{梯度爆炸}：反向传播中梯度幅度变得过大。 \termref{intro:18c-training-engineering}
-\item \textbf{残差连接}：把输入直接加回模块输出，为信息传播提供旁路。 \termref{intro:22-transformer-architecture}
+\item \textbf{残差连接}：把输入直接加回模块输出，为信息传播提供旁路。 \termref{concept:residual}
 \item \textbf{归一化}：调整激活尺度或统计分布以辅助稳定训练。 \termref{intro:22-transformer-architecture}
 \end{enumerate}
 
@@ -95,7 +95,7 @@
 
 \subsubsection{第七组：语言变成数字}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=61]
-\item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{intro:20-embeddings}
+\item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{intro:20a-tokenizer}
 \item \textbf{Tokenizer}：将文本切成 Token 并映射到整数 ID 的方法。 \termref{intro:20a-tokenizer}
 \item \textbf{词表}：允许的 Token 与其 ID 的集合。 \termref{intro:20a-tokenizer}
 \item \textbf{One-hot}：只有对应类别位置为一，其余为零的编码。 \termref{intro:20-embeddings}
@@ -109,15 +109,15 @@
 
 \subsubsection{第八组：从注意力到 Transformer}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=71]
-\item \textbf{Query}：查询向量，表达当前这个位置想寻找什么。 \termref{intro:21b-why-attention}
-\item \textbf{Key}：与 Query 做匹配的向量。 \termref{intro:21b-why-attention}
-\item \textbf{Value}：被注意力权重组合后形成输出的向量。 \termref{intro:21b-why-attention}
-\item \textbf{Self-Attention}：Query、Key、Value 都来源于同一序列的注意力机制。 \termref{intro:12-self-attention-matrices}
-\item \textbf{Cross-Attention}：Query 来自一个序列，Key/Value 来自另一序列的注意力。 \termref{intro:22-transformer-architecture}
-\item \textbf{缩放点积}：把 Query 与 Key 的点积按维度尺度缩放。 \termref{intro:11-softmax-memory}
-\item \textbf{Softmax}：将分数转成非负且总和为一的一组权重。 \termref{intro:21b-why-attention}
-\item \textbf{因果掩码}：防止生成位置注意到未来 Token 的约束。 \termref{intro:22-transformer-architecture}
-\item \textbf{多头注意力}：用多组可训练投影并行学习不同注意力模式。 \termref{intro:22-transformer-architecture}
+\item \textbf{Query}：查询向量，表达当前这个位置想寻找什么。 \termref{concept:qkv}
+\item \textbf{Key}：与 Query 做匹配的向量。 \termref{concept:qkv}
+\item \textbf{Value}：被注意力权重组合后形成输出的向量。 \termref{concept:qkv}
+\item \textbf{Self-Attention}：Query、Key、Value 都来源于同一序列的注意力机制。 \termref{concept:self-attention}
+\item \textbf{Cross-Attention}：Query 来自一个序列，Key/Value 来自另一序列的注意力。 \termref{concept:cross-attention}
+\item \textbf{缩放点积}：把 Query 与 Key 的点积按维度尺度缩放。 \termref{concept:scaled-dot-product}
+\item \textbf{Softmax}：将分数转成非负且总和为一的一组权重。 \termref{concept:softmax}
+\item \textbf{因果掩码}：防止生成位置注意到未来 Token 的约束。 \termref{concept:causal-mask}
+\item \textbf{多头注意力}：用多组可训练投影并行学习不同注意力模式。 \termref{concept:multihead}
 \item \textbf{Transformer}：把注意力、逐位置 MLP、残差和归一化等组合的架构。 \termref{intro:22-transformer-architecture}
 \end{enumerate}
 
@@ -125,27 +125,27 @@
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=81]
 \item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{intro:22-transformer-architecture}
 \item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{intro:22-transformer-architecture}
-\item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{intro:23c-post-training}
+\item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{concept:pretraining}
 \item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:23c-post-training}
-\item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{intro:23c-post-training}
-\item \textbf{RLHF}：用人类反馈相关的偏好信号辅助模型行为优化。 \termref{intro:23c-post-training}
-\item \textbf{LoRA}：冻结多数基础权重并训练低秩参数的微调方法。 \termref{intro:23b-deployment-and-ecosystem}
-\item \textbf{Logits}：进入 Softmax 前、还没归一化的分数。 \termref{intro:22-transformer-architecture}
-\item \textbf{温度}：通过缩放 logits 控制输出分布尖锐程度的参数。 \termref{intro:23-llm-systems}
-\item \textbf{Top-k}：只在概率最高的若干候选中继续采样。 \termref{intro:23-llm-systems}
-\item \textbf{Top-p}：保留累积概率达到阈值的一组高概率候选。 \termref{intro:23-llm-systems}
+\item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{concept:sft}
+\item \textbf{RLHF}：用人类反馈相关的偏好信号辅助模型行为优化。 \termref{concept:rlhf}
+\item \textbf{LoRA}：冻结多数基础权重并训练低秩参数的微调方法。 \termref{concept:lora}
+\item \textbf{Logits}：进入 Softmax 前、还没归一化的分数。 \termref{concept:logits}
+\item \textbf{温度}：通过缩放 logits 控制输出分布尖锐程度的参数。 \termref{concept:sampling}
+\item \textbf{Top-k}：只在概率最高的若干候选中继续采样。 \termref{concept:sampling}
+\item \textbf{Top-p}：保留累积概率达到阈值的一组高概率候选。 \termref{concept:sampling}
 \end{enumerate}
 
 \subsubsection{第十组：大模型应用与边界}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=92]
 \item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
 \item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23d-agent-systems}
-\item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{intro:23d-agent-systems}
+\item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{concept:rag}
 \item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{intro:23d-agent-systems}
-\item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{intro:23d-agent-systems}
-\item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{intro:23d-agent-systems}
-\item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{intro:23d-agent-systems}
-\item \textbf{量化}：用更低数值精度保存或计算部分权重与激活。 \termref{intro:23b-deployment-and-ecosystem}
+\item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{concept:mcp}
+\item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{concept:agent}
+\item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{concept:workflow}
+\item \textbf{量化}：用更低数值精度保存或计算部分权重与激活。 \termref{concept:quant}
 \item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:23b-deployment-and-ecosystem}
 \end{enumerate}
 

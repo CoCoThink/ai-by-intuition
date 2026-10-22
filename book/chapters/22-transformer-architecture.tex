@@ -96,6 +96,7 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 这能使\textbf{训练时的并行计算}保持“只能利用当前位置之前内容”的条件。
 
 \subsection{原始 Transformer 与现代 Decoder-only LLM}
+\phantomsection\label{concept:cross-attention}
 
 经典 Encoder--Decoder Transformer 包含：编码器自注意力、解码器被掩码的自注意力，以及解码器对编码器输出的交叉注意力。交叉注意力的 Query 来自解码器，Key 和 Value 来自编码器。
 
