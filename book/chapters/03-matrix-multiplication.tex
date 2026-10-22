@@ -1,7 +1,8 @@
 \section{矩阵乘法到底在算什么？}
 \label{intro:03-matrix-multiplication}
 
-前面的点积只产生一个分数。如果要同时处理很多个输入向量，难道要把相同的计算手写几十次？矩阵可以把许多相似计算排在一起，并清楚地标出输入输出各有多少个数字。先把它当成一张数字表，先学会运算，不必提前记住后面模型的术语。
+点积每次得到一个分数。要对大量向量执行相似的运算，可以把它们排成矩阵，
+用一次矩阵乘法完成多次点积，并清楚记录输入和输出的维度。
 
 \subsection{矩阵就是一张有行和列的数字表}
 
@@ -20,7 +21,7 @@ $\vect{x}$ 有 2 行 1 列，尺寸是 $2\times1$；$A$ 是 $2\times2$；$B$ 是
 $\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以是 $3\times2$，不是 $2\times3$。
 \end{example}
 
-\subsection{先用列向量辅助理解：每一行做一次点积}
+\subsection{按行做点积：矩阵乘列向量}
 
 我们来手算：
 \begin{equation}
@@ -59,18 +60,7 @@ $\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以
 
 我们将两列分别乘以 $5$、$6$，再相加。输出仍然是 $(17,39)^\top$。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:03-matrix-multiplication}若 $A:2\times3$、$B:3\times4$，$AB$ 有几行几列？\quad{\footnotesize\hyperref[answer:03-matrix-multiplication]{核对解答。}}\par\medskip
-
-\begin{conclusion}
-\noindent\emph{一条关键定理，两种直观解释}\par
-
-\textbf{行的视角：}每行做点积，产生每一项输出。\\
-\textbf{列的视角：}输入里的系数，决定每一列要贡献多少。\\
-先记住相同的结果，可以从“行做点积”或“列作加权组合”两种方向解释。
-后面学习 Attention 时，再给这些向量取 Query、Key 和 Value 的名字。
-\end{conclusion}
-
-\subsection{主线写法：行向量放在权重矩阵左侧}
+\subsection{神经网络中常用的行向量写法}
 一条输入写成 $\vect x^\top=(5,6)$，使用
 $W=\begin{bmatrix}1&3\\2&4\end{bmatrix}$，那么
 \[
@@ -139,3 +129,10 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 \begin{warningbox}
 不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），甚至 $BA$ 可能根本无法相乘；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
 \end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:03-matrix-multiplication}若 $A:2\times3$、$B:3\times4$，$AB$ 有几行几列？\quad{\footnotesize\hyperref[answer:03-matrix-multiplication]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+矩阵乘向量既可以理解为每行依次做点积，也可以理解为按系数组合各列。
+行向量与列向量的写法通过转置相互对应；计算前先核对矩阵的尺寸，便能避免大多数形状错误。
+\end{conclusion}
