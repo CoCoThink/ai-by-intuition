@@ -12,7 +12,7 @@
 
 ## 2. 可复核的 CI 证据
 
-- [成功的整书构建 ＃39772869124](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39772869124)（上述源码 `a37f3cbc`）：包含源码结构、可复算 NumPy 数值例、Tagged PDF、公式 MathML-AF 与 veraPDF PDF/UA-2。
+- [成功的整书构建 #39772869124](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39772869124)（上述源码 `a37f3cbc`）：包含源码结构、可复算 NumPy 数值例、Tagged PDF、公式 MathML-AF 与 veraPDF PDF/UA-2。
 - [成功的 Markdown / 工作流安全检查 #39771283849](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39771283849)：包括本地 Markdown 链接、GitHub Actions YAML 和必须手动发布、仅允许 `main` 正式构建等门槛。
 - 成功的 110 页 PDF 构建中，`validate_book.py` 报告 **9 个显示部分（七必读+两选读）、55 个输入源文件、23 张带 TH 表头的结构化表格、65 个表头单元格、17 幅 Figure 和 17 个 Alt、44 个 H1 与 182 个 H2 标题**。
 - 同一构建的机器审计报告 **110 页、1,589 个 Formula / 1,589 个 MathML-AF 关联、1,009 种不同 MathML 文档**。veraPDF 报告 `PDF/UA-2: compliant=true; failedRules=0; failedChecks=0`。
