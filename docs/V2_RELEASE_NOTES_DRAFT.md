@@ -32,4 +32,4 @@
 - **作者签核及日期：** 未完成
 - **正式 Release 地址：** 尚未创建
 
-完整核对流程见 [PUBLISHING.md](PUBLISHING.md)，修订批次见 [P1](P1_COMPLETION.md) 与 [P2](P2_COMPLETION.md)。
+完整核对流程见 [出版流程](PUBLISHING.md)，修订概览见 [勘误与版本记录](ERRATA.md)，发行状态见 [V2 验收表](V2_RELEASE_READINESS.md)。
