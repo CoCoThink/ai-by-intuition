@@ -14,7 +14,7 @@
 
 - [V2 重构计划与进度（包含 M0–M6 验收）](docs/STRUCTURE_REDESIGN_PLAN.md)
 - [旧版 47 章节源码迁移台账](docs/RESTRUCTURING_BASELINE.md) · [V2 的 31 章先修依赖与缺口链](docs/CURRICULUM_DEPENDENCIES.md)
-- [可复算的三维 Transformer 数值基线](scripts/teaching_reference.py)：一层单头 Pre-Norm Block、三位置联合训练、梯度校验；将用于后续贯通算例，**暂未替换当前正式 PDF 的二维数字**。
+- [可复算的三维 Transformer 数值基线](scripts/teaching_reference.py)：一层单头 Pre-Norm Block、三位置联合训练与 20 步 Embedding 轨迹。M2 已替换输入 Embedding 章节，**后续 Attention/Block 仍有明确标记的独立二维教学例，待 M3 统一迁移**。
 
 当前教材说明和 v0.1.0 下载仍以本页其余部分及正式 Release 为准。只有完成数值、章节引用、排版、MathML 和 PDF/UA 验收后才发布 V2 版本。
 

@@ -15,7 +15,7 @@
 ### II · 把许多数一起算，再让文字进入计算
 - [向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)
 - [矩阵 MLP](chapters/10-mlp.tex)、[Mini-batch 与 Adam](chapters/18c-training-engineering.tex)
-- [Token、One-hot 与 Embedding](chapters/20-embeddings.tex)、[下一 Token 的目标](chapters/20b-task-contract.tex)
+- [Token、ID 与 BPE](chapters/20a-tokenizer.tex)、[统一三维 Embedding 与训练前后图](chapters/20-embeddings.tex)、[下一 Token 任务与 GPT-2 尺度预览](chapters/20b-task-contract.tex)
 
 ### III · 让词与词交换信息
 - [RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)

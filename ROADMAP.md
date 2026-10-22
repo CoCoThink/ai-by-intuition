@@ -15,7 +15,7 @@
 | 部分 | 学会的能力 | 应能手算的检查 |
 |---|---|---|
 | I 标量学习 | 规则、函数、损失、梯度、非线性、反传与泛化 | 解析解、两层网络参数更新 |
-| II 多维与文字 | 向量、矩阵、MLP、Token、Embedding 与语言任务 | 点积、形状检查与标签对齐 |
+| II 多维与文字 | 向量、矩阵、MLP、Token/BPE、统一三维 Embedding 与 GPT-2 尺度 | 点积、形状、三个位置标签对齐 |
 | III 上下文读取 | RNN、Attention、Q/K/V | 三条 Key 的权重与读出 |
 | IV Transformer 闭环 | 位置、多头、Pre-Norm Block、输出头、训练 | 双头、LayerNorm、p−onehot 与输出头 SGD 与一次 Value/FFN 共同更新 |
 | V 架构与系统 | RoPE、MoE、GQA、SFT、Agent、LoRA、量化与蒸馏 | 旋转、缓存、参数与概率 |
