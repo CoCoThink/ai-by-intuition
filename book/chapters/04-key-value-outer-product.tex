@@ -1,12 +1,7 @@
 \section{外积与矩阵：如何真正“写入”一条记忆？}
-\noindent\emph{建议读完 Transformer Block 后选读。以下“外积写入 $\to$ 干扰 $\to$ 非线性 $\to$ 容量”的论证路线受到 Alex Wang 的文章
-\href{https://alexwang.ai/posts/associative-memory/}{You could have invented transformers from memory} 启发。本书小数字例子与叙述另行编写；这不是对原文逐句复述。}
-
-前五部分已经沿着\textbf{预测下一个 Token}的主线搭建并使用了 Transformer。
-接下来换一个角度，不再追着网络结构往前走，而是思考：
-一个矩阵能否保存“遇到某种输入，就返回某个结果”的关联？
-这条路线将解释为什么 MLP 和 Attention 有时都可以被看成不同的读取规则。
-它是\textbf{选读的数学视角}，不是每个 Transformer 必须按外积存储记忆的证明。
+除了沿网络结构理解 Transformer，还可以从\textbf{关联记忆}出发：
+一个矩阵能否保存“遇到某种输入，就返回某个结果”的关系？
+沿着这个问题，我们会看到线性层、MLP 与 Attention 在读取规则上的联系。
 
 现在为一条记忆指定两个向量：
 \[
@@ -15,7 +10,7 @@
 \]
 我们的目标是设计函数 $f$，使输入 Key 时返回 Value，即 $f(\vect{k})=\vect{v}$。
 
-\subsection{先造出一个能工作的公式}
+\subsection{从匹配分数得到 Value}
 考虑：
 \begin{equation}
 \boxed{f(\vect{x})=\vect{v}\bigl(\vect{k}^\top\vect{x}\bigr).}

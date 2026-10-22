@@ -1,6 +1,7 @@
 \section{线性记忆怎样减少干扰？}
 
-我们刚才直接将外积相加，写入新记忆时没有考虑旧记忆。其实也可以寻找一个更好的矩阵 $W$，要求它尽可能满足所有配对关系：
+直接相加外积时，每写入一条新记忆都可能影响旧关系。
+另一种办法是寻找矩阵 $W$，使它尽可能满足所有配对关系：
 \begin{equation}
 \boxed{\min_W\sum_{i=1}^{M}\|W\vect{k}_i-\vect{v}_i\|^2.}
 \end{equation}
@@ -19,7 +20,7 @@ W_{\text{better}}=\begin{bmatrix}1&-0.75\\0&1.25\end{bmatrix}.
 W_{\text{better}}\vect{k}_A=\vect{v}_A,\qquad
 W_{\text{better}}\vect{k}_B=\vect{v}_B.
 \]
-两条记忆都可以精确召回！矩阵中的负数在这里扮演了\textbf{抵消交叉干扰}的角色。
+两条记忆都能被精确召回；矩阵中的负数在这里用于\textbf{抵消交叉干扰}。
 
 不过，线性映射的自由度有限。如果在 $d_k$ 维中放入很多\emph{任意且相互独立的} Key--Value 对，最终还是无法全部精确拟合。
 

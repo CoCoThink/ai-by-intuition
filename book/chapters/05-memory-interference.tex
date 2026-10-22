@@ -10,7 +10,7 @@
 \end{equation}
 也就是说：所有记忆都会按照它们与输入的相似度，贡献一部分输出。
 
-\subsection{一个完全算得出来的二维例子}
+\subsection{两条记忆的二维例子}
 假设我们有两条记忆：
 \[\begin{aligned}
 \vect{k}_A&=\begin{bmatrix}1\\0\end{bmatrix}, &
@@ -71,6 +71,6 @@ W\vect{k}_j=
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:05-memory-interference}为什么把多条外积记忆相加后，读取一条 Key 时会混入别的 Value？\quad{\footnotesize\hyperref[answer:05-memory-interference]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-关键矛盾不是\textbf{能不能把记忆写进矩阵}，而是取回其中一条时，其他记忆会不会一起冒出来。在这个\textbf{联想记忆模型}中，可以尝试两类办法：优化写入矩阵，或改变检索权重。
-后面的选读章节会依次探索；它们不是标准 MLP 或 Self-Attention 的历史发明步骤。
+多条关联共享一个矩阵时，查询可能同时激活其他记忆，形成干扰。
+解决思路有两类：优化写入矩阵以减少交叉影响，或改变读取权重以突出目标记忆。
 \end{conclusion}
