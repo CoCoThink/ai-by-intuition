@@ -48,6 +48,11 @@ Softmax 是 $(0.665,0.245,0.090)$；
 第 2 类为真时损失 $-\log0.245\approx1.408$。
 \textbf{两段概率来自不同运算}：题目没有指定如何从 Attention 输出映射成 logits，
 所以不能由读取权重独立决定损失。
+\item 改动后的第一行是
+$X'_1=(0.15,-0.2,1.25)+(0.10,0.05,-0.10)
+=\boxed{(0.25,-0.15,1.15)}$。
+因果 Attention 的第二、三位置可读取第一个位置，所以后续表示\textbf{可能}变化；
+这里没有更新任何权重，是一次输入反事实消融。
 \end{enumerate}
 \end{tcolorbox}
 
@@ -89,6 +94,10 @@ $\partial L/\partial W_{\rm down}=u^\top g_h
 故 $\partial L/\partial W_V=a^\top g_u
 \approx\begin{bmatrix}0.04810&0.35895\\0.09765&0.72878\end{bmatrix}$。
 
+\item Q2 环比为 $(125-100)/100=\boxed{25\%}$；
+Q3 环比为 $(132-125)/125=\boxed{5.6\%}$。
+仅修改 Prompt 输入数据不改变网络权重；
+实际执行 SFT 训练才会进行参数更新。
 \end{enumerate}
 \end{tcolorbox}
 

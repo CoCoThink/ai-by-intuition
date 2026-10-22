@@ -250,6 +250,22 @@ def validate_source() -> None:
             fail(f"Exercise chapter may contain an embedded solution list: {name}")
         if r"\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案}" in body:
             fail(f"Inline answer box is still present: {name}")
+    # M5: exercise / answer-key parity must not drift after adding transfer tasks.
+    math_body = sources["25-integrated-practice"]
+    modern_body = sources["25b-modern-practice"]
+    answer_sections = sources["27-answer-key"].split(r"\subsection*{")
+    if len(answer_sections) != 4:
+        fail("Expected three distinctly labelled answer sets")
+    expected_counts = (11, 14, 14)  # X2 optional, mathematics, modern systems
+    actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
+                     for i in range(3))
+    if tuple(actual_counts) != expected_counts:
+        fail("Central answer counts do not match 11/14/14 lesson exercises")
+    if math_body.count(r"\item") != 14 or modern_body.count(r"\item") != 14:
+        fail("Both core exercise collections must contain fourteen items")
+    for name in ("25-integrated-practice", "25b-modern-practice"):
+        for label in ("【回忆】", "【手算】", "【迁移】"):
+            includes(sources[name], label, f"{name} exercise tier")
     answer_key = sources["27-answer-key"]
     includes(answer_key, r"\label{app:answers}", "answer key")
     if answer_key.count(r"\subsection*{") != 3:
