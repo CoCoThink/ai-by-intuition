@@ -347,35 +347,35 @@ def validate_source() -> None:
                 fail(f"Broken glossary destination: {ref}")
         if lex == "24-lexicon":
             key_terms = {
-          "交叉熵": "concept:cross-entropy",
-          "梯度下降": "intro:16a-gradient-descent",
-          "残差连接": "concept:residual",
-          "Token": "intro:20a-tokenizer",
-          "Query": "concept:qkv",
-          "Key": "concept:qkv",
-          "Value": "concept:qkv",
-          "Self-Attention": "concept:self-attention",
-          "Cross-Attention": "concept:cross-attention",
-          "缩放点积": "concept:scaled-dot-product",
-          "Softmax": "concept:softmax",
-          "因果掩码": "concept:causal-mask",
-          "多头注意力": "concept:multihead",
-          "预训练": "concept:pretraining",
-          "监督微调": "concept:sft",
-          "RLHF": "concept:rlhf",
-          "LoRA": "concept:lora",
-          "Logits": "concept:logits",
-          "温度": "concept:sampling",
-          "Top-k": "concept:sampling",
-          "Top-p": "concept:sampling",
-          "RAG": "concept:rag",
-          "MCP": "concept:mcp",
-          "智能体": "concept:agent",
-          "工作流": "concept:workflow",
-          "量化": "concept:quant"
-}
+                "交叉熵": "concept:cross-entropy",
+                "梯度下降": "intro:16a-gradient-descent",
+                "残差连接": "concept:residual",
+                "Token": "intro:20a-tokenizer",
+                "Query": "concept:qkv",
+                "Key": "concept:qkv",
+                "Value": "concept:qkv",
+                "Self-Attention": "concept:self-attention",
+                "Cross-Attention": "concept:cross-attention",
+                "缩放点积": "concept:scaled-dot-product",
+                "Softmax": "concept:softmax",
+                "因果掩码": "concept:causal-mask",
+                "多头注意力": "concept:multihead",
+                "预训练": "concept:pretraining",
+                "监督微调": "concept:sft",
+                "RLHF": "concept:rlhf",
+                "LoRA": "concept:lora",
+                "Logits": "concept:logits",
+                "温度": "concept:sampling",
+                "Top-k": "concept:sampling",
+                "Top-p": "concept:sampling",
+                "RAG": "concept:rag",
+                "MCP": "concept:mcp",
+                "智能体": "concept:agent",
+                "工作流": "concept:workflow",
+                "量化": "concept:quant"
+            }
             items = dict(re.findall(
-                r"(?m)^\\item \\textbf\{([^}]+)\}[^\\n]*?\\termref\{([^}]+)\}",
+                r"(?m)^\\item \\textbf\{([^}]+)\}.*?\\termref\{([^}]+)\}",
                 sources[lex]))
             for term, destination in key_terms.items():
                 if items.get(term) != destination:
