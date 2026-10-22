@@ -610,7 +610,7 @@ def validate_pdf(path: Path) -> None:
         return result
 
     expected_tables = sum(
-        len(re.findall(r"\begin\{(?:tabularx|tabular|longtable)\}", chapter(name)))
+        len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", chapter(name)))
         for name in REQUIRED
     )
     if len(table_nodes) != expected_tables:
