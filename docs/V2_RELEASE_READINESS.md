@@ -45,4 +45,4 @@
 - [47 个历史源码的迁移台账](https://github.com/CoCoThink/ai-by-intuition/blob/27a1ee5cc16353ef4568e2af47b4c499bc9a0fab/docs/RESTRUCTURING_BASELINE.md) 与 [先修依赖草案](https://github.com/CoCoThink/ai-by-intuition/blob/27a1ee5cc16353ef4568e2af47b4c499bc9a0fab/docs/CURRICULUM_DEPENDENCIES.md)
 - [历史交接记录](https://github.com/CoCoThink/ai-by-intuition/blob/27a1ee5cc16353ef4568e2af47b4c499bc9a0fab/docs/HANDOVER.md) 与 [发布说明草稿](https://github.com/CoCoThink/ai-by-intuition/blob/27a1ee5cc16353ef4568e2af47b4c499bc9a0fab/docs/V2_RELEASE_NOTES_DRAFT.md)
 
-需要追溯教学动机时仍可读 [原始评审](REVIEW.md) 和 [文字稿](从函数到Transformer再到大模型_文字稿.md)；它们是**研究参考材料**，不是新的待办或发布状态来源。
+如需追溯教学动机，可查 [已移出主分支的原始评审（固定 Git 历史版本）](https://github.com/CoCoThink/ai-by-intuition/blob/0c4a66e9bd2f652c8df80504d8c5bd473e6b19ed/docs/REVIEW.md) 和 [文字稿](从函数到Transformer再到大模型_文字稿.md)；这些材料仅用于历史参考，不是当前待办或发布状态来源。
