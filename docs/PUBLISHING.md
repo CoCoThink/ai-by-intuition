@@ -1,48 +1,30 @@
-# 正式出版视觉检查与版本归档流程
+# PDF 出版与版本发布
 
-**已发布正式版：[v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，2026-10-22。** 该版本来自合并后的主分支完整成功 CI；附 PDF、SHA256SUMS、MathML/veraPDF 机器审计及依赖清单。以下流程用于历史核对及后续新版本，视觉巡检记录见文末。
+## 当前发行版
 
-## 发布前门槛（机器验证）
+[**v0.1.0 正式 Release**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 已于 2026-10-22 发布，版本资产包含 PDF、SHA256SUMS 和逐项机器审计文件（共 8 项）。该历史 Release **不会被精简工作流追溯修改**。
 
-- 从发布候选 commit 运行 [Build one PDF book](../.github/workflows/build-latex.yml)，必须完整成功。
-- 保存 `ai-by-intuition-volume-01` PDF 与 `pdfua2-machine-audit` 的 MathML JSON、veraPDF XML、依赖审计记录和对应 CI run URL。
-- 检查全书 Tagged、章节顺序、图/表/标题结构、数学关联和零 PDF/UA-2 机器失败；核对页数、页面文字边界、无 Overfull 警告，以及 `scripts/validate_book.py` 的数值校验。
-- 原生 `align*` 的两份实验仍可预期失败，不是出版 PDF 的失败理由。
+对应 [完整 CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 与 [发布 CI #39700328180](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 均为 success。PDF 为 99 页、1,472/1,472 MathML-AF，veraPDF PDF/UA-2 零失败，原始 SHA-256 为 `211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`。
 
-## 出版视觉 QA（排版，不属于人工无障碍验收）
+首次发行视觉 QA：对全部 99 页缩略图巡检，并放大检查部分复杂页；新旧正式候选的页面文字与缩略图渲染一致，未发现明显裁切或遮挡。详尽历史记录留存在[发布前原始文档](https://github.com/CoCoThink/ai-by-intuition/blob/ad239e83e96fcb71647f278e456078d0fc66571e/docs/PUBLISHING.md)。此检查不包括真实屏读软件的体验验收。
 
-使用构建出的**同一份正式 PDF**对封面、目录、各部分首页、图表密集页、长公式页、附录首尾进行抽样审看；正式发版前可逐页审看。记录字体、分页、图注与图形对齐、跨页断行、公式是否遮挡、页面留白等可见布局问题。
+## 新版本（从 v0.2.0 开始）的发布步骤
 
-| 检查日期 | PDF SHA-256 | CI run | 页码范围/抽样策略 | 发现的问题 | 处理提交 | 复检人/结果 |
-|---|---|---|---|---|---|---|
-| 2026-10-22 | 候选版见下文；v0.1.0 SHA 见正式归档 | [#39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) | 候选版 99 页缩略图巡检、重点页放大；正式版 99 页渲染对比 | 未见明显图文遮挡/裁切 | [PR #5](https://github.com/CoCoThink/ai-by-intuition/pull/5) | 已验证正式版与已审看的候选版文字及逐页低分辨率渲染一致 |
+**发布必须明确人工选择版本号和已验收的主分支构建，不再监听所有成功的 push 自动触发。**
 
-**边界：**本项目不安排真实屏读体验或人工无障碍验收；视觉出版 QA 只针对排版与内容呈现。机器合规不代表任意阅读器中的阅读体验。
+1. 从 `main` 的 [Build one PDF book](../.github/workflows/build-latex.yml) 运行 `workflow_dispatch`，取得 **success** 的完整构建运行 ID（`build_run_id`）。PDF 工件有保留期限，过期后必须重新构建。
+2. 完成变动页面的视觉 QA，确认 PDF 机器结构、公式语义、veraPDF PDF/UA-2 与数值计算均通过。
+3. 在 `main` 的 [Publish validated volume](../.github/workflows/publish-release.yml) 点击 **Run workflow**，输入新版本号（如 `v0.2.0`）和上一步的 `build_run_id`。
+4. 发布工作流校验：版本格式为 `vX.Y.Z`、tag/Release 不存在、来源运行是本仓库 `main` 的成功 `push`、来源提交可追溯至当前 `main`，且构建之后没有改动 `book/`、`scripts/` 或正式 PDF 构建工作流。如验证失败则拒绝发布。
+5. 工作流从指定同一次构建提取 PDF 和审计，确认 99 页、完整 MathML-AF、veraPDF 零失败与环境记录，计算 `SHA256SUMS`，将细分审计文件合并为 `build-audit.zip`，并以 Release 正文记录验证来源。
+6. 新版本只上传 **3 个资产**：`AI-by-Intuition-Volume-01.pdf`、`SHA256SUMS`、`build-audit.zip`。不要覆盖旧版本、不要单独再附一份 `RELEASE-NOTES.md`，也不要发布未经同一成功 CI 验收的其他 PDF。
 
-## 版本化 Release（选择正式发行时执行）
+**注意：**发布工作流不得从 PR / fork 的产物直接发布；历史 Release 不可在原位重新编译替换。任何合规声明只代表机器验收，**不等于**人工屏读体验认证。
 
-1. 冻结候选 commit，确认本次全量 CI 全绿与视觉 QA 记录已填写。
-2. 从成功的 Actions 下载正式 PDF，计算并保存 SHA-256；校验与归档工件一致。
-3. 按项目选择的语义版本号创建不可变标签和 GitHub Release，将 PDF、SHA-256 清单、版本说明、变更摘要、验证器版本与 CI run 链接作为资产发布。
-4. 如重新编译产生不同文件哈希，不覆盖旧 Release 资产；发布新版本并解释变更。保留旧版与机器审计证据。
+## 未来发行版视觉检查表
 
-首个版本号已定为 **v0.1.0**，并已由 [成功的发布作业](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 创建。发布工作流当前仅自动创建 `v0.1.0` 一次；**后续新版本需另行指定版本号并经过完整验证，不会用新的构建覆盖现有历史 Release**。
+| 日期 | 版本/源码 SHA | 构建与视觉 QA 范围 | 发现问题与复核结果 |
+|---|---|---|---|
+| 2026-10-22 | v0.1.0 · `55b55e4` | 99 页抽样排版及全部页文字/缩略图回归 | 无明显遮挡裁切，已发布 |
 
-
-## 首次发布候选的排版检查记录（2026-10-22）
-
-- **候选源码：** `156ef1228ad1dd5aa93aea01c97506dd3b472299`，对应 [成功 CI #39697175674](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39697175674)；本记录仅适用于该候选 PDF 和与之完全相同的渲染内容。
-- **候选 PDF SHA-256：** `7de83f5b08d151307c6d4228e43dea79218c3f9aded718776eb62cf70caae5c2`，99 页，A4，Tagged PDF 2.0。
-- **检查范围：**全部 99 页低分辨率缩略图蒙太奇人工排版巡检；页码 1、11、34、39、41、66、69、81、91、99 额外渲染到 1200 像素以便核对；第 11、34、39 页逐个放大检查了标题、公式、插图和图注。
-- **自动化交叉验证：**PyMuPDF 遍历全部页面的文字块边界，没有越出页面；与 2026-10-21 的上次成功 PDF 逐页比较，**只有第 11 页的可提取文本和低分辨率页面渲染有变化**，对应点积标题去重；其余 98 页渲染未变。
-- **视觉结果：**抽检未发现明显图文遮挡、裁切或标题/图注分离。部分选读章节末页留白较大（30、66、69、81、99 页），属于章节自然收尾，未据此改动排版。
-- **性质与限制：**这是出版排版 QA，不是屏读体验或人工无障碍验收，也不是逐页在多款阅读器中验证。正式 Release 仍须由与其关联的成功 CI 自动生成并存档自身的 PDF SHA-256。
-
-
-## v0.1.0 正式归档核对（2026-10-22）
-
-- **主分支提交：** `55b55e4308028763a0b1952f1a02642e4d9829d8`；[全量成功 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713)，[正式 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)。
-- **PDF 原始文件大小：** 1,807,001 字节；**SHA-256：** `211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`，与 GitHub Release 资产 digest 及对应 CI 工件内 PDF 计算结果一致。
-- **无障碍机器验收：** Tagged，99 页，1,472/1,472 MathML-AF；veraPDF 1.30.2 PDF/UA-2 零失败；发布作业也对同次构建的 MathML JSON、veraPDF XML、环境审计文件执行一致性检查。
-- **视觉 QA 关联：** 与上文候选 PDF 相比，正式版虽然二进制哈希不同，但 99 页的可提取文本与 0.7 倍缩放逐页渲染均一致。因此上文候选排版抽检适用于正式发布版的可见内容。该检查**不等于**多阅读器人工无障碍/屏读体验验收。
-- **正式资产：** `AI-by-Intuition-Volume-01.pdf`、`SHA256SUMS`、`mathml-af-summary.json`、`verapdf-pdfua2.xml`、`texlive-environment.txt`、`runner-environment.txt`、`verapdf-image.txt`、`RELEASE-NOTES.md`。已核对 GitHub Release 中八项资产存在。
+涉及排版的修改，应重新审看封面、目录、部分首页、长公式、插图和变动前后页。出版检查不应被自动版面边界检查完全替代。

@@ -64,7 +64,7 @@
 
 这些资源提供学习问题和参考背景；正文独立组织并独立推导。
 
-## 工程构建与 Tagged PDF 验收（2026-10-21）
+## 工程构建与 Tagged PDF 验收（2026-10-21 基线历史）
 
 - **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)为 99 页。
 - **已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,472 个 Formula、21 张 Table／59 个 TH、16 个 Figure／16 处替代文字、48 个 H1／180 个 H2。

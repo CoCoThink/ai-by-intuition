@@ -6,7 +6,7 @@
 
 **读者阅读一个完整 PDF，作者维护分开的 LaTeX 章节源码。** 最新验证构建采用 **TeX Live 2026 + LuaLaTeX**，生成带结构标签的 PDF。
 
-[**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
+[**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [新版发布流程](docs/PUBLISHING.md) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
 
 ## 为什么这样组织？
 
