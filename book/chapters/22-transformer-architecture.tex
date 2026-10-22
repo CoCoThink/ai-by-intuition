@@ -30,6 +30,7 @@ S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 第 $i$ 行记录第 $i$ 个 Token 对三个 Key 的匹配程度；每行 \conceptlink{softmax}{Softmax} 后和 $V$ 相乘，得到三个\textbf{带上下文信息}的新向量。
 
 \subsection{Pre-Norm Block 中的两条残差连接}
+\phantomsection\label{concept:pre-norm}
 \phantomsection\label{concept:residual}
 
 在这里选择\textbf{Pre-Norm（先归一化）}，每个子层都是

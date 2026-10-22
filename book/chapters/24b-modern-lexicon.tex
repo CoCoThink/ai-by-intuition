@@ -7,44 +7,44 @@
 \subsubsection*{模型输入、目标与训练}
 \begin{itemize}
 \item \textbf{任务契约（Task Contract）}：事先约定输入、目标、张量尺寸和结果的含义。 \termref{concept:task-contract}
-\item \textbf{FFN 与输出头}：前者改变 Token 的隐藏特征，后者映射到词表 logits。 \termref{intro:10b-ffn-output-head}
+\item \textbf{FFN 与输出头}：前者改变 Token 的隐藏特征，后者映射到词表 logits。 \termref{concept:ffn}
 \item \textbf{Teacher Forcing}：训练时以已知真实序列作为条件，一次预测多个后续位置。 \termref{concept:teacher-forcing}
-\item \textbf{标签错位（Shifted Targets）}：每个输入位置的目标为下一位置 Token。 \termref{intro:22c-language-training}
-\item \textbf{损失掩码}：选择哪些位置参与损失统计，区别于因果注意力掩码。 \termref{intro:22c-language-training}
+\item \textbf{标签错位（Shifted Targets）}：每个输入位置的目标为下一位置 Token。 \termref{concept:shifted-targets}
+\item \textbf{损失掩码}：选择哪些位置参与损失统计，区别于因果注意力掩码。 \termref{concept:loss-mask}
 \item \textbf{SFT}：利用示范回答继续训练模型。 \termref{concept:sft}
 \item \textbf{RLHF}：使用人类偏好等评价信号优化模型行为。 \termref{concept:rlhf}
 \item \textbf{RLVR}：利用可程序化核验的任务奖励进行学习。 \termref{concept:rlvr}
-\item \textbf{CoT}：可能要求模型输出中间步骤的提示形式，不等同于直接观察内部计算。 \termref{intro:23c-post-training}
+\item \textbf{CoT}：可能要求模型输出中间步骤的提示形式，不等同于直接观察内部计算。 \termref{concept:cot-prompt}
 \end{itemize}
 
 \subsubsection*{FFN、位置与归一化}
 \begin{itemize}
 \item \textbf{RoPE}：对 Q/K 中的分量对做位置相关旋转。 \termref{concept:rope}
-\item \textbf{RMSNorm}：按特征的均方根控制数值尺度。 \termref{intro:22d-modern-transformers}
-\item \textbf{Pre-Norm}：在某个计算子层之前进行归一化。 \termref{intro:22d-modern-transformers}
-\item \textbf{SwiGLU}：使用两个投影分支与逐元素门控的 FFN 变体。 \termref{intro:22d-modern-transformers}
+\item \textbf{RMSNorm}：按特征的均方根控制数值尺度。 \termref{concept:rmsnorm}
+\item \textbf{Pre-Norm}：在某个计算子层之前进行归一化。 \termref{concept:pre-norm}
+\item \textbf{SwiGLU}：使用两个投影分支与逐元素门控的 FFN 变体。 \termref{concept:swiglu}
 \item \textbf{MoE}：让不同 Token 按路由选择少数专家网络进行计算。 \termref{concept:moe}
-\item \textbf{Router（路由器）}：决定当前 Token 由哪些专家处理。 \termref{intro:22d-modern-transformers}
+\item \textbf{Router（路由器）}：决定当前 Token 由哪些专家处理。 \termref{concept:router}
 \end{itemize}
 
 \subsubsection*{Attention 与长上下文}
 \begin{itemize}
-\item \textbf{MHA}：每个注意力头使用其对应的 Q/K/V 投影。 \termref{intro:22-transformer-architecture}
-\item \textbf{MQA}：让多个 Query 头共享一组 K/V 头。 \termref{intro:22d-modern-transformers}
+\item \textbf{MHA}：每个注意力头使用其对应的 Q/K/V 投影。 \termref{concept:multihead}
+\item \textbf{MQA}：让多个 Query 头共享一组 K/V 头。 \termref{concept:mqa}
 \item \textbf{GQA}：让一组 Query 头共享 K/V 头，降低缓存规模。 \termref{concept:gqa}
-\item \textbf{MLA}：通过潜在表示等机制尝试压缩注意力缓存。 \termref{intro:22d-modern-transformers}
-\item \textbf{KV Cache}：保存过去 Token 的 Key/Value 表示供自回归解码复用。 \termref{intro:23-llm-systems}
-\item \textbf{稀疏 Attention}：只计算选择的 Token 对，不要求全部两两比较。 \termref{intro:22d-modern-transformers}
-\item \textbf{线性 Attention}：通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 \termref{intro:22d-modern-transformers}
+\item \textbf{MLA}：通过潜在表示等机制尝试压缩注意力缓存。 \termref{concept:mla}
+\item \textbf{KV Cache}：保存过去 Token 的 Key/Value 表示供自回归解码复用。 \termref{concept:kv-cache}
+\item \textbf{稀疏 Attention}：只计算选择的 Token 对，不要求全部两两比较。 \termref{concept:sparse-attention}
+\item \textbf{线性 Attention}：通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 \termref{concept:linear-attention}
 \end{itemize}
 
 \subsubsection*{Agent 系统中的边界}
 \begin{itemize}
-\item \textbf{Tool Calling}：模型提出结构化请求，系统在检查后调用外部工具。 \termref{intro:23d-agent-systems}
+\item \textbf{Tool Calling}：模型提出结构化请求，系统在检查后调用外部工具。 \termref{concept:tool-calling}
 \item \textbf{MCP}：模型应用与工具/数据资源协作时使用的接口协议。 \termref{concept:mcp}
-\item \textbf{Workflow}：由固定步骤或条件分支编排的可重复任务流程。 \termref{intro:23d-agent-systems}
-\item \textbf{Skill}：把一类任务的说明、约束和脚本包装为可复用能力。 \termref{intro:23d-agent-systems}
-\item \textbf{Subagent 与 A2A}：前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 \termref{intro:23d-agent-systems}
+\item \textbf{Workflow}：由固定步骤或条件分支编排的可重复任务流程。 \termref{concept:workflow}
+\item \textbf{Skill}：把一类任务的说明、约束和脚本包装为可复用能力。 \termref{concept:skill}
+\item \textbf{Subagent 与 A2A}：前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 \termref{concept:subagent}
 \end{itemize}
 
 \begin{conclusion}

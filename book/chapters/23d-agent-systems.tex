@@ -95,6 +95,7 @@ Agent 是组织模型决策与工具动作的系统方式。
 一个工作流可以同时用 RAG 和 Agent，也可以两者都不用。
 
 \subsection{一次工具调用实际发生了什么？}
+\phantomsection\label{concept:tool-calling}
 
 \begin{center}
 \tagstructbegin{tag=Figure,alttext={工具调用的三泳道：用户目标进入模型，模型输出请求；应用系统校验权限并调用外部工具；工具返回数据后由应用检查并供模型生成回答，最终再经复核交付}}
@@ -148,6 +149,7 @@ Agent 是组织模型决策与工具动作的系统方式。
 并核对数据来源、单位和授权范围。
 
 \subsection{什么时候用固定工作流，什么时候用 Agent？}
+\phantomsection\label{concept:workflow}
 
 同样是处理报告，若每次步骤都固定为
 “读取表格 $\to$ 计算增长率 $\to$ 套模板”，
@@ -186,6 +188,8 @@ Subagent/子任务分工 & 隔离部分上下文和工作；会带来协调与�
 系统不应该把它提升为高优先级命令。
 
 \subsection{Skill、Subagent 与 A2A：为什么不是同一个东西？}
+\phantomsection\label{concept:subagent}
+\phantomsection\label{concept:skill}
 
 为这项报告工作，可写一份\textbf{Skill/操作指南}：
 记录指标定义、表格样式、单位统一的程序及异常处理。

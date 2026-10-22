@@ -64,6 +64,7 @@ R(\pi/2)\begin{bmatrix}1\\0\end{bmatrix}
 \end{example}
 
 \subsection{问题二：归一化为什么从 LayerNorm 变成 RMSNorm？}
+\phantomsection\label{concept:rmsnorm}
 
 \textbf{LayerNorm} 通常先减去特征均值，再按方差缩放（还可以学习仿射参数）。
 \textbf{RMSNorm} 侧重通过均方根控制大小，不执行相同的均值中心化。
@@ -82,6 +83,8 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 在所有模型中总比另一种更强。
 
 \subsection{问题三：FFN 除了 ReLU 还能做什么？}
+\phantomsection\label{concept:router}
+\phantomsection\label{concept:swiglu}
 \phantomsection\label{concept:moe}
 
 常规 \conceptlink{ffn}{FFN} 使用两次矩阵投影夹一个激活函数。
@@ -115,6 +118,8 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \end{warningbox}
 
 \subsection{问题四：多头 Attention 为什么开始共享 K/V？}
+\phantomsection\label{concept:mla}
+\phantomsection\label{concept:mqa}
 \phantomsection\label{concept:gqa}
 
 标准 \conceptlink{multihead}{多头注意力}（MHA）可以为每个 Query 头保存自己的 Key/Value 头。
@@ -145,6 +150,8 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 与简单减少 K/V 头数的设计思路不同；不应把所有缩写视为同一种运算。
 
 \subsection{问题五：长上下文能否不两两比较全部 Token？}
+\phantomsection\label{concept:linear-attention}
+\phantomsection\label{concept:sparse-attention}
 
 对长度为 $T$ 的普通全量 Attention，分数矩阵有 $T^2$ 个位置；
 如果 $T$ 从 $100$ 增到 $200$，潜在分数位置从 $10{,}000$

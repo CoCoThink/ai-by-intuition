@@ -333,6 +333,8 @@ def validate_source() -> None:
         for ref in refs:
             if ref not in labels:
                 fail(f"Broken glossary destination: {ref}")
+        if lex == "24b-modern-lexicon" and any(not ref.startswith("concept:") for ref in refs):
+            fail("Modern glossary must link to precise concept definitions, not chapter introductions")
     # Also verify in-text concept explanations precede their hyperlinks.
     seen: set[str] = set()
     total = 0
