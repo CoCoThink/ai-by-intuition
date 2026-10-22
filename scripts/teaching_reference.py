@@ -164,8 +164,37 @@ def run_checks():
     w1 = {key: val - LR * grads[key] for key, val in w.items()}
     st1 = forward(w1)
     assert st1['loss'] < st['loss'], 'Full-sequence optimization must improve mean loss'
+    assert np.allclose(st['a'], [[1,0,0],[.12438216,.87561784,0],[.16795,.24176,.59029]],atol=3e-4)
+    assert np.allclose(st['probs'][1,4], .05074656916, atol=2e-8)
+    assert np.allclose(st1['probs'][1,4], .06854806547, atol=2e-8)
+    assert np.allclose(st['h'][0], [2.5609,-.0561,-.9413], atol=8e-5)
     assert not np.allclose(st['probs'], st1['probs'])
     return w, st, grads, w1, st1, delta, position_delta, value_delta
+
+
+def position_swap_example():
+    """Independent two-token unmasked ablation using canonical 3D E, P, Q/K/V."""
+    weights = parameters()
+    def calc(ids, with_positions):
+        x = weights['E'][list(ids)].copy()
+        if with_positions:
+            x += weights['P'][:len(ids)]
+        q, k, v = (x @ weights[key] for key in ('Wq', 'Wk', 'Wv'))
+        scores = q @ k.T / math.sqrt(q.shape[1])
+        return softmax(scores) @ v
+
+    original = calc((1, 3), False)
+    reversed_ = calc((3, 1), False)
+    with_position = calc((1, 3), True)
+    reversed_position = calc((3, 1), True)
+    assert np.allclose(reversed_, original[::-1], atol=1e-12)
+    assert np.max(np.abs(reversed_position - with_position[::-1])) > 0.04
+    assert np.allclose(with_position[0], [0.76804159, 0.51382512, -0.02654692], atol=3e-6)
+    assert np.allclose(reversed_position[0], [0.28119184, 0.71451479, 0.14396391], atol=3e-6)
+    return dict(no_positions=original.tolist(),
+                swapped_no_positions=reversed_.tolist(),
+                positions=with_position.tolist(),
+                swapped_positions=reversed_position.tolist())
 
 
 def embedding_training_snapshot(steps=20):
@@ -190,7 +219,9 @@ def embedding_training_snapshot(steps=20):
 def report():
     w, st, grads, _, st1, delta, position_delta, value_delta = run_checks()
     embedding_before, embedding_after, start_loss, final_loss = embedding_training_snapshot()
+    swap = position_swap_example()
     return {
+        'position_swap_ablation': swap,
         'embedding_20_step_before': embedding_before.tolist(),
         'embedding_20_step_after': embedding_after.tolist(),
         'embedding_20_step_loss_before': start_loss,
