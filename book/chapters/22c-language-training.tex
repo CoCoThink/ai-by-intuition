@@ -182,10 +182,18 @@ L_{\rm after}=1.611377.}
 
 \subsection{怎样独立检查数值不是手工凑的？}
 
-运行仓库根目录的 \texttt{python3 scripts/teaching\_reference.py --json}，
-读取三行 \texttt{position\_losses\_before}、
-\texttt{position\_losses\_after}、\texttt{gradient\_norms}
-与 \texttt{states\_before}。
+在仓库根目录运行：
+\begin{center}
+\small\ttfamily
+python3 scripts/teaching\_reference.py --json
+\end{center}
+然后在 JSON 输出中分别查找以下字段：
+\begin{itemize}
+\item \texttt{position\_losses\_before}：三位置初始损失；
+\item \texttt{position\_losses\_after}：更新后三位置损失；
+\item \texttt{gradient\_norms}：各参数梯度的数值规模；
+\item \texttt{states\_before}：每层中间张量和词表分数。
+\end{itemize}
 脚本的反向传播使用矩阵链式法则，
 并用每个参数张量的中心有限差分抽样进行数值核验。
 下游真正部署的语言模型会有不同宽度、层数、归一化及更多参数，
