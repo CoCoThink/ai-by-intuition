@@ -188,6 +188,17 @@ def validate_source() -> None:
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
     sources = {name: chapter(name) for name in REQUIRED}
     includes(main, r"\appendix", "main")
+    # The manual release gate must consume exactly the PDF artifact built here.
+    production = (ROOT / ".github/workflows/build-latex.yml").read_text(encoding="utf8")
+    release = (ROOT / ".github/workflows/publish-release.yml").read_text(encoding="utf8")
+    for workflow in (production, release):
+        includes(workflow, "ai-by-intuition-book", "matching build/release artifact")
+        includes(workflow, "AI-by-Intuition-Book.pdf", "matching build/release PDF filename")
+    if 'summary["pages"] == 99' in release or "1,472/1,472" in release:
+        fail("Release gate still hard-codes historical v0.1.0 PDF statistics")
+    includes(release, 'summary["pages"] == actual_pages', "PDF page and audit reconciliation")
+    includes(release, "failedRules", "PDF/UA-2 release audit enforcement")
+
     includes(main, r"\part*{附录：公式、练习与答案}", "main")
     includes(main, r"\ctexset{", "native CTeX heading styling")
     includes(main, "name={第,章}", "visible chapter number format")

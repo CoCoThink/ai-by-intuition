@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   build-book:
-    name: Compile AI by Intuition Volume 01
+    name: Compile AI by Intuition book
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -61,13 +61,13 @@ jobs:
               grep -E 'Package tagpdf Warning: Parent-Child|Overfull \\hbox' build/main.log
               exit 1
             fi
-            cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
+            cp build/main.pdf build/AI-by-Intuition-Book.pdf
             echo '=== Smoke tagged state ==='
             pdfinfo build/smoke/smoke-tagging.pdf | grep -E '^(Tagged|PDF version|Pages):'
             echo '=== Book tagged state in TeX Live 2026 container ==='
-            pdfinfo build/AI-by-Intuition-Volume-01.pdf | grep -E '^(Tagged|PDF version|Pages):'
+            pdfinfo build/AI-by-Intuition-Book.pdf | grep -E '^(Tagged|PDF version|Pages):'
             echo '=== Book structure tree first lines ==='
-            pdfinfo -struct build/AI-by-Intuition-Volume-01.pdf | head -n 12 || true
+            pdfinfo -struct build/AI-by-Intuition-Book.pdf | head -n 12 || true
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
@@ -88,19 +88,19 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
-          python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Volume-01.pdf
+          python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Book.pdf
       - name: Verify associated MathML for every displayed and inline Formula
         run: |
           mkdir -p pdfua-audit
           python3 scripts/validate_mathml_af.py \
-            book/build/AI-by-Intuition-Volume-01.pdf \
+            book/build/AI-by-Intuition-Book.pdf \
             --minimum 1000 --json-output pdfua-audit/mathml-af-summary.json
       # Machine-verifiable PDF/UA-2 compliance is now mandatory for publication.
       # The release gate is intentionally limited to machine-verifiable rules.
       - name: Validate PDF/UA-2 with veraPDF
         timeout-minutes: 12
         run: |
-          test -s book/build/AI-by-Intuition-Volume-01.pdf
+          test -s book/build/AI-by-Intuition-Book.pdf
           mkdir -p pdfua-audit
           # Digest observed in successful CI #39697175674 (veraPDF 1.30.2).
           VERAPDF_IMAGE="verapdf/cli@sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb"
@@ -111,7 +111,7 @@ jobs:
           docker run --rm --mount "type=bind,src=$PWD,dst=/data,readonly" \
             "$VERAPDF_IMAGE" \
             --flavour ua2 --format xml --maxfailuresdisplayed 5 \
-            /data/book/build/AI-by-Intuition-Volume-01.pdf \
+            /data/book/build/AI-by-Intuition-Book.pdf \
             > pdfua-audit/verapdf-pdfua2.xml
           python3 scripts/summarize_verapdf.py \
             pdfua-audit/verapdf-pdfua2.xml
@@ -128,8 +128,8 @@ jobs:
       - name: Publish single PDF artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ai-by-intuition-volume-01
-          path: book/build/AI-by-Intuition-Volume-01.pdf
+          name: ai-by-intuition-book
+          path: book/build/AI-by-Intuition-Book.pdf
           if-no-files-found: error
       # Retain PDF and logs only when production validation fails.
       # Successful runs publish precisely one copy of the generated PDF.

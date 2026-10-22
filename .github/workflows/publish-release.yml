@@ -1,4 +1,4 @@
-name: Publish validated volume
+name: Publish validated book
 
 # Deliberately manual: a passing push build is NOT an instruction to publish.
 on:
@@ -74,7 +74,7 @@ jobs:
       - name: Download PDF from precisely the validated run
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
-          name: ai-by-intuition-volume-01
+          name: ai-by-intuition-book
           run-id: ${{ inputs.build_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: dist
@@ -85,17 +85,24 @@ jobs:
           run-id: ${{ inputs.build_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: dist/audit
+      - name: Install pinned PDF reader for release provenance checks
+        run: python -m pip install --disable-pip-version-check pypdf==5.9.0
       - name: Validate PDF and audit, assemble minimal assets
         run: |
           python3 - <<'PY'
           import json
+          import os
           from pathlib import Path
           import xml.etree.ElementTree as ET
+          from pypdf import PdfReader
           folder = Path("dist")
-          pdf = folder / "AI-by-Intuition-Volume-01.pdf"
+          pdf = folder / "AI-by-Intuition-Book.pdf"
           assert pdf.is_file() and pdf.stat().st_size > 1000000, "Missing validated PDF"
+          actual_pages = len(PdfReader(str(pdf)).pages)
           summary = json.loads((folder / "audit/mathml-af-summary.json").read_text())
-          assert summary["pages"] == 99, summary
+          assert actual_pages >= 50 and summary["pages"] == actual_pages, (
+              f"Mismatch between PDF ({actual_pages}) and MathML audit: {summary}"
+          )
           assert summary["formulas"] >= 1000 and summary["formulas"] == summary["associations"], summary
           root = ET.parse(folder / "audit/verapdf-pdfua2.xml").getroot()
           reports = [n for n in root.iter() if n.tag.rsplit("}", 1)[-1] == "validationReport"]
@@ -104,22 +111,25 @@ jobs:
           assert details.get("failedRules") == "0" and details.get("failedChecks") == "0", details.attrib
           for name in ("texlive-environment.txt", "runner-environment.txt", "verapdf-image.txt"):
               assert (folder / "audit" / name).is_file(), f"Missing environment audit: {name}"
-          print("Validated PDF, MathML-AF, PDF/UA-2 and reproducibility evidence")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf8") as f:
+              f.write(f"PDF_PAGE_COUNT={actual_pages}\\n")
+              f.write(f"PDF_FORMULA_COUNT={summary['formulas']}\\n")
+          print(f"Validated {actual_pages} pages, {summary['formulas']} MathML-AF associations, PDF/UA-2 and build evidence")
           PY
           (
             cd dist
-            sha256sum AI-by-Intuition-Volume-01.pdf > SHA256SUMS
+            sha256sum AI-by-Intuition-Book.pdf > SHA256SUMS
             zip -q -j build-audit.zip audit/*
           )
       - name: Write release description
         run: |
           cat > dist/RELEASE-NOTES.md <<EOF
-          # AI by Intuition · Volume 01 · $RELEASE_VERSION
+          # AI by Intuition · $RELEASE_VERSION
 
           中文教材 PDF 的版本化归档，源码提交：$VALIDATED_SHA。
 
           来源：$SOURCE_RUN_URL
-          验收：99 页 Tagged PDF、1,472/1,472 MathML-AF 关联、veraPDF PDF/UA-2 零失败，以及源文件、数值与版面检查。
+          验收：$PDF_PAGE_COUNT 页 Tagged PDF、$PDF_FORMULA_COUNT/$PDF_FORMULA_COUNT MathML-AF 关联、veraPDF PDF/UA-2 零失败，以及源文件、数值与版面检查。
 
           下载：PDF 正式文件、SHA256SUMS 文件校验和、build-audit.zip（机器报告及构建环境）。历史版本不覆盖或重编译替换。
           机器合规不代表在所有辅助阅读器中的实际体验。本项目原创教材与正式 PDF 采用 CC BY 4.0（https://creativecommons.org/licenses/by/4.0/），建议署名 AI by Intuition · CoCoThink and contributors（https://github.com/CoCoThink/ai-by-intuition）；scripts/ Python 工具及 .github/workflows/ 采用 MIT。第三方引用按其自身权利/许可处理。
@@ -130,10 +140,10 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           gh release create "$RELEASE_VERSION" \
-            dist/AI-by-Intuition-Volume-01.pdf \
+            dist/AI-by-Intuition-Book.pdf \
             dist/SHA256SUMS \
             dist/build-audit.zip \
             --target "$VALIDATED_SHA" \
-            --title "AI by Intuition · Volume 01 · $RELEASE_VERSION" \
+            --title "AI by Intuition · $RELEASE_VERSION" \
             --notes-file dist/RELEASE-NOTES.md \
             --latest

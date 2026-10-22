@@ -20,7 +20,7 @@
 
 使用 [Build one PDF book](../.github/workflows/build-latex.yml) 检查：源码/数值 → 最小 Tagged `smoke-tagging.tex` → 全书编译 → 文字/标题/表格/图形结构 → 所有公式 MathML-AF → veraPDF PDF/UA-2。
 
-完整 CI 成功时上传**一份 PDF**（`ai-by-intuition-volume-01`）和**一份机器审计**（`pdfua2-machine-audit`）；失败时按需附构建诊断。依赖版本及环境审计见 [BUILD-REPRODUCIBILITY.md](BUILD-REPRODUCIBILITY.md)。
+完整 CI 成功时上传**一份 PDF**（新版 `ai-by-intuition-book`；v0.1.0 的旧构建工件仍叫 `ai-by-intuition-volume-01`）和**一份机器审计**（`pdfua2-machine-audit`）；失败时按需附构建诊断。依赖版本及环境审计见 [BUILD-REPRODUCIBILITY.md](BUILD-REPRODUCIBILITY.md)。
 
 本地主要验收命令：
 

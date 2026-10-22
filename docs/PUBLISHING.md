@@ -10,18 +10,20 @@
 
 ## 新版本（从 v0.2.0 开始）的发布步骤
 
+**M5/M6 候选说明：**新版 CI 不再使用 `Volume 01` 文件名；历史 v0.1.0 的资产仍保持原名称不变。`main` 上的完整 PDF 构建已引入七个必读部分、两个选读专题和 A–E 附录；**新的手动 Release 尚未触发**，不以旧版的 99 页或 1,472 条公式作为新版固定计数。
+
 **许可证：** 教材/PDF 正式采用 [CC BY 4.0](../LICENSE)，Python/工作流采用 [MIT](../scripts/LICENSE)。Release 正文应提供项目来源、版权署名、许可地址以及适用的第三方材料声明。v0.1.0 发布于许可证正式加入前，保留其原始资产与发行日志不覆盖；当前公开授权同时涵盖项目有权授权的 v0.1.0 PDF。
 
 **发布必须明确人工选择版本号和已验收的主分支构建，不再监听所有成功的 push 自动触发。**
 
 1. 从 `main` 的 [Build one PDF book](../.github/workflows/build-latex.yml) 运行 `workflow_dispatch`，取得 **success** 的完整构建运行 ID（`build_run_id`）。PDF 工件有保留期限，过期后必须重新构建。
 2. 完成变动页面的视觉 QA，确认 PDF 机器结构、公式语义、veraPDF PDF/UA-2 与数值计算均通过。
-3. 在 `main` 的 [Publish validated volume](../.github/workflows/publish-release.yml) 点击 **Run workflow**，输入新版本号（如 `v0.2.0`）和上一步的 `build_run_id`。
+3. 在 `main` 的 [Publish validated book](../.github/workflows/publish-release.yml) 点击 **Run workflow**，输入新版本号（如 `v0.2.0`）和上一步的 `build_run_id`。
 4. 发布工作流校验：版本格式为 `vX.Y.Z`、tag/Release 不存在、来源运行是本仓库 `main` 的成功 `push` 或手动完整构建、来源提交可追溯至当前 `main`，且构建之后没有改动 `book/`、`scripts/` 或正式 PDF 构建工作流。如验证失败则拒绝发布。
-5. 工作流从指定同一次构建提取 PDF 和审计，确认 99 页、完整 MathML-AF、veraPDF 零失败与环境记录，计算 `SHA256SUMS`，将细分审计文件合并为 `build-audit.zip`，并以 Release 正文记录验证来源。
-6. 新版本只上传 **3 个资产**：`AI-by-Intuition-Volume-01.pdf`、`SHA256SUMS`、`build-audit.zip`。不要覆盖旧版本、不要单独再附一份 `RELEASE-NOTES.md`，也不要发布未经同一成功 CI 验收的其他 PDF。
+5. 工作流从指定同一次构建提取 PDF 和审计，用 `pypdf` 检查**实际页数与 MathML 审计一致**，核验 Formula/MathML-AF 全量关联、veraPDF 零失败与环境记录，计算 `SHA256SUMS`，将审计合并为 `build-audit.zip`，并在 Release 正文记录真实统计与验证来源。
+6. 新版本只上传 **3 个资产**：`AI-by-Intuition-Book.pdf`、`SHA256SUMS`、`build-audit.zip`。不要覆盖旧版本、不要单独再附一份 `RELEASE-NOTES.md`，也不要发布未经同一成功 CI 验收的其他 PDF。
 
-**注意：**发布工作流不得从 PR / fork 的产物直接发布；历史 Release 不可在原位重新编译替换。任何合规声明只代表机器验收，**不等于**人工屏读体验认证。
+**注意：**手动选择版本号和成功构建仍是必要条件；此处更新发布脚本不意味着已经发布。发布工作流不得从 PR / fork 的产物直接发布；历史 Release 不可在原位重新编译替换。任何合规声明只代表机器验收，**不等于**人工屏读体验认证。
 
 ## 未来发行版视觉检查表
 
