@@ -2,15 +2,12 @@
 \label{intro:22d-modern-transformers}
 
 \begin{idea}
-\noindent\emph{不是背新缩写，而是问“改动想解决哪种成本？”}\par
+\noindent\emph{从实际约束理解架构选择}\par
 
-刚刚学会逐词生成，就遇到一个实际问题：每多生成一个 Token，历史 K/V 缓存可能变得更大。
-这就是 \conceptlink{kv-cache}{KV Cache} 相关架构改进的动机。
-此外，长序列计算、归一化的稳定性和 FFN 的成本，也会让我们重新考虑原始模块。
-因此，本章的每个新缩写都应该对应\textbf{一个具体约束或代价}，而不是意味着原来的 Transformer 已经“失效”。
-一些改动帮助模型处理位置信息，一些改动帮助控制深层网络的数值尺度，
-有的降低缓存或计算成本，还有的让总参数变多却不必每次全部计算。
-本章围绕五个\textbf{稳定问题}整理现代架构，不按品牌或年份排列“技术排行榜”。
+生成的上下文越来越长，KV Cache 随之增长；训练深层网络时，还需要控制特征尺度和计算成本。
+现代 Transformer 因而发展出不同的设计：有的改进位置表示，有的简化归一化，
+有的调整 FFN 的计算路径，还有的减少解码缓存或长序列计算量。
+下面从五类具体问题出发，比较这些设计的收益与代价。
 \end{idea}
 
 \subsection{问题一：位置信息怎么进入 Attention？}
@@ -44,7 +41,7 @@ $m\theta$ 和 $n\theta$，则
 长上下文扩展仍可能需要额外设计与实测，不能从这个恒等式直接保证无限外推。
 
 \begin{example}
-\noindent\emph{真实旋转一次，而不只背恒等式}\par
+\noindent\emph{两个位置的一次旋转}\par
 
 取 $\vect q^\top=\vect k^\top=(1,0)$，
 Query 位于 $m=0$，Key 位于 $n=1$，
@@ -76,8 +73,7 @@ R(\pi/2)\begin{bmatrix}1\\0\end{bmatrix}
 \]
 忽略可学习缩放参数与小正数 $\varepsilon$，
 RMS 归一化后的数字约为 $(0.849,1.131)$。
-这个例子并不意味着每个模型的实际输出都如此；
-真实层还可能使用 $\varepsilon$ 和可学习的增益。
+
 
 \textbf{Pre-Norm 与 Post-Norm} 表示归一化放在子层之前或之后，
 会改变残差路径与训练行为。不能仅凭名称断言一种实现
@@ -97,7 +93,7 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 \end{equation}
 其中 $\odot$ 是\textbf{对应位置逐元素相乘}，
 $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
-真实实现通常还处理偏置、并行化及其他配置。
+
 两个分支分别计算“门”和“内容”，然后逐元素组合。
 
 还有一种\textbf{混合专家（MoE）}思路：
@@ -172,7 +168,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 有的主要节约解码时的 KV Cache，有的减少单 Token 计算，
 并不能简单把它们都称为“Attention 变成线性复杂度”。
 
-\subsection{一张不会被新模型名称冲垮的判断表}
+\subsection{用五个问题比较架构选择}
 
 \begin{center}
 \small
@@ -194,10 +190,7 @@ MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22d-modern-transformers}共享 K/V 头的 GQA 通常能减少哪一类推理内存开销？\quad{\footnotesize\hyperref[answer:22d-modern-transformers]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-现代 Transformer 的变化不是“把经典组件全部宣判过时”：
-每个变体都是在某些约束下重新选择位置、数值尺度、
-参数使用方式和上下文访问方式。
+现代 Transformer 在位置表示、数值尺度、参数使用方式和上下文访问方式上提供了不同选择。
 判断一项技术，先问它解决了什么已知问题，在哪种计算或数据条件下有收益，付出了什么代价。
-架构已经改进，不代表模型就会自动更好地遵循指令或判定事实。
 下一章把问题从\textbf{计算成本}转向\textbf{模型的回答行为}：预训练后的模型怎样进一步适应真实对话？
 \end{conclusion}

@@ -3,8 +3,7 @@
 
 阅读指南提出了一种可大量练习的办法：用原始文字本身作为后续 Token 的答案。
 前面已经学会网络如何计算分数，也学会 \conceptlink{loss}{损失函数}、\conceptlink{backprop}{反向传播} 和\conceptlink{gradient-descent}{梯度下降}。
-现在才具备足够工具回答：一整段真实训练文本，怎样变成位置对齐的预测目标、损失和参数更新？
-这里讲的是\textbf{一种自回归预训练任务}，不是说所有语言模型都只能这样学。
+把这些工具接起来，就能看清一段训练文本如何变成位置对齐的预测目标、损失和参数更新。
 
 \subsection{“错开一格”：一段文本同时产生许多训练目标}
 \phantomsection\label{concept:shifted-targets}
@@ -89,15 +88,13 @@ L_i=-\log P_{i,t_{i+1}}.
 \begin{equation}
 \boxed{L=-\frac{1}{3}\sum_{i=1}^3\log P_{i,t_{i+1}}.}
 \end{equation}
-接下来换一组人为设定的三位置概率，演示怎样合并整段文本的损失；
-它不再使用上一章那组初始输出概率。
-如果三次正确 Token 的预测概率分别是
+再看整段文本的平均损失。假设三个位置的正确 Token 概率分别是
 $0.5$、$0.25$、$0.5$，则
 \[
 L=-\frac{\log0.5+\log0.25+\log0.5}{3}
 =\frac{4\log2}{3}\approx0.924.
 \]
-注意这是\textbf{一个人工算例}，不是实际模型的测试成绩。
+
 
 \subsection{亲手训练：让“开了”超过“花”}
 \label{sec:transformer-gradient-step}
@@ -144,11 +141,10 @@ W_{:,4}&:(0,0)^\top\ \mapsto\ (0.0466,0.2357)^\top.
 \end{tabular}
 \end{center}
 \end{example}
-三次更新后概率排序翻转。这是固定隐藏状态，只训练输出头的局部实验，
-不是端到端训练已全部完成的证据。
+三次更新后，“开了”的概率超过“花”。这一轮计算固定隐藏状态，只训练输出头。
 
-\subsection{再走一步：梯度怎样进入 FFN 和 Embedding？}
-现在不再把输出头当作反向传播的终点。
+\subsection{梯度怎样从输出头传回 FFN 和 Embedding？}
+输出头的梯度还可以继续往前传播。
 用\textbf{初始}的输出头权重，隐藏状态的梯度是
 \[
 \underbrace{\frac{\partial L}{\partial\vect h_{\rm last}^\top}}_{1\times2}
@@ -166,12 +162,10 @@ W_{:,4}&:(0,0)^\top\ \mapsto\ (0.0466,0.2357)^\top.
 也会经过 Attention 的 Value 读出与 Query/Key Softmax 的分数路径。
 多条路径对同一参数的梯度需要\textbf{求和}，
 才能更新 FFN、Q/K/V 和相关 Embedding 行。
-\subsection{真正向前层更新：同时改 FFN 和 Value 投影}
+\subsection{同时更新 FFN 和 Value 投影}
 
-前面三轮 SGD 只训练了输出头。现在保留\textbf{初始}的输出头，
-沿同一计算图再走一个\textbf{不同的单步实验}：
-同时更新 FFN 的下投影 $W_{\rm down}$ 与 Attention 的 $W_V$。
-所有梯度都从\textbf{更新前}的权重计算，不混用新旧参数。
+下面回到初始参数，从同一损失出发，计算 FFN 下投影 $W_{\rm down}$ 和 Attention 的 $W_V$ 的更新。
+这一轮与前面只训练输出头的三次更新相互独立；两组梯度都依据更新前的参数计算。
 
 第二个位置在残差后为
 $u=(0.330,1.670)$，ReLU 后仍是 $u$；
@@ -196,7 +190,7 @@ $g_h=\partial L/\partial h=(0.09716,0.72516)$。
 上一章给出的注意力行是 $a=(0.330,0.670)$，
 原输入矩阵 $X=I_2$；保持 Q/K 不变，
 $O_{\rm att,last}=aXW_V=aW_V$。
-链式法则再次给出一个\textbf{真正可训练参数}的梯度：
+链式法则给出 Value 投影的参数梯度：
 \[
 \frac{\partial L}{\partial W_V}
 =\underbrace{a^\top}_{2\times1}
@@ -222,10 +216,8 @@ h_{\rm last}'\approx(0.45566,2.21140),\qquad
 p_{\rm true}':0.05923\longrightarrow\boxed{0.07296},
 \qquad L:2.826\longrightarrow\boxed{2.618}.
 \]
-这仍然只是单样本单步训练；但梯度确实经过 FFN、残差、
-Attention 的 Value 分支，修改了\textbf{两组中间层权重}并降低损失。
-Q/K 和 Embedding 的梯度仍可依同样规则继续推导，
-不能把本例称作训练了全部参数。
+这一步修改了\textbf{两组中间层权重}，损失随之降低。
+沿着同一计算图，还可以继续求出 Q/K 和 Embedding 的梯度。
 
 \subsection{哪些权重会因此而更新？}
 
@@ -250,12 +242,7 @@ $\theta$ 表示全部参与训练的可学习参数；
 它与\textbf{因果注意力掩码}不是一回事：
 前者决定哪里\textbf{计分}，后者决定哪里\textbf{可读取}。
 
-\begin{warningbox}
-从下一个 Token 的损失最小化，
-不能直接推出模型会在所有任务上做对事实判断，
-也不能推出它已经学会遵循人类指令。
-后面的监督微调、偏好优化与系统工具能力解决的是不同层次的问题。
-\end{warningbox}
+
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22c-language-training}单位置正确 Token 概率为 $0.2$ 时，交叉熵损失约是多少？\quad{\footnotesize\hyperref[answer:22c-language-training]{核对解答。}}\par\medskip
 

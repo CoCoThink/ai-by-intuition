@@ -1,4 +1,4 @@
-\section{前馈网络与输出头：为什么它们都是矩阵，却不能混为一谈？}
+\section{前馈网络与输出头：两种不同的特征变换}
 \label{intro:10b-ffn-output-head}
 
 \begin{idea}
@@ -59,14 +59,12 @@ F_{\rm out}=F_{\rm mid}W_{\rm down}=
 \end{equation}
 这次第一条 Token 从 $(1,2)$ 变成 $(4,2)$，
 第二条从 $(0,1)$ 变成 $(1,1)$。两行都发生了变换，
-且它们无需互相读取即可算出。由此可见 FFN 确实进行了变换，
-不是仅把输入原样抄回。
+两行的变换独立完成，但都使用同一组 FFN 参数。
 
 \textbf{观察关键事实：}第一行 FFN 不需要第二行参与就可以计算；
 第二行也一样。\textbf{标准 FFN 负责逐 Token 处理特征，
 \conceptlink{attention}{Attention} 才负责在 Token 之间混合信息。}
-这不是说 FFN 的输出没有上下文：如果它的输入已经经过 Attention，
-输入向量本身就包含了其他 Token 的信息。
+如果 FFN 的输入来自 Attention，它处理的向量就已经融合了上下文信息。
 
 \subsection{输出头不是 FFN 的“下投影”}
 \phantomsection\label{concept:output-head}
@@ -114,19 +112,14 @@ FFN & 每个 Token 的特征 & 非线性变换当前表示\\
 \end{tabularx}
 \end{center}
 
-\begin{warningbox}
-名字里的“前馈”不意味着每个 FFN 都包含时间上的上一词或下一词；
-它只表示计算中不存在像传统 RNN 那样的同层时间递推。
-真实模型可能使用门控 FFN、MoE 或权重绑定等变体，
-但这里的\textbf{输入输出角色区分}依然有用。
-\end{warningbox}
+
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:10b-ffn-output-head}若 $T=4,d_{\rm model}=6,d_{\rm ff}=18$，FFN 上投影和下投影矩阵形状分别是什么？\quad{\footnotesize\hyperref[answer:10b-ffn-output-head]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
 词表投影则是把内部表示变成预测任务答案的接口。
-不要因为它们都是矩阵乘法，就把 FFN 和输出头当成同一层。
+两者都包含矩阵乘法，但在网络中承担不同的任务。
 下一章选择\textbf{两个很小的 Token 向量}，亲手检查这些模块接起来时的数据流，
 然后才讨论怎样训练完整语言模型。
 \end{conclusion}

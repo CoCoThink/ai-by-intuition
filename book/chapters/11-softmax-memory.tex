@@ -3,10 +3,9 @@
 \phantomsection\label{intro:12-self-attention-matrices}
 \phantomsection\label{concept:self-attention}
 
-上一章算出了一个“开了” Query 对三条 Key 的分数 $(1,1,2)$，
-对应权重 $(0.212,0.212,0.576)$。
-现在\textbf{不换算法、不换向量约定}，只把同一计算写成矩阵，
-再把多个 Query 放在一起算。
+上一章算出了“开了”对三个位置的匹配分数 $(1,1,2)$，
+得到读取权重 $(0.212,0.212,0.576)$。
+把单次查询写成矩阵乘法，再扩展到多个 Query，就得到 Self-Attention 的批量计算。
 
 \subsection{单次查询：匹配、归一化、读取}
 \[
@@ -23,9 +22,7 @@ K=V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},
 \end{aligned}
 \]
 \end{example}
-注意 Key/Value 都是每个位置一行。
-$K^\top$ 只是在\textbf{计算分数时转置 Key 矩阵}，
-不是重新存储一份不同的 Key。
+Key 和 Value 都按位置逐行排列；计算匹配分数时，将 $K$ 转置，使 Query 能与所有 Key 逐个点积。
 
 \subsection{为什么是 $K^\top$ 而不是 $K$？}
 \label{sec:key-layout-card}
@@ -33,7 +30,7 @@ $K^\top$ 只是在\textbf{计算分数时转置 Key 矩阵}，
 $K:M\times d_k$，$\vect q^\top:1\times d_k$。
 因此 $\vect q^\top K^\top:1\times M$ 才能相乘；
 权重乘 $V:M\times d_v$ 才有输出 $1\times d_v$。
-列向量写法只是对\textbf{整个等式转置}，不是另一种算法。
+列向量写法是对\textbf{整个等式转置}，两种写法的运算相同。
 
 \subsection{从一个 Query 到整句：Q/K/V 如何生成？}
 主线把 Token 放在输入矩阵 $X:T\times d_{\rm model}$ 的每一行。
@@ -73,7 +70,7 @@ $V:M\times d_v$；Self-Attention 中 $N=M=T$。
 \phantomsection\label{eq:multi-query-attention}
 Softmax 对每个 Query 的一行单独归一化，输出 $N\times d_v$。
 除以 $\sqrt{d_k}$ 用于控制高维点积分数的典型量级；
-之前的三位置数值\textbf{未缩放}，不能在这里直接沿用旧概率。
+缩放会改变 Softmax 权重，因此需要根据新的分数重新计算。
 
 \begin{example}
 若权重为 $(0.75,0.25)$、两条 Value 是 $(2,0)$、$(0,4)$，

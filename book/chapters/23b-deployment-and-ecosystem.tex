@@ -9,7 +9,8 @@
 \item \textbf{模型权重}：训练得到的大量参数数值。
 \item \textbf{推理运行时}：加载权重、完成 Tokenization、执行网络计算并生成输出的程序。
 \end{enumerate}
-例如你可以有一个完整的 Transformer 计算程序，却没有训练好的权重；此时它不能直接产生有用的语言回答。也可能只获得模型权重，却需要选择合适的推理框架才能实际部署。
+有结构和代码但没有训练好的权重，模型还无法提供成熟的语言能力；
+拿到权重后，也需要合适的推理程序才能运行。
 
 \textbf{开放权重}只是说外部能够获取模型参数，不自动意味着训练代码、数据、许可和商业使用权都完全开放。判断“开源”必须检查实际提供的内容与许可证。
 
@@ -84,8 +85,7 @@ $-\log0.6\approx0.511$，
 \[
 -\bigl(0.8\log0.6+0.2\log0.4\bigr)\approx0.592.
 \]
-后者同时考虑两个类别的匹配程度；
-真实知识蒸馏还可能调整温度并组合原任务损失。
+后者同时考虑两个类别的匹配程度。蒸馏时还可以调整温度，并把软标签损失与原任务损失结合。
 \end{example}
 
 \begin{example}
@@ -105,7 +105,7 @@ $B:8\times1000$，则需要
 不是整套模型参数或部署占用必然缩小到 $1.6\%$。
 \end{example}
 
-这些技术可以结合，但并不能相互替代。例如 LoRA 的主要用途是\textbf{参数高效微调}，不能简单等同于“直接把最终模型文件压缩一半”。
+这些技术解决的成本不同：量化和剪枝常用于减小部署开销，LoRA 主要减少微调时需要更新的参数。
 
 \subsection{从文本模型到多模态模型}
 
@@ -132,9 +132,9 @@ $B:8\times1000$，则需要
 
 \textbf{API、\conceptlink{agent}{Agent} 和 \conceptlink{mcp}{MCP} 等概念主要属于系统集成层。}即使它们带来显著的产品能力提升，也不等于基础模型的参数在每一次工具调用后发生了训练更新。
 
-\noindent\textbf{本章小结：}一个真实 AI 产品除了模型，
-还需要权重、推理引擎、接口和安全机制。
-\textbf{模型计算能力}与\textbf{系统工程能力}是不同层次。
-
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:23b-deployment-and-ecosystem}十亿个参数，每个 2 字节，只算权重约需要多少 GB（十进制）？\quad{\footnotesize\hyperref[answer:23b-deployment-and-ecosystem]{核对解答。}}\par\medskip
 
+\begin{conclusion}
+部署一个 AI 产品需要模型结构、训练权重、推理引擎、接口与安全措施共同工作。
+模型的计算能力与系统的运行能力相互配合，才能构成可用的服务。
+\end{conclusion}

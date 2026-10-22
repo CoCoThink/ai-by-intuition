@@ -37,10 +37,10 @@ $W_2:d_{\rm ff}\times d_{\rm out}$，偏置在相应层的行上相加。
 $\vect x^\top(W_1W_2)$，两层可以合并成一层；
 插入激活函数后，哪些中间分量为零随输入改变，不再能用一个固定矩阵普遍代替。
 
-\subsection{这与 Transformer FFN、联想记忆有何关联？}
-Transformer 的 FFN 也是逐 Token 使用相同两层计算的网络；
-它本身不会跨 Token 读取信息。第六部分才会将权重矩阵
-重新解释成关联记忆，这只是有条件成立的数学视角。
+\subsection{它与 Transformer 中的 FFN 有什么关系？}
+Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
+跨位置的信息交互由 Attention 等机制承担。
+第七部分的选读专题还会从联想记忆角度理解这类矩阵运算。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:10-mlp}为什么两层纯线性映射间没有激活函数时，仍等价于一个线性映射？\quad{\footnotesize\hyperref[answer:10-mlp]{核对解答。}}\par\medskip
 

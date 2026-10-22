@@ -1,4 +1,4 @@
-\section{把 Key 和 Value 堆成矩阵：中间并没有魔法}
+\section{把 Key 和 Value 堆成矩阵：从匹配到读出}
 
 我们已经知道每条记忆都有一个 Key 和一个 Value。但初学者最容易卡住的恰恰是
 \[
@@ -6,7 +6,7 @@
 \quad\longrightarrow\quad
 V^\top\sigma(K\vect{x}).
 \]
-为什么能堆？为什么 ReLU 能放在两个矩阵乘法之间？这一节完全拆开手算。
+下面通过两条记忆，逐步验证矩阵写法与逐条计算完全一致。
 
 \subsection{两条记忆，各用两个数字表示}
 
@@ -77,7 +77,7 @@ box/.style={draw=linegray,rounded corners=3pt,fill=paper,
 \end{tikzpicture}
 \end{center}
 
-\subsection{ReLU 不乘矩阵：它逐个处理分数}
+\subsection{用 ReLU 筛选匹配分数}
 
 矩阵乘法算完后，结果已经是一个普通的两维向量：
 \[
@@ -134,9 +134,9 @@ $d_v$ & 每条\textbf{Value 含多少个数字}；输出向量通常也有这个
 \]
 这就是为什么不能把 $M$ 与 $d_k$ 混为一谈：前者\textbf{数记忆的条数}，后者\textbf{数每条 Key 有几个数字}。
 
-\subsection{为什么 Key 是行，而 Value 从列中读出？}
+\subsection{如何安排 Key 和 Value 的行列方向？}
 
-这不是 AI 特有的规则，而是\textbf{我们选择如何摆放数字}。在本选读专题中，为方便解释外积，单次输入 Query 暂用列向量 $\vect x$。
+行列方向取决于数字的排布约定。这里以列向量 $\vect x$ 表示单次查询。
 
 若对 $K$ 和 $K^\top$ 的方向有疑问，先看\hyperref[sec:layout-matrix-card]{行列对照图}。学习 Self-Attention 时，再看\hyperref[sec:key-layout-card]{Key 与 Value 并排图}。
 
@@ -178,10 +178,10 @@ V=\begin{bmatrix}\vect v_1^\top\\\vdots\\\vect v_M^\top\end{bmatrix}
 \begin{idea}
 最关键的不是记住转置符号，而是知道这一步要做什么。
 $K\vect x$ 用逐行点积计算\textbf{匹配分数}；$V^\top\vect a$ 用按列加权求和形成\textbf{输出}。
-也可以从一开始就叫按列矩阵 $\widetilde V$，那根本不必写转置。
+若直接用 $\widetilde V$ 表示按列排列的 Value，式子就写成 $\widetilde V\vect a$。
 \end{idea}
 
-\subsection{第二个矩阵：每列是一条 Value}
+\subsection{按权重读出 Value}
 
 我们希望的输出是按照激活分数，将 Value 加权求和：
 \begin{equation}
@@ -218,7 +218,7 @@ V^\top\vect{a}
 
 \subsection{整个过程连在一起}
 
-现在把刚才三个独立步骤写在同一张纸上：
+把匹配、筛选和读出连起来：
 \begin{equation}
 \begin{aligned}
 \text{匹配：}\quad
@@ -246,12 +246,6 @@ V^\top\relu(K\vect{x})
 \end{tikzpicture}
 \end{center}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:08-stacking-key-value}$K:3\times2$、$V:3\times4$，用三个 Key 的读取权重按行加权 Value 后输出几维？\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
-
-\begin{conclusion}
-一定要分开理解：\textbf{$K\vect{x}$ 是批量点积；ReLU 是逐元素函数；$V^\top\vect{a}$ 是按列加权求和。}每一步的输出都恰好是下一步能够接收的输入。
-\end{conclusion}
-
 \subsection{维度检查：为什么它们可以相乘？}
 
 前面两条记忆、二维 Key、二维 Value，所以恰好都是 $2\times2$ 方阵。但真实情况并不需要是方阵。
@@ -275,7 +269,7 @@ V^\top\relu(K\vect{x})
 \[
 (32\times100)(100\times1)=(32\times1).
 \]
-这里并没有神秘的“特殊神经网络矩阵乘法”，始终是普通的线性代数。
+两次相乘都遵循普通的矩阵乘法规则。
 
 \subsection{这和外积求和到底是什么关系？}
 
@@ -303,6 +297,10 @@ V^\top\relu(K\vect{x})
 \end{aligned}\]
 前者保留了负匹配；后者把它滤掉了。这就是激活函数引入\textbf{非线性}的实际效果。
 
-\begin{warningbox}
-\textbf{行列约定：}这里规定 $K$ 与 $V$ 的每一\textbf{行}是一条 Key、Value，所以公式使用 $V^\top\sigma(K\vect{x})$。有些教材直接把 Value 放在\textbf{列}中，记为 $\widetilde V$，便会写成 $\widetilde V\sigma(K\vect{x})$。只是摆放约定不同，内容相同。标准 Transformer 的批量 $Q,K,V$ 通常按 Token 放在行上。
-\end{warningbox}
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:08-stacking-key-value}$K:3\times2$、$V:3\times4$，用三个 Key 的读取权重按行加权 Value 后输出几维？\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+$K\vect x$ 将多次点积合成一组匹配分数，$\sigma$ 逐元素筛选，
+$V^\top\sigma(K\vect x)$ 则按权重组合 Value。
+没有非线性时可把两次矩阵乘法合并；插入 ReLU 后，输出随输入的激活模式而变化。
+\end{conclusion}

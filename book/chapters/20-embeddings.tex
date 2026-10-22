@@ -22,8 +22,7 @@
 \text{Token}&\text{其他}&\text{春天}&\text{。}&\text{花}&\text{开了}
 \end{array}
 \]
-其中“其他”只是为编号 $0$ 放置的示意候选，
-并非真实分词器通用的特殊标记。
+编号 $0$ 在这张表中留给“其他”。
 于是
 \[
 \text{“春天 / 花 / 开了 / 。”}
@@ -88,8 +87,7 @@ E=
 三行对应三个位置，每行有两个数字。
 
 \input{figures/embedding-lookup}
-后面讨论 RNN、Attention 和 Transformer 时，
-就沿着这份输入的思路继续。
+后面计算 RNN、Attention 和 Transformer 时，都沿用这张三行输入表。
 
 \subsection{为什么查 Embedding 与矩阵乘法是同一回事？}
 
@@ -103,11 +101,7 @@ E=
 所以“按 ID 查一行”和“用 One-hot 选出一行”在数学上等价。
 实际程序通常直接查表，不必先造出一个长 One-hot 向量。
 
-\begin{warningbox}
-这些二维数字是\textbf{为了教学而编的}，并非“春天”和“花”的真实语义。
-真实 Embedding 的表项是\textbf{训练中调整的参数}，
-向量相近也不能直接证明事实、语义关系或推理能力完全相同。
-\end{warningbox}
+Embedding 表中的向量是可训练参数。模型通过数据调整这些数字，使它们能够支持后续的预测任务。
 
 \subsection{只有词向量够不够？还有顺序问题}
 

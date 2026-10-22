@@ -2,13 +2,11 @@
 \label{intro:23-llm-systems}
 
 \begin{idea}
-\noindent\emph{同一个模型，在训练与生成时经历不同的计算流程}\par
+\noindent\emph{从概率分布到连续的文字输出}\par
 
-上一章训练时可以查看完整的真实文本，从中构造预测题和标准答案。
-但真实使用时，用户只给出问题或前文，未来的正确文字并不事先存在。
-我们暂时固定已学到的参数，研究模型怎样从候选概率中选出一个 Token，
-再把它接回上下文，逐步生成回应。
-这也解释了为什么\textbf{训练时的并行预测}与\textbf{使用时的顺序生成}并不矛盾。
+训练时有完整文本可构造每个位置的预测目标；生成时只有当前上下文。
+模型先为下一 Token 计算概率，选择一个候选并接到上下文末尾，
+再重复这个过程。\textbf{训练可以并行计算多个预测位置，生成则依赖前一步选出的 Token。}
 \end{idea}
 
 \subsection{预测分数还不是最终文字}
@@ -36,12 +34,11 @@ p=(0.6,\ 0.3,\ 0.1).
 \item \textbf{Top-k}：保留概率最高的 $k$ 个候选，重新归一化再采样。
 \item \textbf{Top-p}：从概率较大者开始累加，保留达到阈值的一组候选再采样。
 \end{enumerate}
-这些都是\textbf{推理时的选择策略}，
-通常不需要重新训练网络权重，也不保证生成事实正确。
+这些都是\textbf{推理时的选择策略}，通常不需要修改网络权重。
 
 \subsection{用具体数字比较温度与截断采样}
 
-仍用三个教学候选的 logits $(2,1,0)$。
+取三个候选的 logits $(2,1,0)$。
 温度记为 $\tau>0$，逆温度定义为 $\beta=1/\tau$：
 \[
 p_i(\tau)=\frac{\exp(z_i/\tau)}{\sum_j\exp(z_j/\tau)}
@@ -107,19 +104,11 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 当历史超过限制时，应用可能截断、摘要或重新检索；
 这些是应用层的策略，不能误认为模型参数在对话中被永久改写。
 
-\begin{warningbox}
-以上描述的是常见\textbf{自回归 Decoder-only 模型}。
-不同系统可能使用推测解码、批处理或其他性能优化，
-但这不改变“模型给出候选概率、系统选择 Token”的基本分工。
-流畅的生成也不代表内容已经被外部证据核验。
-\end{warningbox}
+
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:23-llm-systems}贪心解码和 Top-p 采样，在选择下一 Token 时的主要差别是什么？\quad{\footnotesize\hyperref[answer:23-llm-systems]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-我们已经走完\textbf{表示、训练、Attention、Transformer、生成}
-这一整条主线。新的疑问不再是“什么叫 Q/K/V”，
-而是如何降低生成成本、如何训练出更符合任务的行为，
-以及怎样借助外部工具解决实际问题。
-这正是下一部分的起点。
+从文本表示到训练，再到 Attention、Transformer 和逐词生成，语言模型的主要计算流程已经连通。
+接下来讨论如何降低生成成本、调整模型的回答行为，以及怎样通过检索和工具完成更复杂的任务。
 \end{conclusion}

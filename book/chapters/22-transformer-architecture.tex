@@ -9,7 +9,7 @@
 但只会 Attention 还不能直接变成一个会生成文字的模型：
 我们还需要表示词的位置、处理读取后的特征、稳定地堆叠许多层，
 最后把隐藏向量转成对下一 Token 的预测分数。
-上一章已手算位置编码和双头 Attention；现在专心把这些部件装成一个有清楚数据流的 Block。
+位置编码和多头 Attention 已经有了，现在把它们组装成一条完整的数据流。
 \end{idea}
 
 \subsection{先核对 Q/K/V 的形状}
@@ -29,7 +29,7 @@ S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 \]
 第 $i$ 行记录第 $i$ 个 Token 对三个 Key 的匹配程度；每行 \conceptlink{softmax}{Softmax} 后和 $V$ 相乘，得到三个\textbf{带上下文信息}的新向量。
 
-\subsection{Pre-Norm Block 为什么必须有两条残差捷径？}
+\subsection{Pre-Norm Block 中的两条残差连接}
 \phantomsection\label{concept:residual}
 
 在这里选择\textbf{Pre-Norm（先归一化）}，每个子层都是
@@ -55,9 +55,8 @@ y=x+f(x)\quad\Longrightarrow\quad
 所以残差能改善深层网络的信息与梯度传播；
 它不保证总梯度在所有情况下都不消失。
 Block 有 Attention 与 FFN 两个子层，因此分别为这两次变换设置捷径。
-多头的单头输出在上一章记为 $O_j$，
-FFN 中间层将记为 $F_{\rm mid}$；
-不再让同一 $H$ 或 $Y$ 扮演三个不同角色。
+多头 Attention 的单头输出记为 $O_j$，
+FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 
 \textbf{观察橙色捷径：}它们跳过模块直接到加号，
 而不是在模块里偷偷执行“残差”。
@@ -81,8 +80,8 @@ FFN 中间层将记为 $F_{\rm mid}$；
 不是把全部 Token 的行平均掉。
 \end{example}
 
-\textbf{Post-Norm} 可采用另一种合法排列，
-但必须另画图、另写公式。本书该图与两式都使用 Pre-Norm。
+另一种常见排列是 \textbf{Post-Norm}：先计算子层并与残差相加，再做归一化。
+这里采用的是 Pre-Norm。
 
 \subsection{生成时怎样禁止偷看未来？}
 \phantomsection\label{concept:causal-mask}

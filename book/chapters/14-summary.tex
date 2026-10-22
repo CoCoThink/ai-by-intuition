@@ -1,4 +1,4 @@
-\section{回头看：Linear、MLP、Attention 究竟改变了什么？}
+\section{线性层、MLP 与 Attention 的检索视角}
 
 \begin{table}[H]
 \centering
@@ -20,9 +20,8 @@ Attention & $\sum_i \vect{v}_i\softmax(\beta K\vect{x})_i$ & 用归一化指数�
 \begin{equation}
 \boxed{\text{输出}=\sum_i\text{记忆内容}_i\times\text{匹配权重}_i.}
 \end{equation}
-这张表提供的是一种数学重写视角，并非三种网络实际实现的全部定义。
-特别是 ReLU 在正分数区间不会自动把弱匹配变得更弱；
-只有针对给定输入范围和激活函数，才能谈抑制或放大哪些响应。
+三种计算都能写成加权求和，但权重的计算方式不同。
+例如 ReLU 在正数区间保持原值，若想压低较弱的正匹配，还需要其他激活设计。
 
 差别在于\textbf{权重怎么计算}、\textbf{Key/Value 存在哪里}，以及\textbf{怎样更新记忆}。
 
@@ -43,7 +42,8 @@ Key / Value 来源 & 训练得到的权重 & 当前输入的 Token 表示 \\
 \end{tabularx}
 \end{table}
 
-所以“Transformer 的每层都是记忆系统”是一个\textbf{强有力的理解视角}，而不是声称所有层都像数据库一样一条条存储事实。
+参数提供训练中学到的表示，上下文则提供当前输入中可读取的信息。
+两种来源共同影响 Transformer 的输出。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:14-summary}为什么线性外积记忆和 Softmax Attention 都能看作“按相似度读取”？\quad{\footnotesize\hyperref[answer:14-summary]{核对解答。}}\par\medskip
 

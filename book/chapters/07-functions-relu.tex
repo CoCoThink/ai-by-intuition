@@ -24,7 +24,7 @@ g\!\left(\begin{bmatrix}3\\-2\end{bmatrix}\right)
 \relu\!\left(\begin{bmatrix}1\\-0.2\\3\end{bmatrix}\right)
 =\begin{bmatrix}1\\0\\3\end{bmatrix}.
 \]
-注意：应用 ReLU 时，没有进行新的矩阵乘法。它只是分别处理上一步算出的各个数字。
+ReLU 逐元素处理向量，无需额外的矩阵乘法。
 
 \subsection{为什么能够写成 $\relu(\vect x^\top W+\vect b^\top)$？}
 
@@ -34,7 +34,7 @@ g\!\left(\begin{bmatrix}3\\-2\end{bmatrix}\right)
 \quad \vect b^\top=(0,0).
 \]
 第一步：$\vect x^\top W+\vect b^\top=(3,0)$；
-第二步：$\relu(3,0)=(3,0)$。ReLU 并没有进行新的矩阵乘法。
+第二步：$\relu(3,0)=(3,0)$。
 
 \begin{warningbox}
 $\relu(\vect x^\top W)$ 与 $\vect x^\top\relu(W)$ 是不同的操作。前者\textbf{先乘矩阵再处理输出}；后者先把权重中的负数变零再相乘。这里讨论的是前者。
