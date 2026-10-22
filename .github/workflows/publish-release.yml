@@ -112,8 +112,8 @@ jobs:
           for name in ("texlive-environment.txt", "runner-environment.txt", "verapdf-image.txt"):
               assert (folder / "audit" / name).is_file(), f"Missing environment audit: {name}"
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf8") as f:
-              f.write(f"PDF_PAGE_COUNT={actual_pages}\\n")
-              f.write(f"PDF_FORMULA_COUNT={summary['formulas']}\\n")
+              f.write(f"PDF_PAGE_COUNT={actual_pages}\n")
+              f.write(f"PDF_FORMULA_COUNT={summary['formulas']}\n")
           print(f"Validated {actual_pages} pages, {summary['formulas']} MathML-AF associations, PDF/UA-2 and build evidence")
           PY
           (
