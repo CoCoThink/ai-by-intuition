@@ -60,6 +60,21 @@
 % Printed CTeX heading numbers do not automatically enter PDF outline titles.
 % Preserve the same numbered part/chapter/appendix hierarchy in reader bookmarks.
 \hypersetup{unicode=true,bookmarksnumbered=true,pdfdisplaydoctitle=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition：从函数到 Transformer 的直觉之旅},pdfauthor={AI by Intuition},pdfsubject={用可手算的例子理解表示、学习、上下文和模型生成}}
+% TeX Live 2026 native section headings print "第N章"/"附录 A", but
+% hyperref's default bookmark numberline gets only "N"/"A".
+% Format PDF outline numbering without changing \thesection, equation
+% numbers, TOC entries, cross-reference targets, or tagged H1 semantics.
+\makeatletter
+\newif\ifBookAppendix
+\def\Hy@numberline#1{%
+  \ifnum\Hy@level=1\relax
+    \ifBookAppendix 附录~#1\space
+    \else 第#1章\space
+    \fi
+  \else #1\space
+  \fi
+}
+\makeatother
 \setlength{\parindent}{2em}
 \setlength{\parskip}{2.7pt}
 \linespread{1.19}
@@ -268,6 +283,7 @@
 
 \clearpage
 \appendix
+\BookAppendixtrue
 % Appendix section headings retain semantic H1 tags via the native CTeX mechanism.
 \ctexset{section={name={附录~,},number=\Alph{section},
   nameformat=\color{blue},numberformat=\color{blue}}}
