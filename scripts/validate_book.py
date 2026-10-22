@@ -51,10 +51,12 @@ REQUIRED = [
     "22c-language-training",
     "23-llm-systems",
     "23a-from-toy-to-gpt",
-    "22d-modern-transformers",
+    "23aa-pretraining-icl",
     "23c-post-training",
     "23d-agent-systems",
     "23b-deployment-and-ecosystem",
+    "22d-modern-transformers",
+    "23e-tech-judgement",
     "19-cnn",
     "04-key-value-outer-product",
     "05-memory-interference",
@@ -185,6 +187,11 @@ def validate_source() -> None:
     includes(sources["22b-token-to-output"], "0.1244", "causal attention example")
     includes(sources["22c-language-training"], "1.611377", "three-position joint loss")
     includes(sources["23a-from-toy-to-gpt"], "768/12=64", "GPT-2 scale recovery")
+    includes(sources["23aa-pretraining-icl"], r"\label{concept:in-context-learning}", "pretraining and ICL")
+    includes(sources["23c-post-training"], "只改 Prompt/Few-shot", "SFT versus prompting")
+    includes(sources["23d-agent-systems"], "g_{Q2}", "shared report arithmetic")
+    includes(sources["23d-agent-systems"], "A2A", "protocol distinctions")
+    includes(sources["23e-tech-judgement"], "Scaling Laws", "innovation framework")
     includes(sources["22c-language-training"], "0.25764", "shared embedding gradient")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
