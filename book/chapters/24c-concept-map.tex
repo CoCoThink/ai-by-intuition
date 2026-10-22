@@ -34,7 +34,7 @@
 \node[app] (tools) at (8.7,-4.45) {RAG/工具/Agent\\系统边界};
 % Post-training can update parameters; inference can enter an external application.
 % Neither route claims that tool calls automatically backpropagate.
-\draw[->,densely dashed,teal] (post.north) |- (upd.west);
+\draw[->,densely dashed,teal] (post.north) -- ++(0,5mm) -| (upd.south);
 \draw[->,thick,orange] (gen.east) --
   node[midway,above,font=\sffamily\tiny,text=orange] {可接入} (tools.west);
 \end{tikzpicture}

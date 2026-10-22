@@ -246,7 +246,7 @@ def validate_source() -> None:
     for arrow in (
         "(upd.north) --",
         "(emb.south);",
-        "(post.north) |- (upd.west);",
+        "(post.north) -- ++(0,5mm) -| (upd.south);",
         "(gen.east) --",
         "(tools.west);",
     ):
