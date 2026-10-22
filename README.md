@@ -8,6 +8,16 @@
 
 [**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [新版发布流程](docs/PUBLISHING.md) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
 
+## V2 教学结构重构（进行中）
+
+目前发布的 **v0.1.0 PDF 仍采用“五个必读部分 + 两个选读部分”**。仓库 `main` 已开始按“缺口驱动、先学习后矩阵、统一贯通实验”推进新版教学结构，**尚未切换为新的七部分、31 章正式 PDF**。
+
+- [V2 重构计划与进度（包含 M0–M6 验收）](docs/STRUCTURE_REDESIGN_PLAN.md)
+- [旧版 47 章节源码迁移台账](docs/RESTRUCTURING_BASELINE.md) · [V2 的 31 章先修依赖与缺口链](docs/CURRICULUM_DEPENDENCIES.md)
+- [可复算的三维 Transformer 数值基线](scripts/teaching_reference.py)：一层单头 Pre-Norm Block、三位置联合训练、梯度校验；将用于后续贯通算例，**暂未替换当前正式 PDF 的二维数字**。
+
+当前教材说明和 v0.1.0 下载仍以本页其余部分及正式 Release 为准。只有完成数值、章节引用、排版、MathML 和 PDF/UA 验收后才发布 V2 版本。
+
 ## 开放许可证与转载
 
 **教材与阅读材料：** 本仓库的原创 `book/` 教材正文、LaTeX 排版源码、TikZ 教学图、仓库说明文档及正式发布的 **AI by Intuition** PDF（包括 v0.1.0）以 [Creative Commons Attribution 4.0 International（CC BY 4.0）](LICENSE) 授权。允许复制、修改、翻译及商业使用，须按许可要求署名、提供许可证链接并标明修改；本许可不要求衍生作品沿用相同许可证。
