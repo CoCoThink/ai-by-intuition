@@ -1,0 +1,58 @@
+\section{Token 与 ID：文字怎样进入数字世界？}
+\label{intro:20a-tokenizer}
+\phantomsection\label{concept:token}
+
+上一章已经会用矩阵组织学习，但输入还是数字。现在给模型一句中文，
+如何把它变成可以查表的输入？
+
+\subsection{Token、词表、整数 ID 分别做什么？}
+
+\textbf{Token} 是文本处理单位，不一定恰好等于自然语言里的词：
+它也可能是单字、子词或标点。
+\textbf{Tokenizer（分词器）}按照某套规则把文本拆成 Token，
+然后按\textbf{词表}将它们映射为整数 \textbf{ID}。
+
+本书统一使用一份\textbf{人为指定}的五项教学词表：
+\[
+\begin{array}{c|ccccc}
+\text{ID}&0&1&2&3&4\\\hline
+\text{Token}&\text{其他}&\text{春天}&\text{。}&\text{花}&\text{开了}
+\end{array}
+\]
+所以“春天 / 花 / 开了 / 。”映射到 $[1,3,4,2]$。
+整数编号只是身份，不能因为 ID 4 大于 ID 1 就认为“开了”更重要。
+
+\subsection{子词与 BPE：为什么不一定按汉字切？}
+
+示意短语“今天天气好”如果逐字分割，会成为
+\[
+[\text{今},\text{天},\text{天},\text{气},\text{好}].
+\]
+在一个简化的\textbf{子词/BPE 合并演示}里，
+若“今+天”和“天+气”经常相邻，可能学到这两次合并：
+\[
+[\text{今},\text{天},\text{天},\text{气},\text{好}]
+\ \longrightarrow\
+[\text{今天},\text{天气},\text{好}].
+\]
+\textbf{这是从汉字出发的教学示意，不是真实 GPT 分词器的逐字节运行记录。}
+真正的 BPE 词表及合并规则因模型不同而不同，
+中文有时会被切成字、子词甚至字节片段。
+
+切得更细可能增加序列长度，切得较粗可能增加词表体积；
+Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
+
+\begin{warningbox}
+本文五项词表只为统一计算和手算服务。
+真实模型并不保证将“春天”或“开了”保留为单个 Token。
+\end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:20a-tokenizer}
+按示意规则合并“今+天”“天+气”后，输入的 Token 数从多少变成多少？
+\quad{\footnotesize\hyperref[answer:20a-tokenizer]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+Token 化将原始文字变成离散 ID，但 ID 只是类别标签。
+下一章要解决：如何为每个 ID 学到可用于计算的数值特征？
+\end{conclusion}
