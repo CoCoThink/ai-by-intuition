@@ -47,8 +47,10 @@ PyTorch 自动求导和 NumPy 手工反传是\textbf{两种独立实现途径}�
 
 \subsection{完整 20 步轨迹：三个位置何时预测正确？}
 
-如果不安装 PyTorch，也可以只安装 NumPy，在仓库根目录执行
-\texttt{python3 scripts/teaching\_trace.py}。
+如果不安装 PyTorch，也可以只安装 NumPy，在仓库根目录执行：
+\begin{verbatim}
+python3 scripts/teaching_trace.py
+\end{verbatim}
 它直接调用参考实现的完整反向传播，输出
 $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 \begin{center}\small
