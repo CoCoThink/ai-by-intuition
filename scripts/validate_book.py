@@ -217,6 +217,19 @@ def validate_source() -> None:
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
     includes(sources["20a-tokenizer"], "BPE", "subword example")
+    # V2 main reading path: 31 displayed numbered sections across seven core parts.
+    input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
+    first_elective = input_list.index("19-cnn")
+    core_sources = input_list[:first_elective]
+    visible_chapters = sum(len(re.findall(r"(?m)^\\section\{", sources[n]))
+                           for n in core_sources)
+    if visible_chapters != 31:
+        fail(f"Core curriculum requires 31 numbered chapters, found {visible_chapters}")
+    includes(sources["16-loss-gradient"], r"\label{intro:16a-gradient-descent}",
+             "loss and gradient are two progressive lessons")
+    includes(sources["28-chapter-checks"], r"\label{answer:16-loss-analytic}",
+             "separate analytical-loss self-check")
+
     includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
     includes(sources["20b-task-contract"], "50,257", "GPT-2 preview")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")

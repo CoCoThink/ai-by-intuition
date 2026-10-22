@@ -42,11 +42,11 @@ $\vect x^\top(W_1W_2)$，两层可以合并成一层；
 \subsection{它与 Transformer 中的 FFN 有什么关系？}
 Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 跨位置的信息交互由 Attention 等机制承担。
-第七部分的选读专题还会从联想记忆角度理解这类矩阵运算。
+第九部分的联想记忆选读专题还会从检索角度理解这类矩阵运算。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:10-mlp}为什么两层纯线性映射间没有激活函数时，仍等价于一个线性映射？\quad{\footnotesize\hyperref[answer:10-mlp]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 你现在可以用行向量手算两层 MLP，并核对每一步的形状。
-下一章研究一次怎样用一批训练样本，以及为什么实际优化器会保存历史梯度。
+接下来的小节研究怎样用一批训练样本，以及为什么实际优化器会保存历史梯度。
 \end{conclusion}

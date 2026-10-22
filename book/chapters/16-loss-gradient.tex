@@ -1,4 +1,4 @@
-\section{怎样判断参数好不好？从损失函数到梯度下降}
+\section{怎样量“猜得多差”？损失与一次直接求解}
 \label{intro:16-loss-gradient}
 
 \begin{idea}
@@ -49,6 +49,23 @@ L(w)&=\tfrac12[(w-1)^2+(2w-2)^2]\\
 因此换一种更可实施的目标：\textbf{不先求整个问题的最终答案，
 只算当前位置朝哪个方向调参数，更可能让损失下降。}
 这才需要梯度下降。它是数值优化方法，不是“求导失效了”。
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:16-loss-analytic}
+对 $L(w)=\tfrac52(w-1)^2$，哪个参数 $w$ 让两个训练样本都没有误差？
+\quad{\footnotesize\hyperref[answer:16-loss-analytic]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+损失函数把预测差异变成可计算的数。在这道二次函数题里，直接解驻点就能找到最优参数。
+下一章转向不能轻松一次解出全部参数的模型，研究怎样沿局部下降方向反复更新。
+\end{conclusion}
+
+\section{当解析解不现实时：梯度下降怎样调参数？}
+\label{intro:16a-gradient-descent}
+
+上一章的简单二次损失可以解析求解；
+但在更复杂的网络里，我们通常要沿当前局部梯度一步步迭代。
+先从最直观的一维导数开始，再推广到双参数。
 
 \subsection{导数是什么意思？先用一个小改动体验}
 
@@ -119,5 +136,5 @@ w_2=0.5-0.1\times(-2.5)=0.75.
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:16-loss-gradient}$L(w)=(w-1)^2$ 在 $w=0$ 处的导数是多少？\quad{\footnotesize\hyperref[answer:16-loss-gradient]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-损失函数把“模型好不好”变成数字；梯度提供局部下降方向；学习率控制步长。下一章先问：即使参数可以优化，若函数本身只能画直线，又怎样表示弯曲的关系？
+本章建立了梯度、学习率与参数更新的关系。下一章先问：即使参数能够优化，若函数本身只能画直线，又怎样表示弯曲的关系？
 \end{conclusion}

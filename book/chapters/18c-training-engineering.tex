@@ -1,10 +1,10 @@
-\section{训练如何组织？小批次、优化器与稳定性}
+\subsection{训练如何组织？小批次、优化器与稳定性}
 \label{intro:18c-training-engineering}
 
 训练除了定义损失函数，还要安排每次使用的数据量、更新参数的方法以及数值稳定措施。
 这些设置会影响训练速度和收敛行为。
 
-\subsection{Mini-batch、Batch Size 与 Epoch 是什么？}
+\subsubsection{Mini-batch、Batch Size 与 Epoch 是什么？}
 
 设有 $100$ 条训练样本。如果每次取其中 $10$ 条一起估计梯度，那么 \textbf{Batch Size（批量大小）}是 $10$，这一组样本叫 \textbf{Mini-batch（小批次）}。把全部 $100$ 条训练样本完整处理一遍，称为一个 \textbf{Epoch（训练轮次）}；本例中每轮大约需要 $100/10=10$ 次参数更新。
 
@@ -12,7 +12,7 @@
 
 若梯度特别大，\textbf{梯度裁剪}可以在更新前限制其幅度。例如梯度向量的长度超过设定阈值时，可以将其整体按比例缩小。裁剪不能取代合理的学习率和数据检查。
 
-\subsection{两步小算例：动量和 Adam 为什么要记住过去？}
+\subsubsection{两步小算例：动量和 Adam 为什么要记住过去？}
 
 SGD 每次使用当前梯度。若梯度有噪声，可以保存\textbf{历史梯度的滑动平均}。
 先用人为选择的两步标量梯度 $g_1=2,g_2=1$ 演示。
@@ -44,7 +44,7 @@ v_1=2,\quad v_2=1.5.
 这不是生产环境的推荐系数，只是可以手算的说明：
 \textbf{Adam 使用了梯度的历史平均与历史平方平均，更新幅度不只由当前梯度决定}。
 
-\subsection{常见训练故障与应对方法}
+\subsubsection{常见训练故障与应对方法}
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
