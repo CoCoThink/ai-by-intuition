@@ -68,6 +68,7 @@ REQUIRED = [
     "09-nonlinearity-and-memory",
     "14-summary",
     "13-capacity",
+    "00e-core-formulas",
     "00b-math-tools",
     "00c-symbols",
     "25-integrated-practice",
@@ -177,7 +178,7 @@ def validate_source() -> None:
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
     sources = {name: chapter(name) for name in REQUIRED}
     includes(main, r"\appendix", "main")
-    includes(main, r"\part*{附录：练习、术语与答案}", "main")
+    includes(main, r"\part*{附录：公式、练习与答案}", "main")
     includes(main, r"\ctexset{", "native CTeX heading styling")
     includes(main, "name={第,章}", "visible chapter number format")
     if r"\usepackage{titlesec}" in main or r"\titleformat" in main:
@@ -253,7 +254,7 @@ def validate_source() -> None:
     # M5: exercise / answer-key parity must not drift after adding transfer tasks.
     math_body = sources["25-integrated-practice"]
     modern_body = sources["25b-modern-practice"]
-    answer_sections = sources["27-answer-key"].split(r"\subsection*{")
+    answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
     if len(answer_sections) != 4:
         fail("Expected three distinctly labelled answer sets")
     expected_counts = (11, 14, 14)  # X2 optional, mathematics, modern systems
@@ -268,7 +269,7 @@ def validate_source() -> None:
             includes(sources[name], label, f"{name} exercise tier")
     answer_key = sources["27-answer-key"]
     includes(answer_key, r"\label{app:answers}", "answer key")
-    if answer_key.count(r"\subsection*{") != 3:
+    if answer_key.count(r"\subsubsection*{") != 3:
         fail("Answer appendix should separate the three exercise sets")
     includes(sources["24-lexicon"], r"\textbf{Top-p}", "100-word index")
     ninth = sources["24-lexicon"].split(r"\subsection{第九组")[1].split(r"\subsection{第十组")[0]
@@ -362,6 +363,16 @@ def validate_source() -> None:
         encoding="utf-8")
     includes(weight_figure, "coltitle=ink", "figure 10 dark title on light background")
     includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
+    # A-E appendix sections must be explicit in the main file (no extra numbered sections).
+    appendix = main.split(r"\appendix", 1)[1]
+    group_titles = re.findall(r"(?m)^\\section\{([^}]+)\}", appendix)
+    if group_titles != ["核心公式、数学与形状速查", "综合练习与迁移实践",
+                        "术语地图、概念关系与索引", "集中参考答案与随堂解答",
+                        "来源与延伸阅读"]:
+        fail(f"Expected exactly five A-E appendix groups, found {group_titles}")
+    includes(sources["00e-core-formulas"], r"Z=HW_{\rm out}",
+             "compact core formula card")
+
     includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
     includes(sources["18c-training-engineering"], "0.943", "two-step Adam example")
     includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")

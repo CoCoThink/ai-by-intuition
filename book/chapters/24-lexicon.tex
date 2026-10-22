@@ -1,4 +1,4 @@
-\section{建立自己的 AI 术语地图：100 个基础概念}
+\subsection{建立自己的 AI 术语地图：100 个基础概念}
 
 这一章是可以点击回溯的概念索引。术语后面的链接给出正文中的章号和页码；文末另有英文术语字母索引及概念关联图。
 
@@ -9,7 +9,7 @@
 \end{idea}
 
 
-\subsection{第一组：基本概念}
+\subsubsection{第一组：基本概念}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=1]
 \item \textbf{函数}：输入经过确定的计算规则得到输出，例如 $y=2x+1$。 \termref{intro:00-functions}
 \item \textbf{模型}：为完成任务选定的一套计算结构和参数。 \termref{intro:00-functions}
@@ -23,7 +23,7 @@
 \item \textbf{标签}：监督学习中为样本提供的目标或正确类别。 \termref{intro:18-generalization}
 \end{enumerate}
 
-\subsection{第二组：最少数学}
+\subsubsection{第二组：最少数学}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=11]
 \item \textbf{向量}：有顺序的一列数字；可用来表示一个对象的多个特征。 \termref{intro:01-vectors}
 \item \textbf{维度}：向量有几个数，或矩阵有几行几列。 \termref{intro:01-vectors}
@@ -37,7 +37,7 @@
 \item \textbf{激活函数}：应用在线性层输出上的函数，扩展模型表达能力。 \termref{intro:07-functions-relu}
 \end{enumerate}
 
-\subsection{第三组：学会参数}
+\subsubsection{第三组：学会参数}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=21]
 \item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:16-loss-gradient}
 \item \textbf{损失函数}：用数字评估预测与目标之间的差距。 \termref{intro:16-loss-gradient}
@@ -51,7 +51,7 @@
 \item \textbf{反向传播}：利用链式法则高效计算计算图中全部参数的梯度。 \termref{intro:17-backpropagation}
 \end{enumerate}
 
-\subsection{第四组：让模型泛化}
+\subsubsection{第四组：让模型泛化}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=31]
 \item \textbf{训练集}：用于直接计算参数梯度与更新权重的数据。 \termref{intro:18-generalization}
 \item \textbf{验证集}：用于选择超参数、模型方案和提前停止的数据。 \termref{intro:18-generalization}
@@ -65,7 +65,7 @@
 \item \textbf{提前停止}：根据验证表现决定停止训练的时机。 \termref{intro:18-generalization}
 \end{enumerate}
 
-\subsection{第五组：优化与工程}
+\subsubsection{第五组：优化与工程}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=41]
 \item \textbf{Mini-batch}：将数据分为较小的批次计算梯度。 \termref{intro:18c-training-engineering}
 \item \textbf{Epoch}：训练过程完整遍历一次训练数据。 \termref{intro:18c-training-engineering}
@@ -79,7 +79,7 @@
 \item \textbf{归一化}：调整激活尺度或统计分布以辅助稳定训练。 \termref{intro:22-transformer-architecture}
 \end{enumerate}
 
-\subsection{第六组：不同的网络架构}
+\subsubsection{第六组：不同的网络架构}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=51]
 \item \textbf{MLP}：多层感知机；组合矩阵乘法、偏置和非线性激活。 \termref{intro:10-mlp}
 \item \textbf{全连接层}：本层各输出单元能使用前一层所有输入特征。 \termref{intro:19-cnn}
@@ -93,7 +93,7 @@
 \item \textbf{隐藏状态}：序列模型随位置传递的中间向量。 \termref{intro:21-rnn}
 \end{enumerate}
 
-\subsection{第七组：语言变成数字}
+\subsubsection{第七组：语言变成数字}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=61]
 \item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{intro:20-embeddings}
 \item \textbf{Tokenizer}：将文本切成 Token 并映射到整数 ID 的方法。 \termref{intro:20a-tokenizer}
@@ -107,7 +107,7 @@
 \item \textbf{LSTM}：利用门控状态改进长期信息传播的一类循环网络。 \termref{intro:21-rnn}
 \end{enumerate}
 
-\subsection{第八组：从注意力到 Transformer}
+\subsubsection{第八组：从注意力到 Transformer}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=71]
 \item \textbf{Query}：查询向量，表达当前这个位置想寻找什么。 \termref{intro:21b-why-attention}
 \item \textbf{Key}：与 Query 做匹配的向量。 \termref{intro:21b-why-attention}
@@ -121,7 +121,7 @@
 \item \textbf{Transformer}：把注意力、逐位置 MLP、残差和归一化等组合的架构。 \termref{intro:22-transformer-architecture}
 \end{enumerate}
 
-\subsection{第九组：训练与采样生成}
+\subsubsection{第九组：训练与采样生成}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=81]
 \item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{intro:22-transformer-architecture}
 \item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{intro:22-transformer-architecture}
@@ -136,7 +136,7 @@
 \item \textbf{Top-p}：保留累积概率达到阈值的一组高概率候选。 \termref{intro:23-llm-systems}
 \end{enumerate}
 
-\subsection{第十组：大模型应用与边界}
+\subsubsection{第十组：大模型应用与边界}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=92]
 \item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
 \item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23d-agent-systems}
@@ -149,7 +149,7 @@
 \item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:23b-deployment-and-ecosystem}
 \end{enumerate}
 
-\subsection*{不要混淆的五对概念}
+\subsubsection*{不要混淆的五对概念}
 \begin{itemize}
 \item \textbf{参数与超参数}：前者主要由训练算法学习，后者控制模型或训练设计。
 \item \textbf{训练与推理}：训练会更新参数，普通推理通常使用固定参数。
