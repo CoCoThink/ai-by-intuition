@@ -1,0 +1,78 @@
+\section{从一层三维算例，到真正的 GPT 差了什么？}
+\label{intro:23a-from-toy-to-gpt}
+
+上一章会用训练好的模型一步步生成 Token。
+但我们手算的网络只有一层、一个头、三个隐藏特征和五项词表。
+它为何能说明 GPT 的训练原理，却不能当成一款真正能回答问题的大模型？
+
+\subsection{先收回前面那张 GPT-2 small 尺度卡}
+
+在第三部分，\hyperref[intro:20b-task-contract]{语言预测任务}已给出尺寸对照。
+经典基础版 GPT-2 的示例配置为：
+词表 $50{,}257$，隐藏宽度 $768$，
+$12$ 层 Transformer Block、$12$ 个注意力头，
+每层 FFN 中间宽度为 $3{,}072$，最大配置位置数 $1{,}024$。
+这些值来自
+\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/configuration_gpt2.py}{GPT-2 配置}
+和
+\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py}{相应 FFN 实现}。
+这不是 2026 年所有 LLM 的统一规格。
+
+\subsection{宽度、层数、头数分别在改变什么？}
+
+\textbf{宽度}增加每个 Token 的隐藏特征维度。
+本书主例 $d_{\rm model}=3$，所有隐藏行都是 $1\times3$；
+GPT-2 small 为 $1\times768$。
+
+\textbf{头数}让不同注意力头在不同投影子空间中读取内容。
+若将 768 个隐藏维度等分给 12 个注意力头，
+每头 Query/Key 的宽度为 $768/12=64$。
+这与本书另设的 $d_{\rm model}=4$ 两头示例相同地遵守整除原则，
+不能把三维主例硬分成两个等宽头。
+
+\textbf{层数}允许把一个 Block 的输出作为下一个 Block 的输入，
+让上下文特征反复组合。它不是简单把每层的预测概率相加。
+
+\textbf{FFN 宽度}决定每个 Token 经过非线性中间层时可用的特征数量，
+不是 Token 的个数；它与词表输出头也不是同一个矩阵。
+
+\subsection{同一个训练目标，不代表相同能力}
+
+无论玩具模型还是 GPT-2 类 Decoder-only 模型，
+在自回归预训练时都可以从当前及先前 Token 预测下一 Token。
+不同点在于训练文本规模、Tokenization、
+模型宽度和深度、参数量、优化预算以及数据分布。
+本书的单条训练序列从 $L=1.7984$ 降到 $1.6114$
+只证明该教学例子的一次优化工作正常：
+\textbf{没有证据表明它已经具备一般中文理解、可靠回答或指令遵循能力。}
+
+真实 GPT-2 的输出头通常与输入 Token Embedding 权重\textbf{绑定}，
+采用词嵌入矩阵的转置来得到词表分数。
+本书为了让每步梯度和形状易于检查，采用\textbf{独立的 $3\times5$ 输出头}，
+因此不能把玩具参数总数按 GPT-2 的共享权重规则直接缩放。
+真实模型的参数总量还与位置 Embedding、归一化、偏置等设计有关。
+
+\subsection{Decoder-only 与 Encoder--Decoder 是同一个概念吗？}
+
+经典 Transformer 原论文的翻译架构有编码器和解码器，
+其中解码器还可以用交叉注意力读取编码器输出。
+GPT-2 是\textbf{仅解码器式}的自回归语言模型，
+通过因果 Self-Attention 处理已有文本并持续预测下一 Token。
+不能将“Transformer”与“GPT”当作完全同义词。
+
+\begin{warningbox}
+本章比较的是一类\textbf{经典、可查证的参考配置}，
+不是对所有现代模型的排名；“参数更多”也不单独保证每项能力更强。
+模型上线后还需要考虑训练分布外的可靠性、成本与安全边界。
+\end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:23a-from-toy-to-gpt}
+GPT-2 small 隐藏宽度 768、12 个等宽头时每头是多少维？
+为什么教学模型一次训练损失下降不等于获得通用语言能力？
+\quad{\footnotesize\hyperref[answer:23a-from-toy-to-gpt]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+从三维主算例到 GPT，\textbf{同一条训练原则}需要更多参数、层、数据和计算支撑。
+接下来我们要问：经典 Block 在效率、显存、可靠回答和工具使用上还有哪些局限？
+\end{conclusion}
