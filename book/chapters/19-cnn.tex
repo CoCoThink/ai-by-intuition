@@ -6,13 +6,13 @@ CNN 利用这种结构，让同一组特征检测规则在图像不同位置重�
 
 \subsection{直接把图片铺成一列，会出现什么问题？}
 
-一张 $30\times30$ 的灰度图片有 $900$ 个像素；每个像素是一个数字，当然可以把图片铺成长度 $900$ 的列向量，再送入全连接层：
+一张 $30\times30$ 的灰度图片有 $900$ 个像素；每个像素是一个数字，当然可以把图片铺成长度 $900$ 的\textbf{行向量}，再送入全连接层：
 \[
-\vect h=\relu(W\vect x+\vect b).
+\vect h^\top=\relu(\vect x^\top W+\vect b^\top).
 \]
 如果隐藏层有 $1000$ 个输出，那么
 \[
-W\in\R^{1000\times900}
+W\in\R^{900\times1000}
 \]
 就需要\textbf{900,000 个权重}，还不包括偏置。更糟的是，单纯铺平会使图片中“相邻像素”的结构不再显式体现在模型里；为了在不同位置识别相同的边缘或图案，全连接层往往要重复学习类似模式。
 
@@ -67,17 +67,6 @@ $2\times2$ 的核只有\textbf{4 个可学习数字}，但可以在所有位置\
 \]
 做\textbf{最大池化}（max pooling），只保留最大值 $7$。池化可以缩小特征图并对一定范围内的微小位移增加稳定性；但它也会丢失空间信息，因此现代 CNN 并不一定每层都使用池化。
 
-\subsection{CNN 和 Transformer 之间的桥：ViT}
-Transformer 并不限于文字输入。Vision Transformer（ViT）可以把图片
-分成固定大小的 Patch（图像块），把每个 Patch 映射成向量，
-再像 Token 一样按行排成序列，并加入位置信息：
-\[
-\text{图片}\ \longrightarrow\ \text{Patch}\ \longrightarrow\
-\text{Token 向量}\ \longrightarrow\ \text{Transformer}.
-\]
-CNN 偏向局部卷积与权重共享；ViT 通过图像块表示与 Attention
-建模图像位置之间的关系。它们是处理图像的不同设计，不是互相排斥。
-
 \subsection{一个典型图像分类模型}
 
 \[
@@ -92,5 +81,5 @@ CNN 的关键是局部连接与权重共享：同一组参数可以检测不同�
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:19-cnn}核为 $3\times3$、输入 3 通道、输出 8 通道时，常规卷积权重数是多少（不计偏置）？\quad{\footnotesize\hyperref[answer:19-cnn]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。
+图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。下一章将换一条路线：把同样的图像切成 Patch，使图像也能输入 Transformer。
 \end{conclusion}

@@ -60,6 +60,7 @@ REQUIRED = [
     "22d-modern-transformers",
     "23e-tech-judgement",
     "19-cnn",
+    "19b-vit",
     "04-key-value-outer-product",
     "05-memory-interference",
     "06-better-linear-memory",
@@ -119,6 +120,15 @@ def test_numeric_examples() -> None:
              .08257257/3, .0954348/3, .09512195/3,
              .67612411/3, (.05074656916466208 - 1)/3
          ])
+    # Standalone ViT: four 2x2 grayscale patches projected from 4D to 3D.
+    pixels = [[1,1,0,0], [1,0,0,1], [0,1,1,1], [0,0,0,1]]
+    patches = [[pixels[r+i][c+j] for i in range(2) for j in range(2)]
+               for r in (0,2) for c in (0,2)]
+    assert patches == [[1,1,1,0], [0,0,0,1], [0,1,0,0], [1,1,0,1]]
+    proj = [[1,0,0], [0,1,0], [0,0,1], [.5,.5,0]]
+    embedded = [[sum(row[i]*proj[i][k] for i in range(4)) for k in range(3)]
+                for row in patches]
+    assert embedded == [[1,1,1], [.5,.5,0], [0,1,0], [1.5,1.5,0]]
     # Fictitious reporting task: check source values and quarter-on-quarter rates.
     q1, q2, q3 = 100, 120, 132
     assert math.isclose((q2 - q1) / q1, 0.20)
@@ -189,6 +199,7 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], "位置", "positional example")
     includes(sources["22a-position-multihead"], r"\label{eq:pos-swap-d3}", "nondegenerate 3D position comparison")
     includes(sources["21a-context-gap"], r"\label{check:21a-context-gap}", "context gap self-check")
+    includes(sources["19b-vit"], r"\label{eq:vit-patch-embedding}", "standalone patch embedding")
     includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "Embedding-based Q/K example")
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
     includes(sources["22b-token-to-output"], r"\label{eq:three-token-block-output}", "canonical Pre-Norm numeric forward")

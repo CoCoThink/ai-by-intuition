@@ -41,6 +41,7 @@
 \item \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{22d-modern-transformers}}\enspace 当多个 Query 头共享更少的 K/V 头时，KV Cache 每个 Token 需要存储的键值数通常减少。
 \item \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace KV Cache 减少一半仅说明某项内存指标改善，不能推断质量提高；还需测准确性、延迟、吞吐等，并保持可比评测条件。
 \item \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{19-cnn}}\enspace $3^2\times3\times8=216$ 个权重，不含每个输出通道的可选偏置。
+\item \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace 四个 Patch 各自投影为 3 个数字，矩阵为 $4\times3$；添加一个 CLS 后是 $5\times3$，Attention 分数的尺寸为 $5\times5$。
 \item \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{04-key-value-outer-product}}\enspace $Wk=vk^\top k=v\|k\|^2=v$（因为 $\|k\|=1$）。
 \item \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{05-memory-interference}}\enspace 其他 Key 与当前查询的点积不一定是零，因此它们的 Value 贡献会混入召回结果。
 \item \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{06-better-linear-memory}}\enspace 可尝试更正交/可分辨的 Key、适当归一化、优化存储表示或改变读取时的选择性。
