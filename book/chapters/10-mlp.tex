@@ -6,6 +6,43 @@
 现在不再重复完整推导梯度，而是把同一结构推广到多个输入特征与隐藏单元。
 MLP（多层感知机）把两个可训练线性层与一个非线性激活串联起来。
 
+\subsection{什么是神经元、输入层、隐藏层与输出层？}
+\phantomsection\label{concept:neuron}
+
+一个\textbf{人工神经元}接收若干输入数字，
+按权重加总、加偏置，再经过激活函数，例如
+$h=\relu(x_1w_1+x_2w_2+b)$。
+它只是可训练的计算单元，不是对生物神经元的精确模拟。
+将多个这样的单元并排计算，就是一层向量运算。
+
+下面的圆点分别是两个输入特征、三个\textbf{隐藏神经元}和两个输出。
+\textbf{输入层}提供数据，\textbf{隐藏层}形成中间表示，
+\textbf{输出层}产生任务需要的特征或候选分数。
+箭头是带可训练权重的连接，激活在隐藏层计算之后进行。
+
+\par\medskip
+\tagstructbegin{tag=Figure,alttext={全连接多层感知机示意图：左侧两个输入节点连接到中间三个隐藏神经元，再连接到右侧两个输出节点。边表示可训练权重，每一层可加偏置及非线性激活。}}
+\begin{center}
+\begin{tikzpicture}[x=15mm,y=12mm,>=Latex,
+ n/.style={circle,draw=blue,very thick,fill=blueback,minimum size=7mm,inner sep=0pt},
+ h/.style={circle,draw=teal,very thick,fill=greenback,minimum size=7mm,inner sep=0pt},
+ o/.style={circle,draw=orange,very thick,fill=orangeback,minimum size=7mm,inner sep=0pt}]
+\foreach \j in {1,2}{\node[n] (i\j) at (0,{2.5-\j}) {$x_{\j}$};}
+\foreach \j in {1,2,3}{\node[h] (h\j) at (3,{3-\j}) {$h_{\j}$};}
+\foreach \j in {1,2}{\node[o] (o\j) at (6,{2.5-\j}) {$y_{\j}$};}
+\foreach \i in {1,2}{\foreach \j in {1,2,3}
+ {\draw[->,linegray,thick] (i\i)--(h\j);}}
+\foreach \i in {1,2,3}{\foreach \j in {1,2}
+ {\draw[->,linegray,thick] (h\i)--(o\j);}}
+\node[font=\small,below] at (0,-.2) {输入层 $d_0=2$};
+\node[font=\small,below] at (3,-.2) {隐藏层 $d_1=3$};
+\node[font=\small,below] at (6,-.2) {输出层 $d_2=2$};
+\end{tikzpicture}
+\captionof{figure}{两次可训练投影的神经网络：箭头连接权重，节点代表计算结果}
+\label{fig:mlp-neurons}
+\end{center}
+\tagstructend
+
 \subsection{按行向量约定，手算一次}
 令 $\vect x^\top=(2,-1)$，取
 \[
@@ -33,6 +70,31 @@ $1\times3$ 和 $1\times2$。
 其中 $W_1:d_{\rm in}\times d_{\rm ff}$，
 $W_2:d_{\rm ff}\times d_{\rm out}$，偏置在相应层的行上相加。
 多 Token 情况下，逐行使用\textbf{同一组参数}。
+
+\subsection{从两层推广到任意 $L$ 层}
+
+沿全书“一个样本/Token 占一行”的约定，
+令 $A^{(0)}=X\in\R^{N\times d_0}$，对第 $\ell$ 层：
+\begin{equation}
+\boxed{A^{(\ell)}
+=\sigma_\ell\!\left(A^{(\ell-1)}W_\ell+
+\mathbf1_N\vect b_\ell^\top\right),\quad \ell=1,\ldots,L.}
+\label{eq:mlp-l-layer-row}
+\end{equation}
+$W_\ell:d_{\ell-1}\times d_\ell$，
+$\vect b_\ell^\top:1\times d_\ell$，所以结果为
+$A^{(\ell)}:N\times d_\ell$；$\mathbf1_N$ 的作用
+只是给 $N$ 行广播同一个偏置。输出层可以按任务选择
+恒等激活（产生 logits）、Sigmoid 或其他映射。
+若改用列向量，等价式可写成
+$\vect a^{(\ell)}=\sigma_\ell(W_\ell^\top\vect a^{(\ell-1)}+\vect b_\ell)$；
+这里权重转置不能省略。
+
+随着数据扰动和任务分布变化，模型输出是否仍稳定，称为
+\textbf{鲁棒性}问题；改变网络宽度、深度可能改善表示，
+但并不自动保证鲁棒性。多个单元组合后出现单个单元所没有的行为，
+有时笼统称为\textbf{涌现}；在大模型研究中，
+是否存在突变式能力跃迁还取决于指标和实验设计，不能只靠网络变深推出结论。
 
 \subsection{为什么夹在中间的非线性不可少？}
 去掉偏置和 ReLU，就有
