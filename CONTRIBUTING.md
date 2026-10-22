@@ -45,4 +45,8 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 优先报告：哪一段无法理解、跳过了哪个步骤、某次形状检查是否有问题。提交 PR 时请写明你改进了哪一种初学者困惑，附上手算核验步骤，并确认 LuaLaTeX 构建与相关验收可通过。
 
-尚未设置开源许可证；版权仍默认保留。后续明确授权后将更新本说明。
+## 贡献与许可
+
+项目采用双许可证：教材正文、LaTeX/TikZ、文档及正式 PDF 依照 [CC BY 4.0](LICENSE)；`scripts/` Python 工具及 `.github/workflows/` 工作流依照 [MIT](scripts/LICENSE)。具体范围和建议署名见 [README](README.md#开放许可证与转载)。
+
+提交 PR 前请确认自己有权按对应许可证贡献原创内容与代码；引用第三方材料时标明来源和原始许可，未经授权的内容不要混入可再授权的项目文件。修改教材时保留必要的署名和变更说明，修改软件时保留适用的 MIT 许可和版权声明。

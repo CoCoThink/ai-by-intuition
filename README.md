@@ -8,6 +8,16 @@
 
 [**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [新版发布流程](docs/PUBLISHING.md) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
 
+## 开放许可证与转载
+
+**教材与阅读材料：** 本仓库的原创 `book/` 教材正文、LaTeX 排版源码、TikZ 教学图、仓库说明文档及正式发布的 **AI by Intuition** PDF（包括 v0.1.0）以 [Creative Commons Attribution 4.0 International（CC BY 4.0）](LICENSE) 授权。允许复制、修改、翻译及商业使用，须按许可要求署名、提供许可证链接并标明修改；本许可不要求衍生作品沿用相同许可证。
+
+**软件与自动化：** `scripts/` 下的 Python 工具及 `.github/workflows/` 下的 GitHub Actions 工作流，以 [MIT License](scripts/LICENSE) 授权。复用代码时应保留 MIT 版权与许可声明。
+
+**建议署名：** AI by Intuition · CoCoThink and contributors；项目地址：<https://github.com/CoCoThink/ai-by-intuition>；许可：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。改编或翻译时请注明变更。仅对项目权利人拥有或有权授权的原创部分授予以上许可；引用的第三方文本、图像、品牌及依赖库仍受各自权利或许可约束，引用链接本身不构成再授权。
+
+**版本说明：** v0.1.0 于加入许可证前发布，历史 Release 资产和当时的说明保留原样；本次授权同样覆盖本项目有权授权的该版本 PDF。后续 PDF 应随发布说明一并提供许可与署名信息。
+
 ## 为什么这样组织？
 
 | 学习阶段 | 自然产生的问题 |
@@ -56,4 +66,4 @@ PDF 生成于 `book/build/main.pdf`；如需复现带中文、数学、`tabularx
 
 视频启发了选题和问题意识；教材根据学习依赖重新安排内容，不按分集照抄。更多引文见 [参考与延伸阅读](book/chapters/26-sources.tex)。
 
-欢迎通过 Issue 提供计算核对、未解释的符号及跨章衔接建议。仓库尚未设置正式 LICENSE，请勿默认可任意再授权。
+欢迎通过 Issue 提供计算核对、未解释的符号及跨章衔接建议。转载、改编及代码复用请遵循上文按目录划分的授权范围。

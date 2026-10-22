@@ -3,6 +3,8 @@
 **唯一入口：** [book/main.tex](main.tex)。读者只需要阅读一个 PDF；
 源码按章节维护，正文编号由 LaTeX 自动生成，目录与书内引用应以编译 PDF 为准。
 
+**教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
+
 ## 前五部分：必读主线
 
 ### I · 把文字变成可计算的数字
