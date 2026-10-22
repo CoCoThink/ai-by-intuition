@@ -376,6 +376,18 @@ def validate_source() -> None:
         for name, body in sources.items():
             if editorial in body:
                 fail(f"Editorial residue {editorial!r} in {name}")
+    # X2: seven source files, but four visible chapters, without removing any exercises.
+    x2 = ("04-key-value-outer-product", "05-memory-interference",
+          "06-better-linear-memory", "08-stacking-key-value",
+          "09-nonlinearity-and-memory", "14-summary", "13-capacity")
+    heading_count = sum(bool(re.search(r"(?m)^\\section\{", sources[n]))
+                        for n in x2)
+    if heading_count != 4:
+        fail(f"X2 must display four sections, got {heading_count}")
+    for n in ("05-memory-interference", "08-stacking-key-value", "14-summary"):
+        includes(sources[n], r"\subsection{", f"nested X2 topic {n}")
+    includes(sources["04-key-value-outer-product"], r"\vect a^\top V",
+             "row/column convention bridge")
     if r"\sim" in sources["13-capacity"]:
         fail("Do not use strict asymptotic equivalence as loose statistical magnitude")
     print(f"Source QA passed: {len(PARTS)} parts, {len(REQUIRED)} files, three separated solutions, linked glossary")

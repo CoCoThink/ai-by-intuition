@@ -1,4 +1,4 @@
-\section{把 Key 和 Value 堆成矩阵：从匹配到读出}
+\subsection{把 Key 和 Value 堆成矩阵：从匹配到读出}
 
 我们已经知道每条记忆都有一个 Key 和一个 Value。但初学者最容易卡住的恰恰是
 \[
@@ -8,7 +8,7 @@ V^\top\sigma(K\vect{x}).
 \]
 下面通过两条记忆，逐步验证矩阵写法与逐条计算完全一致。
 
-\subsection{两条记忆，各用两个数字表示}
+\subsubsection{两条记忆，各用两个数字表示}
 
 先约定两条 Key--Value 关系：
 \[\begin{aligned}
@@ -28,7 +28,7 @@ s_2&=\vect{k}_2^\top\vect{x}=0.6\cdot1+0.8\cdot(-1)=-0.2.
 \end{aligned}\]
 所以两个 Key 的匹配程度为 $1$ 和 $-0.2$。现在我们只想把\textbf{这两次点积合并计算}。
 
-\subsection{第一个矩阵：每行是一条 Key}
+\subsubsection{第一个矩阵：每行是一条 Key}
 
 把两条 Key \textbf{横放成两行}：
 \begin{equation}
@@ -77,7 +77,7 @@ box/.style={draw=linegray,rounded corners=3pt,fill=paper,
 \end{tikzpicture}
 \end{center}
 
-\subsection{用 ReLU 筛选匹配分数}
+\subsubsection{用 ReLU 筛选匹配分数}
 
 矩阵乘法算完后，结果已经是一个普通的两维向量：
 \[
@@ -97,7 +97,7 @@ box/.style={draw=linegray,rounded corners=3pt,fill=paper,
 \]
 直觉是：第一条记忆保留权重 $1$；第二条记忆被压到 $0$。
 
-\subsection{三个重要符号：记忆数量与向量维度}
+\subsubsection{三个重要符号：记忆数量与向量维度}
 
 后面会反复出现 $M$、$d_k$ 和 $d_v$。它们分别回答三个不同的问题：
 
@@ -134,7 +134,7 @@ $d_v$ & 每条\textbf{Value 含多少个数字}；输出向量通常也有这个
 \]
 这就是为什么不能把 $M$ 与 $d_k$ 混为一谈：前者\textbf{数记忆的条数}，后者\textbf{数每条 Key 有几个数字}。
 
-\subsection{如何安排 Key 和 Value 的行列方向？}
+\subsubsection{如何安排 Key 和 Value 的行列方向？}
 
 行列方向取决于数字的排布约定。这里以列向量 $\vect x$ 表示单次查询。
 
@@ -181,7 +181,7 @@ $K\vect x$ 用逐行点积计算\textbf{匹配分数}；$V^\top\vect a$ 用按�
 若直接用 $\widetilde V$ 表示按列排列的 Value，式子就写成 $\widetilde V\vect a$。
 \end{idea}
 
-\subsection{按权重读出 Value}
+\subsubsection{按权重读出 Value}
 
 我们希望的输出是按照激活分数，将 Value 加权求和：
 \begin{equation}
@@ -216,7 +216,7 @@ V^\top\vect{a}
 我们取回了第一条 Value，第二条因为激活为 $0$ 而没有参与。
 \end{example}
 
-\subsection{整个过程连在一起}
+\subsubsection{整个过程连在一起}
 
 把匹配、筛选和读出连起来：
 \begin{equation}
@@ -246,7 +246,7 @@ V^\top\relu(K\vect{x})
 \end{tikzpicture}
 \end{center}
 
-\subsection{维度检查：为什么它们可以相乘？}
+\subsubsection{维度检查：为什么它们可以相乘？}
 
 前面两条记忆、二维 Key、二维 Value，所以恰好都是 $2\times2$ 方阵。但真实情况并不需要是方阵。
 
@@ -271,7 +271,7 @@ V^\top\relu(K\vect{x})
 \]
 两次相乘都遵循普通的矩阵乘法规则。
 
-\subsection{这和外积求和到底是什么关系？}
+\subsubsection{这和外积求和到底是什么关系？}
 
 如果\textbf{不加 ReLU}，之前的外积求和能合并：
 \begin{equation}

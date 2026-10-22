@@ -3,6 +3,28 @@
 一个矩阵能否保存“遇到某种输入，就返回某个结果”的关系？
 沿着这个问题，我们会看到线性层、MLP 与 Attention 在读取规则上的联系。
 
+\subsection*{行向量主线与列向量扩展：只差转置}
+
+\textbf{本专题统一使用列向量}，便于把“外积写入”写成矩阵：
+$\vect x\in\R^{d_k\times1}$，Key 和 Value 同样为列向量，
+存储矩阵 $W\in\R^{d_v\times d_k}$，
+读取是 $W\vect x$。主线的查询写成
+$\vect x^\top\in\R^{1\times d_k}$，它就是这里输入的转置，
+\textbf{两者并非不同的记忆机制}。
+
+把 $M$ 条 Key 按行堆成 $K\in\R^{M\times d_k}$，
+Value 按行堆成 $V\in\R^{M\times d_v}$，则
+\[
+\vect a=\sigma(K\vect x)\in\R^{M\times1},\qquad
+\underbrace{\vect a^\top V}_{1\times d_v}
+=\underbrace{(V^\top\vect a)^\top}_{1\times d_v}.
+\]
+右侧列向量读出做一次转置才是主线的行向量读出。
+每次遇到 $K\vect x$、$V^\top\vect a$，
+先核对形状，不把行列约定混用。
+
+
+
 现在为一条记忆指定两个向量：
 \[
 \text{Key }\vect{k}=\begin{bmatrix}1\\0\end{bmatrix},\qquad
