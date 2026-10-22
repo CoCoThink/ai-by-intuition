@@ -3,7 +3,7 @@
 \label{intro:21b-why-attention}
 
 \begin{idea}
-\noindent\emph{先给 Attention 一个能听懂的定义}\par
+\noindent\emph{按相关性读取上下文}\par
 
 Attention（注意力）是一种按相关性读取信息的方法：
 当前这个位置先对\textbf{可读取的每个位置}算一个匹配分数，
@@ -12,11 +12,9 @@ Attention（注意力）是一种按相关性读取信息的方法：
 
 它最核心的三个动作就是
 \textbf{比较 $\to$ 分配权重 $\to$ 加权读取}。
-这不是说模型像人一样拥有注意力意识，
-而是一个具体的可训练数学运算。
 \end{idea}
 
-\subsection{为什么 RNN 已经能传信息，还需要另一个办法？}
+\subsection{从逐步传递到直接读取}
 
 上一章的 \conceptlink{rnn}{RNN} 让模型按顺序读：
 \[
@@ -35,25 +33,21 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 让第三个位置直接查看前三个位置，各自决定读多少。
 
 \input{figures/attention-rnn-bridge}
-\textbf{这几根箭头的意思：}在这个简化例子中，
-位置 3 可以直接从位置 1、2、3 读取信息，
-不同箭头并不要求权重相等。
-我们还没有说权重具体由什么决定，下面就设计这件事。
+图中，位置 3 可以直接读取位置 1、2、3 的信息，
+不同位置的读取比例可以不同。接下来要解决的，就是怎样算出这些比例。
 
-\subsection{先不提 QKV：一次“读取”到底要算什么？}
+\subsection{从平均读取到按需读取}
 
-如果前面有三个可以读取的位置，
-每个位置都保存一条\textbf{内容向量}。
-为了便于手算，假设三条内容分别是
+设当前位置可以读取三个位置，它们各自提供一条\textbf{内容向量}：
 \[
-\vect c_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
-\vect c_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
-\vect c_3=\begin{bmatrix}1\\1\end{bmatrix}.
+\vect v_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
+\vect v_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
+\vect v_3=\begin{bmatrix}1\\1\end{bmatrix}.
 \]
 最简单的方法是把它们\textbf{平均}：
 \[
 \vect y_{\rm avg}
-=\frac13(\vect c_1+\vect c_2+\vect c_3)
+=\frac13(\vect v_1+\vect v_2+\vect v_3)
 =\begin{bmatrix}2/3\\2/3\end{bmatrix}.
 \]
 但无论当前位置想查找什么，只要内容不变，
@@ -62,30 +56,21 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 不妨先给三条内容分配权重 $a_1,a_2,a_3$，
 且规定权重非负、总和为 $1$：
 \begin{equation}
-\boxed{\vect y=a_1\vect c_1+a_2\vect c_2+a_3\vect c_3,\qquad
+\boxed{\vect y=a_1\vect v_1+a_2\vect v_2+a_3\vect v_3,\qquad
 a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
 \label{eq:attention-design-goal}
 \end{equation}
-刚才的平均，只是 $a_1=a_2=a_3=1/3$ 的特例。
-真正缺少的东西是：
-这些权重该由谁决定？不同位置该读不同内容时怎么办？
+平均对应 $a_1=a_2=a_3=1/3$。
+要让读取结果随着当前位置的需要而变化，就得让权重取决于当前查询与各个位置的匹配程度。
 
-于是我们把任务拆成两件事：
-\begin{enumerate}
-\item \textbf{先算“读谁、读多少”。}
-当前位置有一个\textbf{查找需求}，每个候选位置需要提供
-能与这个需求比较的\textbf{匹配特征}。
-\item \textbf{再算“读到什么”。}
-一旦知道读取比例，就按这些比例组合各位置保存的内容。
-\end{enumerate}
-现在才有必要引入三个名称：查找需求叫 Query，
-候选位置的匹配特征叫 Key，
-被实际加权读取的内容叫 Value。
+因此，一次按需读取分为两步：先比较\textbf{当前想找什么}与\textbf{各位置有哪些匹配特征}，算出权重；
+再用权重组合各位置提供的内容。
+这三种角色分别称为 Query（查询）、Key（键）和 Value（值）。
 
-\subsection{三种角色是怎样从这两个任务长出来的？}
+\subsection{Query、Key、Value 各负责什么？}
 \phantomsection\label{concept:qkv}
 
-把上面两个任务落实到数值计算，就得到三个角色：
+在点积 Attention 中，三者分工明确：
 \begin{itemize}
 \item \textbf{Query（查询，记作 $\vect q$）：}
 当前这个位置\textbf{拿什么条件来查}？它用于发起匹配。
@@ -98,9 +83,7 @@ a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
 \end{itemize}
 
 \begin{center}\QKVlegend\end{center}
-因此Q 和 K 是为了得到权重，V 是为了形成输出。
-刚才暂时写的“内容” $\vect c_i$，现在就改名为 Value $\vect v_i$；
-不是凭空新添了第三种数据。
+Query 和 Key 用来计算权重，Value 则是按权重组合的内容。
 
 \input{figures/attention-why-qkv}
 
@@ -118,21 +101,15 @@ a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
 $W_Q:d_{\rm model}\times d_k$。若改写为列向量，
 必须把权重也转置：$\vect q_i=W_Q^\top\vect x_i$，
 而不是仍写 $W_Q\vect x_i$。
-这三组参数以后才通过训练确定；
-这里提前展示它们的来源，下一部分再亲自算投影矩阵。
+三组投影参数都可以通过训练学习。
 
-为什么不干脆只用一种向量？
-当然可以设计让 Query、Key、Value 使用相同表示的简化注意力；
-但\textbf{用于判断相关性的特征}和\textbf{希望读出的内容}
-不必一样，且 Value 的维度也不要求等于 Key 的维度。
-把两项任务分开，是采用 Q/K/V 投影的重要理由，
-不是数学上必须使用三个不同矩阵的定理。
+为什么区分这三种向量？因为\textbf{用于判断相关性的特征}与\textbf{希望读出的内容}可以不同，
+Value 的维度也不必等于 Key 的维度。
+独立投影让网络能分别学习匹配和读出的表示；简化模型也可以让部分投影相同。
 
-打个类比：查资料时，问题像 Query、索引像 Key、
-正文内容像 Value。但这只帮助区分\textbf{功能}；
-真实模型读写的都是数字向量，不是在互联网搜索网页。
+打个类比：查资料时，问题像 Query，索引像 Key，正文内容像 Value。
 
-现在只进行\textbf{一次查询}：
+先看\textbf{一次查询}：
 位置 3 发出 Query，分别与位置 1、2、3 的 Key 匹配，
 得到三条权重，再从这三个位置的 Value 读取内容。
 
@@ -155,9 +132,7 @@ K=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
 \]
 三项是分别点积，例如“开了”的 Key 得分为 $1\cdot1+1\cdot1=2$。
 \end{example}
-这里只用\textbf{未缩放点积}演示机制；
-真实 Transformer 还会除以 $\sqrt{d_k}$，
-Softmax 概率会随之改变。
+这里使用未缩放的点积分数；标准缩放点积 Attention 还会除以 $\sqrt{d_k}$。
 
 \subsection{分配：Softmax 产生读取比例}
 \phantomsection\label{concept:softmax}
@@ -189,12 +164,12 @@ V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
 Key 负责匹配，Value 负责提供内容：
 \textbf{只把第一条 Value 改成 $(0,2)$} 时，
 Key 与 Softmax 权重不变，但输出变成 $(0.576,1.212)$。
-因此这两个角色可以分开；这不要求三种投影权重一定不同。
+可见，Key 和 Value 分别负责匹配与读出。
 \end{idea}
 
 \input{figures/attention-three-step-weights}
 
-\subsection{最后对照 RNN：差别究竟在哪里？}
+\subsection{Attention 与 RNN 怎样传递信息？}
 
 \begin{center}
 \small
@@ -212,7 +187,7 @@ Key 与 Softmax 权重不变，但输出变成 $(0.576,1.212)$。
 \end{tabularx}
 \end{center}
 
-还有三条重要边界：
+使用 Attention 还要考虑三个问题：
 \begin{enumerate}
 \item 普通注意力不等于任意偷看未来。
 预测下一个 Token 时，只允许读取当前及此前可见的位置；

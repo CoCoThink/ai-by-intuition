@@ -33,7 +33,7 @@ $K^\top$ 只是在\textbf{计算分数时转置 Key 矩阵}，
 $K:M\times d_k$，$\vect q^\top:1\times d_k$。
 因此 $\vect q^\top K^\top:1\times M$ 才能相乘；
 权重乘 $V:M\times d_v$ 才有输出 $1\times d_v$。
-列向量写法只是对\textbf{整个等式转置}，不是另一种算法。
+列向量写法是对\textbf{整个等式转置}，两种写法的运算相同。
 
 \subsection{从一个 Query 到整句：Q/K/V 如何生成？}
 主线把 Token 放在输入矩阵 $X:T\times d_{\rm model}$ 的每一行。
@@ -73,7 +73,7 @@ $V:M\times d_v$；Self-Attention 中 $N=M=T$。
 \phantomsection\label{eq:multi-query-attention}
 Softmax 对每个 Query 的一行单独归一化，输出 $N\times d_v$。
 除以 $\sqrt{d_k}$ 用于控制高维点积分数的典型量级；
-之前的三位置数值\textbf{未缩放}，不能在这里直接沿用旧概率。
+缩放会改变 Softmax 权重，因此需要根据新的分数重新计算。
 
 \begin{example}
 若权重为 $(0.75,0.25)$、两条 Value 是 $(2,0)$、$(0,4)$，
