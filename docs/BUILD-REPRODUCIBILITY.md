@@ -12,8 +12,9 @@
 | `xu-cheng/texlive-action` | v3 | `22c04326a5d855880f9d39bb955138bf11c6df80` |
 | `actions/setup-python` | v6 | `ece7cb06caefa5fff74198d8649806c4678c61a1` |
 | `actions/upload-artifact` | v4 | `ea165f8d65b6e75b540449e92b4886f43607fa02` |
+| `actions/download-artifact` | v6 | `018cc2cf5baa6db3ef3c5f8a56943fffe632ef53` |
 
-**剩余浮动边界：** `texlive_version: 2026` 是年份选择而非容器内容摘要；`verapdf/cli:v1.30.2` 也是可重新指向的镜像标签；apt 安装的 Noto/Poppler 依赖受当时 Debian 镜像索引影响。不能声称已实现完全字节级可重复构建。
+**剩余浮动边界：** `texlive_version: 2026` 是年份选择而非容器内容摘要；veraPDF 1.30.2 **已按镜像摘要固定**（见本文末尾）；apt 安装的 Noto/Poppler 依赖受当时 Debian 镜像索引影响。不能声称已实现完全字节级可重复构建。
 
 ## 自动保存的审计证据
 
@@ -35,3 +36,7 @@
 ## 2026-10-22 固定镜像更新
 
 在 [修复后完整成功的 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39697175674) 核对到 `verapdf/cli:v1.30.2` 的仓库镜像摘要 `sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb`，后续验收直接以 `verapdf/cli@sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb` 拉取并运行。TeX Live Action 自身的容器镜像与 apt 索引仍由上游和镜像仓库管理：工作流保留摘要与实际软件包版本审计，而不是假设其每次都相同。升级需要新分支、记录环境漂移并运行整本书回归。
+
+## 正式发布的可复核证据
+
+[主分支全量 CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 和 [Release v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 对应提交 `55b55e4308028763a0b1952f1a02642e4d9829d8`。官方 PDF 文件 SHA-256：`211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`。完整机器审计随 Release 归档；若要升级 TeX Live 镜像或系统包，仍应比较新旧审计环境再决定是否锁定更底层的不可变镜像。
