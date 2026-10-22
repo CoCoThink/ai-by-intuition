@@ -35,8 +35,7 @@
 % Post-training can update parameters; inference can enter an external application.
 % Neither route claims that tool calls automatically backpropagate.
 \draw[->,densely dashed,teal] (post.north) -- ++(0,5mm) -| (upd.south);
-\draw[->,thick,orange] (gen.east) --
-  node[midway,above,font=\sffamily\tiny,text=orange] {可接入} (tools.west);
+\draw[->,thick,orange] (gen.east) -- (tools.west);
 \end{tikzpicture}
 \captionof{figure}{模型内部的前向计算、损失反传与外部工具链是三个不同层次}
 \tagstructend
