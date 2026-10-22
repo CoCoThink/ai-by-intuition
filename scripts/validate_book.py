@@ -580,8 +580,14 @@ def validate_pdf(path: Path) -> None:
         body = re.sub(r"AI\s+by\s+Intuition.*?完整教材", "", page)
         body = re.sub(r"从函数到\s*Transformer", "", body)
         body = re.sub(r"(?m)^\s*\d+\s*$", "", body)
-        if len(re.findall(r"[\u4e00-\u9fff]", body)) < 18:
+        han_count = len(re.findall(r"[\u4e00-\u9fff]", body))
+        if han_count < 18:
             fail(f"Likely orphan/blank page: {i}")
+        # A short final bibliography page is legitimate, but an almost empty
+        # intermediate page with a stranded conclusion is not. This caught the
+        # prior ViT conclusion that occupied an entire page by itself.
+        if i < len(pages) - 1 and han_count < 90:
+            fail(f"Likely stranded content on interior page {i}: {han_count} Han chars")
     # Read only tag attributes: PDF text can contain literal control chars
     # that make pdftotext's XHTML *text nodes* invalid XML.
     bbox = subprocess.run(["pdftotext", "-bbox-layout", str(path), "-"],
