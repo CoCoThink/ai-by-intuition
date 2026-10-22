@@ -1,25 +1,42 @@
-% Real coordinates: 20 whole-network SGD steps in scripts/teaching_reference.py.
-% Compare first two coordinates, not PCA and not a semantic interpretation.
-\tagstructbegin{tag=Figure,alttext={三维词向量前两个坐标训练前后对照。春天从一点二和零变成一点二一四五和零点一三六四；花从负零点三和一点一变为负零点四三和零点八八；开了从零点一五和负零点二变成零点一七三四和负零点二一八八}}
+% Three training-input embedding rows, all three coordinate changes E20 - E0.
+% Rounded values are from scripts/teaching_reference.py, 20 SGD steps.
+\tagstructbegin{tag=Figure,alttext={三维词嵌入经过二十次联合 SGD 更新后九个坐标的变化量。春天变化正零点零一四五、正零点一三六四、负零点零二七二；花变化负零点一二九八、负零点二一九零、正零点一三四五；开了变化正零点零二三四、负零点零一八八、正零点零六三六。蓝色为增加，橙色为减少。}}
 \begin{center}
-\begin{tikzpicture}[x=16mm,y=16mm,>=Latex]
-\begin{scope}[shift={(0,0)}]
-\draw[->,linegray,thick] (-.68,-.55)--(1.62,-.55) node[below,font=\scriptsize] {$e_1$};
-\draw[->,linegray,thick] (-.68,-.55)--(-.68,1.46) node[above,font=\scriptsize] {$e_2$};
-\node[font=\small\bfseries] at (.45,1.58) {训练前 $E_0$};
-\fill[blue] (1.2,0) circle (2.5pt); \node[font=\scriptsize,above] at (1.18,.02) {春天};
-\fill[teal] (-.3,1.1) circle (2.5pt); \node[font=\scriptsize,right] at (-.3,1.1) {花};
-\fill[orange] (.15,-.2) circle (2.5pt); \node[font=\scriptsize,right] at (.15,-.2) {开了};
-\end{scope}
-\begin{scope}[shift={(3.35,0)}]
-\draw[->,linegray,thick] (-.68,-.55)--(1.62,-.55) node[below,font=\scriptsize] {$e_1$};
-\draw[->,linegray,thick] (-.68,-.55)--(-.68,1.46) node[above,font=\scriptsize] {$e_2$};
-\node[font=\small\bfseries] at (.45,1.58) {20 步后 $E_{20}$};
-\fill[blue] (1.2145,.1364) circle (2.5pt); \node[font=\scriptsize,above] at (1.2,.15) {春天};
-\fill[teal] (-.4298,.881) circle (2.5pt); \node[font=\scriptsize,right] at (-.43,.88) {花};
-\fill[orange] (.1734,-.2188) circle (2.5pt); \node[font=\scriptsize,right] at (.17,-.22) {开了};
-\end{scope}
+\begin{tikzpicture}[x=100mm,y=7.2mm]
+\draw[linegray,densely dashed] (0,.5)--(0,9.65);
+\node[font=\scriptsize,text=muted] at (-.205,9.75) {$-0.2$};
+\node[font=\scriptsize,text=muted] at (0,9.75) {$0$};
+\node[font=\scriptsize,text=muted] at (.205,9.75) {$+0.2$};
+\node[font=\footnotesize,anchor=east] at (-.31,9) {春天 $e_1$};
+\filldraw[fill=blue!55,draw=blue,line width=.35pt] (0,8.72) rectangle (0.0145,9.28);
+\node[font=\footnotesize,anchor=west] at (.27,9) {$+0.0145$};
+\node[font=\footnotesize,anchor=east] at (-.31,8) {春天 $e_2$};
+\filldraw[fill=blue!55,draw=blue,line width=.35pt] (0,7.72) rectangle (0.1364,8.28);
+\node[font=\footnotesize,anchor=west] at (.27,8) {$+0.1364$};
+\node[font=\footnotesize,anchor=east] at (-.31,7) {春天 $e_3$};
+\filldraw[fill=orange!55,draw=orange,line width=.35pt] (0,6.72) rectangle (-0.0272,7.28);
+\node[font=\footnotesize,anchor=west] at (.27,7) {$-0.0272$};
+\node[font=\footnotesize,anchor=east] at (-.31,6) {花 $e_1$};
+\filldraw[fill=orange!55,draw=orange,line width=.35pt] (0,5.72) rectangle (-0.1298,6.28);
+\node[font=\footnotesize,anchor=west] at (.27,6) {$-0.1298$};
+\node[font=\footnotesize,anchor=east] at (-.31,5) {花 $e_2$};
+\filldraw[fill=orange!55,draw=orange,line width=.35pt] (0,4.72) rectangle (-0.2190,5.28);
+\node[font=\footnotesize,anchor=west] at (.27,5) {$-0.2190$};
+\node[font=\footnotesize,anchor=east] at (-.31,4) {花 $e_3$};
+\filldraw[fill=blue!55,draw=blue,line width=.35pt] (0,3.72) rectangle (0.1345,4.28);
+\node[font=\footnotesize,anchor=west] at (.27,4) {$+0.1345$};
+\node[font=\footnotesize,anchor=east] at (-.31,3) {开了 $e_1$};
+\filldraw[fill=blue!55,draw=blue,line width=.35pt] (0,2.72) rectangle (0.0234,3.28);
+\node[font=\footnotesize,anchor=west] at (.27,3) {$+0.0234$};
+\node[font=\footnotesize,anchor=east] at (-.31,2) {开了 $e_2$};
+\filldraw[fill=orange!55,draw=orange,line width=.35pt] (0,1.72) rectangle (-0.0188,2.28);
+\node[font=\footnotesize,anchor=west] at (.27,2) {$-0.0188$};
+\node[font=\footnotesize,anchor=east] at (-.31,1) {开了 $e_3$};
+\filldraw[fill=blue!55,draw=blue,line width=.35pt] (0,0.72) rectangle (0.0636,1.28);
+\node[font=\footnotesize,anchor=west] at (.27,1) {$+0.0636$};
+\node[font=\footnotesize,text=muted] at (0,.15) {横轴：坐标变化 $\Delta e_j=E_{20,j}-E_{0,j}$};
 \end{tikzpicture}
+\captionof{figure}{20 步全参数训练后，三个输入 Token 的全部三维坐标变化；正负方向不同，绝对值越大变化越明显}
+\label{fig:embedding-before-after}
 \end{center}
-\begin{center}\captionof{figure}{训练前后 $E$ 的前两坐标投影：同尺度、非 PCA；不展示第三坐标，不代表真实词义}\label{fig:embedding-before-after}\end{center}
 \tagstructend
