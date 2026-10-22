@@ -37,6 +37,7 @@ REQUIRED = [
     "03-matrix-multiplication",
     "10-mlp",
     "18c-training-engineering",
+    "20a-tokenizer",
     "20-embeddings",
     "20b-task-contract",
     "21-rnn",
@@ -206,6 +207,9 @@ def validate_source() -> None:
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
+    includes(sources["20a-tokenizer"], "BPE", "subword example")
+    includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
+    includes(sources["20b-task-contract"], "50,257", "GPT-2 preview")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
     includes(sources["27-answer-key"], r"\|\vect a\|=6", "corrected cosine exercise")
     includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
@@ -220,6 +224,7 @@ def validate_source() -> None:
         ("validation-early-stop", "18-generalization"),
         ("cnn-window", "19-cnn"),
         ("embedding-lookup", "20-embeddings"),
+        ("embedding-training-projection", "20-embeddings"),
         ("causal-mask-heatmap", "22-transformer-architecture"),
     ):
         includes(sources[chapter_name], f"\\input{{figures/{figure_name}}}", chapter_name)
@@ -274,8 +279,8 @@ def validate_source() -> None:
                      for body in sources.values())
     marked_headers = sum(body.count(r"\tagpdfsetup{table/header-rows={1}}")
                          for body in sources.values())
-    if table_envs != 21 or marked_headers != table_envs:
-        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (expected 21)")
+    if table_envs != 22 or marked_headers != table_envs:
+        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (expected 22)")
 
     # The prominent diagram and teaching resources are all editable TikZ.
     for figure in ("row-column-intuition", "key-value-layout", "pre-norm-block",
@@ -418,7 +423,7 @@ def validate_pdf(path: Path) -> None:
                 result.append(child)
         return result
 
-    if len(table_nodes) != 21:
+    if len(table_nodes) != 22:
         fail(f"Expected 21 tagged data tables, found {len(table_nodes)}")
     for index, table_node in enumerate(table_nodes, 1):
         rows = [n for n in struct_children(table_node) if n.get("/S") == "/TR"]

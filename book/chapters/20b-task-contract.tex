@@ -32,25 +32,25 @@
 这三个对应关系就是三道由原始文本自动构造的练习题。
 例如第一题的输入是“春天”，期望候选是“花”；
 第二题的输入已经多了“花”，希望预测“开了”。
-这和前一章那张 $5\times2$ 的 Embedding 表连接起来了：
-模型现在可以把输入 $[1,3,4]$ 查成三行二维向量，
+这和前一章那张 $5\times3$ 的 Embedding 表连接起来了：
+模型现在可以把输入 $[1,3,4]$ 查成三行三维向量，
 接下来要学的是怎样通过可训练的网络把每一行变成词表候选分数。
 此时比较的是\textbf{预测是否符合真实文本}，而不是机器是否理解了春天。
 为什么能在同一次前向计算中同时训练三个位置，
-要等学会 Attention、因果掩码和损失函数后再解释。
+损失函数已经学过，Attention 和因果掩码将在后面解释。
 
 \subsection{先约定输入，再约定预测的输出}
 
 \textbf{输入：}把已知文字表示成可计算的向量。
-假设每个 Token 用 $2$ 个数字表示，
+根据统一主算例，每个 Token 用 $3$ 个数字表示，
 那么 Embedding 表的形状是
 \[
 \underbrace{5}_{\text{词表大小}}
 \times
-\underbrace{2}_{\text{每个向量的数字数}}.
+\underbrace{3}_{\text{每个向量的数字数}}.
 \]
-三个输入 Token 查表后可以组成 $3\times2$ 矩阵：
-三行表示三个位置，每行两个特征。
+三个输入 Token 查表后可以组成 $3\times3$ 矩阵：
+三行表示三个位置，每行三个特征。
 
 \textbf{输出：}针对下一位置的候选给出预测分数。
 无论网络内部进行了多少运算，最终都需要
@@ -66,14 +66,46 @@
 对象 & 示例尺寸 & 为什么是这个数\\
 \midrule
 输入 Token ID & $3$ 个整数 & 有 3 个已知位置\\
-Embedding 表 & $5\times2$ & 词表 5 项，每项 2 个特征\\
-输入向量矩阵 & $3\times2$ & 3 个位置，每行 2 个特征\\
+Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
+输入向量矩阵 & $3\times3$ & 3 个位置，每行 3 个特征\\
 每个位置的候选 & $5$ 个 & 词表共有 5 个可能的输出\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
 
+
+\subsection{尺度预览：玩具模型与 GPT-2 small}
+
+现在只有三个输入位置、五个候选 Token。
+经典 GPT-2 small（常称约 124M 参数模型）也是从 Token ID
+产生词表候选分数，却大得多：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}Xrr@{}}
+\toprule
+项目 & 本书主算例 & GPT-2 small\\\midrule
+词表大小 & 5 & 50,257\\
+隐藏宽度 & 3 & 768\\
+Transformer Block 数 & 1 & 12\\
+注意力头数 & 1 & 12\\
+FFN 中间宽度 & 4 & 3,072\\
+最大位置数（配置） & 3 & 1,024\\
+\bottomrule\end{tabularx}
+\end{center}
+
+\textbf{此处只预览尺度，不要求现在理解所有组件}。
+隐藏宽度代表每个 Token 拥有多少个特征；
+Block、多头与 FFN 将在后面逐步解释。
+3,072 来自 GPT-2 的 $4\times768$ FFN 设计，
+不是所有模型都遵守的常数比例。
+配置依据
+\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/configuration_gpt2.py}{基础 GPT-2 配置}
+与
+\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py}{FFN 实现}。
+实际参数量依赖权重共享和统计口径；此处只给模型类别的约数，
+不声称逐个校验了真实 checkpoint 的全部权重。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:20b-task-contract}输入 ID 为 $(1,3,4)$，对应的下一 Token 标签怎样错位排列？\quad{\footnotesize\hyperref[answer:20b-task-contract]{核对解答。}}\par\medskip
 

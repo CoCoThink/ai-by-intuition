@@ -168,9 +168,33 @@ def run_checks():
     return w, st, grads, w1, st1, delta, position_delta, value_delta
 
 
+def embedding_training_snapshot(steps=20):
+    """Real 20-step all-parameter SGD trajectory for the textbook figure."""
+    weights = parameters()
+    loss_before = forward(weights)['loss']
+    embedding_before = weights['E'].copy()
+    for _ in range(steps):
+        state = forward(weights)
+        grads = backward(weights, state)
+        weights = {key: value - LR * grads[key]
+                   for key, value in weights.items()}
+    loss_after = forward(weights)['loss']
+    assert loss_after < loss_before
+    if steps == 20:
+        assert abs(loss_after - 0.483173) < 2e-5
+        assert np.allclose(weights['E'][1, :2], [1.214497, .136409], atol=2e-5)
+        assert np.allclose(weights['E'][3, :2], [-.429829, .880955], atol=2e-5)
+    return embedding_before, weights['E'].copy(), loss_before, loss_after
+
+
 def report():
     w, st, grads, _, st1, delta, position_delta, value_delta = run_checks()
+    embedding_before, embedding_after, start_loss, final_loss = embedding_training_snapshot()
     return {
+        'embedding_20_step_before': embedding_before.tolist(),
+        'embedding_20_step_after': embedding_after.tolist(),
+        'embedding_20_step_loss_before': start_loss,
+        'embedding_20_step_loss_after': final_loss,
         'exercise': 'single-head pre-norm 3D teaching decoder',
         'token_ids': list(IDS), 'targets': list(TARGETS), 'vocab': list(VOCAB),
         'learning_rate': LR, 'layernorm_epsilon': EPS,

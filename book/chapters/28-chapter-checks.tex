@@ -20,7 +20,8 @@
 \item \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{03-matrix-multiplication}}\enspace $AB:2\times4$，因为 $A$ 的列数等于 $B$ 的行数。
 \item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{10-mlp}}\enspace 无激活时 $xW_1W_2=x(W_1W_2)$，两层合并成一个线性矩阵，表达能力受限。
 \item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{18c-training-engineering}}\enspace $100/10=10$ 次；若样本无法整除，还需决定最后批次如何处理。
-\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{20-embeddings}}\enspace Embedding 表为 $5\times2$，查一个 Token ID 得到长度为 $2$ 的行向量。
+\item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 五个单字经两次合并后变成三个 Token；这是教学示意，真实分词取决于词表和合并表。
+\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{20-embeddings}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。
 \item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{20b-task-contract}}\enspace 连续序列为 $(1,3,4,2)$ 时，输入 $(1,3,4)$，目标左移得到 $(3,4,2)$。
 \item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{21-rnn}}\enspace $h_1=2$，$h_2=0+0.5\times2=1$。
 \item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{21b-why-attention}}\enspace 按权重求和：$0.2(1,0)+0.8(0,1)=(0.2,0.8)$。
