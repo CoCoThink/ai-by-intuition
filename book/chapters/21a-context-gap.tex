@@ -1,0 +1,60 @@
+\section{逐个处理 Token，为什么仍看不到前文？}
+\label{intro:21a-context-gap}
+
+上一部分我们把文字转成 ID，再查到三维行向量，
+已经能让一个 MLP 对\textbf{每个 Token} 独立计算。
+但如果下一 Token 的正确答案需要结合前文，一个只看当前 Token 的函数够用吗？
+
+\subsection{同一个当前词，两段不同的前文}
+
+试着设计两条不同上下文：
+\[
+\text{“春天，花，开了”},\qquad
+\text{“冬天，窗，开了”}.
+\]
+两段在最后位置都以“开了”结束，但后面的词
+可以分别接不同对象或标点。这是说明“预测依赖上下文”的
+\textbf{人为构造例子}，不是两句话的统计概率断言。
+
+如果让一个相同的逐 Token MLP 只看“开了”的 Embedding，
+它得到的输入都是同一个 $E[\text{开了}]$；
+因为函数及参数也完全一样，两个上下文的输出就\textbf{必然一样}：
+\[
+f\bigl(E[\text{开了}]\bigr)
+=f\bigl(E[\text{开了}]\bigr).
+\]
+它无法仅凭这一行区分不同前文。
+\textbf{不是 MLP 永远不能用于语言建模，而是没有接收前文的
+逐 Token 计算结构，无法凭空获取前文信息。}
+
+\subsection{朴素办法：把前几个 Token 直接拼起来}
+
+可以把最近三个 Token 的向量首尾拼接成一条长输入，
+交给一个 MLP。这样它确实能看到这三个位置，
+但只允许固定长度时，碰到第四个、更早的第十个位置又怎么办？
+如果不断扩展拼接长度，输入参数量和位置处理办法也随之改变。
+固定窗口 MLP 能解决一些任务，仍没有自然地复用任意前文的机制。
+
+\subsection{新的问题：怎样把历史信息送给当前位置？}
+
+我们需要让后一个位置\textbf{能利用}前面位置的信息，
+而不是只做独立行变换。
+下一章先采用容易理解的方案：沿序列传递一份不断更新的状态。
+这叫 RNN。再下一步才尝试不经过一长串状态，直接读取某个位置。
+
+\begin{warningbox}
+这里比较的是三种具体输入机制：只看当前 Token、
+固定窗口拼接和逐步更新状态。
+不能据此断言某种网络“完全没有能力”或 Attention 总优于所有其他架构；
+还需要考虑任务长度、数据、参数量和计算代价。
+\end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:21a-context-gap}
+为什么只接收最后一个 Token 向量的同一 MLP，不能区分两个前文不同但最后 Token 相同的输入？
+\quad{\footnotesize\hyperref[answer:21a-context-gap]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+多维 Embedding 解决了“单个词怎样表示”，却不会自动提供跨位置上下文。
+下一章试着让历史通过一份递推状态传到当前位置。
+\end{conclusion}
