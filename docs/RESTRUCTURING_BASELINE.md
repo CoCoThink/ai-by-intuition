@@ -65,7 +65,7 @@
 | 46 | `book/chapters/28-chapter-checks.tex` | 附录 C |
 | 47 | `book/chapters/26-sources.tex` | 附录 E |
 
-**迁移进度：**2026-10-22 首批 M2 已创建 `book/chapters/00d-rules-gap.tex` 并将数学速查挪至附录；当前 main 含 **49 个** `chapters/` 引入源文件，新增 `00d-rules-gap` 和 `20a-tokenizer`。以下是 v0.1.0 历史映射，不是现版顺序。
+**迁移进度：**2026-10-22 首批 M2 已创建 `book/chapters/00d-rules-gap.tex` 并将数学速查挪至附录；当前 main 已推进至 **51 个** `chapters/` 引入源文件：除 M2 的 `00d-rules-gap`、`20a-tokenizer` 外，M3 另增 `21a-context-gap` 和 `23a-from-toy-to-gpt`。以下是 v0.1.0 历史映射，不是现版顺序。
 
 **需要新增的其余内容：**第 15 章“孤立词与固定拼接的局限”、第 25 章完整尺度回收、第 26 章预训练与上下文学习、第 31 章整体技术判断，以及统一算例/扩展篇重组需要的新增段落。现有第 1 章可拆为新 1–2 章，不另造一套互相重复的文本。
 

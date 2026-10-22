@@ -17,7 +17,7 @@
 | I 标量学习 | 规则、函数、损失、梯度、非线性、反传与泛化 | 解析解、两层网络参数更新 |
 | II 多维与文字 | 向量、矩阵、MLP、Token/BPE、统一三维 Embedding 与 GPT-2 尺度 | 点积、形状、三个位置标签对齐 |
 | III 上下文读取 | RNN、Attention、Q/K/V | 三条 Key 的权重与读出 |
-| IV Transformer 闭环 | 位置、多头、Pre-Norm Block、输出头、联合训练 | 独立双头演示；三维三位置全链前向与一次共享梯度更新 |
+| IV Transformer 闭环 | 位置、多头、Pre-Norm Block、联合训练与生成、GPT-2 尺度回收 | 三维三位置完整前向、共享梯度更新及 $768/12=64$ |
 | V 架构与系统 | RoPE、MoE、GQA、SFT、Agent、LoRA、量化与蒸馏 | 旋转、缓存、参数与概率 |
 
 第六部分为 CNN/ViT 选读，第七部分为联想记忆/高维容量选读，两者可独立阅读。

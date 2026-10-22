@@ -27,7 +27,7 @@
 - [FFN 与词表输出头](chapters/10b-ffn-output-head.tex)
 - [统一三维三位置完整前向](chapters/22b-token-to-output.tex)
 - [三位置联合交叉熵与共享参数一次更新](chapters/22c-language-training.tex)
-- [推理、缓存与生成](chapters/23-llm-systems.tex)
+- [推理、缓存与生成](chapters/23-llm-systems.tex)、[从三维主例回到 GPT-2 尺度](chapters/23a-from-toy-to-gpt.tex)
 
 ### V · 改进模型并构建可靠应用
 - [现代 Transformer 架构](chapters/22d-modern-transformers.tex)
