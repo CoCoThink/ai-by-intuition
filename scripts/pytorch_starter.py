@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+"""Autograd reproduction of the shared 3-token teaching fixture; needs torch, numpy."""
+import math
+import torch
+from teaching_reference import EPS, IDS, LR, TARGETS, parameters
+
+torch.set_default_dtype(torch.float64)
+weights = {k: torch.tensor(v, requires_grad=True)
+           for k, v in parameters().items()}
+ids = torch.tensor(IDS)
+targets = torch.tensor(TARGETS)
+
+def norm(x):
+    centered = x - x.mean(dim=-1, keepdim=True)
+    return centered / torch.sqrt(centered.square().mean(dim=-1, keepdim=True) + EPS)
+
+def forward():
+    x = weights["E"][ids] + weights["P"]
+    u = norm(x)
+    q, k, v = (u @ weights[name] for name in ("Wq", "Wk", "Wv"))
+    score = (q @ k.T) / math.sqrt(q.shape[1])
+    forbidden = torch.triu(torch.ones_like(score, dtype=torch.bool), diagonal=1)
+    attention = torch.softmax(score.masked_fill(forbidden, float("-inf")), dim=-1)
+    residual = x + (attention @ v) @ weights["Wo"]
+    hidden = residual + torch.relu(norm(residual) @ weights["Wup"]) @ weights["Wdown"]
+    logits = hidden @ weights["Wout"]
+    return torch.nn.functional.cross_entropy(logits, targets), logits
+
+loss_before, z_before = forward()
+loss_before.backward()
+with torch.no_grad():
+    for value in weights.values():
+        value -= LR * value.grad
+        value.grad.zero_()
+loss_after, z_after = forward()
+
+assert abs(loss_before.item() - 1.7984303789332916) < 1e-8
+assert abs(loss_after.item() - 1.6113771577442104) < 1e-8
+assert z_after.shape == (3, 5)
+assert sum(value.numel() for value in weights.values()) == 99
+print("Loss:", f"{loss_before.item():.6f}", "->", f"{loss_after.item():.6f}")
+print("Shape:", tuple(z_after.shape), "Parameters: 99")
