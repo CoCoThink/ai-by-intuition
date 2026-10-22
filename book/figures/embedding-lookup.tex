@@ -1,27 +1,25 @@
-% The Figure structure intentionally includes the non-floating caption.
-\tagstructbegin{tag=Figure,alttext={根据 Token ID 从五行二维向量表中取出对应行}}
+% Uniform 5-by-3 teaching E, from scripts/teaching_reference.py
+\tagstructbegin{tag=Figure,alttext={根据 Token ID 在五行三列的嵌入表中选取一行；ID 3 花对应负零点三、一点一、零点二}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,x=11mm,y=7.7mm]
-\node[font=\small\bfseries,anchor=south] at (1,1.36) {Embedding 表 $E$（$5\times2$）};
-\foreach \rr/\aa/\bb in {0/0/0,1/1/0,2/0/-1,3/0/1,4/1/1}{
- \ifnum\rr=3
-  \def\bg{orangeback}
- \else
-  \def\bg{paper}
- \fi
- \filldraw[fill=\bg,draw=linegray] (0,{-\rr}) rectangle (1,{1-\rr});
- \filldraw[fill=\bg,draw=linegray] (1,{-\rr}) rectangle (2,{1-\rr});
- \node[font=\small] at (.5,{.5-\rr}) {$\aa$};
- \node[font=\small] at (1.5,{.5-\rr}) {$\bb$};
- \node[font=\footnotesize,anchor=east] at (-.25,{.5-\rr}) {ID \rr};
+\begin{tikzpicture}[>=Latex,x=11mm,y=7.5mm]
+\node[font=\small\bfseries,anchor=south] at (1.5,1.36) {Embedding 表 $E$（$5\times3$）};
+\foreach \rr/\aa/\bb/\cc in {0/0/0/0,1/1.2/0/-0.2,2/0.2/-0.4/0.7,3/-0.3/1.1/0.2,4/0.15/-0.2/1.25}{
+\ifnum\rr=3 \def\bg{orangeback}\else\def\bg{paper}\fi
+\filldraw[fill=\bg,draw=linegray] (0,{-\rr}) rectangle (1,{1-\rr});
+\filldraw[fill=\bg,draw=linegray] (1,{-\rr}) rectangle (2,{1-\rr});
+\filldraw[fill=\bg,draw=linegray] (2,{-\rr}) rectangle (3,{1-\rr});
+\node[font=\scriptsize] at (.5,{.5-\rr}) {$\aa$};
+\node[font=\scriptsize] at (1.5,{.5-\rr}) {$\bb$};
+\node[font=\scriptsize] at (2.5,{.5-\rr}) {$\cc$};
+\node[font=\footnotesize,anchor=east] at (-.25,{.5-\rr}) {ID \rr};
 }
-\draw[orange,very thick,rounded corners=1pt] (0,-3) rectangle (2,-2);
-\draw[->,orange,very thick] (2.13,-2.5)--(4.05,-2.5);
-\node[font=\small,align=center,anchor=west] at (4.25,-2.5)
- {查 ID 3（“花”）\\返回行向量 $(0,1)$};
-\node[font=\footnotesize,anchor=west] at (0,-4.65)
- {编号从 0 开始；这是选择表中一行，不是将 ID 数字当作特征。};
+\draw[orange,very thick] (0,-3) rectangle (3,-2);
+\draw[->,orange,very thick] (3.16,-2.5)--(4.08,-2.5);
+\node[font=\small,align=left,anchor=west] at (4.22,-2.5)
+ {ID 3（“花”）\\行向量 $(-0.3,1.1,0.2)$};
+\node[font=\scriptsize,anchor=west] at (0,-4.65)
+ {编号从 0 开始；查表不是把 ID 本身当成特征。};
 \end{tikzpicture}
 \end{center}
-\begin{center}\captionof{figure}{Embedding 表：根据 Token ID 查找对应的行向量}\label{fig:embedding-table}\end{center}
+\begin{center}\captionof{figure}{三维 Embedding 按 ID 查表；数值均为教学设定}\label{fig:embedding-table}\end{center}
 \tagstructend
