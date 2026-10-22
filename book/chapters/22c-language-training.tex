@@ -51,7 +51,6 @@ C=\begin{bmatrix}
 本章的三个位置\textbf{全部参与损失}，因此平均时除以 $3$。
 
 \subsection{所有位置输出同一个词表的五项分数}
-\phantomsection\label{concept:cross-entropy}
 
 令 $Z=HW_{\rm out}\in\R^{3\times5}$，逐行 Softmax 得到 $\widehat P$。
 一行 logits 是五个未归一化的分数，不是五个独立训练标签；
