@@ -40,6 +40,7 @@ REQUIRED = [
     "20a-tokenizer",
     "20-embeddings",
     "20b-task-contract",
+    "21a-context-gap",
     "21-rnn",
     "21b-why-attention",
     "11-softmax-memory",
@@ -175,8 +176,8 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], "0.990", "two-head worked example")
     includes(sources["22a-position-multihead"], "0.9997", "scaled-dot-product example")
     includes(sources["22a-position-multihead"], "位置", "positional example")
-    includes(sources["22a-position-multihead"], r"\vect x_{\text{春天}}^\top=(1,0)", "position example uses embedding table")
-    includes(sources["22a-position-multihead"], r"\vect x_{\text{花}}^\top=(0,1)", "position example uses embedding table")
+    includes(sources["22a-position-multihead"], r"\label{eq:pos-swap-d3}", "nondegenerate 3D position comparison")
+    includes(sources["21a-context-gap"], r"\label{check:21a-context-gap}", "context gap self-check")
     includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "Embedding-based Q/K example")
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
     includes(sources["22b-token-to-output"], r"\label{eq:three-token-block-output}", "canonical Pre-Norm numeric forward")

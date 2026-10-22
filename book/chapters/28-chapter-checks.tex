@@ -23,6 +23,7 @@
 \item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 五个单字经两次合并后变成三个 Token；这是教学示意，真实分词取决于词表和合并表。
 \item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{20-embeddings}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。
 \item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{20b-task-contract}}\enspace 连续序列为 $(1,3,4,2)$ 时，输入 $(1,3,4)$，目标左移得到 $(3,4,2)$。
+\item \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 当前 Token 的 Embedding 与逐 Token MLP 参数完全相同，则输出也相同；若前文没有作为输入或状态传入，函数就无法区分这两段上下文。
 \item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{21-rnn}}\enspace $h_1=2$，$h_2=0+0.5\times2=1$。
 \item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{21b-why-attention}}\enspace 按权重求和：$0.2(1,0)+0.8(0,1)=(0.2,0.8)$。
 \item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{11-softmax-memory}}\enspace 分数相等时指数也相等，两项归一化后各为 $0.5$。

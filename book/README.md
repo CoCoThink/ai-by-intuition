@@ -18,11 +18,11 @@
 - [Token、ID 与 BPE](chapters/20a-tokenizer.tex)、[统一三维 Embedding 与训练前后图](chapters/20-embeddings.tex)、[下一 Token 任务与 GPT-2 尺度预览](chapters/20b-task-contract.tex)
 
 ### III · 让词与词交换信息
-- [RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)
+- [逐 Token MLP 的上下文缺口](chapters/21a-context-gap.tex)、[RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)
 - [从单 Query 到批量 Self-Attention](chapters/11-softmax-memory.tex)，并比较 Linear / MLP / Attention
 
 ### IV · 组装、训练并使用 Transformer
-- [位置、缩放与双头注意力的数字例子](chapters/22a-position-multihead.tex)
+- [统一三维非退化位置对照、缩放与独立四维双头例](chapters/22a-position-multihead.tex)
 - [Pre-Norm Block、残差图与 LayerNorm](chapters/22-transformer-architecture.tex)
 - [FFN 与词表输出头](chapters/10b-ffn-output-head.tex)
 - [统一三维三位置完整前向](chapters/22b-token-to-output.tex)

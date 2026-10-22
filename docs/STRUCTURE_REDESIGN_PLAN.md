@@ -258,6 +258,9 @@
 
 ### M3 第四至五部分贯通（P0，最重要）
 
+**2026-10-22 当前实施情况：**新增逐 Token MLP 缺口章；位置对照改用统一三维非退化参数，保留独立四维双头；第 22/23 章改为完整单头 Pre-Norm 前向和三位置联合反传。详细源码见 `book/chapters/21a-context-gap.tex`、`22a-position-multihead.tex`、`22b-token-to-output.tex`、`22c-language-training.tex`。仍需检验完整 PDF 构建、术语/练习修复及后续章节的统一边界，不提前将 M3 勾为整体完成。
+
+
 - [ ] RNN → Attention 的缺口清楚，单 Query 计算不会因 Q=K=V=I 强行诱导“只看自己”。
 - [ ] 位置对照不退化；因果 Mask 在联合训练之前引入；多头示例形状一致。
 - [ ] 第 22 章的**完整 Pre-Norm Block 前向**逐步可查，正文/公式/图/代码一致。

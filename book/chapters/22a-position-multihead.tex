@@ -1,49 +1,66 @@
 \section{位置编码、缩放与多头注意力的手算}
 \label{intro:22a-position-multihead}
 
-\subsection{如果交换“春天”和“花”，没有位置的 Attention 会怎样？}
+\subsection{交换两个 Token：统一三维参数为什么需要位置？}
 
-为了单独观察位置的作用，这里采用\textbf{独立二维对照}（并非前述三维 $E$）：
-“春天”的向量为 $\vect x_{\text{春天}}^\top=(1,0)$，
-“花”的向量为 $\vect x_{\text{花}}^\top=(0,1)$。
-忽略位置，按行堆成 $X=\begin{bmatrix}1&0\\0&1\end{bmatrix}$，
-让 $Q=K=V=X$，两个 Token 可以互相读取：
+前面已经确定唯一三维 Embedding。为了比较顺序，
+这里只拿两个已出现的 Token“春天、花”：
 \[
-A=\softmax\!\left(\frac{XX^\top}{\sqrt2}\right)
-\approx\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix},
-\qquad
-O=AX\approx\begin{bmatrix}0.670&0.330\\0.330&0.670\end{bmatrix}.
+X=\begin{bmatrix}1.2&0&-0.2\\-0.3&1.1&0.2\end{bmatrix}
+\in\R^{2\times3},\qquad
+X'=\begin{bmatrix}-0.3&1.1&0.2\\1.2&0&-0.2\end{bmatrix}.
 \]
-如果交换输入的两行，计算结果也只是\textbf{相应交换两行}：
-对一条固定 Token 内容来说，没有得到“在第一位还是第二位”的信息。
-一般地，任何置换矩阵 $\Pi$ 都满足
-$\operatorname{Attention}(\Pi X)=\Pi\operatorname{Attention}(X)$
-（本例不使用因果掩码或位置偏置）。
-
-\subsection{加入最简单的两行位置向量，再算一次}
-
-以\textbf{加性位置编码}为例，选取
+保持与统一教学参考脚本相同的 $W_Q,W_K,W_V$，先做\textbf{无位置、
+无因果 Mask} 的一次双向 Attention。这里只隔离位置对比，
+暂不执行 LayerNorm 与残差：
 \[
-P=\begin{bmatrix}1&0\\0&1\end{bmatrix},\qquad X_+=X+P.
+O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
+\approx\begin{bmatrix}
+0.6693&0.4934&0.0066\\0.2019&0.6886&0.1683
+\end{bmatrix}.
 \]
-顺序为“春天、花”时，
-$X_+=\begin{bmatrix}2&0\\0&2\end{bmatrix}$。
-两个 Token 的自匹配分数为 $4/\sqrt2\approx2.828$，
-交叉匹配是 $0$，第一行权重约 $(0.944,0.056)$，
-所以第一行读取结果约为 $(1.888,0.112)$。
-
-交换成“花、春天”后，保持位置向量\textbf{不随内容交换}：
+因为没有任何位置相关信号，输入交换两行后，
+输出也只是对应交换两行：
 \[
-X'=\begin{bmatrix}0&1\\1&0\end{bmatrix},\quad
-X'_+=X'+P=\begin{bmatrix}1&1\\1&1\end{bmatrix}.
+O(X')\approx\begin{bmatrix}
+0.2019&0.6886&0.1683\\0.6693&0.4934&0.0066
+\end{bmatrix}.
 \]
-两行分数相同，各分得 $(0.5,0.5)$，
-两行输出都是 $(1,1)$。
-此时输出不再只是原结果交换两行：位置已经影响了计算。
+这说明不带位置的 Self-Attention 对行置换具有\textbf{等变性}：
+换了输入行的次序，计算相应换行，并没有额外标记“原来在哪个位置”。
 
+\subsection{加上固定位置向量，再观察交换后的区别}
 
-为单独观察位置向量的作用，上面的交换实验使用\textbf{无掩码双向 Attention}。
-自回归模型还会通过因果掩码约束信息流动的方向。
+位置向量取自贯通主实验的\textbf{前两行}，不因交换 Token 而移动：
+\[
+P_{1:2}=\begin{bmatrix}
+0.10&0.05&-0.10\\0&-0.05&0.12
+\end{bmatrix},\quad
+X_+=X+P_{1:2},\quad X'_+=X'+P_{1:2}.
+\]
+仍用\textbf{相同的三组可训练投影}，只是输入加了位置信息：
+\begin{equation}
+\begin{aligned}
+O(X_+)&\approx\begin{bmatrix}
+0.7680&0.5138&-0.0265\\0.2324&0.6726&0.2092
+\end{bmatrix},\\
+O(X'_+)&\approx\begin{bmatrix}
+0.2812&0.7145&0.1440\\0.6956&0.4854&0.0441
+\end{bmatrix}.
+\end{aligned}
+\label{eq:pos-swap-d3}
+\end{equation}
+注意交换后的第一行\textbf{并不}等于交换前的第二行：
+例如第一坐标分别为 $0.2812$ 和 $0.2324$。
+位置向量提供了独立于内容的位置信号。
+两种顺序下的输出也没有退化成两行完全相同。
+
+\begin{warningbox}
+为明确考察位置信号，这里\textbf{暂不加因果掩码}，
+也暂不做完整 Pre-Norm Block 的 LayerNorm 和残差。
+它是取自统一参数的\textbf{位置消融实验}，不是下一章完整自回归生成的前向输出。
+完整 Block 会使用每行 Norm 和因果 Mask，两者不可混为一谈。
+\end{warningbox}
 
 \subsection{为什么点积要除以 $\sqrt{d_k}$？算一次波动尺度}
 
@@ -68,6 +85,8 @@ $\frac e{e+1}\approx0.731$。
 \subsection{两个头各算二维，再拼接：数字完整走一遍}
 \phantomsection\label{concept:multihead}
 
+\textbf{下面切换到独立的 $d_{\rm model}=4$ 双头形状例}，每个头宽度为 2。
+这个例子不是将三维主实验强行分成两个 1.5 维的头。
 考虑最后一个 Token 可以查看两个位置，
 每个头的 $Q,K,V$ 都有二维特征。
 为简化计算，直接给定两个注意力头\textbf{各自投影得到的数值}；
