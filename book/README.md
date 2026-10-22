@@ -5,7 +5,7 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-## 前五部分：必读主线（M2–M3 过渡编排，正式七部分目标尚未完成）
+## 前五部分：必读主线（M2–M4 过渡编排，正式七部分目标尚未完成）
 
 ### I · 学习是什么：从规则到参数更新
 - [阅读指南](chapters/00-guide.tex)和[手写规则的局限](chapters/00d-rules-gap.tex)
@@ -29,11 +29,12 @@
 - [三位置联合交叉熵与共享参数一次更新](chapters/22c-language-training.tex)
 - [推理、缓存与生成](chapters/23-llm-systems.tex)、[从三维主例回到 GPT-2 尺度](chapters/23a-from-toy-to-gpt.tex)
 
-### V · 改进模型并构建可靠应用
-- [现代 Transformer 架构](chapters/22d-modern-transformers.tex)
-- [后训练与推理策略](chapters/23c-post-training.tex)
-- [Agent 系统设计](chapters/23d-agent-systems.tex)
+### V · 从语言模型到助手，再判断架构变化
+- [预训练、Few-shot 与上下文学习](chapters/23aa-pretraining-icl.tex)——区分 Prompt 与权重更新
+- [后训练与推理策略](chapters/23c-post-training.tex)——SFT、偏好与 RLVR
+- [同一季度报告串起 RAG、工具、MCP、Workflow、Subagent/A2A](chapters/23d-agent-systems.tex)
 - [量化、蒸馏、LoRA 与部署](chapters/23b-deployment-and-ecosystem.tex)
+- [现代 Transformer 五问](chapters/22d-modern-transformers.tex)与[新技术判别法](chapters/23e-tech-judgement.tex)
 
 ## 第六、七部分：独立选读专题（不影响必读主线）
 
