@@ -2,7 +2,7 @@
 
 > **性质：**编审与构建证据记录，而非 GitHub Release，也不是实际屏读软件体验认证。
 > **历史正式版：**[v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，99 页，保持原样。
-> **最新已核验的预发布基线：**2026-10-22 源码提交 `a37f3cbca9272ab144d4095327c53b60a0a72eae`。本台账不自动证明此后提交也合格。
+> **最新已核验的预发布基线：**2026-10-22 源码提交 `2d9fc7e9bc864cbb315287ed6cec64d3898a8950`。本台账不自动证明此后提交也合格。
 
 ## 1. 源码与教学目标
 
@@ -12,12 +12,16 @@
 
 ## 2. 可复核的 CI 证据
 
-- [成功的整书构建 #39772869124](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39772869124)（上述源码 `a37f3cbc`）：包含源码结构、可复算 NumPy 数值例、Tagged PDF、公式 MathML-AF 与 veraPDF PDF/UA-2。
+- [成功的整书构建 #39773683708](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39772869124)（上述源码 `2d9fc7e`）：包含源码结构、可复算 NumPy 数值例、Tagged PDF、公式 MathML-AF 与 veraPDF PDF/UA-2。
 - [成功的 Markdown / 工作流安全检查 #39771283849](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39771283849)：包括本地 Markdown 链接、GitHub Actions YAML 和必须手动发布、仅允许 `main` 正式构建等门槛。
 - 成功的 110 页 PDF 构建中，`validate_book.py` 报告 **9 个显示部分（七必读+两选读）、55 个输入源文件、23 张带 TH 表头的结构化表格、65 个表头单元格、17 幅 Figure 和 17 个 Alt、44 个 H1 与 182 个 H2 标题**。
 - 同一构建的机器审计报告 **110 页、1,589 个 Formula / 1,589 个 MathML-AF 关联、1,009 种不同 MathML 文档**。veraPDF 报告 `PDF/UA-2: compliant=true; failedRules=0; failedChecks=0`。
-- 对渲染完成的 PDF 附注执行独立检查：**421 条内部 GoTo、31 条外部 URI 链接、1,062 个命名位置**，421 个内链目标均可解析；后续源码已将这项检查添加到正式 PDF CI（其新构建仍以 Actions 实际结果验收）。
-- 发布工作流已改为下载`ai-by-intuition-book`工件，并通过 `pypdf` 验证**真实 PDF 页数与同次 MathML 审计一致**，不再要求旧版固定的 99 页或 1,472 个公式；产物名为 `AI-by-Intuition-Book.pdf`，历史 `Volume-01` 资产不变。
+- 对渲染完成的 PDF 附注执行独立检查：**422 条内部 GoTo、31 条外部 URI 链接、1,076 个命名位置**，422 条内链目标均可解析；正式 PDF CI 已加入自动目标验证且本基线通过。
+- 发布工作流已改为下载 `ai-by-intuition-book` 工件，并通过 `pypdf` 验证**真实 PDF 页数与同次 MathML 审计一致**，不再要求旧版固定的 99 页或 1,472 个公式；产物名为 `AI-by-Intuition-Book.pdf`，历史 `Volume-01` 资产不变。
+
+**独立发布演练：**从该次构建的 PDF 与同次 `pdfua2-machine-audit` 工件解压到独立目录，用 `pypdf`、JSON 和 XML 检查真实页数 110、公式 1,589/1,589、veraPDF `compliant=true` 且 `failedRules=failedChecks=0`；交付候选 PDF 的 SHA-256 为 `680b97484ce380cf40ce9b6f460844c2e63be64210e307b1cd422a965405b057`。演练只进行验证，**未创建 GitHub Release**。本 SHA-256 属于 `2d9fc7e` 审核快照，后续版式改动需重新计算。
+
+**后续术语审稿：**`b352e833` 已将 26 条基础术语改为首次定义链接并补充测试；其完整构建 [#39777688357](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39777688357) 尚需按最终 CI 结果验收。暂不将其视为本表机器通过的版本。
 
 构建通过仅覆盖工具检查的规则；**不等于真人审稿、实机屏读体验或所有数学断言的独立形式化证明**。
 
@@ -33,11 +37,11 @@
 
 - [x] 七必读部分与 31 章、两组扩展、A–E 附录结构及术语／习题基本回链进入可编译 PDF。
 - [x] 统一 NumPy 示例、55 个源码输入、31 个显示章节、练习—答案一致性由脚本检查。
-- [x] 基线 `a37f3cbc` 的 Tagged PDF、MathML-AF、PDF/UA-2 机器审计全绿；Markdown/workflow 安全测试在先前 `598e6ff` 文档版本已通过，此后文档增量需单独复验。
+- [x] 基线 `2d9fc7e` 的 Tagged PDF、MathML-AF、PDF/UA-2、PDF 内链目标机器审计全绿；文档链接与工作流安全检查另在 [#39774141425](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39774141425) 通过。
 - [x] 对代表性篇章、图表、公式、目录、ViT 和附录做视觉抽样，解决 ViT 孤立小结页。
 - [ ] **在任何后续影响 PDF 的改动之后**，重新取得同一提交的完整成功构建及审计；确认交付页数与记录一致。
 - [ ] 完成出版前的作者审读，包括重要公式、中文语句、抽样无障碍阅读路径；机器合规不应被描述成实机体验认证。
 - [ ] 明确选择新版本号（可用 `v0.2.0`，但尚未选定）、成功的主分支 `build_run_id`，再**手动**运行 [发布工作流](../.github/workflows/publish-release.yml)。
 - [ ] 核对新 Release 的 PDF、`SHA256SUMS` 和 `build-audit.zip` 三项资产；旧版保持不可变。
 
-完整步骤见 [PDF 出版与版本发布](PUBLISHING.md)，教学重构各阶段见 [V2 计划](STRUCTURE_REDESIGN_PLAN.md)。
+完整步骤及 [候选版变更说明](V2_RELEASE_NOTES_DRAFT.md) 见 [PDF 出版与版本发布](PUBLISHING.md)，教学重构各阶段见 [V2 计划](STRUCTURE_REDESIGN_PLAN.md)。
