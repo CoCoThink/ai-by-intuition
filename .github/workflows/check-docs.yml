@@ -5,12 +5,14 @@ on:
     paths:
       - '**/*.md'
       - 'scripts/check_markdown_links.py'
-      - '.github/workflows/check-docs.yml'
+      - '.github/workflows/**/*.yml'
+      - 'scripts/check_workflows.py'
   pull_request:
     paths:
       - '**/*.md'
       - 'scripts/check_markdown_links.py'
-      - '.github/workflows/check-docs.yml'
+      - '.github/workflows/**/*.yml'
+      - 'scripts/check_workflows.py'
   workflow_dispatch:
 
 permissions:
@@ -23,3 +25,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Validate local Markdown link targets
         run: python3 scripts/check_markdown_links.py
+      - name: Install workflow YAML parser
+        run: python3 -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate workflow syntax and release safety invariants
+        run: python3 scripts/check_workflows.py
