@@ -119,7 +119,7 @@
 \newcommand{\softmax}{\operatorname{softmax}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\eyebrow}[1]{{\sffamily\bfseries\footnotesize\color{blue}#1}}
-\newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{第 \ref*{#1} 章 · 第 \pageref*{#1} 页}}}
+\newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{§\ref*{#1} · 第 \pageref*{#1} 页}}}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
 \newcommand{\learningbridge}[2]{%
 \par\medskip
@@ -201,6 +201,7 @@
 \part{让文字进入计算}
 \learningbridge{矩阵能处理数字，可模型的输入却可能是汉字、词与标点。}{通过 Tokenizer 和 Embedding 将文字变成可训练表示，定义三个位置的下一 Token 目标与形状。}
 \input{chapters/20a-tokenizer}
+\input{chapters/20c-classification-loss}
 \input{chapters/20-embeddings}
 \input{chapters/20b-task-contract}
 
