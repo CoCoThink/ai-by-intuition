@@ -4,8 +4,8 @@
 \begin{idea}
 \noindent\emph{怎样根据误差调整参数？}\par
 
-MLP 已经能够根据输入算出预测值。
-接下来需要衡量预测与目标相差多少，再据此确定参数的更新方向。
+上一章试着猜了带参数的函数，但还没有统一的尺度判断它猜得如何。
+先定义损失，再寻找怎样沿着损失降低的方向改变参数。
 \end{idea}
 
 \subsection{预测值、真实值、误差与损失}
@@ -125,5 +125,5 @@ w_2=0.5-0.1\times(-2.5)=0.75.
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:16-loss-gradient}$L(w)=(w-1)^2$ 在 $w=0$ 处的导数是多少？\quad{\footnotesize\hyperref[answer:16-loss-gradient]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-损失函数把“模型好不好”变成数字；梯度提供局部下降方向；学习率控制步长。下一章解释：网络有很多层时，怎样高效计算每一层参数的梯度。
+损失函数把“模型好不好”变成数字；梯度提供局部下降方向；学习率控制步长。下一章先问：即使参数可以优化，若函数本身只能画直线，又怎样表示弯曲的关系？
 \end{conclusion}

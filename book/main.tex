@@ -147,7 +147,7 @@
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
 \textbf{只需要这些预备知识：}建议具备高中代数基础；余弦、指数、对数可以边读边查。导数、链式法则与方差会在相关章节现学现用。\par
-\textbf{学习路线：} 函数与向量 $\rightarrow$ MLP 与训练 $\rightarrow$ 上下文与 Attention $\rightarrow$ Transformer $\rightarrow$ 生成与应用。\par
+\textbf{学习路线：} 标量学习 $\rightarrow$ 向量、矩阵与文本 $\rightarrow$ 上下文与 Attention $\rightarrow$ Transformer $\rightarrow$ 生成与应用。\par
 \textbf{学习任务：} 从回答问题出发，理解为何用下一 Token 预测训练一类语言模型，再学它怎样生成、改进与使用工具。
 \end{tcolorbox}
 \vspace{9mm}
@@ -177,28 +177,27 @@
 \endgroup
 
 
-\part{把文字变成可计算的数字}
-\learningbridge{人类想要机器回应文字，但我们还不知道怎样把这种能力变成计算。}{先用函数理解“可调规则”，再将一段文字表示为数字，并确定可训练的任务。}
+\part{学习是什么：从规则到参数更新}
+\learningbridge{我们希望机器学会复杂任务，但无法手工写尽所有输入的规则。}{先只用一两个数理解函数、损失、梯度、激活、反向传播和泛化。}
 \input{chapters/00-guide}
-\input{chapters/00b-math-tools}
-\input{chapters/00c-symbols}
+\input{chapters/00d-rules-gap}
 \input{chapters/00-functions}
-\input{chapters/01-vectors}
-\input{chapters/02-dot-product}
-\input{chapters/03-matrix-multiplication}
-\input{chapters/20-embeddings}
-\input{chapters/20b-task-contract}
-
-\clearpage
-\part{让神经网络学会预测}
-\learningbridge{我们有了输入向量和可核对的目标，却还没有能根据错误调整自己的计算函数。}{先搭起小网络，再用损失、梯度和反向传播真正修改一次参数。}
-\input{chapters/07-functions-relu}
-\input{chapters/10-mlp}
 \input{chapters/16-loss-gradient}
+\input{chapters/07-functions-relu}
 \input{chapters/17-backpropagation}
 \input{chapters/18b-end-to-end-learning}
 \input{chapters/18-generalization}
+
+\clearpage
+\part{把许多数一起算，再让文字进入计算}
+\learningbridge{我们已让标量函数从数据中学习；现实输入却有许多特征，语言还是文字。}{用向量、矩阵组织批量计算，再把 Token 转成可训练向量并定义下一 Token 任务。}
+\input{chapters/01-vectors}
+\input{chapters/02-dot-product}
+\input{chapters/03-matrix-multiplication}
+\input{chapters/10-mlp}
 \input{chapters/18c-training-engineering}
+\input{chapters/20-embeddings}
+\input{chapters/20b-task-contract}
 
 \clearpage
 \part{让词与词交换信息}
@@ -251,6 +250,8 @@
 \EditInstance{heading}{section}{number-format=\textcolor{blue}{附录~\theheading}}
 \part*{附录：练习、术语与答案}
 \addcontentsline{toc}{part}{附录：练习、术语与答案}
+\input{chapters/00b-math-tools}
+\input{chapters/00c-symbols}
 \input{chapters/25-integrated-practice}
 \input{chapters/25b-modern-practice}
 \input{chapters/15-practice}

@@ -1,6 +1,6 @@
 \section{把前面的数学连成一次真正的学习}
 
-函数负责计算，MLP 组合层，损失衡量预测与目标的差距，反向传播求出梯度。
+前面已经会用函数前向计算、用损失衡量误差，并沿两层计算链反传梯度。
 把这些步骤连起来，就是一次参数学习。
 下面用只有四个可训练参数的小网络，从\textbf{预测}算到\textbf{更新后的再预测}。
 
@@ -81,16 +81,12 @@ L'&=\frac12(5.30-5)^2=0.045.
 损失从 $0.5$ 降到 $0.045$，这次更新改善了该样本的预测。
 新样本上是否同样有效，还需要另外检验。
 
-\subsection{第四步：从一个数扩展到真正的矩阵网络}
+\subsection{下一步：如果有许多输入数字怎么办？}
 
-让输入有 $d_{\rm in}$ 个数字、隐藏层有 $m$ 个神经元、输出有 $d_{\rm out}$ 个数字：
-\begin{equation}
-\vect h^\top=\sigma(\vect x^\top W_1+\vect b_1^\top),
-\qquad
-\widehat{\vect y}^\top=\vect h^\top W_2+\vect b_2^\top.
-\label{eq:small-to-mlp}
-\end{equation}
-现在每个权重都仍有一个局部导数；训练框架用矩阵运算和自动微分同时计算它们，不需要你手工列出几十万次链式法则。
+这一章仍只有单个 $x$ 与 $h$。若同时处理面积、房龄、位置等特征，
+或有许多隐藏单元，我们仍然使用同一个学习循环，
+但逐一写所有乘法和导数会非常繁琐。
+后面会用\textbf{向量和矩阵}表达同样的计算，而不改变学习机制本身。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18b-end-to-end-learning}为什么一次 SGD 中不能先更新 $w_2$ 再用新的 $w_2$ 计算同一步的 $w_1$ 梯度？\quad{\footnotesize\hyperref[answer:18b-end-to-end-learning]{核对解答。}}\par\medskip
 

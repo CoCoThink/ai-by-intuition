@@ -1,65 +1,57 @@
-\section{为什么神经网络需要激活函数？}
+\section{非线性：为什么多叠两层直线仍不够？}
 \label{intro:07-functions-relu}
 
-前一部分已经把文字表示成向量，也把“用前文预测后续文字”设计成一道练习题。
-现在需要一种把输入数字变成预测数字、而且能够调整参数的计算结构。
-最简单的矩阵层可以组合特征，却存在局限：连续叠加几层纯线性变换，仍相当于一次线性变换。
-要让网络能表示更复杂的规律，先认识一个逐个作用于数字的\textbf{非线性函数}。
+上一章已经会调整一个简单函数的参数了，但如果目标关系会弯曲，
+仅有直线无论怎样调都不足以拟合。试着连续用两层函数，能否让表达更灵活？
 
-\subsection{函数可以作用在每一个数字上}
+\subsection{先算两层纯线性}
 
-回想函数 $g(t)=t^2$：输入 $3$ 得 $9$，输入 $-2$ 得 $4$。如果把一列数字作为输入，约定对每个元素\textbf{分别应用同一函数}：
+令第一层 $h=w_1x$，第二层 $\widehat y=w_2h$，那么
 \[
-g\!\left(\begin{bmatrix}3\\-2\end{bmatrix}\right)
-=\begin{bmatrix}9\\4\end{bmatrix}.
+\widehat y=w_2(w_1x)=(w_1w_2)x.
 \]
+结果还是一条直线。即使每层有偏置，两次仿射变换合起来仍是仿射变换。
+\textbf{层数本身并不会自动创造非线性。}
 
-神经网络常用的\textbf{激活函数} ReLU 定义为
+\subsection{插入一个折角：ReLU}
+
+定义逐个作用于数值的\textbf{激活函数}：
 \begin{equation}
 \relu(t)=\max(0,t)=
 \begin{cases}t,&t>0,\\0,&t\le0.\end{cases}
 \end{equation}
-它的意思是：正数不变，负数变成零。所以
-\[
-\relu\!\left(\begin{bmatrix}1\\-0.2\\3\end{bmatrix}\right)
-=\begin{bmatrix}1\\0\\3\end{bmatrix}.
-\]
-ReLU 逐元素处理向量，无需额外的矩阵乘法。
+例如 $\relu(-2)=0$，$\relu(1)=1$。
+$\relu(1+(-2))=0$，但
+$\relu(1)+\relu(-2)=1$，所以 ReLU 不是线性函数。
 
-\subsection{为什么能够写成 $\relu(\vect x^\top W+\vect b^\top)$？}
-
-先计算行向量与矩阵相乘，例如
+把它插到中间：
 \[
-\vect x^\top=(1,1),\quad W=\begin{bmatrix}1&-1\\2&1\end{bmatrix},
-\quad \vect b^\top=(0,0).
+z=w_1x+b_1,\qquad h=\relu(z),\qquad
+\widehat y=w_2h+b_2.
 \]
-第一步：$\vect x^\top W+\vect b^\top=(3,0)$；
-第二步：$\relu(3,0)=(3,0)$。
+如果 $w_1=w_2=1$，两个偏置为 $0$，
+输入 $-2$ 得到 $0$，输入 $1$ 得到 $1$。
+这条分段折线不能用一条固定直线在所有输入上复现。
+
+\begin{idea}
+第一层组合输入，ReLU 让不同输入产生不同激活状态，
+第二层把它们组合成预测。先理解标量版本，再学向量和矩阵版。
+\end{idea}
+
+\subsection{新缺口：前层参数如何影响最后的损失？}
+
+现在修改 $w_1$，会依次改变 $z$、$h$、最终预测和损失。
+如果每个参数都从头展开所有公式会很繁琐；
+下一章将沿这条计算链复用局部变化率。
 
 \begin{warningbox}
-$\relu(\vect x^\top W)$ 与 $\vect x^\top\relu(W)$ 是不同的操作。前者\textbf{先乘矩阵再处理输出}；后者先把权重中的负数变零再相乘。这里讨论的是前者。
+ReLU 在 $t=0$ 处不可导，训练实现通常约定一个次梯度。
+本章只研究正负输入时的前向计算；下一章解释其求导。
 \end{warningbox}
-
-\subsection{“非线性”到底是什么意思？}
-
-如果运算 $f$ 是线性的，就满足
-\[
-f(\vect x_1+\vect x_2)=f(\vect x_1)+f(\vect x_2)
-\]
-等叠加规则。对 ReLU，用两个数字就能证明它不是线性的：
-\[
-\relu(1+(-2))=\relu(-1)=0,
-\]
-但
-\[
-\relu(1)+\relu(-2)=1+0=1.
-\]
-两边不同，所以 ReLU 是\textbf{非线性}。
-
-两次矩阵乘法之间插入这种函数，相当于让不同输入触发不同的激活模式。下一章会把它们组成一个真正的 MLP。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:07-functions-relu}$\relu(-2)$、$\relu(1)$ 分别是多少？\quad{\footnotesize\hyperref[answer:07-functions-relu]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-矩阵层负责组合数字，激活函数负责逐个改变数字。非线性让网络能够表达单个固定线性变换做不到的映射。
+叠加纯线性函数不能产生非线性，插入 ReLU 可以。
+下一章要解决如何让最终误差高效传回最前面的参数。
 \end{conclusion}
