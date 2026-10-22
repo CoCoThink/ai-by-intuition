@@ -11,7 +11,7 @@
 | 批次 | 修订范围 | 状态 |
 | --- | --- | --- |
 | P0 | 概念首次定义、双参数训练数据、练习编号、术语导航与数值例身份 | 已合入 main，见 [PR #12](https://github.com/CoCoThink/ai-by-intuition/pull/12) |
-| P1 | 表示动机、MLP 与 Transformer 数值图、20 步训练、PyTorch 复现、Agent 缺口链及架构对照 | 已合入 main，详见 [P1 记录](P1_COMPLETION.md) |
+| P1 | 表示动机、MLP 与 Transformer 数值图、20 步训练、PyTorch 复现、Agent 缺口链及架构对照 | 已合入 main；可从 [当前教材](../book/README.md) 与 Git 提交历史核查 |
 | P2 | 技术生态、2017 原论文对照、技术判断、阅读路线及交互实验 | 已合入 main，最终发布级验收以最新成功 CI 为准 |
 
 表中状态仅说明源码分支，不表示相应内容已经发布为新版本，也不能代替带版本号的 PDF 发布审核。
