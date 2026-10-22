@@ -102,6 +102,70 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 
 很多生成式 LLM 使用\textbf{Decoder-only} 架构：以因果自注意力和 MLP 堆叠为主，逐步预测下一个 Token。不能把所有 Transformer 都说成完全相同的结构。
 
+\subsection{对照原论文：Encoder、Decoder、Cross-Attention 分别在哪里？}
+
+\href{https://arxiv.org/abs/1706.03762}{Vaswani 等（2017）《Attention Is All You Need》}
+展示的是用于序列到序列任务的\textbf{编码器--解码器架构}。
+本书主线的 Decoder-only 自回归模型，保留因果自注意力和 FFN，
+但不需要一套独立的源语句 Encoder。
+读原论文的架构图时，可按下表找对应部件。
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.18}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{35mm}p{46mm}X@{}}
+\toprule
+原论文中的部件 & 读取范围与数据来源 & 与本书的关系\\\midrule
+Encoder Self-Attention &
+Query、Key、Value 都来自源语句；通常可双向读取 &
+为源语句建立上下文表示，本书的 Decoder-only 主链没有独立源 Encoder\\
+Masked Decoder Self-Attention &
+Q/K/V 来自目标前缀；屏蔽未来目标 &
+对应本书的\conceptlink{causal-mask}{因果 Mask}与自回归计算\\
+Encoder--Decoder Attention &
+Query 来自 Decoder，Key/Value 来自 Encoder 输出 &
+这是\textbf{交叉注意力}，不是把 Decoder 的 Q/K/V 都取自同一序列\\
+Position-wise FFN &
+对每个位置使用共享的前馈参数 &
+对应本书逐位置的 FFN/MLP\\
+Add \& Norm &
+子层残差与归一化 &
+原论文的图示主要采用 Post-Norm；本书数值主例采用 Pre-Norm\\
+Output Linear + Softmax &
+目标位置的隐藏向量映射到目标词表 &
+对应五类 logits、概率和交叉熵；真实词表通常更大\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{example}
+\noindent\emph{翻译任务怎样安排训练输入、目标与掩码？}\par
+
+设源语句为“我 爱 你”，目标译文的三个 Token 为
+“I / love / you”，另有开始符 \texttt{<BOS>} 和结束符 \texttt{<EOS>}。
+训练时 Encoder 一次读取完整源语句，
+Decoder 输入\textbf{右移后的真实目标前缀}
+\[
+[\texttt{<BOS>},\ \text{I},\ \text{love},\ \text{you}],
+\]
+需要预测
+$[\text{I},\ \text{love},\ \text{you},\ \texttt{<EOS>}]$。
+Decoder 的四个位置可以并行计算，
+但第 $i$ 个位置的\textbf{自注意力}只能读取目标输入的前 $i$ 项，
+例如第二位置不能通过 Self-Attention 读到第三位置的“love”。
+另一方面，每一个 Decoder 位置的\textbf{Cross-Attention}
+都可以读取完整 Encoder 输出的三个源位置：
+它看到的是\textbf{源语句}，不是未来目标标签。
+\end{example}
+
+这里是两种独立的可见性规则：
+\textbf{Decoder Self-Attention} 要因果遮挡，
+\textbf{Cross-Attention} 通常可访问整段已输入的源语句，
+但仍需遮挡源语句的 Padding。
+原论文与现代模型在 Norm 放置、位置编码、层数等细节上可能不同；
+对照时先认清数据流，而不是把架构图所有框都当成同一配置。
+
 \subsection{最后如何得到下一个 Token 的概率？}
 
 对最后位置的隐藏状态 $\vect h_T$ 做输出线性投影，得到与词表大小一样多的\textbf{logits（未归一化的候选分数）}。它们还不是概率，也可能为负：
