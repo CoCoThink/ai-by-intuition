@@ -26,6 +26,7 @@ PARTS = [
     "选读专题二：联想记忆与高维检索",
 ]
 REQUIRED = [
+    "00g-reading-routes",
     "00-guide",
     "00d-rules-gap",
     "00-functions",
@@ -60,6 +61,7 @@ REQUIRED = [
     "23b-deployment-and-ecosystem",
     "22d-modern-transformers",
     "23e-tech-judgement",
+    "23f-foundation-recap",
     "19-cnn",
     "19b-vit",
     "04-key-value-outer-product",
@@ -239,6 +241,13 @@ def validate_source() -> None:
     includes(sources["23d-agent-systems"], "g_{Q2}", "shared report arithmetic")
     includes(sources["23d-agent-systems"], "A2A", "protocol distinctions")
     includes(sources["23e-tech-judgement"], "Scaling Laws", "innovation framework")
+    includes(sources["23e-tech-judgement"], "莫拉维克悖论", "Moravec paradox")
+    includes(sources["23e-tech-judgement"], "架构创新空间", "debated architecture innovation")
+    includes(sources["23b-deployment-and-ecosystem"], "vLLM", "ecosystem tool comparison")
+    includes(sources["22-transformer-architecture"], "Encoder--Decoder Attention", "original architecture comparison")
+    includes(sources["23f-foundation-recap"], "技术底座回顾", "end of core recap")
+    includes(sources["00g-reading-routes"], "速读", "pre-TOC reading paths")
+    includes(main, r"\newtcolorbox{boundarybox}", "separate scope box type")
     includes(sources["22c-language-training"], "0.25764", "shared embedding gradient")
     includes(sources["10-mlp"], r"\label{eq:mlp-l-layer-row}", "L-layer network")
     includes(sources["20b-task-contract"], r"\label{fig:token-ffn-output-pipeline}", "token-to-vocabulary diagram")
