@@ -70,9 +70,9 @@ python3 -m pip install pypdf==5.9.0
 python3 scripts/validate_book.py --pdf book/build/main.pdf
 ```
 
-生成文件为 `book/build/main.pdf`。CI 将唯一正式成品作为 `ai-by-intuition-volume-01` 工件发布，可从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 下载。
+生成文件为 `book/build/main.pdf`。已发布的正式 PDF 从 [v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 下载；未来新版本通过显式版本号和已通过的构建发布。CI 的成功运行只上传一份 `ai-by-intuition-volume-01` PDF 工件及一份机器审计，具体从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 获取。
 
-2026 年 10 月 21 日的[成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界检查，并核验 `Tagged: yes` 及真实 PDF 结构树。
+2026 年 10 月 22 日的 [v0.1.0 正式成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界、全部公式 MathML-AF 和 veraPDF PDF/UA-2 零失败的机器验收。
 
 ## Tagged PDF 与自动化验收
 
@@ -91,4 +91,4 @@ latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outd
 pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 ```
 
-最新 `main` CI 已修复图注父子结构警告、超宽盒子和标题层级缺失。公式 MathML 已在正式构建中启用，并以 `scripts/validate_mathml_af.py` 对 1,472 个公式的关联文件逐一验收；后续保留结构、MathML-AF 与 PDF/UA-2 的自动化回归检查，不再安排屏读测试或人工无障碍验收；详见仓库根目录的 [自动化验收说明](../docs/ACCESSIBILITY.md)。
+正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，并以 `scripts/validate_mathml_af.py` 对 1,472 个公式的关联文件逐一验收；后续保留结构、MathML-AF 与 PDF/UA-2 的自动化回归检查，不再安排屏读测试或人工无障碍验收；详见仓库根目录的 [自动化验收说明](../docs/ACCESSIBILITY.md)。

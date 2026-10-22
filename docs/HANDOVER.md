@@ -1,94 +1,31 @@
-# AI by Intuition — Handover / 遗留事项交接
+# AI by Intuition · 当前维护状态
 
-> **当前状态（2026-10-22，v0.1.0 已发布）：** 本文第 1–6 节是 **2026-10-21 历史交接快照**，不能再作为当前开放待办清单。H-01、H-02、H-05 已解决；H-03 已隔离成非阻断兼容诊断；H-04 完成 Action SHA、veraPDF 镜像 digest 固定与环境审计，TeX Live 基础镜像及 apt 软件包仍是升级时需复核的浮动边界；H-06 的出版 QA 流程、抽检记录和首个正式 Release 已落实。主分支构建 [CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 与 [发布 CI #39700328180](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 均为 **success**，正式版见 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)。\n\n> 交接快照：2026-10-21；基线 `main`：[`7c3e1f4`](https://github.com/CoCoThink/ai-by-intuition/commit/7c3e1f40c2b8bd26bc66b5725865c3033d9c730a)。最近一次已完成的全量 CI 对应源码提交 [`cc680b6`](https://github.com/CoCoThink/ai-by-intuition/commit/cc680b63425e)；[Actions #39615037750](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39615037750) 为 **success**。后续只改过 Markdown 文档，不代表该文档提交又执行了全量 CI。
+> 更新日期：2026-10-22。本页只列出当前工作约定，历史交接原文保留在 [2026-10-22 整理前的 Git 记录](https://github.com/CoCoThink/ai-by-intuition/blob/ad239e83e96fcb71647f278e456078d0fc66571e/docs/HANDOVER.md)，无需让旧事项反复成为新的待办。
 
-## 1. 一句话交接结论
+## 正式交付基线
 
-**当前没有已知的发布阻断项（P0），也没有开放的 GitHub Issue。** 七部分教材已经稳定生成 99 页 Tagged PDF，整本书 MathML-AF 关联与 veraPDF PDF/UA-2 机器验证均通过。剩余事项主要是旧实验清理、自动化覆盖、构建复现性与内容/出版精校。请勿将先前修复的 MathML、标题结构、图注或 PDF/UA-2 机器验证重新标记为未完成。
+- [Release v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 已完成发布，不允许原地覆盖历史 PDF 或其 SHA-256。
+- 正式发布对应主分支提交 `55b55e4308028763a0b1952f1a02642e4d9829d8`，[完整 PDF CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 和 [发布工作流](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 都成功。
+- 已验证 99 页 Tagged PDF、1,472/1,472 MathML-AF、933 个不同 MathML 文档、48 个 H1、180 个 H2、21 张表格、16 张语义图；veraPDF 1.30.2 PDF/UA-2 失败数为 0。
+- 官方 PDF SHA-256 为 `211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`。
 
-项目验收范围以[无障碍说明](ACCESSIBILITY.md)为准：**只要求可重复的机器验证；不安排真实屏读体验或人工无障碍验收**。不得把该已明确排除的工作重新放入交付阻断清单。机器合规不保证所有阅读器的实际体验。
+## 交接事项处理结论
 
-## 2. 已验证的基线（不是遗留问题）
-
-| 维度 | 2026-10-21 全量 CI 已确认 |
+| 项目 | 当前结论 |
 |---|---|
-| 编译 | TeX Live 2026 + LuaLaTeX；99 页；`Tagged: yes` |
-| 教材结构 | 7 部分、47 个章节源文件；数值例子、目录与页面文字边界 QA 通过 |
-| 结构标签 | 48 个 H1、180 个 H2、21 个 Table / 59 个 TH、16 个 Figure / 16 处替代文字 |
-| 数学语义 | 1,472 个 Formula，1,472/1,472 个有效 MathML-AF 关联；933 份不同 MathML 文档 |
-| 独立规则验证 | veraPDF 1.30.2，PDF/UA-2：`compliant=true`，`failedRules=0`，`failedChecks=0` |
-| 排版 | 全书文本边界检查通过，正式主构建无 `Overfull \hbox` 和非法标签父子警告 |
+| H-01 CI 路径覆盖 | 已完成。验证脚本改变会触发完整 PDF 构建；Markdown 和工作流配置有独立检查 |
+| H-02 过时 MathML/veraPDF 说明 | 已完成，正式版开启 `unicode-math` + `mathml-AF`，veraPDF 是发布阻断门槛 |
+| H-03 原生 `align*` 不兼容 | 已绕行，非阻断。使用 [手动兼容诊断工作流](../.github/workflows/check-compatibility.yml) 跟踪 |
+| H-04 构建依赖复现 | Action SHA 与 veraPDF digest 固定，保留环境审计；TeX Live 基础镜像及 apt 软件包仍需升级核对 |
+| H-05 重复小标题 | 已修复且完整 PDF 回归通过 |
+| H-06 视觉 QA 与 Release | 已发布 v0.1.0；新版本采取显式版本号 + 指定已验证构建的手动发布，不自动替换历史资产 |
 
-权威证据：[最新成功的全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39615037750)、[成功的 MathML 集成 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)、[PDF/UA 机器验收说明](ACCESSIBILITY.md)。旧 Issue #2（LuaMML 断言）、#3（标题语义）已关闭；Issue #4（人工验收）按范围取消并关闭。
+历史标题实验已验证并被正式的 `scripts/validate_book.py` 结构测试取代；无需每次正式构建重复实验。过去实验日志仍能通过历史 Actions 获取，受 GitHub 工件保留期限制。
 
-## 3. 2026-10-21 当时的剩余遗留事项（历史记录；现况见顶部）
+## 日常维护方式
 
-| ID / 优先级 | 遗留问题与证据 | 下一步动作及完成标准 |
-|---|---|---|
-| **H-01 · P1** | **CI 触发范围不完整。** `.github/workflows/build-latex.yml` 的 `push`/`pull_request` 只监听 `book/**/*.tex`、`scripts/validate_book.py`、`scripts/validate_mathml_af.py` 和工作流自身；`scripts/summarize_verapdf.py`、`scripts/inspect_heading_tags.py` 变更不会自动触发构建。纯文档提交也不会运行验证。 | 让所有承担验证逻辑的 `scripts/**/*.py` 进入 CI 路径过滤；文档变更可另配轻量链接/Markdown 检查，而不强制整本书编译。补一次手动 `workflow_dispatch`，确认工作流仍通过。 |
-| **H-02 · P1** | **历史说明与当前实现不一致。** `book/smoke-mathml.tex` 的注释仍说正式教材使用旧数学字体；工作流注释称 MathML 尚在实验阶段。事实上生产源码已启用 `unicode-math`、`mathml-AF`，并通过全部关联验证。`scripts/summarize_verapdf.py` 文件头亦保留旧的 advisory 表述，而正式调用不带 `--advisory`，零失败是硬门槛。 | 更新注释与交接文档中的“实验 / 正式版”边界：**正式 MathML-AF 已完成；原生 `align*` 实验仍失败**。保留历史失败记录，但不得让其与最新发布能力混淆。 |
-| **H-03 · P2** | **两项非阻断兼容性实验仍失败。** [CI #39615037750](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39615037750) 的原生 `smoke-mathml.tex`（`align*`）及 `smoke-mathml-lua-unicode.tex` 仍会出现 `luamml-amsmath.lua:63: assertion failed`；`smoke-mathml-aligned.tex` 可生成 MathML，正式全书已使用绕行写法。 | 将旧实验明确标记为预期失败（或从每次正式构建迁移为单独诊断作业）；若 TeX Live/LuaMML 升级再尝试恢复原生 `align*`，必须同时通过 1,472/1,472 MathML-AF 与 veraPDF 门槛。**当前不阻断出版**。 |
-| **H-04 · P2** | **依赖复现性仍可加强。** 已固定 TeX Live 年份、veraPDF 镜像标签和 `pypdf==5.9.0`，但 `xu-cheng/texlive-action@v3`、`actions/checkout@v4`、系统字体/apt 包及容器仍可能随上游内容变动；未见完整哈希/镜像摘要锁定清单。 | 记录运行环境与版本清单；对关键 Action 或容器采用 SHA/digest pin（或定期核验策略），针对新镜像单独跑全量回归并保留机器审计工件。 |
-| **H-05 · P2** | **存在可定位的文字编辑瑕疵。** `book/chapters/02-dot-product.tex` 的小标题是“再用余弦定理，用余弦定理解释点积与角度”，重复表达未被自动规则检出。 | 改为简洁且与正文一致的标题；按同类规则抽查其他章节标题、重复过渡语和解释一致性。每次正文改动继续跑源码数值与全量 PDF 验收。 |
-| **H-06 · P2 / 可选** | **系统化出版视觉精校与版本发布尚未产品化。** 自动 QA 能发现页面边界和 Overfull，但不等于所有图文比例、分页和排版细节均已逐页审看。GitHub 仓库当前未列出正式 Release；CI 只上传 `ai-by-intuition-volume-01` 工件。 | 如需正式发行，建立抽样/逐页视觉检查记录，并选择是否添加版本化 Release、变更说明和不可变 PDF 存档；该项为出版流程增强，不是当前机器验收缺陷。 |
-
-优先级定义：**P1** = 应纳入近期工程整理；**P2** = 非阻断的兼容性、维护性或出版增强。上述状态均来自源码、当前仓库配置和最近成功日志；没有证据表明这些事项导致最新正式 PDF 失败。
-
-## 4. 当时推荐的执行顺序（已执行）
-
-1. **先做 H-01 / H-02**：修工作流路径过滤、清理过时说明；只改这些配置/文档，避免不必要地重构 LaTeX。
-2. **再做 H-05**：修复点积小标题并运行全量回归，确认 PDF 数量、结构和内容数值没有退化。
-3. **将 H-03 单独留为兼容性跟踪**：可以维持预期失败实验，不把已成功的生产 MathML-AF 改回不稳定写法。
-4. **酌情推进 H-04 / H-06**：在发行冻结时再决定依赖锁定、长期版本归档与视觉精校范围。
-
-## 5. 复现、检查与交付入口
-
-从仓库根目录运行源码和正式 PDF 验收（依赖 TeX Live 2026、LuaLaTeX、Noto 中文字体、`latexmk`、Poppler，以及 Python 依赖）：
-
-~~~bash
-python3 scripts/validate_book.py
-cd book
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex
-cd ..
-python3 -m pip install pypdf==5.9.0
-python3 scripts/validate_book.py --pdf book/build/main.pdf
-python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
-~~~
-
-正式验收还必须参考 [CI 工作流](../.github/workflows/build-latex.yml) 所执行的 **veraPDF 1.30.2 PDF/UA-2** 检查，不能只运行本地 `pdfinfo`、结构树计数或上述部分命令。工件：`ai-by-intuition-volume-01`（正式 PDF）、`pdfua2-machine-audit`（veraPDF XML 与 MathML JSON）、`experimental-mathml-logs`（历史兼容实验）。
-
-核心文件：[`book/main.tex`](../book/main.tex) · [`scripts/validate_book.py`](../scripts/validate_book.py) · [`scripts/validate_mathml_af.py`](../scripts/validate_mathml_af.py) · [`scripts/summarize_verapdf.py`](../scripts/summarize_verapdf.py) · [`docs/ACCESSIBILITY.md`](ACCESSIBILITY.md) · [`ROADMAP.md`](../ROADMAP.md)。
-
-## 6. 交付判据
-
-接手者提交新代码后：① GitHub Actions 全量成功；② 正式 PDF 维持 Tagged/标题/表格/图形结构；③ 所有 Formula 有有效 MathML-AF；④ veraPDF PDF/UA-2 零失败；⑤ 页面和数值检查通过；⑥ 如有编辑性改动，更新影响章节及构建证据。**不因原生 `align*` 的非阻断诊断失败而判定生产 PDF 失败。**
-
----
-
-最后核对：交接时公开 GitHub Issues **0 个开放项**。本文件为核查后的遗留事项清单，不假定已经存在对应的 Issue 或已有人负责。
-
-## 7. 接手处理记录（2026-10-22；当时待 CI 核验，现已通过）
-
-- **H-01**：构建工作流已覆盖 `scripts/**/*.py`，新增仅对 Markdown/检查器变更触发的轻量站内链接检查；全量 CI 保留手动触发入口。
-- **H-02 / H-03**：修订旧 MathML 与 veraPDF 注释，并将原生 `align*` 的已知断言标为非阻断的**预期兼容失败**；实际机器验收仍由正式 `mathml-AF` 和 veraPDF 严格检查执行。
-- **H-04**：锁定四种 GitHub Action 的当前提交 SHA，新增构建工具、字体软件包与 veraPDF 镜像标识审计工件。TeX Live 镜像、apt 软件包与 veraPDF tag 仍需按 [依赖复核策略](BUILD-REPRODUCIBILITY.md) 定期核验，不宣称它们已被不可变摘要完全固定。
-- **H-05**：修复点积章节重复标题；源码数值与最终 PDF 结构是否持续通过，以本次变更关联的 GitHub Actions 结果为准。
-- **H-06（可选）**：新增 [出版视觉抽检与版本归档流程](PUBLISHING.md)；**尚未进行逐页视觉复核，也未创建正式 Release**，不得将流程文件误当成完成出版的证据。
-
-本节记述待合并变更的实施内容，不覆盖前文已经成功的 2026-10-21 基线。新一轮全量验证成功后方可宣布更新后的 PDF 验收通过。
-
-
-## 8. CI 修复及出版候选核验（2026-10-22）
-
-- 已定位 CI #39633151403 的失败原因：TeX Live 容器以 root 建立 `pdfua-audit` 目录，后续 Runner 写入失败；已在容器阶段依据工作区目录恢复所有权。修复后的 [完整 CI #39697175674](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39697175674) **success**：99 页、MathML-AF 1,472/1,472、veraPDF PDF/UA-2 零失败，Markdown 链接检查亦通过。
-- 为 H-04 进一步把 veraPDF 容器从可变 tag 改成先前成功 CI 报告的摘要固定；TeX Live/apt 仍是公开的可复现性边界，需按发行维护文档继续审计。
-- H-06 的真实出版版面 QA 候选检查已记录于 [PUBLISHING.md](PUBLISHING.md)；首次正式 Release 由成功的主分支全量构建自动产生，并存档 PDF、SHA-256、MathML 和 PDF/UA-2 审计报告。只有 GitHub Release 实际产生后才视为正式发布完成。
-
-
-## 9. v0.1.0 正式发布核验（2026-10-22）
-
-- **合并：** [PR #5](https://github.com/CoCoThink/ai-by-intuition/pull/5) 已合并，主分支 commit `55b55e4308028763a0b1952f1a02642e4d9829d8`。
-- **全量 CI：** [#39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 通过：7 部分/47 章节源文件、99 页 Tagged、章节与数值/文字边界 QA、1,472/1,472 MathML-AF（933 种不同内容）、veraPDF PDF/UA-2 `compliant=true`、`failedRules=0`、`failedChecks=0`。
-- **发行：** [发布工作流 #39700328180](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 成功创建 [v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，包含 PDF、SHA256SUMS、MathML JSON、veraPDF XML 及构建环境审计文件。
-- **文件一致性：** 官方 PDF 的 SHA-256 为 `211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`；独立从同一主分支成功 CI 下载的 PDF 工件内原始文件计算得到相同哈希。
-- **开放范围：** 目前仓库无开放 Issue；`align*` 的原生 LuaMML 断言仍是**已知非阻断兼容性限制**。TeX Live 基础镜像和 apt 软件包仍需升级审计，均不改变正式 PDF 已通过机器验收的结论。原交接 H-01–H-06 不应再直接描述为“尚未开始”。
+1. 正文 LaTeX 或验证脚本变更，必须通过 [正式完整构建](../.github/workflows/build-latex.yml)：源码、数值、99 页结构/版面、MathML-AF、veraPDF PDF/UA-2。
+2. Markdown 或工作流配置变更运行 [轻量 CI](../.github/workflows/check-docs.yml)，包含链接检查和工作流语法/安全约束检查。
+3. `align*` 上游兼容问题只在需要升级 LuaMML/TeX Live 时通过 [手动实验](../.github/workflows/check-compatibility.yml) 复查，不影响生产 PDF。
+4. 发布新版见 [PUBLISHING.md](PUBLISHING.md)，复现/依赖升级见 [BUILD-REPRODUCIBILITY.md](BUILD-REPRODUCIBILITY.md)。
+5. 公开仓库无开放 Issue 不是“未来没有 bug”的保证；任何新缺陷按实际证据立项。项目不承诺已通过真实屏读软件体验测试。

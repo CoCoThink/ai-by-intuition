@@ -2,6 +2,8 @@ name: Build one PDF book
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'book/**/*.tex'
       - 'scripts/**/*.py'
@@ -59,65 +61,6 @@ jobs:
               grep -E 'Package tagpdf Warning: Parent-Child|Overfull \\hbox' build/main.log
               exit 1
             fi
-            # Only native align* is a known-incompatible LuaMML probe.
-            # Production already uses unicode-math + mathml-AF and verifies every Formula.
-            mkdir -p build/mathml
-            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-              -file-line-error -outdir=build/mathml smoke-mathml.tex; then
-              echo '::notice::Native align* now compiles; reassess known LuaMML incompatibility'
-            else
-              if grep -q 'assertion failed' build/mathml/smoke-mathml.log; then
-                echo '::notice::Expected native align* LuaMML assertion (nonblocking diagnostic)'
-              else
-                echo '::warning::Unexpected native align* diagnostic failure (nonblocking)'
-              fi
-              grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
-                build/mathml/smoke-mathml.log | tail -n 25 || true
-            fi
-            # Alternate aligned-inside-display case; isolated from production.
-            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-              -file-line-error -outdir=build/mathml smoke-mathml-aligned.tex; then
-              if [ -f build/mathml/smoke-mathml-aligned-luamml-mathml.html ] && \
-                grep -q '<math' build/mathml/smoke-mathml-aligned-luamml-mathml.html; then
-                echo 'Production-compatible aligned variant produced MathML'
-              else
-                echo '::warning::MathML aligned variant compiled without verified MathML file'
-              fi
-            else
-              echo '::warning::MathML aligned experiment failed; stable book PDF unaffected'
-              grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
-                build/mathml/smoke-mathml-aligned.log | tail -n 25 || true
-            fi
-            # Experimental section-tagging tests; do not jeopardize production.
-            mkdir -p build/headings
-            for name in smoke-heading-article smoke-heading-chinese; do
-              if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-                -file-line-error -outdir=build/headings "${name}.tex"; then
-                echo "Heading experiment compiled: ${name}"
-              else
-                echo "::warning::Heading experiment failed: ${name}"
-                grep -E -A6 'Fatal error|LaTeX Error' \
-                  "build/headings/${name}.log" | tail -n 20 || true
-              fi
-            done
-            # LuaTeX-native OpenType math loader; isolated from production.
-            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-              -file-line-error -outdir=build/mathml smoke-mathml-lua-unicode.tex; then
-              if [ -f build/mathml/smoke-mathml-lua-unicode-luamml-mathml.html ] && \
-                grep -q '<math' build/mathml/smoke-mathml-lua-unicode-luamml-mathml.html; then
-                echo '::notice::lua-unicode-math native align* now produces MathML'
-              else
-                echo '::warning::lua-unicode-math compiled without verified MathML'
-              fi
-            else
-              if grep -q 'assertion failed' build/mathml/smoke-mathml-lua-unicode.log; then
-                echo '::notice::Expected lua-unicode-math align* assertion (nonblocking diagnostic)'
-              else
-                echo '::warning::Unexpected lua-unicode-math diagnostic failure (nonblocking)'
-              fi
-              grep -E -A8 'assertion failed|Fatal error|LaTeX Error' \
-                build/mathml/smoke-mathml-lua-unicode.log | tail -n 25 || true
-            fi
             cp build/main.pdf build/AI-by-Intuition-Volume-01.pdf
             echo '=== Smoke tagged state ==='
             pdfinfo build/smoke/smoke-tagging.pdf | grep -E '^(Tagged|PDF version|Pages):'
@@ -125,31 +68,6 @@ jobs:
             pdfinfo build/AI-by-Intuition-Volume-01.pdf | grep -E '^(Tagged|PDF version|Pages):'
             echo '=== Book structure tree first lines ==='
             pdfinfo -struct build/AI-by-Intuition-Volume-01.pdf | head -n 12 || true
-      - name: Upload experimental MathML logs
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: experimental-mathml-logs
-          path: |
-            book/build/mathml/*.log
-            book/build/mathml/*mathml.html
-          if-no-files-found: warn
-      - name: Upload heading experiment artifacts
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: experimental-heading-results
-          path: |
-            book/build/headings/*.pdf
-            book/build/headings/*.log
-          if-no-files-found: warn
-      - name: Upload PDF for tagging diagnostics
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: tagged-pdf-diagnostics
-          path: book/build/AI-by-Intuition-Volume-01.pdf
-          if-no-files-found: warn
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
@@ -164,17 +82,6 @@ jobs:
             python -m pip show pypdf | grep -E '^(Name|Version):'
             pdftotext -v 2>&1 | head -n 1
           } > pdfua-audit/runner-environment.txt
-      - name: Inspect experimental heading structure
-        run: |
-          for name in smoke-heading-article smoke-heading-chinese; do
-            file="book/build/headings/${name}.pdf"
-            if [ -f "$file" ]; then
-              python3 scripts/inspect_heading_tags.py "$file" --require-headings || \
-                echo "::warning::Missing structural headings in ${name}"
-            else
-              echo "::warning::No heading experiment PDF: ${name}"
-            fi
-          done
       - name: Verify rendered PDF tags, structure and layout
         run: |
           sudo apt-get update -qq
@@ -222,3 +129,16 @@ jobs:
           name: ai-by-intuition-volume-01
           path: book/build/AI-by-Intuition-Volume-01.pdf
           if-no-files-found: error
+      # Retain PDF and logs only when production validation fails.
+      # Successful runs publish precisely one copy of the generated PDF.
+      - name: Upload failed-build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: failed-build-diagnostics
+          path: |
+            book/build/main.pdf
+            book/build/main.log
+            book/build/smoke/*.log
+          if-no-files-found: warn
+          retention-days: 7

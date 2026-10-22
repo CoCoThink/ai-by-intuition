@@ -1,23 +1,24 @@
 name: Publish validated volume
 
+# Deliberately manual: a passing push build is NOT an instruction to publish.
 on:
-  workflow_run:
-    workflows:
-      - Build one PDF book
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New immutable release tag, e.g. v0.2.0'
+        required: true
+        type: string
+      build_run_id:
+        description: 'Successful main-branch Build one PDF book run ID'
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
-  publish-first-release:
-    # Never grant write access or release assets for PR/fork builds.
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_branch == 'main' &&
-      github.event.workflow_run.head_repository.full_name == github.repository
+  release:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -25,22 +26,66 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-      - name: Download validated PDF from the successful full build
+          fetch-depth: 0
+      - name: Verify requested release and build provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          SOURCE_RUN_ID: ${{ inputs.build_run_id }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$RELEASE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo '::error::Version must be vMAJOR.MINOR.PATCH'
+            exit 1
+          fi
+          if [[ ! "$SOURCE_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo '::error::Build run ID must be numeric'
+            exit 1
+          fi
+          if gh release view "$RELEASE_VERSION" >/dev/null 2>&1 || \
+             gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_VERSION" >/dev/null 2>&1; then
+            echo '::error::Tag or release already exists; never overwrite a published version'
+            exit 1
+          fi
+          gh api "repos/$GH_REPO/actions/runs/$SOURCE_RUN_ID" > "$RUNNER_TEMP/source-run.json"
+          jq -e --arg repo "$GH_REPO" '
+            .name == "Build one PDF book" and
+            (.event == "push" or .event == "workflow_dispatch") and
+            .head_branch == "main" and
+            .conclusion == "success" and
+            .head_repository.full_name == $repo
+          ' "$RUNNER_TEMP/source-run.json" >/dev/null
+          validated_sha="$(jq -r '.head_sha' "$RUNNER_TEMP/source-run.json")"
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$validated_sha" origin/main || {
+            echo '::error::Validated commit is not an ancestor of main'
+            exit 1
+          }
+          # A successful build can precede documentation-only commits.
+          # Reject any source or build-tool change made after that validated run.
+          git diff --quiet "$validated_sha" origin/main -- book scripts .github/workflows/build-latex.yml || {
+            echo '::error::Source or production validation changed after chosen PDF run'
+            exit 1
+          }
+          echo "VALIDATED_SHA=$validated_sha" >> "$GITHUB_ENV"
+          echo "SOURCE_RUN_URL=$(jq -r '.html_url' "$RUNNER_TEMP/source-run.json")" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
+      - name: Download PDF from precisely the validated run
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: ai-by-intuition-volume-01
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.build_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: dist
-      - name: Download validation audit from the same build
+      - name: Download audit from the same run
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: pdfua2-machine-audit
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.build_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: dist/audit
-      - name: Confirm audit consistency and write SHA-256 manifest
+      - name: Validate PDF and audit, assemble minimal assets
         run: |
           python3 - <<'PY'
           import json
@@ -49,50 +94,46 @@ jobs:
           folder = Path("dist")
           pdf = folder / "AI-by-Intuition-Volume-01.pdf"
           assert pdf.is_file() and pdf.stat().st_size > 1000000, "Missing validated PDF"
-          json_file = next(folder.rglob("mathml-af-summary.json"))
-          summary = json.loads(json_file.read_text())
+          summary = json.loads((folder / "audit/mathml-af-summary.json").read_text())
           assert summary["pages"] == 99, summary
           assert summary["formulas"] >= 1000 and summary["formulas"] == summary["associations"], summary
-          xml_file = next(folder.rglob("verapdf-pdfua2.xml"))
-          root = ET.parse(xml_file).getroot()
+          root = ET.parse(folder / "audit/verapdf-pdfua2.xml").getroot()
           reports = [n for n in root.iter() if n.tag.rsplit("}", 1)[-1] == "validationReport"]
           assert len(reports) == 1 and reports[0].get("isCompliant") == "true", "PDF/UA-2 report not compliant"
           details = next(n for n in reports[0] if n.tag.rsplit("}", 1)[-1] == "details")
           assert details.get("failedRules") == "0" and details.get("failedChecks") == "0", details.attrib
           for name in ("texlive-environment.txt", "runner-environment.txt", "verapdf-image.txt"):
-              assert any(folder.rglob(name)), f"Missing environment audit: {name}"
-          print("Release audit verified; PDF + MathML + veraPDF + environment present")
+              assert (folder / "audit" / name).is_file(), f"Missing environment audit: {name}"
+          print("Validated PDF, MathML-AF, PDF/UA-2 and reproducibility evidence")
           PY
-          cd dist
-          sha256sum AI-by-Intuition-Volume-01.pdf > SHA256SUMS
-      - name: Write version notes
+          (
+            cd dist
+            sha256sum AI-by-Intuition-Volume-01.pdf > SHA256SUMS
+            zip -q -j build-audit.zip audit/*
+          )
+      - name: Write release description
         run: |
           cat > dist/RELEASE-NOTES.md <<EOF
-          # AI by Intuition · Volume 01 · v0.1.0
+          # AI by Intuition · Volume 01 · $RELEASE_VERSION
 
-          中文教材首个版本化 PDF 归档。来源提交：${{ github.event.workflow_run.head_sha }}。
+          中文教材 PDF 的版本化归档，源码提交：$VALIDATED_SHA。
 
-          验收：全量 GitHub Actions 编译；99 页 Tagged PDF；1,472 份公式 MathML-AF 关联；veraPDF 1.30.2 PDF/UA-2 零失败；页面及数值回归。验收工件和镜像/环境记录随 PDF 一同存档。
+          来源：$SOURCE_RUN_URL
+          验收：99 页 Tagged PDF、1,472/1,472 MathML-AF 关联、veraPDF PDF/UA-2 零失败，以及源文件、数值与版面检查。
 
-          构建证据：${{ github.event.workflow_run.html_url }}
-
-          发布资产包括 PDF、SHA256SUMS、veraPDF XML、MathML JSON、构建环境清单。项目尚未设定再授权许可，不能据此推定可自由二次发布。自动合规不代表特定屏读软件的体验保证。
+          下载：PDF 正式文件、SHA256SUMS 文件校验和、build-audit.zip（机器报告及构建环境）。历史版本不覆盖或重编译替换。
+          机器合规不代表在所有辅助阅读器中的实际体验。项目许可证仍由权利人决定。
           EOF
-      - name: Create first release once without overwriting historical assets
+      - name: Create immutable versioned GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          if gh release view v0.1.0 >/dev/null 2>&1; then
-            echo '::notice::v0.1.0 already published; historical release left unchanged'
-            exit 0
-          fi
-          gh release create v0.1.0 \
+          gh release create "$RELEASE_VERSION" \
             dist/AI-by-Intuition-Volume-01.pdf \
             dist/SHA256SUMS \
-            dist/RELEASE-NOTES.md \
-            dist/audit/* \
-            --target "${{ github.event.workflow_run.head_sha }}" \
-            --title 'AI by Intuition · Volume 01 · v0.1.0' \
+            dist/build-audit.zip \
+            --target "$VALIDATED_SHA" \
+            --title "AI by Intuition · Volume 01 · $RELEASE_VERSION" \
             --notes-file dist/RELEASE-NOTES.md \
             --latest

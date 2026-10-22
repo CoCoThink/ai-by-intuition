@@ -1,0 +1,56 @@
+name: Diagnose historical LuaMML compatibility
+
+# Never part of regular builds or publishing.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  luamml:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Run isolated LuaMML smoke cases
+        uses: xu-cheng/texlive-action@22c04326a5d855880f9d39bb955138bf11c6df80 # v3
+        with:
+          texlive_version: 2026
+          os: debian
+          run: |
+            set -eu
+            apt-get update -qq
+            apt-get install -y -qq fonts-noto-cjk fonts-noto-core
+            fc-cache -f
+            cd book
+            mkdir -p build/mathml
+            if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+                -file-line-error -outdir=build/mathml smoke-mathml-aligned.tex; then
+              test -s build/mathml/smoke-mathml-aligned-luamml-mathml.html
+              grep -q '<math' build/mathml/smoke-mathml-aligned-luamml-mathml.html
+              echo '::notice::Stable aligned variant produces MathML'
+            else
+              echo '::error::Stable aligned variant regressed'
+              exit 1
+            fi
+            for testname in smoke-mathml smoke-mathml-lua-unicode; do
+              if latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+                  -file-line-error -outdir=build/mathml "$testname.tex"; then
+                echo "::notice::$testname now compiles; inspect native align* compatibility"
+              elif grep -q 'assertion failed' "build/mathml/$testname.log"; then
+                echo "::notice::$testname has the known native align* LuaMML assertion"
+              else
+                echo "::error::$testname has an unexpected compatibility failure"
+                exit 1
+              fi
+            done
+      - name: Save manual compatibility logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: luamml-manual-diagnostics
+          path: |
+            book/build/mathml/*.log
+            book/build/mathml/*mathml.html
+          if-no-files-found: warn
+          retention-days: 7
