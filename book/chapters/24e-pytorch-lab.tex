@@ -1,0 +1,52 @@
+\subsection{动手层：用 PyTorch 自动求导复现 99 参数主模型}
+\label{app:pytorch-lab}
+
+读过三维算例后，可以在电脑上用 43 行教学脚本核对
+\textbf{同一套初值、同一组 Token、一次全参数更新}。
+这里不是另外随机生成一个网络再声称损失恰好相同：
+\texttt{scripts/pytorch\_starter.py} 从本书的唯一参数表
+\texttt{teaching\_reference.parameters()} 读取数值，
+再用 PyTorch 的自动求导实现与 NumPy 手工反传相同的运算。
+
+\textbf{运行环境：}Python 3.10+、NumPy、PyTorch（在本地安装所选兼容版本）。
+在仓库根目录执行：
+\begin{verbatim}
+python3 -m pip install numpy torch
+python3 scripts/pytorch_starter.py
+\end{verbatim}
+\textbf{预期标准输出：}
+\begin{verbatim}
+Loss: 1.798430 -> 1.611377
+Shape: (3, 5) Parameters: 99
+\end{verbatim}
+
+\textbf{完整最小复现脚本：}
+\begingroup
+\footnotesize
+\verbatiminput{../scripts/pytorch_starter.py}
+\endgroup
+
+脚本采用双精度以便与 NumPy 手算基线对齐；
+不是 GPU 优化程序。观察代码时请检查：
+\texttt{E[ids]} 是三行查表，
+\texttt{triu} 保证因果掩码，
+\texttt{cross\_entropy} 对三行取平均，
+\texttt{backward} 将梯度送回所有可训练矩阵，
+最后一次性更新全部九组参数。
+每次重新运行都从同一份初值开始，不改变已发布的标准数值。
+
+\begin{warningbox}
+PyTorch 自动求导和 NumPy 手工反传是\textbf{两种独立实现途径}；
+输出符合数值容差并不代表每种硬件、Torch 版本都能得到逐位相同的浮点结果。
+这里仅声明在规定的双精度运算与精度容差内核对单步基线。
+\end{warningbox}
+
+\subsection{参数计数小练习}
+
+沿用上述脚本的模型：$E:5\times3$、$P:3\times3$，
+四组 $3\times3$ Attention 投影、两组 $3\times4$ 和 $4\times3$ FFN 矩阵、
+一个 $3\times5$ 输出头。忽略固定 LayerNorm 与中间激活，
+手算可训练元素个数，再对照\hyperref[eq:toy-99-parameters]{正文参数总数公式}。
+作为延伸：若输出头与 $E$ 共享权重，
+需要明确转置的形状，以及哪些原有参数不再独立存储；
+不能在不改结构的情况下简单从总数扣除 15。
