@@ -196,8 +196,14 @@ L_{\rm after}=1.611377.}
 
 \subsection{同一网络继续做 20 步，会发生什么？}
 
-不换数据、不重设权重，每一步都重新前向、反传并更新
-$E,P,W_Q,W_K,W_V,W_O,W_{\rm up},W_{\rm down},W_{\rm out}$，
+不换数据、不重设权重，每一步都重新前向、反传，
+并同步更新全部九组可训练参数：
+\[
+\begin{aligned}
+&E,\ P,\ W_Q,\ W_K,\ W_V,\ W_O,\\
+&W_{\rm up},\ W_{\rm down},\ W_{\rm out}.
+\end{aligned}
+\]
 得到下列\textbf{可复算的训练轨迹}：
 
 \par\medskip
