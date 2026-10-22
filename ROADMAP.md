@@ -67,12 +67,10 @@
 
 这些资源提供学习问题和参考背景；正文独立组织并独立推导。
 
-## 工程构建与 Tagged PDF 验收（2026-10-21 基线历史）
+## 持续维护与验收
 
-- **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)为 99 页。
-- **历史基线已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,472 个 Formula、21 张 Table／59 个 TH、16 个 Figure／16 处替代文字、48 个 H1／180 个 H2。
-- **已修复：**正文标题 H1/H2 与图注父子标签的缺失／非法关系；保留 CI 标题层级和图注结构回归检查。
-- **机器验收已通过：** [最新 veraPDF PDF/UA-2 验证](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412) 报告 1,727 项规则、736,481 项检查全部通过，CI 已提升为失败阻断。**全书 MathML 已通过机器验收并合入 `main`**：[集成 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415) 检查 1,472 个 Formula 的 MathML 关联完整性（933 份不同的 MathML），同时保留 veraPDF PDF/UA-2 严格门槛。机器合规结果仅代表验证器覆盖的规则，不作为具体屏读效果保证。
-- **后续维护范围：**持续运行独立 PDF/UA-2 机器验证，自动检查 MathML 关联、标题层级、表格/图形结构、PDF 页面边界及回归；不开展真实屏读或人工无障碍验收。
+教材以缺口驱动、数值可复算、层次分明与正确声明适用边界为长期原则。当前正文结构由 [book/main.tex](book/main.tex) 与 [阅读顺序](book/README.md) 定义；具体编写和数值校验规范见 [CONTRIBUTING.md](CONTRIBUTING.md)，不再在路线图里维护 M0–M6 阶段日志。
 
-工程细节、目前已知限制与复现命令见 [无障碍现状及验收](docs/ACCESSIBILITY.md)；构建命令见 [README](README.md)。
+- **编辑正文或数值脚本：**运行完整 [PDF 构建](.github/workflows/build-latex.yml) 与源码检查，保留 PDF/UA-2、MathML-AF、图表语义、边界和跳转验收。
+- **升级依赖：**对照 [构建可复现性规范](docs/BUILD-REPRODUCIBILITY.md) 留存运行环境与镜像记录。
+- **发行状态：**只在 [V2 发布前验收](docs/V2_RELEASE_READINESS.md) 中维护候选证据和人工发布阻断项；旧版统计在 [正式 v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 的发行记录，不在此处重复。

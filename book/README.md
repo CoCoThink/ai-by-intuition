@@ -5,7 +5,7 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-## 七个必读部分（31 个显示章节；M5 排版与出版验收仍在实施）
+## 七个必读部分（31 个显示章节；新版待人工签核与发布）
 
 ### I · 学习是什么：从规则到参数更新
 - [阅读指南](chapters/00-guide.tex) → [规则为什么写不尽](chapters/00d-rules-gap.tex) → [函数拟合](chapters/00-functions.tex)
