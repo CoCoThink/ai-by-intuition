@@ -37,6 +37,11 @@ def main() -> None:
         data[path.name] = loaded
     check("required workflows", {"build-latex.yml", "check-docs.yml",
           "check-compatibility.yml", "publish-release.yml"} <= data.keys())
+    for workflow_name in ("build-latex.yml", "check-docs.yml"):
+        check(f"{workflow_name}: push only main",
+              data[workflow_name]["on"]["push"].get("branches") == ["main"])
+        check(f"{workflow_name}: PR validation remains enabled",
+              "pull_request" in data[workflow_name]["on"])
     build = data["build-latex.yml"]
     steps = build["jobs"]["build-book"]["steps"]
     uploads = [step for step in steps if (step.get("uses") or "").startswith("actions/upload-artifact@")]

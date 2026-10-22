@@ -2,6 +2,8 @@ name: Check Markdown links
 
 on:
   push:
+    branches:
+      - main
     paths:
       - '**/*.md'
       - 'scripts/check_markdown_links.py'
