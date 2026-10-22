@@ -29,8 +29,8 @@
 \item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{22a-position-multihead}}\enspace 按特征列而非位置行拼接，输出 $3\times4$。
 \item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{22-transformer-architecture}}\enspace 不会；残差相加要求形状兼容，此例仍是 $T\times d$。
 \item \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{10b-ffn-output-head}}\enspace 上投影 $6\times18$，下投影 $18\times6$。
-\item \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{22b-token-to-output}}\enspace 初始输出头贪心预测 ID 3“花”；真实下一 Token 是 ID 4“开了”。
-\item \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{22c-language-training}}\enspace $-\log 0.2=\log5\approx1.609$。
+\item \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{22b-token-to-output}}\enspace 初始第 1、2 位置预测错，第 3 位置预测 ID 2“。”正确；将第一输入改为 ID 4 后，第三位置 logits 最大变化约 $0.3520$，并非完全不变。
+\item \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{22c-language-training}}\enspace 三个位置的平均损失使每行梯度都乘以 $1/3$；一次更新后第 2 位置正确答案 ID 4 的概率由约 $0.0507$ 升到 $0.0685$，但贪心仍选择 ID 3“花”。
 \item \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{23-llm-systems}}\enspace 贪心始终取当前最高概率候选；Top-p 保留累计概率到阈值的一小组候选并按重新归一化概率采样。
 \item \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{22d-modern-transformers}}\enspace 当多个 Query 头共享更少的 K/V 头时，KV Cache 每个 Token 需要存储的键值数通常减少。
 \item \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{23c-post-training}}\enspace SFT 使用目标示范回答；偏好学习利用更偏好的回答与较差回答的比较或相应奖励信号。

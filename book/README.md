@@ -25,8 +25,8 @@
 - [位置、缩放与双头注意力的数字例子](chapters/22a-position-multihead.tex)
 - [Pre-Norm Block、残差图与 LayerNorm](chapters/22-transformer-architecture.tex)
 - [FFN 与词表输出头](chapters/10b-ffn-output-head.tex)
-- [两个 Token 完整前向计算](chapters/22b-token-to-output.tex)
-- [因果训练、输出头与前层参数的梯度更新](chapters/22c-language-training.tex)
+- [统一三维三位置完整前向](chapters/22b-token-to-output.tex)
+- [三位置联合交叉熵与共享参数一次更新](chapters/22c-language-training.tex)
 - [推理、缓存与生成](chapters/23-llm-systems.tex)
 
 ### V · 改进模型并构建可靠应用

@@ -135,7 +135,15 @@ F_{\rm mid}=\relu(BW_{\rm up}),\qquad
 H=X_{\rm att}+F_{\rm mid}W_{\rm down},
 \]
 其中 $W_{\rm up}:3\times4$，$W_{\rm down}:4\times3$。
-两套矩阵的全部初值见配套脚本，不能随意换掉部分元素。
+两套矩阵的初值如下（其余维度不能随意替换）：
+\[
+W_{\rm up}=\begin{bmatrix}
+.4&.2&-.3&.1\\-.1&.5&.15&-.25\\.2&.1&.45&.3
+\end{bmatrix},\quad
+W_{\rm down}=\begin{bmatrix}
+.25&-.1&.15\\-.05&.2&.1\\.1&.15&.15\\.1&-.12&.18
+\end{bmatrix}.
+\]
 归一化和 FFN 激活结果可分别核对：
 \[
 B\approx\begin{bmatrix}
@@ -163,8 +171,13 @@ F_{\rm mid}\approx
 
 \subsection{第五步：共享的输出头一次生成三个位置的概率}
 
-用同一个 $W_{\rm out}:3\times5$，计算
-$Z=HW_{\rm out}$，并逐行 Softmax：
+用同一个词表头矩阵
+\[
+W_{\rm out}=\begin{bmatrix}
+0&.2&0&.2&-.2\\0&.2&0&1.2&-.4\\0&-.1&.4&.1&.2
+\end{bmatrix}\quad (3\times5)
+\]
+计算 $Z=HW_{\rm out}$，并逐行 Softmax：
 \[
 Z\approx
 \begin{bmatrix}

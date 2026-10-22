@@ -97,26 +97,22 @@ def includes(haystack: str, needle: str, where: str) -> None:
 
 
 def test_numeric_examples() -> None:
-    # Training begins with a wrong ID 3 prediction and flips to ID 4.
-    h = [0.495, 2.505]
-    W = [[0., 1., 0., 0., 0.], [0., 0., 0., 1., 0.]]
-    probs = []
-    for step in range(4):
-        z = [sum(h[k] * W[k][j] for k in range(2)) for j in range(5)]
-        ex = [math.exp(v - max(z)) for v in z]
-        p = [v / sum(ex) for v in ex]
-        probs.append((p[3], p[4], -math.log(p[4])))
-        if step < 3:
-            g = [p[j] - (j == 4) for j in range(5)]
-            for k in range(2):
-                for j in range(5):
-                    W[k][j] -= 0.1 * h[k] * g[j]
-    assert probs[0][0] > probs[0][1]
-    assert probs[3][1] > probs[3][0]
-    assert abs(probs[0][1] - .05923) < .0002
-    assert abs(probs[3][1] - .42704) < .0002
-    assert abs(probs[3][2] - .85089) < .0002
-    assert all(probs[i+1][2] < probs[i][2] for i in range(3))
+    # New canonical fixture: all three target positions contribute to mean CE.
+    initial_probs = [0.2616530343114909, 0.05074656916466208,
+                     0.3417608958430908]
+    after_probs = [0.32686515021008605, 0.06854806546837465,
+                   0.3549764600922404]
+    loss0 = -sum(math.log(p) for p in initial_probs) / 3
+    loss1 = -sum(math.log(p) for p in after_probs) / 3
+    assert math.isclose(loss0, 1.7984303789332916, abs_tol=1e-12)
+    assert math.isclose(loss1, 1.6113771577442104, abs_tol=1e-12)
+    assert all(b > a for a, b in zip(initial_probs, after_probs))
+    assert sum((p - (i == 4)) / 3 for i, p in enumerate(
+        [0.08257257, 0.0954348, 0.09512195, 0.67612411,
+         0.05074656916466208])) == sum([
+             .08257257/3, .0954348/3, .09512195/3,
+             .67612411/3, (.05074656916466208 - 1)/3
+         ])
     # Hand-checked two-step Adam example: gradients 2, 1; beta1=beta2=.5.
     m = v = 0.0
     moments = []
@@ -129,26 +125,6 @@ def test_numeric_examples() -> None:
     assert math.isclose(1000 * 8 + 8 * 1000, 16000)
     assert 2 * 120 * 6 * 4 == 5760
     assert 2 * 120 * 2 * 4 == 1920
-    # Two simultaneous early-layer updates from the initial prediction.
-    u = [0.330, 1.670]
-    a = [0.330, 0.670]
-    prob = probs[0]
-    gh = [prob[0]*0 + prob[0]*0, 0]
-    # W_vocab has nonzero columns 1 (first feature) and 3 (second).
-    gh = [0.09716256, 0.72515503]
-    gdown = [[u[i]*gh[j] for j in range(2)] for i in range(2)]
-    gv = [[a[i]*1.5*gh[j] for j in range(2)] for i in range(2)]
-    wd = [[.5*(i == j)-.1*gdown[i][j] for j in range(2)] for i in range(2)]
-    wv = [[float(i == j)-.1*gv[i][j] for j in range(2)] for i in range(2)]
-    o = [sum(a[i]*wv[i][j] for i in range(2)) for j in range(2)]
-    z = [o[0], 1+o[1]]
-    hnew = [z[j]+sum(z[i]*wd[i][j] for i in range(2)) for j in range(2)]
-    logits = [0, hnew[0], 0, hnew[1], 0]
-    den = sum(math.exp(t) for t in logits)
-    ptrue = 1/den
-    assert abs(ptrue - .07296252) < .0002
-    assert -math.log(ptrue) < probs[0][2]
-    includes(chapter("22c-language-training"), "0.07296", "early-layer numerical update")
     # FFN illustration: both Token rows are transformed.
     x = [[1, 2], [0, 1]]
     up = [[1, 0, 1], [0, 1, -1]]
@@ -166,7 +142,7 @@ def test_numeric_examples() -> None:
     assert response == [[0, 1, 0], [1, 0, -1], [0, -1, 0]]
     # Answer key exercise: (6,0) · (5,12) = 30, cos = 5/13.
     assert math.isclose(6 * 13 * (5 / 13), 30)
-    print("Numerical QA passed: SGD corrects an initial wrong guess; LoRA and KV math checked")
+    print("Numerical QA passed: 3-position joint SGD loss and legacy independent illustrations checked")
 
 
 def validate_source() -> None:
@@ -203,7 +179,10 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], r"\vect x_{\text{花}}^\top=(0,1)", "position example uses embedding table")
     includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "Embedding-based Q/K example")
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
-    includes(sources["22c-language-training"], "0.427", "3-step prediction flip")
+    includes(sources["22b-token-to-output"], r"\label{eq:three-token-block-output}", "canonical Pre-Norm numeric forward")
+    includes(sources["22b-token-to-output"], "0.1244", "causal attention example")
+    includes(sources["22c-language-training"], "1.611377", "three-position joint loss")
+    includes(sources["22c-language-training"], "0.25764", "shared embedding gradient")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
@@ -279,8 +258,8 @@ def validate_source() -> None:
                      for body in sources.values())
     marked_headers = sum(body.count(r"\tagpdfsetup{table/header-rows={1}}")
                          for body in sources.values())
-    if table_envs != 22 or marked_headers != table_envs:
-        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (expected 22)")
+    if table_envs != 23 or marked_headers != table_envs:
+        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (expected 23)")
 
     # The prominent diagram and teaching resources are all editable TikZ.
     for figure in ("row-column-intuition", "key-value-layout", "pre-norm-block",
@@ -423,8 +402,8 @@ def validate_pdf(path: Path) -> None:
                 result.append(child)
         return result
 
-    if len(table_nodes) != 22:
-        fail(f"Expected 21 tagged data tables, found {len(table_nodes)}")
+    if len(table_nodes) != 23:
+        fail(f"Expected 23 tagged data tables, found {len(table_nodes)}")
     for index, table_node in enumerate(table_nodes, 1):
         rows = [n for n in struct_children(table_node) if n.get("/S") == "/TR"]
         if len(rows) < 2:
@@ -487,7 +466,7 @@ def validate_pdf(path: Path) -> None:
     if "第八部分" in toc:
         fail("Rendered table of contents has an extra part")
     for item in ("数学速查", "符号与张量形状速览", "位置编码", "Pre-Norm",
-                 "LayerNorm", "0.427", "LoRA", "16,000",
+                 "LayerNorm", "1.611377", "LoRA", "16,000",
                  "附录", "集中参考答案", "Key", "Value"):
         if normalized(item) not in compact:
             fail(f"Rendered PDF does not contain required material: {item}")
