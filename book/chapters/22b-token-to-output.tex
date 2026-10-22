@@ -1,102 +1,59 @@
 \section{三维贯通实验：从 Token ID 到三个位置的输出概率}
 \label{intro:22b-token-to-output}
 
-之前已经分别认识 Embedding、Q/K/V、因果 Mask、位置、Pre-Norm、两条残差、FFN 与输出头。
-但这些组件若一直用不同的玩具数字来算，读者就无法判断它们连起来是否真的一致。
-现在\textbf{只选一套三维参数}，把一层 Decoder-only Transformer
-从输入走到每个位置的五类概率。\textbf{以下全部数值来自仓库
-\texttt{scripts/teaching\_reference.py}，而不是临时另外设定的 logits。}
+前面已学过 Embedding、因果 Mask、Q/K/V、Norm、残差、
+FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。
+正文集中保留最能说明计算过程的三份矩阵：
+\textbf{注意力权重 $A$、隐藏状态 $H$、词表概率 $\widehat P$}。
+其余权重与中间矩阵统一放在
+\hyperref[app:transformer-intermediates]{附录 A 的逐层数值核对表}，
+所有数值由 \texttt{scripts/teaching\_reference.py} 计算。
 
-\subsection{第一步：Token ID、位置向量与形状}
+\subsection{第一步：Token ID、位置向量与输入形状}
 
-词表按 ID 0--4 依次是“其他、春天、。、花、开了”。
-整句的 ID 是 $[1,3,4,2]$；本次输入取前三个 $[1,3,4]$，
-正确的三位置目标是 $[3,4,2]$。Embedding 使用前面唯一的 $5\times3$ 初值表：
-\[
-E_{[1,3,4]}=
-\begin{bmatrix}
-1.2&0&-0.2\\-0.3&1.1&0.2\\0.15&-0.2&1.25
-\end{bmatrix}.
-\]
-为区分同一词在不同位置，\textbf{固定的位置向量}是
-\[
-P=\begin{bmatrix}
-0.10&0.05&-0.10\\0&-0.05&0.12\\-0.12&0.10&0.07
-\end{bmatrix}.
-\]
-加到各自对应行后，Block 的输入为
+本书词表 ID 0--4 为“其他、春天、。、花、开了”。
+完整句子 $[1,3,4,2]$，此处输入 $[1,3,4]$，
+三位置的下一 Token 目标 $[3,4,2]$。
+查 $5\times3$ 的 Embedding，逐行加 $3\times3$ 的位置向量后，
+Block 输入 $X=E_{[1,3,4]}+P$ 有三行：
 \begin{equation}
-\boxed{X=E_{[1,3,4]}+P=
-\begin{bmatrix}
-1.30&0.05&-0.30\\-0.30&1.05&0.32\\0.03&-0.10&1.32
-\end{bmatrix}\in\R^{3\times3}.}
+\boxed{\begin{aligned}
+X_{1,:}&=(1.30,\ 0.05,\ -0.30),\\
+X_{2,:}&=(-0.30,\ 1.05,\ 0.32),\\
+X_{3,:}&=(0.03,\ -0.10,\ 1.32).
+\end{aligned}}
+\quad X\in\R^{3\times3}.
 \label{eq:running-three-token-x}
 \end{equation}
-位置是输入的一部分，不等于 Attention 的 Mask。
-两行即使有相同 Token ID，也会因为对应位置向量不同而得到不同的 $X$。
+一个位置占一行，三个特征占三列；
+位置向量影响输入数值，而因果 Mask 控制哪些位置可以被读取。
 
-\subsection{第二步：先 Norm，再从三个位置算 Q/K/V}
+\subsection{第二步：先 Norm，再投影 Q/K/V}
 
-用\textbf{每个 Token 行独立}的 LayerNorm：
+逐行 LayerNorm 得到 $U=\operatorname{LN}(X)$。
+它对每行减均值并除以标准差（本例 $\varepsilon=10^{-5}$），
+固定仿射参数 $\gamma=1,\beta=0$。
+第一行从 $(1.30,0.05,-0.30)$ 变为
+约 $(1.3833,-0.4368,-0.9464)$。
+随后用\textbf{三组不同}的权重计算
 \[
-U=\operatorname{LN}(X),\qquad
-\operatorname{LN}(\vect x^\top)=
-\frac{\vect x^\top-\mu}
-{\sqrt{\frac{1}{3}\sum_j(x_j-\mu)^2+10^{-5}}}.
+Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 \]
-这个教学网络把 LayerNorm 的缩放 $\gamma=1$、平移 $\beta=0$ \textbf{固定}，
-投影和 FFN 都无偏置；它们不是一般 Transformer 必须采用的限制。
-得到
-\[
-U\approx\begin{bmatrix}
-1.3833&-0.4368&-0.9464\\
--1.1901&1.2566&-0.0665\\
--0.6033&-0.8061&1.4093
-\end{bmatrix}.
-\]
-独立的可训练投影 $Q=UW_Q,\ K=UW_K,\ V=UW_V$：
-\[
-W_Q=\begin{bmatrix}.8&.2&-.1\\.1&.9&.25\\-.1&.15&.8\end{bmatrix},\quad
-W_K=\begin{bmatrix}.85&0&.2\\-.1&.9&0\\.15&.2&.75\end{bmatrix},\quad
-W_V=\begin{bmatrix}1&.2&0\\0&.9&.15\\.1&-.2&.85\end{bmatrix}.
-\]
-例如三行投影结果为
-\[
-Q\approx\begin{bmatrix}
-1.1576&-0.2584&-1.0047\\
--0.8198&0.8829&0.3800\\
--0.7041&-0.6347&0.9863
-\end{bmatrix},\qquad
-K\approx\begin{bmatrix}
-1.0775&-0.5824&-0.4332\\
--1.1473&1.1176&-0.2879\\
--0.2208&-0.4436&0.9364
-\end{bmatrix}.
-\]
-\[
-V\approx\begin{bmatrix}
-1.2886&0.0728&-0.8700\\
--1.1968&0.9062&0.1320\\
--0.4623&-1.1280&1.0770
-\end{bmatrix}.
-\]
-这一次 $W_Q,W_K,W_V$ 确实不同，并不采用 $Q=K=V=X$ 的退化捷径。
+每个投影的形状均为 $(3\times3)(3\times3)\to3\times3$。
+例如第一行 Query 约为 $(1.1576,-0.2584,-1.0047)$。
+因此这里没有使用 $Q=K=V=X$ 的简化假设；
+全部初始投影权重和计算结果见附录核对表。
 
-\subsection{第三步：因果可见性、Softmax 与 Value 读取}
+\subsection{第三步：用因果权重读取 Value}
 
-三个位置有 $d_k=3$，所以分数除以 $\sqrt3$。
-再将不可见的未来位置设为 $-\infty$：
+对 $d_k=3$，匹配分数为 $QK^\top/\sqrt3$。
+未来位置的分数设为 $-\infty$，
+所以它们在 Softmax 后获得零权重：
 \begin{equation}
-S=\frac{QK^\top}{\sqrt3}+C
-\approx
-\begin{bmatrix}
-1.0583&-\infty&-\infty\\
--0.9019&1.0496&-\infty\\
--0.4713&-0.1071&0.7855
-\end{bmatrix}.
+S=QK^\top/\sqrt3+C,\qquad A=\operatorname{softmax}(S).
 \label{eq:two-token-scores}
 \end{equation}
-逐行 Softmax 得到读取比例：
+实际可复算的注意力矩阵是：
 \begin{equation}
 \boxed{A\approx\begin{bmatrix}
 1&0&0\\
@@ -105,68 +62,33 @@ S=\frac{QK^\top}{\sqrt3}+C
 \end{bmatrix}.}
 \label{eq:three-token-attention}
 \end{equation}
-例如第三行只在前三个已知位置中分配权重；第二行不能读取“开了”。
-下图显示的是\textbf{实际计算出的 $A$ 权重}，
-与先前只画“可见/不可见”的 Mask 图不同。
-画成热图后，第二行读取第二个位置约 $88\%$ 的信息，
-而第三行主要读取第三个位置。
+\textbf{每一行的权重在可见 Key 上求和为 $1$}：
+第二位置无法读取第三位置；
+第三位置约把 $59\%$ 的读取权重给当前位置。
+这张\textbf{真实注意力热力图}不同于仅标示“可见或不可见”的 Mask 图。
 
 \par\medskip
 \input{figures/attention-weight-heatmap}
-按权重读出 Value，$R_{\rm raw}=AV$：
+
+先计算 $R_{\rm raw}=AV$，再用 $W_O$ 投影并走第一条残差：
 \[
-R_{\rm raw}\approx\begin{bmatrix}
-1.2886&0.0728&-0.8700\\
--0.8876&0.8025&0.0074\\
--0.3458&-0.4345&0.5215
-\end{bmatrix}.
+X_{\rm att}=X+R_{\rm raw}W_O.
 \]
-随后用\textbf{注意力输出投影} $W_O$，再走第一条残差：
+每次读取和残差相加都保持 $3\times3$，
+但每行已经结合此前可见位置的内容。
+
+\subsection{第四步：第二次 Norm 与逐位置 FFN}
+
+先令 $B=\operatorname{LN}(X_{\rm att})$，然后升维到 $4$：
 \[
-W_O=\begin{bmatrix}.9&0&.1\\.1&.85&0\\0&.15&.95\end{bmatrix},
+F_{\rm mid}=\operatorname{ReLU}(BW_{\rm up})\in\R^{3\times4},
 \qquad
-X_{\rm att}=X+R_{\rm raw}W_O
-\approx\begin{bmatrix}
-2.4670&-0.0186&-0.9976\\
--1.0186&1.7333&0.2382\\
--0.3247&-0.3911&1.7809
-\end{bmatrix}.
-\]
-注意残差相加的两边都是 $3\times3$，并没有把 Token 行数改变。
-
-\subsection{第四步：第二次 Norm、升维 FFN 与残差}
-
-让 $B=\operatorname{LN}(X_{\rm att})$，再计算
-\[
-F_{\rm mid}=\relu(BW_{\rm up}),\qquad
 H=X_{\rm att}+F_{\rm mid}W_{\rm down},
 \]
-其中 $W_{\rm up}:3\times4$，$W_{\rm down}:4\times3$。
-两套矩阵的初值如下（其余维度不能随意替换）：
-\[
-W_{\rm up}=\begin{bmatrix}
-.4&.2&-.3&.1\\-.1&.5&.15&-.25\\.2&.1&.45&.3
-\end{bmatrix},\quad
-W_{\rm down}=\begin{bmatrix}
-.25&-.1&.15\\-.05&.2&.1\\.1&.15&.15\\.1&-.12&.18
-\end{bmatrix}.
-\]
-归一化和 FFN 激活结果可分别核对：
-\[
-B\approx\begin{bmatrix}
-1.3601&-0.3444&-1.0157\\
--1.1879&1.2585&-0.0706\\
--0.6739&-0.7398&1.4137
-\end{bmatrix},
-\quad
-F_{\rm mid}\approx
-\begin{bmatrix}
-0.3753&0&0&0\\
-0&0.3846&0.5134&0\\
-0.0872&0&0.7274&0.5417
-\end{bmatrix}.
-\]
-得到 Block 最终三行隐藏状态：
+其中 $W_{\rm up}:3\times4$、$W_{\rm down}:4\times3$。
+FFN 对每个 Token 行分别使用\textbf{同一组矩阵}；
+跨 Token 的读取来自此前 Attention，FFN 本身不改变位置数。
+第二条残差后的隐藏状态为：
 \begin{equation}
 \boxed{H\approx\begin{bmatrix}
 2.5609&-0.0561&-0.9413\\
@@ -176,24 +98,11 @@ F_{\rm mid}\approx
 \label{eq:three-token-block-output}
 \end{equation}
 
-\subsection{第五步：共享的输出头一次生成三个位置的概率}
+\subsection{第五步：同一个输出头预测五个类别}
 
-用同一个词表头矩阵
-\[
-W_{\rm out}=\begin{bmatrix}
-0&.2&0&.2&-.2\\0&.2&0&1.2&-.4\\0&-.1&.4&.1&.2
-\end{bmatrix}\quad (3\times5)
-\]
-计算 $Z=HW_{\rm out}$，并逐行 Softmax：
-\[
-Z\approx
-\begin{bmatrix}
-0&0.5951&-0.3765&0.3507&-0.6780\\
-0&0.1448&0.1415&2.1027&-0.4868\\
-0&-0.3064&0.8002&-0.2620&0.5776
-\end{bmatrix}.
-\]
-按 ID 0--4 排列的三行概率是
+令共享的词表输出头 $W_{\rm out}:3\times5$，
+则 $Z=HW_{\rm out}\in\R^{3\times5}$；
+对每行 logits 执行 Softmax，可得到
 \begin{equation}
 \boxed{\widehat P\approx\begin{bmatrix}
 0.1843&0.3341&0.1264&0.2617&0.0935\\
@@ -202,55 +111,58 @@ Z\approx
 \end{bmatrix}\in\R^{3\times5}.}
 \label{eq:three-token-probabilities}
 \end{equation}
-把 $3\times5$ 的概率表变成三组柱形图：
-青色标出\textbf{正确答案所在的列}，并不意味着它是最大概率。
-这样可以直接看出哪些位置已经猜对、哪些位置还需要学习。
+下面青色柱表示\textbf{正确类别}，
+并不代表该类别总有最高概率。
 
 \par\medskip
 \input{figures/three-position-probabilities}
 
-第一行最大候选是 ID 1“春天”，目标却是 ID 3“花”；
-第二行最大候选是 ID 3“花”，目标却是 ID 4“开了”；
-第三行最大候选是 ID 2“。”，恰好等于目标。
-\textbf{训练前两题错、一题对}，并非人工指定的每题都错。
+第一位置最大概率对应 ID 1“春天”，目标却是 ID 3“花”；
+第二位置最大概率对应 ID 3“花”，目标却是 ID 4“开了”；
+第三位置预测 ID 2“。”，与目标相同。
+\textbf{训练前两题错、一题对}，并非预设三题全错。
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{29mm}p{27mm}p{26mm}X@{}}
+\begin{tabularx}{\linewidth}{@{}p{29mm}p{25mm}p{25mm}X@{}}
 \toprule
-阶段 & 输入形状 & 输出形状 & 新增的主要能力\\\midrule
-Embedding + 位置 & $3\times3$ & $3\times3$ & 身份与位置\\
-Norm + Q/K/V & $3\times3$ & 各 $3\times3$ & 独立投影\\
-Mask + Softmax & $3\times3$ & $3\times3$ & 不读取未来\\
+计算阶段 & 输入形状 & 输出形状 & 本步增加的能力\\\midrule
+Embedding + 位置 & $3\times3$ & $3\times3$ & 身份、位置\\
+Norm + Q/K/V & $3\times3$ & 各 $3\times3$ & 独立匹配与读取投影\\
+Mask + Softmax & $3\times3$ & $3\times3$ & 排除未来位置\\
 Value + 输出投影 & $3\times3$ & $3\times3$ & 跨位置读取\\
 第二次 Norm + FFN & $3\times3$ & $3\times3$ & 逐位置非线性\\
-词表输出头 & $3\times3$ & $3\times5$ & 每位置五类分数\\
+词表输出头 & $3\times3$ & $3\times5$ & 每位置五类概率\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\subsection{换一项输入，最后一行会怎样？}
+\subsection{改变前文，最后一行还会相同吗？}
 
-把第一个输入由 ID 1 换为 ID 4，得到 $[4,3,4]$，
-保持最后两个 Token 和所有模型参数不变，
-第三行五个 logits 从
+保持最后两个 Token 不变，
+仅把第一个输入由 ID 1 换成 ID 4，得到 $[4,3,4]$。
+第三行 logits 从约
 $(0,-0.3064,0.8002,-0.2620,0.5776)$
-变为约 $(0,-0.4279,0.9325,-0.6140,0.7915)$。
+变为
+$(0,-0.4279,0.9325,-0.6140,0.7915)$，
 最大分数差约 $0.3520$。
-这是\textbf{最后位置利用了前文}的可复算对照；它不是训练或重新拟合。
+这说明最后位置\textbf{受前文影响}，而不是重新训练过一遍。
+全部结果可用附录参数与脚本复算。
 
 \begin{warningbox}
-这是完整的\textbf{一层单头、无偏置、固定 Norm 仿射参数}的教学 Block，
-不等于包含多层、多头及所有工程配置的真实 GPT。
-其他章节的二维/四维局部例子已经单独标明；本章只使用三维贯通参数。
+本节是一层、单头、无投影偏置、固定 Norm 仿射参数的教学模型。
+二维/四维“局部例”采用独立初值，不是这次三维主例的延续；
+若核对本节数值，只使用附录中的同一套参数。
 \end{warningbox}
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
 \phantomsection\label{check:22b-token-to-output}
-统一三维例的三个位置中，哪两个初始贪心预测错误？如果将第一 Token 替换为 ID 4，第三位置 logits 是否完全不变？
+三个位置中哪两个初始贪心预测错误？
+把第一 Token 换为 ID 4，第三位置 logits 是否完全不变？
 \quad{\footnotesize\hyperref[answer:22b-token-to-output]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-从 ID 到三位置概率的完整链已打通：每一个中间量都能通过同一参数表复算。
-下一个缺口：这三份预测怎样\textbf{同时}给所有共享参数提供训练梯度？
+从 Token ID 到每位置五类概率的形状、权重与数值链已连通。
+完整矩阵集中在附录，不必在正文记下每个元素。
+下一章研究三个位置如何共同反传梯度更新同一套参数。
 \end{conclusion}
