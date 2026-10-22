@@ -134,15 +134,16 @@ Agent 是组织模型决策与工具动作的系统方式。
 
 \subsection{请求和返回值长什么样？}
 
-例如要读取一份允许访问的报表，模型可以\textbf{提出}下述 JSON 请求；
+例如要读取一份允许访问的 Q3 教学报表，模型可以\textbf{提出}下述 JSON 请求；
 应用程序仍需验证参数并决定是否执行：
 \begin{verbatim}
 {"tool":"read_reports","arguments":{"quarter":"2026Q3"}}
 \end{verbatim}
 工具返回的可能是
 \begin{verbatim}
-{"ok":true,"revenue":120,"unit":"million_CNY"}
+{"ok":true,"revenue":132,"unit":"million_CNY"}
 \end{verbatim}
+这里的 132 仅是本书编造的 Q3 教学数据；真实报表的工具返回值不可提前指定。
 应用需要确认工具实际执行的结果，再把数据转交模型，
 并核对数据来源、单位和授权范围。
 
