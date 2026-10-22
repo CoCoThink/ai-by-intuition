@@ -676,7 +676,8 @@ def validate_pdf(path: Path) -> None:
     # hyperref's PDF bookmarks are a separate, user-facing navigation system:
     # visible CTeX numbering is insufficient unless the outline contains it.
     # The nine numbered parts, 38 numbered sections and A--E appendices must
-    # retain their numbering and nesting. Two standalone core interludes stay
+    # retain their numbering and nesting. hyperref in TeX Live 2026 uses plain
+    # `1 Title` and `A Title`; older CTeX may write `第1章` and `附录 A`. Two standalone core interludes stay
     # intentionally unnumbered (the reading guide and end-of-core recap).
     outline_groups = []
     for entry in reader.outline:
@@ -705,12 +706,12 @@ def validate_pdf(path: Path) -> None:
     if len(appendix_children) != 5:
         fail(f"Expected five A--E PDF appendix bookmarks, found {appendix_children!r}")
     for letter, title in zip("ABCDE", appendix_children):
-        if not re.match(rf"^附录\s*{letter}\s+\S", title):
+        if not re.match(rf"^(?:附录\s*)?{letter}\s+\S", title):
             fail(f"Appendix {letter} PDF bookmark missing letter prefix: {title!r}")
     chapter_numbers = []
     for _, children in outline_groups[:-1]:
         for title in children:
-            match = re.match(r"^第(\d+)章(?:\s|$)", title)
+            match = re.match(r"^(?:第)?(\d+)(?:章)?\s+\S", title)
             if match:
                 chapter_numbers.append(int(match.group(1)))
             elif not (title.startswith("阅读指南：") or
