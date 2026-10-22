@@ -114,11 +114,14 @@ E_{20}[4]&\approx(0.1734,\,-0.2188,\,1.3136).
 这份结果可由 \texttt{python3 scripts/teaching\_reference.py --json}
 复现；\textbf{训练损失下降只说明在这份教学题上优化成功}，不能证明模型理解真实中文。
 
+\par\medskip
 \input{figures/embedding-training-projection}
 
-图中仅取三维向量的前两个坐标画散点（不是 PCA）；
-每个点第三坐标仍存在。比较同一 Token 在训练前后的移动，
-是为了看到参数会学，并不是用点间距离直接判定词义。
+图中逐项画的是 $E_{20}-E_0$，\textbf{三维坐标一个也没有省略}：
+横向右侧表示该坐标增加，左侧表示减少，柱长代表变化幅度。
+“花”的第二坐标变化最大（约 $-0.2190$），
+但这不是“词义变得更近”的直接证据；
+在小样本教学网络里，只能说明梯度确实更新了输入行。
 
 \subsection{Word2Vec 与上下文化表示有什么关系？}
 
@@ -131,11 +134,9 @@ E_{20}[4]&\approx(0.1734,\,-0.2188,\,1.3136).
 同一个 Token 在不同上下文中的后续隐藏表示还会不同，
 所以 Embedding 表里的一行\textbf{不等于最终上下文化含义}。
 
-\begin{warningbox}
-本节 $5\times3$ 的 $E$ 属于\textbf{三维贯通主算例}。
-后续标为“局部例”的二维注意力和四维双头实验，各有独立参数；
-它们帮助理解运算，但不属于主算例的前向或训练过程。
-\end{warningbox}
+本节数据是\textbf{三维贯通主算例}。
+独立的二维注意力、四维双头示例统一标为“局部例”，
+各自使用独立的数值参数；读数时以示例标题为准。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
 \phantomsection\label{check:20-embeddings}
