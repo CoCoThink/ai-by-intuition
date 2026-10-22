@@ -20,6 +20,7 @@
 可通过 Attention 读取位置 2 的内容：
 第 $i$ 行能看见的最多是自己的位置及以前的内容。
 
+\phantomsection\label{concept:teacher-forcing}
 这里使用了\textbf{Teacher Forcing（教师强制）}：
 训练时将\textbf{真实的已知前缀 Token} 输入模型，
 一次算出多个位置的下一 Token 损失，
