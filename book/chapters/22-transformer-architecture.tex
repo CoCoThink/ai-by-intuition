@@ -103,7 +103,6 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 很多生成式 LLM 使用\textbf{Decoder-only} 架构：以因果自注意力和 MLP 堆叠为主，逐步预测下一个 Token。不能把所有 Transformer 都说成完全相同的结构。
 
 \subsection{最后如何得到下一个 Token 的概率？}
-\phantomsection\label{concept:logits}
 
 对最后位置的隐藏状态 $\vect h_T$ 做输出线性投影，得到与词表大小一样多的\textbf{logits（未归一化的候选分数）}。它们还不是概率，也可能为负：
 \[
