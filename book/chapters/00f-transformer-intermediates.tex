@@ -1,0 +1,155 @@
+\subsection{三维贯通实验：完整参数表与逐层中间值}
+\phantomsection\label{app:transformer-intermediates}
+
+正文\hyperref[intro:22b-token-to-output]{三维贯通章节}保留
+注意力权重 $A$、Block 输出 $H$ 和词表概率 $\widehat P$
+三份关键矩阵；这里集中保存同一次前向传播的其余数值，
+方便读者逐项验算。数值来自
+\texttt{scripts/teaching\_reference.py} 的 \texttt{parameters()}，
+显示时保留四位小数，运算应使用未舍入数。
+
+\textbf{输入与位置。}词表大小 $5$，隐藏宽度 $3$，
+输入 ID $[1,3,4]$，目标 ID $[3,4,2]$：
+\[
+E=\begin{bmatrix}
+0&0&0\\1.2&0&-.2\\.2&-.4&.7\\-.3&1.1&.2\\.15&-.2&1.25
+\end{bmatrix}\;(5\times3),\qquad
+P=\begin{bmatrix}
+.10&.05&-.10\\0&-.05&.12\\-.12&.10&.07
+\end{bmatrix}\;(3\times3).
+\]
+第一步为 $X=E_{[1,3,4]}+P$，逐行 LayerNorm
+采用 $\gamma=1$、$\beta=0$、$\varepsilon=10^{-5}$：
+\[
+U=\operatorname{LN}(X)\approx
+\begin{bmatrix}
+1.3833&-.4368&-.9464\\
+-1.1901&1.2566&-.0665\\
+-.6033&-.8061&1.4093
+\end{bmatrix}.
+\]
+
+\textbf{互不相同的 Query、Key 与 Value 投影。}
+\[
+\begin{aligned}
+W_Q&=\begin{bmatrix}.8&.2&-.1\\.1&.9&.25\\-.1&.15&.8\end{bmatrix},\\[3pt]
+W_K&=\begin{bmatrix}.85&0&.2\\-.1&.9&0\\.15&.2&.75\end{bmatrix},\\[3pt]
+W_V&=\begin{bmatrix}1&.2&0\\0&.9&.15\\.1&-.2&.85\end{bmatrix}.
+\end{aligned}
+\]
+三个投影都为 $3\times3$，对应的输出是
+\[
+\begin{aligned}
+Q&=UW_Q\approx
+\begin{bmatrix}
+1.1576&-.2584&-1.0047\\
+-.8198&.8829&.3800\\
+-.7041&-.6347&.9863
+\end{bmatrix},\\[4pt]
+K&=UW_K\approx
+\begin{bmatrix}
+1.0775&-.5824&-.4332\\
+-1.1473&1.1176&-.2879\\
+-.2208&-.4436&.9364
+\end{bmatrix},\\[4pt]
+V&=UW_V\approx
+\begin{bmatrix}
+1.2886&.0728&-.8700\\
+-1.1968&.9062&.1320\\
+-.4623&-1.1280&1.0770
+\end{bmatrix}.
+\end{aligned}
+\]
+
+\textbf{因果分数与残差。}先除以 $\sqrt3$，
+将未来位置掩为 $-\infty$：
+\[
+S=QK^\top/\sqrt3+C\approx
+\begin{bmatrix}
+1.0583&-\infty&-\infty\\
+-.9019&1.0496&-\infty\\
+-.4713&-.1071&.7855
+\end{bmatrix}.
+\]
+正文的 $A=\operatorname{softmax}(S)$
+保留四位小数；随后
+\[
+R_{\rm raw}=AV\approx
+\begin{bmatrix}
+1.2886&.0728&-.8700\\
+-.8876&.8025&.0074\\
+-.3458&-.4345&.5215
+\end{bmatrix},
+\quad
+W_O=\begin{bmatrix}
+.9&0&.1\\.1&.85&0\\0&.15&.95
+\end{bmatrix},
+\]
+\[
+X_{\rm att}=X+R_{\rm raw}W_O\approx
+\begin{bmatrix}
+2.4670&-.0186&-.9976\\
+-1.0186&1.7333&.2382\\
+-.3247&-.3911&1.7809
+\end{bmatrix}.
+\]
+
+\textbf{第二次归一化与 FFN。}网络隐藏层宽度为 $4$：
+\[
+W_{\rm up}=\begin{bmatrix}
+.4&.2&-.3&.1\\
+-.1&.5&.15&-.25\\
+.2&.1&.45&.3
+\end{bmatrix}\;(3\times4),
+\quad
+W_{\rm down}=\begin{bmatrix}
+.25&-.1&.15\\
+-.05&.2&.1\\
+.1&.15&.15\\
+.1&-.12&.18
+\end{bmatrix}\;(4\times3).
+\]
+\[
+B=\operatorname{LN}(X_{\rm att})\approx
+\begin{bmatrix}
+1.3601&-.3444&-1.0157\\
+-1.1879&1.2585&-.0706\\
+-.6739&-.7398&1.4137
+\end{bmatrix},
+\]
+\[
+F_{\rm mid}=\operatorname{ReLU}(BW_{\rm up})\approx
+\begin{bmatrix}
+.3753&0&0&0\\
+0&.3846&.5134&0\\
+.0872&0&.7274&.5417
+\end{bmatrix}.
+\]
+正文的 $H=X_{\rm att}+F_{\rm mid}W_{\rm down}$ 为 $3\times3$。
+
+\textbf{输出头与 logits。}
+\[
+W_{\rm out}=\begin{bmatrix}
+0&.2&0&.2&-.2\\
+0&.2&0&1.2&-.4\\
+0&-.1&.4&.1&.2
+\end{bmatrix}\;(3\times5),
+\]
+\[
+Z=HW_{\rm out}\approx
+\begin{bmatrix}
+0&.5951&-.3765&.3507&-.6780\\
+0&.1448&.1415&2.1027&-.4868\\
+0&-.3064&.8002&-.2620&.5776
+\end{bmatrix}.
+\]
+正文的 $\widehat P=\operatorname{softmax}(Z)$ 为 $3\times5$，
+目标 $[3,4,2]$ 的三行概率平均交叉熵约 $1.798430$。
+
+\begin{idea}
+矩阵形状检查顺序：
+$E_{\mathrm{ids}}(3\times3)\to X(3\times3)\to
+Q,K,V(3\times3)\to A(3\times3)\to H(3\times3)
+\to Z(3\times5)\to\widehat P(3\times5)$。
+正文负责解释\textbf{为什么这样算}，本附录负责回答\textbf{数字从哪里来}。
+\end{idea}
