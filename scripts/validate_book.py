@@ -240,6 +240,31 @@ def validate_source() -> None:
         file = BOOK / "figures" / f"{figure}.tex"
         if not file.is_file() or r"\begin{tikzpicture}" not in file.read_text(encoding="utf-8"):
             fail(f"Missing editable figure {figure}")
+    # Figure 9: both weighted scores and values must flow INTO the result.
+    # Source-level endpoint assertions complement page-render review; curved
+    # Bezier connectors previously overshot the result boundary and appeared
+    # to point out of the diagram.
+    qkv = (BOOK / "figures" / "attention-why-qkv.tex").read_text(
+        encoding="utf-8")
+    for edge in (
+        "(goal.south) -- (qkv-split);",
+        "(qkv-split) -| (find.north);",
+        "(qkv-split) -| (read.north);",
+        "(weight.south) -- ([xshift=-31.5mm]out.north);",
+        "(value.south) -- ([xshift=31.5mm]out.north);",
+    ):
+        includes(qkv, edge, "figure 9 directed connector")
+    for obsolete in (
+        "to[out=-115,in=90]",
+        "to[out=-65,in=90]",
+        "to[out=-90,in=150]",
+        "to[out=-90,in=30]",
+        "(out.north west)",
+        "(out.north east)",
+    ):
+        if obsolete in qkv:
+            fail(f"Figure 9 retains a misleading arrow route: {obsolete}")
+
     # Figure 16 must not reverse the training feedback arrow or visually suggest
     # that inference -> post-training -> external tools is one execution chain.
     concept = sources["24c-concept-map"]
