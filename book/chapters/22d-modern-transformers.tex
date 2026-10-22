@@ -177,6 +177,71 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 有的主要节约解码时的 KV Cache，有的减少单 Token 计算，
 并不能简单把它们都称为“Attention 变成线性复杂度”。
 
+\subsection{从 GPT-2 到新架构：哪一个部件被替换？}
+
+把 GPT-2 类 Decoder-only Transformer 当成对照坐标系，
+不要以为后来的模型只是“层数更多”。以下按计算部件对齐，
+一项新设计往往只改变其中\textbf{一部分}。
+Dense 表示每次都使用相关稠密计算，
+Sparse 表示按规则只访问部分位置或激活部分专家：
+“稀疏专家”和“稀疏注意力”也不是同一种稀疏。
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.25}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{27mm}p{42mm}X@{}}
+\toprule
+经典部件（示例） & 可替换的方向 & 首先检查什么，保留什么代价\\\midrule
+学习式绝对位置 & RoPE、YaRN、NoPE & 位置编码怎样进入 Q/K；扩展长度需长程实测\\
+LayerNorm / Pre-Norm & RMSNorm 等 & 是否中心化、参数量、数值稳定性\\
+缩放 $QK^\top$ & QK-Norm 等 & Q/K 是否归一化；分数尺度和 Softmax 饱和\\
+Dense FFN（GELU） & SwiGLU / 稀疏 MoE & 门控、活跃专家、通信与总参数量\\
+MHA 的 K/V 头 & MQA、GQA、MLA & 每层 KV Cache 布局、元素数与质量\\
+简单残差旁路 & HC / mHC 连接变体 & 多路径信息流与训练稳定性\\
+Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混合层 & 长程访问、缓存、计算与训练/解码差别\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+这里 \textbf{YaRN} 是基于 RoPE 的长上下文扩展方向，
+\textbf{NoPE} 表示某些设计不在该层显式加入位置编码，
+不是“不需要顺序信息”的普适定理。
+\textbf{QK-Norm} 尝试控制 Q/K 的尺度与分数饱和；
+而 HC / mHC 改变残差信息流拓扑与约束，
+也不是只需把原来的加号改成别的符号。
+可参考
+\href{https://arxiv.org/abs/2309.00071}{YaRN}、
+\href{https://aclanthology.org/2020.findings-emnlp.379/}{QK-Norm}
+与 \href{https://proceedings.mlr.press/v306/xie26aa.html}{mHC} 的原始论文。
+\textbf{Mamba} 是选择性状态空间模型的一类路线，
+\textbf{Gated DeltaNet} 采用门控 Delta 状态更新的高效序列建模路线；
+不能把所有状态空间方法统称为标准 Softmax Attention 的线性化。
+参见 \href{https://arxiv.org/abs/2312.00752}{Mamba} 和
+\href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}。
+
+\subsection{只替换一次 Norm：落回前面的三维数字}
+
+三维贯通模型在 Attention 前的第一行是
+$\vect x^\top=(1.30,0.05,-0.30)$。
+此前使用固定 $\gamma=1,\beta=0$ 的 LayerNorm：
+\[
+\operatorname{LN}(\vect x^\top)\approx(1.3833,-0.4368,-0.9464).
+\]
+如果\textbf{仅为了比较数值}，在同一输入上改算
+\[
+\operatorname{RMSNorm}(\vect x^\top)
+=\frac{\vect x^\top}{
+\sqrt{(1.30^2+0.05^2+(-0.30)^2)/3+10^{-5}}}
+\approx\boxed{(1.6865,0.0649,-0.3892)}.
+\]
+两种归一化\textbf{同样输出 $1\times3$}，
+但 LayerNorm 先减均值、RMSNorm 不减均值，
+因此下一步 $Q=XW_Q$ 的输入数值会改变。
+这里只进行\textbf{单个组件的数值对比}，
+并未声称原模型其它权重不变时，整条输出概率和训练效果会更好；
+验证真实替换仍应重新训练并比较多种任务与数值条件。
+
 \subsection{用五个问题比较架构选择}
 
 \begin{center}
