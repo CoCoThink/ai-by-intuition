@@ -3,7 +3,7 @@
 
 \subsection{如果交换“春天”和“花”，没有位置的 Attention 会怎样？}
 
-沿用前面 Embedding 表的数值：
+为了单独观察位置的作用，这里采用\textbf{独立二维对照}（并非前述三维 $E$）：
 “春天”的向量为 $\vect x_{\text{春天}}^\top=(1,0)$，
 “花”的向量为 $\vect x_{\text{花}}^\top=(0,1)$。
 忽略位置，按行堆成 $X=\begin{bmatrix}1&0\\0&1\end{bmatrix}$，

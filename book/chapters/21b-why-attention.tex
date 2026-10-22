@@ -113,12 +113,14 @@ Value 的维度也不必等于 Key 的维度。
 位置 3 发出 Query，分别与位置 1、2、3 的 Key 匹配，
 得到三条权重，再从这三个位置的 Value 读取内容。
 
-\subsection{匹配：沿用 Embedding 表算三个分数}
+\subsection{匹配：用独立二维小表算三个分数}
 
-“春天、花、开了”的 Embedding 行向量分别是
+为了先算清一次查询，这里另设\textbf{独立的二维手算小表}：
+“春天、花、开了”的行向量分别是
 $(1,0)$、$(0,1)$、$(1,1)$。
+\textbf{这些不是第三部分的三维统一参数 $E$}，不能混用。
 用“开了”作为 Query，暂设 $W_Q=W_K=I_2$，
-所以 Query 与 Key 直接来自同一张 Embedding 表：
+因此这一局部示例中 Query 与 Key 直接来自上述二维小表：
 \[
 \vect q^\top=(1,1),\quad
 K=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
