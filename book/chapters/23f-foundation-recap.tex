@@ -1,0 +1,64 @@
+\section*{技术底座回顾：把全书的线索接成一张图}
+\phantomsection\label{sec:foundation-recap}
+\addcontentsline{toc}{section}{技术底座回顾：把全书的线索接成一张图}
+
+本书从能调整的\textbf{标量函数}出发，
+沿一个贯通问题走到 \textbf{Token 概率与可控的应用系统}。
+在进入选读专题之前，先把每层做的事情与下一层的缺口对齐。
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.18}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{34mm}p{47mm}X@{}}
+\toprule
+技术底座 & 本书能够亲手验证的事实 & 它解决或留下的缺口\\\midrule
+函数与数学 &
+$\widehat y=wx+b$、向量、矩阵乘法、求导 &
+用可调参数代替手写所有规则；单个标量表达能力有限\\
+损失与学习 &
+MSE、交叉熵、链式法则、反传与 SGD &
+以可比较的目标调整参数；需要结构表达复杂关系\\
+神经网络 &
+ReLU、MLP、残差和归一化 &
+多层非线性表示；逐位置 MLP 不能独自读取其他 Token\\
+序列建模 &
+RNN 的状态、Attention 的 Q/K/V &
+利用上下文；因果 Mask 保证训练中不能偷看未来标签\\
+Transformer &
+Embedding $\to$ Attention $\to$ FFN $\to$ 输出概率 &
+在同一网络里连接表示、上下文、训练与生成\\
+模型之外 &
+后训练、检索、工具、权限与 Agent &
+让产品处理可靠证据和真实操作，不等于每次调用都训练权重\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{把公式收成一条主线：}
+\[
+X=E_{\rm ids}+P
+\ \longrightarrow\
+A=\operatorname{softmax}(QK^\top/\sqrt{d_k}+C)
+\ \longrightarrow\
+H
+\ \longrightarrow\
+Z=HW_{\rm out},
+\]
+\[
+\widehat P=\operatorname{softmax}(Z)
+\ \longrightarrow\
+L=-\log p_y
+\ \longrightarrow\
+\theta\gets\theta-\eta\nabla_\theta L.
+\]
+矩阵形状在正文均可追踪，
+详细三维参数与全部中间数值保留在附录 A。
+它只是\textbf{教学主例的一层单头计算链}，
+不能据此推断真实大模型的语言能力。
+
+\begin{conclusion}
+今后遇到任何新的模型、训练法或 Agent 框架，
+都可以先问：它修改了哪一层？输入和输出如何表示？
+证据是什么？性能代价转移到了哪里？
+保留这四个问题，比背下更多新名词更有价值。
+\end{conclusion}
