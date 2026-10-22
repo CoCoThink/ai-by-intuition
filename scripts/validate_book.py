@@ -142,7 +142,7 @@ def test_numeric_examples() -> None:
     assert math.isclose((q3 - q2) / q2, 0.10)
     includes(chapter("23d-agent-systems"),
              '"revenue":132', "fictitious Q3 tool result")
-    # REVIEW item 6: end-to-end attention->projection->logits->cross-entropy.
+    # Numeric regression: attention -> projection -> logits -> cross-entropy.
     e = math.e
     attention = [1 / (2 + e), 1 / (2 + e), e / (2 + e)]
     read0 = attention[0] + attention[2]
@@ -367,7 +367,7 @@ def validate_source() -> None:
     includes(answer_key, r"\label{app:answers}", "answer key")
     if answer_key.count(r"\subsubsection*{") != 3:
         fail("Answer appendix should separate the three exercise sets")
-    # REVIEW item 2: filenames/IDs should never be visible as answer titles.
+    # Reader-facing answer titles must not expose source filenames/IDs.
     key = sources["28-chapter-checks"]
     check_titles = re.findall(
         r"\\label\{answer:([^}]+)\}\\textbf\{\\hyperref\[check:[^\]]+\]\{([^}]+)\}\}",
