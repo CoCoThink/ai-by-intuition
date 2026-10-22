@@ -1,0 +1,144 @@
+\section{从 CNN 到 ViT：如何把图片变成一串 Token？}
+\label{intro:19b-vit}
+\phantomsection\label{concept:vit}
+
+上一章的卷积核可以在图片上\textbf{重复扫描局部窗口}。
+但是文字 Transformer 不用卷积扫描每一个词，
+也能通过 Attention 让不同位置交换信息。
+一个自然的问题是：\textbf{能不能把图片也组织成一串向量}，
+再用已经学过的 Attention 来处理？
+
+\subsection{第一步：把一张图片切成 Patch}
+
+先用一张只有一个通道的 $4\times4$ 小图，
+不涉及颜色，也不用真实照片：
+\[
+I=\begin{bmatrix}
+1&1&0&0\\
+1&0&0&1\\
+0&1&1&1\\
+0&0&0&1
+\end{bmatrix}.
+\]
+每个 Patch 是一个 $2\times2$ 方块，不重叠，
+所以从左上到右下得到\textbf{四个 Patch}。
+将每个 Patch 按行展开为长度 $4$ 的\textbf{行向量}，
+排成一个矩阵：
+\begin{equation}
+X_{\rm patch}=
+\begin{bmatrix}
+1&1&1&0\\
+0&0&0&1\\
+0&1&0&0\\
+1&1&0&1
+\end{bmatrix}\in\R^{4\times4}.
+\label{eq:vit-four-patches}
+\end{equation}
+第一条是原图左上角 $(1,1,1,0)$；
+第四条来自右下角 $(1,1,0,1)$。
+这里的四行指\textbf{四个位置}，
+每行四个数字指\textbf{Patch 中的像素特征}，不要把两条轴混淆。
+
+\subsection{第二步：给每个 Patch 学一条短向量}
+
+文字的 Embedding 使用 Token ID 查表，
+图像的 Patch 通常使用一套\textbf{共享的线性投影}：
+\[
+W_{\rm patch}=
+\begin{bmatrix}
+1&0&0\\
+0&1&0\\
+0&0&1\\
+0.5&0.5&0
+\end{bmatrix}\in\R^{4\times3}.
+\]
+按主线的行向量约定，右乘得到
+\begin{equation}
+\boxed{
+E_{\rm patch}=X_{\rm patch}W_{\rm patch}
+=\begin{bmatrix}
+1&1&1\\
+0.5&0.5&0\\
+0&1&0\\
+1.5&1.5&0
+\end{bmatrix}\in\R^{4\times3}.
+}
+\label{eq:vit-patch-embedding}
+\end{equation}
+这是\textbf{人为设置的教学参数}，不代表预训练视觉模型的权重。
+训练后，$W_{\rm patch}$ 可以学会将像素组合为有用的特征。
+输入位置数由 Patch 数决定，隐藏维度由投影的列数决定。
+
+\subsection{第三步：如果只给四行向量，怎么分清图像位置？}
+
+回想本书第四部分的换位实验：
+没有位置信息的 Self-Attention 对输入行置换是等变的。
+因此 ViT 也需要把\textbf{空间位置}告诉模型。
+例如把四行位置向量 $P_{\rm patch}\in\R^{4\times3}$
+加到投影后：
+\[
+Z_0=E_{\rm patch}+P_{\rm patch}\in\R^{4\times3}.
+\]
+这里 $P_{\rm patch}$ 既可以来自可训练位置参数，
+也可以使用其他位置机制，不强制等同于语言模型的逐词位置编码。
+
+\subsection{第四步：Attention 如何读图像位置？}
+
+对四个 Patch 的行向量进行 Q/K/V 投影，
+普通\textbf{图像编码器}的双向 Self-Attention
+可以让一块读取同一图片其他所有块：
+\[
+Q=Z_0W_Q,\qquad K=Z_0W_K,\qquad V=Z_0W_V.
+\]
+若每头维度是 $3$，
+则 $QK^\top/\sqrt3$ 的形状为 $4\times4$，
+Softmax 后仍是 $4\times4$，
+输出 $AV$ 为 $4\times3$。
+这里通常\textbf{不使用语言生成时的因果掩码}，
+因为整张图已经可用；如果是图像生成或其他特殊任务，
+则可能采用不同的注意力可见性规则。
+
+有些图像分类 ViT 在 Patch 序列前加一个可训练的
+\textbf{分类 Token}（常记作 \texttt{[CLS]}）。
+本例原本是 $4\times3$，
+加上这一个特殊位置就成为 $5\times3$，
+注意力分数也从 $4\times4$ 变成 $5\times5$。
+分类头可读取 CLS 输出，也有使用池化等其他方案。
+\textbf{CLS 是一种设计选择，而不是每个视觉 Transformer 都必须采用。}
+
+\subsection{与 CNN 的区别，以及现实尺寸}
+
+CNN 的卷积核倾向于直接引入\textbf{局部性与权重共享}；
+ViT 则把图片切成 Patch，再学习如何跨 Patch 组合表示。
+并不能由“Attention 看得更远”直接推出 ViT
+在任何图像任务、数据规模和硬件条件下都优于 CNN。
+
+例如 $224\times224$ 彩色图片切成 $16\times16$ 的 Patch，
+如果宽高恰好可整除，就有
+$(224/16)^2=196$ 个 Patch；
+每块展开后有 $16\times16\times3=768$ 个像素数。
+若投影宽度也取 $768$，则 Patch 矩阵形状是
+$196\times768$，投影矩阵形状是 $768\times768$。
+这些是\textbf{尺寸说明}而非对某个 checkpoint 的性能承诺。
+更多模型设计可参考 Dosovitskiy 等人的
+\href{https://arxiv.org/abs/2010.11929}{An Image is Worth 16x16 Words}。
+
+\begin{warningbox}
+Patch 展平与词表 ID 查 Embedding 是不同的输入接口：
+前者从像素块经线性投影产生连续特征，
+后者从离散整数查可训练表。
+它们进入 Transformer 后都可以按位置排成向量序列，
+却不能据此断言所有视觉或语言系统有完全相同的训练目标。
+\end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:19b-vit}
+本章的四个 Patch 投影后是什么形状？
+如果添加一个 CLS Token，Attention 分数矩阵是什么形状？
+\quad{\footnotesize\hyperref[answer:19b-vit]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+从局部卷积到视觉 Transformer，改变的是如何构造和交换图像特征：
+Patch 投影提供序列，位置表示帮助保留空间身份，
+Attention 让不同 Patch 之间的信息能够交互。
+\end{conclusion}
