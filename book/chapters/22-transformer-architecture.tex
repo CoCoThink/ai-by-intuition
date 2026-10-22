@@ -122,7 +122,7 @@ Query、Key、Value 都来自源语句；通常可双向读取 &
 为源语句建立上下文表示，本书的 Decoder-only 主链没有独立源 Encoder\\
 Masked Decoder Self-Attention &
 Q/K/V 来自目标前缀；屏蔽未来目标 &
-对应本书的\conceptlink{causal-mask}{因果 Mask}与自回归计算\\
+对应本书的因果 Mask 与自回归计算\\
 Encoder--Decoder Attention &
 Query 来自 Decoder，Key/Value 来自 Encoder 输出 &
 这是\textbf{交叉注意力}，不是把 Decoder 的 Q/K/V 都取自同一序列\\
