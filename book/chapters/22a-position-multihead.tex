@@ -42,11 +42,8 @@ X'_+=X'+P=\begin{bmatrix}1&1\\1&1\end{bmatrix}.
 此时输出不再只是原结果交换两行：位置已经影响了计算。
 
 
-\begin{warningbox}
-因果掩码本身也携带了“谁可看谁”的方向约束。
-上面的交换实验刻意使用\textbf{无掩码双向 Attention}，
-是为单独观察位置表示的作用，不是说真实 Decoder-only 模型没有顺序信息。
-\end{warningbox}
+为单独观察位置向量的作用，上面的交换实验使用\textbf{无掩码双向 Attention}。
+自回归模型还会通过因果掩码约束信息流动的方向。
 
 \subsection{为什么点积要除以 $\sqrt{d_k}$？算一次波动尺度}
 

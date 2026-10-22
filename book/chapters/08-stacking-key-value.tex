@@ -246,8 +246,6 @@ V^\top\relu(K\vect{x})
 \end{tikzpicture}
 \end{center}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:08-stacking-key-value}$K:3\times2$、$V:3\times4$，用三个 Key 的读取权重按行加权 Value 后输出几维？\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
-
 \subsection{维度检查：为什么它们可以相乘？}
 
 前面两条记忆、二维 Key、二维 Value，所以恰好都是 $2\times2$ 方阵。但真实情况并不需要是方阵。
@@ -298,6 +296,8 @@ V^\top\relu(K\vect{x})
 =\begin{bmatrix}2\\1\end{bmatrix}.
 \end{aligned}\]
 前者保留了负匹配；后者把它滤掉了。这就是激活函数引入\textbf{非线性}的实际效果。
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:08-stacking-key-value}$K:3\times2$、$V:3\times4$，用三个 Key 的读取权重按行加权 Value 后输出几维？\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 $K\vect x$ 将多次点积合成一组匹配分数，$\sigma$ 逐元素筛选，
