@@ -65,9 +65,9 @@
 | 46 | `book/chapters/28-chapter-checks.tex` | 附录 C |
 | 47 | `book/chapters/26-sources.tex` | 附录 E |
 
-**迁移进度：**2026-10-22 首批 M2 已创建 `book/chapters/00d-rules-gap.tex` 并将数学速查挪至附录；当前 main 已推进至 **53 个** `chapters/` 引入源文件：除 M2 的 `00d-rules-gap`、`20a-tokenizer` 外，M3 另增 `21a-context-gap` 和 `23a-from-toy-to-gpt`；M4 新增 `23aa-pretraining-icl` 和 `23e-tech-judgement`。以下是 v0.1.0 历史映射，不是现版顺序。
+**迁移进度：**2026-10-22 首批 M2 已创建 `book/chapters/00d-rules-gap.tex` 并将数学速查挪至附录；当前 main 已推进至 **55 个** `chapters/` 引入源文件：除 M2 的 `00d-rules-gap`、`20a-tokenizer` 外，M3 另增 `21a-context-gap` 和 `23a-from-toy-to-gpt`；M4 新增 `23aa-pretraining-icl` 和 `23e-tech-judgement`；M5 新增 `19b-vit` 和 `00e-core-formulas`，并由多个物理源文件组合为 **31 个主线显示章节 / 4 个 X2 显示章节**，附录分 A–E。以下是 v0.1.0 历史映射，不是现版顺序。
 
-**剩余结构工作：**预训练/ICL 和技术判别章已补齐；后续是正式七部分/31 章重排、扩展篇压缩、练习与排版审稿，而不是再新增同名重复章节。
+**剩余结构工作：**七部分与 31 章显示顺序、X1/X2、A–E 附录已经落实。尚需全量 PDF/UA、MathML-AF、可读性与引用回归，图文视觉审查、更新发版说明，才能发布 V2；不能将历史 47 文件台账误当现行主线。
 
 ## 3. 迁移时不得丢失的教学资产
 
@@ -86,7 +86,7 @@
 
 ## 4. 新版测试与自动出版的风险清单
 
-1. `validate_book.py` 的 v0.1.0 版本校验 **7 parts 和 47 个固定 input**；M2 已同步到 **49 个**；新 7 部分 + 2 扩展应改为新的结构定义与真实源文件清单。
+1. `validate_book.py` 的 v0.1.0 版本校验 **7 parts 和 47 个固定 input**；M5 已同步为 **9 个显示部分（7 必读 + 2 选读）和 55 个源码 input**，并单独验证核心 31 个显示章节及 X2 四个显示章节。
 2. v0.1.0 表头校验严格写死 **21 张表**；M2 新增 GPT-2 尺度表，当前源码检查已改为 **22 张**。下一次重排可能再次改变总数；改为新结构中的动态表数与每表首行 TH 约束，不能放松表头语义。
 3. 源码检查中引用旧文件名、字面 Embedding 坐标 `(1,0)`、`(0,1)`、旧注意力数字、`0.427` 的断言，都需要在第 22–23 章启用新例时同步迁移到统一 NumPy 数据源；不能仅改教材而遗留不符的测试。
 4. PDF 目前有完整公式关联、标签结构、图片替代文字、标题层级；调整 `main.tex`、`\part`、`\appendix`、图注时须编译并运行 PDF/UA-2 和 MathML-AF 验证。
