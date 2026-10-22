@@ -136,6 +136,49 @@ $B:8\times1000$，则需要
 
 \textbf{API、\conceptlink{agent}{Agent} 和 \conceptlink{mcp}{MCP} 等概念主要属于系统集成层。}即使它们带来显著的产品能力提升，也不等于基础模型的参数在每一次工具调用后发生了训练更新。
 
+\subsection{技术生态地图：CUDA、PyTorch、Hugging Face、Ollama、vLLM}
+
+同一个模型可以通过不同软件组合训练、下载和部署。
+不要把\textbf{硬件计算平台、训练框架、模型仓库、运行工具和推理服务}
+当作可以相互替代的五种模型架构。
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.2}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{26mm}p{34mm}X@{}}
+\toprule
+项目 & 主要定位 & 在一条常见工作链中做什么\\\midrule
+CUDA & NVIDIA GPU 计算平台与工具链 &
+提供 GPU 并行计算接口、编译器与加速库；本身不是神经网络\\
+PyTorch & 张量计算与自动求导框架 &
+定义模型、训练/反传，也可执行推理；可使用 CPU 或支持的加速设备\\
+Hugging Face & 模型、数据与工具生态 &
+Hub 管理模型/数据仓库和说明文档；Transformers 等库加载和运行模型\\
+Ollama & 本地模型管理与运行工具 &
+在支持的机器上拉取、运行模型，并提供本地服务接口\\
+vLLM & 面向服务的模型推理引擎 &
+组织高并发批处理、KV Cache 和模型服务；强调推理吞吐与资源利用\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+例如，开发者可能从 Hugging Face Hub 取得一份\textbf{允许使用}的权重，
+用 PyTorch 完成研究实验，再选合适的推理运行时对外提供服务。
+若选用 NVIDIA GPU，底层可能使用 CUDA；也可以按照设备和模型支持情况
+选择其他计算后端。Ollama 偏向便捷的本地运行，
+vLLM 偏向服务型推理；是否更快，要在相同的权重、硬件、
+输入长度、并发数和量化条件下实际测试。
+
+\textbf{查询入口：}
+\href{https://docs.nvidia.com/cuda/cuda-programming-guide/index.html}{CUDA}、
+\href{https://docs.pytorch.org/docs/stable/index.html}{PyTorch}、
+\href{https://huggingface.co/docs/hub/index}{Hugging Face Hub}、
+\href{https://docs.ollama.com/}{Ollama}、
+\href{https://docs.vllm.ai/}{vLLM}。
+这些工具的\textbf{接口、兼容硬件、部署模式和许可证可能更新}。
+本表只定位各层责任，不固定特定版本、吞吐数字或产品优劣排名。
+
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:23b-deployment-and-ecosystem}十亿个参数，每个 2 字节，只算权重约需要多少 GB（十进制）？\quad{\footnotesize\hyperref[answer:23b-deployment-and-ecosystem]{核对解答。}}\par\medskip
 
 \begin{conclusion}
