@@ -1,0 +1,19 @@
+% Contours are exact for L(w,b)=2/3(w-2)^2+(b-1)^2.
+% Radii correspond to contour levels 5/3 and 0.4.
+\tagstructbegin{tag=Figure,alttext={双参数均方误差的椭圆等高线，中心为最优解 w 等于二 b 等于一，初始参数一和零沿梯度方向更新至一点四和零点六，损失由三分之五降低到零点四}}
+\begin{center}
+\begin{tikzpicture}[x=22mm,y=16mm,>=Latex]
+\draw[->,gray] (0,-.6)--(4,-.6) node[right] {$w$};
+\draw[->,gray] (0,-.6)--(0,2.6) node[above] {$b$};
+\draw[blue,thick] (2,1) ellipse [x radius=1.581,y radius=1.291];
+\draw[teal,thick] (2,1) ellipse [x radius=.775,y radius=.632];
+\node[blue,font=\scriptsize] at (3.58,1.6) {$L=5/3$};
+\node[teal,font=\scriptsize] at (2.84,1.15) {$L=0.4$};
+\fill[orange] (1,0) circle (2.5pt) node[below,font=\scriptsize] {$(1,0)$};
+\fill[orange] (1.4,.6) circle (2.5pt) node[below right,font=\scriptsize] {$(1.4,0.6)$};
+\fill[teal] (2,1) circle (2.5pt) node[above,font=\scriptsize] {$(2,1)$ 最优};
+\draw[->,orange,very thick] (1.04,.06)--(1.36,.54);
+\end{tikzpicture}
+\end{center}
+\begin{center}\captionof{figure}{同一三点 MSE 的双参数等高线：更新 $w$ 与 $b$ 后向低损失区域移动}\label{fig:loss-two-parameter-contours}\end{center}
+\tagstructend
