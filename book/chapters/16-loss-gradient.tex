@@ -98,17 +98,11 @@ w_2=0.5-0.1\times(-2.5)=0.75.
 假设模型是 $\widehat y=wx+b$，参数是 $w,b$ 两个数。损失写成 $L(w,b)$：
 \[
 \nabla L=
-\begin{bmatrix}
-\frac{\partial L}{\partial w}\\[2pt]
-\frac{\partial L}{\partial b}
-\end{bmatrix},
+\left(\frac{\partial L}{\partial w},\frac{\partial L}{\partial b}\right),
 \qquad
-\begin{bmatrix}w\\b\end{bmatrix}_{\!\rm new}
-=
-\begin{bmatrix}w\\b\end{bmatrix}_{\!\rm old}
--\eta\nabla L.
+(w,b)_{\mathrm{new}}=(w,b)_{\mathrm{old}}-\eta\nabla L.
 \]
-\textbf{偏导数}就是求某一个参数方向的变化率时，暂时把其他参数视为常数。把所有偏导数排成一列，得到\textbf{梯度}。
+\textbf{偏导数}就是求某一个参数方向的变化率时，暂时把其他参数视为常数。把两个偏导数排成一组，得到\textbf{梯度}。以后参数增多时再用向量和矩阵表示。
 
 \begin{warningbox}
 导数等于零不一定就是全局最小值；还可能是最大值或鞍点。神经网络损失面一般复杂且不凸，梯度下降也没有保证每次都找到全局最优。学习率太大可能震荡或发散，太小则训练缓慢。

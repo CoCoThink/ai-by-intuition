@@ -1,8 +1,10 @@
 \section{向量：如何用数字表示一个东西？}
 \label{intro:01-vectors}
 
-要让“春天、花、开了”进入计算，我们先把其中的词表示为数字。
-从最简单的二维表示开始：
+上一部分用一个数走通训练循环。但仅靠一个数不足以同时表示
+面积、房龄、位置，或同一个 Token 的不同特征。
+因此先试着让一项输入由\textbf{按顺序排列的多个数字}组成。
+以“春天”和“花”的两维教学特征为例：
 \begin{equation}
 \vect x_{\text{春天}}=\begin{bmatrix}1\\0\end{bmatrix},\qquad
 \vect x_{\text{花}}=\begin{bmatrix}0\\1\end{bmatrix}.

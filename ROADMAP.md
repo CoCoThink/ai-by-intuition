@@ -10,12 +10,12 @@
 **先修知识：**建议具备高中代数基础；三角函数、导数、链式法则、
 求和符号、指数对数和矩阵形状在数学速查页补充，并在正文反复配算例。
 
-## 前五部分为必读
+## 当前前五部分为必读（V2 正在分步重排）
 
 | 部分 | 学会的能力 | 应能手算的检查 |
 |---|---|---|
-| I 表示与数据契约 | 从 Token ID 到行向量、形状、目标 | 矩阵乘法和标签对齐 |
-| II 参数学习 | ReLU、MLP、误差、梯度、反向传播 | 一次梯度下降 |
+| I 标量学习 | 规则、函数、损失、梯度、非线性、反传与泛化 | 解析解、两层网络参数更新 |
+| II 多维与文字 | 向量、矩阵、MLP、Token、Embedding 与语言任务 | 点积、形状检查与标签对齐 |
 | III 上下文读取 | RNN、Attention、Q/K/V | 三条 Key 的权重与读出 |
 | IV Transformer 闭环 | 位置、多头、Pre-Norm Block、输出头、训练 | 双头、LayerNorm、p−onehot 与输出头 SGD 与一次 Value/FFN 共同更新 |
 | V 架构与系统 | RoPE、MoE、GQA、SFT、Agent、LoRA、量化与蒸馏 | 旋转、缓存、参数与概率 |
@@ -47,7 +47,7 @@
 
 ## 编辑与工程约束
 
-- 保持五个必读部分、两个选读部分、一个 PDF 和可编辑的 LaTeX/TikZ 插图。
+- M2 过渡版保持五个必读部分、两个选读部分和一份可编辑 LaTeX/TikZ 的 PDF；正式 V2 目标为七个必读部分和两组独立扩展。
 - 主线中的所有重要公式附有形状或具体数字，区分等号、近似和统计量级。
 - 减少“下一章预告”和重复免责声明；小结只记录本章结论。
 - 提示框固定为四类：直觉、动手算、易错、小结；Q（蓝）／K（青）／V（橙）采用贯穿主线的角色配色。
@@ -67,7 +67,7 @@
 ## 工程构建与 Tagged PDF 验收（2026-10-21 基线历史）
 
 - **已通过：**固定 **TeX Live 2026 + LuaLaTeX**，使用 `\DocumentMetadata{lang=zh-CN,tagging=on}` 构建整本书；[GitHub Actions 成功记录](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412)为 99 页。
-- **已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,472 个 Formula、21 张 Table／59 个 TH、16 个 Figure／16 处替代文字、48 个 H1／180 个 H2。
+- **历史基线已通过：**CI 验证七部分和 47 个 `\input` 章节源文件、数值样例、目录提取、PDF 文字边界，并用 `pypdf==5.9.0` 核查 `/MarkInfo`、`/StructTreeRoot` 及结构树内容；上次统计为 1,472 个 Formula、21 张 Table／59 个 TH、16 个 Figure／16 处替代文字、48 个 H1／180 个 H2。
 - **已修复：**正文标题 H1/H2 与图注父子标签的缺失／非法关系；保留 CI 标题层级和图注结构回归检查。
 - **机器验收已通过：** [最新 veraPDF PDF/UA-2 验证](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39609436412) 报告 1,727 项规则、736,481 项检查全部通过，CI 已提升为失败阻断。**全书 MathML 已通过机器验收并合入 `main`**：[集成 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415) 检查 1,472 个 Formula 的 MathML 关联完整性（933 份不同的 MathML），同时保留 veraPDF PDF/UA-2 严格门槛。机器合规结果仅代表验证器覆盖的规则，不作为具体屏读效果保证。
 - **后续维护范围：**持续运行独立 PDF/UA-2 机器验证，自动检查 MathML 关联、标题层级、表格/图形结构、PDF 页面边界及回归；不开展真实屏读或人工无障碍验收。

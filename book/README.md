@@ -5,22 +5,17 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-## 前五部分：必读主线
+## 前五部分：必读主线（M2 过渡编排，新版七部分目标尚未完成）
 
-### I · 把文字变成可计算的数字
-- [阅读指南](chapters/00-guide.tex)：先明确要解决什么问题
-- [数学速查](chapters/00b-math-tools.tex)和[全书符号表](chapters/00c-symbols.tex)：高中三角函数、导数、指数对数与矩阵
-- [函数](chapters/00-functions.tex)、[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)
-- [Token、One-hot 与 Embedding](chapters/20-embeddings.tex)
-- [输入、目标与形状契约](chapters/20b-task-contract.tex)
+### I · 学习是什么：从规则到参数更新
+- [阅读指南](chapters/00-guide.tex)和[手写规则的局限](chapters/00d-rules-gap.tex)
+- [带参数函数](chapters/00-functions.tex)与[损失和梯度下降](chapters/16-loss-gradient.tex)
+- [非线性](chapters/07-functions-relu.tex)、[反向传播](chapters/17-backpropagation.tex)、[四参数更新](chapters/18b-end-to-end-learning.tex)、[泛化](chapters/18-generalization.tex)
 
-### II · 让神经网络学会预测
-- [ReLU 与非线性](chapters/07-functions-relu.tex)
-- [MLP](chapters/10-mlp.tex)
-- [损失与梯度下降](chapters/16-loss-gradient.tex)
-- [反向传播](chapters/17-backpropagation.tex)
-- [完整的两层学习例子](chapters/18b-end-to-end-learning.tex)
-- [泛化、过拟合与正则化](chapters/18-generalization.tex)、[小批次与训练工程](chapters/18c-training-engineering.tex)
+### II · 把许多数一起算，再让文字进入计算
+- [向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)
+- [矩阵 MLP](chapters/10-mlp.tex)、[Mini-batch 与 Adam](chapters/18c-training-engineering.tex)
+- [Token、One-hot 与 Embedding](chapters/20-embeddings.tex)、[下一 Token 的目标](chapters/20b-task-contract.tex)
 
 ### III · 让词与词交换信息
 - [RNN](chapters/21-rnn.tex) 与 [Attention 的需求来源](chapters/21b-why-attention.tex)
@@ -49,6 +44,8 @@
 - [高维容量假设](chapters/13-capacity.tex)
 
 ## 附录：练习、查阅与集中解答（建议完成）
+
+- [数学速查](chapters/00b-math-tools.tex)与[符号/张量形状速览](chapters/00c-symbols.tex)（需要时按链接回查，不再挡在学习路线开头）
 
 - [数学与神经网络练习](chapters/25-integrated-practice.tex)
 - [现代模型与 Agent 练习](chapters/25b-modern-practice.tex)

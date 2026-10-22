@@ -12,6 +12,38 @@
 
 若梯度特别大，\textbf{梯度裁剪}可以在更新前限制其幅度。例如梯度向量的长度超过设定阈值时，可以将其整体按比例缩小。裁剪不能取代合理的学习率和数据检查。
 
+\subsection{两步小算例：动量和 Adam 为什么要记住过去？}
+
+SGD 每次使用当前梯度。若梯度有噪声，可以保存\textbf{历史梯度的滑动平均}。
+先用人为选择的两步标量梯度 $g_1=2,g_2=1$ 演示。
+令动量平均系数为 $\beta_1=0.5$，初值 $m_0=0$，则
+\[
+m_t=0.5m_{t-1}+0.5g_t,\qquad m_1=1,\quad m_2=1.
+\]
+这里展示的是带归一权重的指数移动平均；其他动量实现可能使用不同的缩放约定。
+
+Adam 还跟踪\textbf{梯度平方的移动平均}。取 $\beta_2=0.5$，
+初值 $v_0=0$，同样两步可得
+\[
+v_t=0.5v_{t-1}+0.5g_t^2,\qquad
+v_1=2,\quad v_2=1.5.
+\]
+由于两组平均都从零开始，Adam 还用时间步 $t$ 修正初值偏差：
+\[
+\widehat m_t=\frac{m_t}{1-0.5^t},\qquad
+\widehat v_t=\frac{v_t}{1-0.5^t}.
+\]
+因此
+\[
+(\widehat m_1,\widehat v_1)=(2,4),\qquad
+(\widehat m_2,\widehat v_2)=\left(\frac43,2\right).
+\]
+暂不考虑很小的数值稳定项 $\varepsilon$，
+以 $-\eta\widehat m_t/\sqrt{\widehat v_t}$ 调参，
+第一步是 $-\eta$，第二步约为 $-0.943\eta$。
+这不是生产环境的推荐系数，只是可以手算的说明：
+\textbf{Adam 使用了梯度的历史平均与历史平方平均，更新幅度不只由当前梯度决定}。
+
 \subsection{常见训练故障与应对方法}
 
 \begin{center}\small
@@ -36,5 +68,6 @@
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18c-training-engineering}100 个样本按 Batch Size 10 且全部使用，每 Epoch 约有几次更新？\quad{\footnotesize\hyperref[answer:18c-training-engineering]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-Batch Size 决定一次更新使用的数据量；优化器决定怎样从梯度算出参数改变量。发现梯度爆炸、震荡等问题时应先定位成因，再有针对性地调整。
+Batch Size 决定一次更新使用的数据量；优化器利用当前及可能保存的历史梯度决定参数改变量。
+接下来才把这些计算用于文字：首先要将 Token 变成可学习的数字表示。
 \end{conclusion}
