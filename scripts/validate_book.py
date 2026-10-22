@@ -323,9 +323,21 @@ def validate_source() -> None:
     includes(ninth, r"\textbf{Top-p}", "sampling group")
 
     # Glossary anchors remain valid and are backed by content in the book.
-    labels: set[str] = set()
+    labels: dict[str, str] = {}
     for name in REQUIRED:
-        labels.update(re.findall(r"\\label\{([^}]+)\}", sources[name]))
+        for label in re.findall(r"\\label\{([^}]+)\}", sources[name]):
+            if label in labels:
+                fail(f"Duplicate cross-reference label {label}: {labels[label]} and {name}")
+            labels[label] = name
+    check_ids = {key.removeprefix("check:") for key in labels if key.startswith("check:")}
+    answer_ids = {key.removeprefix("answer:") for key in labels if key.startswith("answer:")}
+    if check_ids != answer_ids:
+        fail(f"Self-check answer mismatch: missing={sorted(check_ids-answer_ids)}, "
+             f"unexpected={sorted(answer_ids-check_ids)}")
+    for name in REQUIRED:
+        for destination in re.findall(r"\\hyperref\[((?:check|answer):[^]]+)\]", sources[name]):
+            if destination not in labels:
+                fail(f"Broken self-check link in {name}: {destination}")
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
         if len(refs) != (100 if lex == "24-lexicon" else 27):
