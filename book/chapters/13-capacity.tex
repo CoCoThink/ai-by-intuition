@@ -1,13 +1,15 @@
 \section{进阶探索：高维空间与记忆容量}
 
-本章属于\textbf{选读内容}。前面已经能手算神经网络和 Attention，这里进一步问：为什么在某些理想随机记忆模型里，Key 维度增加后，能区分的关联数也可能大幅增加？答案依赖随机性和独立性假设，不能直接套到真实 LLM 的事实数量上。
+高维空间能容纳许多彼此区分的方向。
+在随机 Key 近似独立的理想联想记忆模型中，维度增加时，干扰会如何变化？
+下面用典型尺度估算可区分的关联数量。
 
 \subsection{随机高维向量往往近似正交}
 如果两个独立随机单位向量在 $d_k$ 维空间中，那么它们点积的典型尺度为：
 \begin{equation}
 |\vect{k}_i^\top\vect{k}_j|\approx\frac{1}{\sqrt{d_k}},\qquad i\ne j.
 \end{equation}
-这里的 $\approx$ 只是对随机量\textbf{典型尺度}的估计，绝不代表每一对随机向量都满足该数值等式。
+这里的 $\approx$ 表示随机情况下的\textbf{典型尺度}。
 
 当 $d_k=64$，典型干扰相似度量级为：
 \[
@@ -44,9 +46,8 @@
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $M\approx d_k^p$ 这一类标度。
 
-\noindent\textbf{假设边界：}这些是独立随机向量等条件下的
-容量量级估算；相关 Key、Value 的非独立性以及实际激活函数
-均可能改变结论。可区分向量的数量不等于模型可靠掌握的事实数。
+这些量级依赖独立性、随机性和激活函数的选择。
+相关的 Key 与 Value 会改变干扰规模；可区分关联的数量也不同于模型可靠掌握的事实数量。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:13-capacity}高维随机向量更可能接近正交，为什么不能由此直接保证记忆容量无限？\quad{\footnotesize\hyperref[answer:13-capacity]{核对解答。}}\par\medskip
 

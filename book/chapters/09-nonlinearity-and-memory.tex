@@ -1,12 +1,13 @@
 \section{用 MLP 的眼光重新理解记忆检索}
 
-我们已经学过 MLP 的计算结构，也已经把 Key--Value 写成矩阵。现在换一个视角：一个 MLP 的隐藏单元，是否也能看成对某种输入模式的响应？先回顾线性记忆中每条关联的贡献：
+一个 MLP 的隐藏单元可以理解为对某类输入模式的响应。
+先看线性联想记忆中每条关联的贡献：
 \[
 \vect{v}_i\times\underbrace{(\vect{k}_i^\top\vect{x})}_{\text{原始相似度}}.
 \]
 例如正确 Key 的相似度是 $1$，无关 Key 是 $0.6$。线性加权得到 $1$ 和 $0.6$，错误记忆仍贡献很多。
 
-作为一个\textbf{探索性办法}，先只看位于 $[0,1]$ 的相似度，尝试\textbf{平方激活}：
+当相似度位于 $[0,1]$ 时，\textbf{平方}可以压低较弱的匹配：
 \[
 1^2=1,\qquad 0.6^2=0.36.
 \]
@@ -61,10 +62,11 @@
 \end{tikzpicture}
 \end{center}
 
-你现在可以认出熟悉的\textbf{两层 MLP} 结构：第一次矩阵乘法得到隐藏层分数，非线性逐个处理，第二次矩阵乘法组合输出。相比前面一般的 MLP 写法，这里为了看清关联记忆省略了偏置。
+这与\textbf{两层 MLP} 的计算结构相同：第一层产生分数，激活函数逐个处理，第二层组合输出。此处省略偏置以突出检索过程。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:09-nonlinearity-and-memory}$0.5^2$ 与 $0.5^3$ 哪个更小？这与抑制弱匹配有什么联系？\quad{\footnotesize\hyperref[answer:09-nonlinearity-and-memory]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-从记忆角度看，MLP 的第一层可以被解释为\textbf{匹配模式}，激活函数负责\textbf{筛选}，第二层负责\textbf{读出内容}。这是一种有启发性的解释，并不意味着每个真实神经元都恰好对应一条可分离的事实。
+从联想记忆角度，MLP 的第一层负责\textbf{匹配}，激活函数负责\textbf{筛选}，第二层负责\textbf{读出}。
+这种解释有助于理解计算结构，而不是把神经元与具体事实逐一对应。
 \end{conclusion}
