@@ -260,6 +260,10 @@ def validate_source() -> None:
         if obsolete in concept:
             fail(f"Figure 16 contains a misleading or reversed arrow: {obsolete}")
 
+    # A light title bar must not use tcolorbox's default white title text.
+    weight_figure = (BOOK / "figures" / "attention-three-step-weights.tex").read_text(
+        encoding="utf-8")
+    includes(weight_figure, "coltitle=ink", "figure 10 dark title on light background")
     includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
     includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
     includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")
