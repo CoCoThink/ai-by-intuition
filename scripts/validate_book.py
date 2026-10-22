@@ -272,7 +272,7 @@ def validate_source() -> None:
     if answer_key.count(r"\subsubsection*{") != 3:
         fail("Answer appendix should separate the three exercise sets")
     includes(sources["24-lexicon"], r"\textbf{Top-p}", "100-word index")
-    ninth = sources["24-lexicon"].split(r"\subsection{第九组")[1].split(r"\subsection{第十组")[0]
+    ninth = sources["24-lexicon"].split(r"\subsubsection{第九组")[1].split(r"\subsubsection{第十组")[0]
     includes(ninth, r"\textbf{Top-p}", "sampling group")
 
     # Glossary anchors remain valid and are backed by content in the book.
