@@ -4,6 +4,8 @@
 
 ## 1. 当前状态（重排之前）
 
+- **重构启动时 main HEAD：** [`9b9e13b58c47`](https://github.com/CoCoThink/ai-by-intuition/commit/9b9e13b58c47609e75ff93d311563f3c98b7f98b)（V2 计划首次落库，后续的教学实验与正文编辑基于这一时点展开）。
+- **新目录先修依赖：** [31 章知识依赖与缺口图](CURRICULUM_DEPENDENCIES.md)，用于重排时排除提前引用和概念循环。
 - **可出版基线：** v0.1.0（2026-10-22）的 99 页 PDF；正式版本、已发布的 SHA256SUMS、Tag/MathML/PDF/UA 机器验收详情见仓库 README；后续不能修改历史发布资产。
 - **正文：** 5 个必读部分、2 个选读部分、附录；`main.tex` 引入 **47 个章节源文件**（下表逐条列出）。
 - **图示：** 当前 GitHub 源树包含 14 个 `book/figures/` 图示源文件；已发布 PDF 自述包含 16 个 Figure/替代文字节点，两者口径不同，不应混用。
