@@ -7,49 +7,49 @@
 
 \begin{enumerate}[leftmargin=2.3em,itemsep=5pt]
 
-\item \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{00-guide}}\enspace 把用户问题和助手前缀视为上下文，模型逐个产生回答的 Token；每生成一个就追加。预测形式本身不保证事实正确。
+\item \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 把用户问题和助手前缀视为上下文，模型逐个产生回答的 Token；每生成一个就追加。预测形式本身不保证事实正确。
 \item \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 遮挡、角度、光照和不同姿态让固定检查表无法覆盖所有照片；并不表示没有可学规律。
-\item \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{00-functions}}\enspace $2\times3+1=7$。
+\item \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace $2\times3+1=7$。
 \item \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace $L(w)=\tfrac52(w-1)^2$ 在 $w=1$ 时为 $0$，两个训练样本都能准确预测；这只是一道具有简单解析解的教学问题。
-\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{16-loss-gradient}}\enspace $L'(w)=2(w-1)$，代入 $w=0$ 得 $-2$，梯度下降更新时应增大 $w$。
-\item \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{07-functions-relu}}\enspace ReLU 把负数置零、正数保留，故为 $0$ 和 $1$。
-\item \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{17-backpropagation}}\enspace 链式法则：$\partial\widehat y/\partial w_1=w_2x$。
-\item \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{18b-end-to-end-learning}}\enspace 同一步反向传播需基于同一组旧权重计算梯度，然后再统一更新；混用新旧值改变了梯度对应的函数。
-\item \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{18-generalization}}\enspace 可能过拟合；先排查切分与数据泄漏，再考虑验证集提前停止、正则化或合适的数据增强。
-\item \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{01-vectors}}\enspace 逐分量相加得到 $(3,2)$。
-\item \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{02-dot-product}}\enspace $1\times3+2\times1=5$。
-\item \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{03-matrix-multiplication}}\enspace $AB:2\times4$，因为 $A$ 的列数等于 $B$ 的行数。
-\item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{10-mlp}}\enspace 无激活时 $xW_1W_2=x(W_1W_2)$，两层合并成一个线性矩阵，表达能力受限。
-\item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{18c-training-engineering}}\enspace $100/10=10$ 次；若样本无法整除，还需决定最后批次如何处理。
+\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace $L'(w)=2(w-1)$，代入 $w=0$ 得 $-2$，梯度下降更新时应增大 $w$。
+\item \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace ReLU 把负数置零、正数保留，故为 $0$ 和 $1$。
+\item \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{链式法则与反向传播}}\enspace 链式法则：$\partial\widehat y/\partial w_1=w_2x$。
+\item \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{一次四参数更新}}\enspace 同一步反向传播需基于同一组旧权重计算梯度，然后再统一更新；混用新旧值改变了梯度对应的函数。
+\item \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{泛化与过拟合}}\enspace 可能过拟合；先排查切分与数据泄漏，再考虑验证集提前停止、正则化或合适的数据增强。
+\item \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量加法}}\enspace 逐分量相加得到 $(3,2)$。
+\item \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积手算}}\enspace $1\times3+2\times1=5$。
+\item \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace $AB:2\times4$，因为 $A$ 的列数等于 $B$ 的行数。
+\item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 无激活时 $xW_1W_2=x(W_1W_2)$，两层合并成一个线性矩阵，表达能力受限。
+\item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{小批次与 Epoch}}\enspace $100/10=10$ 次；若样本无法整除，还需决定最后批次如何处理。
 \item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 五个单字经两次合并后变成三个 Token；这是教学示意，真实分词取决于词表和合并表。
-\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{20-embeddings}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。
-\item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{20b-task-contract}}\enspace 连续序列为 $(1,3,4,2)$ 时，输入 $(1,3,4)$，目标左移得到 $(3,4,2)$。
+\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。
+\item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 连续序列为 $(1,3,4,2)$ 时，输入 $(1,3,4)$，目标左移得到 $(3,4,2)$。
 \item \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 当前 Token 的 Embedding 与逐 Token MLP 参数完全相同，则输出也相同；若前文没有作为输入或状态传入，函数就无法区分这两段上下文。
-\item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{21-rnn}}\enspace $h_1=2$，$h_2=0+0.5\times2=1$。
-\item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{21b-why-attention}}\enspace 按权重求和：$0.2(1,0)+0.8(0,1)=(0.2,0.8)$。
-\item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{11-softmax-memory}}\enspace 分数相等时指数也相等，两项归一化后各为 $0.5$。
-\item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{22a-position-multihead}}\enspace 按特征列而非位置行拼接，输出 $3\times4$。
-\item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{22-transformer-architecture}}\enspace 不会；残差相加要求形状兼容，此例仍是 $T\times d$。
-\item \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{10b-ffn-output-head}}\enspace 上投影 $6\times18$，下投影 $18\times6$。
-\item \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{22b-token-to-output}}\enspace 初始第 1、2 位置预测错，第 3 位置预测 ID 2“。”正确；将第一输入改为 ID 4 后，第三位置 logits 最大变化约 $0.3520$，并非完全不变。
-\item \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{22c-language-training}}\enspace 三个位置的平均损失使每行梯度都乘以 $1/3$；一次更新后第 2 位置正确答案 ID 4 的概率由约 $0.0507$ 升到 $0.0685$，但贪心仍选择 ID 3“花”。
-\item \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{23-llm-systems}}\enspace 贪心始终取当前最高概率候选；Top-p 保留累计概率到阈值的一小组候选并按重新归一化概率采样。
+\item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace $h_1=2$，$h_2=0+0.5\times2=1$。
+\item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 按权重求和：$0.2(1,0)+0.8(0,1)=(0.2,0.8)$。
+\item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 分数相等时指数也相等，两项归一化后各为 $0.5$。
+\item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 按特征列而非位置行拼接，输出 $3\times4$。
+\item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{残差与 Block 维度}}\enspace 不会；残差相加要求形状兼容，此例仍是 $T\times d$。
+\item \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 上投影 $6\times18$，下投影 $18\times6$。
+\item \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace 初始第 1、2 位置预测错，第 3 位置预测 ID 2“。”正确；将第一输入改为 ID 4 后，第三位置 logits 最大变化约 $0.3520$，并非完全不变。
+\item \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace 三个位置的平均损失使每行梯度都乘以 $1/3$；一次更新后第 2 位置正确答案 ID 4 的概率由约 $0.0507$ 升到 $0.0685$，但贪心仍选择 ID 3“花”。
+\item \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{贪心生成与 Top-p 采样}}\enspace 贪心始终取当前最高概率候选；Top-p 保留累计概率到阈值的一小组候选并按重新归一化概率采样。
 \item \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace $768/12=64$ 维；玩具例的一条训练序列损失下降，只能说明该优化在训练样本上有效，不能证明有大量数据预训练后的泛化和可靠推理能力。
 \item \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace 将示例加入 Prompt 不改变模型权重；真正执行 SFT 会更新权重。两者都不能凭空获取未经授权的最新报表。
-\item \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{23c-post-training}}\enspace SFT 使用目标示范回答；偏好学习利用更偏好的回答与较差回答的比较或相应奖励信号。
-\item \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{23d-agent-systems}}\enspace 外部网页是不可信数据，不能将其中越权要求当成系统/用户指令；文件外传须经过单独授权及安全检查。
-\item \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{23b-deployment-and-ecosystem}}\enspace $10^9\times2=2\times10^9$ 字节，十进制约 $2$ GB，尚未计算缓存及激活。
-\item \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{22d-modern-transformers}}\enspace 当多个 Query 头共享更少的 K/V 头时，KV Cache 每个 Token 需要存储的键值数通常减少。
+\item \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace SFT 使用目标示范回答；偏好学习利用更偏好的回答与较差回答的比较或相应奖励信号。
+\item \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{工具结果与提示注入}}\enspace 外部网页是不可信数据，不能将其中越权要求当成系统/用户指令；文件外传须经过单独授权及安全检查。
+\item \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace $10^9\times2=2\times10^9$ 字节，十进制约 $2$ GB，尚未计算缓存及激活。
+\item \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace 当多个 Query 头共享更少的 K/V 头时，KV Cache 每个 Token 需要存储的键值数通常减少。
 \item \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace KV Cache 减少一半仅说明某项内存指标改善，不能推断质量提高；还需测准确性、延迟、吞吐等，并保持可比评测条件。
-\item \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{19-cnn}}\enspace $3^2\times3\times8=216$ 个权重，不含每个输出通道的可选偏置。
+\item \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace $3^2\times3\times8=216$ 个权重，不含每个输出通道的可选偏置。
 \item \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace 四个 Patch 各自投影为 3 个数字，矩阵为 $4\times3$；添加一个 CLS 后是 $5\times3$，Attention 分数的尺寸为 $5\times5$。
-\item \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{04-key-value-outer-product}}\enspace $Wk=vk^\top k=v\|k\|^2=v$（因为 $\|k\|=1$）。
-\item \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{05-memory-interference}}\enspace 其他 Key 与当前查询的点积不一定是零，因此它们的 Value 贡献会混入召回结果。
-\item \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{06-better-linear-memory}}\enspace 可尝试更正交/可分辨的 Key、适当归一化、优化存储表示或改变读取时的选择性。
-\item \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{08-stacking-key-value}}\enspace 对 3 条 Value（每条 4 维）加权求和，输出一条 4 维行向量；权重形状为 $1\times3$。
-\item \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{09-nonlinearity-and-memory}}\enspace $0.5^2=0.25$，$0.5^3=0.125$ 更小；增大幂次可压低小于 $1$ 的弱相似度。
-\item \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{14-summary}}\enspace 两者都由 Query/Key 匹配分数给不同 Value 加权，只是归一化、非线性与存储形式不同。
-\item \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{13-capacity}}\enspace 近似正交是统计现象且依赖分布和维度；噪声、相关性、读出误差和容量定义均影响可可靠存取的数量。
-\item \phantomsection\label{answer:00b-math-tools}\textbf{\hyperref[check:00b-math-tools]{00b-math-tools}}\enspace $e^0=1$，$\log 1=0$。
-\item \phantomsection\label{answer:00c-symbols}\textbf{\hyperref[check:00c-symbols]{00c-symbols}}\enspace $QK^\top:T\times N$，因为中间维度 $d_k$ 匹配并相乘求和。
+\item \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace $Wk=vk^\top k=v\|k\|^2=v$（因为 $\|k\|=1$）。
+\item \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace 其他 Key 与当前查询的点积不一定是零，因此它们的 Value 贡献会混入召回结果。
+\item \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace 可尝试更正交/可分辨的 Key、适当归一化、优化存储表示或改变读取时的选择性。
+\item \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace 对 3 条 Value（每条 4 维）加权求和，输出一条 4 维行向量；权重形状为 $1\times3$。
+\item \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace $0.5^2=0.25$，$0.5^3=0.125$ 更小；增大幂次可压低小于 $1$ 的弱相似度。
+\item \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace 两者都由 Query/Key 匹配分数给不同 Value 加权，只是归一化、非线性与存储形式不同。
+\item \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace 近似正交是统计现象且依赖分布和维度；噪声、相关性、读出误差和容量定义均影响可可靠存取的数量。
+\item \phantomsection\label{answer:00b-math-tools}\textbf{\hyperref[check:00b-math-tools]{数学工具速查}}\enspace $e^0=1$，$\log 1=0$。
+\item \phantomsection\label{answer:00c-symbols}\textbf{\hyperref[check:00c-symbols]{形状与符号约定}}\enspace $QK^\top:T\times N$，因为中间维度 $d_k$ 匹配并相乘求和。
 \end{enumerate}

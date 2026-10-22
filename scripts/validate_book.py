@@ -297,6 +297,16 @@ def validate_source() -> None:
     includes(answer_key, r"\label{app:answers}", "answer key")
     if answer_key.count(r"\subsubsection*{") != 3:
         fail("Answer appendix should separate the three exercise sets")
+    # REVIEW item 2: filenames/IDs should never be visible as answer titles.
+    key = sources["28-chapter-checks"]
+    check_titles = re.findall(
+        r"\\label\{answer:([^}]+)\}\\textbf\{\\hyperref\[check:[^\]]+\]\{([^}]+)\}\}",
+        key)
+    if len(check_titles) < 40:
+        fail(f"Unexpectedly few linked chapter-check answers: {len(check_titles)}")
+    ids = [identifier for identifier, title in check_titles if identifier == title]
+    if ids:
+        fail(f"Internal source identifiers leaked into answer headings: {ids}")
     includes(sources["24-lexicon"], r"\textbf{Top-p}", "100-word index")
     ninth = sources["24-lexicon"].split(r"\subsubsection{第九组")[1].split(r"\subsubsection{第十组")[0]
     includes(ninth, r"\textbf{Top-p}", "sampling group")
