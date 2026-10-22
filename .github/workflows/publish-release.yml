@@ -51,7 +51,7 @@ jobs:
           gh api "repos/$GH_REPO/actions/runs/$SOURCE_RUN_ID" > "$RUNNER_TEMP/source-run.json"
           jq -e --arg repo "$GH_REPO" '
             .name == "Build one PDF book" and
-            .event == "push" and
+            (.event == "push" or .event == "workflow_dispatch") and
             .head_branch == "main" and
             .conclusion == "success" and
             .head_repository.full_name == $repo

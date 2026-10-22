@@ -15,7 +15,7 @@
 1. 从 `main` 的 [Build one PDF book](../.github/workflows/build-latex.yml) 运行 `workflow_dispatch`，取得 **success** 的完整构建运行 ID（`build_run_id`）。PDF 工件有保留期限，过期后必须重新构建。
 2. 完成变动页面的视觉 QA，确认 PDF 机器结构、公式语义、veraPDF PDF/UA-2 与数值计算均通过。
 3. 在 `main` 的 [Publish validated volume](../.github/workflows/publish-release.yml) 点击 **Run workflow**，输入新版本号（如 `v0.2.0`）和上一步的 `build_run_id`。
-4. 发布工作流校验：版本格式为 `vX.Y.Z`、tag/Release 不存在、来源运行是本仓库 `main` 的成功 `push`、来源提交可追溯至当前 `main`，且构建之后没有改动 `book/`、`scripts/` 或正式 PDF 构建工作流。如验证失败则拒绝发布。
+4. 发布工作流校验：版本格式为 `vX.Y.Z`、tag/Release 不存在、来源运行是本仓库 `main` 的成功 `push` 或手动完整构建、来源提交可追溯至当前 `main`，且构建之后没有改动 `book/`、`scripts/` 或正式 PDF 构建工作流。如验证失败则拒绝发布。
 5. 工作流从指定同一次构建提取 PDF 和审计，确认 99 页、完整 MathML-AF、veraPDF 零失败与环境记录，计算 `SHA256SUMS`，将细分审计文件合并为 `build-audit.zip`，并以 Release 正文记录验证来源。
 6. 新版本只上传 **3 个资产**：`AI-by-Intuition-Volume-01.pdf`、`SHA256SUMS`、`build-audit.zip`。不要覆盖旧版本、不要单独再附一份 `RELEASE-NOTES.md`，也不要发布未经同一成功 CI 验收的其他 PDF。
 

@@ -66,19 +66,6 @@ jobs:
             pdfinfo build/AI-by-Intuition-Volume-01.pdf | grep -E '^(Tagged|PDF version|Pages):'
             echo '=== Book structure tree first lines ==='
             pdfinfo -struct build/AI-by-Intuition-Volume-01.pdf | head -n 12 || true
-      # Retain PDF and logs only when production validation fails.
-      # Successful runs publish precisely one copy of the generated PDF.
-      - name: Upload failed-build diagnostics
-        if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: failed-build-diagnostics
-          path: |
-            book/build/main.pdf
-            book/build/main.log
-            book/build/smoke/*.log
-          if-no-files-found: warn
-          retention-days: 7
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
@@ -140,3 +127,16 @@ jobs:
           name: ai-by-intuition-volume-01
           path: book/build/AI-by-Intuition-Volume-01.pdf
           if-no-files-found: error
+      # Retain PDF and logs only when production validation fails.
+      # Successful runs publish precisely one copy of the generated PDF.
+      - name: Upload failed-build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: failed-build-diagnostics
+          path: |
+            book/build/main.pdf
+            book/build/main.log
+            book/build/smoke/*.log
+          if-no-files-found: warn
+          retention-days: 7
