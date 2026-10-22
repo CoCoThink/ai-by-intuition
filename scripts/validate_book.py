@@ -599,8 +599,12 @@ def validate_pdf(path: Path) -> None:
                 result.append(child)
         return result
 
-    if len(table_nodes) != 23:
-        fail(f"Expected 23 tagged data tables, found {len(table_nodes)}")
+    expected_tables = sum(
+        len(re.findall(r"\begin\{(?:tabularx|tabular|longtable)\}", chapter(name)))
+        for name in REQUIRED
+    )
+    if len(table_nodes) != expected_tables:
+        fail(f"Expected {expected_tables} tagged data tables, found {len(table_nodes)}")
     for index, table_node in enumerate(table_nodes, 1):
         rows = [n for n in struct_children(table_node) if n.get("/S") == "/TR"]
         if len(rows) < 2:
@@ -674,12 +678,14 @@ def validate_pdf(path: Path) -> None:
         body = re.sub(r"从函数到\s*Transformer", "", body)
         body = re.sub(r"(?m)^\s*\d+\s*$", "", body)
         han_count = len(re.findall(r"[\u4e00-\u9fff]", body))
-        if han_count < 18:
+        # Code-dense appendix pages may be mostly Latin identifiers.
+        latin_words = len(re.findall(r"[A-Za-z_][A-Za-z_0-9]{2,}", body))
+        if han_count < 18 and latin_words < 80:
             fail(f"Likely orphan/blank page: {i}")
         # A short final bibliography page is legitimate, but an almost empty
         # intermediate page with a stranded conclusion is not. This caught the
         # prior ViT conclusion that occupied an entire page by itself.
-        if i < len(pages) - 1 and han_count < 90:
+        if i < len(pages) - 1 and han_count < 90 and latin_words < 80:
             fail(f"Likely stranded content on interior page {i}: {han_count} Han chars")
     # Read only tag attributes: PDF text can contain literal control chars
     # that make pdftotext's XHTML *text nodes* invalid XML.
