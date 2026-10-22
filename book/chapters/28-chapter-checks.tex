@@ -10,8 +10,8 @@
 \item \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 把用户问题和助手前缀视为上下文，模型逐个产生回答的 Token；每生成一个就追加。预测形式本身不保证事实正确。
 \item \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 遮挡、角度、光照和不同姿态让固定检查表无法覆盖所有照片；并不表示没有可学规律。
 \item \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace $2\times3+1=7$。
-\item \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace $L(w)=\tfrac52(w-1)^2$ 在 $w=1$ 时为 $0$，两个训练样本都能准确预测；这只是一道具有简单解析解的教学问题。
-\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace $L'(w)=2(w-1)$，代入 $w=0$ 得 $-2$，梯度下降更新时应增大 $w$。
+\item \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 固定 $b=1$ 时，$L(w,1)=\frac23(w-2)^2$ 在 $w=2$ 处取到最小值 $0$；使用的仍是正文三点数据。
+\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace $\nabla L(1,0)=(-4/3,-2)$，同步更新至 $(1.4,0.6)$；三点数据的 MSE 从 $5/3$ 降为 $0.4$。
 \item \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace ReLU 把负数置零、正数保留，故为 $0$ 和 $1$。
 \item \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{链式法则与反向传播}}\enspace 链式法则：$\partial\widehat y/\partial w_1=w_2x$。
 \item \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{一次四参数更新}}\enspace 同一步反向传播需基于同一组旧权重计算梯度，然后再统一更新；混用新旧值改变了梯度对应的函数。
@@ -22,6 +22,7 @@
 \item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 无激活时 $xW_1W_2=x(W_1W_2)$，两层合并成一个线性矩阵，表达能力受限。
 \item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{小批次与 Epoch}}\enspace $100/10=10$ 次；若样本无法整除，还需决定最后批次如何处理。
 \item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 五个单字经两次合并后变成三个 Token；这是教学示意，真实分词取决于词表和合并表。
+\item \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace $-\log(1/2)=\log2\approx0.6931$；第二类 logit 的梯度为 $1/2-1=-1/2$。
 \item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。
 \item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 连续序列为 $(1,3,4,2)$ 时，输入 $(1,3,4)$，目标左移得到 $(3,4,2)$。
 \item \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 当前 Token 的 Embedding 与逐 Token MLP 参数完全相同，则输出也相同；若前文没有作为输入或状态传入，函数就无法区分这两段上下文。

@@ -51,7 +51,6 @@ C=\begin{bmatrix}
 本章的三个位置\textbf{全部参与损失}，因此平均时除以 $3$。
 
 \subsection{所有位置输出同一个词表的五项分数}
-\phantomsection\label{concept:cross-entropy}
 
 令 $Z=HW_{\rm out}\in\R^{3\times5}$，逐行 Softmax 得到 $\widehat P$。
 一行 logits 是五个未归一化的分数，不是五个独立训练标签；
@@ -179,6 +178,10 @@ ID 2 是本次的\textbf{目标 Token}，但没有作为输入出现，
 \boxed{L_{\rm before}=1.798430\quad\longrightarrow\quad
 L_{\rm after}=1.611377.}
 \]
+这是一\textbf{步}联合参数更新；第三部分 Embedding 的变化展示的是
+同样初值和学习率继续做\textbf{20 步}后的结果，
+平均损失最终约为 $0.4832$。两个数字属于不同训练步数，
+并非两套互相冲突的训练实验。
 这一步三个位置正确类概率都上升，平均损失下降。
 但并非所有贪心预测都立刻正确：
 更新后位置 1 预测已变成“花”，位置 2 仍偏向“花”而不是“开了”，

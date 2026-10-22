@@ -10,10 +10,10 @@
 
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
-\begin{enumerate}[leftmargin=2.5em,itemsep=5pt]
+\begin{enumerate}[label=\textbf{B1-\arabic*.},leftmargin=2.5em,itemsep=5pt]
 \item $(-1,1,5)$。
-\item 预测为 $(0.5,1)$，误差为 $(-0.5,-1)$，故 $\mathrm{MSE}=(0.25+1)/2=0.625$。
-\item $\mathrm dL/\mathrm dw=5(w-1)=-5$；更新为 $w'=0-0.1(-5)=0.5$。
+\item 预测为 $(-1,0,1)$、真实值为 $(-1,1,3)$，故 $\mathrm{MSE}=(0^2+(-1)^2+(-2)^2)/3=5/3$。
+\item $\nabla L(1,0)=(-4/3,-2)$；以 $\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。
 \item $h=6$，$\widehat y=6$，$L=2$；$\partial L/\partial w_2=(\widehat y-y)h=(-2)\times6=-12$。
 \item 可能过拟合；可考虑更多合适数据、数据增强、L2 惩罚、Dropout、提前停止等，需用独立验证数据评估。
 \item 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。
@@ -46,7 +46,7 @@ $X'_1=(0.15,-0.2,1.25)+(0.10,0.05,-0.10)
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,
  title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
-\begin{enumerate}[leftmargin=2.5em,itemsep=5pt]
+\begin{enumerate}[label=\textbf{B2-\arabic*.},leftmargin=2.5em,itemsep=5pt]
 \item 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
 \item $W_{\rm up}:6\times18$，$W_{\rm down}:18\times6$；
 FFN 输出为 $4\times6$，词表 logits 为 $4\times100$。
@@ -86,7 +86,7 @@ Q3 环比为 $(132-125)/125=\boxed{5.6\%}$。
 \subsubsection*{联想记忆专题练习}
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案},fonttitle=\sffamily\bfseries,breakable]
-\begin{enumerate}[label=\arabic*.]
+\begin{enumerate}[label=\textbf{B3-\arabic*.}]
 \item $0.8$，两单位向量方向比较接近。
 \item $W\vect{k}=\vect{v}(\vect{k}^\top\vect{k})=\vect{v}$。
 \item 因为其他 Key 与查询的点积可能非零，它们的 Value 也会被加进输出。

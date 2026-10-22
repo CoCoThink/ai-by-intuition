@@ -40,6 +40,7 @@ REQUIRED = [
     "10-mlp",
     "18c-training-engineering",
     "20a-tokenizer",
+    "20c-classification-loss",
     "20-embeddings",
     "20b-task-contract",
     "21a-context-gap",
@@ -241,22 +242,34 @@ def validate_source() -> None:
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
     includes(sources["20a-tokenizer"], "BPE", "subword example")
-    # V2 main reading path: 31 displayed numbered sections across seven core parts.
+    # V2 main reading path: 32 displayed numbered sections across seven core parts.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
     core_sources = input_list[:first_elective]
     visible_chapters = sum(len(re.findall(r"(?m)^\\section\{", sources[n]))
                            for n in core_sources)
-    if visible_chapters != 31:
-        fail(f"Core curriculum requires 31 numbered chapters, found {visible_chapters}")
+    if visible_chapters != 32:
+        fail(f"Core curriculum requires 32 numbered chapters, found {visible_chapters}")
     includes(sources["16-loss-gradient"], r"\label{intro:16a-gradient-descent}",
              "loss and gradient are two progressive lessons")
     includes(sources["28-chapter-checks"], r"\label{answer:16-loss-analytic}",
              "separate analytical-loss self-check")
 
+    includes(sources["20c-classification-loss"], r"\label{concept:cross-entropy}", "first classification loss definition")
+    includes(sources["20c-classification-loss"], r"\label{concept:logits}", "first logits definition")
+    includes(sources["20c-classification-loss"], r"\label{concept:softmax}", "first Softmax definition")
+    includes(sources["20c-classification-loss"], r"\label{concept:logit-gradient}", "p-y derivation")
+    includes(sources["16-loss-gradient"], r"L(1,0)=\frac53", "unified starting loss")
+    includes(sources["16-loss-gradient"], r"L(1.4,0.6)", "joint w-b update")
+    includes(sources["16-loss-gradient"], r"\input{figures/loss-two-parameter-contours}", "joint loss contour")
     includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
     includes(sources["20b-task-contract"], "50,257", "GPT-2 preview")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
+    for practice, prefix in (("25-integrated-practice", "B1"), ("25b-modern-practice", "B2"), ("15-practice", "B3")):
+        includes(sources[practice], rf"label=\textbf{{{prefix}-\arabic*.}}", "unique exercise number")
+        includes(sources["27-answer-key"], rf"label=\textbf{{{prefix}-\arabic*.}}", "matching answer number")
+    includes(sources["24d-english-index"], r"\termref{concept:cross-entropy}", "first classification definition in index")
+    includes(sources["24d-english-index"], r"\termref{concept:pretraining}", "pretraining index destination")
     includes(sources["27-answer-key"], r"\|\vect a\|=6", "corrected cosine exercise")
     includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
     includes(sources["10b-ffn-output-head"], r"\begin{bmatrix}4&2\\1&1\end{bmatrix}", "nonidentity FFN")
