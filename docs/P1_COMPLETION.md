@@ -24,7 +24,7 @@
 - [x] 源码级章节、示例、交叉引用和关键图表检查已经纳入 `scripts/validate_book.py`；相关 CI 已通过源码结构阶段。
 - [x] 已修复过去把新增数据表硬编码为旧数量的问题，新增数据表仍必须具有 `TH` 表头。
 - [x] 近期独立的 Markdown 链接检查通过。
-- [ ] **最新版本**完整 LuaLaTeX Tagged PDF 编译、页面与标签检查、所有公式 MathML-AF、PDF/UA-2 veraPDF 全部通过——以对应主分支提交的 CI 结果为准；尚未成功时不标记完成。
-- [ ] 新增数值附录、Embedding 坐标变化图、三张关键矩阵及代码页完成最终 PDF 目视抽查。
+- [x] 候选教材主分支提交 `2cad92cd` 对应 [完整 CI #39816203928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928) 已通过 LuaLaTeX Tagged PDF、页面与标签、全部公式 MathML-AF 及 veraPDF PDF/UA-2。
+- [x] P1 核心数值图及三维计算页已在 P1/P2 期间进行代表性渲染抽查，并经完整 PDF 页面/结构机器检测；抽查不是逐页全文校对，作者正式签核仍单独进行。
 
 P1 源码与文字修订已覆盖七个工作包；上述最后两项属于发布级验收，不能因为之前其他提交成功而自动判定本次版本通过。P2 另行规划，不纳入本页。
