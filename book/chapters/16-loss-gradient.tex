@@ -2,139 +2,149 @@
 \label{intro:16-loss-gradient}
 
 \begin{idea}
-\noindent\emph{怎样根据误差调整参数？}\par
-
-上一章试着猜了带参数的函数，但还没有统一的尺度判断它猜得如何。
-先定义损失，再寻找怎样沿着损失降低的方向改变参数。
+\noindent\emph{沿用刚才的三点数据，判断怎样调整直线}\par
+我们已用 $\widehat y=wx+b$ 拟合三点 $(-1,-1),(0,1),(1,3)$。
+现在不换数据，先用损失衡量误差，再研究两个参数怎样变化。
 \end{idea}
 
-\subsection{预测值、真实值、误差与损失}
+\subsection{预测值、真实值与均方误差}
 \phantomsection\label{concept:loss}
 
-设一个模型 $\widehat y=wx$，先不考虑偏置。样本为：
-\[
-(x_1,y_1)=(1,1),\quad(x_2,y_2)=(2,2).
-\]
-如果猜 $w=0$，两个预测都是零；如果猜 $w=1$，两个预测恰好是 $1,2$。为了量化差距，定义\textbf{均方误差（MSE）}：
+对三点 $(-1,-1),(0,1),(1,3)$，取模型
+$\widehat y=wx+b$。均方误差（MSE）为
 \begin{equation}
-L(w)=\frac1n\sum_{i=1}^{n}(\widehat y_i-y_i)^2.
+\boxed{L(w,b)=\frac13\sum_{i=1}^{3}(\widehat y_i-y_i)^2.}
+\label{eq:three-point-mse}
 \end{equation}
-其中 $n$ 是样本数，$L$ 是\textbf{损失（loss）}。平方避免正负误差相互抵消，还使误差较大的样本被更多惩罚。
-
-把两个样本代入：
-\[\begin{aligned}
-L(w)&=\tfrac12[(w-1)^2+(2w-2)^2]\\
-&=\tfrac52(w-1)^2.
-\end{aligned}\]
-于是 $L(0)=2.5$、$L(0.5)=0.625$、$L(1)=0$。
-训练的目标变成寻找让损失尽可能小的参数。
-
-\subsection{先用导数直接解：为什么还需要梯度下降？}
-
-现在先不要急着迭代。既然上面的损失是一个开口向上的二次函数，
-我们完全可以用熟悉的求极值办法：\textbf{对参数求导，令导数等于零}。
-导数描述参数改变一点时损失的局部变化趋势，计算得到
+平方使正负误差不会抵消，较大的误差也受到更大惩罚。
+从初值 $w=1,b=0$ 出发，三项预测为 $(-1,0,1)$，
+与真实结果 $(-1,1,3)$ 比较，残差是 $(0,-1,-2)$：
 \[
-\frac{\mathrm dL}{\mathrm dw}=5(w-1)=0
-\quad\Longrightarrow\quad \boxed{w=1}.
+L(1,0)=\frac{0^2+(-1)^2+(-2)^2}{3}=\boxed{\frac53}.
 \]
-这是这道简单题的\textbf{全局最小值}：代回去，两个样本的误差都变为零。
-既然直接算出答案了，为什么后面还要学“一小步一小步地调”？
+三个点恰好位于直线 $y=2x+1$ 上。
+把各项残差展开后，可把\textbf{同一损失函数}写成
+\begin{equation}
+\boxed{L(w,b)=\frac23(w-2)^2+(b-1)^2.}
+\label{eq:three-point-loss-surface}
+\end{equation}
+可见理论最优参数是 $(w,b)=(2,1)$，此时训练损失为 $0$。
 
-因为\textbf{简单回归能直接解，不代表复杂网络也能直接解}。
-多层神经网络的损失同时依赖大量参数和非线性运算；即使写出
-“所有偏导数为零”的方程，通常也不能像这条抛物线一样直接求出可用的最优参数。
-而且导数为零只表示驻点，并不总是最小值。
+\subsection{先固定一个参数：解析解能做什么？}
 
-因此换一种更可实施的目标：\textbf{不先求整个问题的最终答案，
-只算当前位置朝哪个方向调参数，更可能让损失下降。}
-这才需要梯度下降。它是数值优化方法，不是“求导失效了”。
+先固定 $b=1$，只调整 $w$；这不是另一套训练样本，
+而是沿同一个二维损失曲面的 $b=1$ 截面：
+\[
+L(w,1)=\frac23(w-2)^2,\qquad
+\frac{\mathrm dL(w,1)}{\mathrm dw}=\frac43(w-2).
+\]
+令导数为零，可直接解出 $w=2$，因此找到全局最小值。
+为什么复杂神经网络不总这么做？
+多层非线性网络的所有参数通常不能通过一个简单方程组直接解出，
+而且导数为零并不总是全局最小值。
+我们需要能从当前位置逐步改善损失的方法。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
 \phantomsection\label{check:16-loss-analytic}
-对 $L(w)=\tfrac52(w-1)^2$，哪个参数 $w$ 让两个训练样本都没有误差？
+固定 $b=1$，对 $L(w,1)=\frac23(w-2)^2$ 求极小值，$w$ 应取多少？
 \quad{\footnotesize\hyperref[answer:16-loss-analytic]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-损失函数把预测差异变成可计算的数。在这道二次函数题里，直接解驻点就能找到最优参数。
-下一章转向不能轻松一次解出全部参数的模型，研究怎样沿局部下降方向反复更新。
+同一份三点数据使我们得到一个具体的损失曲面；
+简单二次损失可以直接求最优值，但复杂模型通常要用迭代优化。
 \end{conclusion}
 
 \section{当解析解不现实时：梯度下降怎样调参数？}
 \label{intro:16a-gradient-descent}
 
-上一章的简单二次损失可以解析求解；
-但在更复杂的网络里，我们通常要沿当前局部梯度一步步迭代。
-先从最直观的一维导数开始，再推广到双参数。
+上节已通过固定 $b=1$ 直接求出最优斜率。
+现在先练习一个参数的迭代更新，再回到真正需要同时更新的 $(w,b)$。
 
-\subsection{导数是什么意思？先用一个小改动体验}
+\subsection{导数告诉我们局部变化方向}
 
 \noindent\emph{数学随手查：}导数表示函数在某个位置的局部变化率，相关符号见\hyperref[app:math-tools]{数学速查}。
 
-
-继续使用刚才求出的 $L(w)=\tfrac52(w-1)^2$，目前 $w=0$。稍微把 $w$ 增大，损失会减小；而从 $w=2$ 开始增大，损失反而变大。导数衡量函数在某个点\textbf{局部怎样变化}：
-\begin{equation}
+当 $b=1$ 时，$L(w,1)=\frac23(w-2)^2$；
+在 $w=1$ 的导数为 $-4/3$，意味着增大 $w$ 有望降低损失。
+导数的严格定义为
+\[
 \frac{\mathrm dL}{\mathrm dw}
 =\lim_{\varepsilon\to0}
 \frac{L(w+\varepsilon)-L(w)}{\varepsilon}.
-\end{equation}
-这个比值比较参数发生微小变化时，损失相应改变多少；取极限便得到该点的瞬时变化率。
-
-本例中，
-\[
-L(w)=\tfrac52(w-1)^2,\qquad
-\frac{\mathrm dL}{\mathrm dw}=5(w-1).
 \]
-在 $w=0$ 时导数是 $-5$：增大 $w$ 有望使损失下降；在 $w=2$ 时导数是 $5$：应该减小 $w$。
+这里表示保持 $b$ 不变，只比较斜率的微小变化。
 
-\subsection{梯度下降：往损失增大的反方向走}
+\subsection{梯度下降：向梯度反方向更新}
 \phantomsection\label{concept:gradient-descent}
 
+采用学习率 $\eta=0.3$，固定 $b=1$，
+根据 $\mathrm dL/\mathrm dw=\frac43(w-2)$ 更新：
 \begin{equation}
-\boxed{w_{\mathrm{new}}=
-w_{\mathrm{old}}-\eta\frac{\mathrm dL}{\mathrm dw}}
+\boxed{w_{\rm new}=w_{\rm old}-\eta\frac{\mathrm dL}{\mathrm dw}.}
 \label{eq:gradient-simple}
 \end{equation}
-其中 $\eta$ 是\textbf{学习率}（learning rate），控制每次修改的幅度。
-
-假设 $w_0=0$、$\eta=0.1$。第一次更新：
+从 $w_0=1$ 开始，第一步为
 \[
-w_1=0-0.1\times(-5)=0.5.
+w_1=1-0.3(-4/3)=1.4,
+\qquad L(w_1,1)=0.24.
 \]
-第二次，导数是 $5(0.5-1)=-2.5$：
-\[
-w_2=0.5-0.1\times(-2.5)=0.75.
-\]
-损失也从 $2.5$ 变为 $0.625$，再变为 $0.15625$。这就是\textbf{迭代优化}：反复评估局部方向，逐渐逼近低损失区域。
+第二步的导数为 $\frac43(1.4-2)=-0.8$，
+于是 $w_2=1.64$、$L(w_2,1)=0.0864$。
+固定偏置的这条截面上，损失从 $2/3$ 降为 $0.24$，再降为 $0.0864$。
 
 \input{figures/loss-descent}
 
-\subsection{同时调整多个参数：偏导数与梯度}
+\subsection{两个参数同时调整：偏导数与梯度}
 \phantomsection\label{concept:gradient}
 
-假设模型是 $\widehat y=wx+b$，参数是 $w,b$ 两个数。损失写成 $L(w,b)$：
+固定 $b$ 的做法帮助我们练习了导数，但实际拟合要调整\textbf{两个参数}。
+偏导数在求某一个参数的变化率时，把其他参数视为常数。
+对同一个三点损失函数：
 \[
-\nabla L=
-\left(\frac{\partial L}{\partial w},\frac{\partial L}{\partial b}\right),
-\qquad
-(w,b)_{\mathrm{new}}=(w,b)_{\mathrm{old}}-\eta\nabla L.
+\nabla L(w,b)=
+\left(\frac{\partial L}{\partial w},\frac{\partial L}{\partial b}\right)
+=\left(\frac43(w-2),2(b-1)\right).
 \]
-\textbf{偏导数}就是求某一个参数方向的变化率时，暂时把其他参数视为常数。把两个偏导数排成一组，得到\textbf{梯度}。以后参数增多时再用向量和矩阵表示。
+仍从本书最初选择的 $(w,b)=(1,0)$ 出发，
+而不是上面固定 $b=1$ 的一维练习：
+\[
+L(1,0)=\frac53,\qquad
+\nabla L(1,0)=\boxed{\left(-\frac43,-2\right)}.
+\]
+学习率同样取 $\eta=0.3$，\textbf{两个参数用同一组旧梯度一起更新}：
+\[
+(w',b')=(1,0)-0.3(-4/3,-2)=\boxed{(1.4,0.6)}.
+\]
+新预测为 $(-0.8,0.6,2.0)$，三个误差为 $(0.2,-0.4,-1)$，
+因此
+\[
+L(1.4,0.6)
+=\frac{0.2^2+(-0.4)^2+(-1)^2}{3}
+=\boxed{0.4}<\frac53.
+\]
+这才兑现了从拟合直线到\textbf{同时调整 $w$、$b$}的承诺。
+二维等损失线是以 $(2,1)$ 为中心的椭圆；在截面上看则是上图的抛物线。
 
 \begin{warningbox}
-导数等于零不一定就是全局最小值；还可能是最大值或鞍点。神经网络损失面一般复杂且不凸，梯度下降也没有保证每次都找到全局最优。学习率太大可能震荡或发散，太小则训练缓慢。
+梯度指出局部下降方向，不保证任意学习率都使损失下降，
+也不能保证复杂非凸网络找到全局最优；学习率太大可能震荡或发散。
 \end{warningbox}
 
 \subsection{一次训练要做哪四件事？}
 \begin{enumerate}
-\item \textbf{前向传播}：用当前权重计算 $\widehat y$。
-\item \textbf{计算损失}：比较 $\widehat y$ 和实际目标 $y$。
-\item \textbf{求梯度}：判断每个权重应该朝哪个方向修改。
-\item \textbf{更新参数}：执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
+\item \textbf{前向传播}：用当前参数计算 $\widehat y$。
+\item \textbf{计算损失}：比较预测 $\widehat y$ 与真实目标 $y$。
+\item \textbf{求梯度}：在同一旧参数状态下求各项偏导数。
+\item \textbf{更新参数}：统一执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
 \end{enumerate}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:16-loss-gradient}$L(w)=(w-1)^2$ 在 $w=0$ 处的导数是多少？\quad{\footnotesize\hyperref[answer:16-loss-gradient]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:16-loss-gradient}
+在三点数据上从 $(w,b)=(1,0)$ 出发，两项梯度分别是多少？
+取 $\eta=0.3$ 更新后损失是多少？
+\quad{\footnotesize\hyperref[answer:16-loss-gradient]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-本章建立了梯度、学习率与参数更新的关系。下一章先问：即使参数能够优化，若函数本身只能画直线，又怎样表示弯曲的关系？
+通过同一组三点数据，我们已经从拟合、MSE、解析解走到
+双参数的梯度更新。下一章研究：如果函数只能画直线，怎样表达弯曲的关系？
 \end{conclusion}
