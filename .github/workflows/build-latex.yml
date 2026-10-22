@@ -35,6 +35,9 @@ jobs:
             apt-get install -y -qq fonts-noto-cjk fonts-noto-core poppler-utils
             fc-cache -f
             mkdir -p pdfua-audit
+            # TeX Live action runs as container root; restore runner ownership so
+            # subsequent host-side audit steps can write in this directory.
+            chown --reference=. pdfua-audit
             {
               echo 'TeX Live 2026, Debian (xu-cheng/texlive-action v3)'
               lualatex --version | head -n 1
