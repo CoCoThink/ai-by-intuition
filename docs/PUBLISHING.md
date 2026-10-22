@@ -10,6 +10,8 @@
 
 ## 新版本（从 v0.2.0 开始）的发布步骤
 
+**许可证：** 教材/PDF 正式采用 [CC BY 4.0](../LICENSE)，Python/工作流采用 [MIT](../scripts/LICENSE)。Release 正文应提供项目来源、版权署名、许可地址以及适用的第三方材料声明。v0.1.0 发布于许可证正式加入前，保留其原始资产与发行日志不覆盖；当前公开授权同时涵盖项目有权授权的 v0.1.0 PDF。
+
 **发布必须明确人工选择版本号和已验收的主分支构建，不再监听所有成功的 push 自动触发。**
 
 1. 从 `main` 的 [Build one PDF book](../.github/workflows/build-latex.yml) 运行 `workflow_dispatch`，取得 **success** 的完整构建运行 ID（`build_run_id`）。PDF 工件有保留期限，过期后必须重新构建。

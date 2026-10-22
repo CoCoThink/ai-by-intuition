@@ -122,7 +122,7 @@ jobs:
           验收：99 页 Tagged PDF、1,472/1,472 MathML-AF 关联、veraPDF PDF/UA-2 零失败，以及源文件、数值与版面检查。
 
           下载：PDF 正式文件、SHA256SUMS 文件校验和、build-audit.zip（机器报告及构建环境）。历史版本不覆盖或重编译替换。
-          机器合规不代表在所有辅助阅读器中的实际体验。项目许可证仍由权利人决定。
+          机器合规不代表在所有辅助阅读器中的实际体验。本项目原创教材与正式 PDF 采用 CC BY 4.0（https://creativecommons.org/licenses/by/4.0/），建议署名 AI by Intuition · CoCoThink and contributors（https://github.com/CoCoThink/ai-by-intuition）；scripts/ Python 工具及 .github/workflows/ 采用 MIT。第三方引用按其自身权利/许可处理。
           EOF
       - name: Create immutable versioned GitHub Release
         env:
