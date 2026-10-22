@@ -1,35 +1,28 @@
-\section{Transformer 怎样真正学会预测下一个 Token？}
+\section{三个位置一起训练：从交叉熵到共享参数更新}
 \label{intro:22c-language-training}
 
-阅读指南提出了一种可大量练习的办法：用原始文字本身作为后续 Token 的答案。
-前面已经学会网络如何计算分数，也学会 \conceptlink{loss}{损失函数}、\conceptlink{backprop}{反向传播} 和\conceptlink{gradient-descent}{梯度下降}。
-把这些工具接起来，就能看清一段训练文本如何变成位置对齐的预测目标、损失和参数更新。
+上一章已经用\textbf{同一组初始参数}得到三个位置的词表概率。
+我们不再只挑最后一行、冻结所有前层参数反复调输出头；
+现在要让整段数据在\textbf{一次前向和一次反向传播}中共同训练完整网络。
 
-\subsection{“错开一格”：一段文本同时产生许多训练目标}
+\subsection{错开一个位置：为什么能从文本自己得到标签？}
 \phantomsection\label{concept:shifted-targets}
 
-令完整 Token 序列为
+完整四个 Token 的 ID 是 $[1,3,4,2]$，
+输入及对应目标错开一位：
 \[
-(t_1,t_2,t_3,t_4)=(1,3,4,2).
+\underbrace{[1,3,4]}_{\text{输入位置 }1,2,3}
+\quad\longrightarrow\quad
+\underbrace{[3,4,2]}_{\text{下一 Token 目标}}.
 \]
-把前面三项作为输入 $X_{\rm id}=(1,3,4)$，
-把后面三项作为目标 $Y_{\rm id}=(3,4,2)$：
-\[
-\begin{array}{c|ccc}
-\text{输入位置 }i&1&2&3\\\hline
-\text{当前 Token}&1&3&4\\
-\text{正确的下一 Token}&3&4&2
-\end{array}
-\]
-这是\textbf{自监督训练}的一种典型形式：标签来自文本本身，
-不需要额外人工为每个位置写一个分类标注。
+同一段训练文本提供三道自监督预测题。
+训练时三个输入 Token 已经给出，却\textbf{不代表}位置 1
+可通过 Attention 读取位置 2 的内容：
+第 $i$ 行能看见的最多是自己的位置及以前的内容。
 
-\subsection{为什么训练时不会偷看未来？}
+\subsection{因果掩码决定可见性，损失掩码决定计分}
 
-假设 $X$ 有三个 Token、形状 $3\times d_{\rm model}$。
-如果允许第一个位置通过 Attention 读到第三个位置，
-就可能让它在预测“第二个 Token”时偷看未来。
-所以解码器使用\conceptlink{causal-mask}{因果掩码}：
+继续使用上一章的独立 Q/K 投影和 $3\times3$ 注意力：
 \[
 C=\begin{bmatrix}
 0&-\infty&-\infty\\
@@ -37,218 +30,176 @@ C=\begin{bmatrix}
 0&0&0
 \end{bmatrix}.
 \]
-把它加到注意力分数上，再\textbf{逐行 Softmax}：
 \begin{equation}
-A=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}+C\right).
+\boxed{A=\softmax\!\left(\frac{QK^\top}{\sqrt3}+C\right).}
 \label{eq:masked-language-model}
 \end{equation}
-第一个 Query 只能看见第一个 Key；第二个可看见前两个；
-第三个可以看见前三个。图中的 $-\infty$ 是数学上的理想化表达，
-实现中会使用正确处理遮蔽位置的数值方案。
+这是\textbf{因果 Mask}，约束“能读取哪些 Token”；
+实际训练中也可能使用\textbf{损失 Mask}，
+只让某些位置参与计分。两种 Mask 不是一回事。
+本章的三个位置\textbf{全部参与损失}，因此平均时除以 $3$。
 
-\begin{idea}
-\noindent\emph{为什么“训练并行”和“生成逐词”并不矛盾？}\par
-
-训练时，整段文本的正确输入都已经给出。
-掩码确保每个位置只使用允许看到的历史信息，
-所以多个位置的预测可以在一次矩阵计算中并行得到。
-
-生成时，下一个真实 Token 还不知道，必须先产生一个，
-把它追加到序列末尾，才能继续生成下一个。
-这叫\textbf{自回归生成}。因此\textbf{训练的并行性}
-不等于解码时所有未来 Token 可以同时确定。
-\end{idea}
-
-\subsection{输出张量和目标怎样对齐？}
+\subsection{所有位置输出同一个词表的五项分数}
 \phantomsection\label{concept:cross-entropy}
 
-设词表大小为 $|\mathcal V|=5$，
-模型输出\conceptlink{logits}{logits}：
+令 $Z=HW_{\rm out}\in\R^{3\times5}$，逐行 Softmax 得到 $\widehat P$。
+一行 logits 是五个未归一化的分数，不是五个独立训练标签；
+每行正确答案是词表中的一个 ID。第 $i$ 行交叉熵为
 \[
-Z\in\R^{3\times5}.
+L_i=-\log \widehat P_{i,y_i},\qquad (y_1,y_2,y_3)=(3,4,2).
 \]
-三行分别给出三个位置对词表中五个候选的分数。
-逐行经过 Softmax，得到预测概率 $P_{i,j}$。
-
-先把上一章的结果接进来：
-上一章用“春天、花”预测下一 Token。
-真实答案是 ID 4“开了”，但初始模型只给它约 $0.059$ 的概率。
-这道题的负对数损失因此是
-\[
-L_{\text{这一题}}=-\log(0.05923)\approx2.826.
-\]
-如果把正确候选的概率提高，损失就会降低；
-因此\textbf{从候选概率到训练信号}，只差一步可以求导的损失。
-
-第 $i$ 个位置的交叉熵损失取\textbf{正确 Token 所在列}：
+三行共享\textbf{同一模型参数}，平均损失是
 \begin{equation}
-L_i=-\log P_{i,t_{i+1}}.
+\boxed{L=-\frac13
+\bigl(\log\widehat P_{1,3}+
+      \log\widehat P_{2,4}+
+      \log\widehat P_{3,2}\bigr).}
+\label{eq:three-position-joint-loss}
 \end{equation}
-整个序列的平均损失是：
-\begin{equation}
-\boxed{L=-\frac{1}{3}\sum_{i=1}^3\log P_{i,t_{i+1}}.}
-\end{equation}
-再看整段文本的平均损失。假设三个位置的正确 Token 概率分别是
-$0.5$、$0.25$、$0.5$，则
+将前一章的初始正确类概率 $(0.261653,\ 0.050747,\ 0.341761)$
+代入，逐位置损失约为
 \[
-L=-\frac{\log0.5+\log0.25+\log0.5}{3}
-=\frac{4\log2}{3}\approx0.924.
+(L_1,L_2,L_3)=(1.340736,\ 2.980911,\ 1.073644),
+\qquad
+\boxed{L_{\rm before}=1.798430}.
 \]
+初始第二位置错得最严重；第三位置已经预测正确，但仍参与优化。
 
-
-\subsection{亲手训练：让“开了”超过“花”}
+\subsection{反向传播：先从全部 logits 求梯度}
 \label{sec:transformer-gradient-step}
 
-沿用上一章输出的隐藏行向量
-$\vect h_{\rm last}^\top=(0.495,2.505)$，
-初始 logits 是 $(0,0.495,0,2.505,0)$。
-正确 ID 4 的概率只有约 $0.059$，而错误 ID 3 为 $0.725$。
-令真实 One-hot 标签为 $\vect y_{\rm target}^\top=(0,0,0,0,1)$，
-交叉熵的 logit 梯度为
-\[
-\boxed{\frac{\partial L}{\partial\vect z^\top}
-=\vect p^\top-\vect y_{\rm target}^\top
-\approx(0.059,0.097,0.059,0.725,-0.941).}
-\]
-可见错误类别 ID 3 要往下调，正确类别 ID 4 要往上调。
-因为 $\vect z^\top=\vect h_{\rm last}^\top W_{\rm vocab}$，
-词表权重梯度是外积：
+对\textbf{平均}交叉熵，每行的五类梯度必须除以 $3$：
 \begin{equation}
-\boxed{\frac{\partial L}{\partial W_{\rm vocab}}
-=\vect h_{\rm last}(\vect p-\vect y_{\rm target})^\top
-\in\R^{2\times5}.}
+\boxed{\frac{\partial L}{\partial Z_{i,:}}
+=\frac13\bigl(\widehat P_{i,:}
+-\operatorname{onehot}(y_i)\bigr).}
+\label{eq:three-position-logit-grad}
 \end{equation}
+例如第二行正确类别 ID 4 的 logit 梯度为
+$(0.050747-1)/3\approx-0.316418$，而它误选的
+ID 3 列梯度为 $0.676124/3\approx0.225375$。
+负梯度方向会提高正确类相对分数，不等于手工指定新的概率。
 
-\begin{example}
-取学习率 $\eta=0.1$，同时更新输出头五列。第一步
-$W\leftarrow W-\eta\partial L/\partial W$，
-其中错误的 ID 3 列与正确的 ID 4 列分别变为
+输出头共享矩阵 $W_{\rm out}:3\times5$，
+因此它的梯度同时累加\textbf{三个位置}的贡献：
+\[
+\frac{\partial L}{\partial W_{\rm out}}
+=\underbrace{H^\top}_{3\times3}
+\underbrace{\frac{\partial L}{\partial Z}}_{3\times5}
+\quad(3\times5).
+\]
+依照统一参数，数值为
+\[
+\frac{\partial L}{\partial W_{\rm out}}
+\approx\begin{bmatrix}
+0.1211&0.2472&0.1153&-0.8595&0.3760\\
+0.0303&0.0404&0.1355&0.4251&-0.6313\\
+0.0543&-0.0182&-0.4674&0.3902&0.0411
+\end{bmatrix}.
+\]
+例如 $(W_{\rm out})_{0,3}$ 的原值 $0.2$，
+学习率为 $\eta=0.04$ 时会更新为
+$0.2-0.04(-0.859532)\approx0.23438$。
+\textbf{这里只展示一个元素以便手算，不代表只更新这一个元素。}
+
+\subsection{梯度能走回 Query、Key、Value、Norm、FFN 和词向量吗？}
+
+误差经输出头先传回隐藏状态 $H$：
+$G_H=G_ZW_{\rm out}^\top$。
+沿第二条残差分成恒等通路和 FFN 通路，
+FFN 的权重梯度、ReLU 传导与第二次 LayerNorm
+又把误差传回 $X_{\rm att}$；
+沿第一条残差、输出投影与 $AV$ 则可继续到 Value，
+并沿 Softmax 与 $QK^\top$ 返回 Query、Key。
+最后，经第一层 LayerNorm 回到 $X=E+P$，
+每个出现过的 Token ID 汇总梯度到 Embedding 行。
+
+这条链的非零数值可以核对：
 \[
 \begin{aligned}
-W_{:,3}&:(0,1)^\top\ \mapsto\ (-0.0359,0.8183)^\top,\\
-W_{:,4}&:(0,0)^\top\ \mapsto\ (0.0466,0.2357)^\top.
+\bigl(\nabla_{W_Q}L\bigr)_{0,0}&\approx 0.014711,&
+\bigl(\nabla_{W_K}L\bigr)_{0,0}&\approx 0.005830,\\
+\bigl(\nabla_{W_V}L\bigr)_{0,0}&\approx-0.119632,&
+\bigl(\nabla_{W_O}L\bigr)_{0,0}&\approx-0.135640.
 \end{aligned}
 \]
-每次重新计算概率和梯度，得到以下数值：
+输入中的三个 Token ID 为 $1,3,4$，对应的梯度行是
+\[
+\begin{aligned}
+\nabla_{E[1]}L&\approx(0.00188,-0.44502,0.11176),\\
+\nabla_{E[3]}L&\approx(0.25764,0.52483,-0.29562),\\
+\nabla_{E[4]}L&\approx(-0.01061,0.02563,-0.06889).
+\end{aligned}
+\]
+比如词“花”向量第一个坐标从 $-0.30$
+更新为 $-0.30-0.04(0.257642)\approx-0.31031$。
+ID 2 是本次的\textbf{目标 Token}，但没有作为输入出现，
+所以它在本次迭代的\textbf{输入 Embedding 梯度为零}；
+这并不意味着 ID 2 的输出头列没有梯度。
+位置向量 $P$ 的梯度也来自 $X=E+P$ 的加法支路。
+本教学模型把 LayerNorm 的 $\gamma=1$、$\beta=0$ 固定，
+所以\textbf{不会更新它们}；有可学习仿射参数的常规 LayerNorm 则可更新。
+
+\subsection{全部参数同时更新，再重新前向计算}
+
+现在从\textbf{同一组旧参数}收集全部梯度，
+对 $E,P,W_Q,W_K,W_V,W_O,W_{\rm up},W_{\rm down},W_{\rm out}$
+同时执行一次 SGD：
+\[
+\theta_{\rm new}=\theta_{\rm old}-0.04\nabla_\theta L.
+\]
+不能边算反向梯度边把后面的旧权重替换为新权重；
+同一个损失的梯度必须在同一旧参数状态下求完。
+重新执行\textbf{完整的}前向计算，而不是固定旧 Attention
+或旧隐藏向量，结果如下：
+
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabular}{@{}ccccc@{}}\toprule
-更新次数 & $p(\text{花})$ & $p(\text{开了})$ & 损失 $-\log p_4$ & 预测\\\midrule
-0 & 0.725 & 0.059 & 2.826 & 花（错）\\
-1 & 0.590 & 0.143 & 1.947 & 花（错）\\
-2 & 0.445 & 0.276 & 1.286 & 花（错）\\
-3 & 0.321 & 0.427 & 0.851 & 开了（对）\\\bottomrule
-\end{tabular}
+\begin{tabularx}{\linewidth}{@{}p{25mm}p{23mm}p{27mm}X@{}}
+\toprule
+预测位置及目标 & 更新前正确类概率 & 更新后正确类概率 & 更新前/后损失\\\midrule
+位置 1：ID 3“花” & $0.261653$ & $0.326865$ & $1.340736\to1.118208$\\
+位置 2：ID 4“开了” & $0.050747$ & $0.068548$ & $2.980911\to2.680220$\\
+位置 3：ID 2“。” & $0.341761$ & $0.354976$ & $1.073644\to1.035704$\\
+\bottomrule
+\end{tabularx}
 \end{center}
-\end{example}
-三次更新后，“开了”的概率超过“花”。这一轮计算固定隐藏状态，只训练输出头。
-
-\subsection{梯度怎样从输出头传回 FFN 和 Embedding？}
-输出头的梯度还可以继续往前传播。
-用\textbf{初始}的输出头权重，隐藏状态的梯度是
 \[
-\underbrace{\frac{\partial L}{\partial\vect h_{\rm last}^\top}}_{1\times2}
-=(\vect p-\vect y_{\rm target})^\top W_{\rm vocab}^\top
-\approx\boxed{(0.097,0.725)}.
+\boxed{L_{\rm before}=1.798430\quad\longrightarrow\quad
+L_{\rm after}=1.611377.}
 \]
-本例 FFN 为 $0.5\relu$，最后位置两个特征都为正，
-于是 $X_{{\rm block},2,:}=1.5X_{{\rm att},2,:}$，
-反传到 FFN 输入（含残差）的梯度是
-\[
-\frac{\partial L}{\partial X_{{\rm att},2,:}}
-=1.5(0.097,0.725)\approx\boxed{(0.146,1.088)}.
-\]
-这份梯度既能沿残差恒等支路回到输入 Embedding，
-也会经过 Attention 的 Value 读出与 Query/Key Softmax 的分数路径。
-多条路径对同一参数的梯度需要\textbf{求和}，
-才能更新 FFN、Q/K/V 和相关 Embedding 行。
-\subsection{同时更新 FFN 和 Value 投影}
+这一步三个位置正确类概率都上升，平均损失下降。
+但并非所有贪心预测都立刻正确：
+更新后位置 1 预测已变成“花”，位置 2 仍偏向“花”而不是“开了”，
+位置 3 仍预测“。”；\textbf{优化一步不等于学会所有题。}
 
-下面回到初始参数，从同一损失出发，计算 FFN 下投影 $W_{\rm down}$ 和 Attention 的 $W_V$ 的更新。
-这一轮与前面只训练输出头的三次更新相互独立；两组梯度都依据更新前的参数计算。
+\begin{warningbox}
+上述全部参数更新是三位置\textbf{共享梯度}的真实数值实验；
+不是“先只更新输出头、再拿不同模型的中层梯度”的拼贴。
+每个矩阵来自统一 NumPy 参考实现。它在一个微型训练序列上损失降低，
+并不能作为新句子或真实语言模型泛化能力的证据。
+\end{warningbox}
 
-第二个位置在残差后为
-$u=(0.330,1.670)$，ReLU 后仍是 $u$；
-此时 $W_{\rm down}=0.5I_2$，
-$h=u+\relu(u)W_{\rm down}=(0.495,2.505)$。
-从词表头反传的梯度
-$g_h=\partial L/\partial h=(0.09716,0.72516)$。
-因此下投影参数梯度为
-\[
-\frac{\partial L}{\partial W_{\rm down}}
-=\underbrace{u^\top}_{2\times1}
-\underbrace{g_h}_{1\times2}
-\approx
-\begin{bmatrix}
-0.03206&0.23930\\
-0.16226&1.21101
-\end{bmatrix}.
-\]
-为了继续传回 Attention，FFN 加残差对 $u$ 的导数
-在本例两个正分量处是 $I_2+W_{\rm down}=1.5I_2$，
-所以 $g_u=1.5g_h\approx(0.14574,1.08773)$。
-上一章给出的注意力行是 $a=(0.330,0.670)$，
-原输入矩阵 $X=I_2$；保持 Q/K 不变，
-$O_{\rm att,last}=aXW_V=aW_V$。
-链式法则给出 Value 投影的参数梯度：
-\[
-\frac{\partial L}{\partial W_V}
-=\underbrace{a^\top}_{2\times1}
-\underbrace{g_u}_{1\times2}
-\approx
-\begin{bmatrix}
-0.04810&0.35895\\
-0.09765&0.72878
-\end{bmatrix}.
-\]
-让两组矩阵\textbf{同时}按学习率 $0.1$ 更新，
-重新前向计算最后位置（所有其它矩阵不变），得到
-\[
-W_V'\approx\begin{bmatrix}
-0.99519&-0.03590\\-0.00976&0.92712
-\end{bmatrix},\quad
-W_{\rm down}'\approx\begin{bmatrix}
-0.49679&-0.02393\\-0.01623&0.37890
-\end{bmatrix}.
-\]
-\[
-h_{\rm last}'\approx(0.45566,2.21140),\qquad
-p_{\rm true}':0.05923\longrightarrow\boxed{0.07296},
-\qquad L:2.826\longrightarrow\boxed{2.618}.
-\]
-这一步修改了\textbf{两组中间层权重}，损失随之降低。
-沿着同一计算图，还可以继续求出 Q/K 和 Embedding 的梯度。
+\subsection{怎样独立检查数值不是手工凑的？}
 
-\subsection{哪些权重会因此而更新？}
+运行仓库根目录的 \texttt{python3 scripts/teaching\_reference.py --json}，
+读取三行 \texttt{position\_losses\_before}、
+\texttt{position\_losses\_after}、\texttt{gradient\_norms}
+与 \texttt{states\_before}。
+脚本的反向传播使用矩阵链式法则，
+并用每个参数张量的中心有限差分抽样进行数值核验。
+下游真正部署的语言模型会有不同宽度、层数、归一化及更多参数，
+但本章的共享训练原则不会改变。
 
-这份损失从词表输出头往回，经过每一层 Transformer Block，
-一路传到 Q/K/V 投影、FFN、归一化参数和 Embedding 表：
-\[
-\text{损失}\ \longrightarrow\
-\text{反向传播}\ \longrightarrow\
-\nabla_{\theta}L\
-\longrightarrow\
-\text{优化器更新 }\theta.
-\]
-$\theta$ 表示全部参与训练的可学习参数；
-实际是否更新某组参数，取决于它是否被冻结、是否参与计算以及训练设置。
-同一参数在多个 Token 位置上被复用，
-它的梯度要汇总这些路径的贡献。
-
-\subsection{训练时为什么有时需要忽略一些 Token？}
-
-真实批次可能含有填充（padding）或不需要参与训练的提示片段。
-因此实现中常定义\textbf{损失掩码}：仅对选定的目标位置累计损失。
-它与\textbf{因果注意力掩码}不是一回事：
-前者决定哪里\textbf{计分}，后者决定哪里\textbf{可读取}。
-
-
-
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22c-language-training}单位置正确 Token 概率为 $0.2$ 时，交叉熵损失约是多少？\quad{\footnotesize\hyperref[answer:22c-language-training]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:22c-language-training}
+当三个位置都计入平均交叉熵时，为什么每行 logit 梯度含有 $1/3$？
+第一次更新后第二位置是否已经贪心预测正确？
+\quad{\footnotesize\hyperref[answer:22c-language-training]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-对于本书的自回归训练任务，\textbf{错位标签}提供答案，\textbf{因果掩码}限制可见信息，
-\textbf{逐位置概率和交叉熵}定义误差，\textbf{反向传播}推动参数学习。
-但训练结束后，用户不会提供未来文本作为标签：
-下一章研究没有标准答案在旁边时，模型怎样一步步生成自己的回答。
+三个位置同时提供训练信号，所有共享参数沿完整图累积梯度，
+在同一旧参数状态下统一更新。
+现在整条“ID $\to$ 概率 $\to$ 损失 $\to$ 梯度 $\to$ 再预测”已可复算。
+下一章研究：没有给出未来标准答案时，模型如何自回归地产生文字？
 \end{conclusion}
