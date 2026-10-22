@@ -43,6 +43,35 @@
 分类交叉熵已在前面的三分类例子中推导；
 Attention 和因果掩码将在后面解释。
 
+\subsection{先看全图：Attention 是网络内部的上下文读取步骤}
+
+可以先把整套语言模型理解为\textbf{一个可训练的大神经网络}：
+ID 查表后，每个位置先有自己的向量；
+Attention 让向量读到此前可见的其他 Token，
+再经逐位置 FFN、输出头，得到词表候选分数。
+这里的“给输入加上下文”指\textbf{模型内部的计算模块}，
+不是额外联网插件；它不会自行读取外部私有资料。
+训练还要在右侧用正确 Token 算损失，反向更新前面所有可训练权重。
+
+\par\medskip
+\tagstructbegin{tag=Figure,alttext={语言模型形状流程：三枚 Token ID 查五乘三的词嵌入表，形成三乘三向量；上下文注意力和逐位置前馈层维持三乘三形状，输出头映射为三乘五 logits，再转换为三个位置各五类的概率。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=3mm,
+ n/.style={draw=linegray,rounded corners=2pt,fill=white,align=center,
+ font=\sffamily\footnotesize,minimum height=14mm,minimum width=25mm,inner sep=1mm}]
+\node[n,fill=blueback] (t) {Token ID\\ $3$ 个整数};
+\node[n,right=of t] (e) {Embedding\\ $3\times3$};
+\node[n,right=of e,fill=greenback] (a) {Attention\\ $3\times3$};
+\node[n,right=of a] (f) {FFN\\ $3\times3$};
+\node[n,right=of f,fill=orangeback] (z) {输出头\\ $3\times5$};
+\foreach \a/\b in {t/e,e/a,a/f,f/z}{\draw[->,blue,thick] (\a.east)--(\b.west);}
+\node[font=\scriptsize,text=muted,below=2mm of a] {由前文注入上下文};
+\end{tikzpicture}
+\captionof{figure}{语言预测任务的形状地图：词表概率与训练损失接在输出头之后}
+\label{fig:token-ffn-output-pipeline}
+\end{center}
+\tagstructend
+
 \subsection{先约定输入，再约定预测的输出}
 
 \textbf{输入：}把已知文字表示成可计算的向量。
