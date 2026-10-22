@@ -1,0 +1,93 @@
+\section{面对新模型与新缩写，怎么判断它值不值得学？}
+\label{intro:23e-tech-judgement}
+
+我们已从语言模型走到系统工具、部署，再回看 RoPE、MoE、GQA 等架构。
+技术名称不断变化，但读者不必为了追赶每个缩写而重新背一遍名词表。
+更重要的是拿到一个新技术时，能独立判断\textbf{它解决了哪个瓶颈，
+用什么证据证明，付出了什么代价，以及哪些条件下会失效}。
+
+\subsection{先把“改进”分到五层，而不是混在一起}
+
+\begin{enumerate}
+\item \textbf{表示层：}Tokenizer、Embedding、位置表示如何编码输入？
+改动会影响形状、长度或位置感知，不能直接等同于回答更准确。
+\item \textbf{模型计算层：}Attention、FFN、MoE、归一化与缓存改变什么？
+区分训练 FLOPs、解码延迟、KV 内存和总参数量。
+\item \textbf{训练与反馈层：}预训练、SFT、偏好优化、RLVR 是否修改权重？
+数据、奖励与评测目标一致吗？
+\item \textbf{推理策略层：}采样、验证、搜索、上下文示例是否使用额外计算，
+但通常保持同一权重？
+\item \textbf{系统层：}RAG、工具、MCP、Workflow、Agent/A2A 是怎样连接
+资料与授权动作的？安全责任归谁？
+\end{enumerate}
+例如“模型接入了新的报表搜索工具”，首先是\textbf{系统与证据来源}变化；
+不能说这证明基础模型的 Transformer 宽度更大。
+
+\subsection{Scaling Laws：更多参数一定更聪明吗？}
+
+经典缩放规律研究在一定实验范围内发现：
+语言模型的\textbf{验证损失}常随参数量、训练 Token 与计算预算
+呈较规律的变化趋势。Kaplan 等（2020）讨论了这些关系，
+见 \href{https://arxiv.org/abs/2001.08361}{Scaling Laws for Neural Language Models}。
+Hoffmann 等（2022）进一步研究给定训练计算量时
+\textbf{模型参数和训练 Token 应如何分配}，见
+\href{https://arxiv.org/abs/2203.15556}{Training Compute-Optimal Large Language Models}。
+
+这里的词语是\textbf{经验规律}，不是“参数翻倍就必然答对某道题”的定理。
+参数、数据、算力与质量互相制约；
+评测分布、推理预算以及是否有工具，也会改变最终结果。
+规模有价值，但不能替代任务定义、数据质量和可靠性验证。
+
+\subsection{Bitter Lesson：计算与通用方法为何常被重视？}
+
+Richard Sutton 在
+\href{http://www.incompleteideas.net/IncIdeas/BitterLesson.html}{The Bitter Lesson}
+中主张，长期来看，能够借助增长的计算规模进行学习或搜索的通用方法，
+往往比大量手写领域规则更有扩展性。
+这是一种关于研究历史与方法选择的\textbf{经验观点}，
+不是针对每一个数据量、预算和应用场景的严格证明。
+在受限硬件、特定安全规则和明确工作流中，
+手写约束与专家知识仍然可以非常重要。
+第一部分问“为什么规则难以写尽”，在这里得到了一次回响：
+\textbf{让系统学会一般模式，与让应用遵守明确规则，并不矛盾。}
+
+\subsection{拿到宣传语，先做一次拆解}
+
+假设听到一句：“新注意力让上下文扩大十倍，速度提升十倍，
+因此所有业务的答案都会更准确。”
+先要求补齐缺失的证据：
+\begin{itemize}
+\item \textbf{比较对象：}与哪一个基线、哪一种实现、哪一个硬件平台比较？
+\item \textbf{指标定义：}更快指首 Token 延迟、吞吐还是总运行时间？
+上下文变长不自动等于能准确找到远处证据。
+\item \textbf{质量代价：}长程检索、普通对话、代码等任务是否都测过？
+有没有关键回归？
+\item \textbf{实验条件：}输入长度、并发数、精度、缓存策略和训练量是否相同？
+\item \textbf{应用边界：}引用核查、工具权限、失败处理有没有另外验证？
+\end{itemize}
+一项新技术可能主要减少显存，
+另一项主要增加训练期活跃参数，
+第三项主要减少人为操作；\textbf{三者不能只按同一个“更先进”排名}。
+
+\subsection{把全书压缩成五道可以反复使用的问题}
+
+读完任何新的架构、训练算法或 Agent 系统，试着回答：
+\begin{enumerate}
+\item 上一个方法\textbf{哪一步不够用}，能否构造反例？
+\item 新方法的\textbf{输入、输出、形状或调用协议}是什么？
+\item 有什么可复算的\textbf{数字、测试或可追溯来源}？
+\item 哪一项\textbf{成本或风险}被转移到别处？
+\item 什么情形下应该\textbf{退回更简单的方法}？
+\end{enumerate}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:23e-tech-judgement}
+如果一种新方法把 KV Cache 元素减少一半，是否就证明回答质量一定提升？
+至少还要测哪两类指标？
+\quad{\footnotesize\hyperref[answer:23e-tech-judgement]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+从标量训练到 Transformer，再到工具系统，核心方法始终是
+\textbf{明确问题、给出可运行的运算或接口、检查结果与代价}。
+面对新缩写，不妨先判断它作用在哪一层，再决定是否需要学它的细节。
+\end{conclusion}

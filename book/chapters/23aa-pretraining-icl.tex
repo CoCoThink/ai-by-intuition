@@ -1,0 +1,98 @@
+\section{预训练已经学会续写，为什么还能临时学会新任务？}
+\label{intro:23aa-pretraining-icl}
+\phantomsection\label{concept:pretraining}
+\phantomsection\label{concept:in-context-learning}
+
+上一部分我们用三维模型完成了“下一 Token”训练与生成，
+又发现真实 GPT 需要更多数据、宽度和计算。
+可是用户给它一个新任务时，未必会先提供训练集并运行梯度下降：
+它为何能根据几条示例就模仿任务格式？
+
+\subsection{预训练扩大的是统计经验，不是写死的知识清单}
+
+把许多文档转成 Token 序列，使用因果 Mask，
+每个位置尝试预测后续 Token，再对大量位置和样本的损失做优化，
+这就是自回归\textbf{预训练}的一种基本训练目标：
+\[
+L_{\rm pretrain}(\theta)=
+-\frac1N\sum_{(x,y)}\log p_\theta(y\mid x).
+\]
+$x$ 表示位置之前的可见文本，$y$ 表示下一 Token；
+$N$ 是参与计分的训练位置总数，并非文档数。
+它和本书的三位置交叉熵\textbf{在目标形式上相同}；
+区别在数据范围、训练预算与模型容量，而不是突然改成另一种数学魔法。
+
+大规模训练会调整 Embedding、Attention、FFN 等参数，
+使模型对训练分布中的多种语言模式形成统计能力。
+它可以帮助模型迁移到新文本，但\textbf{并不保证事实正确、持续更新或理解每一条规则}。
+
+\subsection{零样本、少样本：能在不改权重时给出示例吗？}
+\phantomsection\label{concept:few-shot}
+
+沿用下一章要处理的\textbf{季度运营报告}任务。
+先提出一个纯文本格式要求：“阅读指标，输出季度与收入，附原文出处”；
+这是\textbf{零样本提示}（Zero-shot）的一种形式。
+再在 Prompt 中给出两条例子：
+
+\begin{quote}
+输入：一季度收入为 100 百万元。\\
+输出：季度=Q1；收入=100；单位=百万元。\\
+输入：二季度收入为 120 百万元。\\
+输出：季度=Q2；收入=120；单位=百万元。
+\end{quote}
+
+然后输入“第三季度收入为 132 百万元”，
+希望模型按示例输出相同格式。
+这叫\textbf{上下文学习}（In-context Learning, ICL）中
+常见的 Few-shot（少样本）使用方式。
+它\textbf{不是把这两条文本变成梯度去更新网络}：
+预测时模型参数 $\theta$ 保持不变，
+变化的是作为条件的 Prompt：
+\[
+p_\theta(y\mid\underbrace{\text{任务说明、示例、新输入}}_{\text{上下文}}).
+\]
+模型可以模仿格式，也可能漏掉单位或编造不存在的来源；
+示例只是条件，不是正确性的保证。
+
+\subsection{一条清楚的边界：上下文 vs 权重 vs 外部资料}
+
+\begin{itemize}
+\item \textbf{预训练/微调}：计算损失和梯度，改变权重 $\theta$；
+持久改变模型参数，但更新成本与风险高。
+\item \textbf{ICL/Prompt}：只改变本次上下文，不改变 $\theta$；
+会受到上下文长度、顺序、示例质量影响。
+\item \textbf{RAG}：从系统允许的数据中检索片段并放入上下文；
+它也通常不改模型权重，来源与准确性仍须核验。
+\end{itemize}
+尤其要防止误解：从几条新示例模仿格式，不代表模型在本次推理中
+运行了与预训练相同的参数优化步骤。
+
+\subsection{为什么大规模预训练也不是万能钥匙？}
+
+例如训练文本大多只讨论到某一日期，
+模型参数里没有自动更新的未来报表。
+即使见过财务术语，也不能凭语言统计
+代替\textbf{当前文件读取、来源核对与准确计算}。
+Few-shot 能让某些任务在不更新参数的情况下改善表现，
+却不是“给一个例子就必然学会”的定律。
+经典研究可参见 Brown 等（2020），
+\href{https://arxiv.org/abs/2005.14165}{Language Models are Few-Shot Learners}；
+其中的实验结论有其模型、数据和评测范围。
+
+\begin{warningbox}
+本节 Q1/Q2/Q3 的 100、120、132 是\textbf{人为构造的教学数字}，
+并非任何公司的真实财报，不能当成对外披露的数据或引用来源。
+如果用于真实季度报告比较，必须读取原文件并记录页码或表格来源。
+\end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:23aa-pretraining-icl}
+在 Prompt 中增加两条示例，与用这些示例做一次 SFT 更新，
+哪一种会改变模型参数？两者都能保证读到最新季度报表吗？
+\quad{\footnotesize\hyperref[answer:23aa-pretraining-icl]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+预训练用海量预测题改变权重；ICL 利用已训练模型与当前上下文，
+通常不改变权重。下一道缺口：
+即使模型能模仿任务格式，我们又怎样让它更稳定地遵守指令与评价标准？
+\end{conclusion}
