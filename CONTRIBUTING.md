@@ -31,7 +31,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 不要单凭 `pdfinfo` 的 `Tagged:` 行宣布无障碍合规：最后一步还会检查 PDF 结构树、公式及图像节点、目录、正文内容与文字边界。相关背景见 [无障碍现状和验收清单](docs/ACCESSIBILITY.md)。
 
-请勿逐章提交 PDF，也勿提交 LaTeX 中间文件。CI 会发布**一个**正式 PDF 构建产物。仅编辑 Markdown 文档时，工作流不会自动触发；可在 GitHub Actions 手动运行 `workflow_dispatch`。
+请勿逐章提交 PDF，也勿提交 LaTeX 中间文件。CI 会发布**一个**正式 PDF 构建产物。仅编辑 Markdown 文档时会运行轻量的站内 Markdown 链接检查，不会强制编译整本书。所有 `scripts/**/*.py` 验证脚本改动将触发完整 PDF CI；也可在 GitHub Actions 手动运行 `workflow_dispatch`。依赖固定与构建审计见 [构建复现说明](docs/BUILD-REPRODUCIBILITY.md)，出版版本流程见 [出版检查清单](docs/PUBLISHING.md)。
 
 ## 图形与内容验收
 

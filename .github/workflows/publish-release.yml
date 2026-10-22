@@ -1,0 +1,98 @@
+name: Publish validated volume
+
+on:
+  workflow_run:
+    workflows:
+      - Build one PDF book
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  publish-first-release:
+    # Never grant write access or release assets for PR/fork builds.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Download validated PDF from the successful full build
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: ai-by-intuition-volume-01
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist
+      - name: Download validation audit from the same build
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: pdfua2-machine-audit
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist/audit
+      - name: Confirm audit consistency and write SHA-256 manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          folder = Path("dist")
+          pdf = folder / "AI-by-Intuition-Volume-01.pdf"
+          assert pdf.is_file() and pdf.stat().st_size > 1000000, "Missing validated PDF"
+          json_file = next(folder.rglob("mathml-af-summary.json"))
+          summary = json.loads(json_file.read_text())
+          assert summary["pages"] == 99, summary
+          assert summary["formulas"] >= 1000 and summary["formulas"] == summary["associations"], summary
+          xml_file = next(folder.rglob("verapdf-pdfua2.xml"))
+          root = ET.parse(xml_file).getroot()
+          reports = [n for n in root.iter() if n.tag.rsplit("}", 1)[-1] == "validationReport"]
+          assert len(reports) == 1 and reports[0].get("isCompliant") == "true", "PDF/UA-2 report not compliant"
+          details = next(n for n in reports[0] if n.tag.rsplit("}", 1)[-1] == "details")
+          assert details.get("failedRules") == "0" and details.get("failedChecks") == "0", details.attrib
+          for name in ("texlive-environment.txt", "runner-environment.txt", "verapdf-image.txt"):
+              assert any(folder.rglob(name)), f"Missing environment audit: {name}"
+          print("Release audit verified; PDF + MathML + veraPDF + environment present")
+          PY
+          cd dist
+          sha256sum AI-by-Intuition-Volume-01.pdf > SHA256SUMS
+      - name: Write version notes
+        run: |
+          cat > dist/RELEASE-NOTES.md <<EOF
+          # AI by Intuition · Volume 01 · v0.1.0
+
+          中文教材首个版本化 PDF 归档。来源提交：${{ github.event.workflow_run.head_sha }}。
+
+          验收：全量 GitHub Actions 编译；99 页 Tagged PDF；1,472 份公式 MathML-AF 关联；veraPDF 1.30.2 PDF/UA-2 零失败；页面及数值回归。验收工件和镜像/环境记录随 PDF 一同存档。
+
+          构建证据：${{ github.event.workflow_run.html_url }}
+
+          发布资产包括 PDF、SHA256SUMS、veraPDF XML、MathML JSON、构建环境清单。项目尚未设定再授权许可，不能据此推定可自由二次发布。自动合规不代表特定屏读软件的体验保证。
+          EOF
+      - name: Create first release once without overwriting historical assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view v0.1.0 >/dev/null 2>&1; then
+            echo '::notice::v0.1.0 already published; historical release left unchanged'
+            exit 0
+          fi
+          gh release create v0.1.0 \
+            dist/AI-by-Intuition-Volume-01.pdf \
+            dist/SHA256SUMS \
+            dist/RELEASE-NOTES.md \
+            dist/audit/* \
+            --target "${{ github.event.workflow_run.head_sha }}" \
+            --title 'AI by Intuition · Volume 01 · v0.1.0' \
+            --notes-file dist/RELEASE-NOTES.md \
+            --latest

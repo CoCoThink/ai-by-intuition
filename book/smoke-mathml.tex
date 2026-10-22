@@ -1,6 +1,7 @@
 % !TeX program = lualatex
-% Isolated MathML experiment; the production book remains on classic math fonts
-% until LuaMML's amsmath integration is confirmed for this worked derivation.
+% Nonblocking compatibility reproduction: native amsmath align* currently fails
+% with a LuaMML assertion. Production already uses unicode-math + mathml-AF,
+% with aligned wrapped in display/equation for stable MathML associations.
 \DocumentMetadata{
   lang=zh-CN,
   tagging=on,
