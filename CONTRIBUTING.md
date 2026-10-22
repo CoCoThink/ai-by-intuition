@@ -15,7 +15,7 @@
 
 ## 目录与编译
 
-新增教程文件写入 `book/chapters/NN-name.tex`，并将 `\input{chapters/NN-name}` 加入 `book/main.tex` 的正确阅读顺序。主线目前为七个必读部分、31 个显示章节，CNN/ViT 与联想记忆分别位于第八、九选读部分；附录 A–E 收录公式、练习、术语、答案及来源。改变章节顺序时需同步 `scripts/validate_book.py` 和随堂自测答案顺序。
+新增教程文件写入 `book/chapters/NN-name.tex`，并将 `\input{chapters/NN-name}` 加入 `book/main.tex` 的正确阅读顺序。主线目前为七个必读部分、32 个显示章节，CNN/ViT 与联想记忆分别位于第八、九选读部分；附录 A–E 收录公式、练习、术语、答案及来源。改变章节顺序时需同步 `scripts/validate_book.py` 和随堂自测答案顺序。
 
 全书唯一 PDF 由 `book/main.tex` 使用 **TeX Live 2026 + LuaLaTeX** 构建。安装 `latexmk`、Noto 中文/西文字体、`poppler-utils`、相应 TeX Live 宏包后，从仓库根目录运行：
 
