@@ -639,6 +639,32 @@ def validate_pdf(path: Path) -> None:
                 fail(f"Text outside PDF page bounds on page {pageno}: {vals}")
     if words_checked < 1000:
         fail(f"Suspiciously few PDF words checked: {words_checked}")
+    # Source-level hyperlinks may have existing labels but resolve incorrectly
+    # once TeX has built bookmarks and named destinations. Audit the actual PDF.
+    named_destinations = reader.named_destinations
+    internal_links = 0
+    external_links = 0
+    for page_index, page in enumerate(reader.pages, 1):
+        for annotation in page.get("/Annots", []):
+            annot = annotation.get_object()
+            if annot.get("/Subtype") != "/Link":
+                continue
+            action = annot.get("/A")
+            if not action:
+                continue
+            kind = action.get("/S")
+            if kind == "/GoTo":
+                internal_links += 1
+                target = action.get("/D")
+                if isinstance(target, str) and target not in named_destinations:
+                    fail(f"Unresolved PDF navigation on page {page_index}: {target}")
+            elif kind == "/URI":
+                external_links += 1
+    if internal_links < len(REQUIRED) * 2 or not external_links:
+        fail(f"Suspiciously few PDF links: {internal_links} internal, "
+             f"{external_links} external")
+    print(f"Navigation QA: {internal_links} internal links resolved against "
+          f"{len(named_destinations)} named destinations; {external_links} external links")
     print(f"PDF QA passed: {len(pages)-1} pages (tagged={tagged}); text boxes stay within page bounds")
 
 
