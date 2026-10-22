@@ -19,7 +19,7 @@ PARTS = [
     "把许多数一起算，再让文字进入计算",
     "让词与词交换信息",
     "组装、训练并使用 Transformer",
-    "改进模型并构建可靠应用",
+    "从语言模型到助手，再判断架构变化",
     "选读专题一：从 CNN 到视觉 Transformer",
     "选读专题二：联想记忆与高维检索",
 ]
@@ -117,6 +117,12 @@ def test_numeric_examples() -> None:
              .08257257/3, .0954348/3, .09512195/3,
              .67612411/3, (.05074656916466208 - 1)/3
          ])
+    # Fictitious reporting task: check source values and quarter-on-quarter rates.
+    q1, q2, q3 = 100, 120, 132
+    assert math.isclose((q2 - q1) / q1, 0.20)
+    assert math.isclose((q3 - q2) / q2, 0.10)
+    includes(chapter("23d-agent-systems"),
+             '"revenue":132', "fictitious Q3 tool result")
     # Hand-checked two-step Adam example: gradients 2, 1; beta1=beta2=.5.
     m = v = 0.0
     moments = []
