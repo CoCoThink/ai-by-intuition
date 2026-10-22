@@ -75,6 +75,7 @@ REQUIRED = [
     "25-integrated-practice",
     "25b-modern-practice",
     "15-practice",
+    "24e-pytorch-lab",
     "24-lexicon",
     "24b-modern-lexicon",
     "24c-concept-map",
@@ -238,10 +239,25 @@ def validate_source() -> None:
     includes(sources["23d-agent-systems"], "A2A", "protocol distinctions")
     includes(sources["23e-tech-judgement"], "Scaling Laws", "innovation framework")
     includes(sources["22c-language-training"], "0.25764", "shared embedding gradient")
+    includes(sources["10-mlp"], r"\label{eq:mlp-l-layer-row}", "L-layer network")
+    includes(sources["20b-task-contract"], r"\label{fig:token-ffn-output-pipeline}", "token-to-vocabulary diagram")
+    includes(sources["22b-token-to-output"], r"\input{figures/attention-weight-heatmap}", "attention weight heatmap")
+    includes(sources["22b-token-to-output"], r"\input{figures/three-position-probabilities}", "vocabulary probability bars")
+    includes(sources["22c-language-training"], r"\input{figures/training-20-step-loss}", "20-step loss curve")
+    includes(sources["23a-from-toy-to-gpt"], r"\label{eq:toy-99-parameters}", "99 parameter count")
+    includes(sources["24e-pytorch-lab"], r"\verbatiminput{../scripts/pytorch_starter.py}", "standalone PyTorch lab")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
     includes(sources["20a-tokenizer"], "BPE", "subword example")
+    # The optional Torch companion is syntax-checked without requiring Torch at source-QA time.
+    import ast
+    for script in ("pytorch_starter.py", "teaching_trace.py"):
+        script_path = ROOT / "scripts" / script
+        if not script_path.is_file():
+            fail(f"Missing P1 reproducibility script: {script}")
+        ast.parse(script_path.read_text(encoding="utf-8"))
+    includes(sources["24e-pytorch-lab"], "1.798430", "initial loss in lab")
     # V2 main reading path: 32 displayed numbered sections across seven core parts.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
@@ -285,6 +301,9 @@ def validate_source() -> None:
         ("embedding-lookup", "20-embeddings"),
         ("embedding-training-projection", "20-embeddings"),
         ("causal-mask-heatmap", "22-transformer-architecture"),
+        ("attention-weight-heatmap", "22b-token-to-output"),
+        ("three-position-probabilities", "22b-token-to-output"),
+        ("training-20-step-loss", "22c-language-training"),
     ):
         includes(sources[chapter_name], f"\\input{{figures/{figure_name}}}", chapter_name)
         figure = BOOK / "figures" / f"{figure_name}.tex"
