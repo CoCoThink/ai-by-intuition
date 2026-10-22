@@ -23,7 +23,9 @@
 
 ## 本候选版的机器证据与出版边界
 
-[完整构建 #39773683708](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39773683708) 的 PDF 是 **110 页、1,589/1,589 个公式 MathML 关联、23 张表、17 幅带替代文字的图，veraPDF PDF/UA-2 零失败**。该数字是具体源码提交 `2d9fc7e` 的审核快照；后来涉及正文、术语、PDF 的编辑应以新的成功构建重新统计，不能套用这组数。
+[完整构建 #39777688357](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39777688357) 的 PDF 是 **110 页、1,589/1,589 个公式 MathML 关联、23 张表、17 幅带替代文字的图，veraPDF PDF/UA-2 零失败**。该数字是具体源码提交 `b352e833` 的审核快照；后来涉及正文、术语、PDF 的编辑应以新的成功构建重新统计，不能套用这组数。
+
+该次 PDF 的 422 个内部跳转全部可解析；同一来源 PDF SHA-256 为 `7541c309edb63c3009c67ce6293caece4b394680d308194b4e57c573e9ea27db`。后续 `main` 对比仅改动发布说明文档，没有触碰 PDF 相关源码。
 
 详见 [发布前验收台账](V2_RELEASE_READINESS.md) 及 [出版流程](PUBLISHING.md)。机器合规不是实机屏幕阅读器或专家同行评审的替代；真实 Release、作者正式签核及终版 SHA-256 尚未完成。
 
