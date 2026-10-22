@@ -150,17 +150,26 @@ def run_checks():
     counter = forward(w, ids=(4, 3, 4), targets=None)
     delta = float(np.max(np.abs(counter['logits'][-1] - st['logits'][-1])))
     assert delta > 1e-4, f'Counterfactual too weak: {delta}'
+    # Independent ablations: location and Value path, with everything else fixed.
+    wp = {key: val.copy() for key, val in w.items()}
+    wp['P'][1, 0] += .2
+    position_delta = float(np.max(np.abs(forward(wp)['logits'] - st['logits'])))
+    assert position_delta > 1e-4
+    wv = {key: val.copy() for key, val in w.items()}
+    wv['Wv'][0, 0] += .25
+    value_delta = float(np.max(np.abs(forward(wv)['logits'] - st['logits'])))
+    assert value_delta > 1e-4
     grads = backward(w, st)
     finite_difference_check(w, grads)
     w1 = {key: val - LR * grads[key] for key, val in w.items()}
     st1 = forward(w1)
     assert st1['loss'] < st['loss'], 'Full-sequence optimization must improve mean loss'
     assert not np.allclose(st['probs'], st1['probs'])
-    return w, st, grads, w1, st1, delta
+    return w, st, grads, w1, st1, delta, position_delta, value_delta
 
 
 def report():
-    w, st, grads, _, st1, delta = run_checks()
+    w, st, grads, _, st1, delta, position_delta, value_delta = run_checks()
     return {
         'exercise': 'single-head pre-norm 3D teaching decoder',
         'token_ids': list(IDS), 'targets': list(TARGETS), 'vocab': list(VOCAB),
@@ -176,6 +185,8 @@ def report():
         'logits_before': st['logits'].tolist(),
         'gradient_norms': {key: float(np.linalg.norm(val)) for key, val in grads.items()},
         'counterfactual_last_logit_max_delta': delta,
+        'position_perturbation_logit_delta': position_delta,
+        'value_projection_perturbation_logit_delta': value_delta,
         'embedding_det_1_3_4': float(np.linalg.det(w['E'][[1, 3, 4]])),
     }
 
