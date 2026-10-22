@@ -10,9 +10,9 @@
 
 ## 新版教材候选（尚未发布）
 
-**已发布的 v0.1.0** 仍为五个必读部分加两组选读，原版资产保持不变。**`main` 的新版候选**已完成七个必读部分、32 个显示章节、两组选读及 A–E 附录；P2 已补充原论文对照、技术生态、阅读导引与交互实验。**最新教材源码 `2cad92cd` 的 [全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928) 已成功，生成 126 页 Tagged PDF、1,836/1,836 个 MathML-AF 公式关联，veraPDF PDF/UA-2 为 compliant、零失败。****尚待作者最终签核及手动发布**，不能把构建成功理解为已经正式发行。
+**已发布的 v0.1.0** 仍为五个必读部分加两组选读，原版资产保持不变。**`main` 的新版候选**已完成七个必读部分、32 个显示章节、两组选读及 A–E 附录；P2 已补充原论文对照、技术生态、阅读导引与交互实验。**最新教材源码 `2cad92cd` 的 [全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928) 已成功，生成 126 页 Tagged PDF、1,836/1,836 个 MathML-AF 公式关联，veraPDF PDF/UA-2 为 compliant、零失败。** **尚待作者最终签核及手动发布**，不能把构建成功理解为已经正式发行。
 
-后续只维护 [V2 发布前状态与验收（唯一入口）](docs/V2_RELEASE_READINESS.md)、[教学阅读路线](ROADMAP.md) 和 [出版流程](docs/PUBLISHING.md)。数值实验的唯一基线是 [三维 Transformer 参考脚本](scripts/teaching_reference.py)，旧的 M0–M6 过程资料可从验收单中的固定 Git 历史链接查阅。
+后续只维护 [V2 发布前状态与验收（唯一入口）](docs/V2_RELEASE_READINESS.md)、[教学阅读路线](ROADMAP.md) 和 [出版流程](docs/PUBLISHING.md)。数值实验的唯一基线是 [三维 Transformer 参考脚本](scripts/teaching_reference.py)，历史改动可从 Git 提交记录查阅。
 
 ## 开放许可证与转载
 
@@ -40,7 +40,7 @@
 
 **I–VII 连续阅读，VIII–IX 各自独立选读**；书末附录 A–E 依次为核心公式与数学、迁移练习、术语索引、集中答案、参考资料。正文与附录由独立的 LaTeX 源文件维护；选读联想记忆专题整合为四个**显示章节**，主线为 32 个显示章节。版本发布前仍需完成候选审查和人工签核。
 
-**P2 资料：** [阅读路线](book/chapters/00g-reading-routes.tex) · [三项交互式实验 Notebook](notebooks/p2-interactive-intuitions.ipynb)（[在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/p2-interactive-intuitions.ipynb)） · [P2 修订登记](docs/P2_COMPLETION.md) · [勘误](docs/ERRATA.md)。
+**阅读与实验：** [阅读路线](book/chapters/00g-reading-routes.tex) · [三项交互式实验 Notebook](notebooks/p2-interactive-intuitions.ipynb)（[在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/p2-interactive-intuitions.ipynb)） · [勘误与版本记录](docs/ERRATA.md)。
 
 新版统一三维算例使用 `[1,3,4]` 预测 `[3,4,2]`，一次完整联合更新使损失由 **1.798430 降为 1.611377**。选读的独立二维小实验不会与其混用；图像专题还附有从 $4\times4$ 图像到 ViT 四个 Patch 的手算。
 
