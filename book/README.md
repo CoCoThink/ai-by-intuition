@@ -44,6 +44,8 @@
 
 **附录 A：**三维 Transformer 主算例的完整初始权重与逐层中间矩阵在 [数值核对表](chapters/00f-transformer-intermediates.tex)，正文只保留 A、H 与词表概率三组关键矩阵。
 
+**P2 交互：**[Softmax 温度、因果 Attention、学习率三项可调实验](../notebooks/p2-interactive-intuitions.ipynb)（[在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/p2-interactive-intuitions.ipynb)）；只需 NumPy、Matplotlib、ipywidgets，不下载模型。
+
 **动手：** [三维 Transformer 的 PyTorch/NumPy 复现 Notebook](../notebooks/pytorch_starter.ipynb)（可 [在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/pytorch_starter.ipynb)）。
 
 ## 附录 A–E：公式、练习、术语与答案
