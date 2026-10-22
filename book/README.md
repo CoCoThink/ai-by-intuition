@@ -5,7 +5,7 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-## 前五部分：必读主线（M2 过渡编排，新版七部分目标尚未完成）
+## 前五部分：必读主线（M2–M3 过渡编排，正式七部分目标尚未完成）
 
 ### I · 学习是什么：从规则到参数更新
 - [阅读指南](chapters/00-guide.tex)和[手写规则的局限](chapters/00d-rules-gap.tex)
