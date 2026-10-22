@@ -30,3 +30,8 @@
 2. TeX Live、apt 包、veraPDF 镜像或 Action 更新必须通过单独 PR，附旧/新环境记录与构建审计工件。
 3. 需要全部通过：源码数值验证、Tagged PDF 结构/页面 QA、全部 Formula 的 MathML-AF、veraPDF PDF/UA-2 零失败。原生 `align*` 诊断仍属于非阻断实验。
 4. 如果升级无意引入页数或结构数量变化，必须说明原因；若无法复现旧状态，保留原始构建及 CI URL 作为审计基线。
+
+
+## 2026-10-22 固定镜像更新
+
+在 [修复后完整成功的 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39697175674) 核对到 `verapdf/cli:v1.30.2` 的仓库镜像摘要 `sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb`，后续验收直接以 `verapdf/cli@sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb` 拉取并运行。TeX Live Action 自身的容器镜像与 apt 索引仍由上游和镜像仓库管理：工作流保留摘要与实际软件包版本审计，而不是假设其每次都相同。升级需要新分支、记录环境漂移并运行整本书回归。
