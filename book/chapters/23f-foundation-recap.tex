@@ -36,20 +36,15 @@ Embedding $\to$ Attention $\to$ FFN $\to$ 输出概率 &
 
 \textbf{把公式收成一条主线：}
 \[
-X=E_{\rm ids}+P
-\ \longrightarrow\
-A=\operatorname{softmax}(QK^\top/\sqrt{d_k}+C)
-\ \longrightarrow\
-H
-\ \longrightarrow\
-Z=HW_{\rm out},
-\]
-\[
-\widehat P=\operatorname{softmax}(Z)
-\ \longrightarrow\
-L=-\log p_y
-\ \longrightarrow\
-\theta\gets\theta-\eta\nabla_\theta L.
+\begin{aligned}
+X&=E_{\rm ids}+P,\\
+A&=\operatorname{softmax}(QK^\top/\sqrt{d_k}+C),\\
+H&=\operatorname{TransformerBlock}(X),\qquad
+Z=HW_{\rm out},\\
+\widehat P&=\operatorname{softmax}(Z),\qquad
+L=-\log p_y,\\
+\theta'&=\theta-\eta\nabla_\theta L.
+\end{aligned}
 \]
 矩阵形状在正文均可追踪，
 详细三维参数与全部中间数值保留在附录 A。
