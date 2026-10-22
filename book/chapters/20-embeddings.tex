@@ -1,126 +1,109 @@
-\section{从文字到向量：先分 Token，再查 Embedding}
+\section{Embedding：让 Token ID 变成可训练的向量}
 \label{intro:20-embeddings}
-
-前面学会了向量和矩阵，但还有一个问题：
-文字不能直接参与点积，怎样让同一段文字成为一张数字表？
-我们先认识每个输入位置的身份，再让每个身份对应一条可训练向量。
-这条转换链是\textbf{文本 $\to$ Token $\to$ ID $\to$ Embedding}。
-
-\subsection{第一步：Token 与 Tokenizer 是什么？}
-\phantomsection\label{concept:token}
-
-\textbf{Token} 是模型处理文本时采用的离散单位，
-可以是一个字、一个词、词的一部分或标点。
-\textbf{Tokenizer（分词器）}规定怎样把原始文本拆成 Token，
-并从词表中查出对应的整数 ID；不同分词方案可能得到不同的切分结果。
-
-继续使用贯穿全书的\textbf{人工教学词表}，
-假设它只有五个编号，其中四个对应：
-\[
-\begin{array}{c|ccccc}
-\text{ID}&0&1&2&3&4\\\hline
-\text{Token}&\text{其他}&\text{春天}&\text{。}&\text{花}&\text{开了}
-\end{array}
-\]
-编号 $0$ 在这张表中留给“其他”。
-于是
-\[
-\text{“春天 / 花 / 开了 / 。”}
-\quad\longmapsto\quad [1,3,4,2].
-\]
-\textbf{编号只回答“是哪一个 Token”}。
-不能因为 $4>1$，就说“开了”比“春天”更重要或语义更强。
-
-\subsection{第二步：One-hot 怎样表示 Token 的身份？}
-
-如果词表有五个候选，\textbf{One-hot（独热编码）}
-就用五个数字表示某个 ID，只有相应位置为 $1$，
-其余位置都是 $0$：
-\[
-\text{ID 1}\ \mapsto\
-\begin{bmatrix}0\\1\\0\\0\\0\end{bmatrix},
-\qquad
-\text{ID 3}\ \mapsto\
-\begin{bmatrix}0\\0\\0\\1\\0\end{bmatrix}.
-\]
-它能区分身份，但两条不同的 One-hot 向量点积都是 $0$；
-光靠这个身份标签，还没学到词与词的关系。
-而且真实词表可能很大，不会为了每次查词都显式创建这么长的稀疏列向量。
-
-\subsection{第三步：Embedding 表让每个 Token 有一条短向量}
 \phantomsection\label{concept:embedding}
 
-给每个 Token 学习一条长度为 $d$ 的向量；
-将它们\textbf{按行}堆起来，就是
-\textbf{Embedding（嵌入）表}。
-例如暂定 $d=2$，人工给出一张 $5\times2$ 的表：
+上一章已经把文字转成整数 ID，但编号本身没有语义大小：
+ID 4 与 ID 1 的差值并不是两个词语的含义差异。
+我们要找一种表示，让\textbf{每个 ID 有自己的特征，而且这些特征能在训练时调整}。
+
+\subsection{先试 One-hot，再看它缺什么}
+
+在本书的五项教学词表中，ID 1 对应 One-hot 行向量
+$(0,1,0,0,0)$，ID 3 对应 $(0,0,0,1,0)$。
+它们可以区分身份，但不同类别之间的点积都为零。
+真实模型词表可能很大，实际程序也不必真的创建这些长而稀疏的向量。
+
+\subsection{同一份三维教学参数：五行向量}
+
+从这里开始，\textbf{新版完整贯通实验的唯一初始 Embedding 表}
+使用 $d_{\rm model}=3$，五个 ID 各对应一行：
 \[
-E=
-\begin{bmatrix}
-0&0\\
-1&0\\
-0&-1\\
-0&1\\
-1&1
-\end{bmatrix}
-\quad\in\R^{5\times2}.
+E=\begin{bmatrix}
+0&0&0\\
+1.2&0&-0.2\\
+0.2&-0.4&0.7\\
+-0.3&1.1&0.2\\
+0.15&-0.2&1.25
+\end{bmatrix}\in\R^{5\times3}.
 \]
-读第 $1$ 行（ID 1，春天）得到 $(1,0)$；
-读第 $3$ 行（ID 3，花）得到 $(0,1)$；
-读第 $4$ 行（ID 4，开了）得到 $(1,1)$。
+数值来自仓库 \texttt{scripts/teaching\_reference.py} 的
+\texttt{parameters()}，是人为设计的、训练之前的参数，\textbf{不是真实语言模型的已学权重}。
+其中“春天”是 ID 1 的 $(1.2,0,-0.2)$，“花”是 ID 3 的
+$(-0.3,1.1,0.2)$，“开了”是 ID 4 的 $(0.15,-0.2,1.25)$。
+三条向量\textbf{线性无关}，避免了原二维示例中
+“开了 = 春天 + 花”的偶然构造被误解成语言规律。
 
-注意这里说的“第 $1$ 行”是\textbf{从编号 $0$ 开始的行索引}，
-即肉眼从上往下数的第二行。
-为了避免混淆，更准确的说法是
-\textbf{“读取 ID 为 1 的那一行”}。
-
-那么前三个输入 Token $[1,3,4]$ 查表后得到：
+把输入 $[1,3,4]$ 逐行查表：
 \begin{equation}
-\boxed{X=
-\begin{bmatrix}
-1&0\\
-0&1\\
-1&1
-\end{bmatrix}\in\R^{3\times2}.}
+\boxed{
+X=\begin{bmatrix}
+1.2&0&-0.2\\
+-0.3&1.1&0.2\\
+0.15&-0.2&1.25
+\end{bmatrix}\in\R^{3\times3}.
+}
 \label{eq:running-embedding}
 \end{equation}
-三行对应三个位置，每行有两个数字。
+每一行对应一个 Token 位置，每行有三个可训练特征。
 
 \input{figures/embedding-lookup}
-后面计算 RNN、Attention 和 Transformer 时，都沿用这张三行输入表。
 
-\subsection{为什么查 Embedding 与矩阵乘法是同一回事？}
+\subsection{按 ID 查表为什么等价于矩阵乘法？}
 
-用 ID 3（“花”）的 One-hot \emph{行向量}，直接选取 Embedding 表中的一行：
+ID 3 的 One-hot 行向量右乘 $E$，只取出其中一行：
 \[
-\underbrace{\begin{bmatrix}0&0&0&1&0\end{bmatrix}}_{1\times5}
-\underbrace{E}_{5\times2}
-=\underbrace{\begin{bmatrix}0&1\end{bmatrix}}_{1\times2}.
+\underbrace{(0,0,0,1,0)}_{1\times5}\,
+\underbrace{E}_{5\times3}
+=\underbrace{(-0.3,1.1,0.2)}_{1\times3}.
 \]
-这与主线中 $X: T\times d$、每个 Token 占一行的约定一致。若改用列向量，才需要同时转置两个因子，写成 $E^\top\vect u_3=(0,1)^\top$。
-所以“按 ID 查一行”和“用 One-hot 选出一行”在数学上等价。
-实际程序通常直接查表，不必先造出一个长 One-hot 向量。
+实际程序用整数索引直接读取，不会为了查询一次 Token 就构造整条 One-hot。
+训练时，这张 Embedding 表与后续网络一样，可以根据预测误差更新。
 
-Embedding 表中的向量是可训练参数。模型通过数据调整这些数字，使它们能够支持后续的预测任务。
+\subsection{训练前后，向量真的变了什么？}
 
-\subsection{只有词向量够不够？还有顺序问题}
-
-把“花 / 开了”与“开了 / 花”的两个向量\textbf{无序相加}，
-得到的数字相同，因为加法可以交换：
+我们先看结果，等 Transformer 部分再逐层算出它的来历。
+用一层三维、单头、Pre-Norm 教学网络，以
+$[1,3,4]$ 预测三个位置的目标 $[3,4,2]$，
+所有参数同时用学习率 $0.04$ 做 \textbf{20 步 SGD}。
+该训练样本的平均交叉熵从约 $1.7984$ 降为 $0.4832$。
+这时对应的三行 Embedding 变为：
 \[
-\vect x_{\text{花}}+\vect x_{\text{开了}}
-=
-\vect x_{\text{开了}}+\vect x_{\text{花}}.
+\begin{aligned}
+E_{20}[1]&\approx(1.2145,\,0.1364,\,-0.2272),\\
+E_{20}[3]&\approx(-0.4298,\,0.8810,\,0.3345),\\
+E_{20}[4]&\approx(0.1734,\,-0.2188,\,1.3136).
+\end{aligned}
 \]
-但两段文本的顺序不同，意思也未必一样。
-因此除了知道\textbf{每个 Token 是什么}，
-还需要知道它处在哪个位置、与别的位置怎样联系。
+这份结果可由 \texttt{python3 scripts/teaching\_reference.py --json}
+复现；\textbf{训练损失下降只说明在这份教学题上优化成功}，不能证明模型理解真实中文。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:20-embeddings}词表大小为 $5$、向量维度为 $2$ 时，Embedding 表是什么形状？\quad{\footnotesize\hyperref[answer:20-embeddings]{核对解答。}}\par\medskip
+\input{figures/embedding-training-projection}
+
+图中仅取三维向量的前两个坐标画散点（不是 PCA）；
+每个点第三坐标仍存在。比较同一 Token 在训练前后的移动，
+是为了看到参数会学，并不是用点间距离直接判定词义。
+
+\subsection{Word2Vec 与上下文化表示有什么关系？}
+
+经典 Word2Vec 用词与上下文之间的预测关系训练\textbf{静态词向量}，
+体现“上下文相关的词可能学到某些类似特征”的直觉。
+现代 Transformer 的 Embedding 通常与后面网络一起训练，
+同一个 Token 在不同上下文中的后续隐藏表示还会不同，
+所以 Embedding 表里的一行\textbf{不等于最终上下文化含义}。
+
+\begin{warningbox}
+本节 $5\times3$ 的 $E$ 是新版统一贯通实验的数据来源；
+后续若仍出现 $d=2$ 的 Attention 或 Block 示例，
+它们是保留的\textbf{独立局部演示}，不能从这里直接沿用其权重。
+其余二维算例将在 M3 与完整 Transformer 的数值链一并迁移。
+\end{warningbox}
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:20-embeddings}
+词表大小为 $5$、向量维度为 $3$，查三个 Token ID 得到多大的矩阵？
+\quad{\footnotesize\hyperref[answer:20-embeddings]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-从原始文字到可计算矩阵，我们已经有完整通路：
-Tokenizer 切分 $\to$ ID 表示身份 $\to$ Embedding 查表 $\to$ 向量按行堆叠。
-但我们还没有给网络规定该用这些数字完成哪道练习题。
-下一章就把“学习语言”变成有输入、有答案的训练任务。
+ID 查表得到可训练特征；梯度会改变这些数字，供后续语言预测使用。
+下一章规定模型要学的任务：给什么输入，输出哪一个 Token 的分数？
 \end{conclusion}
