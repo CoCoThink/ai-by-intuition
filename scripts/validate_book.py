@@ -240,6 +240,26 @@ def validate_source() -> None:
         file = BOOK / "figures" / f"{figure}.tex"
         if not file.is_file() or r"\begin{tikzpicture}" not in file.read_text(encoding="utf-8"):
             fail(f"Missing editable figure {figure}")
+    # Figure 16 must not reverse the training feedback arrow or visually suggest
+    # that inference -> post-training -> external tools is one execution chain.
+    concept = sources["24c-concept-map"]
+    for arrow in (
+        "(upd.north) --",
+        "(emb.south);",
+        "(post.north) |- (upd.west);",
+        "(gen.east) --",
+        "(tools.west);",
+    ):
+        includes(concept, arrow, "figure 16 arrow direction")
+    for obsolete in (
+        "([yshift=4mm]emb.north)",
+        "(gen)--(post)",
+        "(post)--(tools)",
+        "(ffn.east) -- ++(.5,0) |- (tools.east)",
+    ):
+        if obsolete in concept:
+            fail(f"Figure 16 contains a misleading or reversed arrow: {obsolete}")
+
     includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
     includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
     includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")

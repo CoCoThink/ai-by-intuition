@@ -3,7 +3,7 @@
 
 这一页不是按背诵次序罗列缩写，而是展示\textbf{信息流}与\textbf{学习信号}：
 上方沿前向计算生成概率；中间由正确标签形成梯度；
-下方是模型生成结果后可接入的系统工具。点击旁边章页索引可回到推导。
+下方分开呈现后训练、推理生成与应用工具：后训练会再次更新参数，工具调用本身不会实时反传。点击章页索引可回到推导。
 
 \begin{center}
 \tagstructbegin{tag=Figure,alttext={从 Token 到 Embedding、注意力、输出、损失、梯度、参数更新，再到推理和 Agent 工具链的概念关系图}}
@@ -25,13 +25,18 @@
 \draw[->,thick,teal] (ffn)--(loss);
 \draw[->,thick,teal] (loss)--(grad);
 \draw[->,thick,teal] (grad)--(upd);
-\draw[->,thick,teal] (upd.north) |- ([yshift=4mm]emb.north) -- (emb.north);
-\node[app] (gen) at (1.65,-4.45) {推理生成\\温度/缓存};
-\node[app] (post) at (5.0,-4.45) {后训练\\行为目标};
+% The arrowhead must finish at the model, not above or through the Embedding box.
+\draw[->,thick,teal] (upd.north) --
+  node[midway,right,font=\sffamily\tiny,text=teal] {参数回写} (emb.south);
+% Post-training is a separate optimization phase, not a step after inference.
+\node[signal] (post) at (1.65,-4.45) {后训练\\行为目标};
+\node[app] (gen) at (5.0,-4.45) {推理生成\\温度/缓存};
 \node[app] (tools) at (8.7,-4.45) {RAG/工具/Agent\\系统边界};
-\draw[->,thick,orange] (gen)--(post);
-\draw[->,thick,orange] (post)--(tools);
-\draw[->,dashed,orange] (ffn.east) -- ++(.5,0) |- (tools.east);
+% Post-training can update parameters; inference can enter an external application.
+% Neither route claims that tool calls automatically backpropagate.
+\draw[->,densely dashed,teal] (post.north) |- (upd.west);
+\draw[->,thick,orange] (gen.east) --
+  node[midway,above,font=\sffamily\tiny,text=orange] {可接入} (tools.west);
 \end{tikzpicture}
 \captionof{figure}{模型内部的前向计算、损失反传与外部工具链是三个不同层次}
 \tagstructend
