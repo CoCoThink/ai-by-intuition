@@ -207,6 +207,7 @@ def validate_source() -> None:
 
     includes(main, r"\part*{附录：公式、练习与答案}", "main")
     includes(main, r"\ctexset{", "native CTeX heading styling")
+    includes(main, "bookmarksnumbered=true", "numbered PDF outline titles")
     includes(main, "name={第,章}", "visible chapter number format")
     if r"\usepackage{titlesec}" in main or r"\titleformat" in main:
         fail("titlesec must not override tagged section headings")
@@ -672,6 +673,55 @@ def validate_pdf(path: Path) -> None:
     if heading_counts["/H1"] < 20 or heading_counts["/H2"] < 40:
         fail(f"Accessible heading hierarchy incomplete: {heading_counts}")
     print(f"Heading QA: {heading_counts['/H1']} H1 headings; {heading_counts['/H2']} H2 headings")
+    # hyperref's PDF bookmarks are a separate, user-facing navigation system:
+    # visible CTeX numbering is insufficient unless the outline contains it.
+    # The nine numbered parts, 38 numbered sections and A--E appendices must
+    # retain their numbering and nesting. Two standalone core interludes stay
+    # intentionally unnumbered (the reading guide and end-of-core recap).
+    outline_groups = []
+    for entry in reader.outline:
+        if isinstance(entry, list):
+            if not outline_groups:
+                fail("PDF outline has children without a parent")
+            outline_groups[-1][1].extend(
+                str(item.title).strip() for item in entry if hasattr(item, "title")
+            )
+        elif hasattr(entry, "title"):
+            outline_groups.append([str(entry.title).strip(), []])
+    if len(outline_groups) != len(PARTS) + 1:
+        fail(f"PDF bookmark root should have 9 numbered parts plus one "
+             f"unnumbered appendix: {len(outline_groups)} roots")
+    han_numbers = "一二三四五六七八九"
+    for index, expected in enumerate(PARTS):
+        title, children = outline_groups[index]
+        prefix = f"第{han_numbers[index]}部分"
+        if not title.startswith(prefix) or expected not in title:
+            fail(f"PDF bookmark part {index + 1} missing printed number/title: {title!r}")
+        if not children:
+            fail(f"PDF bookmark part {index + 1} has no chapter bookmarks")
+    appendix_title, appendix_children = outline_groups[-1]
+    if not appendix_title.startswith("附录："):
+        fail(f"Unnumbered appendix PDF bookmark missing: {appendix_title!r}")
+    if len(appendix_children) != 5:
+        fail(f"Expected five A--E PDF appendix bookmarks, found {appendix_children!r}")
+    for letter, title in zip("ABCDE", appendix_children):
+        if not re.match(rf"^附录\s*{letter}\s+\S", title):
+            fail(f"Appendix {letter} PDF bookmark missing letter prefix: {title!r}")
+    chapter_numbers = []
+    for _, children in outline_groups[:-1]:
+        for title in children:
+            match = re.match(r"^第(\d+)章(?:\s|$)", title)
+            if match:
+                chapter_numbers.append(int(match.group(1)))
+            elif not (title.startswith("阅读指南：") or
+                      title.startswith("技术底座回顾：")):
+                fail(f"Unnumbered PDF chapter bookmark: {title!r}")
+    if chapter_numbers != list(range(1, 39)):
+        fail(f"PDF chapter bookmark numbers must be 1--38 in order; "
+             f"found {chapter_numbers!r}")
+    print(f"PDF bookmark QA: {len(PARTS)} numbered parts, "
+          f"{len(chapter_numbers)} numbered chapters, 5 lettered appendices")
+
 
     if len(reader.pages) < 50:
         fail("Suspiciously short tagged book")
