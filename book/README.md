@@ -40,6 +40,8 @@
 - VIII · [CNN 局部卷积](chapters/19-cnn.tex) → [独立 ViT Patch 手算](chapters/19b-vit.tex)
 - IX · [外积写入与干扰](chapters/04-key-value-outer-product.tex)、[改善与矩阵读出](chapters/06-better-linear-memory.tex)、[非线性与 Attention 视角](chapters/09-nonlinearity-and-memory.tex)、[高维容量](chapters/13-capacity.tex)。四个显示章节保留原有七个源码的推导和练习，并在开篇说明列向量约定
 
+**动手：** [三维 Transformer 的 PyTorch/NumPy 复现 Notebook](../notebooks/pytorch_starter.ipynb)（可 [在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/pytorch_starter.ipynb)）。
+
 ## 附录 A–E：公式、练习、术语与答案
 
 - A · [核心公式卡](chapters/00e-core-formulas.tex)、[数学速查](chapters/00b-math-tools.tex)与[符号形状](chapters/00c-symbols.tex)
