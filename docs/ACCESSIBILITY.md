@@ -1,6 +1,6 @@
 # Tagged PDF 机器验收状态
 
-**状态更新：2026-10-21。** 项目将验收范围限定为可重复的机器验证：Tagged PDF 结构、MathML-AF 关联、自动化布局检查及 veraPDF 1.30.2 PDF/UA-2 规则。**不安排真实屏读体验或人工无障碍验收**，机器结果不代表具体辅助技术体验的保证。
+**状态更新：2026-10-22（[正式版 v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)、[最新主分支完整 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 均已通过）。** 项目将验收范围限定为可重复的机器验证：Tagged PDF 结构、MathML-AF 关联、自动化布局检查及 veraPDF 1.30.2 PDF/UA-2 规则。**不安排真实屏读体验或人工无障碍验收**，机器结果不代表具体辅助技术体验的保证。
 
 ## 已确认的构建结果
 

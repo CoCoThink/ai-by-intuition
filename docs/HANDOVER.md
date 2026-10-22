@@ -1,6 +1,6 @@
 # AI by Intuition — Handover / 遗留事项交接
 
-> 交接快照：2026-10-21；基线 `main`：[`7c3e1f4`](https://github.com/CoCoThink/ai-by-intuition/commit/7c3e1f40c2b8bd26bc66b5725865c3033d9c730a)。最近一次已完成的全量 CI 对应源码提交 [`cc680b6`](https://github.com/CoCoThink/ai-by-intuition/commit/cc680b63425e)；[Actions #39615037750](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39615037750) 为 **success**。后续只改过 Markdown 文档，不代表该文档提交又执行了全量 CI。
+> **当前状态（2026-10-22，v0.1.0 已发布）：** 本文第 1–6 节是 **2026-10-21 历史交接快照**，不能再作为当前开放待办清单。H-01、H-02、H-05 已解决；H-03 已隔离成非阻断兼容诊断；H-04 完成 Action SHA、veraPDF 镜像 digest 固定与环境审计，TeX Live 基础镜像及 apt 软件包仍是升级时需复核的浮动边界；H-06 的出版 QA 流程、抽检记录和首个正式 Release 已落实。主分支构建 [CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 与 [发布 CI #39700328180](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 均为 **success**，正式版见 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)。\n\n> 交接快照：2026-10-21；基线 `main`：[`7c3e1f4`](https://github.com/CoCoThink/ai-by-intuition/commit/7c3e1f40c2b8bd26bc66b5725865c3033d9c730a)。最近一次已完成的全量 CI 对应源码提交 [`cc680b6`](https://github.com/CoCoThink/ai-by-intuition/commit/cc680b63425e)；[Actions #39615037750](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39615037750) 为 **success**。后续只改过 Markdown 文档，不代表该文档提交又执行了全量 CI。
 
 ## 1. 一句话交接结论
 
@@ -21,7 +21,7 @@
 
 权威证据：[最新成功的全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39615037750)、[成功的 MathML 集成 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)、[PDF/UA 机器验收说明](ACCESSIBILITY.md)。旧 Issue #2（LuaMML 断言）、#3（标题语义）已关闭；Issue #4（人工验收）按范围取消并关闭。
 
-## 3. 剩余遗留事项（不含已关闭问题）
+## 3. 2026-10-21 当时的剩余遗留事项（历史记录；现况见顶部）
 
 | ID / 优先级 | 遗留问题与证据 | 下一步动作及完成标准 |
 |---|---|---|
@@ -34,7 +34,7 @@
 
 优先级定义：**P1** = 应纳入近期工程整理；**P2** = 非阻断的兼容性、维护性或出版增强。上述状态均来自源码、当前仓库配置和最近成功日志；没有证据表明这些事项导致最新正式 PDF 失败。
 
-## 4. 接手后推荐的执行顺序
+## 4. 当时推荐的执行顺序（已执行）
 
 1. **先做 H-01 / H-02**：修工作流路径过滤、清理过时说明；只改这些配置/文档，避免不必要地重构 LaTeX。
 2. **再做 H-05**：修复点积小标题并运行全量回归，确认 PDF 数量、结构和内容数值没有退化。
@@ -67,7 +67,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 最后核对：交接时公开 GitHub Issues **0 个开放项**。本文件为核查后的遗留事项清单，不假定已经存在对应的 Issue 或已有人负责。
 
-## 7. 接手处理记录（2026-10-22；待新一轮 CI 核验）
+## 7. 接手处理记录（2026-10-22；当时待 CI 核验，现已通过）
 
 - **H-01**：构建工作流已覆盖 `scripts/**/*.py`，新增仅对 Markdown/检查器变更触发的轻量站内链接检查；全量 CI 保留手动触发入口。
 - **H-02 / H-03**：修订旧 MathML 与 veraPDF 注释，并将原生 `align*` 的已知断言标为非阻断的**预期兼容失败**；实际机器验收仍由正式 `mathml-AF` 和 veraPDF 严格检查执行。
@@ -83,3 +83,12 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 - 已定位 CI #39633151403 的失败原因：TeX Live 容器以 root 建立 `pdfua-audit` 目录，后续 Runner 写入失败；已在容器阶段依据工作区目录恢复所有权。修复后的 [完整 CI #39697175674](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39697175674) **success**：99 页、MathML-AF 1,472/1,472、veraPDF PDF/UA-2 零失败，Markdown 链接检查亦通过。
 - 为 H-04 进一步把 veraPDF 容器从可变 tag 改成先前成功 CI 报告的摘要固定；TeX Live/apt 仍是公开的可复现性边界，需按发行维护文档继续审计。
 - H-06 的真实出版版面 QA 候选检查已记录于 [PUBLISHING.md](PUBLISHING.md)；首次正式 Release 由成功的主分支全量构建自动产生，并存档 PDF、SHA-256、MathML 和 PDF/UA-2 审计报告。只有 GitHub Release 实际产生后才视为正式发布完成。
+
+
+## 9. v0.1.0 正式发布核验（2026-10-22）
+
+- **合并：** [PR #5](https://github.com/CoCoThink/ai-by-intuition/pull/5) 已合并，主分支 commit `55b55e4308028763a0b1952f1a02642e4d9829d8`。
+- **全量 CI：** [#39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 通过：7 部分/47 章节源文件、99 页 Tagged、章节与数值/文字边界 QA、1,472/1,472 MathML-AF（933 种不同内容）、veraPDF PDF/UA-2 `compliant=true`、`failedRules=0`、`failedChecks=0`。
+- **发行：** [发布工作流 #39700328180](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39700328180) 成功创建 [v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，包含 PDF、SHA256SUMS、MathML JSON、veraPDF XML 及构建环境审计文件。
+- **文件一致性：** 官方 PDF 的 SHA-256 为 `211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`；独立从同一主分支成功 CI 下载的 PDF 工件内原始文件计算得到相同哈希。
+- **开放范围：** 目前仓库无开放 Issue；`align*` 的原生 LuaMML 断言仍是**已知非阻断兼容性限制**。TeX Live 基础镜像和 apt 软件包仍需升级审计，均不改变正式 PDF 已通过机器验收的结论。原交接 H-01–H-06 不应再直接描述为“尚未开始”。

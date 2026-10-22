@@ -6,7 +6,7 @@
 
 **读者阅读一个完整 PDF，作者维护分开的 LaTeX 章节源码。** 最新验证构建采用 **TeX Live 2026 + LuaLaTeX**，生成带结构标签的 PDF。
 
-[**全书顺序与可点击目录**](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [GitHub Actions 下载最新版 PDF](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
+[**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
 
 ## 为什么这样组织？
 
@@ -28,13 +28,13 @@
 
 ## 最新 PDF 与构建状态
 
-2026 年 10 月 21 日的[全书 MathML 集成验证](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39613800415)构建了 **99 页 Tagged PDF**，在 PDF 结构树中检测到 **1,472 个公式节点、21 张表格（59 个 TH 表头单元格）、16 个图形节点与 16 处替代文字，以及 48 个 H1、180 个 H2 标题节点**，并通过章节、数值、目录和全部页面文字边界检查。PDF 请从 [Actions 工作流](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 的成功运行中下载 `ai-by-intuition-volume-01`；仓库不提交编译后的 PDF。
+**v0.1.0 已于 2026-10-22 正式发布。** [主分支全量 CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 通过，生成 **99 页 Tagged PDF**，检测到 **1,472 个公式节点、21 张表格（59 个 TH 表头单元格）、16 个 Figure 及 16 处替代文字、48 个 H1 和 180 个 H2**，并通过章节、数值、页面边界及机器无障碍验证。请从 [正式 Release（PDF、SHA256SUMS、审计工件）](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 下载归档版；仓库不提交编译后的 PDF。
 
 **PDF/UA-2 与 MathML 机器验收均已通过：**正式构建使用 `mathml-AF`，CI 验证 **1,472 个 Formula 均带有效的 MathML 关联文件**（933 种不同内容），veraPDF 1.30.2 的 PDF/UA-2 检查报告零失败。两项检查都阻断不达标的 PDF 发布。**项目仅设置自动化验收门槛**：持续检查 PDF/UA-2、MathML-AF、结构标签和页面布局；真实屏读体验测试与人工无障碍验收不列入待办。机器检查的通过仅代表验证工具覆盖的规则，详见[自动化验收说明](docs/ACCESSIBILITY.md)。
 
 ## 本地编译
 
-推荐使用 **TeX Live 2026、LuaLaTeX**，安装中文/西文字体 **Noto Serif CJK SC、Noto Sans CJK SC、Noto Serif、Noto Sans**，并具备 `latexmk`、TikZ/PGF、`poppler-utils` 和 `pypdf==5.9.0`。CI 使用固定的 TeX Live 2026 容器；旧版本内核不保证能正确处理 Tagged PDF。
+推荐使用 **TeX Live 2026、LuaLaTeX**，安装中文/西文字体 **Noto Serif CJK SC、Noto Sans CJK SC、Noto Serif、Noto Sans**，并具备 `latexmk`、TikZ/PGF、`poppler-utils` 和 `pypdf==5.9.0`。CI 选择 TeX Live 2026 并固定执行 Action 的 commit SHA，但 TeX Live 基础镜像和 apt 软件包尚未达到字节级冻结；详见[构建复现说明](docs/BUILD-REPRODUCIBILITY.md)。旧版本内核不保证能正确处理 Tagged PDF。
 
 ```bash
 python3 scripts/validate_book.py
