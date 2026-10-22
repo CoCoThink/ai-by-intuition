@@ -1,0 +1,37 @@
+% Authoritative initial attention probabilities from teaching_reference.py.
+\tagstructbegin{tag=Figure,alttext={三个位置的因果注意力热图。第一行只有 Key 1 权重 1，其余未来位置被掩码；第二行的 Key 1 和 Key 2 权重为零点一二四四和零点八七五六；第三行权重为零点一六八零、零点二四一八和零点五九零三。}}
+\begin{center}
+\begin{tikzpicture}[x=15mm,y=12mm]
+\foreach \r in {0,1,2}{
+ \node[font=\footnotesize,anchor=east] at (-.12,{2.5-\r}) {Query \number\numexpr\r+1\relax};
+}
+\foreach \c in {0,1,2}{
+ \node[font=\footnotesize,anchor=south] at ({\c+.5},3.06) {Key \number\numexpr\c+1\relax};
+}
+\filldraw[fill=blue!85,draw=linegray] (0,2) rectangle (1,3);
+\node[white,font=\small\bfseries] at (.5,2.5) {$1.000$};
+\filldraw[fill=paper,draw=linegray] (1,2) rectangle (2,3);
+\node[orange,font=\small] at (1.5,2.5) {$\times$};
+\filldraw[fill=paper,draw=linegray] (2,2) rectangle (3,3);
+\node[orange,font=\small] at (2.5,2.5) {$\times$};
+\filldraw[fill=blue!15,draw=linegray] (0,1) rectangle (1,2);
+\node[ink,font=\small] at (.5,1.5) {$0.124$};
+\filldraw[fill=blue!75,draw=linegray] (1,1) rectangle (2,2);
+\node[white,font=\small\bfseries] at (1.5,1.5) {$0.876$};
+\filldraw[fill=paper,draw=linegray] (2,1) rectangle (3,2);
+\node[orange,font=\small] at (2.5,1.5) {$\times$};
+\filldraw[fill=blue!20,draw=linegray] (0,0) rectangle (1,1);
+\node[ink,font=\small] at (.5,.5) {$0.168$};
+\filldraw[fill=blue!26,draw=linegray] (1,0) rectangle (2,1);
+\node[ink,font=\small] at (1.5,.5) {$0.242$};
+\filldraw[fill=blue!56,draw=linegray] (2,0) rectangle (3,1);
+\node[ink,font=\small] at (2.5,.5) {$0.590$};
+\node[anchor=west,align=left,font=\footnotesize] at (3.35,2.3)
+ {颜色越深\\读取权重越大};
+\node[anchor=west,align=left,font=\footnotesize] at (3.35,.9)
+ {$\times$ 为未来位置\\因果 Mask 后权重为 $0$};
+\end{tikzpicture}
+\captionof{figure}{真实三维主算例的 $A=\operatorname{softmax}(QK^\top/\sqrt3+C)$；每行按可见 Key 归一化}
+\label{fig:attention-a-weights}
+\end{center}
+\tagstructend
