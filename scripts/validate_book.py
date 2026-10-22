@@ -433,8 +433,8 @@ def validate_source() -> None:
                      for body in sources.values())
     marked_headers = sum(body.count(r"\tagpdfsetup{table/header-rows={1}}")
                          for body in sources.values())
-    if table_envs != 23 or marked_headers != table_envs:
-        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (expected 23)")
+    if table_envs < 23 or marked_headers != table_envs:
+        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (minimum 23)")
 
     # The prominent diagram and teaching resources are all editable TikZ.
     for figure in ("row-column-intuition", "key-value-layout", "pre-norm-block",
