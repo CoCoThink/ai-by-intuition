@@ -5,24 +5,6 @@
 建议先核对\textbf{输入数字、运算步骤和输出维度}，
 再检查最后答案。数字正确而方向、形状不一致也需要订正。
 
-\subsubsection*{联想记忆专题练习}
-
-\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案},fonttitle=\sffamily\bfseries,breakable]
-\begin{enumerate}[label=\arabic*.]
-\item $0.8$，两单位向量方向比较接近。
-\item $W\vect{k}=\vect{v}(\vect{k}^\top\vect{k})=\vect{v}$。
-\item 因为其他 Key 与查询的点积可能非零，它们的 Value 也会被加进输出。
-\item 它们分别是 $0.5,0.25,0.125$；高次激活能更快压低小于 $1$ 的相似度。
-\item 第一条（分数为 $1$）的相对权重上升；当 $\beta$ 很大时趋近于 $1$。
-\item $K\vect{x}=(-1,-1)^\top$，所以 $\relu(K\vect{x})=(0,0)^\top$。
-\item $V^\top\vect{a}=(0,6)^\top$；这是两列 Value 按权重 $0$ 与 $2$ 求和。
-\item $\vect a\cdot\vect b=6\times5=30$，$\|\vect a\|=6$，$\|\vect b\|=13$，$\cos\theta=5/13$，故 $6\times13\times(5/13)=30$。
-\item $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$V^\top=\begin{bmatrix}2&0\\1&3\end{bmatrix}$；$V^\top\vect a=(1.6,1.4)^\top$。
-\item 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
-\item $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
-\end{enumerate}
-\end{tcolorbox}
-
 \subsubsection*{从数学到神经网络的综合练习}
 
 
@@ -43,11 +25,13 @@
 \item 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。
 \item $qK^\top=(1,1,2)$；Softmax 为
 $(e,e,e^2)/(2e+e^2)\approx(0.212,0.212,0.576)$，
-读取 $(0.788,0.788)$。另外 logits $(2,1,0)$ 的
-Softmax 是 $(0.665,0.245,0.090)$；
-第 2 类为真时损失 $-\log0.245\approx1.408$。
-\textbf{两段概率来自不同运算}：题目没有指定如何从 Attention 输出映射成 logits，
-所以不能由读取权重独立决定损失。
+读取 $r\approx(0.788058,0.788058)$。
+按照题设矩阵右乘，logits 约为
+$z=(1.576117,0.788058,0)$，再做 Softmax，
+第二类概率约 $p_2=0.273684$，所以
+$\boxed{L=-\log p_2\approx1.295781}$。
+\textbf{这次预测真正沿着读取向量和输出头得出}；
+若不给出输出头，Attention 权重本身不足以唯一决定词表概率。
 \item 改动后的第一行是
 $X'_1=(0.15,-0.2,1.25)+(0.10,0.05,-0.10)
 =\boxed{(0.25,-0.15,1.15)}$。
@@ -55,8 +39,6 @@ $X'_1=(0.15,-0.2,1.25)+(0.10,0.05,-0.10)
 这里没有更新任何权重，是一次输入反事实消融。
 \end{enumerate}
 \end{tcolorbox}
-
-
 
 \subsubsection*{现代 Transformer 与 Agent 练习}
 
@@ -101,4 +83,20 @@ Q3 环比为 $(132-125)/125=\boxed{5.6\%}$。
 \end{enumerate}
 \end{tcolorbox}
 
+\subsubsection*{联想记忆专题练习}
 
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案},fonttitle=\sffamily\bfseries,breakable]
+\begin{enumerate}[label=\arabic*.]
+\item $0.8$，两单位向量方向比较接近。
+\item $W\vect{k}=\vect{v}(\vect{k}^\top\vect{k})=\vect{v}$。
+\item 因为其他 Key 与查询的点积可能非零，它们的 Value 也会被加进输出。
+\item 它们分别是 $0.5,0.25,0.125$；高次激活能更快压低小于 $1$ 的相似度。
+\item 第一条（分数为 $1$）的相对权重上升；当 $\beta$ 很大时趋近于 $1$。
+\item $K\vect{x}=(-1,-1)^\top$，所以 $\relu(K\vect{x})=(0,0)^\top$。
+\item $V^\top\vect{a}=(0,6)^\top$；这是两列 Value 按权重 $0$ 与 $2$ 求和。
+\item $\vect a\cdot\vect b=6\times5=30$，$\|\vect a\|=6$，$\|\vect b\|=13$，$\cos\theta=5/13$，故 $6\times13\times(5/13)=30$。
+\item $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$V^\top=\begin{bmatrix}2&0\\1&3\end{bmatrix}$；$V^\top\vect a=(1.6,1.4)^\top$。
+\item 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
+\item $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
+\end{enumerate}
+\end{tcolorbox}

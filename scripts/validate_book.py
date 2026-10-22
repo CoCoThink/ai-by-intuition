@@ -136,6 +136,16 @@ def test_numeric_examples() -> None:
     assert math.isclose((q3 - q2) / q2, 0.10)
     includes(chapter("23d-agent-systems"),
              '"revenue":132', "fictitious Q3 tool result")
+    # REVIEW item 6: end-to-end attention->projection->logits->cross-entropy.
+    e = math.e
+    attention = [1 / (2 + e), 1 / (2 + e), e / (2 + e)]
+    read0 = attention[0] + attention[2]
+    read1 = attention[1] + attention[2]
+    logits = [2 * read0, read1, read0 - read1]
+    weights = [math.exp(z - max(logits)) for z in logits]
+    p_class2 = weights[1] / sum(weights)
+    assert math.isclose(p_class2, 0.27368396943659246, abs_tol=1e-12)
+    assert math.isclose(-math.log(p_class2), 1.295781234484205, abs_tol=1e-12)
     # Hand-checked two-step Adam example: gradients 2, 1; beta1=beta2=.5.
     m = v = 0.0
     moments = []
@@ -208,6 +218,9 @@ def validate_source() -> None:
     includes(sources["22c-language-training"], "1.611377", "three-position joint loss")
     includes(sources["23a-from-toy-to-gpt"], "768/12=64", "GPT-2 scale recovery")
     includes(sources["23aa-pretraining-icl"], r"\label{concept:in-context-learning}", "pretraining and ICL")
+    includes(sources["20b-task-contract"], "任务契约（Task Contract）", "task contract explained in body")
+    includes(sources["22c-language-training"], "Teacher Forcing（教师强制）", "teacher forcing in body")
+    includes(sources["25-integrated-practice"], r"W_{\rm vocab}", "attention output to vocabulary logits exercise")
     includes(sources["23c-post-training"], "只改 Prompt/Few-shot", "SFT versus prompting")
     includes(sources["23d-agent-systems"], "g_{Q2}", "shared report arithmetic")
     includes(sources["23d-agent-systems"], "A2A", "protocol distinctions")
@@ -270,11 +283,11 @@ def validate_source() -> None:
     answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
     if len(answer_sections) != 4:
         fail("Expected three distinctly labelled answer sets")
-    expected_counts = (11, 14, 14)  # X2 optional, mathematics, modern systems
+    expected_counts = (14, 14, 11)  # practice order: mathematics, modern systems, X2 elective
     actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
                      for i in range(3))
     if tuple(actual_counts) != expected_counts:
-        fail("Central answer counts do not match 11/14/14 lesson exercises")
+        fail("Central answer counts do not match 14/14/11 lesson exercises")
     if math_body.count(r"\item") != 14 or modern_body.count(r"\item") != 14:
         fail("Both core exercise collections must contain fourteen items")
     for name in ("25-integrated-practice", "25b-modern-practice"):
