@@ -72,6 +72,7 @@ REQUIRED = [
     "00e-core-formulas",
     "00b-math-tools",
     "00c-symbols",
+    "00f-transformer-intermediates",
     "25-integrated-practice",
     "25b-modern-practice",
     "15-practice",
@@ -243,6 +244,15 @@ def validate_source() -> None:
     includes(sources["20b-task-contract"], r"\label{fig:token-ffn-output-pipeline}", "token-to-vocabulary diagram")
     includes(sources["22b-token-to-output"], r"\input{figures/attention-weight-heatmap}", "attention weight heatmap")
     includes(sources["22b-token-to-output"], r"\input{figures/three-position-probabilities}", "vocabulary probability bars")
+    includes(sources["22b-token-to-output"], r"\hyperref[app:transformer-intermediates]", "appendix numerical link")
+    includes(sources["00f-transformer-intermediates"], r"\label{app:transformer-intermediates}", "appendix numerical target")
+    includes(sources["20-embeddings"], r"\input{figures/embedding-training-projection}", "embedding delta chart")
+    includes((BOOK / "figures" / "embedding-training-projection.tex").read_text(encoding="utf-8"),
+             r"E_{20,j}-E_{0,j}", "embedding coordinate difference")
+    # Keep only three full-sized forward-result matrices in the narrative chapter.
+    full_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["22b-token-to-output"]))
+    if full_matrices != 3:
+        fail(f"Running forward lesson should contain exactly A/H/P matrices, found {full_matrices}")
     includes(sources["22c-language-training"], r"\input{figures/training-20-step-loss}", "20-step loss curve")
     includes(sources["23a-from-toy-to-gpt"], r"\label{eq:toy-99-parameters}", "99 parameter count")
     includes(sources["24e-pytorch-lab"], r"\verbatiminput{../scripts/pytorch_starter.py}", "standalone PyTorch lab")
