@@ -181,6 +181,11 @@ def report():
         'mean_loss_before': st['loss'], 'mean_loss_after': st1['loss'],
         'true_probabilities_before': [float(st['probs'][i, y]) for i, y in enumerate(TARGETS)],
         'true_probabilities_after': [float(st1['probs'][i, y]) for i, y in enumerate(TARGETS)],
+        'states_before': {key: st[key].tolist() for key in
+                          ('x', 'u', 'q', 'k', 'v', 'a', 'raw', 'r', 'b',
+                           'pre', 'hid', 'h', 'logits', 'probs')},
+        'states_after': {key: st1[key].tolist() for key in
+                         ('x', 'a', 'r', 'h', 'logits', 'probs')},
         'attention_weights_before': st['a'].tolist(),
         'logits_before': st['logits'].tolist(),
         'gradient_norms': {key: float(np.linalg.norm(val)) for key, val in grads.items()},
