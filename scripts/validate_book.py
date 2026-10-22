@@ -16,10 +16,12 @@ ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
 PARTS = [
     "学习是什么：从规则到参数更新",
-    "把许多数一起算，再让文字进入计算",
+    "把许多数一起算",
+    "让文字进入计算",
     "让词与词交换信息",
-    "组装、训练并使用 Transformer",
-    "从语言模型到助手，再判断架构变化",
+    "组装并训练 Transformer",
+    "从语言模型到助手",
+    "架构为什么在变，往哪走",
     "选读专题一：从 CNN 到视觉 Transformer",
     "选读专题二：联想记忆与高维检索",
 ]
@@ -159,7 +161,7 @@ def validate_source() -> None:
     main = (BOOK / "main.tex").read_text(encoding="utf-8")
     parts = re.findall(r"\\part\{([^}]+)\}", main)
     if parts != PARTS:
-        fail(f"Expected seven reading parts; found {parts!r}")
+        fail(f"Expected nine total parts (seven core and two elective); found {parts!r}")
     inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
@@ -171,9 +173,9 @@ def validate_source() -> None:
     if r"\usepackage{titlesec}" in main or r"\titleformat" in main:
         fail("titlesec must not override tagged section headings")
     if main.find(r"\appendix") <= main.find(r"\part{选读专题二：联想记忆与高维检索}"):
-        fail("Appendices must follow optional part VII")
-    if main.count(r"\learningbridge{") != 7:
-        fail("Seven sections need seven minimal part introductions")
+        fail("Appendices must follow optional part IX")
+    if main.count(r"\learningbridge{") != 9:
+        fail("Nine parts need nine minimal introductions")
 
     # Explicit vector and architecture consistency.
     for name in ("21b-why-attention", "11-softmax-memory"):
@@ -472,14 +474,14 @@ def validate_pdf(path: Path) -> None:
                           text=True, check=True).stdout
     pages = text.split("\f")
     compact = normalized(text)
-    toc = normalized("".join(pages[1:6]))
-    for num, title in zip("一二三四五六七", PARTS):
+    toc = normalized("".join(pages[1:7]))
+    for num, title in zip("一二三四五六七八九", PARTS):
         # pdftotext can interleave the page number before the title.
         # Permit a 1-3 digit TOC folio between the part marker and title.
         pattern = rf"第{num}部分\d{{0,3}}{re.escape(normalized(title))}"
         if not re.search(pattern, toc):
             fail(f"Rendered TOC missing part 第{num}部分: {title}")
-    if "第八部分" in toc:
+    if "第十部分" in toc:
         fail("Rendered table of contents has an extra part")
     for item in ("数学速查", "符号与张量形状速览", "位置编码", "Pre-Norm",
                  "LayerNorm", "1.611377", "LoRA", "16,000",
