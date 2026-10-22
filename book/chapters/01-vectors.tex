@@ -1,17 +1,14 @@
 \section{向量：如何用数字表示一个东西？}
 \label{intro:01-vectors}
 
-全书正在尝试理解“春天、花、开了”这段话。
-文字本身不能直接代入数学运算，所以我们需要给每个词一个\textbf{由数字组成的表示}。
-先随便挑两组很简单的数字，用来认识向量的写法；这些数字并非从真实训练中获得。
-
-例如，临时把两个词写成：
+要让“春天、花、开了”进入计算，我们先把其中的词表示为数字。
+从最简单的二维表示开始：
 \begin{equation}
 \vect x_{\text{春天}}=\begin{bmatrix}1\\0\end{bmatrix},\qquad
 \vect x_{\text{花}}=\begin{bmatrix}0\\1\end{bmatrix}.
 \end{equation}
 
-这种有序数字列表叫作\textbf{向量（vector）}。$(1,0)$ 是二维向量；真实模型中的向量可以有几十、几百乃至几千维。这里的数字只是教学示意，并非语言模型真实的语义编码。
+这种按顺序排列的数字叫作\textbf{向量（vector）}。$(1,0)$ 和 $(0,1)$ 都是二维向量；大型模型往往使用维度更高的表示。
 
 \begin{center}
 \begin{tikzpicture}[x=2.6cm,y=2.6cm,>=Latex]
@@ -30,9 +27,8 @@
 例如 $(0.6,0.8)$ 的长度为 $\sqrt{0.6^2+0.8^2}=1$。长度等于 $1$ 的向量叫\textbf{单位向量}，后面很多计算会方便得多。
 
 \begin{idea}
-向量是一组有顺序的数字，可以表示输入的多个特征，
-也能计算长度和方向；它本身不是一本已经写好语义的词典。
-但有了两条向量，怎样判断它们的方向或特征是否匹配？下一章从最简单的乘法开始。
+向量既能表示不同特征，也能比较长度与方向。
+有了两条向量，怎样判断它们是否匹配？下一章从点积开始。
 \end{idea}
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:01-vectors}两个向量 $(2,3)$ 和 $(1,-1)$ 相加得到什么？\quad{\footnotesize\hyperref[answer:01-vectors]{核对解答。}}\par\medskip
