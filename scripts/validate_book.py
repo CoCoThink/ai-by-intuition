@@ -690,12 +690,18 @@ def validate_pdf(path: Path) -> None:
         han_count = len(re.findall(r"[\u4e00-\u9fff]", body))
         # Code-dense appendix pages may be mostly Latin identifiers.
         latin_words = len(re.findall(r"[A-Za-z_][A-Za-z_0-9]{2,}", body))
-        if han_count < 18 and latin_words < 80:
+        # Matrix-reference pages may contain many numeric entries but few Han glyphs.
+        # Require both numeric density AND substantive nonempty lines: a lone formula
+        # or page number must not suppress the orphan-page regression guard.
+        number_terms = len(re.findall(r"[-−]?\d+(?:[.,]\d+)*", body))
+        content_lines = sum(bool(line.strip()) for line in body.splitlines())
+        math_dense_page = number_terms >= 50 and content_lines >= 30
+        if han_count < 18 and latin_words < 80 and not math_dense_page:
             fail(f"Likely orphan/blank page: {i}")
         # A short final bibliography page is legitimate, but an almost empty
         # intermediate page with a stranded conclusion is not. This caught the
         # prior ViT conclusion that occupied an entire page by itself.
-        if i < len(pages) - 1 and han_count < 90 and latin_words < 80:
+        if i < len(pages) - 1 and han_count < 90 and latin_words < 80 and not math_dense_page:
             fail(f"Likely stranded content on interior page {i}: {han_count} Han chars")
     # Read only tag attributes: PDF text can contain literal control chars
     # that make pdftotext's XHTML *text nodes* invalid XML.
