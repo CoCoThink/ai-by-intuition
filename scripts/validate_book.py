@@ -11,6 +11,7 @@ import math
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
@@ -248,6 +249,13 @@ def validate_source() -> None:
     includes(sources["23f-foundation-recap"], "技术底座回顾", "end of core recap")
     includes(sources["00g-reading-routes"], "速读", "pre-TOC reading paths")
     includes(main, r"\newtcolorbox{boundarybox}", "separate scope box type")
+    includes(main, r"\input{chapters/00g-reading-routes}", "reading guide before contents")
+    includes(main, r"\input{chapters/23f-foundation-recap}", "core recap before electives")
+    check = subprocess.run([sys.executable, str(ROOT / "scripts" / "check_p2_notebook.py")],
+                           capture_output=True, text=True)
+    if check.returncode:
+        fail("P2 interactive notebook QA failed: " + check.stdout + check.stderr)
+    print(check.stdout.strip())
     includes(sources["22c-language-training"], "0.25764", "shared embedding gradient")
     includes(sources["10-mlp"], r"\label{eq:mlp-l-layer-row}", "L-layer network")
     includes(sources["20b-task-contract"], r"\label{fig:token-ffn-output-pipeline}", "token-to-vocabulary diagram")
