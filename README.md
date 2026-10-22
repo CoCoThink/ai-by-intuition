@@ -12,7 +12,7 @@
 
 目前发布的 **v0.1.0 PDF 仍采用“五个必读部分 + 两个选读部分”**。仓库 `main` 已开始按“缺口驱动、先学习后矩阵、统一贯通实验”推进新版教学结构，**`main` 已按七必读、两选读和 A–E 附录组织，主线现在准确显示 31 章；新版本 PDF 尚未正式发布**。
 
-- [V2 重构计划与进度（包含 M0–M6 验收）](docs/STRUCTURE_REDESIGN_PLAN.md)
+- [V2 重构计划与进度（包含 M0–M6 验收）](docs/STRUCTURE_REDESIGN_PLAN.md) · [V2 发布前验收台账（当前未发布）](docs/V2_RELEASE_READINESS.md)
 - [旧版 47 章节源码迁移台账](docs/RESTRUCTURING_BASELINE.md) · [V2 的 31 章先修依赖与缺口链](docs/CURRICULUM_DEPENDENCIES.md)
 - [可复算的三维 Transformer 数值基线](scripts/teaching_reference.py)：一层单头 Pre-Norm Block、三位置联合训练与 20 步 Embedding 轨迹。M2 已替换 Embedding，M3 已在正文打通完整的三维单头 Pre-Norm Block、三位置联合反向传播和一次共享参数更新；M4 已增加预训练/Few-shot、季度报告 Agent 任务链和新技术判别末章。**此前一些用于局部直觉的二维 Attention 小例子仍是独立示范，未与三维主数值链混用**。
 

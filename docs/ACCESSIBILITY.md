@@ -12,7 +12,7 @@
 | PDF/UA-2 | veraPDF 1.30.2 `compliant=true`、`failedRules=0`、`failedChecks=0` | 严格阻断构建/发布 |
 | 页面/数值 | 7 部分、47 章节文件、页面文字边界和数值算例通过 | 正式工作流回归 |
 
-正式源码入口为 [book/main.tex](../book/main.tex)，使用 TeX Live 2026 + LuaLaTeX，`unicode-math`、`pdfstandard=ua-2`、`math/setup=mathml-AF`。各项计数基于已发布 v0.1.0，源码升级后必须重新验收。
+正式源码入口为 [book/main.tex](../book/main.tex)，使用 TeX Live 2026 + LuaLaTeX，`unicode-math`、`pdfstandard=ua-2`、`math/setup=mathml-AF`。各项计数基于已发布 v0.1.0，源码升级后必须重新验收。[V2 候选机器审计与视觉抽查](V2_RELEASE_READINESS.md)提供新版另行验证的可追溯记录，不覆盖 v0.1.0 历史数据。
 
 **范围限制：**只验证可重复的机器规则和布局检查。**不安排真实屏幕阅读器体验或人工无障碍验收**；机器符合 PDF/UA-2 规则，不代表任何辅助阅读器中的实际阅读体验已获保证。
 
