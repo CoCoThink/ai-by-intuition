@@ -36,6 +36,40 @@ GPT-2 small 为 $1\times768$。
 \textbf{FFN 宽度}决定每个 Token 经过非线性中间层时可用的特征数量，
 不是 Token 的个数；它与词表输出头也不是同一个矩阵。
 
+\subsection{参数怎么数：99 个教学参数与 GPT-2 量级}
+
+本书三维贯通模型\textbf{按实际可训练元素个数}计数。
+固定 LayerNorm 仿射系数、不使用偏置，输出头与输入 Embedding 独立，
+也不把计算图中的中间激活当作参数：
+\[
+\begin{aligned}
+E &: 5\times3=15, & P &:3\times3=9,\\
+W_Q,W_K,W_V,W_O &:4\times(3\times3)=36,\\
+W_{\rm up},W_{\rm down} &:3\times4+4\times3=24,\\
+W_{\rm out} &:3\times5=15.
+\end{aligned}
+\]
+因此总数为
+\begin{equation}
+\boxed{15+9+36+24+15=99\text{ 个可训练参数}.}
+\label{eq:toy-99-parameters}
+\end{equation}
+\textbf{参数量不等于运行时显存}：
+推理还会保存激活、缓存和程序开销，训练还需梯度及优化器状态。
+
+再用经典 GPT-2 small 的已公开结构做量级估算：
+Token Embedding 约有
+$50{,}257\times768=38{,}597{,}376$ 个参数，约 $38.6$ M；
+每个 Block 的四组 Attention 投影与两个约 $4d$ 的 FFN 投影，
+主导项约为 $12d^2$，
+即 $12\times768^2\approx7.08$ M/层。
+十二层约 $84.9$ M；再加可学习位置 Embedding
+$1{,}024\times768\approx0.79$ M、
+归一化参数与偏置，得到约 $124$ M 的经典量级。
+这是\textbf{结构上的近似预算}，
+精确数值需按具体权重共享、偏置及 checkpoint 逐项核对；
+不能将教学模型的独立输出头规则套在 GPT-2 上。
+
 \subsection{同一个训练目标，不代表相同能力}
 
 无论玩具模型还是 GPT-2 类 Decoder-only 模型，
