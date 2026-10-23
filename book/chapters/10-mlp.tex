@@ -103,6 +103,12 @@ $\vect x^\top(W_1W_2)$，两层可以合并成一层；
 \subsection{它与 Transformer 中的 FFN 有什么关系？}
 Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 跨位置的信息交互由 Attention 等机制承担。
+例如有三个 Token，每行宽度为 2，
+取 $X:3\times2$、$W_1:2\times3$、$W_2:3\times2$，
+则 $\relu(XW_1)W_2:3\times2$。
+三行分别对应三个 Token；FFN 虽改变每行的特征，
+却没有在不同 Token 之间交换信息。
+
 第 VI 部分将用联想记忆的外积与读取，从另一个角度理解这类矩阵运算。
 
 \chaptercheck{10-mlp}{MLP 为什么需要激活函数？}{$\relu(-1)$ 与 $\relu(2)$ 各是什么？}{若把两层之间的非线性删去，
