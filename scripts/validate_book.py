@@ -468,9 +468,12 @@ def validate_source() -> None:
     english_aliases = re.findall(
         r"(?m)^\\item\s+\{\\sffamily\\bfseries\s+([^}]+)\}",
         sources["24d-english-index"])
+    core_duplicates = sorted(set(base_terms) & set(modern_terms))
+    if core_duplicates:
+        fail(f"Modern glossary repeats defined base terms: {core_duplicates}")
     for label, terms, expected in (
         ("base glossary", base_terms, 100),
-        ("modern glossary", modern_terms, 27),
+        ("modern glossary", modern_terms, 25),
         ("English aliases", english_aliases, 100),
     ):
         if len(terms) != expected or len(set(terms)) != expected:
@@ -502,7 +505,7 @@ def validate_source() -> None:
                 fail(f"Broken self-check link in {name}: {destination}")
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (110 if lex == "24-lexicon" else 27):
+        if len(refs) != (110 if lex == "24-lexicon" else 25):
             fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
         for ref in refs:
             if ref not in labels:

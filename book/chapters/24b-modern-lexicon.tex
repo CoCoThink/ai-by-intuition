@@ -1,9 +1,10 @@
 \subsection{现代架构与 Agent 术语补充索引}
 \label{intro:24b-modern-lexicon}
 
-这一组只补充基础 100 词条未覆盖的架构与应用接口；
-按\textbf{解决的问题}分为四组，词条链接回正文。
-与基础词条相近的缩写只解释\textbf{差异}，避免维护另一份定义。
+这 25 个词条仅补充基础 100 词未覆盖的架构与系统接口，
+按\textbf{解决的问题}分组，链接回正文。
+例如 RLHF 与 MCP 已在基础词条定义，\textbf{这里不重复列词条}；
+英文 A--Z 别名页仅用于查找，不另维护定义。
 
 \subsubsection*{模型输入、目标与训练}
 \begin{itemize}
@@ -13,7 +14,6 @@
 \item \textbf{标签错位（Shifted Targets）}：每个输入位置的目标为下一位置 Token。 \termref{concept:shifted-targets}
 \item \textbf{损失掩码}：选择哪些位置参与损失统计，区别于因果注意力掩码。 \termref{concept:loss-mask}
 \item \textbf{SFT}：利用示范回答继续训练模型。 \termref{concept:sft}
-\item \textbf{RLHF}：使用人类偏好等评价信号优化模型行为。 \termref{concept:rlhf}
 \item \textbf{RLVR}：利用可程序化核验的任务奖励进行学习。 \termref{concept:rlvr}
 \item \textbf{CoT}：可能要求模型输出中间步骤的提示形式，不等同于直接观察内部计算。 \termref{concept:cot-prompt}
 \end{itemize}
@@ -42,7 +42,6 @@
 \subsubsection*{Agent 系统中的边界}
 \begin{itemize}
 \item \textbf{Tool Calling}：模型提出结构化请求，系统在检查后调用外部工具。 \termref{concept:tool-calling}
-\item \textbf{MCP}：模型应用与工具/数据资源协作时使用的接口协议。 \termref{concept:mcp}
 \item \textbf{Workflow}：由固定步骤或条件分支编排的可重复任务流程。 \termref{concept:workflow}
 \item \textbf{Skill}：把一类任务的说明、约束和脚本包装为可复用能力。 \termref{concept:skill}
 \item \textbf{Subagent 与 A2A}：前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 \termref{concept:subagent}
