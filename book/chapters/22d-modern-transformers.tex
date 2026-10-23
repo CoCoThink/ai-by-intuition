@@ -287,7 +287,8 @@ Qwen2 架构的门控 FFN 还需结合\textbf{模型实现}判断，
 来源：
 \href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 config}、
 \href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json}{Qwen2.5 config}。
-这些是\textbf{结构元数据}，不是对模型质量、推理速度的独立测量。
+这张表只比较\textbf{结构元数据}；
+模型质量与推理速度需由独立基准测量。
 
 \subsection{［复算］MLA 缓存元素与滑动窗口掩码}
 
@@ -302,9 +303,7 @@ $2\times8\times2\times2=\boxed{64}$。
 宽度为 $3$ 的共享潜在向量和宽度为 $2$ 的位置相关部分，
 则\textbf{这份假设}的缓存数为
 $8\times(3+2)=\boxed{40}$。
-这并非 MLA 通用缓存公式；真实实现还有解码重建、
-位置分支、张量布局、投影计算等额外成本，
-不能据此断言 MLA 的整体显存必然只有 MHA 的 $40/128$。
+
 
 对五个 Token，用窗口 $w=3$ 的\textbf{包含当前位置}的因果掩码，
 行是 Query 位置，列是 Key 位置；1 表示允许读取：
@@ -320,8 +319,12 @@ $8\times(3+2)=\boxed{40}$。
 最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
 窗口掩码有 $1+2+3+3+3=\boxed{12}$ 个可见位置对，
 全量因果 Mask 则有 $15$ 个；
-这里统计的是\textbf{可参与计算的对数}，
-不是经过特定 Kernel 优化后的真实运行时间。
+\begin{boundarybox}
+\textbf{计算口径：}以上 $128/64/40$ 是\textbf{示例结构的缓存元素数}；
+实际 MLA 还涉及位置分支、张量布局、投影与解码重建。
+掩码的 $12/15$ 是\textbf{可见位置对数}；
+实际显存和运行时间还取决于实现、数据类型、Kernel 与设备。
+\end{boundarybox}
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 运行 \texttt{python3 scripts/architecture\_demo.py}
