@@ -8,7 +8,7 @@
 ]
 \small
 \noindent{\sffamily\bfseries\color{ink}图解：为什么一会儿写 $K$，一会儿写 $K^\top$？}\par\smallskip
-假设有 $M=3$ 条 Key，每条 Key 有 $d_k=2$ 个数字。
+延续第 20.1 节：$K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix}$，有 $M=3$ 条 Key、$d_k=2$ 个数字。
 \textbf{相同底色表示同一条 Key：两栏中的数字相同，只是摆放方向不同。}
 
 \vspace{1.5mm}
@@ -24,8 +24,8 @@
   }
 }
 \node at (.5,-.5){1}; \node at (1.5,-.5){0};
-\node at (.5,-1.5){0}; \node at (1.5,-1.5){1};
-\node at (.5,-2.5){1}; \node at (1.5,-2.5){1};
+\node at (.5,-1.5){1}; \node at (1.5,-1.5){1};
+\node at (.5,-2.5){2}; \node at (1.5,-2.5){1};
 \end{tikzpicture}
 \\[1mm]
 $K\in\R^{M\times d_k}$\\
@@ -41,7 +41,7 @@ $K\in\R^{M\times d_k}$\\
       (\c-1,1-\r) rectangle (\c,-\r);
   }
 }
-\node at (.5,-.5){1}; \node at (1.5,-.5){0}; \node at (2.5,-.5){1};
+\node at (.5,-.5){1}; \node at (1.5,-.5){1}; \node at (2.5,-.5){2};
 \node at (.5,-1.5){0}; \node at (1.5,-1.5){1}; \node at (2.5,-1.5){1};
 \end{tikzpicture}
 \\[1mm]

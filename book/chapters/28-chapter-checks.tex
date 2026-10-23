@@ -1,170 +1,171 @@
 \subsection{全书随堂自测参考解答}
 \phantomsection\label{app:chapter-checks}
 
-正文每个核心小节结束处都有一个简短的自测问题。这份答案按阅读顺序排列；
+正文自测答案\textbf{按当前正文章号与阅读顺序排列}，同章多题共用章号；
 若数值与这里不一致，请先核对矩阵的\textbf{维度、乘法方向和输入数据}。
-点击每题标题可回到正文中的提问位置。
+附录 A 的两项工具自测列在最后。点击每题标题可回到正文中的提问位置。
 
-\begin{enumerate}[leftmargin=2.3em,itemsep=5pt]
+\begin{enumerate}[leftmargin=6em,labelsep=.7em,itemsep=5pt]
 
-\item \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 回忆：映射成下一 Token 的概率分布；
+\item[\textbf{第 1 章}] \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 回忆：映射成下一 Token 的概率分布；
 手算：贪心选择概率最大的\textbf{第 1 个候选}；
 迁移：不能，预测形式不提供事实核验。
-\item \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 回忆：遮挡、姿态与光照会让规则枚举失效；
+\item[\textbf{第 2 章}] \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 回忆：遮挡、姿态与光照会让规则枚举失效；
 手算：$\widehat y(4)=2\times4+1=\boxed{9}$，是待验证的预测；
 迁移：优先研究利用标注数据学习可泛化特征，再在独立样本上验证。
-\item \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace 回忆：$w,b$ 是参数，$x$ 是输入；
+\item[\textbf{第 3 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace 回忆：$w,b$ 是参数，$x$ 是输入；
 手算：$2\times3+1=\boxed{7}$；
 迁移：新输出 $2\times3-1=\boxed{5}$，减少 $2$。
-\item \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 回忆：任何实数的平方都非负；
+\item[\textbf{第 4 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 回忆：任何实数的平方都非负；
 手算：$w=\boxed{2}$ 时 $L_{\min}=\boxed{0}$；
 迁移：$L(3,1)=\frac23(3-2)^2=\boxed{2/3}$。
-\item \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace 回忆：沿负梯度方向更新；
+\item[\textbf{第 4 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace 回忆：沿负梯度方向更新；
 手算：$\nabla L=(-4/3,-2)$，更新到 $(1.4,0.6)$，
 损失从 $5/3$ 降到 $\boxed{0.4}$；
 迁移：$\eta=0$ 时无更新，损失仍为 $5/3$。
-\item \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace 回忆：两次仿射复合仍可化为一次仿射变换；
+\item[\textbf{第 5 章}] \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace 回忆：两次仿射复合仍可化为一次仿射变换；
 手算：$\boxed{0}$ 和 $\boxed{1}$；
 迁移：ReLU 对正负输入采用不同分支，生成分段变化。
-\item \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{链式法则与反向传播}}\enspace 回忆：链式法则可共享相同中间节点的上游梯度；
+\item[\textbf{第 6 章}] \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{链式法则与反向传播}}\enspace 回忆：链式法则可共享相同中间节点的上游梯度；
 手算：$\partial\widehat y/\partial w_1=w_2x=\boxed{6}$；
 迁移：不必重算整条后续路径，计算图中间结果可复用。
-\item \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{一次四参数更新}}\enspace 回忆：前向、损失、反传求梯度、统一更新；
+\item[\textbf{第 6 章}] \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{一次四参数更新}}\enspace 回忆：前向、损失、反传求梯度、统一更新；
 手算：$\widehat y=4,L=\boxed{0.5}$；
 迁移：不能混用新旧权重，否则两项梯度不再对应同一组参数。
-\item \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{泛化与过拟合}}\enspace 回忆：可能过拟合，先检查数据切分与泄漏；
+\item[\textbf{第 7 章}] \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{泛化与过拟合}}\enspace 回忆：可能过拟合，先检查数据切分与泄漏；
 手算：最低损失为 $0.4$，选择\textbf{第 2 轮}；
 迁移：测试集反复参与调参会产生间接泄漏，
 使最终评估不再独立。
-\item \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量加法}}\enspace 回忆：有两个有序分量；
+\item[\textbf{第 8 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量加法}}\enspace 回忆：有两个有序分量；
 手算：$(2,3)+(1,-1)=\boxed{(3,2)}$；
 迁移：不能直接相加，需先明确形状兼容的映射或补维规则。
-\item \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积手算}}\enspace 回忆：对应分量相乘后求和；
+\item[\textbf{第 9 章}] \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积手算}}\enspace 回忆：对应分量相乘后求和；
 手算：$1\times3+2\times1=\boxed{5}$；
 迁移：两个非零向量互相正交，夹角为直角。
-\item \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace 回忆：左矩阵列数等于右矩阵行数；
+\item[\textbf{第 10 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace 回忆：左矩阵列数等于右矩阵行数；
 手算：$AB:\boxed{2\times4}$；
 迁移：不能，内侧维度为 $3$ 和 $4$，不匹配。
-\item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 回忆：激活引入非线性变换；手算：$\boxed{0}$ 与 $\boxed{2}$；
+\item[\textbf{第 11 章}] \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 回忆：激活引入非线性变换；手算：$\boxed{0}$ 与 $\boxed{2}$；
 迁移：能，$xW_1W_2=x(W_1W_2)$，两层等价于一次线性映射。
-\item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{批次、Warmup、AdamW}}\enspace
+\item[\textbf{第 11 章}] \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{批次、Warmup、AdamW}}\enspace
 回忆：$100/10=10$ 次更新；
 手算：$w_5=0.64-0.03\times2=\boxed{0.58}$；
 迁移：AdamW 的衰减直接缩小当前权重，独立于自适应梯度估计；
 若把 $\lambda w$ 直接加入梯度，会连动一阶、二阶移动平均。
-\item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 回忆：ID 只是离散编号，不表明语义大小；
+\item[\textbf{第 12 章}] \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 回忆：ID 只是离散编号，不表明语义大小；
 手算：$5-2=\boxed{3}$ 个 Token；
 迁移：未必相同，分词器词表与合并规则改变切分结果。
-\item \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace 回忆：logits 未归一化，不要求非负或总和为一；
+\item[\textbf{第 13 章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace 回忆：logits 未归一化，不要求非负或总和为一；
 手算：$-\log(1/2)=\boxed{0.6931}$，
 正确类梯度 $1/2-1=\boxed{-1/2}$；
 迁移：$-\log p$ 随 $p$ 升高而降低。
-\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace 回忆：每行对应词表中一个 Token ID；
+\item[\textbf{第 14 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace 回忆：每行对应词表中一个 Token ID；
 手算：$E:5\times3$，三次查表得到 $\boxed{3\times3}$；
 迁移：同一 ID 查到同一 Embedding 行；
 后续位置与上下文变换才可能产生差异。
-\item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 回忆：每个位置预测它之后的 Token；
+\item[\textbf{第 15 章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 回忆：每个位置预测它之后的 Token；
 手算：目标为 $\boxed{[3,4,2]}$；
 迁移：不能，生成只有可见前缀，未来目标必须屏蔽。
-\item \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 回忆：缺少此前位置的信息；
+\item[\textbf{第 16 章}] \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 回忆：缺少此前位置的信息；
 手算：两次输出均为 $\boxed{7}$；
 迁移：可将前文表示加入输入、递推状态或 Attention 可见位置。
-\item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace 回忆：状态按序列位置向后递推；
+\item[\textbf{第 17 章}] \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace 回忆：状态按序列位置向后递推；
 手算：$h_1=2,h_2=\boxed{1}$；
 迁移：$h_3=1+0.5\times1=\boxed{1.5}$。
-\item \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace 回忆：点积交换顺序不改变结果；
+\item[\textbf{第 18 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace 回忆：点积交换顺序不改变结果；
 手算：$S_{13}=S_{31}=\boxed{1}$；
 迁移：未必，逐行 Softmax 的分母随 Query 所在行改变，
 本例 $A_{13}\approx0.422$，$A_{31}\approx0.212$。
-\item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 回忆：Query/Key 产生匹配分数，Value 供加权读取；
+\item[\textbf{第 19 章}] \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 回忆：Query/Key 产生匹配分数，Value 供加权读取；
 手算：$0.2(1,0)+0.8(0,1)=\boxed{(0.2,0.8)}$；
 迁移：匹配分数不变，输出通常随 Value 改变。
-\item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 回忆：用 $QK^\top$ 得到完整分数矩阵；
+\item[\textbf{第 20 章}] \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 回忆：用 $QK^\top$ 得到完整分数矩阵；
 手算：两条权重都是 $\boxed{0.5}$；
 迁移：其他分数固定时，提高某条分数会增大其 Softmax 权重。
-\item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 回忆：不同投影可学习不同的匹配与读取表示；
+\item[\textbf{第 21 章}] \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 回忆：不同投影可学习不同的匹配与读取表示；
 手算：拼接输出 $\boxed{3\times4}$；
 迁移：再右乘 $4\times6$，得到 $\boxed{3\times6}$。
-\item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{Block 三层自测}}\enspace
+\item[\textbf{第 22 章}] \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{Block 三层自测}}\enspace
 回忆：同形状向量才能逐位置直接残差相加，否则需要投影对齐；
 手算：两个 $3\times2$ 头按特征拼接为 $\boxed{3\times4}$；
 迁移：Encoder--Decoder 原论文的 Cross-Attention 中
 Query 来自 Decoder、Key/Value 来自 Encoder 输出。
-\item \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 回忆：FFN 改写隐藏特征，输出头产生词表 logits；
+\item[\textbf{第 23 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 回忆：FFN 改写隐藏特征，输出头产生词表 logits；
 手算：上投影 $\boxed{6\times18}$、下投影 $\boxed{18\times6}$；
 迁移：Token 数不变，FFN 输出仍为 $4\times6$。
-\item \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace 回忆：隐藏向量经过输出头、logits、Softmax；
+\item[\textbf{第 24 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace 回忆：隐藏向量经过输出头、logits、Softmax；
 手算：第 $\boxed{1,2}$ 位置预测错，第 3 位置正确；
 迁移：并非不变，主例最大 logit 变化约 $0.3520$，
 首位置可以经因果 Attention 影响后续。
-\item \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace 回忆：平均三项损失令每项梯度带 $1/3$；
+\item[\textbf{第 25 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace 回忆：平均三项损失令每项梯度带 $1/3$；
 手算：$(0.3-1)/3=\boxed{-0.2333}$；
 迁移：只统计两个参与位置时均值归一化为 $1/2$，
 需同时一致地更改损失掩码。
-\item \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{贪心生成与 Top-p 采样}}\enspace 回忆：贪心取最高概率，Top-p 在累计概率达到阈值的候选中采样；
+\item[\textbf{第 26 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{贪心生成与 Top-p 采样}}\enspace 回忆：贪心取最高概率，Top-p 在累计概率达到阈值的候选中采样；
 手算：保留前两个候选（累计 $0.9$）；
 迁移：归一化为 $\boxed{(2/3,1/3)}$。
-\item \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace 回忆：玩具损失下降只验证一次已给定数据上的更新；
+\item[\textbf{第 27 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace 回忆：玩具损失下降只验证一次已给定数据上的更新；
 手算：$768/12=\boxed{64}$；
 迁移：还要用独立任务评价事实、泛化与错误率，
 头宽和训练单步结果都不足以证明可靠性。
-\item \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace 回忆：ICL 只改变当前上下文；实际执行 SFT 才更新参数；
+\item[\textbf{第 28 章}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace 回忆：$S=k^\top v$，查询为 $kS=(kk^\top)v$；
+手算：$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$；
+迁移：不能，$k'k'^\top=0.25$，读出 $0.25v$，
+说明单位 Key 条件的重要性。
+\item[\textbf{第 28 章}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace 回忆：查询与其他 Key 的非零点积会带入别的 Value；
+手算：$S=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}$，
+$k_AS=\boxed{(1,0.6)}$；
+迁移：当两个 Key 正交时此交叉项为零。
+\item[\textbf{第 29 章}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace 回忆：残差是目标 Value 减去旧状态的查询结果；
+手算：$k_AS_2=\boxed{(0.64,0.6)}$；
+迁移：不能，此时 A 已偏离目标 $(1,0)$；
+可交替重访 A 与 B、持续修正残差。
+\item[\textbf{第 29 章}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace 回忆：$xK^\top$ 给出各 Key 的匹配分数；
+手算：$xK^\top:1\times3$，输出 $\boxed{1\times4}$；
+迁移：不能，Key 与 Value 的记录行数不一致。
+\item[\textbf{第 30 章}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace 回忆：大于一的幂可压低 $0$ 到 $1$ 之间的弱匹配；
+手算：$\boxed{0.25}$ 和 $\boxed{0.125}$；
+迁移：相似度为 $1$ 时 $1^n=1$，此项保持不变。
+\item[\textbf{第 30 章}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace 回忆：都以 Query/Key 匹配、用权重组合 Value；
+手算：$\boxed{(0.25,0.75)}$；
+迁移：不能，归一化和非线性规则不同，读取结果一般不等价。
+\item[\textbf{第 31 章}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace 回忆：其他 Key 的点积通常较小，交叉项的影响可能降低；
+手算：$\boxed{0}$；
+迁移：噪声、Key 的相关性、读出误差和具体容量定义仍构成限制。
+\item[\textbf{第 32 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace 回忆：ICL 只改变当前上下文；实际执行 SFT 才更新参数；
 手算：$2+1=\boxed{3}$ 条任务记录；
 迁移：不能，最新真实数据仍需授权读取并核验。
-\item \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace 回忆：SFT 用目标示范回答，偏好学习用回答间偏好或奖励；
+\item[\textbf{第 33 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace 回忆：SFT 用目标示范回答，偏好学习用回答间偏好或奖励；
 手算：$-\ln0.25=\ln4\approx\boxed{1.386}$；
 迁移：偏好学习可以利用 A 优于 B 的比较信号。
-\item \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{RAG、环比与权限}}\enspace
+\item[\textbf{第 34 章}] \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{RAG、环比与权限}}\enspace
 回忆：RAG 补充可追溯证据，不直接赋予模型外部操作权限；
 手算：$(132-120)/120=\boxed{10\%}$；
 迁移：网页是不可信数据，越权要求不等于系统或用户指令；
 文件外传必须另经授权与应用侧校验。
-\item \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace 回忆：权重与随上下文增长的 KV Cache 不同；
+\item[\textbf{第 35 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace 回忆：权重与随上下文增长的 KV Cache 不同；
 手算：$10^9\times2=2\times10^9$ 字节，为 $\boxed{2\ {\rm GB}}$；
 迁移：通常更多，还包括缓存、激活及运行时开销。
-\item \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace 回忆：多个 Query 头共享较少的 K/V 头；
+\item[\textbf{第 36 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace 回忆：多个 Query 头共享较少的 K/V 头；
 手算：$3/12=\boxed{1/4}$（只比较 K/V 元素）；
 迁移：不能，投影、Kernel、硬件、序列与质量指标仍需实测。
-\item \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace 回忆：单一资源指标不代表模型质量；
+\item[\textbf{第 37 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace 回忆：单一资源指标不代表模型质量；
 手算：$(100-50)/100=\boxed{50\%}$；
 迁移：至少测任务质量（如正确率）与效率
 （如延迟、吞吐），并固定输入和硬件条件。
-\item \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace 回忆：同一卷积核在多个空间位置共享参数；
+\item[\textbf{第 38 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace 回忆：同一卷积核在多个空间位置共享参数；
 手算：$3\times3\times3\times8=\boxed{216}$；
 迁移：核参数数目不随输入宽高翻倍而变，
 但输出位置数与运算量通常增加。
-\item \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace 回忆：将局部图像块变成一串向量供 Transformer 处理；
+\item[\textbf{第 39 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace 回忆：将局部图像块变成一串向量供 Transformer 处理；
 手算：Patch 为 $4\times3$，加 CLS 后共有 5 行，
 分数形状 $\boxed{5\times5}$；
 迁移：Patch 更小使 Token 数增多，全局 Attention 对数随之增加。
-\item \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace 回忆：$S=k^\top v$，查询为 $kS=(kk^\top)v$；
-手算：$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$；
-迁移：不能，$k'k'^\top=0.25$，读出 $0.25v$，
-说明单位 Key 条件的重要性。
-\item \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace 回忆：查询与其他 Key 的非零点积会带入别的 Value；
-手算：$S=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}$，
-$k_AS=\boxed{(1,0.6)}$；
-迁移：当两个 Key 正交时此交叉项为零。
-\item \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace 回忆：残差是目标 Value 减去旧状态的查询结果；
-手算：$k_AS_2=\boxed{(0.64,0.6)}$；
-迁移：不能，此时 A 已偏离目标 $(1,0)$；
-可交替重访 A 与 B、持续修正残差。
-\item \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace 回忆：$xK^\top$ 给出各 Key 的匹配分数；
-手算：$xK^\top:1\times3$，输出 $\boxed{1\times4}$；
-迁移：不能，Key 与 Value 的记录行数不一致。
-\item \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace 回忆：大于一的幂可压低 $0$ 到 $1$ 之间的弱匹配；
-手算：$\boxed{0.25}$ 和 $\boxed{0.125}$；
-迁移：相似度为 $1$ 时 $1^n=1$，此项保持不变。
-\item \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace 回忆：都以 Query/Key 匹配、用权重组合 Value；
-手算：$\boxed{(0.25,0.75)}$；
-迁移：不能，归一化和非线性规则不同，读取结果一般不等价。
-\item \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace 回忆：其他 Key 的点积通常较小，交叉项的影响可能降低；
-手算：$\boxed{0}$；
-迁移：噪声、Key 的相关性、读出误差和具体容量定义仍构成限制。
-\item \phantomsection\label{answer:00b-math-tools}\textbf{\hyperref[check:00b-math-tools]{数学工具速查}}\enspace 回忆：自然对数是以 $e$ 为底的指数函数的反函数；
+\item[\textbf{附录 A}] \phantomsection\label{answer:00b-math-tools}\textbf{\hyperref[check:00b-math-tools]{数学工具速查}}\enspace 回忆：自然对数是以 $e$ 为底的指数函数的反函数；
 手算：$e^0=\boxed{1}$，$\log1=\boxed{0}$；
 迁移：$\log e=\boxed{1}$。
-\item \phantomsection\label{answer:00c-symbols}\textbf{\hyperref[check:00c-symbols]{形状与符号约定}}\enspace 回忆：默认一条 Token 占一行；
+\item[\textbf{附录 A}] \phantomsection\label{answer:00c-symbols}\textbf{\hyperref[check:00c-symbols]{形状与符号约定}}\enspace 回忆：默认一条 Token 占一行；
 手算：$QK^\top:\boxed{3\times5}$；
 迁移：直接乘 $3\times2$ 与 $5\times2$，内维 $2$ 与 $5$ 不同。
+
 \end{enumerate}

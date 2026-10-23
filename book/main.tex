@@ -149,12 +149,10 @@
 }
 
 
-% Compact chapter location: only the relevant stage, not seven repeated nodes.
+% Short, reader-facing topic label; legacy stage arg retained for source compatibility.
 \newcommand{\modelpipelinefocus}[2]{%
 \par\smallskip\noindent
-{\sffamily\footnotesize\color{muted}本章定位：\enspace
-\ifcase#1 训练基础\or 分词器\or Embedding\or Attention\or FFN\or 输出头\or Softmax\or 采样\or 工具与应用\fi
-\enspace$\cdot$\enspace\textbf{#2}}\par\smallskip
+{\sffamily\footnotesize\color{muted}本章定位：\enspace\textbf{#2}}\par\smallskip
 }
 
 \begin{document}
