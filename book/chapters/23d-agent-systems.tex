@@ -1,6 +1,7 @@
 \section{从语言模型到 Agent：哪些能力来自模型，哪些来自系统？}
 \phantomsection\label{concept:agent}
 \label{intro:23d-agent-systems}
+\chaptercompass{模型可以提出工具动作，谁真正执行？}{Agent 是有权限与错误处理的应用循环，不能用模型推理代替系统授权。}{用户任务／上下文 $\to$ 工具请求与结果 $\to$ 有依据的回答}{普通工具循环不自动更新语言模型权重；状态由应用系统管理}
 
 \begin{idea}
 \noindent\emph{模型生成请求，系统执行动作}\par
@@ -12,6 +13,12 @@ Agent 把语言模型与这些工具组织到同一条工作流程中，
 \end{idea}
 
 \subsection{给“员工小 L”补能力：一条连续的缺口链}
+
+本节以任务负责人与员工逐层补能力的方式解释 Agent，
+叙事思路参考本书来源附录列出的公开 AI 教学课程。
+具体相似内容的来源与许可仍需在正式发布前逐项核验，
+核对记录见仓库 \texttt{docs/ATTRIBUTION\_REVIEW.md}；
+这里不暗示已取得原讲稿的复用授权。
 
 设想你是负责人，员工小 L 是一位只会读取当前对话、生成文本的语言模型。
 你交给它一份任务：“读取\textbf{有权限}的三份季度运营报告，

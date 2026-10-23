@@ -1,6 +1,7 @@
 \section{从 CNN 到 ViT：如何把图片变成一串 Token？}
 \label{intro:19b-vit}
 \phantomsection\label{concept:vit}
+\chaptercompass{图像块怎样变成可读的 Token 序列？}{Patch 投影、视觉编码与桥接层把视觉向量接到语言模型宽度。}{$4\times4$ 像素 $\to4\times3$ 视觉特征 $\to4\times4$ 前缀}{Patch 投影与视觉到语言的桥接矩阵（在实际训练时可训练）}
 
 卷积核在图片上\textbf{重复扫描局部窗口}；
 但 Transformer 用 Attention 就能让序列里的位置交换信息。

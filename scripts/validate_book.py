@@ -460,6 +460,30 @@ def validate_source() -> None:
     includes(sources["25b-modern-practice"], "Dropout",
              "modern conceptual correction exercise")
 
+    # Glossary is one maintained definition set with search-only alternate views.
+    base_terms = re.findall(r"(?m)^\\item\s+\\textbf\{([^}]+)\}",
+                            sources["24-lexicon"].split(r"\subsubsection*{不要混淆")[0])
+    modern_terms = re.findall(r"(?m)^\\item\s+\\textbf\{([^}]+)\}",
+                              sources["24b-modern-lexicon"])
+    english_aliases = re.findall(
+        r"(?m)^\\item\s+\{\\sffamily\\bfseries\s+([^}]+)\}",
+        sources["24d-english-index"])
+    for label, terms, expected in (
+        ("base glossary", base_terms, 100),
+        ("modern glossary", modern_terms, 27),
+        ("English aliases", english_aliases, 100),
+    ):
+        if len(terms) != expected or len(set(terms)) != expected:
+            fail(f"{label}: expected {expected} distinct entries, found "
+                 f"{len(terms)} entries and {len(set(terms))} unique names")
+    includes(sources["24-lexicon"], "英文 A--Z 列表只提供",
+             "single-source glossary explanation")
+    for core in ("22-transformer-architecture", "23a-from-toy-to-gpt",
+                 "04-key-value-outer-product", "23d-agent-systems",
+                 "22d-modern-transformers", "19b-vit"):
+        includes(sources[core], r"\chaptercompass{",
+                 f"{core} one-sentence and shape-first introduction")
+
     # Glossary anchors remain valid and are backed by content in the book.
     labels: dict[str, str] = {}
     for name in REQUIRED:

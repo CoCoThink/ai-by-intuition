@@ -21,7 +21,10 @@ L_{\rm MSE}=\frac1N\sum_{i=1}^{N}(\widehat y_i-y_i)^2,
 X=E[\mathrm{IDs}]+P.
 \]
 这里 $T$ 表示输入 Token 数，$d$ 是隐藏宽度，
-$h$ 是投影输出宽度。列向量的联想记忆专题需按其声明转置。
+$h$ 是投影输出宽度。
+第 VI 部分的联想记忆同样使用行向量，
+写入为 $S=\sum_i k_i^\top v_i$，
+读取为 $xS$；无需另外切换方向。
 
 \noindent\textbf{三、上下文读取：因果掩码不能泄露未来。}
 \[
