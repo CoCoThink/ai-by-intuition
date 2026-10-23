@@ -668,25 +668,25 @@ def validate_source() -> None:
         ("25b-modern-practice", "exercise:batch-attention-new"),
         ("15-practice", "exercise:delta-reverse"),
     ):
-        includes(sources[name], r"\\label{" + anchor + "}", "matched exercise anchor")
+        includes(sources[name], r"\label{" + anchor + "}", "matched exercise anchor")
     for name in ("20a-tokenizer", "20c-classification-loss",
                  "20b-task-contract", "21a-context-gap", "21-rnn"):
-        includes(sources[name], r"\\chaptercompass{", "shape-first missing chapter card")
+        includes(sources[name], r"\chaptercompass{", "shape-first missing chapter card")
     for ordinal in ("第一", "第二", "第三", "第四", "第五", "第六", "第七"):
         includes(agent_source, ordinal + "道关口", "seven gate prose/table parity")
-    includes(agent_source, r"\\label{sec:agent-seven-gates}", "Agent gate anchor")
-    includes(agent_source, r"\\label{sec:agent-acceptance}", "Agent acceptance anchor")
+    includes(agent_source, r"\label{sec:agent-seven-gates}", "Agent gate anchor")
+    includes(agent_source, r"\label{sec:agent-acceptance}", "Agent acceptance anchor")
     includes(sources["24e-bilingual-glossary"],
-             r"\\subsubsection*{不要混淆的五对概念}", "restored five concept contrasts")
+             r"\subsubsection*{不要混淆的五对概念}", "restored five concept contrasts")
     for concept in ("In-context learning (ICL)", "Few-shot prompting",
                     "Prompt", "Context", "Application memory", "Reward model"):
         includes(sources["24e-bilingual-glossary"], concept, "modern core glossary terms")
     key_source = sources["28-chapter-checks"]
     answered_chapters = [int(x) for x in
-        re.findall(r"\\item\\[\\textbf\\{第 (\\d+) 章\\}\\]", key_source)]
+        re.findall(r"\\item\[\\textbf\{第 (\d+) 章\}\]", key_source)]
     if answered_chapters != sorted(answered_chapters) or answered_chapters[-1] != 39:
         fail("Chapter answer key must follow numbered chapter order through 39")
-    if key_source.count(r"\\item[\\textbf{附录 A}]") != 2:
+    if key_source.count(r"\item[\textbf{附录 A}]") != 2:
         fail("Math and symbol appendix self-checks must follow numbered chapters")
 
     # Editorial regression after moving memory into Part VI.
