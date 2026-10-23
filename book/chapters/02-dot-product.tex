@@ -100,6 +100,13 @@ s_i=\vect k_i^\top\vect q.
 下一章会专门说明这个记号。
 这个式子与 $\vect k_i\cdot\vect q$ 表示同一个点积。
 
+\textbf{GPU 并行的起点：}一条点积先逐项相乘，再将结果求和；
+这个求和过程叫\textbf{归约}（reduction）。
+若有许多不同的 Query--Key 配对，每对的分数可以分别计算，
+大量乘加和局部归约适合在 GPU 上并行执行。
+下一章把许多点积排成矩阵乘法；并行不意味着每次都更快，
+很小的计算还可能受启动及数据搬运开销限制。
+
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:02-dot-product}
 \textbf{回忆：}点积如何从两个等长向量求出标量？

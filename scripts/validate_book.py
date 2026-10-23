@@ -306,6 +306,10 @@ def validate_source() -> None:
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
     includes(sources["20a-tokenizer"], "BPE", "subword example")
+    includes(sources["02-dot-product"], "归约", "GPU parallel reduction bridge")
+    includes(sources["23b-deployment-and-ecosystem"], "公司／模型／产品",
+             "distinct provider model and product layers")
+    includes(main, "忒修斯之船", "Part VIII architecture evolution opening")
     # The optional Torch companion is syntax-checked without requiring Torch at source-QA time.
     import ast
     for script in ("pytorch_starter.py", "teaching_trace.py"):
