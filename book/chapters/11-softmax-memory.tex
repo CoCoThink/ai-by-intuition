@@ -6,32 +6,32 @@
 \phantomsection\label{concept:self-attention}
 \chaptercompass{如何同时处理整句的 Query，而不逐个重复手算？}{将每行匹配合成 $QK^\top$，逐行 Softmax 后一次读取 $AV$。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\to Y:T\times d_v$}{$W_Q,W_K,W_V$ 可学习；回顾示例用单位投影}
 
-\localfixture{二维零投影注意力；回到第 18 章的朴素例子}
-前一章用独立的 $W_Q$、$W_K$ 得到了\textbf{不对称}的匹配分数，
-说明 Query 与 Key 可以表达不同的匹配关系。
-这里为专心观察\textbf{从一条 Query 到整个矩阵}的形状，
-先回到\hyperref[intro:21c-naive-attention]{第 18 章的未投影例子}：
-“开了”的匹配分数为 $(1,1,2)$，
-Softmax 权重为 $(0.212,0.212,0.576)$。
-接下来把单次查询推广为多行并行计算；
-\textbf{本段仍未缩放}，后面再引入 $\sqrt{d_k}$。
+\localfixture{二维 Q/K/V；承接上一章的独立投影，未缩放、未加因果 Mask}
+上一章使用 $W_Q=I_2$、$W_K=\begin{bmatrix}1&0\\1&1\end{bmatrix}$、
+$W_V=I_2$ 得到了\textbf{不对称}的匹配分数。
+这里保持同一套投影与输入，先复核最后一条 Query，
+再\textbf{对所有行并行归一化和读取 Value}。
+相比\hyperref[intro:21c-naive-attention]{更早的未投影例子}，
+现在 Key 已经由独立的矩阵生成。
 
-\subsection{单次查询：匹配、归一化、读取}
+\subsection{先复核第三条 Query 的单次读取}
 \[
-K=V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},
-\qquad\vect q^\top=(1,1).
+K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix},\quad
+V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\quad
+\vect q^\top=(1,1).
 \]
 \begin{example}
 \[
 \begin{aligned}
-\vect q^\top K^\top&=(1,1,2),\\
-\vect a^\top&=\softmax(\vect q^\top K^\top)\\
-&\approx(0.212,0.212,0.576),\\
-\vect y^\top&=\vect a^\top V=\boxed{(0.788,0.788).}
+\vect q^\top K^\top&=(1,2,3),\\
+\vect a^\top&=\softmax(\vect q^\top K^\top)
+\approx(0.090,0.245,0.665),\\
+\vect y^\top&=\vect a^\top V=\boxed{(0.755,0.910).}
 \end{aligned}
 \]
 \end{example}
-Key 和 Value 都按位置逐行排列；计算匹配分数时，将 $K$ 转置，使 Query 能与所有 Key 逐个点积。
+Key 与 Value 均按位置逐行排列。将 $K$ 转置后，
+Query 与三个 Key 的分数一次求出；下面同时计算全部 Query。
 
 \subsection{为什么是 $K^\top$ 而不是 $K$？}
 \label{sec:key-layout-card}
@@ -68,6 +68,50 @@ $V:M\times d_v$；Self-Attention 中 $N=M=T$。
 \underbrace{K^\top}_{d_k\times M}
 =\underbrace{S}_{N\times M}.
 \]
+
+\subsection{完整三行复算：$S\to A\to Y$}
+\localfixture{承接上一章的三位置非对称 Q/K/V 数值例}
+继续使用 $Q=X$、$K=XW_K$、$V=X$，
+上一章得到的原始分数为（\textbf{未缩放、未加因果 Mask}）
+\[
+S=QK^\top=\begin{bmatrix}
+1&1&2\\
+0&1&1\\
+1&2&3
+\end{bmatrix}\quad(3\times3).
+\]
+Softmax 对\textbf{每行分别归一化}，各行和为 $1$：
+\begin{equation}
+\label{eq:three-query-attention-weights}
+A=\operatorname{softmax}_{\rm row}(S)
+\approx\boxed{\begin{bmatrix}
+0.212&0.212&0.576\\
+0.155&0.422&0.422\\
+0.090&0.245&0.665
+\end{bmatrix}}\quad(3\times3).
+\end{equation}
+然后一次完成全部 Value 读取：
+\begin{equation}
+\label{eq:three-query-attention-output}
+Y=AV=
+\begin{bmatrix}
+0.212&0.212&0.576\\
+0.155&0.422&0.422\\
+0.090&0.245&0.665
+\end{bmatrix}
+\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}
+\approx\boxed{\begin{bmatrix}
+0.788&0.788\\
+0.578&0.845\\
+0.755&0.910
+\end{bmatrix}}\quad(3\times2).
+\end{equation}
+第二行的两项是 $a_{21}+a_{23}$ 与 $a_{22}+a_{23}$。
+输出以\textbf{未舍入的权重}求和后保留三位小数；
+直接相加表里舍入后的数字会出现约 $0.001$ 的误差。
+第三行 $(0.755,0.910)$ 与上一章单 Query 的结果一致。
+
+
 
 \subsection{缩放点积 Attention 的通用式}
 \begin{equation}
