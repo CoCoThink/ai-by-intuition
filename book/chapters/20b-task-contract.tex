@@ -1,5 +1,7 @@
+\Needspace{16\baselineskip}
 \section{把语言练习变成一道可计算的预测题}
 \label{intro:20b-task-contract}
+\chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{把输入 ID 序列与右移一位的目标 ID 配对，再约定预测形状和评测。}{$[1,3,4]\to[3,4,2]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；后续模型中的 Embedding、投影等参数需训练}
 \modelpipelinefocus{0}{训练样本与目标}
 
 阅读指南已经解释了为什么选择下一 Token 预测来学习语言模式：

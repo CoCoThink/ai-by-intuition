@@ -1,6 +1,8 @@
+\Needspace{16\baselineskip}
 \section{RNN 是什么？让网络一个词一个词地读}
 \phantomsection\label{concept:rnn}
 \label{intro:21-rnn}
+\chaptercompass{怎样把前一个 Token 的信息传给当前 Token？}{RNN 逐位置更新隐藏状态，把之前信息随时间传递。}{$x_t:1\times d_x,\ h_{t-1}:1\times d_h\to h_t:1\times d_h$}{$W_x,W_h,b$ 可学习；隐藏状态随输入改变，不是新训练权重}
 \modelpipelinefocus{3}{RNN 的历史状态}
 
 \begin{idea}
