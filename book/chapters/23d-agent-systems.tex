@@ -203,7 +203,7 @@ $(132-120)/120=\boxed{10\%}$。
 \draw[agentline] (gate)--(exec);
 \draw[agentline] (exec)--(feedback);
 \draw[agentline] (feedback)--node[right,font=\scriptsize]{完成} (done);
-\draw[agentline,teal] (feedback.east)--++(14mm,0) |- node[pos=.55,right,font=\scriptsize,text=teal]{未完成：下一轮} (plan.east);
+\draw[agentline,teal] (feedback.east)--++(7mm,0) |- node[pos=.47,right,font=\scriptsize,text=teal]{未完成：下一轮} (plan.east);
 \end{tikzpicture}
 \captionof{figure}{Agent loop：模型提出动作，应用负责权限与执行，每轮工具结果返回模型；实际应用还需终止与超时机制}
 \label{fig:agent-loop}
