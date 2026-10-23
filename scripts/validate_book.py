@@ -903,6 +903,25 @@ def validate_source() -> None:
             if label in labels:
                 fail(f"Duplicate cross-reference label {label}: {labels[label]} and {name}")
             labels[label] = name
+
+    # Guard against dangling LaTeX references in the complete active manuscript.
+    # Figure labels and generated chapter-check destinations are included.
+    active_tex = [main, *sources.values()]
+    active_tex.extend(path.read_text(encoding="utf-8")
+                      for path in (BOOK / "figures").glob("*.tex"))
+    combined_source = "\n".join(active_tex)
+    known_targets = set(re.findall(r"\\label\{([^}]+)\}", combined_source))
+    known_targets.update("check:" + check_id
+                         for body in sources.values()
+                         for check_id in re.findall(r"\\chaptercheck\{([^}]+)\}", body))
+    ref_targets = set(re.findall(
+        r"\\(?:ref\*?|pageref\*?)\{([^}]+)\}", combined_source))
+    ref_targets.update(re.findall(r"\\hyperref\[([^]]+)\]", combined_source))
+    missing_targets = sorted(target for target in ref_targets
+                             if "#" not in target and target not in known_targets)
+    if missing_targets:
+        fail(f"Unresolved cross-references (would print ??): {missing_targets!r}")
+
     # The new \chaptercheck macro emits \label{check:...} during TeX expansion.
     # Register those semantic targets in the static source audit as well.
     for name in REQUIRED:
