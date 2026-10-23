@@ -1157,6 +1157,142 @@ def validate_source() -> None:
     test_numeric_examples()
 
 
+
+def expected_subsection_bookmarks() -> dict[str, list[str]]:
+    """Expected x.y bookmarks in typesetting order, not just PDF outline totals.
+
+    The printed TOC stops at chapters, but hyperref bookmarks include H2.
+    Count numbered \section and \subsection commands across the actual
+    main.tex input order; never derive expectations from the PDF being tested.
+    """
+    main = (BOOK / "main.tex").read_text(encoding="utf-8")
+    includes(main, "bookmarksdepth=2", "PDF subsection bookmark depth")
+    includes(main, r"\setcounter{tocdepth}{1}", "intentionally chapter-only printed TOC")
+
+    def no_comments(body: str) -> str:
+        return re.sub(r"(?<!\\)%[^\n]*", "", body)
+
+    main = no_comments(main)
+    events = re.compile(
+        r"\\appendix\b|\\section\s*\{|\\input\{chapters/([^}]+)\}"
+    )
+    heads = re.compile(r"\\(section|subsection)\s*\{")
+    chapter_id = 0
+    appendix_id = 0
+    appendix = False
+    current: str | None = None
+    expected: dict[str, list[str]] = {}
+
+    def section_start() -> None:
+        nonlocal chapter_id, appendix_id, current
+        if appendix:
+            appendix_id += 1
+            current = chr(ord("A") + appendix_id - 1)
+        else:
+            chapter_id += 1
+            current = str(chapter_id)
+        if current in expected:
+            fail(f"Repeated expected outline heading {current}")
+        expected[current] = []
+
+    for event in events.finditer(main):
+        command = event.group(0)
+        if command.startswith(r"\appendix"):
+            appendix = True
+            current = None
+        elif command.startswith(r"\section"):
+            section_start()
+        else:
+            lesson = no_comments(chapter(event.group(1)))
+            for heading in heads.finditer(lesson):
+                if heading.group(1) == "section":
+                    section_start()
+                elif current is not None:
+                    expected[current].append(
+                        f"{current}.{len(expected[current]) + 1}"
+                    )
+
+    if list(expected) != [str(i) for i in range(1, 39)] + list("ABCDEFG"):
+        fail("Bookmark source reference must contain chapters 1..38 and appendices A..G")
+    if len([item for group in expected.values() for item in group]) < 150:
+        fail("Suspiciously few numbered subsection headings in source")
+    return expected
+
+
+def validate_subsection_bookmarks(reader) -> None:
+    """Compare every H2 bookmark's prefix, parent and order against source."""
+    expected = expected_subsection_bookmarks()
+
+    def nested(items):
+        result = []
+        for item in items:
+            if isinstance(item, list):
+                if not result or result[-1]["children"]:
+                    fail("PDF bookmark has orphaned/duplicate nested levels")
+                result[-1]["children"] = nested(item)
+            elif hasattr(item, "title"):
+                result.append({"title": str(item.title).strip(),
+                               "entry": item, "children": []})
+            else:
+                fail(f"Unknown PDF bookmark node: {type(item).__name__}")
+        return result
+
+    roots = nested(reader.outline)
+    if len(roots) != 10:
+        fail("PDF bookmark tree must have 9 part roots and 1 appendix root")
+    chapter_re = re.compile(r"^(?:第)?(\d+)(?:章)?\s+\S")
+    appendix_re = re.compile(r"^(?:附录\s*)?([A-G])\s+\S")
+    subsection_re = re.compile(r"^(\d+|[A-G])\.(\d+)\s+\S")
+    by_parent = {}
+    for root_number, root in enumerate(roots):
+        for node in root["children"]:
+            if subsection_re.match(node["title"]):
+                fail(f"PDF subsection is at part level: {node['title']!r}")
+            match = (appendix_re if root_number == 9 else chapter_re).match(
+                node["title"])
+            if match is None:
+                continue  # The unnumbered reading guide/recap.
+            key = match.group(1)
+            if key in by_parent:
+                fail(f"Duplicate PDF chapter/appendix bookmark: {key}")
+            by_parent[key] = node
+
+    if set(by_parent) != set(expected):
+        fail(f"PDF numbered bookmark parents mismatch: "
+             f"missing={sorted(set(expected)-set(by_parent))}, "
+             f"extra={sorted(set(by_parent)-set(expected))}")
+
+    checked = 0
+    for chapter_name, required in expected.items():
+        chapter_node = by_parent[chapter_name]
+        parent_page = reader.get_destination_page_number(chapter_node["entry"])
+        observed = []
+        previous_page = parent_page
+        for subsection in chapter_node["children"]:
+            if subsection["children"]:
+                fail(f"PDF subsection has children instead of being H2: "
+                     f"{subsection['title']!r}")
+            match = subsection_re.match(subsection["title"])
+            if not match:
+                fail(f"Missing x.y prefix in {chapter_name} subsection bookmark: "
+                     f"{subsection['title']!r}")
+            label = f"{match.group(1)}.{int(match.group(2))}"
+            observed.append(label)
+            page_number = reader.get_destination_page_number(subsection["entry"])
+            if not 0 <= page_number < len(reader.pages):
+                fail(f"PDF subsection destination outside page range: {label}")
+            if page_number < previous_page:
+                fail(f"PDF subsection destination goes backwards: {label}")
+            previous_page = page_number
+        if observed != required:
+            fail(f"PDF subsection bookmarks missing/misnumbered/misnested "
+                 f"under {chapter_name}: expected={required!r}; "
+                 f"found={observed!r}")
+        checked += len(observed)
+    print(f"PDF subsection bookmark QA: {checked} x.y leaves match "
+          f"{len(expected)} numbered chapters/appendices and source order")
+
+
 def validate_pdf(path: Path) -> None:
     if not path.exists() or path.stat().st_size < 70_000:
         fail(f"Final PDF missing or suspiciously small: {path}")
@@ -1317,6 +1453,7 @@ def validate_pdf(path: Path) -> None:
              f"found {chapter_numbers!r}")
     print(f"PDF bookmark QA: {len(PARTS)} numbered parts, "
           f"{len(chapter_numbers)} numbered chapters, 7 lettered appendices")
+    validate_subsection_bookmarks(reader)
 
 
     if len(reader.pages) < 50:
