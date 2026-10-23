@@ -1284,7 +1284,7 @@ def validate_pdf(path: Path) -> None:
     for chapter_number, opening_index in sorted(numbered_pages.items()):
         attrs, page_markup = pages_with_boxes[opening_index]
         matches = re.findall(
-            r'<word\b([^>]*)>整机路径定位：</word>', page_markup
+            r'<word\b([^>]*)>本章定位：</word>', page_markup
         )
         if len(matches) != 1:
             fail(f"R01 chapter {chapter_number} has {len(matches)} locators "
