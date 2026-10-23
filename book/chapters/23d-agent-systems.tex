@@ -188,6 +188,28 @@ $(132-120)/120=\boxed{10\%}$。
 
 
 \subsection{Agent loop：一次任务在消息里怎样向前推进？}
+\par\medskip
+\tagstructbegin{tag=Figure,alttext={Agent 逐轮执行流程：模型规划动作，应用进行授权和参数检查，工具在限制内执行或返回拒绝，结果追加到消息列表，再由模型判断是否结束；任务未完成则重新规划，完成后输出最终答复。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=4mm,
+ agentnode/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=98mm,minimum height=9mm,align=center,font=\small},
+ agentline/.style={->,line width=.75pt,draw=blue}]
+\node[agentnode] (plan) {模型：读消息、提出下一步或直接给出最终答复};
+\node[agentnode,below=of plan] (gate) {应用：检查工具白名单、参数、用户授权与步数预算};
+\node[agentnode,below=of gate] (exec) {执行：受限工具调用；拒绝时返回错误而非执行};
+\node[agentnode,below=of exec] (feedback) {应用：将工具结果及来源追加到消息历史};
+\node[agentnode,below=of feedback,fill=greenback] (done) {完成条件满足时：答复用户并保留可核对的证据};
+\draw[agentline] (plan)--(gate);
+\draw[agentline] (gate)--(exec);
+\draw[agentline] (exec)--(feedback);
+\draw[agentline] (feedback)--node[right,font=\scriptsize]{完成} (done);
+\draw[agentline,teal] (feedback.east)--++(14mm,0) |- node[pos=.55,right,font=\scriptsize,text=teal]{未完成：下一轮} (plan.east);
+\end{tikzpicture}
+\captionof{figure}{Agent loop：模型提出动作，应用负责权限与执行，每轮工具结果返回模型；实际应用还需终止与超时机制}
+\label{fig:agent-loop}
+\end{center}
+\tagstructend
+
 
 前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
