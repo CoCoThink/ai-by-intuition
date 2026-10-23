@@ -407,6 +407,12 @@ def validate_source() -> None:
         fail(f"Grayscale proof accepted invalid page selection: {bad_selection}")
     print("Grayscale print-proof selector QA passed")
 
+    # Catch a numerical transition that became stale after changing chapter 19.
+    includes(sources["11-softmax-memory"], r"\hyperref[intro:21c-naive-attention]",
+             "chapter 20 explicitly reprises the earlier naive example")
+    if "上一章算出了" in sources["11-softmax-memory"]:
+        fail("Chapter 20 attributes a naive-attention score to the asymmetric chapter 19")
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (

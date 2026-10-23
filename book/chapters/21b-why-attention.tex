@@ -212,9 +212,10 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 后面的\textbf{因果 Mask} 将明确实现这个限制。
 \item \textbf{Attention 不等于无限长记忆。}
 如果每个位置都和很多位置比较，计算量和存储会增长。
-\item \textbf{本章只有一个 Query。}
-真实 Self-Attention 会让\textbf{每个 Token 都发出自己的 Query}，
-因此需要把重复运算写成矩阵形式。
+\item \textbf{本章重点手算最后一个 Query。}
+虽已列出 $QK^\top$ 的三行原始分数，
+还需要对\textbf{每一行分别归一化和读取 Value}；
+下一章会把这一步完整写成矩阵运算。
 \end{enumerate}
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:21b-why-attention}两条 Value 为 $(1,0)$、$(0,1)$，Attention 权重 $(0.2,0.8)$，输出是什么？\quad{\footnotesize\hyperref[answer:21b-why-attention]{核对解答。}}\par\medskip

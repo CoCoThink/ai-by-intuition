@@ -3,13 +3,17 @@
 \label{intro:11-softmax-memory}
 \phantomsection\label{intro:12-self-attention-matrices}
 \phantomsection\label{concept:self-attention}
-\chaptercompass{一个位置怎样按需读取其他位置？}{匹配分数、归一化权重、加权读取。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\ \to\ Y:T\times d_v$}{$W_Q,W_K,W_V$（由输入 $X$ 投影）}
+\chaptercompass{如何同时处理整句的 Query，而不逐个重复手算？}{将每行匹配合成 $QK^\top$，逐行 Softmax 后一次读取 $AV$。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\to Y:T\times d_v$}{$W_Q,W_K,W_V$ 可学习；回顾示例用单位投影}
 
-\localfixture{二维 Q/K/V，延续上一节}
-\noindent\textbf{［未缩放］}本章继续沿用上一章的原始点积分数；后面介绍缩放时会明确除以 $\sqrt{d_k}$。
-上一章算出了“开了”对三个位置的匹配分数 $(1,1,2)$，
-得到读取权重 $(0.212,0.212,0.576)$。
-把单次查询写成矩阵乘法，再扩展到多个 Query，就得到 Self-Attention 的批量计算。
+\localfixture{二维零投影注意力；回到第 18 章的朴素例子}
+前一章用独立的 $W_Q$、$W_K$ 得到了\textbf{不对称}的匹配分数，
+说明 Query 与 Key 可以表达不同的匹配关系。
+这里为专心观察\textbf{从一条 Query 到整个矩阵}的形状，
+先回到\hyperref[intro:21c-naive-attention]{第 18 章的未投影例子}：
+“开了”的匹配分数为 $(1,1,2)$，
+Softmax 权重为 $(0.212,0.212,0.576)$。
+接下来把单次查询推广为多行并行计算；
+\textbf{本段仍未缩放}，后面再引入 $\sqrt{d_k}$。
 
 \subsection{单次查询：匹配、归一化、读取}
 \[
