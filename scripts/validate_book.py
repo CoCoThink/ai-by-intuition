@@ -491,7 +491,7 @@ def validate_source() -> None:
              "modern shape-error exercise")
     includes(sources["25b-modern-practice"], "Dropout",
              "modern conceptual correction exercise")
-    includes(sources["25-integrated-practice"], "XX^\top",
+    includes(sources["25-integrated-practice"], r"XX^\top",
              "independent symmetric raw-dot-product exercise")
     includes(sources["25-integrated-practice"], "a a b",
              "new BPE corpus exercise")
