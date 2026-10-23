@@ -110,18 +110,14 @@ Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选�
 及独立的权重缩小项。生产训练中的批次、梯度与超参数都需要另外设定。
 \end{boundarybox}
 
-\subsubsection{常见训练故障与应对方法}
+\subsubsection{训练不稳定时先诊断什么？}
 
-\begin{center}\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{23mm}X@{}}\toprule
-现象 & 常见应对思路\\\midrule
-梯度消失 & 恰当初始化、残差连接、激活设计、归一化\\
-梯度爆炸 & 梯度裁剪、初始化与学习率调整\\
-优化震荡 & 合适的学习率、动量、Adam 等优化器\\
-数据太多 & Mini-batch 训练，配合硬件并行\\
-\bottomrule\end{tabularx}
-\end{center}
+\textbf{梯度消失}先排查初始化、激活与残差路径；
+\textbf{梯度爆炸}检查学习率并考虑裁剪；
+\textbf{更新震荡}核对学习率、动量与 Adam；
+\textbf{样本过多}则通过 Mini-batch 和硬件并行降低单次更新成本。
+这些操作分别处理数值传播、优化步长或吞吐问题，
+不能互相替代。
 
 \textbf{超参数}是训练前或训练过程中设定的控制量，如学习率、正则化系数、批次大小；\textbf{模型参数}则是通过优化直接学习的权重。
 

@@ -109,37 +109,14 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 
 
 
-\subsection{尺度预览：玩具模型与 GPT-2 small}
+\subsection{一眼看懂这份任务的尺度}
 
-现在只有三个输入位置、五个候选 Token。
-经典 GPT-2 small（常称约 124M 参数模型）也是从 Token ID
-产生词表候选分数，却大得多：
-
-\begin{center}\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}Xrr@{}}
-\toprule
-项目 & 本书主算例 & GPT-2 small\\\midrule
-词表大小 & 5 & 50,257\\
-隐藏宽度 & 3 & 768\\
-Transformer Block 数 & 1 & 12\\
-注意力头数 & 1 & 12\\
-FFN 中间宽度 & 4 & 3,072\\
-最大位置数（配置） & 3 & 1,024\\
-\bottomrule\end{tabularx}
-\end{center}
-
-\textbf{此处只预览尺度，不要求现在理解所有组件}。
-隐藏宽度代表每个 Token 拥有多少个特征；
-Block、多头与 FFN 将在后面逐步解释。
-3,072 来自 GPT-2 的 $4\times768$ FFN 设计，
-不是所有模型都遵守的常数比例。
-配置依据
-\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/configuration_gpt2.py}{基础 GPT-2 配置}
-与
-\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py}{FFN 实现}。
-实际参数量依赖权重共享和统计口径；此处只给模型类别的约数，
-不声称逐个校验了真实 checkpoint 的全部权重。
+本书此刻只用\textbf{3 个输入位置、5 个候选 Token、每位置 3 维特征}
+定义训练任务。真实 GPT-2 small 的词表有 $50{,}257$ 项，
+但目标仍是预测后续 Token。
+这些数字先用来认识\textbf{输入、输出和目标的口径}；
+完整模型与实际运行环境的规模对照在
+\hyperref[intro:23a-from-toy-to-gpt]{第 27 章}集中给出。
 
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:20b-task-contract}
