@@ -1,4 +1,5 @@
 \Needspace{24\baselineskip}
+\chapterrule
 \section{系统已经会用工具了，怎样稳定部署并控制成本？}
 \label{intro:23b-deployment-and-ecosystem}
 \chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{部署通常不更新权重；缓存和运行状态会变化}
@@ -191,14 +192,10 @@ vLLM 偏向服务型推理；是否更快，要在相同的权重、硬件、
 这些工具的\textbf{接口、兼容硬件、部署模式和许可证可能更新}。
 本表只定位各层责任，不固定特定版本、吞吐数字或产品优劣排名。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:23b-deployment-and-ecosystem}
-\textbf{回忆：}权重存储与 KV Cache 是同一笔内存吗？
-\textbf{手算：}$10^9$ 个参数每个 2 字节，
-仅权重约占多少十进制 GB？
-\textbf{迁移：}如果解码还需额外缓存，
-推理总内存会恰好等于这个权重数字吗？
-\quad{\footnotesize\hyperref[answer:23b-deployment-and-ecosystem]{核对解答。}}\par\medskip
+\chaptercheck{23b-deployment-and-ecosystem}{权重存储与 KV Cache 是同一笔内存吗？}{$10^9$ 个参数每个 2 字节，
+仅权重约占多少十进制 GB？}{如果解码还需额外缓存，
+推理总内存会恰好等于这个权重数字吗？}
+
 
 \begin{conclusion}
 部署一个 AI 产品需要模型结构、训练权重、推理引擎、接口与安全措施共同工作。

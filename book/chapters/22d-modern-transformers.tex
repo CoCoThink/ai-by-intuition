@@ -1,3 +1,4 @@
+\chapterrule
 \section{现代 Transformer 为什么看起来越来越不像原版？}
 \label{intro:22d-modern-transformers}
 \chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_h,\quad KV:T\times H_{KV}\times d_h$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
@@ -10,10 +11,10 @@
 模型的\textbf{显存、延迟和吞吐}既受部署方式影响，也受内部计算结构限制。
 上下文变长会扩大 KV Cache；堆叠深层网络还要控制特征尺度与计算成本。
 现代 Transformer 因而在位置表示、归一化、FFN 和 Attention 上产生了不同变体。
-下面逐项比较五类选择及其计算代价。
+必读只需掌握 RoPE、RMSNorm、GQA 三项，并完成小算例；标 ★ 的内容按需选读，不必一次背完全部缩写。
 \end{idea}
 
-\subsection{问题一：位置信息怎么进入 Attention？}
+\subsection{必读 1：RoPE 怎样利用相对位置？}
 \phantomsection\label{concept:rope}
 
 经典 Transformer 可以把位置向量 $P$ 加在 Token 嵌入上：
@@ -27,13 +28,14 @@ R(\phi)=
 \begin{bmatrix}\cos\phi&-\sin\phi\\
 \sin\phi&\cos\phi\end{bmatrix},
 \quad
-R(\phi)\begin{bmatrix}1\\0\end{bmatrix}
-=\begin{bmatrix}\cos\phi\\\sin\phi\end{bmatrix}.
+(1,0)R(\phi)^\top
+=(\cos\phi,\sin\phi).
 \]
 假如 Query 位置是 $m$，Key 位置是 $n$，分别旋转
 $m\theta$ 和 $n\theta$，则
 \begin{equation}
-(R(m\theta)\vect q)^\top (R(n\theta)\vect k)
+(\vect q^\top R(m\theta)^\top)
+(\vect k^\top R(n\theta)^\top)^\top
 =\vect q^\top R((n-m)\theta)\vect k.
 \label{eq:rope-relative}
 \end{equation}
@@ -49,14 +51,10 @@ $m\theta$ 和 $n\theta$，则
 取 $\vect q^\top=\vect k^\top=(1,0)$，
 Query 位于 $m=0$，Key 位于 $n=1$，
 选择角频率 $\theta=\pi/2$。
-将两个向量以列形式代入旋转定义，
-得到
+沿用全书的行向量约定，在右侧乘旋转矩阵的转置：
 \[
-R(0)\begin{bmatrix}1\\0\end{bmatrix}
-=\begin{bmatrix}1\\0\end{bmatrix},
-\qquad
-R(\pi/2)\begin{bmatrix}1\\0\end{bmatrix}
-=\begin{bmatrix}0\\1\end{bmatrix}.
+(1,0)R(0)^\top=(1,0),\qquad
+(1,0)R(\pi/2)^\top=(0,1).
 \]
 两者点积等于 $0$。
 若 $m=n=0$，两个向量都为 $(1,0)$，
@@ -64,7 +62,7 @@ R(\pi/2)\begin{bmatrix}1\\0\end{bmatrix}
 相对位置也能改变 Q/K 分数。
 \end{example}
 
-\subsection{问题二：归一化为什么从 LayerNorm 变成 RMSNorm？}
+\subsection{必读 2：RMSNorm 为什么不减均值？}
 \phantomsection\label{concept:rmsnorm}
 
 \textbf{LayerNorm} 通常先减去特征均值，再按方差缩放（还可以学习仿射参数）。
@@ -83,7 +81,7 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 会改变残差路径与训练行为。不能仅凭名称断言一种实现
 在所有模型中总比另一种更强。
 
-\subsection{问题三：FFN 除了 ReLU 还能做什么？}
+\subsection{★ 选读：SwiGLU 与 MoE 怎样改变 FFN？}
 \phantomsection\label{concept:router}
 \phantomsection\label{concept:swiglu}
 \phantomsection\label{concept:moe}
@@ -118,7 +116,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 还存在路由、通信和内存负担。Dense（稠密）与 MoE 并非简单的谁取代谁。
 \end{warningbox}
 
-\subsection{问题四：多头 Attention 为什么开始共享 K/V？}
+\subsection{必读 3：GQA 怎样减少 KV 缓存？}
 \phantomsection\label{concept:mla}
 \phantomsection\label{concept:mqa}
 \phantomsection\label{concept:gqa}
@@ -150,7 +148,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \textbf{MLA} 等低秩潜在表示技术则尝试使用另一种缓存压缩方案，
 与简单减少 K/V 头数的设计思路不同；不应把所有缩写视为同一种运算。
 
-\subsection{问题五：长上下文能否不两两比较全部 Token？}
+\subsection{★ 选读：长上下文与稀疏访问}
 \phantomsection\label{concept:sliding-window-attention}
 \phantomsection\label{concept:linear-attention}
 \phantomsection\label{concept:sparse-attention}
@@ -163,7 +161,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \small
 \renewcommand{\arraystretch}{1.3}
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{25mm}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{33mm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 设计方向 & 为何这样改，以及保留什么代价\\
 \midrule
@@ -179,7 +177,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 有的主要节约解码时的 KV Cache，有的减少单 Token 计算，
 并不能简单把它们都称为“Attention 变成线性复杂度”。
 
-\subsection{从外积记忆看线性 Attention 与 DeltaNet}
+\subsection{★ 选读：线性 Attention 与 Delta 规则}
 
 当长度不断增加时，为什么有人尝试不保存完整的 $T\times T$ 分数矩阵？
 \hyperref[intro:04-key-value-outer-product]{联想记忆专题}
@@ -215,7 +213,7 @@ $k_2=(0,1)$、$v_2=(0,3)$，
 \end{example}
 
 
-\subsection{从 GPT-2 到新架构：哪一个部件被替换？}
+\subsection{★ 选读索引：其他现代架构术语}
 
 把 GPT-2 类 Decoder-only Transformer 当成对照坐标系，
 不要以为后来的模型只是“层数更多”。以下按计算部件对齐，
@@ -228,7 +226,7 @@ Sparse 表示按规则只访问部分位置或激活部分专家：
 \small
 \renewcommand{\arraystretch}{1.25}
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{27mm}p{42mm}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{29mm}>{\raggedright\arraybackslash}p{41mm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 经典部件（示例） & 可替换的方向 & 首先检查什么，保留什么代价\\\midrule
 学习式绝对位置 & RoPE、YaRN、NoPE & 位置编码怎样进入 Q/K；扩展长度需长程实测\\
@@ -290,7 +288,7 @@ Qwen2 架构的门控 FFN 还需结合\textbf{模型实现}判断，
 这张表只比较\textbf{结构元数据}；
 模型质量与推理速度需由独立基准测量。
 
-\subsection{［复算］MLA 缓存元素与滑动窗口掩码}
+\subsection{★ 选读复算：MLA 缓存与窗口}
 
 \localfixture{假设参数下的单层缓存与五位置窗口；不对应特定发布模型}
 取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
@@ -353,7 +351,7 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 并未声称原模型其它权重不变时，整条输出概率和训练效果会更好；
 验证真实替换仍应重新训练并比较多种任务与数值条件。
 
-\subsection{用五个问题比较架构选择}
+\subsection{读完三项必读，怎样比较架构？}
 
 \begin{center}
 \small
@@ -372,14 +370,10 @@ MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
 \end{tabularx}
 \end{center}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:22d-modern-transformers}
-\textbf{回忆：}GQA 为什么有助于减少 KV Cache？
-\textbf{手算：}在其他形状相同的条件下，
+\chaptercheck{22d-modern-transformers}{GQA 为什么有助于减少 KV Cache？}{在其他形状相同的条件下，
 MHA 有 12 个 K/V 头，GQA 只保留 3 个，
-两者每 Token 的 K/V 元素比是多少？
-\textbf{迁移：}仅凭缓存比例能直接推断端到端速度或质量提升吗？
-\quad{\footnotesize\hyperref[answer:22d-modern-transformers]{核对解答。}}\par\medskip
+两者每 Token 的 K/V 元素比是多少？}{仅凭缓存比例能直接推断端到端速度或质量提升吗？}
+
 
 \begin{conclusion}
 现代 Transformer 在位置表示、数值尺度、参数使用方式和上下文访问方式上提供了不同选择。

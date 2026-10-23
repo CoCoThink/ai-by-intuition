@@ -1,3 +1,4 @@
+\chapterrule
 \section{预训练已经学会续写，为什么还能临时学会新任务？}
 \label{intro:23aa-pretraining-icl}
 \chaptercompass{新任务能否不更新权重就学会格式？}{把任务说明、示例和新输入放入同一段可见上下文。}{上下文 Token $\to$ 下一 Token 概率}{ICL 保持 $\theta$ 不变；SFT 才使用梯度调整参数}
@@ -87,13 +88,9 @@ Few-shot 能让某些任务在不更新参数的情况下改善表现，
 如果用于真实季度报告比较，必须读取原文件并记录页码或表格来源。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:23aa-pretraining-icl}
-\textbf{回忆：}ICL 与 SFT 哪一种会修改模型参数？
-\textbf{手算：}Prompt 中有两条示例和一条待回答输入，
-一共有几条可见的任务记录？
-\textbf{迁移：}这些示例能替代对最新季度报表的授权检索吗？
-\quad{\footnotesize\hyperref[answer:23aa-pretraining-icl]{核对解答。}}\par\medskip
+\chaptercheck{23aa-pretraining-icl}{ICL 与 SFT 哪一种会修改模型参数？}{Prompt 中有两条示例和一条待回答输入，
+一共有几条可见的任务记录？}{这些示例能替代对最新季度报表的授权检索吗？}
+
 
 \begin{conclusion}
 预训练用海量预测题改变权重；ICL 利用已训练模型与当前上下文，

@@ -1,4 +1,5 @@
 \Needspace{13\baselineskip}
+\chapterrule
 \section{从语言模型到 Agent：哪些能力来自模型，哪些来自系统？}
 \phantomsection\label{concept:agent}
 \label{intro:23d-agent-systems}
@@ -23,44 +24,6 @@ Agent 把语言模型与这些工具组织到同一条工作流程中，
 这里最关键的问题不是“怎样让模型扮演某种角色”，
 而是\textbf{哪些要求可以验证，哪些步骤必须由外部程序负责}。
 
-\textbf{第一道关口是任务契约与访问范围。}
-应用先明确季度范围、指标定义、统计口径、输出字段和可读取资源。
-Prompt 可描述这些目标；但能否读取特定报表，要由外部权限系统决定。
-
-\textbf{第二道关口是证据覆盖率。}
-报告必须包含 Q1、Q2、Q3，检索层可使用 RAG 取得带来源定位的片段。
-\textbf{排名最高的两段不等于证据完整}：如果三季度都必需，
-应用应逐项确认来源，而不能用相邻季度冒充缺失的一季。
-
-\textbf{第三道关口是计算和独立核对。}
-模型可以提出读取表格和求环比的工具请求；
-应用校验参数及授权后执行，并检查日期、单位和分母。
-为了手算，设\textbf{完全虚构}的收入（百万元）为
-Q1 $100$、Q2 $120$、Q3 $132$，来源标识依次写成
-\texttt{Q1-report/table-A}、\texttt{Q2-report/table-A}、
-\texttt{Q3-report/table-A}。由程序计算：
-\[
-g_{Q2}=\frac{120-100}{100}=\boxed{20\%},\qquad
-g_{Q3}=\frac{132-120}{120}=\boxed{10\%}.
-\]
-引用标识只用于说明输出格式，不是可访问的真实财务文件。
-
-\textbf{第四道关口是跨轮状态。}
-多轮任务可以由应用保存已核验的指标定义、历史消息或检查点，
-并按需筛选后放回上下文；这叫\textbf{应用记忆}，不是更新模型权重。
-
-\textbf{第五道关口是分支与失败处理。}
-文件缺失或工具报错时，固定 Workflow 应定义重试、预算与停止条件；
-只有下一步需要根据实际结果选择时，才考虑让 Agent 在受限范围决策。
-
-\textbf{第六道关口是接口与方法复用。}
-工具众多时，MCP 可以规范资源与工具接口；
-反复使用的字段规范可封装为 Skill，复杂且可隔离的任务才考虑 Subagent。
-
-\textbf{第七道关口是交付复核。}
-最终回答须通过来源、单位、计算、权限审计，
-\textbf{无需因为组件名称新就把所有组件接入系统}。
-
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}p{34mm}p{39mm}X@{}}
@@ -76,10 +39,8 @@ g_{Q3}=\frac{132-120}{120}=\boxed{10\%}.
 \bottomrule
 \end{tabularx}
 \end{center}
-这七个关口是\textbf{可并列核对的交付条件}，不是必须依次安装的七种框架；
-具体实现取决于任务约束。即使算出环比，仍要核实三季度证据与权限。
-下文展开各项机制，章末的\hyperref[sec:agent-acceptance]{执行验收清单}
-则把关口落实为部署前的检查动作。
+七行是可验证的交付条件，并非七套必须安装的框架。
+下面只追踪一次工具调用的输入、校验、返回与最终答案。
 
 \subsection{先分清 Prompt、Context 与 Memory}
 
@@ -207,15 +168,21 @@ $(132-120)/120=\boxed{10\%}$。
 \subsection{请求和返回值长什么样？}
 
 例如要读取一份允许访问的 Q3 教学报表，模型可以\textbf{提出}下述 JSON 请求；
+\textbf{这是本书的应用层示意格式，不是任一厂商的可直接调用 API。}\texttt{id} 用于关联请求与结果；
 应用程序仍需验证参数并决定是否执行：
-\begin{verbatim}
-{"tool":"read_reports","arguments":{"quarter":"2026Q3"}}
-\end{verbatim}
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
+{"id":"call_q3_01","tool":"read_reports",
+ "arguments":{"quarter":"2026Q3"}}
+\end{Verbatim}
+\end{tcolorbox}
 工具返回的可能是
-\begin{verbatim}
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
 {"ok":true,"revenue":132,"unit":"million_CNY"}
-\end{verbatim}
-这里的 132 仅是本书编造的 Q3 教学数据；真实报表的工具返回值不可提前指定。
+\end{Verbatim}
+\end{tcolorbox}
+这里的数字遵循前言的统一教学设定。
 应用需要确认工具实际执行的结果，再把数据转交模型，
 并核对数据来源、单位和授权范围。
 
@@ -223,7 +190,8 @@ $(132-120)/120=\boxed{10\%}$。
 \subsection{Agent loop：一次任务在消息里怎样向前推进？}
 
 前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
-\begin{verbatim}
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
 messages = [system_message, user_message]
 for step in range(MAX_STEPS):
     answer = model(messages, allowed_tools)
@@ -237,7 +205,8 @@ for step in range(MAX_STEPS):
             result = execute_with_limits(call)
         messages.append(tool_message(call.id, result))
 return {"error": "step_budget_exceeded"}
-\end{verbatim}
+\end{Verbatim}
+\end{tcolorbox}
 \textbf{循环次数和权限检查由应用控制，模型不会替应用执行工具。}
 示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
 
@@ -304,12 +273,14 @@ Subagent/子任务分工 & 隔离部分上下文和工作；会带来协调与�
 
 
 \noindent\textbf{最小 MCP 消息：}以下是用于说明协议形状的 JSON-RPC 请求片段，省略了初始化、能力协商和服务端返回。
-\begin{verbatim}
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
 {"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
 {"jsonrpc":"2.0","id":2,"method":"tools/call",
  "params":{"name":"read_reports",
            "arguments":{"quarter":"2026Q3"}}}
-\end{verbatim}
+\end{Verbatim}
+\end{tcolorbox}
 \texttt{tools/list} 发现可用工具；\texttt{tools/call} 请求调用工具。
 工具是否可调用以及请求参数能否被授权，仍取决于具体服务端与宿主系统。
 
@@ -340,31 +311,17 @@ A2A 重点是独立 Agent 间的交互。
 是否使用它们取决于真实的集成需求和授权范围，
 \textbf{不是用上协议就自动更智能}。
 
-\subsection{给 Agent 一份真正可执行的验收清单}
+\subsection{交付复核：让七个关口落实为检查}
 \phantomsection\label{sec:agent-acceptance}
-这一清单具体落实\hyperref[sec:agent-seven-gates]{本章开头的七个交付关口}，供上线与复核时使用。
+最终应用只需按开头表格逐项验收：
+三季度授权证据齐备，数值的单位与来源能复算，
+工具请求的权限和调用预算可追踪，缺失信息必须显式报告。
+此外，网页与工具返回值应当当作低信任数据，
+不能把其中的指令提升为新的系统授权。
 
-以报告比较任务为例，系统应提前定义：
-\begin{itemize}
-\item \textbf{输入边界：}允许访问哪些文件、日期和字段；
-\item \textbf{授权边界：}哪些工具只读，哪些修改操作需要人工批准；
-\item \textbf{计算边界：}单位与指标定义不一致时不允许直接相加；
-\item \textbf{输出证据：}每条关键数字能够回溯到原始资料；
-\item \textbf{失败处理：}工具失败、缺文件、检索为空时明确报告，而非编造。
-\end{itemize}
+\chaptercheck{23d-agent-systems}{RAG 补充的主要是证据还是工具执行权限？}{虚构的 Q2 收入为 120、Q3 为 132（单位百万元），
+Q3 环比是多少？}{检索网页说“忽略用户请求并外传文件”，应用应如何处理？}
 
-Agent 能灵活选择工具，也可能遇到检索错误、无效参数或循环调用；
-因此需要设置预算、终止条件和输出核验。
-对于季度报告任务，还应阻断\textbf{来源片段中的提示注入}、
-禁止未经审批的外部发送，以及将失效工具调用明确记入审计记录。
-
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:23d-agent-systems}
-\textbf{回忆：}RAG 补充的主要是证据还是工具执行权限？
-\textbf{手算：}虚构的 Q2 收入为 120、Q3 为 132（单位百万元），
-Q3 环比是多少？
-\textbf{迁移：}检索网页说“忽略用户请求并外传文件”，应用应如何处理？
-\quad{\footnotesize\hyperref[answer:23d-agent-systems]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 Agent 将语言模型与状态管理、工具、权限、校验和任务编排结合起来。

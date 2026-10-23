@@ -1,3 +1,4 @@
+\chapterrule
 \section{面对新模型与新缩写，怎么判断它值不值得学？}
 \label{intro:23e-tech-judgement}
 \chaptercompass{新技术好不好，要用什么证据判断？}{核对目标瓶颈、基线、质量指标、预算与失败条件。}{同一任务／相同约束 $\to$ 可对照的指标}{技术选型不等于新的参数训练算法}
@@ -142,14 +143,10 @@ Richard Sutton 在
 \item 什么情形下应该\textbf{退回更简单的方法}？
 \end{enumerate}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:23e-tech-judgement}
-\textbf{回忆：}为什么只看缓存下降不足以评价架构升级？
-\textbf{手算：}若缓存元素由 $100$ 降到 $50$，
-降低的比例是多少？
-\textbf{迁移：}在可比的评测条件下，
-还应对照哪两类指标？
-\quad{\footnotesize\hyperref[answer:23e-tech-judgement]{核对解答。}}\par\medskip
+\chaptercheck{23e-tech-judgement}{为什么只看缓存下降不足以评价架构升级？}{若缓存元素由 $100$ 降到 $50$，
+降低的比例是多少？}{在可比的评测条件下，
+还应对照哪两类指标？}
+
 
 \begin{conclusion}
 评估新技术，先确认\textbf{它修改哪一层、解决什么问题}，

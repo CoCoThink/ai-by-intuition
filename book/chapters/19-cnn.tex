@@ -1,3 +1,4 @@
+\chapterrule
 \section{为什么图片不能只靠大矩阵？从局部特征到 CNN}
 \label{intro:19-cnn}
 \modelpipelinefocus{2}{视觉局部特征}
@@ -79,14 +80,10 @@ $2\times2$ 的核只有\textbf{4 个可学习数字}，但可以在所有位置\
 \]
 CNN 的关键是局部连接与权重共享：同一组参数可以检测不同位置的相似图案。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:19-cnn}
-\textbf{回忆：}卷积为什么可以在不同位置复用同一组权重？
-\textbf{手算：}$3\times3$ 卷积核，输入 3 通道、
-输出 8 通道，常规卷积权重数有多少（不含偏置）？
-\textbf{迁移：}输入图像宽高翻倍时，
-同一个卷积层的核权重数会跟着翻倍吗？
-\quad{\footnotesize\hyperref[answer:19-cnn]{核对解答。}}\par\medskip
+\chaptercheck{19-cnn}{卷积为什么可以在不同位置复用同一组权重？}{$3\times3$ 卷积核，输入 3 通道、
+输出 8 通道，常规卷积权重数有多少（不含偏置）？}{输入图像宽高翻倍时，
+同一个卷积层的核权重数会跟着翻倍吗？}
+
 
 \begin{conclusion}
 图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。下一章将换一条路线：把同样的图像切成 Patch，使图像也能输入 Transformer。
