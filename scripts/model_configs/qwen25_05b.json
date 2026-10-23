@@ -1,0 +1,19 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B",
+  "revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+  "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json",
+  "config": {
+    "model_type": "qwen2",
+    "hidden_size": 896,
+    "num_hidden_layers": 24,
+    "num_attention_heads": 14,
+    "num_key_value_heads": 2,
+    "intermediate_size": 4864,
+    "hidden_act": "silu",
+    "rms_norm_eps": 0.000001,
+    "rope_theta": 1000000,
+    "sliding_window": 32768,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+  }
+}

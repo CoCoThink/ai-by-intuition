@@ -1,0 +1,15 @@
+{
+  "model_id": "openai-community/gpt2",
+  "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+  "source": "https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json",
+  "config": {
+    "model_type": "gpt2",
+    "n_embd": 768,
+    "n_layer": 12,
+    "n_head": 12,
+    "n_positions": 1024,
+    "activation_function": "gelu_new",
+    "layer_norm_epsilon": 0.00001,
+    "vocab_size": 50257
+  }
+}

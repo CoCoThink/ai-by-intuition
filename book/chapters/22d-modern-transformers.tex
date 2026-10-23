@@ -256,6 +256,76 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 参见 \href{https://arxiv.org/abs/2312.00752}{Mamba} 和
 \href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}。
 
+\subsection{［复算］从公开配置文件对照两种模型}
+
+只凭宣传名称判断“用了哪些技术”容易出错。
+\texttt{scripts/config\_table.py} 读取带来源和固定修订号的
+\texttt{config.json} 字段快照，生成以下最小对照：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{29mm}p{16mm}p{15mm}p{18mm}X@{}}
+\toprule
+参考模型 & 隐藏宽 & 层数 & Q/KV 头 & 位置／归一化\\\midrule
+GPT-2 small & 768 & 12 & 12/12 & 学习式位置，LayerNorm\\
+Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
+\bottomrule
+\end{tabularx}
+\end{center}
+后一配置的激活函数设为 SiLU，并包含
+\texttt{use\_sliding\_window=false}；
+\textbf{不能仅凭配置中存在滑动窗口长度字段就断言已经启用窗口}。
+Qwen2 架构的门控 FFN 还需结合\textbf{模型实现}判断，
+单看 \texttt{hidden\_act} 字段不足以证明每层的实现细节。
+
+\textbf{复算入口：}
+\texttt{python3 scripts/config\_table.py}
+（只读仓库中固定版本的公开配置摘要，不下载权重）；
+加入 \texttt{--verify-online} 才会联网核对原始 \texttt{config.json}。
+来源：
+\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 config}、
+\href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json}{Qwen2.5 config}。
+这些是\textbf{结构元数据}，不是对模型质量、推理速度的独立测量。
+
+\subsection{［复算］MLA 缓存元素与滑动窗口掩码}
+
+\localfixture{假设参数下的单层缓存与五位置窗口；不对应特定发布模型}
+取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
+普通 MHA 的 Key/Value 缓存元素数为
+$2\times8\times4\times2=\boxed{128}$。
+若 GQA 只保留 2 个 K/V 头：
+$2\times8\times2\times2=\boxed{64}$。
+
+再假设一种 MLA 式压缩设计，每个 Token 缓存
+宽度为 $3$ 的共享潜在向量和宽度为 $2$ 的位置相关部分，
+则\textbf{这份假设}的缓存数为
+$8\times(3+2)=\boxed{40}$。
+这并非 MLA 通用缓存公式；真实实现还有解码重建、
+位置分支、张量布局、投影计算等额外成本，
+不能据此断言 MLA 的整体显存必然只有 MHA 的 $40/128$。
+
+对五个 Token，用窗口 $w=3$ 的\textbf{包含当前位置}的因果掩码，
+行是 Query 位置，列是 Key 位置；1 表示允许读取：
+\[
+\boxed{\begin{bmatrix}
+1&0&0&0&0\\
+1&1&0&0&0\\
+1&1&1&0&0\\
+0&1&1&1&0\\
+0&0&1&1&1
+\end{bmatrix}}.
+\]
+最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
+窗口掩码有 $1+2+3+3+3=\boxed{12}$ 个可见位置对，
+全量因果 Mask 则有 $15$ 个；
+这里统计的是\textbf{可参与计算的对数}，
+不是经过特定 Kernel 优化后的真实运行时间。
+
+\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
+运行 \texttt{python3 scripts/architecture\_demo.py}
+可以检查缓存元素数与 $5\times5$ 掩码的 12 个可见位置。
+
+
 \subsection{只替换一次 Norm：落回前面的三维数字}
 
 三维贯通模型在 Attention 前的第一行是

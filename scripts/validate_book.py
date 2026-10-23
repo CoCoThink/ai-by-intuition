@@ -329,6 +329,20 @@ def validate_source() -> None:
     includes(sources["23a-from-toy-to-gpt"], "gpt2\\_demo.py",
              "reproducible optional real GPT-2 example")
 
+    # Modern architecture figures use pinned, inspectable offline source excerpts.
+    for reproducible in ("config_table.py", "architecture_demo.py"):
+        path = ROOT / "scripts" / reproducible
+        if not path.is_file():
+            fail(f"Missing modern architecture reproducer: {reproducible}")
+        ast.parse(path.read_text(encoding="utf-8"))
+        result = subprocess.run([sys.executable, str(path)], cwd=ROOT,
+                                text=True, capture_output=True)
+        if result.returncode:
+            fail(f"Architecture example {reproducible} failed:\n"
+                 + result.stdout + result.stderr)
+    includes(sources["22d-modern-transformers"], "architecture\\_demo.py",
+             "sliding-window and illustrative MLA arithmetic")
+
     # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")

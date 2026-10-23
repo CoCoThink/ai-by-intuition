@@ -29,6 +29,14 @@ revision 固定为
 本地实际输出没有经过本书 CI 的神经网络推理验收，
 因此模型概率和热图的变化应由读者在该环境中核对。
 
+\textbf{架构配置的独立复现：}
+\texttt{python3 scripts/config\_table.py}
+从仓库中的固定公开配置摘录读取 GPT-2 与 Qwen2.5 两个参考模型；
+\texttt{--verify-online} 才访问对应固定 revision 的源 \texttt{config.json}。
+\texttt{python3 scripts/architecture\_demo.py}
+复核本书明确声明为假设的 MHA/GQA/MLA 缓存元素数
+与滑动窗口掩码；它们不是实际设备的显存/延迟基准。
+
 \textbf{勘误与证据入口：}
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{在线勘误记录}、
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{复现说明}、
