@@ -44,6 +44,72 @@ v_1=2,\quad v_2=1.5.
 这不是生产环境的推荐系数，只是可以手算的说明：
 \textbf{Adam 使用了梯度的历史平均与历史平方平均，更新幅度不只由当前梯度决定}。
 
+\subsubsection{学习率 Warmup 与衰减：五步怎样变化？}
+\phantomsection\label{concept:lr-warmup}
+
+开始训练时，模型权重与优化器的历史统计量尚在调整。
+\textbf{Warmup} 可以让学习率先从较小值逐步增加；
+随后可保持平台值，再按预定规则衰减。
+它调节的是\textbf{更新步长}，并不改变本章的损失函数。
+
+取单个参数 $w_0=1$，五步都假设梯度 $g_t=2$，
+仅为了看清学习率调度对 $w_t=w_{t-1}-\eta_t g_t$ 的影响。
+前三步线性升温至 $\eta_{\max}=0.06$，
+第四步保持，第五步减半：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}cXcc@{}}
+\toprule
+步数 $t$ & 阶段 & $\eta_t$ & 更新后 $w_t$\\\midrule
+1 & Warmup & $0.02$ & $0.96$\\
+2 & Warmup & $0.04$ & $0.88$\\
+3 & Warmup & $0.06$ & $0.76$\\
+4 & 平台 & $0.06$ & $0.64$\\
+5 & 衰减 & $0.03$ & $\boxed{0.58}$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+这里固定梯度只是用于\textbf{隔离学习率调度}；
+实际梯度会随参数与训练批次变化。
+五步手算说明的是“每步走多远”，
+而不是 warmup 必定提高最终准确率。
+
+\subsubsection{AdamW：把权重衰减与梯度更新分开}
+\phantomsection\label{concept:adamw}
+
+AdamW 继承 Adam 根据梯度历史估计\textbf{自适应更新方向}的部分，
+同时把权重衰减作为单独的参数缩小步骤：
+\begin{equation}
+w_t=(1-\eta_t\lambda)w_{t-1}
+-\eta_t\frac{\widehat m_t}{\sqrt{\widehat v_t}+\varepsilon}.
+\label{eq:adamw-decoupled}
+\end{equation}
+$\lambda$ 是\textbf{解耦权重衰减系数}；式子中不含
+偏置校正的推导，$\widehat m_t,\widehat v_t$ 已表示校正后的估计。
+
+\begin{example}
+\noindent\emph{一个参数的第一步 AdamW}\par
+取 $w_0=2$、$\eta=0.1$、$\lambda=0.05$，
+梯度 $g_1=0.5$。第一步偏置校正后，
+$\widehat m_1=0.5,\widehat v_1=0.25$；
+忽略足够小的 $\varepsilon$，自适应方向是 $1$。
+于是
+\[
+w_1=(1-0.1\times0.05)\times2-0.1\times1
+=\boxed{1.89}.
+\]
+\textbf{拆开看：}原权重缩小 $0.01$，再沿自适应方向更新 $0.1$。
+没有衰减时，同一自适应方向得到 $1.90$。
+这与直接把 $\lambda w$ 塞进 Adam 梯度的做法不同；
+后者会改变动量和方差的历史统计。
+\end{example}
+
+\begin{boundarybox}
+Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选择}：
+前两者规定每一步的 $\eta_t$，后者规定优化器如何使用梯度
+及独立的权重缩小项。生产训练中的批次、梯度与超参数都需要另外设定。
+\end{boundarybox}
+
 \subsubsection{常见训练故障与应对方法}
 
 \begin{center}\small
@@ -65,7 +131,13 @@ v_1=2,\quad v_2=1.5.
 设当前参数梯度为 $(6,8)$，其 L2 长度是 $10$。如果阈值设为 $5$，整体乘以 $5/10=0.5$，得到裁剪后的梯度 $(3,4)$；方向不变，长度变为 $5$。用学习率 $0.1$ 更新时，两个参数分别减去 $0.3$ 和 $0.4$。裁剪的对象是梯度，不是原始训练数据。
 \end{example}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18c-training-engineering}100 个样本按 Batch Size 10 且全部使用，每 Epoch 约有几次更新？\quad{\footnotesize\hyperref[answer:18c-training-engineering]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:18c-training-engineering}
+\textbf{回忆：}100 个样本按 Batch Size 10，每 Epoch 约更新几次？
+\textbf{手算：}按五步表算第五步后的 $w_5$；
+\textbf{迁移：}为什么 AdamW 把 $\lambda w$ 放在独立衰减项，
+而不是放进用于计算 Adam 动量的梯度？
+\quad{\footnotesize\hyperref[answer:18c-training-engineering]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 Batch Size 决定一次更新使用的数据量；优化器利用当前及可能保存的历史梯度决定参数改变量。

@@ -20,7 +20,11 @@
 \item \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积手算}}\enspace $1\times3+2\times1=5$。
 \item \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace $AB:2\times4$，因为 $A$ 的列数等于 $B$ 的行数。
 \item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 无激活时 $xW_1W_2=x(W_1W_2)$，两层合并成一个线性矩阵，表达能力受限。
-\item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{小批次与 Epoch}}\enspace $100/10=10$ 次；若样本无法整除，还需决定最后批次如何处理。
+\item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{批次、Warmup、AdamW}}\enspace
+回忆：$100/10=10$ 次更新；
+手算：$w_5=0.64-0.03\times2=\boxed{0.58}$；
+迁移：AdamW 的衰减直接缩小当前权重，独立于自适应梯度估计；
+若把 $\lambda w$ 直接加入梯度，会连动一阶、二阶移动平均。
 \item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 五个单字经两次合并后变成三个 Token；这是教学示意，真实分词取决于词表和合并表。
 \item \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace $-\log(1/2)=\log2\approx0.6931$；第二类 logit 的梯度为 $1/2-1=-1/2$。
 \item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。

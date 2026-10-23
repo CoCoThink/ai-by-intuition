@@ -535,6 +535,22 @@ def validate_source() -> None:
              "modern shape-error exercise")
     includes(sources["25b-modern-practice"], "Dropout",
              "modern conceptual correction exercise")
+    includes(sources["18c-training-engineering"], r"\label{eq:adamw-decoupled}",
+             "decoupled AdamW mathematical update")
+    includes(sources["18c-training-engineering"], r"\label{concept:lr-warmup}",
+             "five-step learning-rate scheduling example")
+    includes(sources["28-chapter-checks"], r"\boxed{0.58}",
+             "warmup self-test answer")
+    from math import isclose
+    eta_schedule = (0.02, 0.04, 0.06, 0.06, 0.03)
+    w = 1.0
+    for eta in eta_schedule:
+        w -= eta * 2.0
+    assert isclose(w, 0.58, abs_tol=1e-12)
+    assert isclose((1-0.1*0.05)*2-0.1*(0.5/(0.25**0.5)),
+                   1.89, abs_tol=1e-12)
+    assert english_aliases == sorted(english_aliases, key=str.casefold)
+
     includes(sources["25-integrated-practice"], r"XX^\top",
              "independent symmetric raw-dot-product exercise")
     includes(sources["25-integrated-practice"], "a a b",
@@ -562,8 +578,8 @@ def validate_source() -> None:
         fail(f"Modern glossary repeats defined base terms: {core_duplicates}")
     for label, terms, expected in (
         ("base glossary", base_terms, 100),
-        ("modern glossary", modern_terms, 31),
-        ("English aliases", english_aliases, 106),
+        ("modern glossary", modern_terms, 33),
+        ("English aliases", english_aliases, 108),
     ):
         if len(terms) != expected or len(set(terms)) != expected:
             fail(f"{label}: expected {expected} distinct entries, found "
@@ -599,7 +615,7 @@ def validate_source() -> None:
                 fail(f"Broken self-check link in {name}: {destination}")
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (110 if lex == "24-lexicon" else 31):
+        if len(refs) != (110 if lex == "24-lexicon" else 33):
             fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
         for ref in refs:
             if ref not in labels:
