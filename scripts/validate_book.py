@@ -152,6 +152,39 @@ def test_numeric_examples() -> None:
     p_class2 = weights[1] / sum(weights)
     assert math.isclose(p_class2, 0.27368396943659246, abs_tol=1e-12)
     assert math.isclose(-math.log(p_class2), 1.295781234484205, abs_tol=1e-12)
+    # New independent exercise solutions: reverse Delta, batched Attention,
+    # three-step warmup, and decoupled AdamW.
+    s_b_first = ((0.0, 0.6), (0.0, 0.8))
+    residual_a = (1.0 - s_b_first[0][0], 0.0 - s_b_first[0][1])
+    s_after_a = ((s_b_first[0][0] + residual_a[0],
+                  s_b_first[0][1] + residual_a[1]), s_b_first[1])
+    assert s_after_a == ((1.0, 0.0), (0.0, 0.8))
+    b_read = (0.6 * s_after_a[0][0] + 0.8 * s_after_a[1][0],
+              0.6 * s_after_a[0][1] + 0.8 * s_after_a[1][1])
+    assert b_read == (0.6, 0.6400000000000001) or all(
+        math.isclose(x, y) for x, y in zip(b_read, (0.6, 0.64)))
+    assert math.isclose(math.hypot(b_read[0], b_read[1] - 1),
+                        math.sqrt(.4896), abs_tol=1e-12)
+    score = ((math.log(2), 0., 0.), (0., math.log(3), 0.),
+             (0., 0., math.log(4)))
+    reference_a = ((.5, .25, .25), (.2, .6, .2),
+                   (1/6, 1/6, 2/3))
+    value = ((1, 0), (0, 1), (1, 1))
+    for row, expected, expected_y in zip(
+        score, reference_a, ((.75, .5), (.4, .8), (5/6, 5/6))):
+        exps = [math.exp(v - max(row)) for v in row]
+        weights = [v / sum(exps) for v in exps]
+        assert all(math.isclose(a, b, abs_tol=1e-12)
+                   for a, b in zip(weights, expected))
+        output = [sum(weights[k] * value[k][j] for k in range(3))
+                  for j in range(2)]
+        assert all(math.isclose(a, b, abs_tol=1e-12)
+                   for a, b in zip(output, expected_y))
+    w = 1.
+    for rate in (.01, .02, .03):
+        w -= rate * 2.
+    assert math.isclose(w, .88, abs_tol=1e-12)
+    assert math.isclose((1 - .1 * .05) * 4 - .1 * .5, 3.93)
     # Hand-checked two-step Adam example: gradients 2, 1; beta1=beta2=.5.
     m = v = 0.0
     moments = []
@@ -604,7 +637,7 @@ def validate_source() -> None:
         fail(f"R01 requires 39 numbered chapter locators and all 0..8 stages; "
              f"found {numbered_count} and {sorted(stages_seen)}")
 
-    # Grayscale-safe pipeline locator in the six most important entry points.
+    # Grayscale-safe topic locator in the six most important entry points.
     for name, stage in (
         ("20a-tokenizer", 1), ("20-embeddings", 2),
         ("21b-why-attention", 3), ("10b-ffn-output-head", 4),
@@ -627,6 +660,34 @@ def validate_source() -> None:
              "merged seven-point report delivery table")
     if r"\subsection{七个核对关口" in agent_source:
         fail("Agent chapter duplicates the same seven checkpoints")
+
+    # Every new practice computation and link must have its independent answer.
+    for name, anchor in (
+        ("25-integrated-practice", "exercise:warmup-schedule"),
+        ("25-integrated-practice", "exercise:adamw-decay"),
+        ("25b-modern-practice", "exercise:batch-attention-new"),
+        ("15-practice", "exercise:delta-reverse"),
+    ):
+        includes(sources[name], r"\\label{" + anchor + "}", "matched exercise anchor")
+    for name in ("20a-tokenizer", "20c-classification-loss",
+                 "20b-task-contract", "21a-context-gap", "21-rnn"):
+        includes(sources[name], r"\\chaptercompass{", "shape-first missing chapter card")
+    for ordinal in ("第一", "第二", "第三", "第四", "第五", "第六", "第七"):
+        includes(agent_source, ordinal + "道关口", "seven gate prose/table parity")
+    includes(agent_source, r"\\label{sec:agent-seven-gates}", "Agent gate anchor")
+    includes(agent_source, r"\\label{sec:agent-acceptance}", "Agent acceptance anchor")
+    includes(sources["24e-bilingual-glossary"],
+             r"\\subsubsection*{不要混淆的五对概念}", "restored five concept contrasts")
+    for concept in ("In-context learning (ICL)", "Few-shot prompting",
+                    "Prompt", "Context", "Application memory", "Reward model"):
+        includes(sources["24e-bilingual-glossary"], concept, "modern core glossary terms")
+    key_source = sources["28-chapter-checks"]
+    answered_chapters = [int(x) for x in
+        re.findall(r"\\item\\[\\textbf\\{第 (\\d+) 章\\}\\]", key_source)]
+    if answered_chapters != sorted(answered_chapters) or answered_chapters[-1] != 39:
+        fail("Chapter answer key must follow numbered chapter order through 39")
+    if key_source.count(r"\\item[\\textbf{附录 A}]") != 2:
+        fail("Math and symbol appendix self-checks must follow numbered chapters")
 
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
@@ -715,13 +776,13 @@ def validate_source() -> None:
     answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
     if len(answer_sections) != 4:
         fail("Expected three distinctly labelled answer sets")
-    expected_counts = (16, 20, 11)  # practice order: mathematics, modern systems, core memory
+    expected_counts = (18, 21, 12)  # practice order: mathematics, modern systems, core memory
     actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
                      for i in range(3))
     if tuple(actual_counts) != expected_counts:
-        fail("Central answer counts do not match 16/20/11 lesson exercises")
-    if math_body.count(r"\item") != 16 or modern_body.count(r"\item") != 20:
-        fail("Core collections must contain sixteen math and twenty modern items")
+        fail("Central answer counts do not match 18/21/12 lesson exercises")
+    if math_body.count(r"\item") != 18 or modern_body.count(r"\item") != 21 or sources["15-practice"].count(r"\item") != 12:
+        fail("Exercise collections must contain 18 math, 21 modern and 12 memory tasks")
     for name in ("25-integrated-practice", "25b-modern-practice"):
         for label in ("【回忆】", "【手算】", "【迁移】"):
             includes(sources[name], label, f"{name} exercise tier")
