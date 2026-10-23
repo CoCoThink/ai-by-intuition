@@ -1,6 +1,7 @@
 \section{训练好了，模型怎样逐词生成文字？}
 \label{intro:23-llm-systems}
 \chaptercompass{模型如何不依赖未来答案逐词生成？}{反复运行前向，按概率策略选 Token 并延长上下文。}{上下文 $1\times T\to$ 下一位置词表分布}{生成时保持网络参数不变；KV Cache 可复用旧状态}
+\modelpipelinefocus{7}{采样生成}
 
 \begin{idea}
 \noindent\emph{从概率分布到连续的文字输出}\par

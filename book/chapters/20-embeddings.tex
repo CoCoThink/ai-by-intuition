@@ -2,6 +2,7 @@
 \label{intro:20-embeddings}
 \phantomsection\label{concept:embedding}
 \chaptercompass{文字的离散编号怎样进入矩阵计算？}{每个 Token ID 查表获得一行可训练向量。}{$\mathrm{ID}:T\ \to\ X:T\times d_{\rm model}$}{$E:|\mathcal V|\times d_{\rm model}$}
+\modelpipelinefocus{2}{Embedding}
 
 前面已把文字转成整数 ID，并学过分类损失，但编号本身没有语义大小：
 ID 4 与 ID 1 的差值并不是两个词语的含义差异。

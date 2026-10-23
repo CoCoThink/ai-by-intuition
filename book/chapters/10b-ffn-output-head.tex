@@ -1,6 +1,7 @@
 \section{前馈网络与输出头：两种不同的特征变换}
 \label{intro:10b-ffn-output-head}
 \chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{$X:T\times d_{\rm model}\to F:T\times d_{\rm model}\to L:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm vocab}$（及相应偏置）}
+\modelpipelinefocus{4}{FFN}
 
 \begin{idea}
 \noindent\emph{这一章的核心问题}\par

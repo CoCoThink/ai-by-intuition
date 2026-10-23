@@ -486,6 +486,15 @@ def validate_source() -> None:
     assert (1 * 0 + 0 * 1) == 0
     assert (3 * 3 * 3 * 8) == 216
 
+    # Grayscale-safe pipeline locator in the six most important entry points.
+    for name, stage in (
+        ("20a-tokenizer", 1), ("20-embeddings", 2),
+        ("21b-why-attention", 3), ("10b-ffn-output-head", 4),
+        ("22b-token-to-output", 5), ("23-llm-systems", 7),
+    ):
+        includes(sources[name], rf"\modelpipelinefocus{{{stage}}}",
+                 f"{name} consistent module locator")
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (

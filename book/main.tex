@@ -148,6 +148,30 @@
 \end{tcolorbox}\par\smallskip
 }
 
+
+% Lightweight reader-facing, grayscale-safe strip of the model's data path.
+% The emphasized stage has both a stronger border and bold typography.
+\newcommand{\modelpipenode}[3]{%
+\ifnum#1=#2\relax
+\fcolorbox{blue}{paper}{\sffamily\scriptsize\bfseries #3}%
+\else
+\fcolorbox{linegray}{white}{\sffamily\scriptsize #3}%
+\fi}
+\newcommand{\modelpipelinefocus}[2]{%
+\par\smallskip\noindent{\sffamily\scriptsize\color{muted}整机路径定位：
+\textbf{#2}（加粗边框标出本章部件）}\par
+\begingroup\centering
+\setlength{\fboxsep}{2pt}\setlength{\fboxrule}{.4pt}%
+\modelpipenode{#1}{1}{分词器}\enspace$\to$\enspace
+\modelpipenode{#1}{2}{Embedding}\enspace$\to$\enspace
+\modelpipenode{#1}{3}{Attention}\enspace$\to$\enspace
+\modelpipenode{#1}{4}{FFN}\enspace$\to$\enspace
+\modelpipenode{#1}{5}{输出头}\enspace$\to$\enspace
+\modelpipenode{#1}{6}{Softmax}\enspace$\to$\enspace
+\modelpipenode{#1}{7}{采样}
+\par\endgroup\smallskip
+}
+
 \begin{document}
 \thispagestyle{empty}
 \vspace*{10mm}
