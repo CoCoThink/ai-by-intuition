@@ -16,10 +16,10 @@
 | MathML | 1,209 份不同的 MathML 文档 |
 | veraPDF | PDF/UA-2 **compliant=true、failedRules=0、failedChecks=0** |
 | 源码与数值 | 62 个章节输入文件、联合训练、独立 Q/K、Delta 写入与教学脚本回归通过 |
-| 审计资产 | 此次 CI 的 \`ai-by-intuition-book\` 和 \`pdfua2-machine-audit\` |
+| 审计资产 | 此次 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` |
 
 **重要：上述机器数字仅对该 SHA 的 PDF 有效。**
-任何在此之后对 \`book/\`、\`scripts/\` 或构建配置的修改，
+任何在此之后对 `book/`、`scripts/` 或构建配置的修改，
 必须以新 SHA 的成功全量工作流重新验收；本文件不得自行宣称后续主分支已通过。
 
 ## 当前 135 页版本的灰度技术预检
@@ -33,7 +33,7 @@
 ## 旧版灰度渲染预检（不等于当前人工审阅）
 
 之前已对 [CI #39890022919](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39890022919)
-所生成的 **131 页 PDF** 使用 \`scripts/print_proof.py --all --scale 430\`
+所生成的 **131 页 PDF** 使用 `scripts/print_proof.py --all --scale 430`
 完成 **131／131 页**灰度图片生成，并浏览了按页码排序的六组缩略总览。
 旧 131 页基线的技术预检未发现整页丢失或明显的大幅裁切；当前 135 页 PDF 仍需另行人工逐页审校。
 
