@@ -81,7 +81,9 @@ def run_real(prompt: str, heatmap: Path | None, local_files_only: bool) -> None:
         bad = (~good).nonzero().flatten()[:8].tolist()
         raise RuntimeError(f"Nonfinite GPT-2 logits at vocabulary indices {bad}")
     for temperature in (0.7, 1.0, 1.5):
-        distribution = torch.softmax(last.float() / temperature, dim=-1)
+        # Sum across a 50,257-way distribution in float64 to avoid float32
+        # accumulation noise (observed 1.00001204 at T=0.7 on CPU).
+        distribution = torch.softmax(last.double() / temperature, dim=-1)
         mass = float(distribution.sum())
         print(f"T={temperature}: probability sum={mass:.8f}")
         if not math.isfinite(mass) or abs(mass - 1.0) >= 1e-5:
