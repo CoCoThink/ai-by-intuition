@@ -12,13 +12,13 @@
 
 **v0.1.0 的正式 Release 不变。**
 当前 \`main\` 根据 [REVIEW.md](docs/REVIEW.md) 已建立
-**九部分、39 章、A–G 附录**的新目录：I–VIII 为必读主线，
-IX 为视觉选读。原联想记忆选读已统一行向量并升为第 VI 部分，
+**九部分、38 章、A–G 附录**的新目录：I–VIII 为必读主线，
+IX 为视觉选读。第 1、2 章已合并；联想记忆专题统一行向量并成为第 VI 部分，
 朴素点积 Attention 已独立成章；RAG、Agent、BPE 也有可复算新例。
 
 修订候选已存在可追溯的[成功全量 PDF/UA-2 构建 #39929702902](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39929702902)
 （对应 `07b368c`、144 页、2,366／2,366 个公式关联）。
-**这只是该提交的机器基线，后续修改仍需重新验收，作者人工审校和发行签核未完成。**
+**上述成功记录只对应历史提交，当前修订仍需重新通过构建和印刷审校，不代表已重新发布。**
 请参见 [V3 发布前验收](docs/V3_RELEASE_READINESS.md)与
 [灰度逐页校样流程](docs/PRINT_PROOF.md)。
 具体参见 [修订映射](docs/CHAPTER_MAPPING.md)、
