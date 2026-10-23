@@ -790,10 +790,10 @@ def validate_source() -> None:
              + table_check.stdout + table_check.stderr)
     includes(sources["24e-bilingual-glossary"], r"\label{app:bilingual-glossary}",
              "unified bilingual table anchor")
-    includes(sources["24e-bilingual-glossary"], r"\\pageref*{",
+    includes(sources["24e-bilingual-glossary"], r"\pageref*{",
              "page-linked single typeset glossary")
     for unused in ("24-lexicon", "24b-modern-lexicon", "24d-english-index"):
-        if rf"\\input{{chapters/{unused}}}" in main:
+        if rf"\input{{chapters/{unused}}}" in main:
             fail(f"Canonical glossary source must not be typeset: {unused}")
     for core in ("22-transformer-architecture", "23a-from-toy-to-gpt",
                  "04-key-value-outer-product", "23d-agent-systems",
