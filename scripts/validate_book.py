@@ -600,8 +600,10 @@ def validate_source() -> None:
     for old_analogy in ("员工小 L", "给员工加能力", "老板逐步", "原讲稿的复用授权"):
         if old_analogy in agent_source:
             fail(f"Legacy person/authorization editorial prose returned to Agent chapter: {old_analogy}")
-    includes(agent_source, r"\subsection{七个核对关口",
-             "independent report-task checks remain visible for source comparison")
+    includes(agent_source, r"\subsection{先分解任务：七个可核对的交付条件}",
+             "merged seven-point report delivery table")
+    if r"\subsection{七个核对关口" in agent_source:
+        fail("Agent chapter duplicates the same seven checkpoints")
 
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
