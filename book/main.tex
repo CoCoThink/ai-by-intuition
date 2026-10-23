@@ -181,6 +181,9 @@
 \end{tcolorbox}\par\smallskip
 }
 \newcommand{\answerresult}[1]{\boldsymbol{#1}}
+% Plain core formulas: reserve visible boxing for Appendix A's mathematical quick reference.
+\let\bookboxed\boxed
+\renewcommand{\boxed}[1]{#1}
 \newcommand{\chapterrule}{\Needspace{17\baselineskip}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
 \begin{document}
 \thispagestyle{empty}
@@ -327,12 +330,14 @@
 \EditInstance{heading}{section}{number-format=\textcolor{blue}{附录~\theheading}}
 \part*{附录：公式、练习与答案}
 \addcontentsline{toc}{part}{附录：公式、练习与答案}
+\let\boxed\bookboxed
 \section{核心公式、数学与形状速查}
 \input{chapters/00e-core-formulas}
 \input{chapters/00b-math-tools}
 \input{chapters/00c-symbols}
 \input{chapters/30-optimizer-appendix}
 
+\renewcommand{\boxed}[1]{#1}
 \section{三维贯通实验、复算与脚本}
 \input{chapters/00f-transformer-intermediates}
 \input{chapters/24e-pytorch-lab}
