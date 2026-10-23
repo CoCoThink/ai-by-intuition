@@ -6,6 +6,7 @@
 \chaptercompass{一个位置怎样按需读取其他位置？}{匹配分数、归一化权重、加权读取。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\ \to\ Y:T\times d_v$}{$W_Q,W_K,W_V$（由输入 $X$ 投影）}
 
 \localfixture{二维 Q/K/V，延续上一节}
+\noindent\textbf{［未缩放］}本章继续沿用上一章的原始点积分数；后面介绍缩放时会明确除以 $\sqrt{d_k}$。
 上一章算出了“开了”对三个位置的匹配分数 $(1,1,2)$，
 得到读取权重 $(0.212,0.212,0.576)$。
 把单次查询写成矩阵乘法，再扩展到多个 Query，就得到 Self-Attention 的批量计算。

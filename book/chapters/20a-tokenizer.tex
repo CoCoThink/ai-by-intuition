@@ -42,6 +42,36 @@
 切得更细可能增加序列长度，切得较粗可能增加词表体积；
 Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 
+
+\subsection{［复算］五行手算：BPE 怎样挑最频繁的相邻对？}
+
+\localfixture{使用字母的玩具 BPE；不是任何真实 GPT 分词器}
+为了避免中文编码和字节级分词的额外细节，暂把训练语料设成
+两段由空格分开的字符序列 \texttt{a b a b} 与 \texttt{a b}，
+\textbf{不允许跨训练段落合并}。
+每轮统计全部段落内部的\textbf{相邻 Token 对}，合并出现次数最多的一对，
+并将新 Token 加入词表。这里没有并列最高频的歧义：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{11mm}p{47mm}X@{}}
+\toprule
+步骤 & 语料状态或计数 & 词表变化与决策\\\midrule
+0 & \texttt{a b a b}；\texttt{a b} & 初始词表 $\{a,b\}$\\
+1 & \texttt{(a,b)} 共 3 次；\texttt{(b,a)} 共 1 次 & 选最频繁对 \texttt{a+b}\\
+2 & \texttt{ab ab}；\texttt{ab} & 合并为 \texttt{ab}；加入词表\\
+3 & \texttt{(ab,ab)} 共 1 次 & 唯一可再合并的相邻对\\
+4 & \texttt{abab}；\texttt{ab} & 合并为 \texttt{abab}；加入词表\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+合并后词表成为 $\{a,b,ab,abab\}$；它\textbf{不会删除初始字符}
+（这样未被合并的其他文本仍可编码）。
+真实字节级 BPE 还包含初始字节表示、预分词和特殊 Token 等实现细节。
+\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
+执行 \texttt{python3 scripts/bpe\_demo.py} 可以重放两轮计数与合并。
+
 \begin{warningbox}
 本文五项词表只为统一计算和手算服务。
 真实模型并不保证将“春天”或“开了”保留为单个 Token。
