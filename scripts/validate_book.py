@@ -299,6 +299,21 @@ def validate_source() -> None:
             fail(f"Missing P1 reproducibility script: {script}")
         ast.parse(script_path.read_text(encoding="utf-8"))
     includes(sources["24e-pytorch-lab"], "1.798430", "initial loss in lab")
+    # Runnable, dependency-free examples must agree with the book after edits.
+    for script in ("memory_demo.py", "bpe_demo.py", "rag_demo.py", "agent_loop.py"):
+        script_path = ROOT / "scripts" / script
+        if not script_path.is_file():
+            fail(f"Missing reproducibility example: {script}")
+        try:
+            ast.parse(script_path.read_text(encoding="utf-8"))
+        except SyntaxError as exc:
+            fail(f"Invalid Python syntax in {script}: {exc}")
+        result = subprocess.run([sys.executable, str(script_path)],
+                                cwd=ROOT, capture_output=True, text=True)
+        if result.returncode:
+            fail(f"Reproducible {script} failed:\n{result.stdout}{result.stderr}")
+    print("Independent teaching QA passed: memory, BPE, RAG and Agent loop")
+
     # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
