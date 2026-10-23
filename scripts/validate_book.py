@@ -549,7 +549,6 @@ def validate_source() -> None:
     assert isclose(w, 0.58, abs_tol=1e-12)
     assert isclose((1-0.1*0.05)*2-0.1*(0.5/(0.25**0.5)),
                    1.89, abs_tol=1e-12)
-    assert english_aliases == sorted(english_aliases, key=str.casefold)
 
     includes(sources["25-integrated-practice"], r"XX^\top",
              "independent symmetric raw-dot-product exercise")
@@ -573,6 +572,7 @@ def validate_source() -> None:
     english_aliases = re.findall(
         r"(?m)^\\item\s+\{\\sffamily\\bfseries\s+([^}]+)\}",
         sources["24d-english-index"])
+    assert english_aliases == sorted(english_aliases, key=str.casefold)
     core_duplicates = sorted(set(base_terms) & set(modern_terms))
     if core_duplicates:
         fail(f"Modern glossary repeats defined base terms: {core_duplicates}")
