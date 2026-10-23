@@ -1103,6 +1103,37 @@ def validate_pdf(path: Path) -> None:
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
+
+    # R01 explicit pagination regression: after compressing the two-line locator,
+    # chapters 11 and 15 must end with a self-check AND a conclusion on the same
+    # substantive page. Never lower the generic orphan/blank-page thresholds.
+    numbered_pages: dict[int, int] = {}
+    for item in reader.outline:
+        if isinstance(item, list):
+            for bookmark in item:
+                title = str(getattr(bookmark, "title", ""))
+                match = re.match(r"^(?:第)?(\d+)(?:章)?\s+\S", title)
+                if match:
+                    numbered_pages[int(match.group(1))] = (
+                        reader.get_destination_page_number(bookmark)
+                    )
+    for chapter_number in (11, 15):
+        if chapter_number not in numbered_pages or chapter_number + 1 not in numbered_pages:
+            fail(f"Missing chapter bookmarks for R01 page regression: {chapter_number}")
+        last_page_index = numbered_pages[chapter_number + 1] - 1
+        if last_page_index < numbered_pages[chapter_number]:
+            fail(f"Chapter {chapter_number} has invalid physical page range")
+        closing_page = pages[last_page_index]
+        han_count = len(re.findall(r"[\u4e00-\u9fff]", closing_page))
+        if ("读完自测" not in closing_page or "小结" not in closing_page
+                or han_count < 260
+                or closing_page.rfind("小结") < closing_page.rfind("读完自测")):
+            fail(f"R01 chapter {chapter_number} stranded its conclusion on PDF "
+                 f"page {last_page_index + 1} (Han={han_count}); "
+                 "retain the compact locator and real orphan gate")
+    print("R01 chapter-end pagination QA passed: chapters 11 and 15 retain "
+          "self-check and substantive conclusion pages")
+
     compact = normalized(text)
     toc = normalized("".join(pages[1:7]))
     for num, title in zip("一二三四五六七八九", PARTS):
