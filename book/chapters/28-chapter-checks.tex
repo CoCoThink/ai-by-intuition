@@ -21,9 +21,8 @@
 手算：$\nabla L=(-4/3,-2)$，更新到 $(1.4,0.6)$，
 损失从 $5/3$ 降到 $\answerresult{0.4}$；
 迁移：$\eta=0$ 时参数不变，损失仍为 $5/3$；
-训练工程例子中 $100/10=10$ 次更新，五步 Warmup 后
-$w_5=0.64-0.03\times2=\answerresult{0.58}$；
-AdamW 把权重衰减与梯度动量分开，避免衰减项污染历史统计。
+梯度 $(6,8)$ 的 L2 范数为 $10$，整体乘 $5/10$ 后为 $\answerresult{(3,4)}$。
+高级优化器与 Warmup 的手算参见附录 A。
 \item[\textbf{第 4 章}] \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace 回忆：两次仿射复合仍可化为一次仿射变换；
 手算：$\answerresult{0}$ 和 $\answerresult{1}$；
 迁移：ReLU 对正负输入采用不同分支，生成分段变化。
