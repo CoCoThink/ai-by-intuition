@@ -83,11 +83,11 @@ g_{Q3}=\frac{132-120}{120}=\boxed{10\%}.
 
 \subsection{先分清 Prompt、Context 与 Memory}
 
-\textbf{Prompt（提示输入）}可以包含目标、约束、示例和当前问题；
-\textbf{Context（上下文）}是本次请求可供模型读取的信息，
+\phantomsection\label{concept:prompt}\textbf{Prompt（提示输入）}可以包含目标、约束、示例和当前问题；
+\phantomsection\label{concept:context}\textbf{Context（上下文）}是本次请求可供模型读取的信息，
 其中可能包含对话历史、检索片段和工具结果。
 
-这里常说的\textbf{应用记忆（Memory）}，通常是系统保存并再次提供的
+这里常说的\phantomsection\label{concept:app-memory}\textbf{应用记忆（Memory）}，通常是系统保存并再次提供的
 历史摘要、偏好或事实，不等于神经网络权重已被修改。
 即使保存了历史，也受上下文长度、检索准确性及隐私策略约束。
 

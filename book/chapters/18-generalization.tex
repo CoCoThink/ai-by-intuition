@@ -65,6 +65,7 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 \input{figures/validation-early-stop}
 
 \subsection{Dropout 到底丢弃了什么？}
+\phantomsection\label{concept:dropout}
 
 对于包含多个中间特征的网络，训练时会随机将\textbf{部分中间激活值}暂时置零，让模型不容易过度依赖少数激活通道。例如
 \[

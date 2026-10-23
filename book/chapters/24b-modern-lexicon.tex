@@ -1,7 +1,7 @@
 \subsection{现代架构与 Agent 术语补充索引}
 \label{intro:24b-modern-lexicon}
 
-这 33 个词条仅补充基础 100 词未覆盖的架构与系统接口，
+这 36 个词条仅补充基础 100 词未覆盖的架构与系统接口，
 按\textbf{解决的问题}分组，链接回正文。
 例如 RLHF 与 MCP 已在基础词条定义，\textbf{这里不重复列词条}；
 英文 A--Z 别名页可反向查找，完整解释请点击相应正文。
@@ -9,13 +9,15 @@
 \subsubsection*{模型输入、目标与训练}
 \begin{itemize}
 \item \textbf{任务契约（Task Contract）}：事先约定输入、目标、张量尺寸和结果的含义。 \termref{concept:task-contract}
-\item \textbf{FFN 与输出头}：前者改变 Token 的隐藏特征，后者映射到词表 logits。 \termref{concept:ffn}
+\item \textbf{输出头}：把每个 Token 的隐藏向量映射为词表 logits，不等同于内部 FFN。 \termref{concept:output-head}
+\item \textbf{上下文学习}：利用当前请求中的任务说明和示例适配输出，不直接更新模型权重。 \termref{concept:in-context-learning}
+\item \textbf{少样本提示}：在 Prompt 中放入少量示例以引导任务格式，是上下文学习的常见形式。 \termref{concept:few-shot}
 \item \textbf{Teacher Forcing}：训练时以已知真实序列作为条件，一次预测多个后续位置。 \termref{concept:teacher-forcing}
 \item \textbf{BPE}：在语料中反复合并高频相邻 Token 对，建立子词单元。 \termref{concept:bpe}
 \item \textbf{标签错位（Shifted Targets）}：每个输入位置的目标为下一位置 Token。 \termref{concept:shifted-targets}
 \item \textbf{损失掩码}：选择哪些位置参与损失统计，区别于因果注意力掩码。 \termref{concept:loss-mask}
-\item \textbf{SFT}：利用示范回答继续训练模型。 \termref{concept:sft}
 \item \textbf{RLVR}：利用可程序化核验的任务奖励进行学习。 \termref{concept:rlvr}
+\item \textbf{奖励模型}：从评价或偏好数据学习对候选回答的评分，不保证评分等同事实真值。 \termref{concept:reward-model}
 \item \textbf{GRPO}：以组内相对奖励构造策略更新信号；还涉及归一化和裁剪等训练步骤。 \termref{concept:grpo}
 \item \textbf{Warmup（学习率升温）}：训练前几步由小到大调度学习率，控制初期更新步长。 \termref{concept:lr-warmup}
 \item \textbf{AdamW}：保留 Adam 的自适应更新并独立施加权重衰减。 \termref{concept:adamw}
@@ -34,7 +36,6 @@
 
 \subsubsection*{Attention 与长上下文}
 \begin{itemize}
-\item \textbf{MHA}：每个注意力头使用其对应的 Q/K/V 投影。 \termref{concept:multihead}
 \item \textbf{MQA}：让多个 Query 头共享一组 K/V 头。 \termref{concept:mqa}
 \item \textbf{GQA}：让一组 Query 头共享 K/V 头，降低缓存规模。 \termref{concept:gqa}
 \item \textbf{MLA}：通过潜在表示等机制尝试压缩注意力缓存。 \termref{concept:mla}
@@ -49,8 +50,10 @@
 
 \subsubsection*{Agent 系统中的边界}
 \begin{itemize}
+\item \textbf{Prompt}：提供给模型的任务说明、示例、问题等提示输入。 \termref{concept:prompt}
+\item \textbf{Context}：一次推理可读取的对话、检索片段和工具结果等上下文内容。 \termref{concept:context}
+\item \textbf{Memory}：应用保存并在需要时恢复的信息，不等于模型权重或 KV Cache。 \termref{concept:app-memory}
 \item \textbf{Tool Calling}：模型提出结构化请求，系统在检查后调用外部工具。 \termref{concept:tool-calling}
-\item \textbf{Workflow}：由固定步骤或条件分支编排的可重复任务流程。 \termref{concept:workflow}
 \item \textbf{Skill}：把一类任务的说明、约束和脚本包装为可复用能力。 \termref{concept:skill}
 \item \textbf{Subagent 与 A2A}：前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 \termref{concept:subagent}
 \end{itemize}

@@ -623,7 +623,7 @@ def validate_source() -> None:
     for old_analogy in ("员工小 L", "给员工加能力", "老板逐步", "原讲稿的复用授权"):
         if old_analogy in agent_source:
             fail(f"Legacy person/authorization editorial prose returned to Agent chapter: {old_analogy}")
-    includes(agent_source, r"\subsection{先分解任务：七个可核对的交付条件}",
+    includes(agent_source, r"\subsection{先分解任务：七个可核对的关口}",
              "merged seven-point report delivery table")
     if r"\subsection{七个核对关口" in agent_source:
         fail("Agent chapter duplicates the same seven checkpoints")
@@ -798,17 +798,17 @@ def validate_source() -> None:
         fail(f"Modern glossary repeats defined base terms: {core_duplicates}")
     for label, terms, expected in (
         ("base glossary", base_terms, 100),
-        ("modern glossary", modern_terms, 33),
+        ("modern glossary", modern_terms, 36),
         ("English aliases", english_aliases, 108),
     ):
         if len(terms) != expected or len(set(terms)) != expected:
             fail(f"{label}: expected {expected} distinct entries, found "
                  f"{len(terms)} entries and {len(set(terms))} unique names")
-    # Generated table is an exact derivative of the 100+33 canonical glossary.
+    # Generated table is an exact derivative of the 100+36 canonical glossary.
     table_check = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "generate_bilingual_glossary.py"), "--check"],
         cwd=ROOT, capture_output=True, text=True)
-    if table_check.returncode or "133-row bilingual glossary QA passed" not in table_check.stdout:
+    if table_check.returncode or "136-row bilingual glossary QA passed" not in table_check.stdout:
         fail("Generated bilingual table is stale:\\n"
              + table_check.stdout + table_check.stderr)
     includes(sources["24e-bilingual-glossary"], r"\label{app:bilingual-glossary}",
@@ -863,7 +863,7 @@ def validate_source() -> None:
                 fail(f"Broken self-check link in {name}: {destination}")
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (110 if lex == "24-lexicon" else 33):
+        if len(refs) != (110 if lex == "24-lexicon" else 36):
             fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
         for ref in refs:
             if ref not in labels:
