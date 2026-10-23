@@ -1,7 +1,8 @@
 \section{现代 Transformer 为什么看起来越来越不像原版？}
 \label{intro:22d-modern-transformers}
-\modelpipelinefocus{3}{现代注意力与架构}
 \chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_h,\quad KV:T\times H_{KV}\times d_h$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
+\modelpipelinefocus{3}{现代注意力与架构}
+
 
 \begin{idea}
 \noindent\emph{从实际约束理解架构选择}\par
