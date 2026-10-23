@@ -86,6 +86,7 @@ REQUIRED = [
     "24-lexicon",
     "24b-modern-lexicon",
     "24c-concept-map",
+    "24e-bilingual-glossary",
     "24d-english-index",
     "26-sources",
     "29-revision-notes",
@@ -610,6 +611,15 @@ def validate_source() -> None:
         if len(terms) != expected or len(set(terms)) != expected:
             fail(f"{label}: expected {expected} distinct entries, found "
                  f"{len(terms)} entries and {len(set(terms))} unique names")
+    # Generated table is an exact derivative of the 100+33 canonical glossary.
+    table_check = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "generate_bilingual_glossary.py"), "--check"],
+        cwd=ROOT, capture_output=True, text=True)
+    if table_check.returncode or "133-row bilingual glossary QA passed" not in table_check.stdout:
+        fail("Generated bilingual table is stale:\\n"
+             + table_check.stdout + table_check.stderr)
+    includes(sources["24e-bilingual-glossary"], r"\label{app:bilingual-glossary}",
+             "unified bilingual table anchor")
     includes(sources["24-lexicon"], "英文 A--Z 列表只提供",
              "single-source glossary explanation")
     for core in ("22-transformer-architecture", "23a-from-toy-to-gpt",
