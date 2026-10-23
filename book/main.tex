@@ -136,6 +136,18 @@
 #2
 \end{tcolorbox}\medskip}
 
+
+% Chapter compass: a single, shape-first entry convention for key model components.
+\newcommand{\chaptercompass}[4]{%
+\begin{tcolorbox}[enhanced,breakable,colback=paper,colframe=linegray,
+  boxrule=.5pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm]
+{\sffamily\bfseries\color{blue}本章先问}\enspace #1\par
+{\sffamily\bfseries 一句话本质}\enspace #2\par
+{\sffamily\footnotesize\color{muted}输入与输出：}\enspace #3\par
+{\sffamily\footnotesize\color{muted}可训练参数：}\enspace #4
+\end{tcolorbox}\par\smallskip
+}
+
 \begin{document}
 \thispagestyle{empty}
 \vspace*{10mm}
@@ -151,19 +163,27 @@
 \noindent{\color{muted}\rule{\linewidth}{0.7pt}}\par
 \vspace{8mm}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=paper,arc=3mm,boxrule=0pt,left=6mm,right=6mm,top=6mm,bottom=6mm]
-\textbf{只需要这些预备知识：}建议具备高中代数基础；余弦、指数、对数可以边读边查。导数、链式法则与方差会在相关章节现学现用。\par
-\textbf{学习路线：} 标量训练 $\rightarrow$ 矩阵 $\rightarrow$ 文字 $\rightarrow$ Attention $\rightarrow$ Transformer $\rightarrow$ 助手 $\rightarrow$ 技术判断。\par
-\textbf{学习任务：} 从回答问题出发，理解为何用下一 Token 预测训练一类语言模型，再学它怎样生成、改进与使用工具。
+\textbf{贯穿主线：}自回归语言模型把已有 Token 序列映射为下一个 Token 的概率分布；大量可训练参数由数据、损失与梯度优化得到。这是理解一类语言模型的入口，不是全部 AI 的终极目标。\par
+\textbf{三个诀窍：}①先问输入、输出和形状；②规则写不全，就用可训练函数和数据求参数；③从最朴素部件出发，理解每次改进修补了什么缺口。\par
+\textbf{怎么读：}有高中代数基础即可起步；标量训练 $\rightarrow$ 矩阵 $\rightarrow$ 文字 $\rightarrow$ Attention $\rightarrow$ Transformer $\rightarrow$ 记忆视角 $\rightarrow$ 助手与技术判断。
 \end{tcolorbox}
 \vspace{9mm}
 \begin{center}
-\begin{tikzpicture}[>=Latex, node distance=1.15cm and 0.6cm,
-    n/.style={draw=linegray,fill=white,rounded corners=4pt,minimum width=35mm,minimum height=13mm,align=center,font=\sffamily\bfseries}]
-\node[n] (lin) {函数\\[-1mm] $\widehat y=wx+b$};
-\node[n,right=of lin] (mlp) {神经网络\\[-1mm] $\sigma(xW_1)W_2$};
-\node[n,right=of mlp] (att) {语言模型\\[-1mm] 学习语言与生成};
-\draw[->,thick,blue] (lin)--(mlp) node[midway,above,font=\footnotesize,align=center]{训练参数};
-\draw[->,thick,blue] (mlp)--(att) node[midway,above,font=\footnotesize,align=center]{利用上下文};
+\begin{tikzpicture}[>=Latex,
+  unit/.style={draw=linegray,fill=white,rounded corners=3pt,
+    minimum width=19mm,minimum height=13mm,align=center,font=\scriptsize}]
+\node[unit] (tok) at (0,0) {Tokenizer\\文字到 ID};
+\node[unit] (emb) at (2.35,0) {Embedding\\$T\times d$};
+\node[unit] (att) at (4.7,0) {Attention\\读取上下文};
+\node[unit] (ffn) at (7.05,0) {FFN\\变换特征};
+\node[unit] (head) at (9.4,0) {输出头\\$T\times|\mathcal V|$};
+\node[unit] (prob) at (11.75,0) {Softmax\\下词概率};
+\node[unit] (next) at (14.1,0) {采样\\下个 Token};
+\foreach \a/\b in {tok/emb,emb/att,att/ffn,ffn/head,head/prob,prob/next}
+  \draw[->,thick,blue] (\a)--(\b);
+\node[font=\scriptsize,align=center,text=muted] at (7.05,-1.15)
+ {训练：目标 Token $\to$ 交叉熵 $\to$ 反向传播 $\to$ 更新参数\\
+  检索、工具与 Agent 属于模型之外的应用系统。};
 \end{tikzpicture}
 \end{center}
 \vfill

@@ -3,6 +3,7 @@
 \label{intro:11-softmax-memory}
 \phantomsection\label{intro:12-self-attention-matrices}
 \phantomsection\label{concept:self-attention}
+\chaptercompass{一个位置怎样按需读取其他位置？}{匹配分数、归一化权重、加权读取。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\ \to\ Y:T\times d_v$}{$W_Q,W_K,W_V$（由输入 $X$ 投影）}
 
 \localfixture{二维 Q/K/V，延续上一节}
 上一章算出了“开了”对三个位置的匹配分数 $(1,1,2)$，
