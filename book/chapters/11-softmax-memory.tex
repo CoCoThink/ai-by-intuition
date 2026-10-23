@@ -35,7 +35,7 @@ V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\quad
 Key 与 Value 均按位置逐行排列。将 $K$ 转置后，
 Query 与三个 Key 的分数一次求出；下面同时计算全部 Query。
 
-\subsection{为什么是 $K^\top$ 而不是 $K$？}
+\subsection{\texorpdfstring{为什么是 $K^\top$ 而不是 $K$？}{为什么是 K 转置而不是 K？}}
 \label{sec:key-layout-card}
 \input{figures/key-value-layout}
 $K:M\times d_k$，$\vect q^\top:1\times d_k$。
@@ -71,7 +71,7 @@ $V:M\times d_v$；Self-Attention 中 $N=M=T$。
 =\underbrace{S}_{N\times M}.
 \]
 
-\subsection{完整三行复算：$S\to A\to Y$}
+\subsection{\texorpdfstring{完整三行复算：$S\to A\to Y$}{完整三行复算：S 到 A 到 Y}}
 \localfixture{承接上一章的三位置非对称 Q/K/V 数值例}
 继续使用 $Q=X$、$K=XW_K$、$V=X$，
 上一章得到的原始分数为（\textbf{未缩放、未加因果 Mask}）
