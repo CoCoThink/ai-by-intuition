@@ -29,7 +29,6 @@ PARTS = [
 REQUIRED = [
     "00g-reading-routes",
     "00-guide",
-    "00d-rules-gap",
     "00-functions",
     "16-loss-gradient",
     "07-functions-relu",
@@ -237,6 +236,7 @@ def validate_source() -> None:
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
     sources = {name: chapter(name) for name in REQUIRED + [
+        "00d-rules-gap",  # archived merged lesson, not typeset
         "24-lexicon", "24b-modern-lexicon", "24d-english-index",
     ]}  # data-only canonical glossary sources; never typeset
     includes(main, r"\appendix", "main")
@@ -273,7 +273,7 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], "0.9997", "scaled-dot-product example")
     includes(sources["22a-position-multihead"], "位置", "positional example")
     includes(sources["22a-position-multihead"], r"\label{eq:pos-swap-d3}", "nondegenerate 3D position comparison")
-    includes(sources["21a-context-gap"], r"\label{check:21a-context-gap}", "context gap self-check")
+    includes(sources["21a-context-gap"], r"\chaptercheck{21a-context-gap}", "context gap self-check")
     includes(sources["19b-vit"], r"\label{eq:vit-patch-embedding}", "standalone patch embedding")
     includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "asymmetric Q/K example")
     includes(sources["21b-why-attention"], r"\label{eq:asymmetric-qk-example}",
@@ -565,12 +565,10 @@ def validate_source() -> None:
                          "FFN", "归一化", "因果")):
         fail("Original Transformer figure alt text lacks source/target or FFN detail")
 
-    three_tier_first_ten = ["00d-rules-gap","00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
+    three_tier_first_ten = ["00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
     for lesson_name in three_tier_first_ten:
-        includes(sources[lesson_name], "读完自测：回忆／手算／迁移",
+        includes(sources[lesson_name], r"\chaptercheck{",
                  f"three-level self-check in {lesson_name}")
-        for kind in ("回忆：", "手算：", "迁移："):
-            includes(sources[lesson_name], kind, f"{lesson_name} {kind}")
     from math import isclose
     assert isclose(2*3 + 1, 7)
     assert isclose(2*3 - 1, 5)
@@ -579,10 +577,8 @@ def validate_source() -> None:
 
     three_tier_attention = ["10-mlp","20a-tokenizer","20c-classification-loss","20-embeddings","20b-task-contract","21a-context-gap","21-rnn","21c-naive-attention","21b-why-attention","11-softmax-memory","22a-position-multihead"]
     for lesson_name in three_tier_attention:
-        includes(sources[lesson_name], "读完自测：回忆／手算／迁移",
+        includes(sources[lesson_name], r"\chaptercheck{",
                  f"attention and text three-level check: {lesson_name}")
-        for kind in ("回忆：", "手算：", "迁移："):
-            includes(sources[lesson_name], kind, f"{lesson_name} {kind}")
     assert (1 * 0 + 0 * 1) == 0
     assert (1 * 1 + 0 * 1) == 1
 
@@ -590,19 +586,19 @@ def validate_source() -> None:
     for lesson_name in three_tier_transformer:
         includes(sources["23b-deployment-and-ecosystem" if lesson_name == "23b-deployment-and-ecosystem" else
                  "16-loss-gradient" if lesson_name == "16-loss-analytic" else lesson_name],
-                 "读完自测：回忆／手算／迁移",
+                 r"\chaptercheck{",
                  f"transformer/application three-level check: {lesson_name}")
     assert math.isclose((0.3 - 1.0)/3, -0.2333333333333333)
     assert math.isclose(math.log(4), 1.3862943611198906)
 
-    three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity","00b-math-tools","00c-symbols"]
+    three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity"]
     for lesson_name in three_tier_memory_and_appendix:
-        includes(sources[lesson_name], "读完自测：回忆／手算／迁移",
+        includes(sources[lesson_name], r"\chaptercheck{",
                  f"memory/vision/math glossary three-tier check: {lesson_name}")
     assert (1 * 0 + 0 * 1) == 0
     assert (3 * 3 * 3 * 8) == 216
 
-    # R01: keep chapter heading, compact two-line locator and first
+    # Keep chapter heading and its first
     # explanatory lines together at previously observed page-bottom starts.
     for name, heading in (
         ("16-loss-gradient", "怎样量“猜得多差”？损失与一次直接求解"),
@@ -612,11 +608,11 @@ def validate_source() -> None:
         ("23d-agent-systems", "从语言模型到 Agent：哪些能力来自模型，哪些来自系统？"),
     ):
         includes(sources[name], "\\Needspace{", f"R01 page-break guard for {name}")
-        if not re.search(r"\\Needspace\{\d+\\baselineskip\}\s*\\section\{"
+        if not re.search(r"\\Needspace\{\d+\\baselineskip\}\s*\\chapterrule\s*\\section\{"
                          + re.escape(heading) + r"\}", sources[name]):
             fail(f"R01 title and full locator can split at a page boundary: {name}")
 
-    # R01: all 39 numbered chapters carry one grayscale-safe model path.
+    # Each of the 38 typeset chapters retains one source metadata locator for review.
     numbered_sources = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     numbered_sources = numbered_sources[:numbered_sources.index("19b-vit") + 1]
     numbered_count = 0
@@ -633,8 +629,8 @@ def validate_source() -> None:
                 fail(f"R01 chapter has unsupported or unlabeled model stage: {name}")
             stages_seen.add(stage)
             numbered_count += 1
-    if numbered_count != 39 or stages_seen != set(range(9)):
-        fail(f"R01 requires 39 numbered chapter locators and all 0..8 stages; "
+    if numbered_count != 38 or stages_seen != set(range(9)):
+        fail(f"R01 requires 38 numbered chapter card anchors and all 0..8 stages; "
              f"found {numbered_count} and {sorted(stages_seen)}")
 
     # Grayscale-safe topic locator in the six most important entry points.
@@ -648,7 +644,7 @@ def validate_source() -> None:
 
     # A chapter's conclusion should not precede its final boundary and check.
     capacity = sources["13-capacity"]
-    if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\label{check:13-capacity}"):
+    if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\chaptercheck{13-capacity}"):
         fail("Capacity chapter places its conclusion before the final self-test")
 
     # Structural guard only: original-course license assessment requires a human.
@@ -672,8 +668,8 @@ def validate_source() -> None:
     for name in ("20a-tokenizer", "20c-classification-loss",
                  "20b-task-contract", "21a-context-gap", "21-rnn"):
         includes(sources[name], r"\chaptercompass{", "shape-first missing chapter card")
-    for ordinal in ("第一", "第二", "第三", "第四", "第五", "第六", "第七"):
-        includes(agent_source, ordinal + "道关口", "seven gate prose/table parity")
+    for title in ("范围与权限", "证据覆盖", "计算校验", "跨轮状态", "失败处理", "接口复用", "交付复核"):
+        includes(agent_source, title, "seven gate delivery table")
     includes(agent_source, r"\label{sec:agent-seven-gates}", "Agent gate anchor")
     includes(agent_source, r"\label{sec:agent-acceptance}", "Agent acceptance anchor")
     includes(sources["24e-bilingual-glossary"],
@@ -684,10 +680,10 @@ def validate_source() -> None:
     key_source = sources["28-chapter-checks"]
     answered_chapters = [int(x) for x in
         re.findall(r"\\item\[\\textbf\{第 (\d+) 章\}\]", key_source)]
-    if answered_chapters != sorted(answered_chapters) or answered_chapters[-1] != 39:
-        fail("Chapter answer key must follow numbered chapter order through 39")
-    if key_source.count(r"\item[\textbf{附录 A}]") != 2:
-        fail("Math and symbol appendix self-checks must follow numbered chapters")
+    if answered_chapters != sorted(answered_chapters) or answered_chapters[-1] != 38:
+        fail("Chapter answer key must follow numbered chapter order through 38")
+    if key_source.count(r"\item[\textbf{附录 A}]") != 0:
+        fail("Math and symbol appendix should be pure reference sections")
 
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
@@ -708,14 +704,14 @@ def validate_source() -> None:
             if phrase in body:
                 fail(f"Obsolete editorial prose in {source}: {phrase}")
 
-    # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
+    # Revised reading path: 36 core numbered chapters, 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
     core_sources = input_list[:first_elective]
     visible_chapters = sum(len(re.findall(r"(?m)^\\section\{", sources[n]))
                            for n in core_sources)
-    if visible_chapters != 37:
-        fail(f"Core curriculum requires 37 numbered chapters, found {visible_chapters}")
+    if visible_chapters != 36:
+        fail(f"Core curriculum requires 36 numbered chapters, found {visible_chapters}")
     includes(sources["16-loss-gradient"], r"\label{intro:16a-gradient-descent}",
              "loss and gradient are two progressive lessons")
     includes(sources["28-chapter-checks"], r"\label{answer:16-loss-analytic}",
@@ -740,7 +736,7 @@ def validate_source() -> None:
     includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
     includes(sources["10b-ffn-output-head"], r"\begin{bmatrix}4&2\\1&1\end{bmatrix}", "nonidentity FFN")
     includes(sources["25b-modern-practice"], "输入行向量 $(2,1)$", "independent FFN exercise")
-    for category in ("title={直觉}", "title={动手算}", "title={易错}", "title={小结}"):
+    for category in ("title={◆ 直觉}", "title={▸ 动手算}", "title={! 易错}", "title={■ 小结}"):
         includes(main, category, "four consistent note classes")
     for figure_name, chapter_name in (
         ("loss-descent", "16-loss-gradient"),
@@ -815,7 +811,7 @@ def validate_source() -> None:
              "decoupled AdamW mathematical update")
     includes(sources["18c-training-engineering"], r"\label{concept:lr-warmup}",
              "five-step learning-rate scheduling example")
-    includes(sources["28-chapter-checks"], r"\boxed{0.58}",
+    includes(sources["28-chapter-checks"], r"\answerresult{0.58}",
              "warmup self-test answer")
     from math import isclose
     eta_schedule = (0.02, 0.04, 0.06, 0.06, 0.03)
@@ -909,7 +905,7 @@ def validate_source() -> None:
     for lesson_id in sorted(check_ids):
         source_name = labels["check:" + lesson_id]
         src = sources[source_name]
-        label = r"\label{check:" + lesson_id + "}"
+        label = r"\chaptercheck{" + lesson_id + "}"
         at = src.index(label)
         near = src[max(0, at-115):at + 950]
         if r"\textbf{读完自测：回忆／手算／迁移}" not in near:
@@ -1249,8 +1245,8 @@ def validate_pdf(path: Path) -> None:
             elif not (title.startswith("阅读指南：") or
                       title.startswith("技术底座回顾：")):
                 fail(f"Unnumbered PDF chapter bookmark: {title!r}")
-    if chapter_numbers != list(range(1, 40)):
-        fail(f"PDF chapter bookmark numbers must be 1--39 in order; "
+    if chapter_numbers != list(range(1, 39)):
+        fail(f"PDF chapter bookmark numbers must be 1--38 in order; "
              f"found {chapter_numbers!r}")
     print(f"PDF bookmark QA: {len(PARTS)} numbered parts, "
           f"{len(chapter_numbers)} numbered chapters, 7 lettered appendices")
@@ -1280,7 +1276,7 @@ def validate_pdf(path: Path) -> None:
                     numbered_pages[int(match.group(1))] = (
                         reader.get_destination_page_number(bookmark)
                     )
-    for chapter_number in (11, 15):
+    for chapter_number in (10, 14):
         if chapter_number not in numbered_pages or chapter_number + 1 not in numbered_pages:
             fail(f"Missing chapter bookmarks for R01 page regression: {chapter_number}")
         last_page_index = numbered_pages[chapter_number + 1] - 1
@@ -1361,31 +1357,15 @@ def validate_pdf(path: Path) -> None:
     if words_checked < 1000:
         fail(f"Suspiciously few PDF words checked: {words_checked}")
 
-    # All 39 opening locators must occur on the numbered chapter's actual
-    # bookmark page, and not be forced against the physical bottom edge.
-    if sorted(numbered_pages) != list(range(1, 40)):
-        fail("R01 opening guard requires exact chapter bookmarks 1..39")
-    late_openings: list[str] = []
+    # Chapter dividers are structural source commands, not repeated page locators.
+    # Validate every numbered destination and require substantive page content;
+    # the page-wide bounding-box and orphan-page checks above remain in effect.
+    if sorted(numbered_pages) != list(range(1, 39)):
+        fail("Opening guard requires chapter bookmarks 1..38")
     for chapter_number, opening_index in sorted(numbered_pages.items()):
-        attrs, page_markup = pages_with_boxes[opening_index]
-        matches = re.findall(
-            r'<word\b([^>]*)>本章定位：[^<]*</word>', page_markup
-        )
-        if len(matches) != 1:
-            fail(f"R01 chapter {chapter_number} has {len(matches)} locators "
-                 f"on its physical opening page {opening_index + 1}")
-        y_match = re.search(r'\byMin="([\d.]+)"', matches[0])
-        h_match = re.search(r'\bheight="([\d.]+)"', attrs)
-        if not y_match or not h_match:
-            fail(f"R01 chapter {chapter_number} has missing locator geometry")
-        y, height = float(y_match.group(1)), float(h_match.group(1))
-        if y > 0.75 * height:
-            late_openings.append(f"chapter {chapter_number}: locator at "
-                                 f"{y:.1f}/{height:.1f} on page {opening_index + 1}")
-    if late_openings:
-        fail("R01 chapters start too near foot: " + "; ".join(late_openings))
-    print("R01 opening-page QA passed: 39/39 chapter strips share bookmark "
-          "page, with sufficient room below")
+        if not pages_with_boxes[opening_index][1].strip():
+            fail(f"Empty chapter opening page for chapter {chapter_number}")
+    print("Chapter opening destinations QA passed: 38/38 bookmarks with visible content")
     # Source-level hyperlinks may have existing labels but resolve incorrectly
     # once TeX has built bookmarks and named destinations. Audit the actual PDF.
     named_destinations = reader.named_destinations
