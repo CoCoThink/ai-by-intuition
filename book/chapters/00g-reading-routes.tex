@@ -1,4 +1,4 @@
-\section*{阅读路线与数学预备}
+\section*{怎么读：路线与数学预备}
 \phantomsection\label{front:reading-routes}
 
 本书围绕同一条主线：先学参数怎样被训练，
@@ -8,15 +8,15 @@
 
 \textbf{三条阅读路线：}
 \begin{itemize}
-\item \textbf{速读：}先看每部分的“从这里出发”、章首问题与章末小结，
+\item \textbf{速读：}依第一至第五、第七和第八部分前进；第六部分“联想记忆”属提高内容，可直接跳过。先看每部分的“从这里出发”、章首问题与章末小结，
   浏览形状流程图和三个位置的预测结果；公式只看输入、输出及含义。
-\item \textbf{标准：}依 I--VIII 的顺序阅读正文，亲手完成标量损失、
+\item \textbf{标准：}依第一至第八部分的顺序阅读正文（第六部分可留到第二遍），亲手完成标量损失、
   双参数梯度更新、三分类交叉熵以及注意力的一次手算。
 \item \textbf{动手：}完成标准路线后再做附录 C 的练习，
   使用 PyTorch 单步实验和交互 Notebook 的三个滑块观察参数或概率变化。
 \end{itemize}
 
-阅读时可用页眉快速定位当前部分与当前章；无需背诵各部分预计耗时。
+阅读时可用页眉快速定位当前部分与当前章；不同人的练习速度不同，按能否复算判断是否继续。
 
 \subsection*{数学预备：开书前的四个小测试}
 试算 $2(3)+1=7$，$(-2)^2=4$，
@@ -30,26 +30,19 @@ $\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
 对新输入 $x=4$，得到预测 $\widehat y=9$；
 这一步是代入计算，接下来才学习怎样从损失自动调整参数。
 
-\subsection*{统一约定、署名与版本}
-本书的矩阵、参数、损失和季度报告数值，
-除明确标出真实实验或公开配置者外，
-\textbf{均为便于复算的教学设定}；虚构报告标识不可用于真实检索。
-从输入输出与形状出发、让数据学习参数、从朴素部件逐步改进的讲述方式，
-借鉴\textbf{飞天闪客}《一小时从函数到 Transformer》及后续课程。
-课程原链接与借鉴范围见附录 F，不作为本书的原创教学原则。
 
-本书当前标识为\textbf{v0.2.0-draft（2026 年 10 月，未发布）}，不同于已发布的 v0.1.0。阅读或引用时还应保留具体 Git 提交号。
-原创教材：CoCoThink and contributors，采用 \textbf{CC BY 4.0}；
-仓库脚本采用 \textbf{MIT}。改编时应署名、附许可证并标示改动；
-第三方材料仍依各自许可。许可与仓库：
-\url{https://github.com/CoCoThink/ai-by-intuition}。
-
-\textbf{统一的向量约定：}I--VIII 均让
-\textbf{一个样本、Token 或 Key 占一行}，
-即 $\vect x^\top:1\times d$、$X:T\times d$；
-前向投影写成 $XW$。第 VI 部分的联想记忆
-写作 $S=\sum_i k_i^\top v_i$、$y=xS$，
-没有另一套默认的列向量计算规则。
-若看不清形状，返回第二部分的矩阵乘法章节。
-
-
+\subsection*{全书路径：先看输入与输出}
+\begin{center}
+\small\renewcommand{\arraystretch}{1.22}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{30mm}X@{}}
+\toprule
+主线阶段 & 要回答的核心问题\\\midrule
+函数 $\to$ 训练 & 参数从哪里来，怎样被损失与梯度更新？\\
+向量 $\to$ Token & 多个数如何计算，文字如何变成矩阵行？\\
+Attention $\to$ Transformer & 上下文怎样参与下一 Token 的概率？\\
+助手 $\to$ Agent & 外部证据、授权工具与模型本身怎样分工？\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\noindent{\footnotesize\color{muted}提高支线：联想记忆与容量（第六部分）；选读专题：CNN 与 ViT。文末“技术底座回顾”附有详细对照表。}
