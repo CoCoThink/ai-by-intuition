@@ -567,7 +567,9 @@ def validate_source() -> None:
 
     three_tier_first_ten = ["00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
     for lesson_name in three_tier_first_ten:
-        includes(sources[lesson_name], r"\chaptercheck{",
+        check_owner = ("18c-training-engineering" if lesson_name == "16-loss-gradient"
+                       else lesson_name)
+        includes(sources[check_owner], r"\chaptercheck{",
                  f"three-level self-check in {lesson_name}")
     from math import isclose
     assert isclose(2*3 + 1, 7)
