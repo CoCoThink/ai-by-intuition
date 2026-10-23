@@ -49,7 +49,13 @@ ReLU 在 $t=0$ 处不可导，训练实现通常约定一个次梯度。
 本章只研究正负输入时的前向计算；下一章解释其求导。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:07-functions-relu}$\relu(-2)$、$\relu(1)$ 分别是多少？\quad{\footnotesize\hyperref[answer:07-functions-relu]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:07-functions-relu}
+\textbf{回忆：}纯线性层叠加后为何仍是线性或仿射？
+\textbf{手算：}$\relu(-2)$、$\relu(1)$ 各是多少？
+\textbf{迁移：}在两层之间加入 ReLU 后，
+为什么能表达纯线性组合做不到的分段关系？
+\quad{\footnotesize\hyperref[answer:07-functions-relu]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 叠加纯线性函数不能产生非线性，插入 ReLU 可以。

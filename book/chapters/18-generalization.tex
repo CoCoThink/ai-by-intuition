@@ -77,7 +77,14 @@ L1 则使用绝对值之和 $\sum_i|w_i|$。
 
 Dropout 只在当前计算中屏蔽部分激活，不会永久删除模型参数。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:18-generalization}训练损失继续下降，但验证损失开始上升，首先应怀疑什么？\quad{\footnotesize\hyperref[answer:18-generalization]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:18-generalization}
+\textbf{回忆：}训练损失下降而验证损失上升，通常要排查什么？
+\textbf{手算：}三轮验证损失依次为 $(0.6,0.4,0.5)$，
+提前停止按最低验证损失选第几轮？
+\textbf{迁移：}若先用测试集反复挑超参数，
+为何会高估最终泛化性能？
+\quad{\footnotesize\hyperref[answer:18-generalization]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 训练误差与验证误差回答不同问题。独立测试集、正则化和提前停止帮助我们判断学到的模式能否迁移到新数据。

@@ -435,6 +435,18 @@ def validate_source() -> None:
     includes(block_ch22, r"\input{figures/original-transformer-map}",
              "source vs decoder-only architecture component mapping")
 
+    three_tier_first_ten = ["00d-rules-gap","00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
+    for chapter in three_tier_first_ten:
+        includes(sources[chapter], "读完自测：回忆／手算／迁移",
+                 f"three-level self-check in {chapter}")
+        for kind in ("回忆：", "手算：", "迁移："):
+            includes(sources[chapter], kind, f"{chapter} {kind}")
+    from math import isclose
+    assert isclose(2*3 + 1, 7)
+    assert isclose(2*3 - 1, 5)
+    assert (2+1, 3-1) == (3, 2)
+    assert (1*3 + 2*1) == 5
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (
