@@ -51,12 +51,12 @@ $X=\begin{bmatrix}1&1\\1&-1\end{bmatrix}$。
 \texttt{a a b} 与 \texttt{a b}（各为独立序列）。
 统计第一轮的相邻对，选最高频对合并；
 写出合并后两条序列，并说明是否跨序列计数。
-\item {\footnotesize\color{muted}〔第~\ref*{intro:16a-gradient-descent}~章〕} \phantomsection\label{exercise:warmup-schedule}\textbf{【标准】} \textbf{【手算】}
+\item {\footnotesize\color{muted}〔\hyperref[app:optimizer-details]{附录 A · 优化器提高}〕} \phantomsection\label{exercise:warmup-schedule}\textbf{【标准】} \textbf{【手算】}
 给定 $w_0=1$、三步人为固定的梯度 $g_t=2$，
 学习率依次为 $(0.01,0.02,0.03)$，按
 $w_t=w_{t-1}-\eta_tg_t$ 求 $w_1,w_2,w_3$；
 指出这里的 Warmup 改变的是损失函数还是步长。
-\item {\footnotesize\color{muted}〔第~\ref*{intro:16a-gradient-descent}~章〕} \phantomsection\label{exercise:adamw-decay}\textbf{【标准】} \textbf{【迁移】}
+\item {\footnotesize\color{muted}〔\hyperref[app:optimizer-details]{附录 A · 优化器提高}〕} \phantomsection\label{exercise:adamw-decay}\textbf{【标准】} \textbf{【迁移】}
 一个参数的 AdamW 步骤给定 $w_0=4$、$\eta=0.1$、
 $\lambda=0.05$，偏置校正后的自适应方向为 $0.5$，
 忽略 $\varepsilon$。计算更新后的 $w_1$，再令 $\lambda=0$
