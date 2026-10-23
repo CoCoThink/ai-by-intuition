@@ -1496,6 +1496,16 @@ def validate_pdf(path: Path) -> None:
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
+    # Page-bottom regression: the "shape-first route" introduction may not be
+    # stranded on a separate page from the first row of its table.
+    route_pages = [i for i, page_text in enumerate(pages, 1)
+                   if "本章运算路线" in page_text]
+    if len(route_pages) != 1:
+        fail(f"Expected one chapter 23 route caption, found pages {route_pages}")
+    route_page = route_pages[0]
+    if "查表与位置" not in pages[route_page - 1]:
+        fail(f"Chapter 23 route heading stranded on PDF page {route_page}; "
+             "the route table must start on the same page")
 
     # R01 explicit pagination regression: after compressing the two-line locator,
     # chapters 11 and 15 must end with a self-check AND a conclusion on the same
