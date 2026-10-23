@@ -129,7 +129,7 @@ $k_AS=\answerresult{(1,0.6)}$；
 迁移：噪声、Key 的相关性、读出误差和具体容量定义仍构成限制。
 \item[\textbf{第 31 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace 回忆：ICL 只改变当前上下文；实际执行 SFT 才更新参数；
 手算：$2+1=\answerresult{3}$ 条任务记录；
-迁移：不能，最新真实数据仍需授权读取并核验。
+迁移（找错）：Few-shot 示例改变的是当前上下文，不会自动持久更新模型权重；最新季度数据需经授权读取并核对来源。
 \item[\textbf{第 32 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace 回忆：SFT 用目标示范回答，偏好学习用回答间偏好或奖励；
 手算：$-\ln0.25=\ln4\approx\answerresult{1.386}$；
 迁移：偏好学习可以利用 A 优于 B 的比较信号。
@@ -143,7 +143,7 @@ $k_AS=\answerresult{(1,0.6)}$；
 迁移：通常更多，还包括缓存、激活及运行时开销。
 \item[\textbf{第 35 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace 回忆：多个 Query 头共享较少的 K/V 头；
 手算：$3/12=\answerresult{1/4}$（只比较 K/V 元素）；
-迁移：不能，投影、Kernel、硬件、序列与质量指标仍需实测。
+迁移（找错）：K/V 缓存占用比不等于整体耗时比；投影计算、Kernel、硬件访存、序列长度、批量与质量都需实测。
 \item[\textbf{第 36 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace 回忆：单一资源指标不代表模型质量；
 手算：$(100-50)/100=\answerresult{50\%}$；
 迁移：至少测任务质量（如正确率）与效率
