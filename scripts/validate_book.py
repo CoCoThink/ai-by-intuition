@@ -250,10 +250,29 @@ def validate_source() -> None:
     from math import exp
     scores = ((1, 1, 2), (0, 1, 1), (1, 2, 3))
     assert scores[0][1] == 1 and scores[1][0] == 0
-    third = [exp(v) for v in scores[2]]
-    third = [v / sum(third) for v in third]
-    assert math.isclose(third[0] + third[2], 0.7552715289452023)
-    assert math.isclose(third[1] + third[2], 0.9099694268296196)
+    # Exercise all three projected Q/K/V rows, not only the final query.
+    values = ((1, 0), (0, 1), (1, 1))
+    weights = []
+    for row in scores:
+        shifted = [exp(v - max(row)) for v in row]
+        weights.append([v / sum(shifted) for v in shifted])
+    expected_weights = (
+        (0.212, 0.212, 0.576),
+        (0.155, 0.422, 0.422),
+        (0.090, 0.245, 0.665),
+    )
+    for actual, expected in zip(weights, expected_weights):
+        assert math.isclose(sum(actual), 1, abs_tol=1e-12)
+        assert all(abs(a - b) < 0.0005 for a, b in zip(actual, expected))
+    batch_out = [
+        [sum(weights[i][k] * values[k][j] for k in range(3))
+         for j in range(2)]
+        for i in range(3)
+    ]
+    expected_out = ((0.788, 0.788), (0.578, 0.845), (0.755, 0.910))
+    for actual, expected in zip(batch_out, expected_out):
+        assert all(abs(a - b) < 0.0005 for a, b in zip(actual, expected))
+    assert not math.isclose(scores[0][1], scores[1][0])
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
     includes(sources["22b-token-to-output"], r"\label{eq:three-token-block-output}", "canonical Pre-Norm numeric forward")
     includes(sources["22b-token-to-output"], "0.1244", "causal attention example")
