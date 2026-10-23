@@ -979,6 +979,24 @@ def validate_source() -> None:
     # 47 old checks minus the merged opening lesson, two appendix checks and duplicate optimizer check.
     if len(check_ids) != 43:
         fail(f"Expected 43 linked chapter checks, got {len(check_ids)}")
+    varied = {key for key in check_ids
+              if r"\chapterchecktasks{" + key + "}" in
+              sources[labels["check:" + key]]}
+    if varied != {"16-loss-gradient", "22b-token-to-output",
+                  "23-llm-systems", "23d-agent-systems"}:
+        fail(f"Expected four complete teaching-redesign exemplars, got {sorted(varied)}")
+    legacy = check_ids - varied
+    if len(legacy) != 39:
+        fail(f"Expected 39 legacy chapters with new diagnostic fourth item, got {len(legacy)}")
+    if main.count(r"\csname chapterchallenge@") != 40:
+        fail("Missing a per-chapter challenge bank entry (39 definitions plus expansion)")
+    if main.count(r"\csname chapterrecall@") != 40:
+        fail("Missing one of the 39 direct chapter-end recall answers")
+    if sources["28-chapter-checks"].count(r"\textbf{补充题（") != 39:
+        fail("Appendix D.2 must give worked solutions for all 39 added diagnostic tasks")
+    if main.count(r"\item \csname chapterchallenge@#1\endcsname") != 1:
+        fail("Legacy chapter checks must render the fourth lesson-specific task")
+
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
         variants = [r"\chaptercheck{" + lesson_id + "}",
