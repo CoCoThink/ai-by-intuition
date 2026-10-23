@@ -41,7 +41,7 @@ python3 scripts/vision_bridge_demo.py
 检查 Token、logits、候选概率与温度变化。
 增加 \texttt{--local-files-only} 可仅从本地缓存读取权重与分词器；
 \texttt{--heatmap} 可在安装 Matplotlib 后保存注意力图。
-结果随输入文本和实际运行环境而变化，建议保留输出的版本信息。
+结果随输入文本和实际运行环境而变化，建议保留输出的版本信息。下面固定印出本书采用的测试输入与结果，方便纸质版核对。
 
 \subsubsection*{真实 GPT-2 的实验来源}
 正文中的 GPT-2 small 实测示例来自
@@ -51,14 +51,42 @@ python3 scripts/vision_bridge_demo.py
 应以该运行记录的环境、Prompt 与公开权重修订为准，
 不要与本书 99 参数教学网络混淆。
 
+\textbf{2026-10-23 已存档实测（GPT-2 small，$T=1.0$）：}
+Prompt：\texttt{The capital of France is}。
+输入 Token ID：\texttt{[464, 3139, 286, 4881, 318]}。
+logits 形状为 $1\times5\times50{,}257$，概率和为 $1.00000000$。
+Top-5（Token ID ／ 解码文本 ／ 概率）：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}r>{\raggedright\arraybackslash}Xr@{}}
+\toprule
+ID & 解码文本 & 概率\\\midrule
+262 & \texttt{' the'} & 0.08459\\
+783 & \texttt{' now'} & 0.04795\\
+257 & \texttt{' a'} & 0.04616\\
+4881 & \texttt{' France'} & 0.03238\\
+6342 & \texttt{' Paris'} & 0.03224\\
+\bottomrule
+\end{tabularx}
+\end{center}
+这些是固定权重与输入下的\textbf{下一 Token 候选}，不是模型能力基准。
+证据备份见仓库 \texttt{docs/GPT2\_REAL\_RUN.md}；
+工作流编号 \#39897932969 仅作补充溯源，避免依赖可能过期的工件下载。
+
 \subsubsection*{版本与勘误}
 
 教学三维初始矩阵是本书的可复算参数设定，
 并非真实大模型的训练结果。
 不同版本的示例数字应配合其公式、矩阵与脚本阅读。
-发现计算或排版问题时，记录\textbf{章节、输入数字、期望计算和实际结果}，
-便于复现与订正。已发布版本、勘误和完整复现说明可在教材仓库查阅：
-\href{https://github.com/CoCoThink/ai-by-intuition/releases}{已发布版本}、
-\href{https://github.com/CoCoThink/ai-by-intuition/issues}{反馈入口}、
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{勘误记录}、
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{构建与复现说明}。
+发现问题时请记录章节、输入与期待结果。
+\textbf{仓库与纸质版可见入口：}
+\url{https://github.com/CoCoThink/ai-by-intuition}
+
+发布版本：\url{https://github.com/CoCoThink/ai-by-intuition/releases}
+
+反馈：\url{https://github.com/CoCoThink/ai-by-intuition/issues}
+
+勘误：\url{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}
+
+构建与复现：\url{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}。
