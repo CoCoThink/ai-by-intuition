@@ -495,6 +495,11 @@ def validate_source() -> None:
         includes(sources[name], rf"\modelpipelinefocus{{{stage}}}",
                  f"{name} consistent module locator")
 
+    # A chapter's conclusion should not precede its final boundary and check.
+    capacity = sources["13-capacity"]
+    if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\label{check:13-capacity}"):
+        fail("Capacity chapter places its conclusion before the final self-test")
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (
