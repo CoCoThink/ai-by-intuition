@@ -1,0 +1,27 @@
+\section*{版权页：约定、署名与版本}\phantomsection\label{front:colophon}
+本书的矩阵、参数、损失和季度报告数值，
+除明确标出真实实验或公开配置者外，
+\textbf{均为便于复算的教学设定}；虚构报告标识不可用于真实检索。
+从输入输出与形状出发、让数据学习参数、从朴素部件逐步改进的讲述方式，
+借鉴\textbf{飞天闪客}《一小时从函数到 Transformer》及后续课程（教学组织与讲述方式借鉴，并非其文字或图表的授权转载）。
+课程原链接与借鉴范围见附录 F，不作为本书的原创教学原则。
+
+本书当前标识为\textbf{v0.2.0-draft（2026 年 10 月，未发布）}，不同于已发布的 v0.1.0。阅读或引用时还应保留具体 Git 提交号。
+原创内容：CoCoThink and contributors，采用 \textbf{CC BY 4.0}；
+仓库脚本采用 \textbf{MIT}。改编时应署名、附许可证并标示改动；
+第三方材料仍依各自许可。许可与仓库：
+\url{https://github.com/CoCoThink/ai-by-intuition}。
+
+\textbf{统一的向量约定：}I--VIII 均让
+\textbf{一个样本、Token 或 Key 占一行}，
+即 $\vect x^\top:1\times d$、$X:T\times d$；
+前向投影写成 $XW$。第 VI 部分的联想记忆
+写作 $S=\sum_i k_i^\top v_i$、$y=xS$，
+没有另一套默认的列向量计算规则。
+若看不清形状，返回第二部分的矩阵乘法章节。
+
+
+
+\subsection*{术语与颜色约定}
+首次出现时以中文名称加英文原词标注；之后优先使用行业通行的 Token、Embedding、Attention、Query（Q）、Key（K）、Value（V）等写法，附录 E 保留中英对照。全书以蓝色表示 Query／查询、青绿色表示 Key／匹配、橙色表示 Value／内容；印刷时仍提供文字标签，不单靠颜色区分。\par
+\textbf{数据标注规则：}未注明真实来源的财务报表、奖励和矩阵均为教学虚构数据；正文简写“教学例”，不再逐章重复免责声明。
