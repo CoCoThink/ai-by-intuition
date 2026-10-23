@@ -832,7 +832,7 @@ def validate_source() -> None:
              "sliding-window edge count regression")
     includes(sources["25b-modern-practice"], "review\\_exercises\\_demo.py",
              "first programming exercise uses locally runnable standard-library script")
-    includes(sources["28-chapter-checks"], r"\boxed{10\%}",
+    includes(sources["28-chapter-checks"], r"\answerresult{10\%}",
              "Agent numeric arithmetic self-check")
 
     includes(sources["25b-modern-practice"], "1000",
