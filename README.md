@@ -10,9 +10,9 @@
 
 ## 新版教材候选（尚未发布）
 
-**已发布的 v0.1.0** 仍为五个必读部分加两组选读，原版资产保持不变。**`main` 的新版候选**已完成七个必读部分、32 个显示章节、两组选读及 A–E 附录；P2 已补充原论文对照、技术生态、阅读导引与交互实验。**最新教材源码 `2cad92cd` 的 [全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928) 已成功，生成 126 页 Tagged PDF、1,836/1,836 个 MathML-AF 公式关联，veraPDF PDF/UA-2 为 compliant、零失败。** **尚待作者最终签核及手动发布**，不能把构建成功理解为已经正式发行。
+**已发布的 v0.1.0** 仍为五个必读部分加两组选读，原版资产保持不变。**`main` 的新版候选**已完成七个必读部分、32 个显示章节、两组选读及 A–E 附录；P2 已补充原论文对照、技术生态、阅读导引与交互实验。**此前候选源码 `2cad92cd` 的 [全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928) 曾成功，生成 126 页 Tagged PDF、1,836/1,836 个 MathML-AF 公式关联，veraPDF PDF/UA-2 为 compliant、零失败；这些统计只对应当时的提交。** **尚待作者最终签核及手动发布**，不能把构建成功理解为已经正式发行。
 
-后续只维护 [V2 发布前状态与验收（唯一入口）](docs/V2_RELEASE_READINESS.md)、[教学阅读路线](ROADMAP.md) 和 [出版流程](docs/PUBLISHING.md)。数值实验的唯一基线是 [三维 Transformer 参考脚本](scripts/teaching_reference.py)，历史改动可从 Git 提交记录查阅。
+V2 候选发布仍以 [发布前状态与验收](docs/V2_RELEASE_READINESS.md) 为唯一签核入口；下一轮按 [REVIEW 评审设计](docs/REVIEW.md) 逐批实施的主分支修订另见 [章节迁移与实施记录](docs/CHAPTER_MAPPING.md)。**当前 main 的新增修订需以自身对应的 CI 为准，不得套用历史成功构建的验证结果。** 数值实验的唯一基线是 [三维 Transformer 参考脚本](scripts/teaching_reference.py)，历史改动可从 Git 提交记录查阅。
 
 ## 开放许可证与转载
 
