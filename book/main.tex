@@ -73,6 +73,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\sectionmark}[1]{\markright{第\thesection 章 · #1}}
+\renewcommand{\subsectionmark}[1]{} % Keep running header at chapter level, not subsection
 \fancyhead[L]{\parbox[b]{.38\headwidth}{\raggedright\sffamily\scriptsize\color{muted}\nouppercase{\leftmark}}}
 \fancyhead[R]{\parbox[b]{.58\headwidth}{\raggedleft\sffamily\scriptsize\color{muted}\nouppercase{\rightmark}}}
 \fancyfoot[C]{\sffamily\footnotesize\color{muted}\thepage}
