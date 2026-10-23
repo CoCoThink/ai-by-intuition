@@ -16,8 +16,11 @@
 IX 为视觉选读。原联想记忆选读已统一行向量并升为第 VI 部分，
 朴素点积 Attention 已独立成章；RAG、Agent、BPE 也有可复算新例。
 
-本轮修订尚待完整的 PDF/UA-2 CI 及作者最终签核，
-**不要把历史 V2 构建成绩视为当前 39 章的质量证明**。
+修订候选已存在可追溯的[成功全量 PDF/UA-2 构建 #39890022919](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39890022919)
+（对应 \`41aec08\`、131 页、1,900／1,900 个公式关联）。
+**这只是该提交的机器基线，后续修改仍需重新验收，作者人工审校和发行签核未完成。**
+请参见 [V3 发布前验收](docs/V3_RELEASE_READINESS.md)与
+[灰度逐页校样流程](docs/PRINT_PROOF.md)。
 具体参见 [修订映射](docs/CHAPTER_MAPPING.md)、
 [实际章节顺序](book/README.md) 与
 [最新 PDF 构建](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)。

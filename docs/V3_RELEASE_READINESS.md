@@ -1,0 +1,43 @@
+# V3 修订候选：发布前验收与人工签核
+
+> **状态：39 章修订的机器基线已通过；人工逐页审校、来源授权和发布签核未完成。**
+> 当前正式 Release 仍是 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)。
+> 本页仅用于 V3 候选；[V2 的历史验收](V2_RELEASE_READINESS.md)不应被当作当前版本的证据。
+
+## 可追溯机器基线（不是持续自动有效的状态）
+
+| 项目 | 成功验证的明确来源 |
+|---|---|
+| 源码 SHA | [41aec08bd1bcf2f95c478d1c0c07bc8ec841d550](https://github.com/CoCoThink/ai-by-intuition/commit/41aec08bd1bcf2f95c478d1c0c07bc8ec841d550) |
+| 成功的 main 构建 | [Build one PDF book #39890022919](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39890022919) |
+| 内容结构 | 9 部分、39 个编号章节、A–G 共 7 个附录 |
+| PDF | **131 页** Tagged PDF；页面文字边界检查通过 |
+| Formula | **1,900 / 1,900** 具有可解析的 MathML-AF 关联 |
+| MathML | 1,175 份不同的 MathML 文档 |
+| veraPDF | PDF/UA-2 **compliant=true、failedRules=0、failedChecks=0** |
+| 源码与数值 | 62 个 \`chapters/\` 输入文件、三位置联合训练数值与教学脚本回归通过 |
+| 审计资产 | 此次 CI 的 \`ai-by-intuition-book\` 和 \`pdfua2-machine-audit\` |
+
+**重要：上述机器数字仅对该 SHA 的 PDF 有效。**
+任何在此之后对 \`book/\`、\`scripts/\` 或构建配置的修改，
+必须以新 SHA 的成功全量工作流重新验收；本文件不得自行宣称后续主分支已通过。
+
+## 尚需人工确认的发布阻断项
+
+- [ ] 运行 [灰度逐页审校](PRINT_PROOF.md)，检查所有页面的阅读顺序、版心、对比度、图形标签、表格、长链接和数学排印，并记录日期及审校者
+- [ ] 检查重要图的替代文字是否与实际图示一致；机器检测到替代文字不保证质量充分
+- [ ] 完成 [Agent 教学来源与复用核对](ATTRIBUTION_REVIEW.md)，记录必要授权或独立改写依据
+- [ ] 核对真实 GPT-2 可选实验的运行环境与实际输出；常规 CI 只运行离线数学自检，不能冒称已验证真实权重推理
+- [ ] 选取待发布版本**最终 SHA**，重新运行一次成功的完整 PDF + MathML-AF + PDF/UA-2 工作流
+- [ ] 记录作者明确的最终发布签核、版本号与日期，并确认没有未解决阻断问题
+
+机器审计与灰度图不能替代真实屏读设备的用户体验验证；
+本项目当前将人工阅读/视觉核对设为发布门槛，
+不暗示已经完成真实屏幕阅读器测试。
+
+## 发布与维护
+
+源码目录和修订映射见 [CHAPTER_MAPPING.md](CHAPTER_MAPPING.md)。
+发行步骤见 [PUBLISHING.md](PUBLISHING.md)；
+正式发布只能使用审核通过、绑定 SHA 的构建工件，
+不能直接复用较早成功版本的 PDF 或审计统计。

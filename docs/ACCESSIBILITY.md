@@ -2,7 +2,22 @@
 
 > 正式基线：2026-10-22 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)；[完整成功 CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713)。旧的实验与修复过程可查 [原始历史文档](https://github.com/CoCoThink/ai-by-intuition/blob/ad239e83e96fcb71647f278e456078d0fc66571e/docs/ACCESSIBILITY.md)，本页只记录现行要求。
 
-## 当前已经验证
+## 当前 V3 修订候选的机器证据
+
+以下是 **commit \`41aec08bd1bcf2f95c478d1c0c07bc8ec841d550\`**
+在 [Build one PDF book #39890022919](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39890022919)
+成功构建的证据：
+**131 页** Tagged PDF、**9 部分、39 章、7 附录**，
+**1,900／1,900 Formula MathML-AF**，
+veraPDF PDF/UA-2 \`compliant=true\`、\`failedRules=0\`、\`failedChecks=0\`。
+
+这是明确 SHA 的机器验证，**不意味着晚于该提交的 main 自动得到相同结果**。
+人工灰度视觉、替代文字实质质量及来源授权的待办项
+见 [V3_RELEASE_READINESS.md](V3_RELEASE_READINESS.md)、
+[PRINT_PROOF.md](PRINT_PROOF.md)。
+不应将以下 v0.1.0 的结构数量与 V3 候选混写。
+
+## 已发布 v0.1.0 的历史验证
 
 | 范围 | 正式版结果 | 自动验收 |
 |---|---|---|
