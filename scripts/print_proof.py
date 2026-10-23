@@ -10,7 +10,9 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
+import json
 import re
 import shutil
 import subprocess
@@ -59,8 +61,29 @@ def render_pages(pdf: Path, out: Path, pages: list[int], scale: int) -> None:
             raise RuntimeError(f"Missing output PNG for page {page}")
 
 
-def write_review_materials(pdf: Path, out: Path, pages: list[int]) -> None:
+def build_manifest(pdf: Path, pages: list[int], scale: int, source_sha: str | None) -> dict:
+    """Bind review output to source bytes, never assert human signoff."""
+    if source_sha is not None and not re.fullmatch(r"[a-fA-F0-9]{40}", source_sha):
+        raise ValueError("Source SHA must have exactly 40 hexadecimal characters")
+    digest = hashlib.sha256()
+    with pdf.open("rb") as source:
+        for block in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(block)
+    return {
+        "pdf_name": pdf.name,
+        "pdf_sha256": digest.hexdigest(),
+        "source_commit_sha": source_sha.lower() if source_sha else None,
+        "selected_pages": pages,
+        "render_scale_max_pixels": scale,
+        "manual_review_completed": False,
+    }
+
+
+def write_review_materials(pdf: Path, out: Path, pages: list[int], manifest: dict) -> None:
     title = html.escape(pdf.name)
+    digest = manifest["pdf_sha256"]
+    sha = manifest["source_commit_sha"] or "UNSET - record successful CI SHA"
+    source_label = html.escape(sha)
     gallery = "\n".join(
         f'<section><h2>PDF page {n}</h2><img loading="lazy" '
         f'src="page-{n:03d}.png" alt="Grayscale page {n}"></section>'
@@ -77,6 +100,8 @@ img {{max-width:100%;height:auto;display:block;margin:auto}}
 @media print {{body {{background:white}} section {{break-after:page}}}}
 </style></head><body>
 <h1>Grayscale proof: {title}</h1>
+<p>Source commit: <code>{source_label}</code>;
+PDF SHA-256: <code>{digest}</code>.</p>
 <p>Human-review aid only. PDF/UA-2 compliance and screen-reader behavior are
 not established by grayscale rendering. The source PDF was not modified.</p>
 {gallery}</body></html>
@@ -84,6 +109,10 @@ not established by grayscale rendering. The source PDF was not modified.</p>
     (out / "index.html").write_text(html_doc, encoding="utf-8")
     checklist = [
         f"# Manual grayscale proof — {pdf.name}", "",
+        f"- Source commit SHA: {sha}",
+        f"- PDF SHA-256: {digest}",
+        f"- Selected pages: {len(pages)}; max image edge: "
+        f"{manifest['render_scale_max_pixels']}px", "",
         "Rendering is not a manual review or release approval.", "",
         "Review labels without color, contrast, tables, images, equations,",
         "visible citations, clipping and logical reading order.", "",
@@ -98,6 +127,9 @@ not established by grayscale rendering. The source PDF was not modified.</p>
             "- [ ] Reviewer, date and evidence: ______", "",
         ]
     (out / "CHECKLIST.md").write_text("\n".join(checklist), encoding="utf-8")
+    (out / "PROVENANCE.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
 
 def main() -> None:
@@ -108,6 +140,8 @@ def main() -> None:
     group.add_argument("--pages", default="1,2,3,last",
                        help="comma-separated pages, inclusive ranges and last")
     group.add_argument("--all", action="store_true", help="render every page")
+    parser.add_argument("--source-sha",
+                        help="full 40-character commit SHA for this PDF, from successful CI")
     parser.add_argument("--scale", type=int, default=1100,
                         help="maximum image dimension, pixels (300–2400)")
     args = parser.parse_args()
@@ -121,8 +155,9 @@ def main() -> None:
     try:
         total = count_pages(args.pdf)
         pages = list(range(1, total + 1)) if args.all else parse_pages(args.pages, total)
+        manifest = build_manifest(args.pdf, pages, args.scale, args.source_sha)
         render_pages(args.pdf, args.out_dir, pages, args.scale)
-        write_review_materials(args.pdf, args.out_dir, pages)
+        write_review_materials(args.pdf, args.out_dir, pages, manifest)
     except (ValueError, RuntimeError, subprocess.CalledProcessError) as exc:
         parser.error(str(exc))
     print(f"Rendered {len(pages)}/{total} grayscale pages to {args.out_dir}")

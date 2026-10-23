@@ -406,6 +406,26 @@ def validate_source() -> None:
         except ValueError:
             continue
         fail(f"Grayscale proof accepted invalid page selection: {bad_selection}")
+    # Human review provenance is not a substitute for a human approval.
+    import hashlib
+    import tempfile
+    proof_helpers = runpy.run_path(str(proof_source), run_name="book_print_proof")
+    with tempfile.TemporaryDirectory(prefix="proof-sha-qa-") as tmp:
+        fixture = Path(tmp) / "fixture.pdf"
+        fixture.write_bytes(b"%PDF-1.7\nsha-test-data\n")
+        manifest = proof_helpers["build_manifest"](fixture, [1, 3], 1100,
+                                                    "a" * 40)
+        if (manifest["pdf_sha256"] != hashlib.sha256(fixture.read_bytes()).hexdigest()
+                or manifest["source_commit_sha"] != "a" * 40
+                or manifest["manual_review_completed"] is not False):
+            fail("Proof provenance data did not match input bytes")
+        try:
+            proof_helpers["build_manifest"](fixture, [1], 1100, "abc")
+        except ValueError:
+            pass
+        else:
+            fail("Proof accepted a truncated commit SHA")
+
     print("Grayscale print-proof selector QA passed")
 
     # Machine grayscale preflight is distinct from the human proof checklist.

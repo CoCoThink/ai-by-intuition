@@ -8,6 +8,7 @@
 
 在 [V3 发布验收](V3_RELEASE_READINESS.md)记录：完整源码 SHA、成功构建 ID、
 实际下载的 PDF SHA-256、PDF 物理页数、工具/阅读器及版本、核对日期和审阅人。
+可用 `scripts/print_proof.py --source-sha <完整40位SHA>` 生成带 PDF SHA-256 的 `PROVENANCE.json`，辅助确认人工审阅对象。
 必须使用**同一 SHA 的 PDF 和无障碍审计工件**，
 不能沿用更早的页码或通过状态。
 
