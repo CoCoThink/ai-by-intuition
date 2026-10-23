@@ -360,6 +360,23 @@ def validate_source() -> None:
     includes(sources["19b-vit"], r"\label{eq:vit-llm-bridge}",
              "multimodal adapter teaching example")
 
+    # Print-proof selector QA: must not require a PDF, Poppler or online access.
+    import runpy
+    proof_source = ROOT / "scripts" / "print_proof.py"
+    if not proof_source.is_file():
+        fail("Missing grayscale human print-proof tool")
+    ast.parse(proof_source.read_text(encoding="utf-8"))
+    select = runpy.run_path(str(proof_source), run_name="book_print_proof")["parse_pages"]
+    if select("1,3-4,last", 8) != [1, 3, 4, 8]:
+        fail("Grayscale proof page selections are incorrect")
+    for bad_selection in ("0", "9", "5-2", ",", "not-a-page"):
+        try:
+            select(bad_selection, 8)
+        except ValueError:
+            continue
+        fail(f"Grayscale proof accepted invalid page selection: {bad_selection}")
+    print("Grayscale print-proof selector QA passed")
+
     # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
