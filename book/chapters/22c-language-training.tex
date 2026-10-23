@@ -247,10 +247,12 @@ python3 scripts/teaching\_reference.py --json
 下游真正部署的语言模型会有不同宽度、层数、归一化及更多参数，
 但本章的共享训练原则不会改变。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:22c-language-training}
-当三个位置都计入平均交叉熵时，为什么每行 logit 梯度含有 $1/3$？
-第一次更新后第二位置是否已经贪心预测正确？
+\textbf{回忆：}三个位置损失取平均时，梯度为什么乘以 $1/3$？
+\textbf{手算：}若某行正确类概率为 $0.3$，
+它的正确类 logit 梯度在三位置平均损失下约为多少？
+\textbf{迁移：}若仅两个位置参与损失，归一化因子如何变化？
 \quad{\footnotesize\hyperref[answer:22c-language-training]{核对解答。}}\par\medskip
 
 \begin{conclusion}

@@ -456,6 +456,15 @@ def validate_source() -> None:
     assert (1 * 0 + 0 * 1) == 0
     assert (1 * 1 + 0 * 1) == 1
 
+    three_tier_transformer = ["00-guide","16-loss-analytic","10b-ffn-output-head","22b-token-to-output","22c-language-training","23-llm-systems","23a-from-toy-to-gpt","23aa-pretraining-icl","23c-post-training","23b-deployment-and-ecosystem","22d-modern-transformers","23e-tech-judgement"]
+    for lesson_name in three_tier_transformer:
+        includes(sources["23b-deployment-and-ecosystem" if lesson_name == "23b-deployment-and-ecosystem" else
+                 "16-loss-gradient" if lesson_name == "16-loss-analytic" else lesson_name],
+                 "读完自测：回忆／手算／迁移",
+                 f"transformer/application three-level check: {lesson_name}")
+    assert math.isclose((0.3 - 1.0)/3, -0.2333333333333333)
+    assert math.isclose(math.log(4), 1.3862943611198906)
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (

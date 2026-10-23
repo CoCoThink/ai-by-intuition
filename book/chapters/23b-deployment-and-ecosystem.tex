@@ -180,7 +180,14 @@ vLLM 偏向服务型推理；是否更快，要在相同的权重、硬件、
 这些工具的\textbf{接口、兼容硬件、部署模式和许可证可能更新}。
 本表只定位各层责任，不固定特定版本、吞吐数字或产品优劣排名。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:23b-deployment-and-ecosystem}十亿个参数，每个 2 字节，只算权重约需要多少 GB（十进制）？\quad{\footnotesize\hyperref[answer:23b-deployment-and-ecosystem]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:23b-deployment-and-ecosystem}
+\textbf{回忆：}权重存储与 KV Cache 是同一笔内存吗？
+\textbf{手算：}$10^9$ 个参数每个 2 字节，
+仅权重约占多少十进制 GB？
+\textbf{迁移：}如果解码还需额外缓存，
+推理总内存会恰好等于这个权重数字吗？
+\quad{\footnotesize\hyperref[answer:23b-deployment-and-ecosystem]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 部署一个 AI 产品需要模型结构、训练权重、推理引擎、接口与安全措施共同工作。

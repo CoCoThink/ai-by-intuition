@@ -105,7 +105,14 @@ left=5mm,right=5mm,top=3mm,bottom=3mm]
 优先检查向量是按行还是按列摆放，
 可以回看矩阵乘法章的双色图卡。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:00-guide}为什么把问题和“助手：”放进上下文后，生成回答可以变成下一 Token 预测？\quad{\footnotesize\hyperref[answer:00-guide]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:00-guide}
+\textbf{回忆：}语言模型把已有上下文映射成什么？
+\textbf{手算：}下一 Token 只有两个候选，
+概率为 $(0.6,0.4)$，贪心策略选择第几个？
+\textbf{迁移：}把助手前缀加入 Prompt，
+能否仅凭下一 Token 预测形式保证后续回答真实？
+\quad{\footnotesize\hyperref[answer:00-guide]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 真正的出发点是“计算机怎样学会生成有用的语言回答”。

@@ -164,7 +164,14 @@ CoT 提示 & 改变输入组织方式，不必修改模型权重\\
 \end{tabularx}
 \end{center}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:23c-post-training}SFT 和偏好学习分别需要哪种类型的训练信号？\quad{\footnotesize\hyperref[answer:23c-post-training]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:23c-post-training}
+\textbf{回忆：}SFT 与偏好学习的训练信号分别是什么？
+\textbf{手算：}若某 SFT 目标 Token 的预测概率是 $0.25$，
+单位置交叉熵约为多少？
+\textbf{迁移：}用户更偏好回答 A 而非 B，
+哪一种训练方法可以利用这种成对比较信号？
+\quad{\footnotesize\hyperref[answer:23c-post-training]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 理解一种模型改进方法，要看它使用什么目标和反馈、是否更新参数，以及如何评价结果。

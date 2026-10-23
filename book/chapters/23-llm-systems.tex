@@ -107,7 +107,13 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 
 
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:23-llm-systems}贪心解码和 Top-p 采样，在选择下一 Token 时的主要差别是什么？\quad{\footnotesize\hyperref[answer:23-llm-systems]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:23-llm-systems}
+\textbf{回忆：}贪心解码与 Top-p 采样的主要区别是什么？
+\textbf{手算：}三个候选概率为 $(0.6,0.3,0.1)$，
+Top-p 阈值 $0.8$ 时保留哪两个候选？
+\textbf{迁移：}对这两个候选重新归一化后，概率分别是多少？
+\quad{\footnotesize\hyperref[answer:23-llm-systems]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 从文本表示到训练，再到 Attention、Transformer 和逐词生成，语言模型的主要计算流程已经连通。

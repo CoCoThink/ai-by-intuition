@@ -370,7 +370,14 @@ MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
 \end{tabularx}
 \end{center}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22d-modern-transformers}共享 K/V 头的 GQA 通常能减少哪一类推理内存开销？\quad{\footnotesize\hyperref[answer:22d-modern-transformers]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:22d-modern-transformers}
+\textbf{回忆：}GQA 为什么有助于减少 KV Cache？
+\textbf{手算：}在其他形状相同的条件下，
+MHA 有 12 个 K/V 头，GQA 只保留 3 个，
+两者每 Token 的 K/V 元素比是多少？
+\textbf{迁移：}仅凭缓存比例能直接推断端到端速度或质量提升吗？
+\quad{\footnotesize\hyperref[answer:22d-modern-transformers]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 现代 Transformer 在位置表示、数值尺度、参数使用方式和上下文访问方式上提供了不同选择。

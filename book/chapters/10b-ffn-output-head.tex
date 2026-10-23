@@ -115,7 +115,14 @@ FFN & 每个 Token 的特征 & 非线性变换当前表示\\
 
 
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:10b-ffn-output-head}若 $T=4,d_{\rm model}=6,d_{\rm ff}=18$，FFN 上投影和下投影矩阵形状分别是什么？\quad{\footnotesize\hyperref[answer:10b-ffn-output-head]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:10b-ffn-output-head}
+\textbf{回忆：}逐 Token FFN 与词表输出头分别改变什么？
+\textbf{手算：}$T=4,d_{\rm model}=6,d_{\rm ff}=18$，
+FFN 上、下投影矩阵各是什么形状？
+\textbf{迁移：}经过 FFN 后 $T$ 会变化吗，
+输出仍是什么形状？
+\quad{\footnotesize\hyperref[answer:10b-ffn-output-head]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
