@@ -14,7 +14,7 @@ Agent 把语言模型与这些工具组织到同一条工作流程中，
 让模型参与决定下一步动作，由系统负责执行和校验。
 \end{idea}
 
-\subsection{先分解任务：哪些事必须由系统保证？}
+\subsection{先分解任务：七个可核对的交付条件}
 
 以一份\textbf{季度收入对比报告}为例：输入是三份允许访问的报表，
 输出须列出 Q1--Q3 收入、Q2/Q3 环比、单位及可追溯的表格位置。
@@ -73,40 +73,9 @@ g_{Q3}=\frac{132-120}{120}=\boxed{10\%}.
 \textbf{系统设计顺序应由任务约束决定}。
 下文分别解释上下文、记忆、检索、工具与 Agent 的计算和权限边界。
 
-\subsection{七个核对关口：从任务输入到可信交付}
-
-同一个季度报表任务有\textbf{七类可以独立核对的交付条件}，
-并不是七个必须依次安装的软件框架。
-例如先计算环比，仍要核实季度证据是否齐全；
-即使 Agent 自动重试，也不能跳过原始文件的读取授权。
-每一种风险都可以在多个流程步骤反复检查。
-
-\begin{center}
-\tagstructbegin{tag=Figure,alttext={七项并列审计映射：访问权限要有授权的报表；证据覆盖要求三季度来源齐全；环比数值应经程序复核；日期单位需一致；会话状态仅恢复已核验资料；工具异常须有重试预算与停止条件；最终交付对应来源和人工审计。七行是独立可复核条件，不是逐层安装组件。}}
-\begin{tikzpicture}[>=Latex,
-  ask/.style={draw=linegray,fill=paper,rounded corners=2pt,
-    minimum width=34mm,minimum height=6.5mm,align=center,font=\scriptsize},
-  result/.style={draw=linegray,fill=white,rounded corners=2pt,
-    minimum width=52mm,minimum height=6.5mm,align=center,font=\scriptsize}]
-\node[font=\scriptsize\bfseries] at (-2.3,.15) {需要解决的失败类型};
-\node[font=\scriptsize\bfseries] at (2.7,.15) {能被核验的交付条件};
-\foreach \i/\risk/\proof in {
-  1/访问权限/已授权的季度报表,
-  2/证据覆盖/Q1--Q3 来源齐全,
-  3/环比数值/程序复核计算结果,
-  4/单位与日期/数据口径一致,
-  5/多轮状态/仅恢复已核验资料,
-  6/工具异常/重试预算与停止条件,
-  7/最终交付/逐条来源和人工审计} {
-  \pgfmathsetmacro{\yy}{-.72*\i}
-  \node[ask] (risk-\i) at (-2.3,\yy) {\risk};
-  \node[result] (proof-\i) at (2.7,\yy) {\proof};
-  \draw[->,line width=.65pt,blue] (risk-\i.east)--(proof-\i.west);
-}
-\end{tikzpicture}
-\captionof{figure}{并列的任务失败条件与可核查证据：按责任设计，而不是按能力组件堆叠层数}
-\tagstructend
-\end{center}
+上表七个关口是\textbf{并列的交付检查}，而非依次安装的软件框架。
+例如，即使工具已算出环比，仍要核实 Q1--Q3 的证据覆盖和读取授权。
+资料缺失或调用失败时，应用应按照预算重试、说明缺口或停止交付。
 
 \subsection{先分清 Prompt、Context 与 Memory}
 

@@ -149,30 +149,12 @@
 }
 
 
-% Lightweight reader-facing, grayscale-safe strip of the model's data path.
-% The emphasized stage has both a stronger border and bold typography.
-\newcommand{\modelpipenode}[3]{%
-\ifnum#1=#2\relax
-\fcolorbox{blue}{paper}{\sffamily\scriptsize\bfseries #3}%
-\else
-\fcolorbox{linegray}{white}{\sffamily\scriptsize #3}%
-\fi}
+% Compact chapter location: only the relevant stage, not seven repeated nodes.
 \newcommand{\modelpipelinefocus}[2]{%
 \par\smallskip\noindent
-{\sffamily\scriptsize\color{muted}整机路径定位：}\enspace
-\ifnum#1=0\relax\modelpipenode{#1}{0}{训练基础}\enspace\fi
-\ifnum#1=8\relax\modelpipenode{#1}{8}{任务与外部工具}\enspace\fi
-{\sffamily\scriptsize\bfseries #2}\par
-\begingroup\centering
-\setlength{\fboxsep}{2pt}\setlength{\fboxrule}{.4pt}%
-\modelpipenode{#1}{1}{分词器}\enspace$\to$\enspace
-\modelpipenode{#1}{2}{Embedding}\enspace$\to$\enspace
-\modelpipenode{#1}{3}{Attention}\enspace$\to$\enspace
-\modelpipenode{#1}{4}{FFN}\enspace$\to$\enspace
-\modelpipenode{#1}{5}{输出头}\enspace$\to$\enspace
-\modelpipenode{#1}{6}{Softmax}\enspace$\to$\enspace
-\modelpipenode{#1}{7}{采样}
-\par\endgroup\smallskip
+{\sffamily\footnotesize\color{muted}本章定位：\enspace
+\ifcase#1 训练基础\or 分词器\or Embedding\or Attention\or FFN\or 输出头\or Softmax\or 采样\or 工具与应用\fi
+\enspace$\cdot$\enspace\textbf{#2}}\par\smallskip
 }
 
 \begin{document}
@@ -282,7 +264,7 @@
 
 \clearpage
 \part{把 Attention 与 FFN 看作记忆}
-\learningbridge{下一步本可直接讨论助手；先补四章简短的底层视角：Attention 和 FFN 怎样完成匹配与读取？}{用外积、串扰、Delta 修正串起内部记忆机制，为第 VIII 部分的长上下文架构做准备，然后回到助手问题。}
+\learningbridge{Attention 与 FFN 已能完成上下文读取和特征变换；这里再从“存入与取出”的角度观察它们。}{通过外积、串扰、Delta 更新与非线性检索理解记忆机制，为后面的长上下文架构提供数学直觉。}
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
 \input{chapters/06-better-linear-memory}
@@ -342,11 +324,9 @@
 \input{chapters/28-chapter-checks}
 
 \section{术语地图、概念关系与索引}
-\input{chapters/24-lexicon}
-\input{chapters/24b-modern-lexicon}
-\input{chapters/24c-concept-map}
+% The 100+33 canonical definitions and English aliases remain generator data only.
 \input{chapters/24e-bilingual-glossary}
-\input{chapters/24d-english-index}
+\input{chapters/24c-concept-map}
 
 \section{来源与延伸阅读}
 \input{chapters/26-sources}

@@ -209,11 +209,9 @@ Transformers 4.46.3 下，
 \texttt{Paris}（含前导空格，ID 6342）约为 $0.03224$。
 \textbf{下一 Token 分布是在续写文本，不等于查事实后给出确定答案。}
 
-完整依赖版本、Top-5 与第一层注意力热图收录在
-\href{https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969}{真实推理记录 \#39897932969}，
-源代码 SHA 为 \texttt{a20a0c15}。
-可按相同输入和权重修订复算；
-这一份报告只代表该实验环境的一次执行。
+本次实验的固定依赖、Top-5 与注意力热图复现入口统一放在
+\hyperref[app:revision-notes]{附录 G 的真实 GPT-2 运行记录}。
+上述实测值仅对应所述输入、权重及运行环境。
 \end{example}
 
 \subsection{Decoder-only 与 Encoder--Decoder 是同一个概念吗？}
@@ -241,8 +239,7 @@ GPT-2 或玩具模型回答可靠？
 
 \begin{conclusion}
 从三维主算例到 GPT，\textbf{同一条训练原则}需要更多参数、层、数据和计算支撑。
-接下来先用第 VI 部分的\textbf{四章记忆视角}回答一个紧贴 Transformer 的问题：
-Attention、FFN 为什么都可以理解为“匹配再读取”，以及线性状态怎样处理串扰？
-这条计算支线完成后，第 VII 部分再回到读者最关心的下一步：
-\textbf{预训练模型怎样变成会遵守任务、使用证据和工具的助手？}
+第 VI 部分将从\textbf{写入、匹配与读取}观察 Attention 与 FFN，
+并用线性记忆的串扰与修正建立另一条数学直觉。
+之后继续讨论预训练语言模型如何适应任务、使用证据与工具。
 \end{conclusion}

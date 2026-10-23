@@ -27,6 +27,9 @@ python3 scripts/architecture_demo.py
 python3 scripts/vision_bridge_demo.py
 \end{verbatim}
 架构缓存与视觉桥接数据是独立教学设定。
+\item \textbf{新增自测题的数值：}
+运行 \texttt{python3 scripts/review\_exercises\_demo.py}，
+核对 B1-15、B1-16、B2-17 至 B2-20 的中间计算。
 \end{itemize}
 
 \subsubsection*{与真实 GPT-2 比较}
@@ -39,6 +42,14 @@ python3 scripts/vision_bridge_demo.py
 增加 \texttt{--local-files-only} 可仅从本地缓存读取权重与分词器；
 \texttt{--heatmap} 可在安装 Matplotlib 后保存注意力图。
 结果随输入文本和实际运行环境而变化，建议保留输出的版本信息。
+
+\subsubsection*{真实 GPT-2 的实验来源}
+正文中的 GPT-2 small 实测示例来自
+\href{https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969}{GitHub Actions 运行记录 \#39897932969}，
+对应源码短 SHA \texttt{a20a0c15}。
+核对 Token ID、Top-5 候选概率及首层注意力热图时，
+应以该运行记录的环境、Prompt 与公开权重修订为准，
+不要与本书 99 参数教学网络混淆。
 
 \subsubsection*{版本与勘误}
 
