@@ -8,12 +8,12 @@
 
 | 项目 | 成功验证的明确来源 |
 |---|---|
-| 源码 SHA | [36e37ff15417f35085bd3bbf9b616ae2ea3f41c9](https://github.com/CoCoThink/ai-by-intuition/commit/36e37ff15417f35085bd3bbf9b616ae2ea3f41c9) |
-| 成功的 main 构建 | [Build one PDF book #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456) |
+| 源码 SHA | [13035eee9075874dabae058ecfd62ddb0ba97cfc](https://github.com/CoCoThink/ai-by-intuition/commit/13035eee9075874dabae058ecfd62ddb0ba97cfc) |
+| 成功的 main 构建 | [Build one PDF book #39904322633](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39904322633) |
 | 内容结构 | 9 部分、39 个编号章节、A–G 共 7 个附录 |
 | PDF | **135 页** Tagged PDF；页面文字边界检查通过 |
-| Formula | **1,957 / 1,957** 具有可解析的 MathML-AF 关联 |
-| MathML | 1,209 份不同的 MathML 文档 |
+| Formula | **1,972 / 1,972** 具有可解析的 MathML-AF 关联 |
+| MathML | 1,219 份不同的 MathML 文档 |
 | veraPDF | PDF/UA-2 **compliant=true、failedRules=0、failedChecks=0** |
 | 源码与数值 | 62 个章节输入文件、联合训练、独立 Q/K、Delta 写入与教学脚本回归通过 |
 | 审计资产 | 此次 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` |
@@ -22,10 +22,10 @@
 任何在此之后对 `book/`、`scripts/` 或构建配置的修改，
 必须以新 SHA 的成功全量工作流重新验收；本文件不得自行宣称后续主分支已通过。
 
-## 当前 135 页版本的灰度技术预检
+## 上一份 135 页基线的灰度技术预检
 
-已从同一 SHA 的 [成功构建 #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456)
-下载 PDF，确认实际为 135 页；以灰度渲染工具生成 **135／135 页**图片，
+已从早前的 [成功构建 #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456)
+（SHA 为 `36e37ff`）下载 PDF，确认实际为 135 页；以灰度渲染工具生成 **135／135 页**图片，
 并抽查第 19、29、34 章以及练习、术语和版本附录的代表页。
 缩略校样未发现整页丢失或大幅裁切，**尚未完成全书高分辨率人工审校**。
 这个技术预检不能代替作者核对正文细线对比、替代文本质量、屏读顺序及版权许可。

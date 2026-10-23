@@ -21,7 +21,7 @@
 | 36–37 | 现代架构、技术判断 | \`22d-modern-transformers\`、\`23e-tech-judgement\` |
 | 38–39 | 选读视觉：CNN、ViT 到多模态 | \`19-cnn\`、\`19b-vit\` |
 
-目前 **I–VIII** 为核心主线、**IX** 为视觉选读；已在 `main.tex` 完成重排。尚未 Release；`36e37ff` 机器基线已通过，进一步修改应按新 SHA 再验收。
+目前 **I–VIII** 为核心主线、**IX** 为视觉选读；已在 `main.tex` 完成重排。尚未 Release；`13035ee` 机器基线已通过，进一步修改应按新 SHA 再验收。
 
 ## 实施关卡
 
@@ -33,7 +33,7 @@
 - [x] R05：真实 GPT-2 已由 [独立运行 #39897932969](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969) 实测 5 个 Token、全 logits 形状、温度概率和及零上三角掩码；模型 revision 与完整依赖存档，PDF 构建不加载模型权重
 - [x] R06：CoT/GRPO、线性状态、公开模型 config、MLA 假设缓存、窗口掩码以及 ViT→LLM 投影算例均已落地；待整本视觉/数值验收
 - [ ] R07：已补外积、串扰、Delta、BPE、滑窗、GRPO 六个术语和英中别名；B1 增两题、B2 增三题，集中答案、数量门禁和独立数值复算均已同步；Agent 来源已改叙事，仍待人工版权与逐页校样
-- [ ] R08：`36e37ff` 的 [CI #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456) 验证 135 页、1,957/1,957 MathML-AF、PDF/UA-2 机器合规；待对新版进行人工逐页灰度审校、来源授权核对与发行签核
+- [ ] R08：`13035ee` 的 [CI #39904322633](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39904322633) 验证 135 页、1,972/1,972 MathML-AF、PDF/UA-2 机器合规；待对新版进行人工逐页灰度审校、来源授权核对与发行签核
 
 ## 改动必须遵守的边界
 
