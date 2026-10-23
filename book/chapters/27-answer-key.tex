@@ -6,7 +6,7 @@
 再检查最后答案。数字正确而方向、形状不一致也需要订正。
 
 \subsubsection*{从数学到神经网络的综合练习}
-题目与难度见附录 C 的 B1 同号练习；这里先给\textbf{提示}，再给\textbf{关键步骤}。
+题目与难度见附录 C 的 C1 组同号练习；这里先给\textbf{提示}，再给\textbf{关键步骤}。
 一步回忆题只保留结论，复杂计算题展开中间量。
 
 
@@ -47,12 +47,12 @@ $(a,a):1$，$(a,b):2$；第一轮合并 $a+b\to ab$，
 得到 \texttt{a ab} 与 \texttt{ab}。
 每段单独切分与合并，不跨段统计相邻对。
 
-\item \textbf{C1-17 提示：}每一步用上一步的权重，不要三次都从 $w_0$ 减。
+\item \textbf{提示：}每一步用上一步的权重，不要三次都从 $w_0$ 减。
 \textbf{完整解答：}$w_1=1-0.01\times2=\answerresult{0.98}$，
 $w_2=0.98-0.02\times2=\answerresult{0.94}$，
 $w_3=0.94-0.03\times2=\answerresult{0.88}$。
 Warmup 改变更新步长 $\eta_t$，并不更换损失函数。
-\item \textbf{C1-18 提示：}把权重缩小项和自适应更新项分开计算。
+\item \textbf{提示：}把权重缩小项和自适应更新项分开计算。
 \textbf{完整解答：}$w_1=(1-0.1\times0.05)\times4-0.1\times0.5
 =\answerresult{3.93}$；无衰减得到 $\answerresult{3.95}$，
 差别为 $0.02$。AdamW 的权重衰减与自适应梯度方向\textbf{解耦}，
@@ -61,7 +61,7 @@ Warmup 改变更新步长 $\eta_t$，并不更换损失函数。
 \end{tcolorbox}
 
 \subsubsection*{现代 Transformer 与 Agent 练习}
-B2 同号题目的\textbf{基础／标准／挑战}标签见附录 C；
+附录 C 的 C2 组同号题目的\textbf{基础／标准／挑战}标签见附录 C；
 涉及多步计算的答案按“提示 $\to$ 解算 $\to$ 检查”阅读。
 
 
@@ -98,7 +98,7 @@ $\partial L/\partial W_{\rm down}=u^\top g_h
 故 $\partial L/\partial W_V=a^\top g_u
 \approx\begin{bmatrix}0.04810&0.35895\\0.09765&0.72878\end{bmatrix}$。
 
-\item \textbf{C2-14 提示：}先固定相邻季度的分母，再分别算两个增长率。
+\item \textbf{提示：}先固定相邻季度的分母，再分别算两个增长率。
 \textbf{完整解答：}Q2 环比为 $(125-100)/100=\answerresult{25\%}$；
 Q3 环比为 $(132-125)/125=\answerresult{5.6\%}$。
 仅修改 Prompt 输入数据不改变网络权重；
@@ -113,13 +113,13 @@ $QK$ 的内侧维度为 $3$ 和 $4$，不能相乘。
 检索排名不等于来源可信或权限授权；
 网页内容是低信任数据，必须核验来源，
 并由应用层单独校验工具和外发权限。
-\item \textbf{C2-17 提示：}先把查询行向量右乘文档矩阵的转置，再排序。
+\item \textbf{提示：}先把查询行向量右乘文档矩阵的转置，再排序。
 \textbf{完整解答：}$q=(0.2,1)$，
 $qD^\top=(0.2\cdot1+1\cdot0,\;0.2\cdot0+1\cdot1,\;
 0.2\cdot0.8+1\cdot0.8)=(0.2,1,0.96)$。
 Top-2 为 Q2、Q3；
 Q1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核对。
-\item \textbf{C2-18 提示：}窗口包含当前位置，前两行还未填满窗口。
+\item \textbf{提示：}窗口包含当前位置，前两行还未填满窗口。
 \textbf{完整解答：}五行可见位置数为 $(1,2,2,2,2)$，
 允许位置对总数 $1+2+2+2+2=\answerresult{9}$；
 这里包含查询自己的当前位置。
