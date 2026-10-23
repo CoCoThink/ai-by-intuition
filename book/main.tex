@@ -211,9 +211,12 @@
 \draw[->,thick,orange] (c)--(d);
 \end{tikzpicture}
 \end{center}
-\tagstructend
+% This cover diagram is semantic content; provide a nested Caption for PDF/UA.
+\tagstructbegin{tag=Caption}
 \vspace{2mm}
 {\sffamily\footnotesize\color{muted}一个四 Token 例子，串起表示、注意力、学习与生成。}\par
+\tagstructend
+\tagstructend
 \vspace{8mm}
 {\large\color{ink}从一个可手算的函数开始，逐层理解数据怎样训练模型、上下文怎样参与预测，以及工具怎样进入系统。}\par
 \vfill
