@@ -8,40 +8,36 @@
 
 | 项目 | 成功验证的明确来源 |
 |---|---|
-| 源码 SHA | [13035eee9075874dabae058ecfd62ddb0ba97cfc](https://github.com/CoCoThink/ai-by-intuition/commit/13035eee9075874dabae058ecfd62ddb0ba97cfc) |
-| 成功的 main 构建 | [Build one PDF book #39904322633](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39904322633) |
+| 源码 SHA | [d4f45cd7630239750adb0c71cbec3718fe705aae](https://github.com/CoCoThink/ai-by-intuition/commit/d4f45cd7630239750adb0c71cbec3718fe705aae) |
+| 成功的 main 构建 | [Build one PDF book #39907188928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39907188928) |
 | 内容结构 | 9 部分、39 个编号章节、A–G 共 7 个附录 |
-| PDF | **135 页** Tagged PDF；页面文字边界检查通过 |
-| Formula | **1,972 / 1,972** 具有可解析的 MathML-AF 关联 |
-| MathML | 1,219 份不同的 MathML 文档 |
+| PDF | **137 页** Tagged PDF；页面文字边界检查通过 |
+| Formula | **2,025 / 2,025** 具有可解析的 MathML-AF 关联 |
+| MathML | 1,250 份不同的 MathML 文档 |
 | veraPDF | PDF/UA-2 **compliant=true、failedRules=0、failedChecks=0** |
-| 源码与数值 | 62 个章节输入文件、联合训练、独立 Q/K、Delta 写入与教学脚本回归通过 |
+| 源码与数值 | 62 个章节输入文件、联合训练、Q/K、Delta、Warmup/AdamW、现代 B2 二十题及相关数值回归通过 |
 | 审计资产 | 此次 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` |
 
 **重要：上述机器数字仅对该 SHA 的 PDF 有效。**
 任何在此之后对 `book/`、`scripts/` 或构建配置的修改，
 必须以新 SHA 的成功全量工作流重新验收；本文件不得自行宣称后续主分支已通过。
 
-## 上一份 135 页基线的灰度技术预检
+## 全书灰度技术预检（区别于人工签核）
 
-已从早前的 [成功构建 #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456)
-（SHA 为 `36e37ff`）下载 PDF，确认实际为 135 页；以灰度渲染工具生成 **135／135 页**图片，
-并抽查第 19、29、34 章以及练习、术语和版本附录的代表页。
-缩略校样未发现整页丢失或大幅裁切，**尚未完成全书高分辨率人工审校**。
-这个技术预检不能代替作者核对正文细线对比、替代文本质量、屏读顺序及版权许可。
+已从 [完整成功构建 #39906433306](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39906433306)
+取得对应 `a5fb466b` 的 **137 页 PDF**，
+将 **137／137 页**渲染为灰度图并制作七张缩略总览。
+技术抽查未发现整页缺失或明显大面积裁切；
+实看页 28 的 Warmup/AdamW 算例和页 56 的 Transformer 十步及架构图，
+未见明显文字重叠或图形截断。
 
-## 旧版灰度渲染预检（不等于当前人工审阅）
-
-之前已对 [CI #39890022919](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39890022919)
-所生成的 **131 页 PDF** 使用 `scripts/print_proof.py --all --scale 430`
-完成 **131／131 页**灰度图片生成，并浏览了按页码排序的六组缩略总览。
-旧 131 页基线的技术预检未发现整页丢失或明显的大幅裁切；当前 135 页 PDF 仍需另行人工逐页审校。
-
-**本记录不构成人工逐页审校或无障碍体验验收：**
-430 像素缩略图无法检查小字号、公式、细线对比度、
-屏读顺序及第三方素材授权。正式检查仍需用
-[PRINT_PROOF.md](PRINT_PROOF.md) 所示更高分辨率的完整灰度校样
-逐页记录审阅者、发现的问题及对应修改提交。
+最终通过的 [#39907188928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39907188928)
+对应 `d4f45cd`，在 Encoder 框内进一步补足了
+FFN／归一化等部件，并已通过新的 PDF/UA-2 机器验收。
+**上述全书灰度渲染的确切文件属于先前的 `a5fb466b`，
+不能视作对最终源码 SHA 的人工高分辨率逐页签核。**
+发行前仍须按 [人工逐页流程](PRINT_PROOF.md)
+核对图形辨识度、细线与文字、替代文字、屏读顺序和版权复用。
 
 ## 尚需人工确认的发布阻断项
 
