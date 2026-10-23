@@ -13,12 +13,11 @@
 下列旧文件名用于稳定链接；印刷章节号由 LaTeX 生成。
 
 ### I–III：从函数到文字（第 1–14 章）
-I：[函数](chapters/00-functions.tex)、[损失](chapters/16-loss-gradient.tex)、
+I：[函数](chapters/00-functions.tex)、[损失与梯度](chapters/16-loss-gradient.tex)、[优化器与训练工程](chapters/18c-training-engineering.tex)、
 [反传](chapters/17-backpropagation.tex)、[泛化](chapters/18-generalization.tex)。
 
 II：[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、
-[矩阵](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex)、
-[优化器](chapters/18c-training-engineering.tex)。
+[矩阵](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex)。
 
 III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、
 [Embedding](chapters/20-embeddings.tex)、[任务契约](chapters/20b-task-contract.tex)。

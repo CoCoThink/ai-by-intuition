@@ -31,6 +31,7 @@ REQUIRED = [
     "00-guide",
     "00-functions",
     "16-loss-gradient",
+    "18c-training-engineering",
     "07-functions-relu",
     "17-backpropagation",
     "18b-end-to-end-learning",
@@ -39,7 +40,6 @@ REQUIRED = [
     "02-dot-product",
     "03-matrix-multiplication",
     "10-mlp",
-    "18c-training-engineering",
     "20a-tokenizer",
     "20c-classification-loss",
     "20-embeddings",
@@ -906,9 +906,9 @@ def validate_source() -> None:
     if check_ids != answer_ids:
         fail(f"Self-check answer mismatch: missing={sorted(check_ids-answer_ids)}, "
              f"unexpected={sorted(answer_ids-check_ids)}")
-    # 47 old checks minus the merged opening lesson and the two reference-appendix checks.
-    if len(check_ids) != 44:
-        fail(f"Expected 44 linked chapter checks, got {len(check_ids)}")
+    # 47 old checks minus the merged opening lesson, two appendix checks and duplicate optimizer check.
+    if len(check_ids) != 43:
+        fail(f"Expected 43 linked chapter checks, got {len(check_ids)}")
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
         call = r"\chaptercheck{" + lesson_id + "}{"

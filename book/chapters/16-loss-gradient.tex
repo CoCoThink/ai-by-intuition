@@ -143,12 +143,3 @@ L(1.4,0.6)
 \item \textbf{求梯度}：在同一旧参数状态下求各项偏导数。
 \item \textbf{更新参数}：统一执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
 \end{enumerate}
-
-\chaptercheck{16-loss-gradient}{梯度下降更新方向与损失梯度是什么关系？}{三点损失从 $(w,b)=(1,0)$ 出发，
-梯度是多少？取 $\eta=0.3$，更新后的损失是多少？}{相同梯度若令 $\eta=0$，参数与损失会改变吗？}
-
-
-\begin{conclusion}
-通过同一组三点数据，我们已经从拟合、MSE、解析解走到
-双参数的梯度更新。下一章研究：如果函数只能画直线，怎样表达弯曲的关系？
-\end{conclusion}
