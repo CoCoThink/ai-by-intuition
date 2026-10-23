@@ -68,6 +68,13 @@ Gated DeltaNet 还包含对已有状态的误差修正或门控，
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。
 
+\begin{conclusion}
+从第 28 章的外积写入，到串扰、残差修正和高维状态，
+我们完成了一条\textbf{解释 Transformer 内部读取方式}的支线。
+下一部分回到预训练模型如何在用户任务中工作：
+先看上下文学习，再看后训练、外部检索、工具与 Agent。
+\end{conclusion}
+
 这些量级依赖独立性、随机性和激活函数的选择。
 相关的 Key 与 Value 会改变干扰规模；可区分关联的数量也不同于模型可靠掌握的事实数量。
 

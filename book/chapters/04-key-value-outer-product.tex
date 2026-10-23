@@ -3,7 +3,7 @@
 \chaptercompass{一个矩阵怎样保存 Key 和 Value 的关联？}{外积写入 $S=k^\top v$，行查询从左边读取 $xS$。}{$k:1\times d_k,\ v:1\times d_v\to S:d_k\times d_v\to xS$}{这里写入的是示例状态矩阵；是否训练取决于应用场景}
 Transformer 主线里每个 Token 占一行。现在换一种视角理解线性层：
 能否把“遇见 Key 就读出 Value”的关联写入一个矩阵？
-本专题\textbf{继续使用行向量约定}，不再引入另一套列向量主线。
+和前面一样，Key、Query 与 Value 都以\textbf{一条记录占一行}来表示。
 
 \subsection{先问输入、输出和形状}
 单次 Query 是 $x:1\times d_k$，Key 为 $k:1\times d_k$，

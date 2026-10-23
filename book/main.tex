@@ -187,7 +187,7 @@
 \end{tikzpicture}
 \end{center}
 \vfill
-\noindent{\color{muted}\small 第 I–VIII 部分是必读主线；第 IX 部分为视觉选读。联想记忆请在 Transformer Block 后阅读。}\par
+\noindent{\color{muted}\small 第 I–VIII 部分是必读主线；第 IX 部分为视觉选读。}\par
 \vspace{3mm}
 \noindent {\color{muted}\small 项目维护：CoCoThink \quad｜\quad 2026 年 10 月修订 · 单册教材}\par
 \vspace{1.5mm}
@@ -255,7 +255,7 @@
 
 \clearpage
 \part{把 Attention 与 FFN 看作记忆}
-\learningbridge{Transformer 已能通过 Attention 读取上下文，并由 FFN 改写特征；它们为何都能被看成某种匹配与读取？}{统一行向量约定，手算外积写入、串扰和误差修正，连接现代线性 Attention 的状态。}
+\learningbridge{下一步本可直接讨论助手；先补四章简短的底层视角：Attention 和 FFN 怎样完成匹配与读取？}{用外积、串扰、Delta 修正串起内部记忆机制，为第 VIII 部分的长上下文架构做准备，然后回到助手问题。}
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
 \input{chapters/06-better-linear-memory}

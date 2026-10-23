@@ -1,51 +1,44 @@
-\subsection{版本、勘误与复算说明}
+\subsection{版本、勘误与复算入口}
 \phantomsection\label{app:revision-notes}
-本书将\textbf{正式发布版本}和\textbf{持续修订的源码}分开管理：
-读者获取正式归档 PDF 时应核对版本与对应的发布记录；
-仓库 \texttt{main} 中的更改不会自动覆盖历史发行资产。
 
-\textbf{本书的复算分三层：}
-\begin{enumerate}
-\item 三维 Transformer 主例的唯一基线是
-\texttt{scripts/teaching\_reference.py}；
-\item 二维联想记忆、Tokenizer、RAG、Agent 的独立小实验分别在
-\texttt{scripts/memory\_demo.py}、
-\texttt{scripts/bpe\_demo.py}、
-\texttt{scripts/rag\_demo.py} 与
-\texttt{scripts/agent\_loop.py}；
-\item 从可编辑 \LaTeX{} 构建正式 PDF 后，
-还需通过目录、数值、图形语义、MathML-AF 与 PDF/UA-2 机器校验。
-\end{enumerate}
+本书将可手算的\textbf{教学小模型}和可以运行的\textbf{真实公开模型}
+分开标注。复算时首先核对输入、矩阵形状、计算规则，
+再根据所使用的模型确认版本和依赖。
 
-\textbf{真实 GPT-2 的独立复现：}
-\texttt{python3 scripts/gpt2\_demo.py} 默认不加载权重；
-添加 \texttt{--real} 时才使用公开 GPT-2 small，
-revision 固定为
-\texttt{607a30d7}。
-模型与分词器的公开来源是
-\href{https://huggingface.co/openai-community/gpt2}{Hugging Face 的原模型仓库}。
-脚本输出实际运行时的 Torch、Transformers 版本；
-\texttt{--heatmap} 需要 Matplotlib。
-本地实际输出没有经过本书 CI 的神经网络推理验收，
-因此模型概率和热图的变化应由读者在该环境中核对。
+\subsubsection*{从可复算的例子开始}
 
-\textbf{架构配置的独立复现：}
-\texttt{python3 scripts/config\_table.py}
-从仓库中的固定公开配置摘录读取 GPT-2 与 Qwen2.5 两个参考模型；
-\texttt{--verify-online} 才访问对应固定 revision 的源 \texttt{config.json}。
-\texttt{python3 scripts/architecture\_demo.py}
-复核本书明确声明为假设的 MHA/GQA/MLA 缓存元素数
-与滑动窗口掩码；它们不是实际设备的显存/延迟基准。
+\begin{itemize}
+\item \textbf{三维 Transformer：}
+运行 \texttt{python3 scripts/teaching\_reference.py --json}，
+检查三个位置的概率、损失和一次联合参数更新。
+\item \textbf{联想记忆：}
+运行 \texttt{python3 scripts/memory\_demo.py}，
+检查外积写入、串扰、Delta 残差与交替重访。
+\item \textbf{Tokenizer、检索与工具：}
+分别运行 \texttt{python3 scripts/bpe\_demo.py}、
+\texttt{python3 scripts/rag\_demo.py}、
+\texttt{python3 scripts/agent\_loop.py}。
+\item \textbf{现代架构与视觉：}
+运行 \texttt{python3 scripts/config\_table.py}、
+\texttt{python3 scripts/architecture\_demo.py}、
+\texttt{python3 scripts/vision\_bridge\_demo.py}；
+注意架构缓存和视觉桥接数值是独立的教学设定。
+\end{itemize}
 
-\textbf{ViT 视觉前缀的独立复算：}
-\texttt{python3 scripts/vision\_bridge\_demo.py} 不需要下载图像或模型，
-只用手设矩阵验证四条视觉 Token 经过
-$3\times4$ 投影后与两条文字 Token 合并的 $6\times4$ 形状。
-该接口不代表已具备视觉问答能力。
+\subsubsection*{与真实 GPT-2 比较}
 
-\textbf{勘误与证据入口：}
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{在线勘误记录}、
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{复现说明}、
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/PUBLISHING.md}{发布流程}。
-历史版本号、训练环境或报告页面的统计数字必须与特定构建绑定；
-不能把某次机器检测通过当成未来版本已经通过。
+\texttt{python3 scripts/gpt2\_demo.py}
+可在不加载模型的情况下复核概率公式；
+安装兼容的 \texttt{torch} 和 \texttt{transformers} 后，
+使用 \texttt{--real} 加载固定版本的公开 GPT-2 small，
+检查 Token、logits、候选概率与温度变化。
+增加 \texttt{--local-files-only} 可仅从本地缓存读取权重与分词器；
+\texttt{--heatmap} 可在安装 Matplotlib 后保存注意力图。
+结果随输入文本和实际运行环境而变化，建议保留输出的版本信息。
+
+\subsubsection*{版本与勘误}
+
+发现计算或排版问题时，记录\textbf{章节、输入数字、期望计算和实际结果}，
+便于复现与订正。版本资料、勘误和完整复现说明可在教材仓库查阅：
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{勘误记录}、
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{构建与复现说明}。
