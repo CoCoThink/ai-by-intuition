@@ -622,6 +622,8 @@ def validate_source() -> None:
     for name in numbered_sources:
         blocks = re.split(r"(?m)^\\section\{[^\n]*\}", sources[name])
         for chapter_body in blocks[1:]:
+            if chapter_body.count(r"\chaptercompass{") != 1:
+                fail(f"Chapter compass missing or repeated in {name}")
             stages = re.findall(r"\\modelpipelinefocus\{(\d+)\}\{([^}]+)\}",
                                 chapter_body)
             if len(stages) != 1:
@@ -674,6 +676,10 @@ def validate_source() -> None:
         includes(agent_source, title, "seven gate delivery table")
     includes(agent_source, r"\label{sec:agent-seven-gates}", "Agent gate anchor")
     includes(agent_source, r"\label{sec:agent-acceptance}", "Agent acceptance anchor")
+    includes(agent_source, '"id":"call_q3_01"', "Agent request has a stable call ID")
+    includes(agent_source, "tool_message(call.id, result)", "Agent result resolves request ID")
+    includes(sources["22d-modern-transformers"], r"R(m\theta)^\top",
+             "RoPE preserves the row-vector rotation convention")
     includes(sources["24e-bilingual-glossary"],
              r"\subsubsection*{不要混淆的五对概念}", "restored five concept contrasts")
     for concept in ("In-context learning (ICL)", "Few-shot prompting",
