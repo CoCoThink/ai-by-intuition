@@ -92,10 +92,10 @@ P(A\succ B)=\sigma(r_A-r_B)
 \[
 (A_1,A_2,A_3,A_4)=\boxed{(+1,-1,+1,-1)}.
 \]
-奖励较高的候选得到正优势，较低者得到负优势。若整组奖励相同、$\sigma_r=0$，实现中必须处理零分母，例如加入稳定项；不能直接套用上式。
-\textbf{与完整 GRPO 的边界：}这里仅完成组内优势归一化。GRPO（Group Relative Policy Optimization）的策略目标还包含当前与旧策略的\textbf{概率比}、\textbf{裁剪}及可能的正则化约束，不能把四个优势数当成完整的训练算法。
-可对照 \href{https://arxiv.org/abs/2402.03300}{DeepSeekMath 的 GRPO 方法}
-和 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1 的强化学习实践}。
+奖励高低对应正负优势；若整组奖励相同，需加稳定项处理 $\sigma_r=0$。
+\textbf{注意：}此处只算组内优势；完整 GRPO 还涉及策略概率比、裁剪和正则化。
+可参见 \href{https://arxiv.org/abs/2402.03300}{DeepSeekMath}
+与 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1}。
 \end{example}
 
 把自动验证用在更复杂的任务上，还需要检查答案格式、代码测试结果、奖励漏洞以及验证器本身的错误。
