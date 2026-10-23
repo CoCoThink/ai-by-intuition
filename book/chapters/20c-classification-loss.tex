@@ -1,4 +1,4 @@
-\Needspace{16\baselineskip}
+\Needspace{24\baselineskip}
 \section{分类损失：预测错了哪一类，怎样调整分数？}
 \label{intro:20c-classification-loss}
 \chaptercompass{为什么原始 logits 不能直接当作概率？}{Softmax 将一行候选分数归一化，交叉熵度量目标类别概率。}{$z:1\times C\to p:1\times C\to L:1\times1$}{Softmax 与交叉熵没有自身可训练参数；上游输出头的权重可学习}
