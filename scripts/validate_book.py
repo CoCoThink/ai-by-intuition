@@ -83,8 +83,8 @@ REQUIRED = [
     "15-practice",
     "27-answer-key",
     "28-chapter-checks",
-    "24c-concept-map",
     "24e-bilingual-glossary",
+    "24c-concept-map",
     "26-sources",
     "29-revision-notes",
 ]
