@@ -242,7 +242,18 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], r"\label{eq:pos-swap-d3}", "nondegenerate 3D position comparison")
     includes(sources["21a-context-gap"], r"\label{check:21a-context-gap}", "context gap self-check")
     includes(sources["19b-vit"], r"\label{eq:vit-patch-embedding}", "standalone patch embedding")
-    includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "Embedding-based Q/K example")
+    includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "asymmetric Q/K example")
+    includes(sources["21b-why-attention"], r"\label{eq:asymmetric-qk-example}",
+             "independent Query and Key cause raw score asymmetry")
+    includes(sources["06-better-linear-memory"], r"\label{eq:delta-overwrites-key-a}",
+             "Delta write can disturb previously learned association")
+    from math import exp
+    scores = ((1, 1, 2), (0, 1, 1), (1, 2, 3))
+    assert scores[0][1] == 1 and scores[1][0] == 0
+    third = [exp(v) for v in scores[2]]
+    third = [v / sum(third) for v in third]
+    assert math.isclose(third[0] + third[2], 0.7552715289452023)
+    assert math.isclose(third[1] + third[2], 0.9099694268296196)
     includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
     includes(sources["22b-token-to-output"], r"\label{eq:three-token-block-output}", "canonical Pre-Norm numeric forward")
     includes(sources["22b-token-to-output"], "0.1244", "causal attention example")

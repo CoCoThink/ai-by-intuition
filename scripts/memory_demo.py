@@ -30,6 +30,28 @@ def main():
     better = ((1, 0), (-0.75, 1.25))
     close(mul(k_a, better), v_a)
     close(mul(k_b, better), v_b)
+    # Two sequential Delta writes: B correct, but the previously learned A degrades.
+    eta = 1.0
+    delta_state = outer(k_a, v_a)
+    residual_b = tuple(v - r for v, r in zip(v_b, mul(k_b, delta_state)))
+    close(residual_b, (-0.6, 1.0))
+    delta_state = plus(delta_state, outer(k_b, residual_b))
+    close(delta_state[0], (0.64, 0.6))
+    close(delta_state[1], (-0.48, 0.8))
+    close(mul(k_b, delta_state), v_b)
+    close(mul(k_a, delta_state), (0.64, 0.6))
+    from math import sqrt
+    assert isclose(sqrt(0.36**2 + 0.6**2), 0.6997142273814361)
+    # Revisiting two independent unit keys converges to the full exact fit.
+    for _ in range(90):
+        for key, value in ((k_a, v_a), (k_b, v_b)):
+            residual = tuple(v - r for v, r in zip(value, mul(key, delta_state)))
+            delta_state = plus(delta_state, outer(key, residual))
+    close(mul(k_a, delta_state), v_a)
+    close(mul(k_b, delta_state), v_b)
+    for got, want in zip(delta_state, better):
+        close(got, want)
+
     q, keys, values = (1, -1), ((1, 0), (0.6, 0.8)), ((2, 1), (0, 3))
     scores = tuple(sum(a * b for a, b in zip(q, k)) for k in keys)
     close(scores, (1, -0.2))

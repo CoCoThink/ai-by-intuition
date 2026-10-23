@@ -31,8 +31,54 @@ r_t=v_t-k_tS_{t-1},\qquad
 \boxed{S_t=S_{t-1}+\eta k_t^\top r_t}.
 \]
 这里 $k_t:1\times d_k$、$r_t:1\times d_v$；
-若 $k_t$ 归一化且 $\eta=1$，可以在该 Key 方向消除当次读出误差。
-这是教学化的在线 Delta 更新规则，\textbf{不能声称单步就得到了全部配对的最小二乘最优解}。
+若 $k_t$ 归一化且 $\eta=1$，可以在该 Key 方向消除\textbf{当次}读出误差。
+但这未必保护此前已学会的 Key。
+
+\subsection{［复算］写好 B 时，A 会不会再次出错？}
+
+仍用两条单位 Key 和 Value：
+\[
+k_A=(1,0),\ v_A=(1,0),\qquad
+k_B=(0.6,0.8),\ v_B=(0,1).
+\]
+从 $S_0=0$、$\eta=1$ 开始，先写 A：
+\[
+S_1=k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix}.
+\]
+写 B 前，旧状态的读取为 $k_BS_1=(0.6,0)$，
+所以不是直接追加 $k_B^\top v_B$，而是计算残差：
+\[
+r_B=v_B-k_BS_1=(-0.6,1).
+\]
+下一步得到
+\begin{equation}
+\begin{aligned}
+S_2&=S_1+k_B^\top r_B\\
+&=\begin{bmatrix}1&0\\0&0\end{bmatrix}
++\begin{bmatrix}0.6\\0.8\end{bmatrix}(-0.6,1)
+=\boxed{\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}}.
+\end{aligned}
+\label{eq:delta-overwrites-key-a}
+\end{equation}
+立即查询 B 得到\textbf{正确的} $k_BS_2=(0,1)$；
+反过来，旧的 A 查询却变成
+$k_AS_2=(0.64,0.6)$，不再等于 $(1,0)$。
+A 的误差范数为
+\[
+\|k_AS_2-v_A\|_2=\sqrt{(-0.36)^2+0.6^2}
+\approx\boxed{0.700}.
+\]
+若直接相加外积，A 的误差为 $0.600$。
+\textbf{在这个明确例子里，单步 Delta 对旧记忆的扰动反而更大。}
+
+\begin{boundarybox}
+Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
+每写一条后所有旧记忆都更准确。
+交替重访 A、B，在这两条独立单位 Key 与 $\eta=1$
+的条件下可收敛到本章的精确解 $S_{\rm better}$。
+它是一次次更新得到的结果，而不是两次写入后的立即结果。
+\end{boundarybox}
+
 
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。

@@ -119,61 +119,71 @@ Value 的维度也不必等于 Key 的维度。
 位置 3 发出 Query，分别与位置 1、2、3 的 Key 匹配，
 得到三条权重，再从这三个位置的 Value 读取内容。
 
-\subsection{匹配：用独立二维小表算三个分数}
+\subsection{匹配：独立投影让分数不再对称}
 
-\localfixture{二维 Q/K/V}
-为了先算清一次查询，这里另设一份二维手算小表：
-“春天、花、开了”的行向量分别是
+\localfixture{二维 Q/K/V，与上一章使用同一组 X；此处未缩放、未加因果 Mask}
+沿用三个 Token“春天、花、开了”的行向量：
+\[
+X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\qquad
+W_Q=I_2,\qquad
+W_K=\begin{bmatrix}1&0\\1&1\end{bmatrix},\qquad W_V=I_2.
+\]
+这组权重只是\textbf{为了观察分工而设定的例子}，实际训练可学习不同的投影。
+矩阵乘法得到
+\[
+Q=XW_Q=X,\quad
+K=XW_K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix},\quad
+V=XW_V=X.
+\]
+Key 的三行现在是 $(1,0)$、$(1,1)$、$(2,1)$，
+它们已经不再与输入向量逐行相同。
+将所有 Query 的点积合成矩阵：
+\begin{equation}
+\underbrace{S}_{3\times3}=QK^\top
+=\boxed{\begin{bmatrix}1&1&2\\0&1&1\\1&2&3\end{bmatrix}}.
+\label{eq:asymmetric-qk-example}
+\end{equation}
+\textbf{对照前一章：}原始 $XX^\top$ 必定对称，
+而此处 $S_{12}=\boxed{1}$、$S_{21}=\boxed{0}$。
+“春天”查询“花”与“花”查询“春天”的匹配分数可以不同；
+这正是\textbf{拆开 Query 和 Key 的新增表达能力}。
+逐行 Softmax 之后权重一般也不对称，但不能反过来用
+Softmax 权重不对称来证明原始点积分数不对称。
+
+\subsection{分配：以第三个位置为 Query 计算权重}
+
+当前第三行 Query 是 $\vect q^\top=(1,1)$，
+与三个 Key 的分数是 $(1,2,3)$：
+\[
+\vect a^\top=\softmax(1,2,3)
+=\frac{(e,e^2,e^3)}{e+e^2+e^3}
+\approx\boxed{(0.090,0.245,0.665)}.
+\]
+若是 Decoder-only 模型的第三个位置，三个 Key 均在可见前缀；
+第一、二位置还应通过因果 Mask 排除各自的未来位置。
+本节使用\textbf{未缩放}的原始点积以便比较投影；
+标准缩放点积还会除以 $\sqrt{d_k}$。
+
+\subsection{读出：Value 与 Key 分开设计}
+
+由于 $W_V=I_2$，三行 Value 仍是
 $(1,0)$、$(0,1)$、$(1,1)$。
-
-用“开了”作为 Query，暂设 $W_Q=W_K=I_2$，
-因此这一局部示例中 Query 与 Key 直接来自上述二维小表：
-\[
-\vect q^\top=(1,1),\quad
-K=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
-\]
 \begin{example}
 \[
-\underbrace{\vect s^\top}_{1\times3}
-=\underbrace{\vect q^\top}_{1\times2}
-\underbrace{K^\top}_{2\times3}
-=\boxed{(1,1,2)}.
+\vect y^\top=\vect a^\top V
+\approx(0.090,0.245,0.665)
+\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}
+=\boxed{(0.755,0.910)}.
 \]
-三项是分别点积，例如“开了”的 Key 得分为 $1\cdot1+1\cdot1=2$。
-\end{example}
-\textbf{［未缩放］}这里为了与零参数方案直接对照，继续使用原始点积分数；标准缩放点积 Attention 还会除以 $\sqrt{d_k}$。
-
-\subsection{分配：Softmax 产生读取比例}
-\[
-a_i=\frac{e^{s_i}}{\sum_{j=1}^3e^{s_j}},
-\qquad
-\vect a^\top=\softmax(1,1,2)
-\approx\boxed{(0.212,0.212,0.576)}.
-\]
-“春天”和“花”的匹配分数相同，得到相同权重；
-“开了”得到较大的权重。
-
-\subsection{读出：按权重组合 Value}
-
-让 $W_V=I_2$，继续使用 Embedding 表的三行：
-\[
-V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}.
-\]
-\begin{example}
-\[
-\underbrace{\vect y^\top}_{1\times2}
-=\underbrace{\vect a^\top}_{1\times3}\underbrace{V}_{3\times2}
-\approx(0.212,0.212,0.576)V
-=\boxed{(0.788,0.788)}.
-\]
+这与上一章未投影时的 $(0.788,0.788)$ 不同：
+\textbf{输入和 Value 没变，只改变 Key 的投影就改变了读取内容的比例。}
 \end{example}
 
-\begin{idea}
-Key 负责匹配，Value 负责提供内容：
-\textbf{只把第一条 Value 改成 $(0,2)$} 时，
-Key 与 Softmax 权重不变，但输出变成 $(0.576,1.212)$。
-可见，Key 和 Value 分别负责匹配与读出。
-\end{idea}
+如果只把第一行 Value 改成 $(0,2)$，
+分数和权重完全不变，输出则约为
+$(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
+所以 Key 决定匹配、Value 决定取出的内容，
+两者的作用可以分别核对。
 
 \input{figures/attention-three-step-weights}
 
