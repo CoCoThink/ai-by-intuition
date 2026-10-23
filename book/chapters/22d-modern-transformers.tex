@@ -5,14 +5,8 @@
 \modelpipelinefocus{3}{现代注意力与架构}
 
 
-\begin{idea}
-\noindent\emph{从实际约束理解架构选择}\par
+先看 RoPE、RMSNorm 与 GQA 的手算，其余技术只在遇到相应性能瓶颈时选读。\par\smallskip
 
-模型的\textbf{显存、延迟和吞吐}既受部署方式影响，也受内部计算结构限制。
-上下文变长会扩大 KV Cache；堆叠深层网络还要控制特征尺度与计算成本。
-现代 Transformer 因而在位置表示、归一化、FFN 和 Attention 上产生了不同变体。
-必读只需掌握 RoPE、RMSNorm、GQA 三项，并完成小算例；标为{\symboliconfont ★}的内容按需选读，不必一次背完全部缩写。
-\end{idea}
 
 \subsection{必读 1：RoPE 怎样利用相对位置？}
 \phantomsection\label{concept:rope}

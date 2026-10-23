@@ -5,11 +5,7 @@
 \chaptercompass{怎样衡量同一组预测错得多远？}{平方误差汇成损失，简单二次式还可以直接求最小值。}{三个 $(x_i,y_i)$ 输入 $\to L(w,b)$ 输出}{$w,b$ 是待优化参数}
 \modelpipelinefocus{0}{损失与解析解}
 
-\begin{idea}
-\noindent\emph{沿用刚才的三点数据，判断怎样调整直线}\par
-我们已用 $\widehat y=wx+b$ 拟合三点 $(-1,-1),(0,1),(1,3)$。
-现在不换数据，先用损失衡量误差，再研究两个参数怎样变化。
-\end{idea}
+
 
 \subsection{预测值、真实值与均方误差}
 \phantomsection\label{concept:loss}
