@@ -286,6 +286,10 @@ def validate_source() -> None:
         fail(f"Running forward lesson should contain exactly A/H/P matrices, found {full_matrices}")
     includes(sources["22c-language-training"], r"\input{figures/training-20-step-loss}", "20-step loss curve")
     includes(sources["23a-from-toy-to-gpt"], r"\label{eq:toy-99-parameters}", "99 parameter count")
+    includes(sources["23a-from-toy-to-gpt"], "7{,}077{,}888",
+             "classic GPT-2 attention-plus-FFN parameter budget")
+    assert 4 * 768**2 == 2359296 and 8 * 768**2 == 4718592
+    assert 12 * 768**2 == 7077888
     includes(sources["24e-pytorch-lab"], r"\verbatiminput{../scripts/pytorch_starter.py}", "standalone PyTorch lab")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")

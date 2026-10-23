@@ -71,6 +71,33 @@ $1{,}024\times768\approx0.79$ M、
 精确数值需按具体权重共享、偏置及 checkpoint 逐项核对；
 不能将教学模型的独立输出头规则套在 GPT-2 上。
 
+\subsection{［复算］为什么一个 Block 的 FFN 通常比 Attention 参数多？}
+
+在\textbf{经典 Dense Transformer} 的简化预算中，
+注意力有 $W_Q,W_K,W_V,W_O$ 四个 $d\times d$ 投影；
+两层普通 FFN 则先从 $d$ 扩到 $4d$，再降回 $d$：
+\[
+\underbrace{N_{\rm att}}_{4d^2}=4d^2,\qquad
+\underbrace{N_{\rm FFN}}_{8d^2}=d(4d)+(4d)d=8d^2.
+\]
+因此在\textbf{不计偏置与归一化参数}的前提下，
+一层总主导项为 $12d^2$，其中 FFN 约占三分之二。
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{24mm}p{28mm}X@{}}
+\toprule
+部件 & 主导公式 & $d=768$ 时参数元素数\\\midrule
+Q/K/V/O & $4d^2$ & $2{,}359{,}296$\\
+Dense FFN & $8d^2$ & $4{,}718{,}592$\\
+两者合计 & $12d^2$ & $7{,}077{,}888$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+这些是\textbf{参数数量}，不是 FLOPs、KV Cache 或实际速度。
+SwiGLU、MoE、共享投影和不同 FFN 扩展比例都会改变这个对照；
+不能将“FFN 永远是两倍 Attention”当成普遍定律。
+
 
 \subsection{［复算］训练前损失应该与什么比较？}
 
