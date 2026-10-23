@@ -1,4 +1,5 @@
 \Needspace{11\baselineskip}
+\chapterrule
 \section{怎样量“猜得多差”？损失与一次直接求解}
 \label{intro:16-loss-gradient}
 \modelpipelinefocus{0}{损失与解析解}
@@ -46,19 +47,16 @@ L(w,1)=\frac23(w-2)^2,\qquad
 而且导数为零并不总是全局最小值。
 我们需要能从当前位置逐步改善损失的方法。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:16-loss-analytic}
-\textbf{回忆：}平方项为什么永远不小于零？
-\textbf{手算：}固定 $b=1$，$L(w,1)=\frac23(w-2)^2$
-在什么 $w$ 处取最小值，最小损失是多少？
-\textbf{迁移：}若 $w$ 改为 $3$，损失会变成多少？
-\quad{\footnotesize\hyperref[answer:16-loss-analytic]{核对解答。}}\par\medskip
+\chaptercheck{16-loss-analytic}{平方项为什么永远不小于零？}{固定 $b=1$，$L(w,1)=\frac23(w-2)^2$
+在什么 $w$ 处取最小值，最小损失是多少？}{若 $w$ 改为 $3$，损失会变成多少？}
+
 
 \begin{conclusion}
 同一份三点数据使我们得到一个具体的损失曲面；
 简单二次损失可以直接求最优值，但复杂模型通常要用迭代优化。
 \end{conclusion}
 
+\chapterrule
 \section{当解析解不现实时：梯度下降怎样调参数？}
 \label{intro:16a-gradient-descent}
 \modelpipelinefocus{0}{梯度下降与参数更新}
@@ -148,13 +146,9 @@ L(1.4,0.6)
 \item \textbf{更新参数}：统一执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
 \end{enumerate}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:16-loss-gradient}
-\textbf{回忆：}梯度下降更新方向与损失梯度是什么关系？
-\textbf{手算：}三点损失从 $(w,b)=(1,0)$ 出发，
-梯度是多少？取 $\eta=0.3$，更新后的损失是多少？
-\textbf{迁移：}相同梯度若令 $\eta=0$，参数与损失会改变吗？
-\quad{\footnotesize\hyperref[answer:16-loss-gradient]{核对解答。}}\par\medskip
+\chaptercheck{16-loss-gradient}{梯度下降更新方向与损失梯度是什么关系？}{三点损失从 $(w,b)=(1,0)$ 出发，
+梯度是多少？取 $\eta=0.3$，更新后的损失是多少？}{相同梯度若令 $\eta=0$，参数与损失会改变吗？}
+
 
 \begin{conclusion}
 通过同一组三点数据，我们已经从拟合、MSE、解析解走到

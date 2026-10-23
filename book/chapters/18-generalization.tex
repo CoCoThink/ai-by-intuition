@@ -1,4 +1,5 @@
 \Needspace{12\baselineskip}
+\chapterrule
 \section{训练得很好，为什么新题反而做错？}
 \label{intro:18-generalization}
 \modelpipelinefocus{0}{泛化与验证}
@@ -75,14 +76,10 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 
 Dropout 只在当前计算中屏蔽部分激活，不会永久删除模型参数。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:18-generalization}
-\textbf{回忆：}训练损失下降而验证损失上升，通常要排查什么？
-\textbf{手算：}三轮验证损失依次为 $(0.6,0.4,0.5)$，
-提前停止按最低验证损失选第几轮？
-\textbf{迁移：}若先用测试集反复挑超参数，
-为何会高估最终泛化性能？
-\quad{\footnotesize\hyperref[answer:18-generalization]{核对解答。}}\par\medskip
+\chaptercheck{18-generalization}{训练损失下降而验证损失上升，通常要排查什么？}{三轮验证损失依次为 $(0.6,0.4,0.5)$，
+提前停止按最低验证损失选第几轮？}{若先用测试集反复挑超参数，
+为何会高估最终泛化性能？}
+
 
 \begin{conclusion}
 训练误差与验证误差回答不同问题。独立测试集、正则化和提前停止帮助我们判断学到的模式能否迁移到新数据。

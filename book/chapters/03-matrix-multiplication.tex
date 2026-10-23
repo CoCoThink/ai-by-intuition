@@ -1,3 +1,4 @@
+\chapterrule
 \section{矩阵乘法到底在算什么？}
 \label{intro:03-matrix-multiplication}
 \modelpipelinefocus{0}{矩阵与批量运算}
@@ -131,14 +132,10 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），甚至 $BA$ 可能根本无法相乘；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:03-matrix-multiplication}
-\textbf{回忆：}矩阵乘法要求内侧哪两个维度相同？
-\textbf{手算：}若 $A:2\times3$、$B:3\times4$，
-$AB$ 是什么形状？
-\textbf{迁移：}若把 $B$ 换成 $4\times3$，
-$AB$ 还能直接相乘吗？
-\quad{\footnotesize\hyperref[answer:03-matrix-multiplication]{核对解答。}}\par\medskip
+\chaptercheck{03-matrix-multiplication}{矩阵乘法要求内侧哪两个维度相同？}{若 $A:2\times3$、$B:3\times4$，
+$AB$ 是什么形状？}{若把 $B$ 换成 $4\times3$，
+$AB$ 还能直接相乘吗？}
+
 
 \begin{conclusion}
 矩阵乘向量既可以理解为每行依次做点积，也可以理解为按系数组合各列。

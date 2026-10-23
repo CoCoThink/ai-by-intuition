@@ -1,6 +1,12 @@
+\chapterrule
 \section{为什么从函数开始学 AI？}
 \label{intro:00-functions}
 \modelpipelinefocus{0}{函数、参数与样本}
+
+手写规则适合条件明确的任务，例如 $c=\sqrt{a^2+b^2}$。
+但图像识别面对遮挡、光照和姿态变化，想列尽所有规则很困难。
+另一个办法是选\textbf{带参数的函数}，让训练样本参与决定参数。
+我们马上拟合三个点；至于参数怎样自动更新，留给损失与梯度一章。
 
 \begin{idea}
 \noindent\emph{让计算规则从数据中学习}\par
@@ -60,13 +66,6 @@ xtick={-1,0,1},ytick={-1,0,1,2,3},
 \end{tikzpicture}
 \end{center}
 
-\subsection{为什么只调整一条直线不够？}
-
-如果数据沿着弯曲的形状分布，一条直线无论怎样调整斜率与截距，都不能完整贴合。
-我们便希望用\textbf{更灵活、又仍能训练}的函数来组合输入。
-一种重要思路是把简单的线性变换与非线性步骤串起来，
-后面组合矩阵与激活函数时，就会看到这种灵活性从何而来。
-
 \subsection{从可调函数到模型、训练与推理}
 
 请先分清四个词：
@@ -82,13 +81,9 @@ xtick={-1,0,1},ytick={-1,0,1,2,3},
 近似拟合不等于证明找到了真实世界的唯一规律。不同模型可能在已有样本上给出同样结果，却对新数据作出不同预测。后续的\textbf{泛化}章节专门讨论这个问题。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:00-functions}
-\textbf{回忆：}在 $y=wx+b$ 中，哪些是参数？
-\textbf{手算：}设 $w=2,b=1$，输入 $x=3$，输出是多少？
-\textbf{迁移：}固定 $w=2,x=3$，若把 $b$ 改成 $-1$，
-输出怎样变化？
-\quad{\footnotesize\hyperref[answer:00-functions]{核对解答。}}\par\medskip
+\chaptercheck{00-functions}{在 $y=wx+b$ 中，哪些是参数？}{设 $w=2,b=1$，输入 $x=3$，输出是多少？}{固定 $w=2,x=3$，若把 $b$ 改成 $-1$，
+输出怎样变化？}
+
 
 \begin{conclusion}
 带参数的函数可以根据样本逐步改善预测。

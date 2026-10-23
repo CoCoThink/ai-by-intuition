@@ -1,3 +1,4 @@
+\chapterrule
 \section{点积：如何判断两条线索相不相似？}
 \label{intro:02-dot-product}
 \modelpipelinefocus{0}{点积与匹配}
@@ -107,13 +108,9 @@ s_i=\vect k_i^\top\vect q.
 下一章把许多点积排成矩阵乘法；并行不意味着每次都更快，
 很小的计算还可能受启动及数据搬运开销限制。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:02-dot-product}
-\textbf{回忆：}点积如何从两个等长向量求出标量？
-\textbf{手算：}$(1,2)\cdot(3,1)$ 是多少？
-\textbf{迁移：}$(1,0)$ 与 $(0,1)$ 的点积为零，
-这对它们的方向意味着什么？
-\quad{\footnotesize\hyperref[answer:02-dot-product]{核对解答。}}\par\medskip
+\chaptercheck{02-dot-product}{点积如何从两个等长向量求出标量？}{$(1,2)\cdot(3,1)$ 是多少？}{$(1,0)$ 与 $(0,1)$ 的点积为零，
+这对它们的方向意味着什么？}
+
 
 \begin{conclusion}
 点积就是\textbf{同位置相乘再求和}，既可以用数字算，

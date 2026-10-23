@@ -82,15 +82,11 @@ L'&=\frac12(5.30-5)^2=0.045.
 但逐一写所有乘法和导数会非常繁琐。
 后面会用\textbf{向量和矩阵}表达同样的计算，而不改变学习机制本身。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:18b-end-to-end-learning}
-\textbf{回忆：}一次完整训练更新依次有哪些环节？
-\textbf{手算：}在 $x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$
+\chaptercheck{18b-end-to-end-learning}{一次完整训练更新依次有哪些环节？}{在 $x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$
 且 $h=\relu(w_1x+b_1)$ 时，$\widehat y$ 与
-$\tfrac12(\widehat y-y)^2$ 是多少？
-\textbf{迁移：}同一次 SGD 中，能否先更新 $w_2$
-再用新的 $w_2$ 算 $w_1$ 的梯度？
-\quad{\footnotesize\hyperref[answer:18b-end-to-end-learning]{核对解答。}}\par\medskip
+$\tfrac12(\widehat y-y)^2$ 是多少？}{同一次 SGD 中，能否先更新 $w_2$
+再用新的 $w_2$ 算 $w_1$ 的梯度？}
+
 
 \begin{conclusion}
 训练的基本循环是：预测 $\to$ 算损失 $\to$ 求梯度 $\to$ 更新参数。
