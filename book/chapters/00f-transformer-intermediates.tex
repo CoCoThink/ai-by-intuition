@@ -1,9 +1,8 @@
 \subsection{三维贯通实验：完整参数表与逐层中间值}
 \phantomsection\label{app:transformer-intermediates}
 
-正文\hyperref[intro:22b-token-to-output]{三维贯通章节}保留
-注意力权重 $A$、Block 输出 $H$ 和词表概率 $\widehat P$
-三份关键矩阵；这里集中保存同一次前向传播的其余数值，
+正文\hyperref[intro:22b-token-to-output]{三维贯通章节}只保留形状和代表元素；
+这里保存同一次前向传播的所有矩阵与完整数值，
 方便读者逐项验算。数值来自
 \texttt{scripts/teaching\_reference.py} 的 \texttt{parameters()}，
 显示时保留四位小数，运算应使用未舍入数。
@@ -125,7 +124,7 @@ F_{\rm mid}=\operatorname{ReLU}(BW_{\rm up})\approx
 .0872&0&.7274&.5417
 \end{bmatrix}.
 \]
-正文的 $H=X_{\rm att}+F_{\rm mid}W_{\rm down}$ 为 $3\times3$。
+$H=X_{\rm att}+F_{\rm mid}W_{\rm down}$ 为 $3\times3$，完整数值见本节末。
 
 \textbf{输出头与 logits。}
 \[
@@ -145,6 +144,62 @@ Z=HW_{\rm out}\approx
 \]
 正文的 $\widehat P=\operatorname{softmax}(Z)$ 为 $3\times5$，
 目标 $[3,4,2]$ 的三行概率平均交叉熵约 $1.798430$。
+
+
+\subsubsection*{完整前向矩阵（第 23 章移入）}
+下列矩阵均来自同一次前向计算；显示时保留四位小数，计算请使用未舍入参数。
+\noindent\textbf{输入 $X$。}\par
+\begin{equation}
+\boxed{\begin{aligned}
+X_{1,:}&=(1.30,\ 0.05,\ -0.30),\\
+X_{2,:}&=(-0.30,\ 1.05,\ 0.32),\\
+X_{3,:}&=(0.03,\ -0.10,\ 1.32).
+\end{aligned}}
+\quad X\in\R^{3\times3}.
+
+\end{equation}
+
+\noindent\textbf{注意力 $A$。}\par
+\begin{equation}
+\boxed{A\approx\begin{bmatrix}
+1&0&0\\
+0.1244&0.8756&0\\
+0.1680&0.2418&0.5903
+\end{bmatrix}.}
+
+\end{equation}
+
+\noindent\textbf{隐藏输出 $H$。}\par
+\begin{equation}
+\boxed{H\approx\begin{bmatrix}
+2.5609&-0.0561&-0.9413\\
+-0.9865&1.8872&0.3537\\
+-0.1760&-0.3557&2.0005
+\end{bmatrix}\in\R^{3\times3}.}
+
+\end{equation}
+
+\noindent\textbf{词表概率 $\widehat P$。}\par
+\begin{equation}
+\boxed{\widehat P\approx\begin{bmatrix}
+0.1843&0.3341&0.1264&0.2617&0.0935\\
+0.0826&0.0954&0.0951&0.6761&0.0507\\
+0.1535&0.1130&0.3418&0.1181&0.2735
+\end{bmatrix}\in\R^{3\times5}.}
+
+\end{equation}
+
+\subsubsection*{输出头梯度矩阵（第 24 章移入）}
+正文只保留代表梯度与形状，这里保留十五个元素供逐项复算。
+\[
+\frac{\partial L}{\partial W_{\rm out}}
+\approx\begin{bmatrix}
+0.1211&0.2472&0.1153&-0.8595&0.3760\\
+0.0303&0.0404&0.1355&0.4251&-0.6313\\
+0.0543&-0.0182&-0.4674&0.3902&0.0411
+\end{bmatrix}.
+\]
+
 
 \begin{idea}
 矩阵形状检查顺序：
