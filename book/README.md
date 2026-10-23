@@ -7,54 +7,71 @@
 
 **从这里开始：**[目录前阅读路线与时间参考](chapters/00g-reading-routes.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
-## 七个必读部分（32 个显示章节；新版待人工签核与发布）
+## 当前修订目录：八个必读部分、视觉选读（39 章）
 
-### I · 学习是什么：从规则到参数更新
-- [阅读指南](chapters/00-guide.tex) → [规则为什么写不尽](chapters/00d-rules-gap.tex) → [函数拟合](chapters/00-functions.tex)
-- [损失与梯度](chapters/16-loss-gradient.tex)、[ReLU](chapters/07-functions-relu.tex)、[反向传播](chapters/17-backpropagation.tex)、[四参数训练](chapters/18b-end-to-end-learning.tex)、[泛化](chapters/18-generalization.tex)
+本目录以 [\`book/main.tex\`](main.tex) 的实际输入顺序为准。
+下列旧文件名用于稳定链接；印刷章节号由 LaTeX 生成。
 
-### II · 把许多数一起算
-- [向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)
-- [矩阵 MLP](chapters/10-mlp.tex)、[Mini-batch 与 Adam](chapters/18c-training-engineering.tex)
+### I–III：从函数到文字（第 1–15 章）
+I：[函数](chapters/00-functions.tex)、[损失](chapters/16-loss-gradient.tex)、
+[反传](chapters/17-backpropagation.tex)、[泛化](chapters/18-generalization.tex)。
 
-### III · 让文字进入计算
-- [Tokenizer 与 BPE](chapters/20a-tokenizer.tex) → [分类损失与 logits](chapters/20c-classification-loss.tex) → [统一三维 Embedding](chapters/20-embeddings.tex) → [下一 Token 任务和 GPT-2 规模](chapters/20b-task-contract.tex)
+II：[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、
+[矩阵](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex)、
+[优化器](chapters/18c-training-engineering.tex)。
 
-### IV · 让词与词交换信息
-- [逐 Token MLP 的上下文缺口](chapters/21a-context-gap.tex)、[RNN](chapters/21-rnn.tex)、[为什么需要 Attention](chapters/21b-why-attention.tex)
-- [Self-Attention 与因果 Mask](chapters/11-softmax-memory.tex)、[位置与独立双头例](chapters/22a-position-multihead.tex)
+III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、
+[Embedding](chapters/20-embeddings.tex)、[任务契约](chapters/20b-task-contract.tex)。
 
-### V · 组装并训练 Transformer
-- [Pre-Norm Block](chapters/22-transformer-architecture.tex)、[FFN 和输出头](chapters/10b-ffn-output-head.tex)
-- [三维完整前向](chapters/22b-token-to-output.tex)、[三位置联合训练](chapters/22c-language-training.tex)
-- [自回归生成](chapters/23-llm-systems.tex)、[从三维教学例到 GPT-2](chapters/23a-from-toy-to-gpt.tex)
+### IV：上下文与 Attention（第 16–21 章）
+[上下文缺口](chapters/21a-context-gap.tex) →
+[RNN](chapters/21-rnn.tex) →
+[朴素点积 Attention](chapters/21c-naive-attention.tex) →
+[Q/K/V](chapters/21b-why-attention.tex) →
+[矩阵式 Self-Attention](chapters/11-softmax-memory.tex) →
+[位置与多头](chapters/22a-position-multihead.tex)。
 
-### VI · 从语言模型到助手
-- [预训练与 ICL](chapters/23aa-pretraining-icl.tex)、[SFT／偏好／RLVR](chapters/23c-post-training.tex)
-- [季度报告任务中的 RAG、工具、MCP、Agent、A2A](chapters/23d-agent-systems.tex)
-- [部署、LoRA、量化与蒸馏](chapters/23b-deployment-and-ecosystem.tex)
+### V：Transformer 训练（第 22–27 章）
+[Block](chapters/22-transformer-architecture.tex)、
+[FFN 与输出头](chapters/10b-ffn-output-head.tex)、
+[贯通前向](chapters/22b-token-to-output.tex)、
+[联合训练](chapters/22c-language-training.tex)、
+[生成](chapters/23-llm-systems.tex)、
+[从玩具到 GPT-2](chapters/23a-from-toy-to-gpt.tex)。
 
-### VII · 架构为什么在变，往哪走
-- [现代架构的五问](chapters/22d-modern-transformers.tex) → [如何评价新技术](chapters/23e-tech-judgement.tex)
+### VI：Attention 与 FFN 的记忆视角（第 28–31 章）
+[外积](chapters/04-key-value-outer-product.tex)、
+[串扰](chapters/05-memory-interference.tex)、
+[减少干扰](chapters/06-better-linear-memory.tex)、
+[矩阵读出](chapters/08-stacking-key-value.tex)、
+[非线性与 MLP](chapters/09-nonlinearity-and-memory.tex)、
+[高维容量](chapters/13-capacity.tex)。
+本部分统一使用行向量；[memory_demo.py](../scripts/memory_demo.py) 验证二维结果。
 
-## VIII–IX：两个独立选读专题
+### VII–VIII：助手与架构判断（第 32–37 章）
+VII：[ICL](chapters/23aa-pretraining-icl.tex)、
+[后训练](chapters/23c-post-training.tex)、
+[Agent/RAG](chapters/23d-agent-systems.tex)、
+[部署](chapters/23b-deployment-and-ecosystem.tex)。
 
-- VIII · [CNN 局部卷积](chapters/19-cnn.tex) → [独立 ViT Patch 手算](chapters/19b-vit.tex)
-- IX · [外积写入与干扰](chapters/04-key-value-outer-product.tex)、[改善与矩阵读出](chapters/06-better-linear-memory.tex)、[非线性与 Attention 视角](chapters/09-nonlinearity-and-memory.tex)、[高维容量](chapters/13-capacity.tex)。四个显示章节保留原有七个源码的推导和练习，并在开篇说明列向量约定
+VIII：[现代 Transformer](chapters/22d-modern-transformers.tex)、
+[新技术判断](chapters/23e-tech-judgement.tex)、
+[技术底座回顾](chapters/23f-foundation-recap.tex)。
 
-**附录 A：**三维 Transformer 主算例的完整初始权重与逐层中间矩阵在 [数值核对表](chapters/00f-transformer-intermediates.tex)，正文只保留 A、H 与词表概率三组关键矩阵。
+### IX：视觉选读（第 38–39 章）
+[CNN](chapters/19-cnn.tex) → [ViT](chapters/19b-vit.tex)。
 
-**P2 交互：**[Softmax 温度、因果 Attention、学习率三项可调实验](../notebooks/p2-interactive-intuitions.ipynb)（[在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/p2-interactive-intuitions.ipynb)）；只需 NumPy、Matplotlib、ipywidgets，不下载模型。
+## 附录 A–G
 
-**动手：** [三维 Transformer 的 PyTorch/NumPy 复现 Notebook](../notebooks/pytorch_starter.ipynb)（可 [在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/pytorch_starter.ipynb)）。
+A · [公式和数学](chapters/00e-core-formulas.tex)；
+B · [三维数值与实验](chapters/00f-transformer-intermediates.tex)；
+C · [综合练习](chapters/25-integrated-practice.tex)；
+D · [集中答案](chapters/27-answer-key.tex)；
+E · [术语](chapters/24-lexicon.tex)；
+F · [参考文献](chapters/26-sources.tex)；
+G · [版本与复现](chapters/29-revision-notes.tex)。
 
-## 附录 A–E：公式、练习、术语与答案
-
-- A · [核心公式卡](chapters/00e-core-formulas.tex)、[数学速查](chapters/00b-math-tools.tex)与[符号形状](chapters/00c-symbols.tex)
-- B · [数学与神经网络迁移题](chapters/25-integrated-practice.tex)、[现代模型与 Agent 迁移题](chapters/25b-modern-practice.tex)、[联想记忆练习](chapters/15-practice.tex)
-- C · [100 个基础术语](chapters/24-lexicon.tex)、[现代术语](chapters/24b-modern-lexicon.tex)、[关系图](chapters/24c-concept-map.tex)与[英中索引](chapters/24d-english-index.tex)
-- D · [集中参考答案](chapters/27-answer-key.tex)及[分章随堂解答](chapters/28-chapter-checks.tex)
-- E · [引用与延伸阅读](chapters/26-sources.tex)
+这份目录属于正在修订的 \`main\`，不是正式发布版本清单。
 
 ## 一次构建，一本 Tagged PDF
 

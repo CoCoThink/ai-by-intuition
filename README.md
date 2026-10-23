@@ -8,11 +8,22 @@
 
 [**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [新版发布流程](docs/PUBLISHING.md) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
 
-## 新版教材候选（尚未发布）
+## 主分支修订候选（尚未发布）
 
-**已发布的 v0.1.0** 仍为五个必读部分加两组选读，原版资产保持不变。**`main` 的新版候选**已完成七个必读部分、32 个显示章节、两组选读及 A–E 附录；P2 已补充原论文对照、技术生态、阅读导引与交互实验。**此前候选源码 `2cad92cd` 的 [全量 CI](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928) 曾成功，生成 126 页 Tagged PDF、1,836/1,836 个 MathML-AF 公式关联，veraPDF PDF/UA-2 为 compliant、零失败；这些统计只对应当时的提交。** **尚待作者最终签核及手动发布**，不能把构建成功理解为已经正式发行。
+**v0.1.0 的正式 Release 不变。**
+当前 \`main\` 根据 [REVIEW.md](docs/REVIEW.md) 已建立
+**九部分、39 章、A–G 附录**的新目录：I–VIII 为必读主线，
+IX 为视觉选读。原联想记忆选读已统一行向量并升为第 VI 部分，
+朴素点积 Attention 已独立成章；RAG、Agent、BPE 也有可复算新例。
 
-V2 候选发布仍以 [发布前状态与验收](docs/V2_RELEASE_READINESS.md) 为唯一签核入口；下一轮按 [REVIEW 评审设计](docs/REVIEW.md) 逐批实施的主分支修订另见 [章节迁移与实施记录](docs/CHAPTER_MAPPING.md)。**当前 main 的新增修订需以自身对应的 CI 为准，不得套用历史成功构建的验证结果。** 数值实验的唯一基线是 [三维 Transformer 参考脚本](scripts/teaching_reference.py)，历史改动可从 Git 提交记录查阅。
+本轮修订尚待完整的 PDF/UA-2 CI 及作者最终签核，
+**不要把历史 V2 构建成绩视为当前 39 章的质量证明**。
+具体参见 [修订映射](docs/CHAPTER_MAPPING.md)、
+[实际章节顺序](book/README.md) 与
+[最新 PDF 构建](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)。
+原 V2 候选的历史成功构建
+[39816203928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928)
+仅对应当时提交 \`2cad92cd\`，不是本次修订版的正式发布证据。
 
 ## 开放许可证与转载
 
@@ -26,23 +37,23 @@ V2 候选发布仍以 [发布前状态与验收](docs/V2_RELEASE_READINESS.md) �
 
 ## 为什么这样组织？
 
-| 当前必读部分 | 上一步尚未解决什么 |
+| 部分 | 从上一步留下的问题 |
 |---|---|
-| I · 标量学习 | 规则难以写尽，怎样用样本调整参数？ |
-| II · 向量与矩阵 | 一个数不够，怎样处理多特征与批量计算？ |
-| III · 文字表示 | 文本怎样变成 Token ID 与三维 Embedding？ |
-| IV · 上下文读取 | 单 Token 看不到前文，怎样用 RNN 与 Attention 读取？ |
-| V · Transformer 闭环 | 怎样把 Block、输出头、三位置联合训练与生成连起来？ |
-| VI · 从模型到助手 | 怎样区分预训练、SFT、RAG、工具与 Agent 的边界？ |
-| VII · 现代架构与判断 | 怎样评价 RoPE、MoE、GQA、长上下文和性能宣传？ |
-| VIII · 选读 CNN/ViT | 局部卷积与图像 Patch 各自提供什么？ |
-| IX · 选读联想记忆 | 外积、干扰、非线性与容量如何解释检索？ |
+| I · 学习 | 函数怎样从样本、损失和梯度中学出参数？ |
+| II · 多维计算 | 怎样把许多特征和样本放进矩阵？ |
+| III · 文字 | Token 怎样进入可训练的数字表示？ |
+| IV · 上下文 | 朴素点积有何限制，为什么要引入 Q/K/V？ |
+| V · Transformer | 如何组装 Block、FFN、输出头并共同训练？ |
+| VI · 关联记忆 | 外积、串扰、MLP、线性状态如何连成一条主线？ |
+| VII · 助手与 Agent | 后训练、检索、工具、权限和部署分别解决什么问题？ |
+| VIII · 架构判断 | 怎样权衡长上下文、KV Cache、效率与质量？ |
+| IX · 选读视觉 | CNN、ViT 如何处理图片表示？ |
 
-**I–VII 连续阅读，VIII–IX 各自独立选读**；书末附录 A–E 依次为核心公式与数学、迁移练习、术语索引、集中答案、参考资料。正文与附录由独立的 LaTeX 源文件维护；选读联想记忆专题整合为四个**显示章节**，主线为 32 个显示章节。版本发布前仍需完成候选审查和人工签核。
-
-**阅读与实验：** [阅读路线](book/chapters/00g-reading-routes.tex) · [三项交互式实验 Notebook](notebooks/p2-interactive-intuitions.ipynb)（[在 Colab 打开](https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/p2-interactive-intuitions.ipynb)） · [勘误与版本记录](docs/ERRATA.md)。
-
-新版统一三维算例使用 `[1,3,4]` 预测 `[3,4,2]`，一次完整联合更新使损失由 **1.798430 降为 1.611377**。选读的独立二维小实验不会与其混用；图像专题还附有从 $4\times4$ 图像到 ViT 四个 Patch 的手算。
+附录 A–G 包含数学与形状、复算实验、练习、答案、术语、文献、版本与勘误。
+三维主例仍用 \`[1,3,4]\` 预测 \`[3,4,2]\`；
+一次联合训练的损失为 **1.798430 → 1.611377**。
+[teaching_reference.py](scripts/teaching_reference.py) 是主例数值的唯一基线，
+二维记忆、Agent 与 BPE 均独立标注，不能混用参数。
 
 ## 最新 PDF 与构建状态
 
