@@ -343,6 +343,10 @@ def validate_source() -> None:
         fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
     includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
              "reproducible optional real GPT-2 example (verbatim command)")
+    includes(gpt2_source.read_text(encoding="utf-8"), "masked_future",
+             "real-model causal-mask numeric assertion")
+    includes(gpt2_source.read_text(encoding="utf-8"), "probability sum",
+             "real-model normalized vocabulary probabilities")
 
     # Modern architecture figures use pinned, inspectable offline source excerpts.
     for reproducible in ("config_table.py", "architecture_demo.py"):

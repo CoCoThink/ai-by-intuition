@@ -161,18 +161,20 @@ python3 scripts/gpt2_demo.py --real
 \texttt{--heatmap gpt2-attn.png}；实验使用
 \texttt{eager} 注意力后端以便读出权重。
 
-\textbf{观察四个结果：}
-Tokenizer 把英文 Prompt 变成真实 Token ID；
-logits 的末尾形状是 $1\times50{,}257$；
-温度分别为 $0.7,1.0,1.5$ 时，同一 logits 的概率分布不同；
-热图中因果 Attention 的未来位置应被屏蔽。
-更高温度通常使分布平坦，并不必然使每个 Token 的概率都增大。
+\textbf{观察四项可验证的数字：}
+脚本打印分词后的\textbf{真实 Token 数 $T$}；
+logits 的完整形状应为 $1\times T\times50{,}257$，
+最后一个位置的分数向量宽 $50{,}257$；
+在每个正温度下，全词表 Softmax 的概率和应接近 $\boxed{1}$；
+请求热图后，第一层首个头在对角线上方
+（未来 Key 位置）的权重最大绝对值应接近 $\boxed{0}$。
+脚本会自动检查这些不变量，同时打印 Top-5 候选概率。
 
-实验打印模型 commit、PyTorch 和 Transformers 的实际版本。
-由于包版本、计算设备与运算后端可能不同，
-书中不预填未经执行核实的前五 Token 或概率。
-这份在线权重实验\textbf{不会参与常规 PDF CI 的模型下载}；
-默认离线自检始终可以独立运行。
+固定 Prompt、分词器和权重版本后即可记录实际的 $T$、
+候选 ID、概率总和及掩码上三角最大值。
+未加载公开权重时不把\textbf{教学公式的数值}冒充
+\textbf{真实 GPT-2 推理输出}；
+若权重已经缓存，使用 \texttt{--local-files-only} 可重复本地复算。
 
 
 \subsection{Decoder-only 与 Encoder--Decoder 是同一个概念吗？}

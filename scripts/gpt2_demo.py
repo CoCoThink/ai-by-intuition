@@ -66,11 +66,15 @@ def run_real(prompt: str, heatmap: Path | None, local_files_only: bool) -> None:
     assert last.ndim == 1 and last.shape[0] == VOCAB
     print(f"Model={MODEL}@{REVISION}; torch={torch.__version__}; "
           f"transformers={transformers.__version__}")
+    print("Token count:", ids.shape[1])
     print("Token IDs:", ids[0].tolist())
     print("Tokenizer pieces:", tokenizer.convert_ids_to_tokens(ids[0].tolist()))
     print("Next token logits shape:", tuple(outputs.logits.shape))
     for temperature in (0.7, 1.0, 1.5):
         distribution = torch.softmax(last.float() / temperature, dim=-1)
+        mass = float(distribution.sum())
+        assert abs(mass - 1.0) < 1e-5
+        print(f"T={temperature}: probability sum={mass:.8f}")
         values, indices = torch.topk(distribution, k=5)
         choices = [(int(i), repr(tokenizer.decode([int(i)])),
                     round(float(v), 5))
@@ -89,6 +93,12 @@ def run_real(prompt: str, heatmap: Path | None, local_files_only: bool) -> None:
         weights = attentions[0][0, 0].detach().float().cpu().numpy()
         n = ids.shape[1]
         assert weights.shape == (n, n), weights.shape
+        import numpy as np
+        masked_future = np.triu(weights, k=1)
+        max_future = float(np.max(np.abs(masked_future)))
+        assert max_future < 1e-6, max_future
+        assert np.allclose(weights.sum(axis=-1), 1.0, atol=1e-5)
+        print(f"Causal attention first-head upper triangle max={max_future:.8g}")
         fig, ax = plt.subplots(figsize=(6, 5))
         picture = ax.imshow(weights, vmin=0, vmax=1, cmap="gray_r")
         fig.colorbar(picture, ax=ax, label="Attention weight")
