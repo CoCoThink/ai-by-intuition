@@ -329,6 +329,19 @@ def validate_source() -> None:
             fail(f"Reproducible {script} failed:\n{result.stdout}{result.stderr}")
     print("Independent teaching QA passed: memory, BPE, RAG and Agent loop")
 
+    # Independent answer-key numerics for newly added user-review exercises.
+    exercises_script = ROOT / "scripts" / "review_exercises_demo.py"
+    if not exercises_script.is_file():
+        fail("Missing review-exercises numerical reproducer")
+    ast.parse(exercises_script.read_text(encoding="utf-8"))
+    exercises_result = subprocess.run([sys.executable, str(exercises_script)],
+                                      cwd=ROOT, capture_output=True, text=True)
+    if (exercises_result.returncode
+            or "Review exercises QA passed" not in exercises_result.stdout):
+        fail("Review exercises numeric QA failed:\n"
+             + exercises_result.stdout + exercises_result.stderr)
+
+
     # GPT-2 smoke is standard-library-only; real weights are explicitly opt-in.
     gpt2_source = ROOT / "scripts" / "gpt2_demo.py"
     if not gpt2_source.is_file():
