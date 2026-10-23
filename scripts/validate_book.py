@@ -326,8 +326,8 @@ def validate_source() -> None:
                                  cwd=ROOT, capture_output=True, text=True)
     if gpt2_result.returncode or "Offline smoke passed:" not in gpt2_result.stdout:
         fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
-    includes(sources["23a-from-toy-to-gpt"], "gpt2\\_demo.py",
-             "reproducible optional real GPT-2 example")
+    includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
+             "reproducible optional real GPT-2 example (verbatim command)")
 
     # Modern architecture figures use pinned, inspectable offline source excerpts.
     for reproducible in ("config_table.py", "architecture_demo.py"):
