@@ -436,11 +436,11 @@ def validate_source() -> None:
              "source vs decoder-only architecture component mapping")
 
     three_tier_first_ten = ["00d-rules-gap","00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
-    for chapter in three_tier_first_ten:
-        includes(sources[chapter], "读完自测：回忆／手算／迁移",
-                 f"three-level self-check in {chapter}")
+    for lesson_name in three_tier_first_ten:
+        includes(sources[lesson_name], "读完自测：回忆／手算／迁移",
+                 f"three-level self-check in {lesson_name}")
         for kind in ("回忆：", "手算：", "迁移："):
-            includes(sources[chapter], kind, f"{chapter} {kind}")
+            includes(sources[lesson_name], kind, f"{lesson_name} {kind}")
     from math import isclose
     assert isclose(2*3 + 1, 7)
     assert isclose(2*3 - 1, 5)
