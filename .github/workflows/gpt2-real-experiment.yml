@@ -1,0 +1,52 @@
+name: Real GPT-2 reproducibility experiment
+
+# Optional heavy-weight run; independent of the required Tagged PDF workflow.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/gpt2-real-experiment.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  real-gpt2:
+    name: Pinned GPT-2 inference and attention report
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      OMP_NUM_THREADS: "2"
+    steps:
+      - name: Check out source at invoking SHA
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Create isolated Python environment
+        run: |
+          python3 -m venv .venv-gpt2
+          .venv-gpt2/bin/python -m pip install --upgrade pip
+      - name: Install fixed top-level dependency versions
+        run: |
+          .venv-gpt2/bin/python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.5.1"
+          .venv-gpt2/bin/python -m pip install "numpy==1.26.4" "transformers==4.46.3" "matplotlib==3.9.2"
+      - name: Run pinned real-model experiment
+        run: |
+          mkdir -p artifacts
+          echo "source_commit=$GITHUB_SHA" | tee artifacts/revision.txt
+          .venv-gpt2/bin/python -m pip freeze > artifacts/python-packages.txt
+          .venv-gpt2/bin/python scripts/gpt2_demo.py --real --heatmap artifacts/gpt2-attention.png > artifacts/gpt2-console.txt
+          cat artifacts/gpt2-console.txt
+          test -s artifacts/gpt2-attention.png
+          grep -q "Causal attention first-head upper triangle max=" artifacts/gpt2-console.txt
+          grep -q "Next token logits shape:" artifacts/gpt2-console.txt
+          grep -q "probability sum=" artifacts/gpt2-console.txt
+      - name: Preserve numbers, versions and heatmap
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gpt2-real-repro-report
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
