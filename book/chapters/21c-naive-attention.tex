@@ -1,5 +1,6 @@
 \section{最朴素的注意力：直接用词向量做点积}
 \label{intro:21c-naive-attention}
+\modelpipelinefocus{3}{朴素点积注意力}
 \chaptercompass{不增加 Q/K/V 参数，能否先做一次按需读取？}{用原始词向量点积匹配，再用 Softmax 加权求和。}{$X:3\times2\to XX^\top:3\times3\to Y:3\times2$}{本章无新可训练投影参数}
 
 顺序传递状态会把早先信息压进连续更新的向量。
