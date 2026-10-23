@@ -83,11 +83,8 @@ REQUIRED = [
     "15-practice",
     "27-answer-key",
     "28-chapter-checks",
-    "24-lexicon",
-    "24b-modern-lexicon",
     "24c-concept-map",
     "24e-bilingual-glossary",
-    "24d-english-index",
     "26-sources",
     "29-revision-notes",
 ]
@@ -206,7 +203,9 @@ def validate_source() -> None:
     inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
-    sources = {name: chapter(name) for name in REQUIRED}
+    sources = {name: chapter(name) for name in REQUIRED + [
+        "24-lexicon", "24b-modern-lexicon", "24d-english-index",
+    ]}  # data-only canonical glossary sources; never typeset
     includes(main, r"\appendix", "main")
     # The manual release gate must consume exactly the PDF artifact built here.
     production = (ROOT / ".github/workflows/build-latex.yml").read_text(encoding="utf8")
@@ -355,7 +354,7 @@ def validate_source() -> None:
                                  cwd=ROOT, capture_output=True, text=True)
     if gpt2_result.returncode or "Offline smoke passed:" not in gpt2_result.stdout:
         fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
-    includes(sources["23a-from-toy-to-gpt"], "39897932969",
+    includes(sources["29-revision-notes"], "39897932969",
              "successful source-pinned real GPT-2 inference reference")
     includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
              "reproducible optional real GPT-2 example (verbatim command)")
@@ -466,6 +465,14 @@ def validate_source() -> None:
         fail("Grayscale PDF audit self-test failed:\n"
              + audit_test.stdout + audit_test.stderr)
 
+
+    # Batch attention must use the preceding asymmetric Q/K fixture.
+    includes(sources["11-softmax-memory"], "eq:three-query-attention-weights",
+             "projected three-query Softmax example")
+    includes(sources["11-softmax-memory"], "eq:three-query-attention-output",
+             "projected three-query AV example")
+    includes(sources["11-softmax-memory"], "0.578&0.845",
+             "projected second-row attention output")
 
     # Catch a numerical transition that became stale after changing chapter 19.
     includes(sources["11-softmax-memory"], r"\hyperref[intro:21c-naive-attention]",
@@ -781,8 +788,11 @@ def validate_source() -> None:
              + table_check.stdout + table_check.stderr)
     includes(sources["24e-bilingual-glossary"], r"\label{app:bilingual-glossary}",
              "unified bilingual table anchor")
-    includes(sources["24-lexicon"], "英文 A--Z 列表只提供",
-             "single-source glossary explanation")
+    includes(sources["24e-bilingual-glossary"], r"\\pageref*{",
+             "page-linked single typeset glossary")
+    for unused in ("24-lexicon", "24b-modern-lexicon", "24d-english-index"):
+        if rf"\\input{{chapters/{unused}}}" in main:
+            fail(f"Canonical glossary source must not be typeset: {unused}")
     for core in ("22-transformer-architecture", "23a-from-toy-to-gpt",
                  "04-key-value-outer-product", "23d-agent-systems",
                  "22d-modern-transformers", "19b-vit",
