@@ -587,8 +587,9 @@ def validate_source() -> None:
     for lesson_name in three_tier_first_ten:
         check_owner = ("18c-training-engineering" if lesson_name == "16-loss-gradient"
                        else lesson_name)
-        includes(sources[check_owner], r"\chaptercheck{",
-                 f"three-level self-check in {lesson_name}")
+        if not any(token in sources[check_owner] for token in
+                   (r"\chaptercheck{", r"\chapterchecktasks{")):
+            fail(f"Missing self-check in {lesson_name}")
     from math import isclose
     assert isclose(2*3 + 1, 7)
     assert isclose(2*3 - 1, 5)
@@ -604,10 +605,11 @@ def validate_source() -> None:
 
     three_tier_transformer = ["00-guide","16-loss-analytic","10b-ffn-output-head","22b-token-to-output","22c-language-training","23-llm-systems","23a-from-toy-to-gpt","23aa-pretraining-icl","23c-post-training","23b-deployment-and-ecosystem","22d-modern-transformers","23e-tech-judgement"]
     for lesson_name in three_tier_transformer:
-        includes(sources["23b-deployment-and-ecosystem" if lesson_name == "23b-deployment-and-ecosystem" else
-                 "16-loss-gradient" if lesson_name == "16-loss-analytic" else lesson_name],
-                 r"\chaptercheck{",
-                 f"transformer/application three-level check: {lesson_name}")
+        owner = ("16-loss-gradient" if lesson_name == "16-loss-analytic"
+                 else lesson_name)
+        if not any(token in sources[owner] for token in
+                   (r"\chaptercheck{", r"\chapterchecktasks{")):
+            fail(f"Missing transformer/application self-check in {lesson_name}")
     assert math.isclose((0.3 - 1.0)/3, -0.2333333333333333)
     assert math.isclose(math.log(4), 1.3862943611198906)
 
@@ -947,7 +949,7 @@ def validate_source() -> None:
     known_targets = set(re.findall(r"\\label\{([^}]+)\}", combined_source))
     known_targets.update("check:" + check_id
                          for body in sources.values()
-                         for check_id in re.findall(r"\\chaptercheck\{([^}]+)\}", body))
+                         for check_id in re.findall(r"\\chaptercheck(?:tasks)?\{([^}]+)\}", body))
     ref_targets = set(re.findall(
         r"\\(?:ref\*?|pageref\*?)\{([^}]+)\}", combined_source))
     ref_targets.update(re.findall(r"\\hyperref\[([^]]+)\]", combined_source))
@@ -974,12 +976,17 @@ def validate_source() -> None:
         fail(f"Expected 43 linked chapter checks, got {len(check_ids)}")
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
-        call = r"\chaptercheck{" + lesson_id + "}{"
-        if call not in src:
-            fail(f"Broken four-argument chapter check: {lesson_id}")
-        # Three substantive task arguments follow the stable slug; old inline labels are gone.
-        if src.count(r"\chaptercheck{" + lesson_id + "}") != 1:
-            fail(f"Repeated check invocation: {lesson_id}")
+        variants = [r"\chaptercheck{" + lesson_id + "}",
+                    r"\chapterchecktasks{" + lesson_id + "}"]
+        if sum(src.count(variant) for variant in variants) != 1:
+            fail(f"Missing/repeated self-check invocation: {lesson_id}")
+        if variants[1] in src:
+            fragment = src.split(variants[1], 1)[1].split(
+                r"\chapterrecallanswer{", 1)[0]
+            if fragment.count(r"\item ") < 4:
+                fail(f"Varied self-check must include four or more tasks: {lesson_id}")
+            if r"\chapterrecallanswer{" not in src:
+                fail(f"Chapter-end recall answer missing: {lesson_id}")
 
     for name in REQUIRED:
         for destination in re.findall(r"\\hyperref\[((?:check|answer):[^]]+)\]", sources[name]):
