@@ -186,7 +186,7 @@ def test_numeric_examples() -> None:
         return tuple(sum(row[i] * matrix[i][j] for i in range(len(row)))
                      for j in range(len(matrix[0])))
     assert mul_row((1.0, 0.0), simple) == (1.0, 0.6)
-    assert all(math.isclose(a, b) for a, b in
+    assert all(math.isclose(a, b, abs_tol=1e-12) for a, b in
                zip(mul_row((0.6, 0.8), better), (0.0, 1.0)))
     assert all(math.isclose(a, b) for a, b in
                zip(mul_row((1.0, -0.2), ((2.0, 1.0), (0.0, 3.0))), (2.0, 0.4)))
