@@ -314,6 +314,21 @@ def validate_source() -> None:
             fail(f"Reproducible {script} failed:\n{result.stdout}{result.stderr}")
     print("Independent teaching QA passed: memory, BPE, RAG and Agent loop")
 
+    # GPT-2 smoke is standard-library-only; real weights are explicitly opt-in.
+    gpt2_source = ROOT / "scripts" / "gpt2_demo.py"
+    if not gpt2_source.is_file():
+        fail("Missing pinned GPT-2 experiment")
+    ast.parse(gpt2_source.read_text(encoding="utf-8"))
+    includes(gpt2_source.read_text(encoding="utf-8"),
+             "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+             "pinned public GPT-2 revision")
+    gpt2_result = subprocess.run([sys.executable, str(gpt2_source)],
+                                 cwd=ROOT, capture_output=True, text=True)
+    if gpt2_result.returncode or "Offline smoke passed:" not in gpt2_result.stdout:
+        fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
+    includes(sources["23a-from-toy-to-gpt"], "gpt2\\_demo.py",
+             "reproducible optional real GPT-2 example")
+
     # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")

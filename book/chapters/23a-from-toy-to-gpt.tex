@@ -106,6 +106,46 @@ GPT-2 small 的词表规模为 $50{,}257$，
 因此不能把玩具参数总数按 GPT-2 的共享权重规则直接缩放。
 真实模型的参数总量还与位置 Embedding、归一化、偏置等设计有关。
 
+\subsection{［复算］真实 GPT-2：分词、概率、温度与注意力}
+
+\localfixture{公开 GPT-2 small 预训练权重；非本书三维参数}
+这一节提供一个\textbf{独立运行的真实模型实验}：
+\href{https://huggingface.co/openai-community/gpt2}{openai-community/gpt2}，
+固定修订
+\texttt{607a30d783dfa663caf39e06633721c8d4cfcd7e}。
+它是历史上以英文为主进行预训练的模型；
+不能期待它在中文任务上表现得像现代指令助手。
+
+先在仓库根目录运行无需联网或额外依赖的数学自检：
+\begin{verbatim}
+python3 scripts/gpt2_demo.py
+\end{verbatim}
+真实推理需要先自行安装兼容的 \texttt{torch}、
+\texttt{transformers}，绘制热图还需 \texttt{matplotlib}；
+模型文件首次运行时需下载。显式启用：
+\begin{verbatim}
+python3 scripts/gpt2_demo.py --real
+\end{verbatim}
+若权重与分词器已缓存，可加
+\texttt{--local-files-only} 防止网络访问。
+保存第一层第零个注意力头热图时，可额外指定
+\texttt{--heatmap gpt2-attn.png}；实验使用
+\texttt{eager} 注意力后端以便读出权重。
+
+\textbf{观察四个结果：}
+Tokenizer 把英文 Prompt 变成真实 Token ID；
+logits 的末尾形状是 $1\times50{,}257$；
+温度分别为 $0.7,1.0,1.5$ 时，同一 logits 的概率分布不同；
+热图中因果 Attention 的未来位置应被屏蔽。
+更高温度通常使分布平坦，并不必然使每个 Token 的概率都增大。
+
+实验打印模型 commit、PyTorch 和 Transformers 的实际版本。
+由于包版本、计算设备与运算后端可能不同，
+书中不预填未经执行核实的前五 Token 或概率。
+这份在线权重实验\textbf{不会参与常规 PDF CI 的模型下载}；
+默认离线自检始终可以独立运行。
+
+
 \subsection{Decoder-only 与 Encoder--Decoder 是同一个概念吗？}
 
 经典 Transformer 原论文的翻译架构有编码器和解码器，

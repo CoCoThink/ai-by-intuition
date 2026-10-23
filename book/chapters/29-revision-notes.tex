@@ -17,6 +17,18 @@
 还需通过目录、数值、图形语义、MathML-AF 与 PDF/UA-2 机器校验。
 \end{enumerate}
 
+\textbf{真实 GPT-2 的独立复现：}
+\texttt{python3 scripts/gpt2\_demo.py} 默认不加载权重；
+添加 \texttt{--real} 时才使用公开 GPT-2 small，
+revision 固定为
+\texttt{607a30d783dfa663caf39e06633721c8d4cfcd7e}。
+模型与分词器的公开来源是
+\href{https://huggingface.co/openai-community/gpt2}{Hugging Face 的原模型仓库}。
+脚本输出实际运行时的 Torch、Transformers 版本；
+\texttt{--heatmap} 需要 Matplotlib。
+本地实际输出没有经过本书 CI 的神经网络推理验收，
+因此模型概率和热图的变化应由读者在该环境中核对。
+
 \textbf{勘误与证据入口：}
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{在线勘误记录}、
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{复现说明}、
