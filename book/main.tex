@@ -179,6 +179,7 @@
 {\footnotesize\color{muted}答案见
 \hyperref[app:chapter-checks]{附录~\ref*{app:chapter-checks}（随堂自测解答），第~\pageref*{answer:#1}~页}。}
 \end{tcolorbox}\par\smallskip
+\chapterrecallanswer{\csname chapterrecall@#1\endcsname}
 }
 % Varied chapter self-checks: tasks are explicit, not three predetermined types.
 % Keep the same check:<slug> / answer:<slug> anchors as the legacy form.
@@ -200,6 +201,46 @@
 \newcommand{\chapterrecallanswer}[1]{%
 \par\noindent{\sffamily\footnotesize\color{muted}\textbf{章末先核对：}#1}\par\smallskip
 }
+% Verified short answers extracted from Appendix D.2 for chapter-end feedback.
+\expandafter\def\csname chapterrecall@00-guide\endcsname{映射成下一 Token 的概率分布}
+\expandafter\def\csname chapterrecall@00-functions\endcsname{$w,b$ 是参数，$x$ 是输入}
+\expandafter\def\csname chapterrecall@16-loss-analytic\endcsname{任何实数的平方都非负}
+\expandafter\def\csname chapterrecall@07-functions-relu\endcsname{两次仿射复合仍可化为一次仿射变换}
+\expandafter\def\csname chapterrecall@17-backpropagation\endcsname{链式法则可共享相同中间节点的上游梯度}
+\expandafter\def\csname chapterrecall@18b-end-to-end-learning\endcsname{前向、损失、反传求梯度、统一更新}
+\expandafter\def\csname chapterrecall@18-generalization\endcsname{可能过拟合，先检查数据切分与泄漏}
+\expandafter\def\csname chapterrecall@01-vectors\endcsname{有两个有序分量}
+\expandafter\def\csname chapterrecall@02-dot-product\endcsname{对应分量相乘后求和}
+\expandafter\def\csname chapterrecall@03-matrix-multiplication\endcsname{左矩阵列数等于右矩阵行数}
+\expandafter\def\csname chapterrecall@10-mlp\endcsname{激活引入非线性变换}
+\expandafter\def\csname chapterrecall@20a-tokenizer\endcsname{ID 只是离散编号，不表明语义大小}
+\expandafter\def\csname chapterrecall@20c-classification-loss\endcsname{logits 未归一化，不要求非负或总和为一}
+\expandafter\def\csname chapterrecall@20-embeddings\endcsname{每行对应词表中一个 Token ID}
+\expandafter\def\csname chapterrecall@20b-task-contract\endcsname{每个位置预测它之后的 Token}
+\expandafter\def\csname chapterrecall@21a-context-gap\endcsname{缺少此前位置的信息}
+\expandafter\def\csname chapterrecall@21-rnn\endcsname{状态按序列位置向后递推}
+\expandafter\def\csname chapterrecall@21c-naive-attention\endcsname{点积交换顺序不改变结果}
+\expandafter\def\csname chapterrecall@21b-why-attention\endcsname{Query/Key 产生匹配分数，Value 供加权读取}
+\expandafter\def\csname chapterrecall@11-softmax-memory\endcsname{用 $QK^\top$ 得到完整分数矩阵}
+\expandafter\def\csname chapterrecall@22a-position-multihead\endcsname{不同投影可学习不同的匹配与读取表示}
+\expandafter\def\csname chapterrecall@22-transformer-architecture\endcsname{同形状向量才能逐位置直接残差相加，否则需要投影对齐}
+\expandafter\def\csname chapterrecall@10b-ffn-output-head\endcsname{FFN 改写隐藏特征，输出头产生词表 logits}
+\expandafter\def\csname chapterrecall@22c-language-training\endcsname{平均三项损失令每项梯度带 $1/3$}
+\expandafter\def\csname chapterrecall@23a-from-toy-to-gpt\endcsname{玩具损失下降只验证一次已给定数据上的更新}
+\expandafter\def\csname chapterrecall@04-key-value-outer-product\endcsname{$S=k^\top v$，查询为 $kS=(kk^\top)v$}
+\expandafter\def\csname chapterrecall@05-memory-interference\endcsname{查询与其他 Key 的非零点积会带入别的 Value}
+\expandafter\def\csname chapterrecall@06-better-linear-memory\endcsname{残差是目标 Value 减去旧状态的查询结果}
+\expandafter\def\csname chapterrecall@08-stacking-key-value\endcsname{$xK^\top$ 给出各 Key 的匹配分数}
+\expandafter\def\csname chapterrecall@09-nonlinearity-and-memory\endcsname{大于一的幂可压低 $0$ 到 $1$ 之间的弱匹配}
+\expandafter\def\csname chapterrecall@14-summary\endcsname{都以 Query/Key 匹配、用权重组合 Value}
+\expandafter\def\csname chapterrecall@13-capacity\endcsname{其他 Key 的点积通常较小，交叉项的影响可能降低}
+\expandafter\def\csname chapterrecall@23aa-pretraining-icl\endcsname{ICL 只改变当前上下文；实际执行 SFT 才更新参数}
+\expandafter\def\csname chapterrecall@23c-post-training\endcsname{SFT 用目标示范回答，偏好学习用回答间偏好或奖励}
+\expandafter\def\csname chapterrecall@23b-deployment-and-ecosystem\endcsname{权重与随上下文增长的 KV Cache 不同}
+\expandafter\def\csname chapterrecall@22d-modern-transformers\endcsname{多个 Query 头共享较少的 K/V 头}
+\expandafter\def\csname chapterrecall@23e-tech-judgement\endcsname{单一资源指标不代表模型质量}
+\expandafter\def\csname chapterrecall@19-cnn\endcsname{同一卷积核在多个空间位置共享参数}
+\expandafter\def\csname chapterrecall@19b-vit\endcsname{将局部图像块变成一串向量供 Transformer 处理}
 \newcommand{\answerresult}[1]{\boldsymbol{#1}}
 % Plain core formulas: reserve visible boxing for Appendix A's mathematical quick reference.
 \let\bookboxed\boxed
