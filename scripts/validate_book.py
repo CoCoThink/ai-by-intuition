@@ -465,6 +465,13 @@ def validate_source() -> None:
     assert math.isclose((0.3 - 1.0)/3, -0.2333333333333333)
     assert math.isclose(math.log(4), 1.3862943611198906)
 
+    three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity","00b-math-tools","00c-symbols"]
+    for lesson_name in three_tier_memory_and_appendix:
+        includes(sources[lesson_name], "读完自测：回忆／手算／迁移",
+                 f"memory/vision/math glossary three-tier check: {lesson_name}")
+    assert (1 * 0 + 0 * 1) == 0
+    assert (3 * 3 * 3 * 8) == 216
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (

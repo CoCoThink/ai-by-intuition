@@ -88,7 +88,12 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 后面现代架构部分会据此理解 Gated DeltaNet 为什么强调“纠正旧状态”。
 \end{idea}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:06-better-linear-memory}
-若要减少 Key 的串扰，除了增加非线性，还可以怎样改进存储矩阵？
+\textbf{回忆：}Delta 写入先计算哪一种残差？
+\textbf{手算：}本章先写 A 再写 B 后，
+$S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$，
+用 $k_A=(1,0)$ 读出的 Value 是什么？
+\textbf{迁移：}这一次写入 B 后能否据此宣称 A 的记忆改善？
+怎样才能进一步减小误差？
 \quad{\footnotesize\hyperref[answer:06-better-linear-memory]{核对解答。}}\par\medskip

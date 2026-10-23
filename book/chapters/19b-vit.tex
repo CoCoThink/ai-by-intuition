@@ -175,10 +175,13 @@ Patch 是\textbf{像素块线性投影}，文字 Embedding 是
 却不表示视觉与语言模型具有相同的训练目标。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:19b-vit}
-本章的四个 Patch 投影后是什么形状？
-如果添加一个 CLS Token，Attention 分数矩阵是什么形状？
+\textbf{回忆：}ViT 为什么把图像划成 Patch？
+\textbf{手算：}四个 Patch 各投影成三维，
+再加一个 CLS Token，Attention 分数矩阵多大？
+\textbf{迁移：}图像大小固定而 Patch 变得更小，
+Token 数和全局 Attention 配对数一般怎样变化？
 \quad{\footnotesize\hyperref[answer:19b-vit]{核对解答。}}\par\medskip
 
 \begin{conclusion}

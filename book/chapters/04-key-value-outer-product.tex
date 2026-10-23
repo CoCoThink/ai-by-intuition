@@ -44,7 +44,11 @@ $K:M\times d_k$、$V:M\times d_v$，
 形式直接对齐主线 Attention 的“权重乘 Value”。
 \end{idea}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:04-key-value-outer-product}
-若单位行向量 Key 为 $k$、Value 为 $v$，$S=k^\top v$，查询 $k$ 得到什么？
+\textbf{回忆：}行向量 Key 和 Value 怎样写入外积状态？
+\textbf{手算：}$k=(1,0)$、$v=(0,1)$，
+$S=k^\top v$ 是哪个 $2\times2$ 矩阵？
+\textbf{迁移：}如果把单位 Key 缩成 $k'=(0.5,0)$，
+写入后再用 $k'$ 读取，能完全恢复 $v$ 吗？
 \quad{\footnotesize\hyperref[answer:04-key-value-outer-product]{核对解答。}}\par\medskip

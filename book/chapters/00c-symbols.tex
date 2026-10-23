@@ -32,5 +32,12 @@ $QK^\top$ 是匹配分数，$\softmax(QK^\top)V$ 才是读取结果。
 矩阵乘法顺序不能任意交换。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:00c-symbols}若 $Q:T\times d_k$、$K:N\times d_k$，$QK^\top$ 的形状是什么？\quad{\footnotesize\hyperref[answer:00c-symbols]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:00c-symbols}
+\textbf{回忆：}本书一条 Token 的特征默认占矩阵一行还是一列？
+\textbf{手算：}$Q:3\times2,K:5\times2$，
+$QK^\top$ 的形状是什么？
+\textbf{迁移：}如果忘记转置，直接计算 $QK$，
+维度会在哪里不匹配？
+\quad{\footnotesize\hyperref[answer:00c-symbols]{核对解答。}}\par\medskip
 
