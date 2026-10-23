@@ -5,12 +5,10 @@
 \begin{idea}
 \noindent\emph{从“所有词都能互相查看”到完整网络}\par
 
-上一章已经知道：每个 Token 可以产生自己的 Query、Key、Value，
-并用矩阵一次读取上下文。
-但只会 Attention 还不能直接变成一个会生成文字的模型：
-我们还需要表示词的位置、处理读取后的特征、稳定地堆叠许多层，
-最后把隐藏向量转成对下一 Token 的预测分数。
-位置编码和多头 Attention 已经有了，现在把它们组装成一条完整的数据流。
+Attention 能让 Token 从上下文读取信息，
+但\textbf{一个 Attention 公式还不是完整的语言模型}。
+把位置信息、多头读取、逐位置 FFN、归一化和残差接起来，
+再经过词表输出头，才得到可以逐位置预测 Token 的网络。
 \end{idea}
 
 \subsection{先核对 Q/K/V 的形状}

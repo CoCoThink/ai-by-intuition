@@ -413,6 +413,18 @@ def validate_source() -> None:
     if "上一章算出了" in sources["11-softmax-memory"]:
         fail("Chapter 20 attributes a naive-attention score to the asymmetric chapter 19")
 
+    # The end-of-chapter summary owns the forward bridge. Avoid redundant
+    # "last chapter" recaps at the start of these independently framed sections.
+    streamlined_intros = (
+        "07-functions-relu", "17-backpropagation", "20a-tokenizer",
+        "20c-classification-loss", "21a-context-gap", "21c-naive-attention",
+        "22-transformer-architecture", "23c-post-training",
+        "22d-modern-transformers",
+    )
+    for name in streamlined_intros:
+        if "上一章" in "\n".join(sources[name].splitlines()[:15]):
+            fail(f"Redundant prior-chapter recap reintroduced in {name}")
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (

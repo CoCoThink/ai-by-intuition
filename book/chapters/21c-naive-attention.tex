@@ -2,9 +2,9 @@
 \label{intro:21c-naive-attention}
 \chaptercompass{不增加 Q/K/V 参数，能否先做一次按需读取？}{用原始词向量点积匹配，再用 Softmax 加权求和。}{$X:3\times2\to XX^\top:3\times3\to Y:3\times2$}{本章无新可训练投影参数}
 
-上一章的 RNN 通过状态逐步携带信息。
-我们先尝试让当前词直接与此前可见词进行比较，
-考察这个最小方案的好处与限制，再引入 Query、Key、Value。
+顺序传递状态会把早先信息压进连续更新的向量。
+现在换一个思路：直接将当前词与可见位置逐个比较，
+先检验\textbf{不增加投影参数}的简单读取能做到什么。
 
 \subsection{三个二维输入，零参数读取}
 

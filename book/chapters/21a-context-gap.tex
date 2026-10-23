@@ -1,9 +1,9 @@
 \section{逐个处理 Token，为什么仍看不到前文？}
 \label{intro:21a-context-gap}
 
-上一部分我们把文字转成 ID，再查到三维行向量，
-已经能让一个 MLP 对\textbf{每个 Token} 独立计算。
-但如果下一 Token 的正确答案需要结合前文，一个只看当前 Token 的函数够用吗？
+独立处理每个 Token 的 MLP，只接收当前位置的向量。
+如果下一 Token 的正确预测还取决于\textbf{前面说过什么}，
+一个只看当前位置的函数能区分这些不同上下文吗？
 
 \subsection{同一个当前词，两段不同的前文}
 

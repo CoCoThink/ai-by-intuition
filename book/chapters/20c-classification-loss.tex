@@ -1,10 +1,10 @@
 \section{分类损失：预测错了哪一类，怎样调整分数？}
 \label{intro:20c-classification-loss}
 
-上一章把“春天／花／开了／。”变成 Token ID。
-如果任务是预测下一个 Token，模型最终需要为词表中的\textbf{每一个候选类别}打分。
-前面回归问题使用均方误差（MSE）；现在先学习与离散类别相适应的损失，
-再去构造产生分数的 Embedding 和网络。
+预测下一 Token 是一个\textbf{多类别预测}问题：
+模型要为词表里的每个候选 ID 打分，才能判断哪个更可能。
+回归问题可以用均方误差（MSE）；这里先算适用于类别概率的交叉熵，
+再研究 Embedding 和网络怎样产生这些分数。
 
 \subsection{先给每一类一个分数：Logits}
 \phantomsection\label{concept:logits}
