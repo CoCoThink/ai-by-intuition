@@ -90,6 +90,9 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 后面现代架构部分会据此理解 Gated DeltaNet 为什么强调“纠正旧状态”。
 \end{idea}
 
+\noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 B3-12}
+交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
+
 \par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:06-better-linear-memory}
 \textbf{回忆：}Delta 写入先计算哪一种残差？

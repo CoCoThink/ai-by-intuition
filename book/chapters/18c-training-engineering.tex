@@ -110,6 +110,11 @@ Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选�
 及独立的权重缩小项。生产训练中的批次、梯度与超参数都需要另外设定。
 \end{boundarybox}
 
+\noindent\emph{对应练习：}
+\hyperref[exercise:warmup-schedule]{B1-17 的三步 Warmup}和
+\hyperref[exercise:adamw-decay]{B1-18 的 AdamW 解耦衰减}，
+请在看答案前分别复算。
+
 \subsubsection{训练不稳定时先诊断什么？}
 
 \textbf{梯度消失}先排查初始化、激活与残差路径；

@@ -76,12 +76,19 @@ $|\mathcal V|=1000$ 且预测恰好均匀，
 保留原有 $n=5,w=2$ 的九个允许位置对测试，
 再为 $n=5,w=3$ 添加一条计算所有矩阵元素之和的断言。
 期望的允许位置对总数是多少？与 $w=2$ 相比增加多少？
+\item \phantomsection\label{exercise:batch-attention-new}\textbf{【标准】} \textbf{【手算】}
+另取三个 Query 对三个 Key 的未缩放分数矩阵
+$S'=\begin{bmatrix}\ln2&0&0\\0&\ln3&0\\0&0&\ln4\end{bmatrix}$，
+Value 仍为
+$V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}$。
+逐行求 $A'=\softmax_{\rm row}(S')$，再求完整的
+$Y'=A'V$；列出三行权重和三行输出，检查形状。
 \end{enumerate}
 
 \noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}。}
 
 \begin{conclusion}
-如果能独立回答这二十题，
+如果能独立回答这二十一题，
 你不仅理解了单个 Transformer 公式，还能区分模型前向计算、
 训练目标、推理成本和 Agent 工具链。
 \end{conclusion}

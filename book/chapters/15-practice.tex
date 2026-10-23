@@ -17,7 +17,13 @@
 \item \textbf{【标准】} 若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。
 \item \textbf{【基础】} 用一句话说明为什么简化模型可以取 $\vect q=\vect x$，而真实 Transformer 中两者往往不同。
 \item \textbf{【标准】} 若 $Q:2\times3$、$K:4\times3$、$V:4\times5$，求 $QK^\top$ 与 $\softmax(QK^\top)V$ 的尺寸；Softmax 沿哪一个方向归一化？
-\end{enumerate}
+\item \phantomsection\label{exercise:delta-reverse}\textbf{【挑战】}
+\textbf{【手算／迁移】} 沿用第 29 章 Delta 规则：
+$k_A=(1,0),v_A=(1,0)$，$k_B=(0.6,0.8),v_B=(0,1)$，
+$S_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
+求两次写入后的 $S_2$、$k_AS_2$、$k_BS_2$ 和 B 的误差范数；
+与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。
+\end{enumerate
 
 \noindent\emph{参考解答统一放在\hyperref[app:answers]{附录答案}，请先独立完成。}
 
