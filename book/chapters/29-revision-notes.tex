@@ -37,6 +37,12 @@ revision 固定为
 复核本书明确声明为假设的 MHA/GQA/MLA 缓存元素数
 与滑动窗口掩码；它们不是实际设备的显存/延迟基准。
 
+\textbf{ViT 视觉前缀的独立复算：}
+\texttt{python3 scripts/vision\_bridge\_demo.py} 不需要下载图像或模型，
+只用手设矩阵验证四条视觉 Token 经过
+$3\times4$ 投影后与两条文字 Token 合并的 $6\times4$ 形状。
+该接口不代表已具备视觉问答能力。
+
 \textbf{勘误与证据入口：}
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{在线勘误记录}、
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{复现说明}、

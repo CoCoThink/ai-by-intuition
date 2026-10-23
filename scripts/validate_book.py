@@ -343,6 +343,19 @@ def validate_source() -> None:
     includes(sources["22d-modern-transformers"], "architecture\\_demo.py",
              "sliding-window and illustrative MLA arithmetic")
 
+    # Visual-to-language adapter arithmetic is a deliberately untrained toy fixture.
+    bridge_script = ROOT / "scripts" / "vision_bridge_demo.py"
+    if not bridge_script.is_file():
+        fail("Missing ViT-to-LLM shape reproducer")
+    ast.parse(bridge_script.read_text(encoding="utf-8"))
+    bridge_result = subprocess.run([sys.executable, str(bridge_script)],
+                                   cwd=ROOT, capture_output=True, text=True)
+    if bridge_result.returncode or "Vision bridge QA passed" not in bridge_result.stdout:
+        fail("Vision bridge regression failed:\n"
+             + bridge_result.stdout + bridge_result.stderr)
+    includes(sources["19b-vit"], r"\label{eq:vit-llm-bridge}",
+             "multimodal adapter teaching example")
+
     # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
