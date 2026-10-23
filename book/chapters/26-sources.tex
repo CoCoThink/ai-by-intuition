@@ -11,7 +11,7 @@
 从基础运算推导 Transformer，以及从模型能力延伸到
 上下文、外部信息、工具与 Agent 的\textbf{逐层分析方法}，
 均参考了这类课程的讲解思路。
-扉页的“三个诀窍”明确借鉴了上述课程中
+前言所述的“三个诀窍”明确借鉴了上述课程中
 “先核对输入输出、用数据学习参数、从简单部件逐步改进”的教学建议；
 这不是本书独立提出的三条原则。
 本书以季度报表的\textbf{授权范围、证据覆盖、计算核验与审计责任}
@@ -22,7 +22,7 @@
 \item \emph{Dive into Deep Learning}，循环神经网络时间展开图：\\
 \url{https://d2l.ai/chapter_recurrent-neural-networks/}
 \item \emph{动手学深度学习}，注意力评分函数与加权汇聚：\\
-\url{https://zh.d2l.ai/chapter_attention-mechanisms/attention-scoring-functions.html}
+\url{https://zh.d2l.ai/}
 \item Olah \& Carter, \emph{Attention and Augmented Recurrent Neural Networks}，
 Distill (2016)：\\
 \url{https://distill.pub/2016/augmented-rnns/}
@@ -68,9 +68,9 @@ Distill (2016)：\\
 \item GPT-2 small 公共模型卡与固定权重 revision：\\
 \url{https://huggingface.co/openai-community/gpt2}
 \item GPT-2 配置文件（固定提交）：\\
-\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 small（固定 revision）}
+GPT-2 small（revision: \texttt{607a30d}）：\url{https://huggingface.co/openai-community/gpt2}
 \item Qwen2.5-0.5B 配置文件（固定提交）：\\
-\href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json}{Qwen2.5-0.5B（固定 revision）}
+Qwen2.5-0.5B（revision: \texttt{060db64}）：\url{https://huggingface.co/Qwen/Qwen2.5-0.5B}
 \item Dosovitskiy et al., \emph{An Image Is Worth 16x16 Words}
 （ViT, 2020）：\\
 \url{https://arxiv.org/abs/2010.11929}
@@ -78,6 +78,16 @@ Distill (2016)：\\
 模型配置是结构字段，不能替代性能评测；
 ViT 与语言模型的 $3\times4$ 投影是书中自设算例，
 不是这些论文公开的特定权重。
+
+\subsubsection*{新旧参考模型的定位（核对至 2026 年 10 月）}
+GPT-2 与 Qwen2.5-0.5B 在本书承担的是\textbf{公开、可锁定配置的结构对照}，
+并非 2026 年最新能力榜单。更新的架构案例包括
+Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
+的官方架构说明（2026）；它们只供选读，不直接替换正文的固定复算基线：
+\begin{itemize}
+\item Qwen3 Technical Report：\url{https://arxiv.org/abs/2505.09388}
+\item DeepSeek-V4.1-Flash 官方发布说明：\url{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}
+\end{itemize}
 
 \subsubsection*{现代架构与后训练的扩展阅读}
 \begin{itemize}
