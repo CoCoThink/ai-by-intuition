@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Interactive figures — You could have invented transformers from memory</title>
+<style>
+.c-recall,.c-membars{--color-text-ink:#2C2D30;--color-text-light:#595A5D;--color-accent:#B3202A;--font-body:Newsreader,Georgia,serif;--space-md:1rem;background:#F5F3EE;color:#2C2D30;padding:1rem;border-radius:6px;font-family:var(--font-body);margin:1.2rem 0}
+.c-recall svg{display:block;width:100%;height:auto}
+.c-recall__pic{fill:#373229;fill-opacity:.8;transition:fill .8s ease}
+.c-recall__pic.is-recalled{fill:var(--color-accent)}
+.c-recall__label{font-family:var(--font-body);font-size:11px;fill:#373229;text-anchor:middle}
+.c-recall__caption{font-size:.85rem;color:var(--color-text-light);margin:.5rem 0 0}
+.c-membars{--ink:#373229;--red:#B3202A}
+.c-membars__slider{display:flex;align-items:center;gap:.6em;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-light);margin:.25rem 0 0}
+.c-membars input[type=range]{flex:1 1 160px;max-width:260px;accent-color:#373229}
+.c-membars__controls{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.5rem}
+.c-membars__modes{border:none;padding:0;margin:0;display:flex;gap:1em;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-ink)}
+.c-membars__modes legend{float:left;margin-right:.5em;color:var(--color-text-light)}
+.c-membars__modes input{accent-color:#373229}
+.c-membars__bars{display:block;width:100%;height:220px;border-bottom:1px solid rgba(55,50,41,.2)}
+.c-membars__legend{display:flex;gap:1.5em;flex-wrap:wrap;font-size:.85rem;color:var(--color-text-light);margin-top:.35rem}
+.c-membars__swatch{display:inline-block;width:.8em;height:.8em;background:var(--red);margin-right:.4em;vertical-align:-.05em}
+.c-membars__meter{display:flex;align-items:center;gap:.8em;flex-wrap:wrap;font-size:.9rem;color:var(--color-text-ink);margin-top:.5rem;font-variant-numeric:tabular-nums}
+.c-membars__meter-track{position:relative;flex:1 1 160px;max-width:320px;height:8px;background:rgba(55,50,41,.08)}
+.c-membars__meter-track::after{content:"";position:absolute;left:50%;right:0;top:0;bottom:0;background:rgba(55,50,41,.1)}
+.c-membars__meter-fill{position:absolute;left:0;top:0;bottom:0;background:#373229;opacity:.7}
+.c-membars__meter-one{position:absolute;left:50%;top:-3px;bottom:-3px;border-left:1px dashed rgba(55,50,41,.6)}
+.c-membars__fail{font-size:.85rem;font-style:italic;color:var(--color-text-light);visibility:hidden}
+.c-membars.is-failing .c-membars__fail{visibility:visible}
+.c-membars__beta-row[hidden]{display:none}
+.c-membars__nojs{font-size:.8rem;color:var(--color-text-light);margin:.5rem 0 0}
+</style>
+<style>body{max-width:760px;margin:2rem auto;padding:0 1rem;font-family:Newsreader,Georgia,serif;background:#fff;color:#2C2D30}h2{font-size:1.1rem;margin-top:2rem}</style></head><body>
+<p>Source: <a href="https://alexwang.ai/posts/associative-memory/">alexwang.ai/posts/associative-memory</a> (figures and scripts © Alex Wang).</p>
+<h2 id="recall">Retrieving a character from memory</h2>
+<figure class="c-recall"><svg id="recall-svg" viewBox="0 0 564 142" role="img" aria-label="Four pictures of the character 記, meaning to remember, each recalled from a different memory store: an outer product, an MLP with a ReLU, a gated MLP, and self-attention. As the number of stored memories grows from 16 to 2048, the outer product&#x27;s picture dissolves into static first, then the ReLU MLP&#x27;s, then the gated MLP&#x27;s turns grainy, while self-attention&#x27;s stays sharp. Each picture is red while its recall works and turns to ink once interference outweighs the signal."></svg><figcaption class="c-recall__caption">Retrieving a character from memory. The recall worsens as the number of memories grows.</figcaption></figure>
+
+<script>
+// The recall figure (layouts/partials/figure-recall.html): four memory stores, each queried with the same stored
+// key, recall the target memory's value, a 28 x 28 picture of 記 drawn in dots. Every other stored memory adds its
+// own random value, scaled by its weight relative to the target's, so interference shows up as static. The number
+// of memories M grows from 16 to 2048 and starts over. A picture is cinnabar while its interference is smaller than
+// its signal and turns to ink once recall fails. Keys are random unit vectors in d = 64 dimensions, as in the post.
+(() => {
+    const N = 28, D = N * N, P = 4;          // picture size in dots, and their pitch in viewBox units
+    const DK = 64, MMIN = 16, MMAX = 2048;   // key dimension, and the range of M
+    const GROW = 9000, HOLD = 2500;          // ms for M to grow from MMIN to MMAX, ms to hold at MMAX
+    const R = 1.75;                          // a fully inked dot's radius
+    // 記 at 28 x 28, ink 0-9, row by row (Songti, rendered once offline)
+    const GLYPH = '0000000000000000000000000000000000000000000000000000000000000163000000000000000000000000004972000000000000100000000000069700000000000394000000000004960322767777789950000001111262299322222225971000001666665667750000000496000000000000000000000000049600000000000000260000000004960000000255555589700000000496000000013333332120462111159600000000000000130059877778970000000133333389605940000596000000005555554450594000034100000000000000000059400000000000000047322288405940000000000000004976669950594000000000000000493000891059400000024000000049400089105940000003500000004930008910594000000460000000494000891059400000067000000049755599105950000018940000004940008920598666668998000000494000761029999999999300000046100010000134444443100000000000000000000000000000000000000000000000000000000000';
+    const g = Float32Array.from(GLYPH, c => +c / 9);
+    const gNorm = Math.hypot(...g);
+    const stores = [
+        { label: 'Outer product', w: s => s },
+        { label: 'MLP (ReLU)', w: s => Math.max(0, s) },
+        { label: 'MLP (Gated)', w: s => Math.max(0, s) ** 2 },  // squared ReLU, a GLU MLP whose gate shares the input weights
+        { label: 'Self-attention', w: s => Math.exp(8 * (s - 1)) },  // e^{beta s} / e^{beta}, beta = sqrt(64); ratios are unchanged
+    ];
+    let seed;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const gauss = () => Math.sqrt(-2 * Math.log(rand() + 1e-12)) * Math.cos(2 * Math.PI * rand());
+    // Similarity of each stored key to the query, the first key; the target memory's similarity is 1
+    seed = 20261015;
+    const unit = () => { const v = Array.from({ length: DK }, gauss), n = Math.hypot(...v); return v.map(x => x / n); };
+    const keys = Array.from({ length: MMAX }, unit);
+    const sims = keys.map(k => k.reduce((a, x, i) => a + x * keys[0][i], 0));
+    [document.getElementById('recall-svg')].forEach(svg => {
+        const W = 564, gap = (W - 4 * N * P) / 5;
+        let out = '';
+        stores.forEach((st, j) => {
+            const x0 = gap + j * (N * P + gap);
+            out += `<g class="c-recall__pic">`;
+            for (let p = 0; p < D; p++) out += `<circle cx="${x0 + (p % N) * P + P / 2}" cy="${(p / N | 0) * P + P / 2 + 4}" r="0"/>`;
+            out += `</g><text class="c-recall__label" x="${x0 + N * P / 2}" y="${N * P + 22}">${st.label}</text>`;
+        });
+        svg.innerHTML = out;
+        const pics = [...svg.querySelectorAll('.c-recall__pic')];
+        const dots = pics.map(p => [...p.children]);
+        // Running interference per store: the sum of each other memory's value times its weight relative to the target's
+        let acc, M;
+        const reset = () => { acc = stores.map(() => new Float32Array(D)); M = 1; seed = 7; };
+        const fill = to => {
+            for (; M < to; M++) {
+                const c = stores.map(st => st.w(sims[M]));
+                for (let p = 0; p < D; p++) {
+                    const v = gauss() * gNorm / Math.sqrt(D);  // a random value with the target's length, one entry at a time
+                    for (let j = 0; j < 4; j++) acc[j][p] += c[j] * v;
+                }
+            }
+        };
+        const draw = () => {
+            stores.forEach((_, j) => {
+                const a = acc[j];
+                for (let p = 0; p < D; p++) dots[j][p].setAttribute('r', (R * Math.min(1, Math.max(0, g[p] + a[p]))).toFixed(2));
+                pics[j].classList.toggle('is-recalled', Math.hypot(...a) < gNorm);
+            });
+        };
+        reset();
+        // Reduced motion: one still picture, at 512 memories
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) { fill(512); return draw(); }
+        // The clock only runs while the figure is on screen
+        let seen = true, t = 0, last = performance.now();
+        new IntersectionObserver(([e]) => { seen = e.isIntersecting; }).observe(svg);
+        const frame = now => {
+            requestAnimationFrame(frame);
+            if (seen) t += now - last;
+            last = now;
+            if (t > GROW + HOLD) { reset(); t = 0; }
+            const to = Math.round(MMIN * (MMAX / MMIN) ** Math.min(1, t / GROW));
+            if (to !== M) { fill(to); draw(); }
+        };
+        fill(MMIN); draw();
+        requestAnimationFrame(frame);
+    });
+})();
+</script>
+<h2 id="bars-1">Memory bars — linear / ReLU / ReLU² / softmax</h2>
+<figure class="c-membars" id="interactive" role="group" aria-label="Interactive figure: the weight each stored memory gets in one recall, and how much of the recalled vector is interference"><div class="c-membars__controls"><fieldset class="c-membars__modes"><legend>score</legend><label><input type="radio" name="membars-0-mode" value="linear" checked> linear</label><label><input type="radio" name="membars-0-mode" value="relu"> ReLU</label><label><input type="radio" name="membars-0-mode" value="relu2"> ReLU²</label><label><input type="radio" name="membars-0-mode" value="softmax"> softmax</label></fieldset><label class="c-membars__slider">stored memories <i>M</i> = <span class="c-membars__m">32</span><input type="range" name="m" min="4" max="11" step="1" value="5"></label><label class="c-membars__slider c-membars__beta-row">sharpness <i>β</i> = <span class="c-membars__beta">8</span><input type="range" name="beta" min="1" max="24" step="1" value="8"></label></div><canvas class="c-membars__bars" aria-hidden="true"></canvas><div class="c-membars__legend"><span><span class="c-membars__swatch"></span>the target memory</span><span>each other stored memory, weight relative to the target memory</span></div><div class="c-membars__meter" aria-live="polite"><span>interference / signal = <span class="c-membars__ratio"></span></span><span class="c-membars__meter-track"><span class="c-membars__meter-fill"></span><span class="c-membars__meter-one" title="interference = signal"></span></span><span class="c-membars__fail">recall fails</span></div><p class="c-membars__nojs" id="interactive-nojs">（若看不到滑块与柱状图：当前预览器屏蔽了脚本，请用浏览器打开同目录的 interactive-figures.html。）</p></figure>
+
+<script>
+// The memory-bars figure (layouts/shortcodes/memory-bars.html): one recall from a memory store of M random unit
+// key-value pairs in d = 64 dimensions, queried with the first stored key. One bar per stored memory shows its
+// weight relative to the target memory's weight (the target is the first bar, in cinnabar); the meter shows the
+// interference-to-signal ratio of the recalled vector. Only weight ratios matter, so softmax's normalization is left out.
+(() => {
+    const D = 64, MMAX = 2048;
+    // Seeded random unit vectors, so every reader sees the same memory
+    let seed = 20261014;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const gauss = () => Math.sqrt(-2 * Math.log(rand() + 1e-12)) * Math.cos(2 * Math.PI * rand());
+    const unit = () => {
+        const v = Array.from({ length: D }, gauss);
+        const n = Math.hypot(...v);
+        return v.map(x => x / n);
+    };
+    const K = Array.from({ length: MMAX }, unit), V = Array.from({ length: MMAX }, unit);
+    const sims = K.map(k => k.reduce((a, x, i) => a + x * K[0][i], 0));  // similarity of each key to the query
+    const score = {
+        linear: s => s,
+        relu: s => Math.max(0, s),
+        relu2: s => Math.max(0, s) ** 2,
+        softmax: (s, beta) => Math.exp(beta * (s - 1)),  // e^{beta s}, divided by e^beta; ratios are unchanged
+    };
+    [document.getElementById('interactive')].forEach(fig => {
+        fig.dataset.ready = '';
+        const canvas = fig.querySelector('canvas'), ctx = canvas.getContext('2d');
+        const mSlider = fig.querySelector('[name=m]'), bSlider = fig.querySelector('[name=beta]');
+        const mOut = fig.querySelector('.c-membars__m'), bOut = fig.querySelector('.c-membars__beta');
+        const bRow = fig.querySelector('.c-membars__beta-row'), ratioOut = fig.querySelector('.c-membars__ratio');
+        const meter = fig.querySelector('.c-membars__meter-fill');
+        const ink = getComputedStyle(fig).getPropertyValue('--ink').trim() || '#373229';
+        const red = getComputedStyle(fig).getPropertyValue('--red').trim() || '#B3202A';
+        const draw = () => {
+            const mode = fig.querySelector('input[type=radio]:checked').value;
+            const M = 2 ** +mSlider.value, beta = +bSlider.value;
+            mOut.textContent = M;
+            bOut.textContent = beta;
+            bRow.hidden = mode !== 'softmax';
+            const w = sims.slice(0, M).map(s => score[mode](s, beta));
+            const rel = w.map(x => x / w[0]);  // weight relative to the target memory
+            // interference / signal = |sum_{i != 0} rel_i v_i| (the target's relative weight is 1, and values have unit length)
+            const noise = new Array(D).fill(0);
+            for (let i = 1; i < M; i++) for (let j = 0; j < D; j++) noise[j] += rel[i] * V[i][j];
+            const ratio = Math.hypot(...noise);
+            ratioOut.textContent = ratio < 0.01 ? ratio.toExponential(1) : ratio.toFixed(2);
+            meter.style.width = `${Math.min(ratio / 2, 1) * 100}%`;  // the meter spans 0 to 2; 1 is the midpoint
+            fig.classList.toggle('is-failing', ratio >= 1);
+            // bars, from y = -0.4 to 1.05 of the target memory's weight
+            const dpr = window.devicePixelRatio || 1, W = canvas.clientWidth, H = canvas.clientHeight;
+            canvas.width = W * dpr; canvas.height = H * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, W, H);
+            const lo = -0.4, hi = 1.05, y = v => H * (hi - v) / (hi - lo);
+            ctx.strokeStyle = ink; ctx.globalAlpha = 0.45; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(0, y(0)); ctx.lineTo(W, y(0)); ctx.stroke();
+            const bw = W / M;
+            for (let i = M - 1; i >= 0; i--) {
+                const v = Math.max(lo, Math.min(hi, rel[i]));
+                const isTarget = i === 0;
+                ctx.globalAlpha = isTarget ? 1 : 0.7;
+                ctx.fillStyle = isTarget ? red : ink;
+                const x = i * bw, wPx = isTarget ? Math.max(bw, 3) : Math.max(bw * 0.8, 0.6);
+                ctx.fillRect(x, Math.min(y(v), y(0)), wPx, Math.max(Math.abs(y(v) - y(0)), 0.5));
+            }
+            ctx.globalAlpha = 1;
+        };
+        fig.querySelectorAll('input').forEach(el => el.addEventListener('input', draw));
+        new ResizeObserver(draw).observe(canvas);
+        draw();
+    });
+})();
+</script>
+<script>document.getElementById('interactive-nojs').style.display='none'</script>
+<h2 id="bars-2">Memory bars — softmax with sharpness</h2>
+<figure class="c-membars" id="interactive-2" role="group" aria-label="Interactive figure: the weight each stored memory gets in one recall, and how much of the recalled vector is interference"><div class="c-membars__controls"><fieldset class="c-membars__modes"><legend>score</legend><label><input type="radio" name="membars-4-mode" value="linear"> linear</label><label><input type="radio" name="membars-4-mode" value="relu"> ReLU</label><label><input type="radio" name="membars-4-mode" value="relu2"> ReLU²</label><label><input type="radio" name="membars-4-mode" value="softmax" checked> softmax</label></fieldset><label class="c-membars__slider">stored memories <i>M</i> = <span class="c-membars__m">32</span><input type="range" name="m" min="4" max="11" step="1" value="5"></label><label class="c-membars__slider c-membars__beta-row">sharpness <i>β</i> = <span class="c-membars__beta">8</span><input type="range" name="beta" min="1" max="24" step="1" value="8"></label></div><canvas class="c-membars__bars" aria-hidden="true"></canvas><div class="c-membars__legend"><span><span class="c-membars__swatch"></span>the target memory</span><span>each other stored memory, weight relative to the target memory</span></div><div class="c-membars__meter" aria-live="polite"><span>interference / signal = <span class="c-membars__ratio"></span></span><span class="c-membars__meter-track"><span class="c-membars__meter-fill"></span><span class="c-membars__meter-one" title="interference = signal"></span></span><span class="c-membars__fail">recall fails</span></div><p class="c-membars__nojs" id="interactive-2-nojs">（若看不到滑块与柱状图：当前预览器屏蔽了脚本，请用浏览器打开同目录的 interactive-figures.html。）</p></figure>
+
+<script>
+// The memory-bars figure (layouts/shortcodes/memory-bars.html): one recall from a memory store of M random unit
+// key-value pairs in d = 64 dimensions, queried with the first stored key. One bar per stored memory shows its
+// weight relative to the target memory's weight (the target is the first bar, in cinnabar); the meter shows the
+// interference-to-signal ratio of the recalled vector. Only weight ratios matter, so softmax's normalization is left out.
+(() => {
+    const D = 64, MMAX = 2048;
+    // Seeded random unit vectors, so every reader sees the same memory
+    let seed = 20261014;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const gauss = () => Math.sqrt(-2 * Math.log(rand() + 1e-12)) * Math.cos(2 * Math.PI * rand());
+    const unit = () => {
+        const v = Array.from({ length: D }, gauss);
+        const n = Math.hypot(...v);
+        return v.map(x => x / n);
+    };
+    const K = Array.from({ length: MMAX }, unit), V = Array.from({ length: MMAX }, unit);
+    const sims = K.map(k => k.reduce((a, x, i) => a + x * K[0][i], 0));  // similarity of each key to the query
+    const score = {
+        linear: s => s,
+        relu: s => Math.max(0, s),
+        relu2: s => Math.max(0, s) ** 2,
+        softmax: (s, beta) => Math.exp(beta * (s - 1)),  // e^{beta s}, divided by e^beta; ratios are unchanged
+    };
+    [document.getElementById('interactive-2')].forEach(fig => {
+        fig.dataset.ready = '';
+        const canvas = fig.querySelector('canvas'), ctx = canvas.getContext('2d');
+        const mSlider = fig.querySelector('[name=m]'), bSlider = fig.querySelector('[name=beta]');
+        const mOut = fig.querySelector('.c-membars__m'), bOut = fig.querySelector('.c-membars__beta');
+        const bRow = fig.querySelector('.c-membars__beta-row'), ratioOut = fig.querySelector('.c-membars__ratio');
+        const meter = fig.querySelector('.c-membars__meter-fill');
+        const ink = getComputedStyle(fig).getPropertyValue('--ink').trim() || '#373229';
+        const red = getComputedStyle(fig).getPropertyValue('--red').trim() || '#B3202A';
+        const draw = () => {
+            const mode = fig.querySelector('input[type=radio]:checked').value;
+            const M = 2 ** +mSlider.value, beta = +bSlider.value;
+            mOut.textContent = M;
+            bOut.textContent = beta;
+            bRow.hidden = mode !== 'softmax';
+            const w = sims.slice(0, M).map(s => score[mode](s, beta));
+            const rel = w.map(x => x / w[0]);  // weight relative to the target memory
+            // interference / signal = |sum_{i != 0} rel_i v_i| (the target's relative weight is 1, and values have unit length)
+            const noise = new Array(D).fill(0);
+            for (let i = 1; i < M; i++) for (let j = 0; j < D; j++) noise[j] += rel[i] * V[i][j];
+            const ratio = Math.hypot(...noise);
+            ratioOut.textContent = ratio < 0.01 ? ratio.toExponential(1) : ratio.toFixed(2);
+            meter.style.width = `${Math.min(ratio / 2, 1) * 100}%`;  // the meter spans 0 to 2; 1 is the midpoint
+            fig.classList.toggle('is-failing', ratio >= 1);
+            // bars, from y = -0.4 to 1.05 of the target memory's weight
+            const dpr = window.devicePixelRatio || 1, W = canvas.clientWidth, H = canvas.clientHeight;
+            canvas.width = W * dpr; canvas.height = H * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, W, H);
+            const lo = -0.4, hi = 1.05, y = v => H * (hi - v) / (hi - lo);
+            ctx.strokeStyle = ink; ctx.globalAlpha = 0.45; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(0, y(0)); ctx.lineTo(W, y(0)); ctx.stroke();
+            const bw = W / M;
+            for (let i = M - 1; i >= 0; i--) {
+                const v = Math.max(lo, Math.min(hi, rel[i]));
+                const isTarget = i === 0;
+                ctx.globalAlpha = isTarget ? 1 : 0.7;
+                ctx.fillStyle = isTarget ? red : ink;
+                const x = i * bw, wPx = isTarget ? Math.max(bw, 3) : Math.max(bw * 0.8, 0.6);
+                ctx.fillRect(x, Math.min(y(v), y(0)), wPx, Math.max(Math.abs(y(v) - y(0)), 0.5));
+            }
+            ctx.globalAlpha = 1;
+        };
+        fig.querySelectorAll('input').forEach(el => el.addEventListener('input', draw));
+        new ResizeObserver(draw).observe(canvas);
+        draw();
+    });
+})();
+</script>
+<script>document.getElementById('interactive-2-nojs').style.display='none'</script>
+</body></html>
