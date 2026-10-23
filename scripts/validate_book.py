@@ -521,6 +521,14 @@ def validate_source() -> None:
     if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\label{check:13-capacity}"):
         fail("Capacity chapter places its conclusion before the final self-test")
 
+    # Structural guard only: original-course license assessment requires a human.
+    agent_source = sources["23d-agent-systems"]
+    for old_analogy in ("员工小 L", "给员工加能力", "老板逐步", "原讲稿的复用授权"):
+        if old_analogy in agent_source:
+            fail(f"Legacy person/authorization editorial prose returned to Agent chapter: {old_analogy}")
+    includes(agent_source, r"\subsection{七个核对关口",
+             "independent report-task checks remain visible for source comparison")
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (
