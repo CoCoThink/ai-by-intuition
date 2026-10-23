@@ -89,6 +89,13 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
           python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Book.pdf
+      - name: Machine grayscale preflight of every PDF page
+        timeout-minutes: 8
+        run: |
+          mkdir -p pdfua-audit
+          python3 scripts/audit_grayscale_pdf.py \
+            book/build/AI-by-Intuition-Book.pdf \
+            --scale 500 --json pdfua-audit/grayscale-audit.json
       - name: Verify associated MathML for every displayed and inline Formula
         run: |
           mkdir -p pdfua-audit
@@ -123,6 +130,7 @@ jobs:
           path: |
             pdfua-audit/verapdf-pdfua2.xml
             pdfua-audit/mathml-af-summary.json
+            pdfua-audit/grayscale-audit.json
             pdfua-audit/*.txt
           if-no-files-found: warn
       - name: Publish single PDF artifact

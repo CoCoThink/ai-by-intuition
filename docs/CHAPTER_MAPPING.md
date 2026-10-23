@@ -33,7 +33,7 @@
 - [x] R05：真实 GPT-2 已由 [独立运行 #39897932969](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969) 实测 5 个 Token、全 logits 形状、温度概率和及零上三角掩码；模型 revision 与完整依赖存档，PDF 构建不加载模型权重
 - [x] R06：CoT/GRPO、线性状态、公开模型 config、MLA 假设缓存、窗口掩码以及 ViT→LLM 投影算例均已落地；待整本视觉/数值验收
 - [ ] R07：术语附录已形成 100 基础＋33 现代的 133 行中文／English／定义／章节统一四列表，表格自动派生并有防漂移门禁；原有 47 处自测全部扩为回忆／手算／迁移，附录答案同步，B2 增标准库编程练习。内容实现已到位；仍待最终人工审校与原课程授权签核
-- [ ] R08：`3800ab9` 的 [CI #39913269593](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39913269593) 验证 143 页、2,134/2,134 MathML-AF、PDF/UA-2 机器合规；[143／143 页灰度技术预检](PRINT_PROOF_3800AB9.md)已完成；最新稿仍须最终 PDF 的人工高清逐页审阅、来源授权与发行签核
+- [ ] R08：`3800ab9` 的 [CI #39913269593](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39913269593) 验证 143 页、2,134/2,134 MathML-AF、PDF/UA-2 机器合规；[143／143 页灰度技术预检](PRINT_PROOF_3800AB9.md)已完成；最新稿仍须最终 PDF 的人工高清逐页审阅、来源授权与发行签核；主 PDF 工作流新增全页灰度机器预筛与 SHA-256 JSON 工件，技术预检不代表人工签核
 
 ## 改动必须遵守的边界
 

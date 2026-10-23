@@ -47,6 +47,11 @@ python3 scripts/audit_grayscale_pdf.py book/build/main.pdf \
 不能证明文本字体大小合格、灰度可读、页面顺序合理或无障碍体验达标。
 机器报告必须写入对应成功 CI 的完整源码 SHA，不能套用旧版本统计。
 
+正式的 **Build one PDF book** 工作流也会对每页执行此项技术预检，
+并将 `grayscale-audit.json` 同 MathML/veraPDF 统计一起保存在
+`pdfua2-machine-audit` 工件中。自动结果只供排版预筛，
+不能将人工校样待办自动勾选为通过。
+
 已执行的 143 页版本技术预检及其边界见 [SHA 固定灰度审计](PRINT_PROOF_3800AB9.md)；
 该文件不是人工勾选的发行校样。
 
