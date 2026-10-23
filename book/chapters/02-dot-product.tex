@@ -102,6 +102,7 @@ s_i=\vect k_i^\top\vect q.
 下一章会专门说明这个记号。
 这个式子与 $\vect k_i\cdot\vect q$ 表示同一个点积。
 
+\par\Needspace{18\baselineskip}
 \textbf{GPU 并行的起点：}一条点积先逐项相乘，再将结果求和；
 这个求和过程叫\textbf{归约}（reduction）。
 若有许多不同的 Query--Key 配对，每对的分数可以分别计算，
