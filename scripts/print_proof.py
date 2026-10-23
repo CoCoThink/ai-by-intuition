@@ -142,6 +142,8 @@ def main() -> None:
     group.add_argument("--all", action="store_true", help="render every page")
     parser.add_argument("--source-sha",
                         help="full 40-character commit SHA for this PDF, from successful CI")
+    parser.add_argument("--audit-json", type=Path,
+                        help="machine audit JSON for this exact PDF; reject mismatched hash")
     parser.add_argument("--scale", type=int, default=1100,
                         help="maximum image dimension, pixels (300–2400)")
     args = parser.parse_args()
@@ -156,9 +158,23 @@ def main() -> None:
         total = count_pages(args.pdf)
         pages = list(range(1, total + 1)) if args.all else parse_pages(args.pages, total)
         manifest = build_manifest(args.pdf, pages, args.scale, args.source_sha)
+        if args.audit_json is not None:
+            audit = json.loads(args.audit_json.read_text(encoding="utf-8"))
+            if manifest["pdf_sha256"] != audit.get("pdf_sha256"):
+                raise ValueError("Proof PDF SHA-256 differs from machine audit")
+            audited_sha = audit.get("source_commit_sha")
+            if audited_sha:
+                if not re.fullmatch(r"[0-9a-f]{40}", audited_sha):
+                    raise ValueError("Invalid source SHA in machine audit")
+                if (manifest["source_commit_sha"] and
+                        manifest["source_commit_sha"] != audited_sha):
+                    raise ValueError("Proof source SHA differs from machine audit")
+                manifest["source_commit_sha"] = audited_sha
+            manifest["machine_audit_run_id"] = audit.get("github_actions_run_id")
+            manifest["machine_audit_pdf_hash_verified"] = True
         render_pages(args.pdf, args.out_dir, pages, args.scale)
         write_review_materials(args.pdf, args.out_dir, pages, manifest)
-    except (ValueError, RuntimeError, subprocess.CalledProcessError) as exc:
+    except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError) as exc:
         parser.error(str(exc))
     print(f"Rendered {len(pages)}/{total} grayscale pages to {args.out_dir}")
     print("Review index.html and CHECKLIST.md; do not treat output as sign-off")

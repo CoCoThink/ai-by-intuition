@@ -1231,6 +1231,29 @@ def validate_pdf(path: Path) -> None:
                 fail(f"Text outside PDF page bounds on page {pageno}: {vals}")
     if words_checked < 1000:
         fail(f"Suspiciously few PDF words checked: {words_checked}")
+
+    # All 39 opening locators must occur on the numbered chapter's actual
+    # bookmark page, and not be forced against the physical bottom edge.
+    if sorted(numbered_pages) != list(range(1, 40)):
+        fail("R01 opening guard requires exact chapter bookmarks 1..39")
+    for chapter_number, opening_index in sorted(numbered_pages.items()):
+        attrs, page_markup = pages_with_boxes[opening_index]
+        matches = re.findall(
+            r'<word\b([^>]*)>整机路径定位：</word>', page_markup
+        )
+        if len(matches) != 1:
+            fail(f"R01 chapter {chapter_number} has {len(matches)} locators "
+                 f"on its physical opening page {opening_index + 1}")
+        y_match = re.search(r'\byMin="([\d.]+)"', matches[0])
+        h_match = re.search(r'\bheight="([\d.]+)"', attrs)
+        if not y_match or not h_match:
+            fail(f"R01 chapter {chapter_number} has missing locator geometry")
+        y, height = float(y_match.group(1)), float(h_match.group(1))
+        if y > 0.75 * height:
+            fail(f"R01 chapter {chapter_number} starts too near foot: "
+                 f"locator at {y:.1f}/{height:.1f} on page {opening_index + 1}")
+    print("R01 opening-page QA passed: 39/39 chapter strips share bookmark "
+          "page, with sufficient room below")
     # Source-level hyperlinks may have existing labels but resolve incorrectly
     # once TeX has built bookmarks and named destinations. Audit the actual PDF.
     named_destinations = reader.named_destinations

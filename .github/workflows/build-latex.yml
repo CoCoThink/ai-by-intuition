@@ -95,7 +95,8 @@ jobs:
           mkdir -p pdfua-audit
           python3 scripts/audit_grayscale_pdf.py \
             book/build/AI-by-Intuition-Book.pdf \
-            --scale 500 --json pdfua-audit/grayscale-audit.json
+            --scale 500 --json pdfua-audit/grayscale-audit.json \
+            --source-sha "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID"
       - name: Verify associated MathML for every displayed and inline Formula
         run: |
           mkdir -p pdfua-audit

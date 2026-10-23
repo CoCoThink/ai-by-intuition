@@ -119,6 +119,8 @@ def main() -> None:
     parser.add_argument("--min-ink", type=float, default=0.005)
     parser.add_argument("--max-edge", type=int, default=4)
     parser.add_argument("--json", type=Path, help="write machine audit JSON")
+    parser.add_argument("--source-sha", help="source commit SHA from successful CI")
+    parser.add_argument("--run-id", help="numeric GitHub Actions run ID")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     if args.self_test:
@@ -132,8 +134,18 @@ def main() -> None:
         parser.error("--min-ink must be between 0 and 1")
     if args.max_edge < 0:
         parser.error("--max-edge must not be negative")
+    if args.source_sha and not re.fullmatch(r"[0-9a-fA-F]{40}", args.source_sha):
+        parser.error("--source-sha must be 40 hex characters")
+    if args.run_id and not re.fullmatch(r"[1-9][0-9]*", args.run_id):
+        parser.error("--run-id must be a positive integer")
     try:
         report = run_audit(args.pdf, args.scale, args.min_ink, args.max_edge)
+        report["source_commit_sha"] = (
+            args.source_sha.lower() if args.source_sha else None
+        )
+        report["github_actions_run_id"] = (
+            int(args.run_id) if args.run_id else None
+        )
     except (ValueError, subprocess.CalledProcessError) as exc:
         parser.error(str(exc))
     if args.json:
