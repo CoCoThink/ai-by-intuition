@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/gpt2-real-experiment.yml"
+      - "scripts/gpt2_demo.py"
 
 permissions:
   contents: read
@@ -36,8 +37,8 @@ jobs:
           mkdir -p artifacts
           echo "source_commit=$GITHUB_SHA" | tee artifacts/revision.txt
           .venv-gpt2/bin/python -m pip freeze > artifacts/python-packages.txt
-          .venv-gpt2/bin/python scripts/gpt2_demo.py --real --heatmap artifacts/gpt2-attention.png > artifacts/gpt2-console.txt
-          cat artifacts/gpt2-console.txt
+          set -o pipefail
+          .venv-gpt2/bin/python -u scripts/gpt2_demo.py --real --heatmap artifacts/gpt2-attention.png | tee artifacts/gpt2-console.txt
           test -s artifacts/gpt2-attention.png
           grep -q "Causal attention first-head upper triangle max=" artifacts/gpt2-console.txt
           grep -q "Next token logits shape:" artifacts/gpt2-console.txt

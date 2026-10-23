@@ -70,11 +70,22 @@ def run_real(prompt: str, heatmap: Path | None, local_files_only: bool) -> None:
     print("Token IDs:", ids[0].tolist())
     print("Tokenizer pieces:", tokenizer.convert_ids_to_tokens(ids[0].tolist()))
     print("Next token logits shape:", tuple(outputs.logits.shape))
+    good = torch.isfinite(last)
+    finite_count = int(good.sum())
+    print(f"Finite logits: {finite_count}/{VOCAB}")
+    if finite_count:
+        good_values = last[good]
+        print(f"Finite logit range: "
+              f"[{float(good_values.min()):.5g}, {float(good_values.max()):.5g}]")
+    if finite_count != VOCAB:
+        bad = (~good).nonzero().flatten()[:8].tolist()
+        raise RuntimeError(f"Nonfinite GPT-2 logits at vocabulary indices {bad}")
     for temperature in (0.7, 1.0, 1.5):
         distribution = torch.softmax(last.float() / temperature, dim=-1)
         mass = float(distribution.sum())
-        assert abs(mass - 1.0) < 1e-5
         print(f"T={temperature}: probability sum={mass:.8f}")
+        if not math.isfinite(mass) or abs(mass - 1.0) >= 1e-5:
+            raise RuntimeError(f"Invalid softmax probability sum at T={temperature}: {mass}")
         values, indices = torch.topk(distribution, k=5)
         choices = [(int(i), repr(tokenizer.decode([int(i)])),
                     round(float(v), 5))

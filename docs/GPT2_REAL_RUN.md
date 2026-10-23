@@ -15,7 +15,7 @@
 
 在 [可选 GPT-2 真实实验](../.github/workflows/gpt2-real-experiment.yml)
 对应的 GitHub Actions 工作流中选择 **Run workflow**。
-工作流文件首次写入主分支时也会尝试自动执行一次。
+工作流文件或实验脚本在主分支发生修改时，也会独立触发运行；不属于 PDF 主 CI。
 
 成功工件 \`gpt2-real-repro-report\` 应含：
 
