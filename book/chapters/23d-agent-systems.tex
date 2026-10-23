@@ -284,9 +284,11 @@ return {"error": "step_budget_exceeded"}
 \bottomrule
 \end{tabularx}
 \end{center}
-这八条是\textbf{应用层消息记录}，不是模型内部神经元状态；
-本地演示见 \texttt{python3 scripts/agent\_loop.py}。若 Q2 工具失败或无权限，应返回错误，
-不能跳过证据仍声称得到了可靠环比。
+这八条是\textbf{应用层消息记录}，不是模型内部神经元状态。
+若 Q2 工具失败或无权限，应返回错误，不能跳过证据仍声称得到了可靠环比。
+
+\par\smallskip\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}\enspace
+运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹。
 
 \subsection{什么时候用固定工作流，什么时候用 Agent？}
 \phantomsection\label{concept:workflow}
