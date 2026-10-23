@@ -58,7 +58,7 @@ $\log4\approx1.3863$。
 真实实现通常直接用稳定的 logits 交叉熵运算，
 以避免先求极小概率再取对数的数值误差。
 
-\subsection{为什么从 logits 反传得到 $p-y$？}
+\subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}
 \phantomsection\label{concept:logit-gradient}
 
 把 Softmax 代入交叉熵，可改写为
