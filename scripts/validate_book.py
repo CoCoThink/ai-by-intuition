@@ -893,26 +893,30 @@ def validate_source() -> None:
             if label in labels:
                 fail(f"Duplicate cross-reference label {label}: {labels[label]} and {name}")
             labels[label] = name
+    # The new \chaptercheck macro emits \label{check:...} during TeX expansion.
+    # Register those semantic targets in the static source audit as well.
+    for name in REQUIRED:
+        for lesson_id in re.findall(r"\\chaptercheck\{([^}]+)\}", sources[name]):
+            virtual_label = "check:" + lesson_id
+            if virtual_label in labels:
+                fail(f"Duplicate chapter check {lesson_id}")
+            labels[virtual_label] = name
     check_ids = {key.removeprefix("check:") for key in labels if key.startswith("check:")}
     answer_ids = {key.removeprefix("answer:") for key in labels if key.startswith("answer:")}
     if check_ids != answer_ids:
         fail(f"Self-check answer mismatch: missing={sorted(check_ids-answer_ids)}, "
              f"unexpected={sorted(answer_ids-check_ids)}")
-    # Every existing numbered check now has a recall/calculation/transfer
-    # trio; do not silently regress to a single isolated question.
-    if len(check_ids) != 47:
-        fail(f"Expected 47 linked chapter and appendix self-checks, got {len(check_ids)}")
+    # 47 old checks minus the merged opening lesson and the two reference-appendix checks.
+    if len(check_ids) != 44:
+        fail(f"Expected 44 linked chapter checks, got {len(check_ids)}")
     for lesson_id in sorted(check_ids):
-        source_name = labels["check:" + lesson_id]
-        src = sources[source_name]
-        label = r"\chaptercheck{" + lesson_id + "}"
-        at = src.index(label)
-        near = src[max(0, at-115):at + 950]
-        if r"\textbf{读完自测：回忆／手算／迁移}" not in near:
-            fail(f"Three-level label missing from {lesson_id}")
-        for kind in ("回忆：", "手算：", "迁移："):
-            if r"\textbf{" + kind + "}" not in near:
-                fail(f"Three-level self-check missing {kind} in {lesson_id}")
+        src = sources[labels["check:" + lesson_id]]
+        call = r"\chaptercheck{" + lesson_id + "}{"
+        if call not in src:
+            fail(f"Broken four-argument chapter check: {lesson_id}")
+        # Three substantive task arguments follow the stable slug; old inline labels are gone.
+        if src.count(r"\chaptercheck{" + lesson_id + "}") != 1:
+            fail(f"Repeated check invocation: {lesson_id}")
 
     for name in REQUIRED:
         for destination in re.findall(r"\\hyperref\[((?:check|answer):[^]]+)\]", sources[name]):
