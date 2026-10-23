@@ -21,10 +21,10 @@ PARTS = [
     "让文字进入计算",
     "让词与词交换信息",
     "组装并训练 Transformer",
+    "把 Attention 与 FFN 看作记忆",
     "从语言模型到助手",
     "架构为什么在变，往哪走",
-    "选读专题一：从 CNN 到视觉 Transformer",
-    "选读专题二：联想记忆与高维检索",
+    "选读：从 CNN 到视觉 Transformer",
 ]
 REQUIRED = [
     "00g-reading-routes",
@@ -47,6 +47,7 @@ REQUIRED = [
     "20b-task-contract",
     "21a-context-gap",
     "21-rnn",
+    "21c-naive-attention",
     "21b-why-attention",
     "11-softmax-memory",
     "22a-position-multihead",
@@ -56,6 +57,13 @@ REQUIRED = [
     "22c-language-training",
     "23-llm-systems",
     "23a-from-toy-to-gpt",
+    "04-key-value-outer-product",
+    "05-memory-interference",
+    "06-better-linear-memory",
+    "08-stacking-key-value",
+    "09-nonlinearity-and-memory",
+    "14-summary",
+    "13-capacity",
     "23aa-pretraining-icl",
     "23c-post-training",
     "23d-agent-systems",
@@ -65,28 +73,22 @@ REQUIRED = [
     "23f-foundation-recap",
     "19-cnn",
     "19b-vit",
-    "04-key-value-outer-product",
-    "05-memory-interference",
-    "06-better-linear-memory",
-    "08-stacking-key-value",
-    "09-nonlinearity-and-memory",
-    "14-summary",
-    "13-capacity",
     "00e-core-formulas",
     "00b-math-tools",
     "00c-symbols",
     "00f-transformer-intermediates",
+    "24e-pytorch-lab",
     "25-integrated-practice",
     "25b-modern-practice",
     "15-practice",
-    "24e-pytorch-lab",
+    "27-answer-key",
+    "28-chapter-checks",
     "24-lexicon",
     "24b-modern-lexicon",
     "24c-concept-map",
     "24d-english-index",
-    "27-answer-key",
-    "28-chapter-checks",
     "26-sources",
+    "29-revision-notes",
 ]
 
 
@@ -199,7 +201,7 @@ def validate_source() -> None:
     main = (BOOK / "main.tex").read_text(encoding="utf-8")
     parts = re.findall(r"\\part\{([^}]+)\}", main)
     if parts != PARTS:
-        fail(f"Expected nine total parts (seven core and two elective); found {parts!r}")
+        fail(f"Expected nine total parts (eight core and one elective); found {parts!r}")
     inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
@@ -222,7 +224,7 @@ def validate_source() -> None:
     includes(main, "name={第,章}", "visible chapter number format")
     if r"\usepackage{titlesec}" in main or r"\titleformat" in main:
         fail("titlesec must not override tagged section headings")
-    if main.find(r"\appendix") <= main.find(r"\part{选读专题二：联想记忆与高维检索}"):
+    if main.find(r"\appendix") <= main.find(r"\part{选读：从 CNN 到视觉 Transformer}"):
         fail("Appendices must follow optional part IX")
     if main.count(r"\learningbridge{") != 9:
         fail("Nine parts need nine minimal introductions")
@@ -297,14 +299,14 @@ def validate_source() -> None:
             fail(f"Missing P1 reproducibility script: {script}")
         ast.parse(script_path.read_text(encoding="utf-8"))
     includes(sources["24e-pytorch-lab"], "1.798430", "initial loss in lab")
-    # V2 main reading path: 32 displayed numbered sections across seven core parts.
+    # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
     core_sources = input_list[:first_elective]
     visible_chapters = sum(len(re.findall(r"(?m)^\\section\{", sources[n]))
                            for n in core_sources)
-    if visible_chapters != 32:
-        fail(f"Core curriculum requires 32 numbered chapters, found {visible_chapters}")
+    if visible_chapters != 37:
+        fail(f"Core curriculum requires 37 numbered chapters, found {visible_chapters}")
     includes(sources["16-loss-gradient"], r"\label{intro:16a-gradient-descent}",
              "loss and gradient are two progressive lessons")
     includes(sources["28-chapter-checks"], r"\label{answer:16-loss-analytic}",
@@ -531,13 +533,14 @@ def validate_source() -> None:
         encoding="utf-8")
     includes(weight_figure, "coltitle=ink", "figure 10 dark title on light background")
     includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
-    # A-E appendix sections must be explicit in the main file (no extra numbered sections).
+    # A-G appendix sections must be explicit in the main file.
     appendix = main.split(r"\appendix", 1)[1]
     group_titles = re.findall(r"(?m)^\\section\{([^}]+)\}", appendix)
-    if group_titles != ["核心公式、数学与形状速查", "综合练习与迁移实践",
-                        "术语地图、概念关系与索引", "集中参考答案与随堂解答",
-                        "来源与延伸阅读"]:
-        fail(f"Expected exactly five A-E appendix groups, found {group_titles}")
+    if group_titles != ["核心公式、数学与形状速查", "三维贯通实验、复算与脚本",
+                        "综合练习与迁移实践", "集中参考答案与随堂解答",
+                        "术语地图、概念关系与索引", "来源与延伸阅读",
+                        "版本、勘误与复现说明"]:
+        fail(f"Expected exactly seven A-G appendix groups, found {group_titles}")
     includes(sources["00e-core-formulas"], r"Z=HW_{\rm out}",
              "compact core formula card")
 
@@ -555,14 +558,14 @@ def validate_source() -> None:
         for name, body in sources.items():
             if editorial in body:
                 fail(f"Editorial residue {editorial!r} in {name}")
-    # X2: seven source files, but four visible chapters, without removing any exercises.
+    # Memory part: seven source files and four visible chapters, without removing exercises.
     x2 = ("04-key-value-outer-product", "05-memory-interference",
           "06-better-linear-memory", "08-stacking-key-value",
           "09-nonlinearity-and-memory", "14-summary", "13-capacity")
     heading_count = sum(bool(re.search(r"(?m)^\\section\{", sources[n]))
                         for n in x2)
     if heading_count != 4:
-        fail(f"X2 must display four sections, got {heading_count}")
+        fail(f"Memory part must display four sections, got {heading_count}")
     for n in ("05-memory-interference", "08-stacking-key-value", "14-summary"):
         includes(sources[n], r"\subsection{", f"nested X2 topic {n}")
     includes(sources["04-key-value-outer-product"], r"\vect a^\top V",
@@ -693,7 +696,7 @@ def validate_pdf(path: Path) -> None:
     print(f"Heading QA: {heading_counts['/H1']} H1 headings; {heading_counts['/H2']} H2 headings")
     # hyperref's PDF bookmarks are a separate, user-facing navigation system:
     # visible CTeX numbering is insufficient unless the outline contains it.
-    # The nine numbered parts, 38 numbered sections and A--E appendices must
+    # The nine numbered parts, 39 numbered sections and A--G appendices must
     # retain their numbering and nesting. hyperref in TeX Live 2026 uses plain
     # `1 Title` and `A Title`; older CTeX may write `第1章` and `附录 A`. Two standalone core interludes stay
     # intentionally unnumbered (the reading guide and end-of-core recap).
@@ -721,9 +724,9 @@ def validate_pdf(path: Path) -> None:
     appendix_title, appendix_children = outline_groups[-1]
     if not appendix_title.startswith("附录："):
         fail(f"Unnumbered appendix PDF bookmark missing: {appendix_title!r}")
-    if len(appendix_children) != 5:
-        fail(f"Expected five A--E PDF appendix bookmarks, found {appendix_children!r}")
-    for letter, title in zip("ABCDE", appendix_children):
+    if len(appendix_children) != 7:
+        fail(f"Expected seven A--G PDF appendix bookmarks, found {appendix_children!r}")
+    for letter, title in zip("ABCDEFG", appendix_children):
         if not re.match(rf"^(?:附录\s*)?{letter}\s+\S", title):
             fail(f"Appendix {letter} PDF bookmark missing letter prefix: {title!r}")
     chapter_numbers = []
@@ -735,11 +738,11 @@ def validate_pdf(path: Path) -> None:
             elif not (title.startswith("阅读指南：") or
                       title.startswith("技术底座回顾：")):
                 fail(f"Unnumbered PDF chapter bookmark: {title!r}")
-    if chapter_numbers != list(range(1, 39)):
-        fail(f"PDF chapter bookmark numbers must be 1--38 in order; "
+    if chapter_numbers != list(range(1, 40)):
+        fail(f"PDF chapter bookmark numbers must be 1--39 in order; "
              f"found {chapter_numbers!r}")
     print(f"PDF bookmark QA: {len(PARTS)} numbered parts, "
-          f"{len(chapter_numbers)} numbered chapters, 5 lettered appendices")
+          f"{len(chapter_numbers)} numbered chapters, 7 lettered appendices")
 
 
     if len(reader.pages) < 50:

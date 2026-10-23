@@ -17,7 +17,7 @@ Attention（注意力）是一种按相关性读取信息的方法：
 
 \subsection{从逐步传递到直接读取}
 
-上一章的 \conceptlink{rnn}{RNN} 让模型按顺序读：
+前面介绍的 \conceptlink{rnn}{RNN} 让模型按顺序读：
 \[
 \underbrace{\text{春天}}_{\text{第 1 词}}
 \ \to\
@@ -69,37 +69,9 @@ a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
 这三种角色分别称为 Query（查询）、Key（键）和 Value（值）。
 
 
-\subsection{最朴素的一步：不学习任何 Q/K/V，直接点积}
-
-\localfixture{无参数二维注意力；每行一个 Token}
-先不要立即引入三种新参数。设三个 Token 的输入就是
-$x_1=(1,0),\,x_2=(0,1),\,x_3=(1,1)$，
-直接让每条输入向量同时承担查询、匹配和读取的职责：
-\[
-X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}
-\ (3\times2),\quad
-\underbrace{S}_{3\times3}=XX^\top
-=\boxed{\begin{bmatrix}1&0&1\\0&1&1\\1&1&2\end{bmatrix}}.
-\]
-此处\textbf{［未缩放］、未加因果 Mask}。例如第三行
-$(1,1,2)$ 经 Softmax 得
-$(0.212,0.212,0.576)$，继续把输入作为 Value，
-读出约为 $(0.788,0.788)$。
-这说明不增加投影也可以做一次“比较、分配、读取”。
-
-\begin{boundarybox}
-\textbf{朴素方案有两个缺口：}
-(1) 未加 Mask 的原始分数矩阵满足 $S=S^\top$，
-无法让“位置 $i$ 对 $j$ 的原始匹配分数”独立于反方向；
-但逐行 Softmax 后的权重矩阵\textbf{不一定对称}。
-(2) 点积受到向量范数影响，有时偏向自身；
-\textbf{不是每个位置与自身的分数都必然最高}，
-本例第一行的自匹配分数就与第三条 Key 打成平手。
-\end{boundarybox}
-
-要放宽这些限制，就让“拿什么询问”和“凭什么被找到”
-不再必须是同一条表示，并把“读出什么内容”也分开。
-这便是接下来引入 Query、Key、Value 三种角色的动机。
+上章已经验证了零参数点积能产生注意力权重，
+也看到原始分数对称性与向量范数的限制。
+下面开始拆开 Q、K、V 三种角色。
 
 \subsection{Query、Key、Value 各负责什么？}
 \phantomsection\label{concept:qkv}

@@ -1,0 +1,25 @@
+\subsection{版本、勘误与复算说明}
+\phantomsection\label{app:revision-notes}
+本书将\textbf{正式发布版本}和\textbf{持续修订的源码}分开管理：
+读者获取正式归档 PDF 时应核对版本与对应的发布记录；
+仓库 \texttt{main} 中的更改不会自动覆盖历史发行资产。
+
+\textbf{本书的复算分三层：}
+\begin{enumerate}
+\item 三维 Transformer 主例的唯一基线是
+\texttt{scripts/teaching\_reference.py}；
+\item 二维联想记忆、Tokenizer、RAG、Agent 的独立小实验分别在
+\texttt{scripts/memory\_demo.py}、
+\texttt{scripts/bpe\_demo.py}、
+\texttt{scripts/rag\_demo.py} 与
+\texttt{scripts/agent\_loop.py}；
+\item 从可编辑 \LaTeX{} 构建正式 PDF 后，
+还需通过目录、数值、图形语义、MathML-AF 与 PDF/UA-2 机器校验。
+\end{enumerate}
+
+\textbf{勘误与证据入口：}
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/ERRATA.md}{在线勘误记录}、
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/BUILD-REPRODUCIBILITY.md}{复现说明}、
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/PUBLISHING.md}{发布流程}。
+历史版本号、训练环境或报告页面的统计数字必须与特定构建绑定；
+不能把某次机器检测通过当成未来版本已经通过。

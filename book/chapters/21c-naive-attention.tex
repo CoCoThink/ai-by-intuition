@@ -1,0 +1,50 @@
+\section{最朴素的注意力：直接用词向量做点积}
+\label{intro:21c-naive-attention}
+\chaptercompass{不增加 Q/K/V 参数，能否先做一次按需读取？}{用原始词向量点积匹配，再用 Softmax 加权求和。}{$X:3\times2\to XX^\top:3\times3\to Y:3\times2$}{本章无新可训练投影参数}
+
+上一章的 RNN 通过状态逐步携带信息。
+我们先尝试让当前词直接与此前可见词进行比较，
+考察这个最小方案的好处与限制，再引入 Query、Key、Value。
+
+\subsection{三个二维输入，零参数读取}
+
+\localfixture{无参数二维注意力；每行一个 Token}
+先不要立即引入三种新参数。设三个 Token 的输入就是
+$x_1=(1,0),\,x_2=(0,1),\,x_3=(1,1)$，
+直接让每条输入向量同时承担查询、匹配和读取的职责：
+\[
+X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}
+\ (3\times2),\quad
+\underbrace{S}_{3\times3}=XX^\top
+=\boxed{\begin{bmatrix}1&0&1\\0&1&1\\1&1&2\end{bmatrix}}.
+\]
+此处\textbf{［未缩放］、未加因果 Mask}。例如第三行
+$(1,1,2)$ 经 Softmax 得
+$(0.212,0.212,0.576)$，继续把输入作为 Value，
+读出约为 $(0.788,0.788)$。
+这说明不增加投影也可以做一次“比较、分配、读取”。
+
+\begin{boundarybox}
+\textbf{朴素方案有两个缺口：}
+(1) 未加 Mask 的原始分数矩阵满足 $S=S^\top$，
+无法让“位置 $i$ 对 $j$ 的原始匹配分数”独立于反方向；
+但逐行 Softmax 后的权重矩阵\textbf{不一定对称}。
+(2) 点积受到向量范数影响，有时偏向自身；
+\textbf{不是每个位置与自身的分数都必然最高}，
+本例第一行的自匹配分数就与第三条 Key 打成平手。
+\end{boundarybox}
+
+要放宽这些限制，就让“拿什么询问”和“凭什么被找到”
+不再必须是同一条表示，并把“读出什么内容”也分开。
+这便是接下来引入 Query、Key、Value 三种角色的动机。
+
+
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:21c-naive-attention}
+为什么原始分数矩阵 $XX^\top$ 一定对称，而逐行 Softmax 后的权重不一定对称？
+\quad{\footnotesize\hyperref[answer:21c-naive-attention]{核对解答。}}\par\medskip
+
+\begin{conclusion}
+最朴素的点积已经能计算权重，却把“拿什么提问”和“凭什么被匹配”绑定在一起。
+接下来拆开 Q/K/V 三种角色，让模型能分别学习匹配与读出的表示。
+\end{conclusion}
