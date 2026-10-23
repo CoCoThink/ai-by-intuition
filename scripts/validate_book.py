@@ -961,7 +961,7 @@ def validate_source() -> None:
     # The new \chaptercheck macro emits \label{check:...} during TeX expansion.
     # Register those semantic targets in the static source audit as well.
     for name in REQUIRED:
-        for lesson_id in re.findall(r"\\chaptercheck\{([^}]+)\}", sources[name]):
+        for lesson_id in re.findall(r"\\chaptercheck(?:tasks)?\{([^}]+)\}", sources[name]):
             virtual_label = "check:" + lesson_id
             if virtual_label in labels:
                 fail(f"Duplicate chapter check {lesson_id}")
