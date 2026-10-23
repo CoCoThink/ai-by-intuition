@@ -57,7 +57,7 @@
 \par\textbf{补充题（找错）：}内维为 $3$ 和 $4$，不相等，乘法不合法。
 \item[\textbf{第 10 章}] \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 回忆：激活引入非线性变换；手算：$\answerresult{0}$ 与 $\answerresult{2}$；
 辨析：能，$xW_1W_2=x(W_1W_2)$，两层等价于一次线性映射。
-\par\textbf{补充题（比较）：}去除中间非线性后，线性部分可写成 $X(W_1W_2)$；有偏置时可相应合并。
+\par\textbf{补充题（找错）：}共享 FFN 权重表示各 Token 行使用同一个函数，不代表行与行交换信息。第一行的 FFN 输出只取决于第一行输入及共享参数；要读取其他 Token，需由 Attention 等跨位置机制完成。
 \item[\textbf{第 11 章}] \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 回忆：ID 只是离散编号，不表明语义大小；
 手算：$5-2=\answerresult{3}$ 个 Token；
 辨析：未必相同，分词器词表与合并规则改变切分结果。
