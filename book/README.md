@@ -5,15 +5,15 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-**从这里开始：**[目录前阅读路线与数学预备](chapters/00g-reading-routes.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
+**从这里开始：**[目录前的阅读路线](chapters/00g-reading-routes.tex)与[单独版权页、约定](chapters/00h-colophon.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
-## 当前修订目录：八个必读部分、视觉选读（38 章）
+## 当前修订目录：七个基础主线部分、记忆提高专题、视觉选读（38 章）
 
 本目录以 [\`book/main.tex\`](main.tex) 的实际输入顺序为准。
 下列旧文件名用于稳定链接；印刷章节号由 LaTeX 生成。
 
 ### I–III：从函数到文字（第 1–14 章）
-I：[函数](chapters/00-functions.tex)、[损失与梯度](chapters/16-loss-gradient.tex)、[优化器与训练工程](chapters/18c-training-engineering.tex)、
+I：[函数](chapters/00-functions.tex)、[损失与梯度](chapters/16-loss-gradient.tex)、[Mini-batch 与 SGD 训练工程](chapters/18c-training-engineering.tex)（AdamW/Warmup 数值题移至[附录 A 提高选读](chapters/30-optimizer-appendix.tex)）、
 [反传](chapters/17-backpropagation.tex)、[泛化](chapters/18-generalization.tex)。
 
 II：[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、
@@ -38,7 +38,7 @@ III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classifica
 [生成](chapters/23-llm-systems.tex)、
 [从玩具到 GPT-2](chapters/23a-from-toy-to-gpt.tex)。
 
-### VI：Attention 与 FFN 的记忆视角（第 27–30 章）
+### VI（提高）：Attention 与 FFN 的记忆视角（第 27–30 章，速读可跳过）
 [外积](chapters/04-key-value-outer-product.tex)、
 [串扰](chapters/05-memory-interference.tex)、
 [减少干扰](chapters/06-better-linear-memory.tex)、
@@ -66,7 +66,7 @@ A · [公式和数学](chapters/00e-core-formulas.tex)；
 B · [三维数值与实验](chapters/00f-transformer-intermediates.tex)；
 C · [综合练习](chapters/25-integrated-practice.tex)；
 D · [集中答案](chapters/27-answer-key.tex)；
-E · [术语](chapters/24-lexicon.tex)；
+E · [136 项中英术语表](chapters/24e-bilingual-glossary.tex)；
 F · [参考文献](chapters/26-sources.tex)；
 G · [版本与复现](chapters/29-revision-notes.tex)。
 
