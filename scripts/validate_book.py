@@ -737,12 +737,24 @@ def validate_source() -> None:
     includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
     includes(sources["20b-task-contract"], r"50{,}257", "chapter 15 concise GPT-2 scale pointer")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
-    # Old appendix B-era exercise codes must not remain in prose links.
-    stale_ids = {name: sorted(set(re.findall(r"\bB[123]-\d+\b", body)))
+    # Exercise groups can appear as bare B1/B2/B3 in explanatory prose:
+    # previously only B1-17 style IDs were detected, missing two stale labels.
+    legacy_code = r"\bB[123](?:-\d+)?\b"
+    stale_ids = {name: sorted(set(re.findall(legacy_code, body)))
                  for name, body in sources.items()
-                 if re.search(r"\bB[123]-\d+\b", body)}
+                 if re.search(legacy_code, body)}
     if stale_ids:
         fail(f"Stale appendix exercise numbering B1/B2/B3: {stale_ids!r}")
+    answers = sources["27-answer-key"]
+    if re.search(r"\\item\s+\\textbf\{C[123]-\d+\s+提示[:：]", answers):
+        fail("Answer enumeration already renders an exercise code; do not repeat it in a hint")
+    includes(sources["13-capacity"], r"|\vect{k}_i\vect{k}_j^\top|",
+             "row-vector random-key inner product")
+    if r"|\vect{k}_i^\top\vect{k}_j|" in sources["13-capacity"]:
+        fail("Random-key inner product contradicts the row-vector convention")
+    diagram = (BOOK / "figures" / "key-value-layout.tex").read_text(encoding="utf-8")
+    if "第 20.1 节" in diagram:
+        fail("Outdated chapter-specific reference in key layout figure")
     for practice, prefix in (("25-integrated-practice", "C1"), ("25b-modern-practice", "C2"), ("15-practice", "C3")):
         includes(sources[practice], rf"label=\textbf{{{prefix}-\arabic*.}}", "unique exercise number")
         includes(sources["27-answer-key"], rf"label=\textbf{{{prefix}-\arabic*.}}", "matching answer number")
