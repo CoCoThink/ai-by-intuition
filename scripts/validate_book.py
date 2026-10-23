@@ -493,6 +493,14 @@ def validate_source() -> None:
         fail("Transformer oral recap must have exactly ten steps")
     includes(block_ch22, r"\input{figures/original-transformer-map}",
              "source vs decoder-only architecture component mapping")
+    original_map = (BOOK / "figures" / "original-transformer-map.tex").read_text(
+        encoding="utf-8"
+    )
+    if not all(term in original_map.split(r"\tagstructbegin", 1)[1].split(
+            r"\begin{center}", 1)[0]
+            for term in ("Encoder", "Decoder", "Cross-Attention",
+                         "FFN", "归一化", "因果")):
+        fail("Original Transformer figure alt text lacks source/target or FFN detail")
 
     three_tier_first_ten = ["00d-rules-gap","00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
     for lesson_name in three_tier_first_ten:

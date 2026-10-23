@@ -1,6 +1,6 @@
 % Educational mapping, not a reproduction of the original paper figure.
 % Center and each arrow are textual; color is not the sole communication cue.
-\tagstructbegin{tag=Figure,alttext={原始编码器解码器 Transformer 具有左右两条输入路径：源 Token 经 Encoder 自注意力产出 Key 和 Value，目标前缀经因果自注意力产出 Decoder Query，交叉注意力读取 Encoder 输出，再经 FFN 与输出层。GPT-2 等 Decoder-only 模型省去独立 Encoder 与交叉注意力。图中各框注明对应教材章节。}}
+\tagstructbegin{tag=Figure,alttext={左右两路的 Encoder--Decoder Transformer 示意：左路源 Token 经 Embedding、双向 Encoder 自注意力、FFN、残差和归一化成为 Encoder 输出，供交叉注意力读取为 Key 与 Value；右路目标前缀先经过因果遮挡的 Decoder 自注意力，再以 Decoder 状态为 Query 对左路 Encoder 输出做 Cross-Attention，随后经过残差、归一化、FFN、输出头和 Softmax。图中框还标明教材章节；Decoder-only 模型去掉独立 Encoder 与交叉注意力，但保留因果自注意力、FFN 与输出头。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,
  mapbox/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=52mm,
