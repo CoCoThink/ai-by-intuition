@@ -1,7 +1,7 @@
 \subsection{全书随堂自测参考解答}
 \phantomsection\label{app:chapter-checks}
 
-正文自测答案\textbf{按当前正文章号与阅读顺序排列}；阅读指南不占章号，
+正文自测答案\textbf{按当前正文章号与阅读顺序排列}；四个示范章末已有核心判断，这里保留完整订正和数值过程。阅读指南不占章号，
 损失解析解与梯度下降分列两章，同章多题共用章号。
 若数值与这里不一致，请先核对矩阵的\textbf{维度、乘法方向和输入数据}。
 附录 A 汇总核心公式、数学速查和优化器提高选读，不再设置随堂自测。点击题目标题可返回正文。
@@ -17,12 +17,12 @@
 \item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 回忆：任何实数的平方都非负；
 手算：$w=\answerresult{2}$ 时 $L_{\min}=\answerresult{0}$；
 迁移：$L(3,1)=\frac23(3-2)^2=\answerresult{2/3}$。
-\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace 回忆：沿负梯度方向更新；
-手算：$\nabla L=(-4/3,-2)$，更新到 $(1.4,0.6)$，
-损失从 $5/3$ 降到 $\answerresult{0.4}$；
-迁移：$\eta=0$ 时参数不变，损失仍为 $5/3$；
-梯度 $(6,8)$ 的 L2 范数为 $10$，整体乘 $5/10$ 后为 $\answerresult{(3,4)}$。
-高级优化器与 Warmup 的手算参见附录 A。
+\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace
+ \textbf{题 1（预测）：}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；没更新不代表已收敛。
+\par\textbf{题 2（手算）：}$\nabla L=(-4/3,-2)$；以 $\eta=0.3$ 同步更新到 $(1.4,0.6)$，损失为 $\frac23(1.4-2)^2+(0.6-1)^2=\answerresult{0.4}$。
+\par\textbf{题 3（找错）：}同步更新要在同一旧参数处算完全部梯度后再一起更新；不能将新参数混进本次剩余梯度。
+\par\textbf{题 4（权衡）：}单样本更新计算较少但随机波动通常较大；全批次更稳但单次计算较重。Mini-batch 折中内存、吞吐量与梯度方差。
+\par\textbf{题 5（诊断）：}$\|(6,8)\|_2=10$，乘 $5/10$ 得 $\answerresult{(3,4)}$；梯度裁剪不是对预测概率归一化。高级优化器手算见附录 A。
 \item[\textbf{第 4 章}] \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{ReLU 与非线性}}\enspace 回忆：两次仿射复合仍可化为一次仿射变换；
 手算：$\answerresult{0}$ 和 $\answerresult{1}$；
 迁移：ReLU 对正负输入采用不同分支，生成分段变化。
@@ -88,17 +88,21 @@ Query 来自 Decoder、Key/Value 来自 Encoder 输出。
 \item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 回忆：FFN 改写隐藏特征，输出头产生词表 logits；
 手算：上投影 $\answerresult{6\times18}$、下投影 $\answerresult{18\times6}$；
 迁移：Token 数不变，FFN 输出仍为 $4\times6$。
-\item[\textbf{第 23 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace 回忆：隐藏向量经过输出头、logits、Softmax；
-手算：第 $\answerresult{1,2}$ 位置预测错，第 3 位置正确；
-迁移：并非不变，主例最大 logit 变化约 $0.3520$，
-首位置可以经因果 Attention 影响后续。
+\item[\textbf{第 23 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace
+ \textbf{题 1（定位）：}$X,A,H:3\times3$，$Z,\widehat P:3\times5$；输出头 $W_{\rm out}:3\times5$ 从隐藏特征生成词表分数。
+\par\textbf{题 2（预测）：}初始位置 $1,2$ 错，位置 $3$ 对。因果 Attention 允许第三位置读取第一位置，所以首 Token 改变可影响末位置 logits。
+\par\textbf{题 3（找错）：}说反了：Attention 跨 Token 位置读取；FFN 使用共享权重逐行做非线性变换，不交换 Token 信息。
+\par\textbf{题 4（比较）：}无因果 Mask，前面位置可能读取后面的目标 Token 表示，造成未来信息泄漏；自回归训练必须限制可见性。
 \item[\textbf{第 24 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace 回忆：平均三项损失令每项梯度带 $1/3$；
 手算：$(0.3-1)/3=\answerresult{-0.2333}$；
 迁移：只统计两个参与位置时均值归一化为 $1/2$，
 需同时一致地更改损失掩码。
-\item[\textbf{第 25 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{贪心生成与 Top-p 采样}}\enspace 回忆：贪心取最高概率，Top-p 在累计概率达到阈值的候选中采样；
-手算：保留前两个候选（累计 $0.9$）；
-迁移：归一化为 $\answerresult{(2/3,1/3)}$。
+\item[\textbf{第 25 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{贪心生成与 Top-p 采样}}\enspace
+ \textbf{题 1（预测）：}C 从 $\tau=1$ 时约 $0.090$ 降至 $\tau=0.5$ 时约 $\answerresult{0.016}$；$\tau$ 趋于无穷时三个概率均趋 $1/3$。
+\par\textbf{题 2（手算）：}Top-$p=0.8$ 累计 $0.5+0.3=0.8$，按大于等于阈值保留 A、B，归一化为 $\answerresult{(0.625,0.375)}$。Top-$k=3$ 保留前三，总和 $0.95$，归一化约 $\answerresult{(0.526,0.316,0.158)}$；保留集合不同。
+\par\textbf{题 3（找错）：}训练时真实前缀全部已知，因果 Mask 允许不同位置同一轮前向预测；生成时新输入由上一步选出的未知 Token 决定，必须顺序生成。
+\par\textbf{题 4（权衡）：}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。
+\par\textbf{题 5（场景）：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。
 \item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace 回忆：玩具损失下降只验证一次已给定数据上的更新；
 手算：$768/12=\answerresult{64}$；
 迁移：还要用独立任务评价事实、泛化与错误率，
@@ -134,10 +138,11 @@ $k_AS=\answerresult{(1,0.6)}$；
 手算：$-\ln0.25=\ln4\approx\answerresult{1.386}$；
 迁移：偏好学习可以利用 A 优于 B 的比较信号。
 \item[\textbf{第 33 章}] \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{RAG、环比与权限}}\enspace
-回忆：RAG 补充可追溯证据，不直接赋予模型外部操作权限；
-手算：$(132-120)/120=\answerresult{10\%}$；
-迁移：网页是不可信数据，越权要求不等于系统或用户指令；
-文件外传必须另经授权与应用侧校验。
+ \textbf{题 1（覆盖）：}缺 Q2 报告。先对必需季度逐项检查、定向检索或申请合法数据访问；若缺失仍无法计算，明确报告缺口。
+\par\textbf{题 2（手算）：}正确 Q3 环比 $(132-120)/120=\answerresult{10\%}$；误用 Q1 为基期则 $(132-100)/100=\answerresult{32\%}$。
+\par\textbf{题 3（找错）：}检索相关性不等于来源可信，网页正文不等于高优先级系统指令，外发文件更须经应用侧授权，不能由网页文字授予权限。
+\par\textbf{题 4（权衡）：}应用层记忆保存、索引并在获授权后恢复消息或摘要，涉及持久化与隐私成本；KV Cache 存已处理 Token 的注意力 K/V，减少重复计算却占运行内存，不默认跨独立会话保存。
+\par\textbf{题 5（场景）：}记录权限／超时错误，不越权执行；在预算内重试或请求用户授权／提供原始报告，无法核验时停止相关计算。可答：“Q2 报表读取失败，当前无法核对 Q3 环比，请提供获授权的 Q2 数据。”
 \item[\textbf{第 34 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace 回忆：权重与随上下文增长的 KV Cache 不同；
 手算：$10^9\times2=2\times10^9$ 字节，为 $\answerresult{2\ {\rm GB}}$；
 迁移：通常更多，还包括缓存、激活及运行时开销。
