@@ -8,14 +8,14 @@
 
 | 项目 | 成功验证的明确来源 |
 |---|---|
-| 源码 SHA | [3800ab9e2470939db7b93f047bebfd0176556e7a](https://github.com/CoCoThink/ai-by-intuition/commit/3800ab9e2470939db7b93f047bebfd0176556e7a) |
-| 成功的 main 构建 | [Build one PDF book #39913269593](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39913269593) |
+| 源码 SHA | [07b368c3c2c8d7e1c597fe88dddaf3cf20ac8650](https://github.com/CoCoThink/ai-by-intuition/commit/3800ab9e2470939db7b93f047bebfd0176556e7a) |
+| 成功的 main 构建 | [Build one PDF book #39929702902](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39929702902) |
 | 内容结构 | 9 部分、39 个编号章节、A–G 共 7 个附录 |
-| PDF | **143 页** Tagged PDF；页面文字边界检查通过 |
-| Formula | **2,134 / 2,134** 具有可解析的 MathML-AF 关联 |
-| MathML | 1,308 份不同的 MathML 文档 |
+| PDF | **144 页** Tagged PDF；页面文字边界检查通过 |
+| Formula | **2,366 / 2,366** 具有可解析的 MathML-AF 关联 |
+| MathML | 1,305 份不同的 MathML 文档 |
 | veraPDF | PDF/UA-2 **compliant=true、failedRules=0、failedChecks=0** |
-| 源码与数值 | 63 个章节输入文件、133 项中英四列表、47 处三层次自测、统一三维训练及独立数值回归全部通过 |
+| 源码与数值 | 63 个章节输入文件、133 行术语、47 处三层自测、三维训练及第 11／15 章孤页专项回归通过 |
 | 审计资产 | 此次 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` |
 
 **重要：上述机器数字仅对该 SHA 的 PDF 有效。**
@@ -61,6 +61,16 @@ FFN／归一化等部件，并已通过新的 PDF/UA-2 机器验收。
 两处结论均和实际正文、自测同页，不再是孤页。
 历史 143 页记录保留，仅作历史，不覆盖新版证据。
 此后的回归脚本变更仍须独立 CI 验证。
+
+## 最新 144 页成功机器基线（明确的 PDF 字节）
+
+已从 [#39929702902](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39929702902)
+成功构建的工件提取实际 PDF，计算 SHA-256 为 `1d8c85eb3d6ee3ed84994cf1ed8f9d21e0a6c97c7791180327150bf56f7290b6`，
+与该运行的灰度审计 JSON 一致。其灰度机检已渲染 **144／144** 页，
+近空白与贴边嫌疑均为空；第 11、15 章结尾页定向回归亦通过。
+完整证据见 [07b368c 专项审计](PRINT_PROOF_07B368C.md)。
+此证据只对应上表的 `07b368c3c2c8d7e1c597fe88dddaf3cf20ac8650`；后续将物理章首检查和
+CI 源码 SHA／运行号写入灰度 JSON 的改动，须以其自己的新 CI 验证。
 
 ## R03／R08 可审计的人工检查入口
 

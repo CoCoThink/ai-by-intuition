@@ -28,6 +28,16 @@ python3 scripts/print_proof.py book/build/main.pdf \
   --source-sha 0123456789abcdef0123456789abcdef01234567
 ```
 
+如已取得同一次 CI 的 `grayscale-audit.json`，可在生成校样时验证实际 PDF 的 SHA-256：
+```bash
+python3 scripts/print_proof.py book/build/main.pdf \
+  --pages 29,37 --out-dir book/build/proof-bound \
+  --audit-json pdfua-audit/grayscale-audit.json
+```
+若机器报告携带源码 SHA 和 Actions 运行号，它们将被纳入 `PROVENANCE.json`；
+PDF 哈希不符、来源提交不符时直接拒绝生成校样，不允许混用不同 CI 工件。
+老报告没有源码 SHA 时须从其成功运行页面另行确认，不能猜测填入。
+
 输出 `index.html`（灰度图浏览索引）、`page-NNN.png`
 （单页图片）、`CHECKLIST.md`（逐页审阅栏）和 `PROVENANCE.json`（来源摘要）。
 人工审阅包会自动记录 PDF SHA-256；提供 `--source-sha` 时同时记录原始 40 位提交号。
@@ -47,7 +57,7 @@ python3 scripts/audit_grayscale_pdf.py book/build/main.pdf \
 
 ```
 
-报告含 PDF SHA-256、实际页数、渲染数量、每页深色像素比例、
+报告含 PDF SHA-256（新 CI 还记录源码 SHA 与运行号）、实际页数、渲染数量、每页深色像素比例、
 像素贴边情况及嫌疑页清单。默认阈值为深色像素小于 0.5% 或边缘
 4px 中有超过 4 个深色像素。**通过只能说明上述两种粗略机器规则未报警**，
 不能证明文本字体大小合格、灰度可读、页面顺序合理或无障碍体验达标。
@@ -58,7 +68,7 @@ python3 scripts/audit_grayscale_pdf.py book/build/main.pdf \
 `pdfua2-machine-audit` 工件中。自动结果只供排版预筛，
 不能将人工校样待办自动勾选为通过。
 
-已执行的 143 页版本技术预检及其边界见 [SHA 固定灰度审计](PRINT_PROOF_3800AB9.md)；
+最新 144 页证据见 [07b368c 机器校样](PRINT_PROOF_07B368C.md)；此前 143 页预检见 [历史基线](PRINT_PROOF_3800AB9.md)；
 该文件不是人工勾选的发行校样。
 
 ## 逐页核对
