@@ -92,7 +92,13 @@ $\sigma(XW_1)W_2$ 对每个 Token 行再施加非线性；
 $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 语言预测还必须借助因果掩码阻止读取未来 Token。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:11-softmax-memory}两个 Key 分数相等，Softmax 以后两条权重各是多少？\quad{\footnotesize\hyperref[answer:11-softmax-memory]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:11-softmax-memory}
+\textbf{回忆：}Self-Attention 如何同时计算所有位置的匹配分数？
+\textbf{手算：}只有两条 Key，分数相同，Softmax 权重各多少？
+\textbf{迁移：}只提高其中一条 Key 的分数，
+归一化后的那条权重会增大还是减小？
+\quad{\footnotesize\hyperref[answer:11-softmax-memory]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 现在你能从单次 Query 的点积与加权求和，直接写出

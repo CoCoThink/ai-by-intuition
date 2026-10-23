@@ -39,9 +39,13 @@ $(0.212,0.212,0.576)$，继续把输入作为 Value，
 这便是接下来引入 Query、Key、Value 三种角色的动机。
 
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:21c-naive-attention}
-为什么原始分数矩阵 $XX^\top$ 一定对称，而逐行 Softmax 后的权重不一定对称？
+\textbf{回忆：}为什么直接点积矩阵 $XX^\top$ 必定对称？
+\textbf{手算：}本章 $x_1=(1,0)$、$x_3=(1,1)$，
+求 $S_{13}$ 与 $S_{31}$。
+\textbf{迁移：}对矩阵每行单独做 Softmax，
+权重 $A_{13}$ 和 $A_{31}$ 还必须相等吗？
 \quad{\footnotesize\hyperref[answer:21c-naive-attention]{核对解答。}}\par\medskip
 
 \begin{conclusion}

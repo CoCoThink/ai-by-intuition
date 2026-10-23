@@ -41,24 +41,46 @@
 \item \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace 回忆：左矩阵列数等于右矩阵行数；
 手算：$AB:\boxed{2\times4}$；
 迁移：不能，内侧维度为 $3$ 和 $4$，不匹配。
-\item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 无激活时 $xW_1W_2=x(W_1W_2)$，两层合并成一个线性矩阵，表达能力受限。
+\item \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 回忆：激活引入非线性变换；手算：$\boxed{0}$ 与 $\boxed{2}$；
+迁移：能，$xW_1W_2=x(W_1W_2)$，两层等价于一次线性映射。
 \item \phantomsection\label{answer:18c-training-engineering}\textbf{\hyperref[check:18c-training-engineering]{批次、Warmup、AdamW}}\enspace
 回忆：$100/10=10$ 次更新；
 手算：$w_5=0.64-0.03\times2=\boxed{0.58}$；
 迁移：AdamW 的衰减直接缩小当前权重，独立于自适应梯度估计；
 若把 $\lambda w$ 直接加入梯度，会连动一阶、二阶移动平均。
-\item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 五个单字经两次合并后变成三个 Token；这是教学示意，真实分词取决于词表和合并表。
-\item \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace $-\log(1/2)=\log2\approx0.6931$；第二类 logit 的梯度为 $1/2-1=-1/2$。
-\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace Embedding 表为 $5\times3$；查三个 ID 得到 $3\times3$ 的输入矩阵。
-\item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 连续序列为 $(1,3,4,2)$ 时，输入 $(1,3,4)$，目标左移得到 $(3,4,2)$。
-\item \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 当前 Token 的 Embedding 与逐 Token MLP 参数完全相同，则输出也相同；若前文没有作为输入或状态传入，函数就无法区分这两段上下文。
-\item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace $h_1=2$，$h_2=0+0.5\times2=1$。
-\item \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace
-$S_{ij}=x_i\cdot x_j=x_j\cdot x_i=S_{ji}$；
-但每行 Softmax 的分母由该行全部分数决定，不同行分母可能不同，权重矩阵因此未必对称。
-\item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 按权重求和：$0.2(1,0)+0.8(0,1)=(0.2,0.8)$。
-\item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 分数相等时指数也相等，两项归一化后各为 $0.5$。
-\item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 按特征列而非位置行拼接，输出 $3\times4$。
+\item \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 回忆：ID 只是离散编号，不表明语义大小；
+手算：$5-2=\boxed{3}$ 个 Token；
+迁移：未必相同，分词器词表与合并规则改变切分结果。
+\item \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace 回忆：logits 未归一化，不要求非负或总和为一；
+手算：$-\log(1/2)=\boxed{0.6931}$，
+正确类梯度 $1/2-1=\boxed{-1/2}$；
+迁移：$-\log p$ 随 $p$ 升高而降低。
+\item \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace 回忆：每行对应词表中一个 Token ID；
+手算：$E:5\times3$，三次查表得到 $\boxed{3\times3}$；
+迁移：同一 ID 查到同一 Embedding 行；
+后续位置与上下文变换才可能产生差异。
+\item \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 回忆：每个位置预测它之后的 Token；
+手算：目标为 $\boxed{[3,4,2]}$；
+迁移：不能，生成只有可见前缀，未来目标必须屏蔽。
+\item \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 回忆：缺少此前位置的信息；
+手算：两次输出均为 $\boxed{7}$；
+迁移：可将前文表示加入输入、递推状态或 Attention 可见位置。
+\item \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace 回忆：状态按序列位置向后递推；
+手算：$h_1=2,h_2=\boxed{1}$；
+迁移：$h_3=1+0.5\times1=\boxed{1.5}$。
+\item \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace 回忆：点积交换顺序不改变结果；
+手算：$S_{13}=S_{31}=\boxed{1}$；
+迁移：未必，逐行 Softmax 的分母随 Query 所在行改变，
+本例 $A_{13}\approx0.422$，$A_{31}\approx0.212$。
+\item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 回忆：Query/Key 产生匹配分数，Value 供加权读取；
+手算：$0.2(1,0)+0.8(0,1)=\boxed{(0.2,0.8)}$；
+迁移：匹配分数不变，输出通常随 Value 改变。
+\item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 回忆：用 $QK^\top$ 得到完整分数矩阵；
+手算：两条权重都是 $\boxed{0.5}$；
+迁移：其他分数固定时，提高某条分数会增大其 Softmax 权重。
+\item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 回忆：不同投影可学习不同的匹配与读取表示；
+手算：拼接输出 $\boxed{3\times4}$；
+迁移：再右乘 $4\times6$，得到 $\boxed{3\times6}$。
 \item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{Block 三层自测}}\enspace
 回忆：同形状向量才能逐位置直接残差相加，否则需要投影对齐；
 手算：两个 $3\times2$ 头按特征拼接为 $\boxed{3\times4}$；

@@ -447,6 +447,15 @@ def validate_source() -> None:
     assert (2+1, 3-1) == (3, 2)
     assert (1*3 + 2*1) == 5
 
+    three_tier_attention = ["10-mlp","20a-tokenizer","20c-classification-loss","20-embeddings","20b-task-contract","21a-context-gap","21-rnn","21c-naive-attention","21b-why-attention","11-softmax-memory","22a-position-multihead"]
+    for lesson_name in three_tier_attention:
+        includes(sources[lesson_name], "读完自测：回忆／手算／迁移",
+                 f"attention and text three-level check: {lesson_name}")
+        for kind in ("回忆：", "手算：", "迁移："):
+            includes(sources[lesson_name], kind, f"{lesson_name} {kind}")
+    assert (1 * 0 + 0 * 1) == 0
+    assert (1 * 1 + 0 * 1) == 1
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (

@@ -49,9 +49,12 @@ f\bigl(E[\text{开了}]\bigr)
 还需要考虑任务长度、数据、参数量和计算代价。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:21a-context-gap}
-为什么只接收最后一个 Token 向量的同一 MLP，不能区分两个前文不同但最后 Token 相同的输入？
+\textbf{回忆：}仅看最后一个 Token 的逐位置 MLP 缺少什么？
+\textbf{手算：}两段上下文最后均输入 $x=3$，
+同一个 $f(x)=2x+1$ 各输出多少？
+\textbf{迁移：}哪一种输入或状态改动能让模型区分这两段前文？
 \quad{\footnotesize\hyperref[answer:21a-context-gap]{核对解答。}}\par\medskip
 
 \begin{conclusion}

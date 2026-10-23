@@ -82,9 +82,12 @@ L=-z_{\rm correct}+\log\!\left(\sum_k e^{z_k}\right).
 不是所有任务都必须改写成分类；连续数值预测等任务可以使用其他输出与损失。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
 \phantomsection\label{check:20c-classification-loss}
-三分类概率为 $(1/4,1/2,1/4)$、标签为第二类时，交叉熵和该类 logit 的梯度是多少？
+\textbf{回忆：}logits 为什么不能直接当概率？
+\textbf{手算：}三分类 $p=(1/4,1/2,1/4)$，
+标签为第二类，交叉熵与该类 logit 的梯度各是多少？
+\textbf{迁移：}保持标签不变而正确类概率升高，交叉熵会怎样？
 \quad{\footnotesize\hyperref[answer:20c-classification-loss]{核对解答。}}\par\medskip
 
 \begin{conclusion}

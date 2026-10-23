@@ -133,7 +133,14 @@ O_{\rm cat}W_O=(0.990,2.010)\quad(1\times2).
 每个头先读出自己的 Value 向量，
 拼成更宽的特征，再使用 $W_O$ 投影回模型宽度。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22a-position-multihead}若两个注意力头各输出 $3\times2$，按特征拼接后的形状是什么？\quad{\footnotesize\hyperref[answer:22a-position-multihead]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:22a-position-multihead}
+\textbf{回忆：}不同注意力头为什么可以使用不同投影？
+\textbf{手算：}两个头各输出 $3\times2$，
+沿特征轴拼接后的形状是什么？
+\textbf{迁移：}若以 $W_O:4\times6$ 做输出投影，
+矩阵形状变成多少？
+\quad{\footnotesize\hyperref[answer:22a-position-multihead]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 两种问题需要不同设计：\textbf{位置信息}区分内容位于何处；
