@@ -737,6 +737,12 @@ def validate_source() -> None:
     includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
     includes(sources["20b-task-contract"], r"50{,}257", "chapter 15 concise GPT-2 scale pointer")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
+    # Old appendix B-era exercise codes must not remain in prose links.
+    stale_ids = {name: sorted(set(re.findall(r"\bB[123]-\d+\b", body)))
+                 for name, body in sources.items()
+                 if re.search(r"\bB[123]-\d+\b", body)}
+    if stale_ids:
+        fail(f"Stale appendix exercise numbering B1/B2/B3: {stale_ids!r}")
     for practice, prefix in (("25-integrated-practice", "C1"), ("25b-modern-practice", "C2"), ("15-practice", "C3")):
         includes(sources[practice], rf"label=\textbf{{{prefix}-\arabic*.}}", "unique exercise number")
         includes(sources["27-answer-key"], rf"label=\textbf{{{prefix}-\arabic*.}}", "matching answer number")
