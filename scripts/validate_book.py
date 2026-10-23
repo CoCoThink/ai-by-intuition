@@ -1066,7 +1066,7 @@ def validate_source() -> None:
              "compact core formula card")
 
     includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
-    includes(sources["18c-training-engineering"], "0.943", "two-step Adam example")
+    includes(sources["30-optimizer-appendix"], "0.943", "two-step Adam optional example")
     includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")
     includes(sources["11-softmax-memory"], r"\label{concept:self-attention}", "merged chapter")
     for name, body in sources.items():
