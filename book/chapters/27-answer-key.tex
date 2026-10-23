@@ -80,6 +80,16 @@ $\partial L/\partial W_{\rm down}=u^\top g_h
 Q3 环比为 $(132-125)/125=\boxed{5.6\%}$。
 仅修改 Prompt 输入数据不改变网络权重；
 实际执行 SFT 训练才会进行参数更新。
+\item \textbf{形状纠错：} $Q:2\times3$、$K:4\times3$，
+$QK$ 的内侧维度为 $3$ 和 $4$，不能相乘。
+必须先转置 Key：$QK^\top:2\times4$，
+逐行 Softmax 权重仍为 $2\times4$，
+再乘 $V:4\times5$，输出为 $2\times5$。
+\item \textbf{系统纠错：} Dropout 训练时随机屏蔽或缩放部分\textbf{激活}，
+不是永久删除参数；推理时通常停用随机屏蔽并使用匹配的尺度约定。
+检索排名不等于来源可信或权限授权；
+网页内容是低信任数据，必须核验来源，
+并由应用层单独校验工具和外发权限。
 \end{enumerate}
 \end{tcolorbox}
 

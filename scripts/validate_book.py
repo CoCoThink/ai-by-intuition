@@ -424,13 +424,13 @@ def validate_source() -> None:
     answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
     if len(answer_sections) != 4:
         fail("Expected three distinctly labelled answer sets")
-    expected_counts = (14, 14, 11)  # practice order: mathematics, modern systems, X2 elective
+    expected_counts = (14, 16, 11)  # practice order: mathematics, modern systems, core memory
     actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
                      for i in range(3))
     if tuple(actual_counts) != expected_counts:
-        fail("Central answer counts do not match 14/14/11 lesson exercises")
-    if math_body.count(r"\item") != 14 or modern_body.count(r"\item") != 14:
-        fail("Both core exercise collections must contain fourteen items")
+        fail("Central answer counts do not match 14/16/11 lesson exercises")
+    if math_body.count(r"\item") != 14 or modern_body.count(r"\item") != 16:
+        fail("Core collections must contain fourteen math and sixteen modern items")
     for name in ("25-integrated-practice", "25b-modern-practice"):
         for label in ("【回忆】", "【手算】", "【迁移】"):
             includes(sources[name], label, f"{name} exercise tier")
@@ -452,6 +452,14 @@ def validate_source() -> None:
     ninth = sources["24-lexicon"].split(r"\subsubsection{第九组")[1].split(r"\subsubsection{第十组")[0]
     includes(ninth, r"\textbf{Top-p}", "sampling group")
 
+    for practice in ("25-integrated-practice", "25b-modern-practice", "15-practice"):
+        for level in ("【基础】", "【标准】", "【挑战】"):
+            includes(sources[practice], level, f"{practice}: three difficulty tiers")
+    includes(sources["25b-modern-practice"], "形状错误",
+             "modern shape-error exercise")
+    includes(sources["25b-modern-practice"], "Dropout",
+             "modern conceptual correction exercise")
+
     # Glossary anchors remain valid and are backed by content in the book.
     labels: dict[str, str] = {}
     for name in REQUIRED:
@@ -470,7 +478,7 @@ def validate_source() -> None:
                 fail(f"Broken self-check link in {name}: {destination}")
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (100 if lex == "24-lexicon" else 27):
+        if len(refs) != (110 if lex == "24-lexicon" else 27):
             fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
         for ref in refs:
             if ref not in labels:

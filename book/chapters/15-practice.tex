@@ -1,17 +1,22 @@
 \subsection{联想记忆专题练习：外积、干扰与容量}
 
+本组按\textbf{基础／标准／挑战}标明难度：
+基础核对点积和简单向量乘法，标准联系形状与权重，
+挑战需综合多项运算并解释条件。
+题目沿用全书的\textbf{行向量约定}。
+
 \begin{enumerate}[label=\textbf{B3-\arabic*.}]
-\item $\vect{a}=(1,0)$，$\vect{b}=(0.8,0.6)$，两者点积是多少？相似度高还是低？
-\item 如果只存一条行向量记忆 $S=k^\top v$ 且 $k$ 为单位行向量，查询 $kS$ 得到什么？
-\item 为什么行向量记忆 $S=\sum_i k_i^\top v_i$ 在查询某条 Key 时仍可能产生串扰？
-\item 比较 $0.5$、$0.5^2$、$0.5^3$：越来越高次的激活为什么有助于压低弱匹配？
-\item Softmax 对两个分数 $[1,0.6]$ 做指数归一化。增大逆温度 $\beta=1/\tau$（$\tau$ 为温度）后，哪条记忆的权重上升？
-\item 若 $K=\begin{bmatrix}1&2\\3&4\end{bmatrix}$、$x=(1,-1)$，计算 $\relu(xK^\top)$。
-\item 若 $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$、$a=(0,2)$，计算 $aV$，并用「按行加权求和」解释结果。
-\item 已知 $\vect a=(6,0)$、$\vect b=(5,12)$，求点积、两个长度与 $\cos\theta$，并验证 $\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta$。
-\item 若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。
-\item 用一句话说明为什么简化模型可以取 $\vect q=\vect x$，而真实 Transformer 中两者往往不同。
-\item 若 $Q:2\times3$、$K:4\times3$、$V:4\times5$，求 $QK^\top$ 与 $\softmax(QK^\top)V$ 的尺寸；Softmax 沿哪一个方向归一化？
+\item \textbf{【基础】} $\vect{a}=(1,0)$，$\vect{b}=(0.8,0.6)$，两者点积是多少？相似度高还是低？
+\item \textbf{【基础】} 如果只存一条行向量记忆 $S=k^\top v$ 且 $k$ 为单位行向量，查询 $kS$ 得到什么？
+\item \textbf{【标准】} 为什么行向量记忆 $S=\sum_i k_i^\top v_i$ 在查询某条 Key 时仍可能产生串扰？
+\item \textbf{【基础】} 比较 $0.5$、$0.5^2$、$0.5^3$：越来越高次的激活为什么有助于压低弱匹配？
+\item \textbf{【标准】} Softmax 对两个分数 $[1,0.6]$ 做指数归一化。增大逆温度 $\beta=1/\tau$（$\tau$ 为温度）后，哪条记忆的权重上升？
+\item \textbf{【标准】} 若 $K=\begin{bmatrix}1&2\\3&4\end{bmatrix}$、$x=(1,-1)$，计算 $\relu(xK^\top)$。
+\item \textbf{【标准】} 若 $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$、$a=(0,2)$，计算 $aV$，并用「按行加权求和」解释结果。
+\item \textbf{【挑战】} 已知 $\vect a=(6,0)$、$\vect b=(5,12)$，求点积、两个长度与 $\cos\theta$，并验证 $\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta$。
+\item \textbf{【标准】} 若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。
+\item \textbf{【基础】} 用一句话说明为什么简化模型可以取 $\vect q=\vect x$，而真实 Transformer 中两者往往不同。
+\item \textbf{【标准】} 若 $Q:2\times3$、$K:4\times3$、$V:4\times5$，求 $QK^\top$ 与 $\softmax(QK^\top)V$ 的尺寸；Softmax 沿哪一个方向归一化？
 \end{enumerate}
 
 \noindent\emph{参考解答统一放在\hyperref[app:answers]{附录答案}，请先独立完成。}

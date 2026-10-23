@@ -1,4 +1,4 @@
-\subsection{建立自己的 AI 术语地图：100 个基础概念}
+\subsection{统一术语地图：中英速查、100 个基础概念与现代补充}
 
 这一章是可以点击回溯的概念索引。术语后面的链接给出正文中的章号和页码；文末另有英文术语字母索引及概念关联图。
 
@@ -8,6 +8,31 @@
 遇到陌生词时，可点击章页索引，阅读正文中的解释和算例。读完后，使用 PDF 阅读器的“返回上一视图”回到术语表。
 \end{idea}
 
+
+\subsubsection*{统一入口：十个高频术语的中英对照}
+
+下面先集中给出中文、English、核心含义与所在章节，
+后续 100 个基础词条、现代架构补充与 A--Z 索引用于深入查找。
+表中章节使用正文标签，调整目录顺序后仍能正确跳转。
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{20mm}p{30mm}X p{17mm}@{}}
+\toprule
+中文 & English & 一句话定义 & 章节\\\midrule
+分词器 & Tokenizer & 把文字映射为 Token ID。 & \termref{intro:20a-tokenizer}\\
+嵌入 & Embedding & 让离散 ID 对应可训练向量。 & \termref{intro:20-embeddings}\\
+朴素注意力 & Naive attention & 无投影直接点积并加权读出。 & \termref{intro:21c-naive-attention}\\
+自注意力 & Self-attention & Query 匹配上下文 Key，再读 Value。 & \termref{concept:self-attention}\\
+前馈网络 & FFN & 对各 Token 行做共享非线性变换。 & \termref{concept:ffn}\\
+关联记忆 & Associative memory & 将 Key--Value 关联写入可读状态。 & \termref{intro:04-key-value-outer-product}\\
+线性注意力 & Linear attention & 采用不同于全量 Softmax 的状态或特征计算。 & \termref{concept:linear-attention}\\
+多头潜在注意力 & MLA & 将部分 K/V 表示压缩为可缓存潜在量。 & \termref{concept:mla}\\
+检索增强生成 & RAG & 将检索证据放入模型生成上下文。 & \termref{concept:rag}\\
+智能体 & Agent & 按授权规则编排模型、工具及结果反馈。 & \termref{concept:agent}\\
+\bottomrule
+\end{tabularx}
+\end{center}
 
 \subsubsection{第一组：基本概念}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=1]

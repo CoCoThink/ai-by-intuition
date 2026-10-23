@@ -33,7 +33,7 @@ Distill (2016)：\\
 \url{https://www.deeplearningbook.org/}
 \end{itemize}
 
-联想记忆提供了理解 Key--Value 与注意力权重的另一条数学路径，相关推导见选读专题。
+联想记忆提供了理解 Key--Value 与注意力权重的另一条数学路径，相关推导见第 VI 部分。
 
 \subsubsection*{预训练、上下文学习与规模规律}
 \begin{itemize}
@@ -54,6 +54,22 @@ Distill (2016)：\\
 \item Agent2Agent (A2A) Protocol：\\
 \url{https://a2a-protocol.org/latest/}
 \end{itemize}
+
+\subsubsection*{可复算模型配置与视觉桥接的来源}
+\begin{itemize}
+\item GPT-2 small 公共模型卡与固定权重 revision：\\
+\url{https://huggingface.co/openai-community/gpt2}
+\item GPT-2 配置文件（固定提交）：\\
+\url{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}
+\item Qwen2.5-0.5B 配置文件（固定提交）：\\
+\url{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json}
+\item Dosovitskiy et al., \emph{An Image Is Worth 16x16 Words}
+（ViT, 2020）：\\
+\url{https://arxiv.org/abs/2010.11929}
+\end{itemize}
+模型配置是结构字段，不能替代性能评测；
+ViT 与语言模型的 $3\times4$ 投影是书中自设算例，
+不是这些论文公开的特定权重。
 
 \subsubsection*{现代架构与后训练的扩展阅读}
 \begin{itemize}
