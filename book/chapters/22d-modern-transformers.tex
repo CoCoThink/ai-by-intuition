@@ -129,11 +129,11 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \underbrace{100}_{T}\times
 \underbrace{8}_{h_{kv}}\times
 \underbrace{8}_{d_h}
-=\boxed{12{,}800\ \text{个数}}.
+=\answerresult{12{,}800\ \text{个数}}.
 \]
 若采用 2 个 K/V 头的 GQA：
 \[
-2\times100\times2\times8=\boxed{3{,}200\ \text{个数}}.
+2\times100\times2\times8=\answerresult{3{,}200\ \text{个数}}.
 \]
 在这个简化例子里，缓存元素数缩小为原来的四分之一。
 要换算成实际字节，还必须乘以每个元素占用的字节数、
@@ -287,14 +287,14 @@ Qwen2 架构的门控 FFN 还需结合\textbf{模型实现}判断，
 \localfixture{假设参数下的单层缓存与五位置窗口；不对应特定发布模型}
 取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
 普通 MHA 的 Key/Value 缓存元素数为
-$2\times8\times4\times2=\boxed{128}$。
+$2\times8\times4\times2=\answerresult{128}$。
 若 GQA 只保留 2 个 K/V 头：
-$2\times8\times2\times2=\boxed{64}$。
+$2\times8\times2\times2=\answerresult{64}$。
 
 再假设一种 MLA 式压缩设计，每个 Token 缓存
 宽度为 $3$ 的共享潜在向量和宽度为 $2$ 的位置相关部分，
 则\textbf{这份假设}的缓存数为
-$8\times(3+2)=\boxed{40}$。
+$8\times(3+2)=\answerresult{40}$。
 
 
 对五个 Token，用窗口 $w=3$ 的\textbf{包含当前位置}的因果掩码，
@@ -309,7 +309,7 @@ $8\times(3+2)=\boxed{40}$。
 \end{bmatrix}}.
 \]
 最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
-窗口掩码有 $1+2+3+3+3=\boxed{12}$ 个可见位置对，
+窗口掩码有 $1+2+3+3+3=\answerresult{12}$ 个可见位置对，
 全量因果 Mask 则有 $15$ 个；
 \begin{boundarybox}
 \textbf{计算口径：}以上 $128/64/40$ 是\textbf{示例结构的缓存元素数}；
@@ -336,7 +336,7 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 \operatorname{RMSNorm}(\vect x^\top)
 =\frac{\vect x^\top}{
 \sqrt{(1.30^2+0.05^2+(-0.30)^2)/3+10^{-5}}}
-\approx\boxed{(1.6865,0.0649,-0.3892)}.
+\approx\answerresult{(1.6865,0.0649,-0.3892)}.
 \]
 两种归一化\textbf{同样输出 $1\times3$}，
 但 LayerNorm 先减均值、RMSNorm 不减均值，
