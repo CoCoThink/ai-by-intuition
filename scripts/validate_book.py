@@ -569,7 +569,7 @@ def validate_source() -> None:
     includes(sources["16-loss-gradient"], r"L(1.4,0.6)", "joint w-b update")
     includes(sources["16-loss-gradient"], r"\input{figures/loss-two-parameter-contours}", "joint loss contour")
     includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
-    includes(sources["20b-task-contract"], "50,257", "GPT-2 preview")
+    includes(sources["20b-task-contract"], r"50{,}257", "chapter 15 concise GPT-2 scale pointer")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
     for practice, prefix in (("25-integrated-practice", "B1"), ("25b-modern-practice", "B2"), ("15-practice", "B3")):
         includes(sources[practice], rf"label=\textbf{{{prefix}-\arabic*.}}", "unique exercise number")
