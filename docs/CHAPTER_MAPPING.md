@@ -21,7 +21,7 @@
 | 36–37 | 现代架构、技术判断 | \`22d-modern-transformers\`、\`23e-tech-judgement\` |
 | 38–39 | 选读视觉：CNN、ViT 到多模态 | \`19-cnn\`、\`19b-vit\` |
 
-目前 **I–VIII** 为核心主线、**IX** 为视觉选读；已在 `main.tex` 完成重排。尚未 Release；`d4f45cd` 机器基线已通过，进一步修改应按新 SHA 再验收。
+目前 **I–VIII** 为核心主线、**IX** 为视觉选读；已在 `main.tex` 完成重排。尚未 Release；`3800ab9` 机器基线已通过，进一步修改应按新 SHA 再验收。
 
 ## 实施关卡
 
@@ -33,7 +33,7 @@
 - [x] R05：真实 GPT-2 已由 [独立运行 #39897932969](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969) 实测 5 个 Token、全 logits 形状、温度概率和及零上三角掩码；模型 revision 与完整依赖存档，PDF 构建不加载模型权重
 - [x] R06：CoT/GRPO、线性状态、公开模型 config、MLA 假设缓存、窗口掩码以及 ViT→LLM 投影算例均已落地；待整本视觉/数值验收
 - [ ] R07：术语附录已形成 100 基础＋33 现代的 133 行中文／English／定义／章节统一四列表，表格自动派生并有防漂移门禁；原有 47 处自测全部扩为回忆／手算／迁移，附录答案同步，B2 增标准库编程练习。内容实现已到位；仍待最终人工审校与原课程授权签核
-- [ ] R08：`d4f45cd` 的 [CI #39907188928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39907188928) 验证 137 页、2,025/2,025 MathML-AF、PDF/UA-2 机器合规；早期同页数 PDF 的灰度技术预检已做，仍待最终版人工逐页校样、来源授权与发行签核
+- [ ] R08：`3800ab9` 的 [CI #39913269593](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39913269593) 验证 143 页、2,134/2,134 MathML-AF、PDF/UA-2 机器合规、63 章节文件、133 项中英四列表与 47 处自测通过；灰度技术预检不能代替最终高分辨率逐页审校、来源授权与发行签核
 
 ## 改动必须遵守的边界
 

@@ -8,14 +8,14 @@
 
 | 项目 | 成功验证的明确来源 |
 |---|---|
-| 源码 SHA | [d4f45cd7630239750adb0c71cbec3718fe705aae](https://github.com/CoCoThink/ai-by-intuition/commit/d4f45cd7630239750adb0c71cbec3718fe705aae) |
-| 成功的 main 构建 | [Build one PDF book #39907188928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39907188928) |
+| 源码 SHA | [3800ab9e2470939db7b93f047bebfd0176556e7a](https://github.com/CoCoThink/ai-by-intuition/commit/d4f45cd7630239750adb0c71cbec3718fe705aae) |
+| 成功的 main 构建 | [Build one PDF book #39913269593](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39913269593) |
 | 内容结构 | 9 部分、39 个编号章节、A–G 共 7 个附录 |
-| PDF | **137 页** Tagged PDF；页面文字边界检查通过 |
-| Formula | **2,025 / 2,025** 具有可解析的 MathML-AF 关联 |
-| MathML | 1,250 份不同的 MathML 文档 |
+| PDF | **143 页** Tagged PDF；页面文字边界检查通过 |
+| Formula | **2,134 / 2,134** 具有可解析的 MathML-AF 关联 |
+| MathML | 1,308 份不同的 MathML 文档 |
 | veraPDF | PDF/UA-2 **compliant=true、failedRules=0、failedChecks=0** |
-| 源码与数值 | 62 个章节输入文件、联合训练、Q/K、Delta、Warmup/AdamW、现代 B2 二十题及相关数值回归通过 |
+| 源码与数值 | 63 个章节输入文件、133 项中英四列表、47 处三层次自测、统一三维训练及独立数值回归全部通过 |
 | 审计资产 | 此次 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` |
 
 **重要：上述机器数字仅对该 SHA 的 PDF 有效。**
