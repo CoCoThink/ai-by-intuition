@@ -6,9 +6,8 @@
 
 前面已学过 Embedding、因果 Mask、Q/K/V、Norm、残差、
 FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。
-正文集中保留最能说明计算过程的三份矩阵：
-\textbf{注意力权重 $A$、隐藏状态 $H$、词表概率 $\widehat P$}。
-其余权重与中间矩阵统一放在
+正文只保留\textbf{形状、代表元素与三位置预测图}；
+完整的 $X,A,H,\widehat P$ 数值矩阵及中间投影统一放在
 \hyperref[app:transformer-intermediates]{附录 B.1 的逐层数值核对表}，
 所有数值由 \texttt{scripts/teaching\_reference.py} 计算。
 \par\smallskip
@@ -38,12 +37,8 @@ Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
 查 $5\times3$ 的 Embedding，逐行加 $3\times3$ 的位置向量后，
 Block 输入 $X=E_{[1,3,4]}+P$ 有三行：
 \begin{equation}
-\boxed{\begin{aligned}
-X_{1,:}&=(1.30,\ 0.05,\ -0.30),\\
-X_{2,:}&=(-0.30,\ 1.05,\ 0.32),\\
-X_{3,:}&=(0.03,\ -0.10,\ 1.32).
-\end{aligned}}
-\quad X\in\R^{3\times3}.
+X=E_{[1,3,4]}+P\in\R^{3\times3},
+\qquad X_{1,:}=(1.30,\ 0.05,\ -0.30).
 \label{eq:running-three-token-x}
 \end{equation}
 一个位置占一行，三个特征占三列；
@@ -74,13 +69,10 @@ Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 S=QK^\top/\sqrt3+C,\qquad A=\operatorname{softmax}(S).
 \label{eq:two-token-scores}
 \end{equation}
-实际可复算的注意力矩阵是：
+先核对第二行权重，完整注意力矩阵见附录 B：
 \begin{equation}
-\boxed{A\approx\begin{bmatrix}
-1&0&0\\
-0.1244&0.8756&0\\
-0.1680&0.2418&0.5903
-\end{bmatrix}.}
+A\in\R^{3\times3},\qquad
+A_{2,:}\approx(0.1244,\ 0.8756,\ 0).
 \label{eq:three-token-attention}
 \end{equation}
 \textbf{每一行的权重在可见 Key 上求和为 $1$}：
@@ -109,13 +101,10 @@ H=X_{\rm att}+F_{\rm mid}W_{\rm down},
 其中 $W_{\rm up}:3\times4$、$W_{\rm down}:4\times3$。
 FFN 对每个 Token 行分别使用\textbf{同一组矩阵}；
 跨 Token 的读取来自此前 Attention，FFN 本身不改变位置数。
-第二条残差后的隐藏状态为：
+第二条残差后的隐藏状态只用形状与一个代表元素核验：
 \begin{equation}
-\boxed{H\approx\begin{bmatrix}
-2.5609&-0.0561&-0.9413\\
--0.9865&1.8872&0.3537\\
--0.1760&-0.3557&2.0005
-\end{bmatrix}\in\R^{3\times3}.}
+H=X_{\rm att}+F_{\rm mid}W_{\rm down}\in\R^{3\times3},
+\quad H_{1,1}\approx2.5609.
 \label{eq:three-token-block-output}
 \end{equation}
 
@@ -123,13 +112,11 @@ FFN 对每个 Token 行分别使用\textbf{同一组矩阵}；
 
 令共享的词表输出头 $W_{\rm out}:3\times5$，
 则 $Z=HW_{\rm out}\in\R^{3\times5}$；
-对每行 logits 执行 Softmax，可得到
+对每行 logits 执行 Softmax，正文保留正确类概率：
 \begin{equation}
-\boxed{\widehat P\approx\begin{bmatrix}
-0.1843&0.3341&0.1264&0.2617&0.0935\\
-0.0826&0.0954&0.0951&0.6761&0.0507\\
-0.1535&0.1130&0.3418&0.1181&0.2735
-\end{bmatrix}\in\R^{3\times5}.}
+\widehat P=\operatorname{softmax}_{\rm row}(Z)\in\R^{3\times5},
+\quad(\widehat P_{1,3},\widehat P_{2,4},\widehat P_{3,2})
+\approx(0.2617,0.0507,0.3418).
 \label{eq:three-token-probabilities}
 \end{equation}
 下面青色柱表示\textbf{正确类别}，
@@ -170,10 +157,7 @@ $(0,-0.4279,0.9325,-0.6140,0.7915)$，
 这说明最后位置\textbf{受前文影响}，而不是重新训练过一遍。
 全部结果可用附录参数与脚本复算。
 
-\begin{boundarybox}
-本节为一层单头、固定 Norm 仿射参数的教学模型。
-复算时只采用附录所列三维主例参数；二维、四维的“局部例”另有独立参数。
-\end{boundarybox}
+\noindent{\footnotesize\color{muted}完整数值只使用附录 B 的三维主例参数。}\par
 
 \chapterchecktasks{22b-token-to-output}{定位／预测／找错／比较}{
 \item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\widehat P$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。
