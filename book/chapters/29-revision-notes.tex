@@ -14,15 +14,19 @@
 \item \textbf{联想记忆：}
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查外积写入、串扰、Delta 残差与交替重访。
-\item \textbf{Tokenizer、检索与工具：}
-分别运行 \texttt{python3 scripts/bpe\_demo.py}、
-\texttt{python3 scripts/rag\_demo.py}、
-\texttt{python3 scripts/agent\_loop.py}。
-\item \textbf{现代架构与视觉：}
-运行 \texttt{python3 scripts/config\_table.py}、
-\texttt{python3 scripts/architecture\_demo.py}、
-\texttt{python3 scripts/vision\_bridge\_demo.py}；
-注意架构缓存和视觉桥接数值是独立的教学设定。
+\item \textbf{Tokenizer、检索与工具：}三项实验各自运行：
+\begin{verbatim}
+python3 scripts/bpe_demo.py
+python3 scripts/rag_demo.py
+python3 scripts/agent_loop.py
+\end{verbatim}
+\item \textbf{现代架构与视觉：}以下命令各自运行：
+\begin{verbatim}
+python3 scripts/config_table.py
+python3 scripts/architecture_demo.py
+python3 scripts/vision_bridge_demo.py
+\end{verbatim}
+架构缓存与视觉桥接数据是独立教学设定。
 \end{itemize}
 
 \subsubsection*{与真实 GPT-2 比较}
