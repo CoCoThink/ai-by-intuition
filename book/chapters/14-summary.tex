@@ -13,10 +13,12 @@ Attention & $\softmax(\beta xK^\top)V$ & 每条查询归一化权重，Mask 限�
 \bottomrule
 \end{tabularx}
 \end{center}
-$\beta$ 在这里表示分数缩放因子；缩放点积注意力通常取
-$\beta=1/\sqrt{d_k}$。三者都符合
-$\text{输出}=\sum_i\text{匹配权重}_i\,v_i$ 的形式，
-却不能由此认定计算、容量和训练行为相同。
+缩放系数 $\beta$ 在标准点积注意力里通常取
+$1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
+\[
+\text{输出}=\sum_i \text{匹配权重}_i\,v_i.
+\]
+但不能由此认定它们的计算、容量和训练行为相同。
 
 \subsubsection{Key 和 Value 究竟保存在哪里？}
 从 MLP 的“记忆”视角，Key 和 Value 可由训练得到的权重表示；
