@@ -486,6 +486,27 @@ def validate_source() -> None:
     assert (1 * 0 + 0 * 1) == 0
     assert (3 * 3 * 3 * 8) == 216
 
+    # R01: all 39 numbered chapters carry one grayscale-safe model path.
+    numbered_sources = re.findall(r"\\input\{chapters/([^}]+)\}", main)
+    numbered_sources = numbered_sources[:numbered_sources.index("19b-vit") + 1]
+    numbered_count = 0
+    stages_seen: set[int] = set()
+    for name in numbered_sources:
+        blocks = re.split(r"(?m)^\\section\{[^\n]*\}", sources[name])
+        for chapter_body in blocks[1:]:
+            stages = re.findall(r"\\modelpipelinefocus\{(\d+)\}\{([^}]+)\}",
+                                chapter_body)
+            if len(stages) != 1:
+                fail(f"R01 locator missing or repeated in numbered chapter from {name}: {stages}")
+            stage = int(stages[0][0])
+            if stage < 0 or stage > 8 or not stages[0][1].strip():
+                fail(f"R01 chapter has unsupported or unlabeled model stage: {name}")
+            stages_seen.add(stage)
+            numbered_count += 1
+    if numbered_count != 39 or stages_seen != set(range(9)):
+        fail(f"R01 requires 39 numbered chapter locators and all 0..8 stages; "
+             f"found {numbered_count} and {sorted(stages_seen)}")
+
     # Grayscale-safe pipeline locator in the six most important entry points.
     for name, stage in (
         ("20a-tokenizer", 1), ("20-embeddings", 2),
