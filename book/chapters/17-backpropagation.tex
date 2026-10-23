@@ -2,6 +2,7 @@
 \section{反向传播究竟在传什么？}
 \phantomsection\label{concept:backprop}
 \label{intro:17-backpropagation}
+\chaptercompass{多层网络怎样高效求所有梯度？}{沿计算图反向复用局部导数，而不是为每个参数重算。}{$x\to h\to\widehat y\to L$，反向得到梯度}{$w_1,w_2$ 等层参数}
 \modelpipelinefocus{0}{反向传播}
 
 多层网络的一个参数，可能通过后续许多计算步骤才影响最终损失。
