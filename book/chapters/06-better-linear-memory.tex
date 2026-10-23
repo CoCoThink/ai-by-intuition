@@ -24,6 +24,7 @@ S_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
 但如果约束不相容，线性层并不能任意精确存取无限多条关联。
 
 \subsection{从误差修正到 Delta 写入}
+\phantomsection\label{concept:delta-rule}
 比无条件相加外积更进一步：写入新配对之前，先看旧状态
 $S_{t-1}$ 已经读出什么，只写入尚未记住的残差：
 \[

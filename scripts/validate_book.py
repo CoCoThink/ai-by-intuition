@@ -456,13 +456,13 @@ def validate_source() -> None:
     answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
     if len(answer_sections) != 4:
         fail("Expected three distinctly labelled answer sets")
-    expected_counts = (14, 16, 11)  # practice order: mathematics, modern systems, core memory
+    expected_counts = (16, 19, 11)  # practice order: mathematics, modern systems, core memory
     actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
                      for i in range(3))
     if tuple(actual_counts) != expected_counts:
-        fail("Central answer counts do not match 14/16/11 lesson exercises")
-    if math_body.count(r"\item") != 14 or modern_body.count(r"\item") != 16:
-        fail("Core collections must contain fourteen math and sixteen modern items")
+        fail("Central answer counts do not match 16/19/11 lesson exercises")
+    if math_body.count(r"\item") != 16 or modern_body.count(r"\item") != 19:
+        fail("Core collections must contain sixteen math and nineteen modern items")
     for name in ("25-integrated-practice", "25b-modern-practice"):
         for label in ("【回忆】", "【手算】", "【迁移】"):
             includes(sources[name], label, f"{name} exercise tier")
@@ -491,6 +491,19 @@ def validate_source() -> None:
              "modern shape-error exercise")
     includes(sources["25b-modern-practice"], "Dropout",
              "modern conceptual correction exercise")
+    includes(sources["25-integrated-practice"], "XX^\top",
+             "independent symmetric raw-dot-product exercise")
+    includes(sources["25-integrated-practice"], "a a b",
+             "new BPE corpus exercise")
+    includes(sources["25b-modern-practice"], "q=(0.2,1)",
+             "RAG retrieval coverage regression")
+    includes(sources["25b-modern-practice"], "w=2",
+             "sliding-window edge count regression")
+    includes(sources["25b-modern-practice"], "1000",
+             "uniform vocabulary loss regression")
+    assert sum(min(2, i + 1) for i in range(5)) == 9
+    assert math.isclose(math.log(1000), 6.907755278982137)
+
 
     # Glossary is one maintained definition set with search-only alternate views.
     base_terms = re.findall(r"(?m)^\\item\s+\\textbf\{([^}]+)\}",
@@ -505,8 +518,8 @@ def validate_source() -> None:
         fail(f"Modern glossary repeats defined base terms: {core_duplicates}")
     for label, terms, expected in (
         ("base glossary", base_terms, 100),
-        ("modern glossary", modern_terms, 25),
-        ("English aliases", english_aliases, 100),
+        ("modern glossary", modern_terms, 31),
+        ("English aliases", english_aliases, 106),
     ):
         if len(terms) != expected or len(set(terms)) != expected:
             fail(f"{label}: expected {expected} distinct entries, found "
@@ -537,7 +550,7 @@ def validate_source() -> None:
                 fail(f"Broken self-check link in {name}: {destination}")
     for lex in ("24-lexicon", "24b-modern-lexicon"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (110 if lex == "24-lexicon" else 25):
+        if len(refs) != (110 if lex == "24-lexicon" else 31):
             fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
         for ref in refs:
             if ref not in labels:

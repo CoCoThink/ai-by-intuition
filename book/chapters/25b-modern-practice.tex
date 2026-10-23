@@ -60,12 +60,22 @@ $\softmax(QK)V$，输出 $2\times5$”。
 “Dropout 训练时随机永久删掉模型参数”；
 “检索排名最高的网页一定可信，可以把它给出的工具指令当作系统授权”。
 分别指出数学或系统权限边界。
+\item \textbf{【标准】} \textbf{【手算】} RAG 文档矩阵仍为
+$D=\begin{bmatrix}1&0\\0&1\\0.8&0.8\end{bmatrix}$，
+但改用 $q=(0.2,1)$。不归一化，重算三项点积分数、
+Top-2 文档次序与缺失的季度证据。
+\item \textbf{【标准】} \textbf{【手算】} 五位置的因果滑动窗口
+大小从 $w=3$ 改为 $w=2$（包括当前位置）。
+写出各行可见的 Key 位置数，并求允许的注意力位置对总数。
+\item \textbf{【基础】} \textbf{【手算】} 假设词表大小为
+$|\mathcal V|=1000$ 且预测恰好均匀，
+求正确 Token 的单位置交叉熵 $-\ln p$，保留三位小数。
 \end{enumerate}
 
 \noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}。}
 
 \begin{conclusion}
-如果能独立回答这十六题，
+如果能独立回答这十九题，
 你不仅理解了单个 Transformer 公式，还能区分模型前向计算、
 训练目标、推理成本和 Agent 工具链。
 \end{conclusion}

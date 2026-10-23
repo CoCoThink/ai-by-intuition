@@ -43,6 +43,14 @@ $P_1=(0.10,0.05,-0.10)$。
 求 Block 的新输入第一行 $X'_1=E[4]+P_1$。
 第 2、3 位置的输出是否\textbf{可能}发生变化？
 这属于重新训练还是保持权重的输入消融？
+\item \textbf{【标准】} \textbf{【手算】} 取不同于正文的
+$X=\begin{bmatrix}1&1\\1&-1\end{bmatrix}$。
+直接点积求 $XX^\top$，验证原始分数矩阵是否对称；
+这与使用独立 $W_Q,W_K$ 的结果有什么不同？
+\item \textbf{【标准】} \textbf{【手算】} 把 BPE 的玩具训练语料改为
+\texttt{a a b} 与 \texttt{a b}（各为独立序列）。
+统计第一轮的相邻对，选最高频对合并；
+写出合并后两条序列，并说明是否跨序列计数。
 \end{enumerate}
 
 \noindent\emph{参考答案统一放在\hyperref[app:answers]{附录答案}，不要先翻答案。}
