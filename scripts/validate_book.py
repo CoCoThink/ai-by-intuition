@@ -392,6 +392,25 @@ def validate_source() -> None:
         fail(f"Grayscale proof accepted invalid page selection: {bad_selection}")
     print("Grayscale print-proof selector QA passed")
 
+    # Editorial regression after moving memory into Part VI.
+    # These are obsolete book-facing phrases; production policy belongs in docs/.
+    stale_reader_phrases = (
+        "第九部分的联想记忆选读专题",
+        "附录 A 的逐层数值核对表",
+        "第 22、23 章的原始算例",
+        "上一部分我们用三维模型完成了",
+        "联想记忆现已成为第 VI 部分",
+        "不再引入另一套列向量主线",
+        "不会参与常规 PDF CI",
+        "给“员工小 L”补能力",
+        "具体相似内容的来源与许可仍需在正式发布前",
+        "ATTRIBUTION\\_REVIEW.md",
+    )
+    for source, body in sources.items():
+        for phrase in stale_reader_phrases:
+            if phrase in body:
+                fail(f"Obsolete editorial prose in {source}: {phrase}")
+
     # V3 reading path: 37 core numbered chapters (including memory), 2 elective visual chapters.
     input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     first_elective = input_list.index("19-cnn")
