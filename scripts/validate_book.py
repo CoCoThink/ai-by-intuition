@@ -1365,6 +1365,7 @@ def validate_pdf(path: Path) -> None:
     # bookmark page, and not be forced against the physical bottom edge.
     if sorted(numbered_pages) != list(range(1, 40)):
         fail("R01 opening guard requires exact chapter bookmarks 1..39")
+    late_openings: list[str] = []
     for chapter_number, opening_index in sorted(numbered_pages.items()):
         attrs, page_markup = pages_with_boxes[opening_index]
         matches = re.findall(
@@ -1379,8 +1380,10 @@ def validate_pdf(path: Path) -> None:
             fail(f"R01 chapter {chapter_number} has missing locator geometry")
         y, height = float(y_match.group(1)), float(h_match.group(1))
         if y > 0.75 * height:
-            fail(f"R01 chapter {chapter_number} starts too near foot: "
-                 f"locator at {y:.1f}/{height:.1f} on page {opening_index + 1}")
+            late_openings.append(f"chapter {chapter_number}: locator at "
+                                 f"{y:.1f}/{height:.1f} on page {opening_index + 1}")
+    if late_openings:
+        fail("R01 chapters start too near foot: " + "; ".join(late_openings))
     print("R01 opening-page QA passed: 39/39 chapter strips share bookmark "
           "page, with sufficient room below")
     # Source-level hyperlinks may have existing labels but resolve incorrectly
