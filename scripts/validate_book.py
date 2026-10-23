@@ -736,7 +736,7 @@ def validate_source() -> None:
     includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
     includes(sources["10b-ffn-output-head"], r"\begin{bmatrix}4&2\\1&1\end{bmatrix}", "nonidentity FFN")
     includes(sources["25b-modern-practice"], "输入行向量 $(2,1)$", "independent FFN exercise")
-    for category in ("title={◆ 直觉}", "title={▸ 动手算}", "title={! 易错}", "title={■ 小结}"):
+    for category in (r"title={{\symboliconfont ◆} 直觉}", r"title={{\symboliconfont ▸} 动手算}", "title={! 易错}", r"title={{\symboliconfont ■} 小结}"):
         includes(main, category, "four consistent note classes")
     for figure_name, chapter_name in (
         ("loss-descent", "16-loss-gradient"),

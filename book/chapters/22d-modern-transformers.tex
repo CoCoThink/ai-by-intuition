@@ -11,7 +11,7 @@
 模型的\textbf{显存、延迟和吞吐}既受部署方式影响，也受内部计算结构限制。
 上下文变长会扩大 KV Cache；堆叠深层网络还要控制特征尺度与计算成本。
 现代 Transformer 因而在位置表示、归一化、FFN 和 Attention 上产生了不同变体。
-必读只需掌握 RoPE、RMSNorm、GQA 三项，并完成小算例；标 ★ 的内容按需选读，不必一次背完全部缩写。
+必读只需掌握 RoPE、RMSNorm、GQA 三项，并完成小算例；标为{\symboliconfont ★}的内容按需选读，不必一次背完全部缩写。
 \end{idea}
 
 \subsection{必读 1：RoPE 怎样利用相对位置？}
@@ -81,7 +81,7 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 会改变残差路径与训练行为。不能仅凭名称断言一种实现
 在所有模型中总比另一种更强。
 
-\subsection{★ 选读：SwiGLU 与 MoE 怎样改变 FFN？}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
 \phantomsection\label{concept:router}
 \phantomsection\label{concept:swiglu}
 \phantomsection\label{concept:moe}
@@ -148,7 +148,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \textbf{MLA} 等低秩潜在表示技术则尝试使用另一种缓存压缩方案，
 与简单减少 K/V 头数的设计思路不同；不应把所有缩写视为同一种运算。
 
-\subsection{★ 选读：长上下文与稀疏访问}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：长上下文与稀疏访问}
 \phantomsection\label{concept:sliding-window-attention}
 \phantomsection\label{concept:linear-attention}
 \phantomsection\label{concept:sparse-attention}
@@ -177,7 +177,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 有的主要节约解码时的 KV Cache，有的减少单 Token 计算，
 并不能简单把它们都称为“Attention 变成线性复杂度”。
 
-\subsection{★ 选读：线性 Attention 与 Delta 规则}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：线性 Attention 与 Delta 规则}
 
 当长度不断增加时，为什么有人尝试不保存完整的 $T\times T$ 分数矩阵？
 \hyperref[intro:04-key-value-outer-product]{联想记忆专题}
@@ -213,7 +213,7 @@ $k_2=(0,1)$、$v_2=(0,3)$，
 \end{example}
 
 
-\subsection{★ 选读索引：其他现代架构术语}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读索引：其他现代架构术语}
 
 把 GPT-2 类 Decoder-only Transformer 当成对照坐标系，
 不要以为后来的模型只是“层数更多”。以下按计算部件对齐，
@@ -288,7 +288,7 @@ Qwen2 架构的门控 FFN 还需结合\textbf{模型实现}判断，
 这张表只比较\textbf{结构元数据}；
 模型质量与推理速度需由独立基准测量。
 
-\subsection{★ 选读复算：MLA 缓存与窗口}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：MLA 缓存与窗口}
 
 \localfixture{假设参数下的单层缓存与五位置窗口；不对应特定发布模型}
 取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
