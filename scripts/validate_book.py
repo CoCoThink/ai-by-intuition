@@ -506,6 +506,20 @@ def validate_source() -> None:
     assert (1 * 0 + 0 * 1) == 0
     assert (3 * 3 * 3 * 8) == 216
 
+    # R01: keep chapter heading, compact two-line locator and first
+    # explanatory lines together at previously observed page-bottom starts.
+    for name, heading in (
+        ("16-loss-gradient", "怎样量“猜得多差”？损失与一次直接求解"),
+        ("18-generalization", "训练得很好，为什么新题反而做错？"),
+        ("10-mlp", "MLP：把矩阵与激活函数组成两层网络"),
+        ("13-capacity", "进阶探索：高维空间与记忆容量"),
+        ("23d-agent-systems", "从语言模型到 Agent：哪些能力来自模型，哪些来自系统？"),
+    ):
+        includes(sources[name], "\\Needspace{", f"R01 page-break guard for {name}")
+        if not re.search(r"\\Needspace\{\d+\\baselineskip\}\s*\\section\{"
+                         + re.escape(heading) + r"\}", sources[name]):
+            fail(f"R01 title and full locator can split at a page boundary: {name}")
+
     # R01: all 39 numbered chapters carry one grayscale-safe model path.
     numbered_sources = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     numbered_sources = numbered_sources[:numbered_sources.index("19b-vit") + 1]
