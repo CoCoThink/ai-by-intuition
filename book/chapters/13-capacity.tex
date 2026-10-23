@@ -46,6 +46,28 @@
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $M\approx d_k^p$ 这一类标度。
 
+\subsection{线性注意力的状态，就是累加的外积记忆}
+
+此前写入 $k_i^\top v_i$ 的方法可以按序列逐步进行。
+每条 Key 和 Value 都是一行，$k_t:1\times d_k$、$v_t:1\times d_v$：
+\[
+\underbrace{S_0}_{d_k\times d_v}=0,\quad
+\boxed{S_t=S_{t-1}+k_t^\top v_t
+=\sum_{i\le t}k_i^\top v_i,\qquad y_t=q_tS_t.}
+\]
+查询行向量 $q_t:1\times d_k$ 得到 $y_t:1\times d_v$。
+只有因果前缀参与累加，没有用到未来 Token 的信息；
+这一结构与前面的\hyperref[intro:04-key-value-outer-product]{外积写入}
+完全同形。
+
+它是一类\textbf{未归一化线性状态}的教学基例。
+核化线性 Attention 往往还需要特征映射、归一化分母等设计，
+Gated DeltaNet 还包含对已有状态的误差修正或门控，
+不能把这里的公式视为所有线性注意力模型的精确实现。
+
+\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
+可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。
+
 这些量级依赖独立性、随机性和激活函数的选择。
 相关的 Key 与 Value 会改变干扰规模；可区分关联的数量也不同于模型可靠掌握的事实数量。
 

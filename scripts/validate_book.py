@@ -179,6 +179,17 @@ def test_numeric_examples() -> None:
     response = [[image[i][j] - image[i + 1][j + 1] for j in range(3)]
                 for i in range(3)]
     assert response == [[0, 1, 0], [1, 0, -1], [0, -1, 0]]
+    # Row-memory sanity check after transposing the column-vector teaching examples.
+    simple = ((1.0, 0.6), (0.0, 0.8))
+    better = ((1.0, 0.0), (-0.75, 1.25))
+    def mul_row(row, matrix):
+        return tuple(sum(row[i] * matrix[i][j] for i in range(len(row)))
+                     for j in range(len(matrix[0])))
+    assert mul_row((1.0, 0.0), simple) == (1.0, 0.6)
+    assert all(math.isclose(a, b) for a, b in
+               zip(mul_row((0.6, 0.8), better), (0.0, 1.0)))
+    assert all(math.isclose(a, b) for a, b in
+               zip(mul_row((1.0, -0.2), ((2.0, 1.0), (0.0, 3.0))), (2.0, 0.4)))
     # Answer key exercise: (6,0) · (5,12) = 30, cos = 5/13.
     assert math.isclose(6 * 13 * (5 / 13), 30)
     print("Numerical QA passed: 3-position joint SGD loss and legacy independent illustrations checked")
@@ -555,7 +566,14 @@ def validate_source() -> None:
     for n in ("05-memory-interference", "08-stacking-key-value", "14-summary"):
         includes(sources[n], r"\subsection{", f"nested X2 topic {n}")
     includes(sources["04-key-value-outer-product"], r"\vect a^\top V",
-             "row/column convention bridge")
+             "row-vector memory read")
+    includes(sources["05-memory-interference"], r"S_{\rm simple}", "row memory interference")
+    includes(sources["06-better-linear-memory"], r"S_{\rm better}", "row least-squares solution")
+    includes(sources["08-stacking-key-value"], r"\relu(xK^\top)V", "row nonlinear readout")
+    includes(sources["13-capacity"], r"S_t=S_{t-1}+k_t^\top v_t",
+             "linear attention outer-product state")
+    includes(sources["22d-modern-transformers"], r"q_tS_t",
+             "row-state connection in architecture chapter")
     if r"\sim" in sources["13-capacity"]:
         fail("Do not use strict asymptotic equivalence as loose statistical magnitude")
     print(f"Source QA passed: {len(PARTS)} parts, {len(REQUIRED)} files, three separated solutions, linked glossary")
