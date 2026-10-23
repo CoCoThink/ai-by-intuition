@@ -1,72 +1,43 @@
 \section{用 MLP 的眼光重新理解记忆检索}
 
-一个 MLP 的隐藏单元可以理解为对某类输入模式的响应。
-先看线性联想记忆中每条关联的贡献：
+上一章的线性读取让所有非零匹配都参与输出。
+现在让权重随匹配强弱非线性变化。
+
+\subsection{为什么平方可能提高选择性？}
+若相似度处于 $[0,1]$，则
 \[
-\vect{v}_i\times\underbrace{(\vect{k}_i^\top\vect{x})}_{\text{原始相似度}}.
+1^2=1,\quad0.6^2=0.36;\qquad
+1^3=1,\quad0.6^3=0.216.
 \]
-例如正确 Key 的相似度是 $1$，无关 Key 是 $0.6$。线性加权得到 $1$ 和 $0.6$，错误记忆仍贡献很多。
+弱相似度被进一步压低。为了避免负分数平方后变正，
+可以先取 ReLU 再平方：$\sigma(s)=\relu(s)^2$。
+但如果 $s>1$，幂次也可能放大它；
+不能把这一招写成对所有输入都保证可靠的机制。
 
-当相似度位于 $[0,1]$ 时，\textbf{平方}可以压低较弱的匹配：
+\subsection{用同一套行向量写出 MLP}
+令每条 Key 和 Value 都占一行：
 \[
-1^2=1,\qquad 0.6^2=0.36.
+f(x)=\sum_i\sigma(xk_i^\top)v_i
+=\boxed{\sigma(xK^\top)V}.
 \]
-如果立方：
-\[
-1^3=1,\qquad 0.6^3=0.216.
-\]
-正确记忆保持为 $1$，干扰越来越小。
+与两层 MLP 的计算
+$\sigma(xW_1)W_2$ 对照：
+第一层的列可扮演匹配模板，第二层的行可扮演输出模板；
+偏置在这里只为突出结构而省略。
+这种理解是一种\textbf{计算视角}，并不意味着每个神经元存一条独立事实。
 
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[
- width=.89\linewidth,height=5.4cm,
- axis lines=left,xlabel={相似度 $s$},ylabel={激活权重},
- xmin=0,xmax=1.02,ymin=0,ymax=1.06,
- xtick={0,.2,.4,.6,.8,1},ytick={0,.2,.4,.6,.8,1},
- legend style={at={(.02,.98)},anchor=north west,font=\small,draw=none,fill=white},
- grid=major,grid style={linegray!55}, tick label style={font=\small},
- ]
- \addplot[blue,very thick,domain=0:1,samples=100] {x};
- \addlegendentry{线性 $s$}
- \addplot[orange,very thick,domain=0:1,samples=100] {x^2};
- \addlegendentry{平方 $s^2$}
- \addplot[teal,very thick,domain=0:1,samples=100] {x^3};
- \addlegendentry{立方 $s^3$}
- \addplot[dashed,gray] coordinates {(.6,0)(.6,1)};
-\end{axis}
-\end{tikzpicture}
-\end{center}
+\begin{idea}
+MLP 的参数在训练中更新；Attention 的 Key/Value 往往由当前上下文生成。
+两者可以共享“匹配—选择—读出”的数学描述，
+但并非同一种记忆存储实现。
+\end{idea}
 
-为了把负相似度也压成零，可以使用：
-\begin{equation}
-\sigma(s)=\relu(s)^2=\bigl(\max(0,s)\bigr)^2.
-\end{equation}
-我们于是得到新的记忆检索器：
-\begin{equation}
-\boxed{f(\vect{x})=\sum_i\vect{v}_i\,\sigma(\vect{k}_i^\top\vect{x}).}
-\end{equation}
-将所有 Key 堆成矩阵 $K$，所有 Value 堆成矩阵 $V$，就可以简写为：
-\begin{equation}
-\boxed{f(\vect{x})=V^\top\sigma(K\vect{x}).}
-\end{equation}
-这里约定 $K$ 的每一行是一条 Key，$V$ 的每一行是一条 Value；激活函数 $\sigma$ 对向量中的各元素分别作用。
-
-\begin{center}
-\begin{tikzpicture}[>=Latex,node distance=0.55cm,n/.style={draw=linegray,rounded corners=3pt,fill=paper,minimum width=92mm,minimum height=11mm,align=center,font=\small}]
-\node[n] (q) {输入 Query $\vect{x}$};
-\node[n,below=of q] (s) {第一层：$K\vect{x}$，计算每条记忆的匹配分数};
-\node[n,below=of s] (a) {非线性：$\sigma(K\vect{x})$，压低不相关记忆的激活};
-\node[n,below=of a] (v) {第二层：$V^\top\sigma(K\vect{x})$，组合 Value 得到输出};
-\draw[->,blue,thick] (q)--(s);\draw[->,blue,thick] (s)--(a);\draw[->,blue,thick] (a)--(v);
-\end{tikzpicture}
-\end{center}
-
-这与\textbf{两层 MLP} 的计算结构相同：第一层产生分数，激活函数逐个处理，第二层组合输出。此处省略偏置以突出检索过程。
-
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:09-nonlinearity-and-memory}$0.5^2$ 与 $0.5^3$ 哪个更小？这与抑制弱匹配有什么联系？\quad{\footnotesize\hyperref[answer:09-nonlinearity-and-memory]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:09-nonlinearity-and-memory}
+$0.5^2$ 与 $0.5^3$ 哪个更小？这对弱匹配意味着什么？
+\quad{\footnotesize\hyperref[answer:09-nonlinearity-and-memory]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-从联想记忆角度，MLP 的第一层负责\textbf{匹配}，激活函数负责\textbf{筛选}，第二层负责\textbf{读出}。
-这种解释有助于理解计算结构，而不是把神经元与具体事实逐一对应。
+非线性筛选改变匹配权重，MLP 与联想记忆因此存在计算形式上的联系，
+而非对真实知识如何存储的直接证明。
 \end{conclusion}

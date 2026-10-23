@@ -1,49 +1,31 @@
-\subsection{线性层、MLP 与 Attention 的检索视角}
+\subsection{线性层、MLP 与 Attention 的统一检索视角}
+采用行向量 $x:1\times d_k$，
+以及逐行堆叠的 $K:M\times d_k$、$V:M\times d_v$：
 
-\begin{table}[H]
-\centering
-\renewcommand{\arraystretch}{1.45}
-\caption{三类模型的统一检索视角}
+\begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{21mm}X X@{}}
+\begin{tabularx}{\linewidth}{@{}p{23mm}p{57mm}X@{}}
 \toprule
-模型 & 读出规则 & 直观意义 \\
-\midrule
-Linear & $\sum_i \vect{v}_i (\vect{k}_i^\top\vect{x})$ & 任何非零相似度都参与输出 \\
-MLP & $\sum_i \vect{v}_i\sigma(\vect{k}_i^\top\vect{x})$ & 非线性改变各匹配分数的响应 \\
-Attention & $\sum_i \vect{v}_i\softmax(\beta K\vect{x})_i$ & 用归一化指数权重聚焦匹配项 \\
+计算 & 一次读取的行向量写法 & 关键区别\\\midrule
+Linear & $x(K^\top V)=xS$ & 线性匹配，外积可相加\\
+MLP & $\sigma(xK^\top)V$ & 非线性筛选，权重不必归一化\\
+Attention & $\softmax(\beta xK^\top)V$ & 每条查询归一化权重，Mask 限制可见范围\\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{center}
+$\beta$ 在这里表示分数缩放因子；缩放点积注意力通常取
+$\beta=1/\sqrt{d_k}$。三者都符合
+$\text{输出}=\sum_i\text{匹配权重}_i\,v_i$ 的形式，
+却不能由此认定计算、容量和训练行为相同。
 
-三者都可以理解为下面这句话：
-\begin{equation}
-\boxed{\text{输出}=\sum_i\text{记忆内容}_i\times\text{匹配权重}_i.}
-\end{equation}
-三种计算都能写成加权求和，但权重的计算方式不同。
-例如 ReLU 在正数区间保持原值，若想压低较弱的正匹配，还需要其他激活设计。
+\subsubsection{Key 和 Value 究竟保存在哪里？}
+从 MLP 的“记忆”视角，Key 和 Value 可由训练得到的权重表示；
+从 Self-Attention 的视角，它们是当前序列经过投影产生的上下文状态。
+因此 MLP 的参数记忆与 Attention 的上下文读取\textbf{来源不同}。
+普通 Softmax Attention 不能直接用不带条件的固定 $S$ 精确替代。
+后面的现代架构将讨论一种满足特定条件的\textbf{线性状态更新}。
 
-差别在于\textbf{权重怎么计算}、\textbf{Key/Value 存在哪里}，以及\textbf{怎样更新记忆}。
-
-\subsubsection{MLP 和记忆型 Attention 不是同一个东西}
-\begin{table}[H]
-\centering\small
-\renewcommand{\arraystretch}{1.4}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{28mm}XX@{}}
-\toprule
- & MLP 的参数记忆视角 & Self-Attention 的上下文记忆视角 \\
-\midrule
-Key / Value 来源 & 训练得到的权重 & 当前输入的 Token 表示 \\
-更新方式 & 通常需要修改参数 & 可以通过加入上下文动态改变 \\
-主要成本 & 模型参数与训练 & 上下文长度、计算和 KV Cache \\
-数学关键 & 非线性门控、特征混合 & QK 相似度和 Softmax 加权 \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-参数提供训练中学到的表示，上下文则提供当前输入中可读取的信息。
-两种来源共同影响 Transformer 的输出。
-
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:14-summary}为什么线性外积记忆和 Softmax Attention 都能看作“按相似度读取”？\quad{\footnotesize\hyperref[answer:14-summary]{核对解答。}}\par\medskip
-
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:14-summary}
+为什么线性外积记忆和 Softmax Attention 都能看作“按相似度读取”？
+\quad{\footnotesize\hyperref[answer:14-summary]{核对解答。}}\par\medskip

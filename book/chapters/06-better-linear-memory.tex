@@ -1,32 +1,46 @@
 \section{线性记忆怎样减少干扰？}
-
-直接相加外积时，每写入一条新记忆都可能影响旧关系。
-另一种办法是寻找矩阵 $W$，使它尽可能满足所有配对关系：
-\begin{equation}
-\boxed{\min_W\sum_{i=1}^{M}\|W\vect{k}_i-\vect{v}_i\|^2.}
-\end{equation}
-这叫\textbf{最小二乘}：选择一个矩阵，使总平方误差尽可能小。
-
-在上面的二维例子中，外积相加给出：
+直接累加外积时，每条新记忆可能改变旧 Key 的输出。
+可以让矩阵同时拟合全部输入与目标：
 \[
-W_{\text{simple}}=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}.
+\boxed{\min_S\sum_{i=1}^{M}\|k_iS-v_i\|^2}.
 \]
-但我们也可以找到：
-\begin{equation}
-W_{\text{better}}=\begin{bmatrix}1&-0.75\\0&1.25\end{bmatrix}.
-\end{equation}
-直接代入就可以验证：
-\[
-W_{\text{better}}\vect{k}_A=\vect{v}_A,\qquad
-W_{\text{better}}\vect{k}_B=\vect{v}_B.
-\]
-两条记忆都能被精确召回；矩阵中的负数在这里用于\textbf{抵消交叉干扰}。
+这叫最小二乘，注意\textbf{行向量 Key 从左边乘状态矩阵}。
 
-不过，线性映射的自由度有限。如果在 $d_k$ 维中放入很多\emph{任意且相互独立的} Key--Value 对，最终还是无法全部精确拟合。
+\subsection{两条二维记忆：一个精确解}
+刚才的外积相加得到
+\[
+S_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
+\]
+改用
+\[
+\boxed{S_{\rm better}=\begin{bmatrix}1&0\\-0.75&1.25\end{bmatrix}},
+\]
+就能逐项验算：
+\[
+(1,0)S_{\rm better}=(1,0),\qquad
+(0.6,0.8)S_{\rm better}=(0,1).
+\]
+负权重在这里用于\textbf{抵消交叉干扰}。
+但如果约束不相容，线性层并不能任意精确存取无限多条关联。
+
+\subsection{从误差修正到 Delta 写入}
+比无条件相加外积更进一步：写入新配对之前，先看旧状态
+$S_{t-1}$ 已经读出什么，只写入尚未记住的残差：
+\[
+r_t=v_t-k_tS_{t-1},\qquad
+\boxed{S_t=S_{t-1}+\eta k_t^\top r_t}.
+\]
+这里 $k_t:1\times d_k$、$r_t:1\times d_v$；
+若 $k_t$ 归一化且 $\eta=1$，可以在该 Key 方向消除当次读出误差。
+这是教学化的在线 Delta 更新规则，\textbf{不能声称单步就得到了全部配对的最小二乘最优解}。
 
 \begin{idea}
-提高记忆能力有两种思路：\textbf{写入时消除干扰}（优化矩阵），以及\textbf{检索时抑制干扰}（设计更好的权重函数）。接下来采用第二种。
+最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。
+两者都试图减少干扰，但不是完全相同的算法。
+后面现代架构部分会据此理解 Gated DeltaNet 为什么强调“纠正旧状态”。
 \end{idea}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:06-better-linear-memory}若要减少 Key 之间的干扰，除了增加非线性还可以尝试改进什么？\quad{\footnotesize\hyperref[answer:06-better-linear-memory]{核对解答。}}\par\medskip
-
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:06-better-linear-memory}
+若要减少 Key 的串扰，除了增加非线性，还可以怎样改进存储矩阵？
+\quad{\footnotesize\hyperref[answer:06-better-linear-memory]{核对解答。}}\par\medskip

@@ -1,76 +1,56 @@
 \subsection{多条记忆：为什么会互相干扰？}
-
-如果有 $M$ 条 Key--Value 关系 $(\vect{k}_i,\vect{v}_i)$，最简单的存储办法是\textbf{把外积全部相加}：
+对 $M$ 条行向量 Key--Value 配对，最直接的写入是外积累加：
 \begin{equation}
-\boxed{W=\sum_{i=1}^{M}\vect{v}_i\vect{k}_i^\top.}
+\boxed{S=\sum_{i=1}^{M}k_i^\top v_i},
+\qquad
+\boxed{xS=\sum_{i=1}^{M}(xk_i^\top)v_i}.
 \end{equation}
-查询时：
-\begin{equation}
-\boxed{W\vect{x}=\sum_{i=1}^{M}\vect{v}_i(\vect{k}_i^\top\vect{x}).}
-\end{equation}
-也就是说：所有记忆都会按照它们与输入的相似度，贡献一部分输出。
+这里 $S:d_k\times d_v$，$x:1\times d_k$，读取输出仍是一行。
 
 \subsubsection{两条记忆的二维例子}
-假设我们有两条记忆：
-\[\begin{aligned}
-\vect{k}_A&=\begin{bmatrix}1\\0\end{bmatrix}, &
-\vect{v}_A&=\begin{bmatrix}1\\0\end{bmatrix},\\
-\vect{k}_B&=\begin{bmatrix}0.6\\0.8\end{bmatrix}, &
-\vect{v}_B&=\begin{bmatrix}0\\1\end{bmatrix}.
-\end{aligned}\]
-两条记忆分别形成一个矩阵：
 \[
-\vect{v}_A\vect{k}_A^\top=
-\begin{bmatrix}1&0\\0&0\end{bmatrix},\qquad
-\vect{v}_B\vect{k}_B^\top=
-\begin{bmatrix}0&0\\0.6&0.8\end{bmatrix}.
+k_A=(1,0),\quad v_A=(1,0),\qquad
+k_B=(0.6,0.8),\quad v_B=(0,1).
 \]
-把它们加起来：
-\begin{equation}
-\boxed{W=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}.}
-\end{equation}
-
-现在查询 A，即 $\vect{x}=\vect{k}_A$：
-\begin{equation}
-W\vect{k}_A=
-\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}
-\begin{bmatrix}1\\0\end{bmatrix}
-=\begin{bmatrix}1\\0.6\end{bmatrix}.
-\end{equation}
-然而我们真正想得到的结果是 $\vect{v}_A=(1,0)^\top$。
+写入矩阵分别是
+\[
+k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix},
+\qquad
+k_B^\top v_B=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}.
+\]
+因此
+\[
+\boxed{S_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}}.
+\]
+查询 A：
+\[
+k_A S_{\rm simple}
+=(1,0)\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}
+=\boxed{(1,0.6)}
+=\underbrace{(1,0)}_{\text{正确信号}}
++\underbrace{(0,0.6)}_{\text{来自 B 的串扰}}.
+\]
+B 被激活，是因为 $k_Ak_B^\top=0.6$ 不为零；
+两条 Key 虽然都是单位长度，却不垂直。
 
 \begin{example}
-计算结果分成两部分：
-\[
-W\vect{k}_A=\underbrace{\begin{bmatrix}1\\0\end{bmatrix}}_{\text{正确记忆}}
-+\underbrace{\begin{bmatrix}0\\0.6\end{bmatrix}}_{\text{来自 B 的干扰}}.
-\]
-为何有 $0.6$？因为 $\vect{k}_B^\top\vect{k}_A=0.6$，即 B 的 Key 与查询 A 并不垂直，所以 B 也被激活了。
+一行乘矩阵时，第一项是 $1\cdot1+0\cdot0=1$，
+第二项是 $1\cdot0.6+0\cdot0.8=0.6$。
+\textbf{数值结果与原列向量算例相同，但存储矩阵转置了。}
 \end{example}
 
-\begin{center}
-\begin{tikzpicture}
-\node[anchor=east,font=\small] at (0,0.65) {A（正确信号）};
-\node[anchor=east,font=\small] at (0,-.07) {B（干扰）};
-\fill[paper] (0,0.45) rectangle (7.5,0.8);
-\fill[paper] (0,-.25) rectangle (7.5,0.1);
-\fill[blue] (0,0.45) rectangle (7.5,0.8);
-\fill[orange] (0,-.25) rectangle (4.5,0.1);
-\node[anchor=west,font=\small] at (7.7,.62) {$1.0$};
-\node[anchor=west,font=\small] at (4.7,-.07) {$0.6$};
-\end{tikzpicture}
-\end{center}
+对单位行向量 Key $k_j$，通常有
+\[
+k_jS=v_j+\sum_{i\ne j}(k_jk_i^\top)v_i.
+\]
+其他 Key 的匹配分数不为零时，就会产生干扰。
 
-对第 $j$ 条单位 Key 进行查询时，通常可以写为：
-\begin{equation}
-W\vect{k}_j=
-\underbrace{\vect{v}_j}_{\text{正确信号}}
-+\underbrace{\sum_{i\ne j}\vect{v}_i(\vect{k}_i^\top\vect{k}_j)}_{\text{其余记忆的干扰}}.
-\end{equation}
-
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:05-memory-interference}为什么把多条外积记忆相加后，读取一条 Key 时会混入别的 Value？\quad{\footnotesize\hyperref[answer:05-memory-interference]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:05-memory-interference}
+为什么把多条外积记忆相加后，查询某个 Key 仍可能混入别的 Value？
+\quad{\footnotesize\hyperref[answer:05-memory-interference]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-多条关联共享一个矩阵时，查询可能同时激活其他记忆，形成干扰。
-解决思路有两类：优化写入矩阵以减少交叉影响，或改变读取权重以突出目标记忆。
+减少串扰可从两边入手：\textbf{写入时消除已知误差}，
+或者\textbf{读取时更有选择性}。
 \end{conclusion}

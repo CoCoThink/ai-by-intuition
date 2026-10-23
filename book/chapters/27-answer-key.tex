@@ -88,14 +88,14 @@ Q3 环比为 $(132-125)/125=\boxed{5.6\%}$。
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案},fonttitle=\sffamily\bfseries,breakable]
 \begin{enumerate}[label=\textbf{B3-\arabic*.}]
 \item $0.8$，两单位向量方向比较接近。
-\item $W\vect{k}=\vect{v}(\vect{k}^\top\vect{k})=\vect{v}$。
+\item $kS=(kk^\top)v=v$（单位 Key 满足 $kk^\top=1$）。
 \item 因为其他 Key 与查询的点积可能非零，它们的 Value 也会被加进输出。
 \item 它们分别是 $0.5,0.25,0.125$；高次激活能更快压低小于 $1$ 的相似度。
 \item 第一条（分数为 $1$）的相对权重上升；当 $\beta$ 很大时趋近于 $1$。
-\item $K\vect{x}=(-1,-1)^\top$，所以 $\relu(K\vect{x})=(0,0)^\top$。
-\item $V^\top\vect{a}=(0,6)^\top$；这是两列 Value 按权重 $0$ 与 $2$ 求和。
+\item $xK^\top=(-1,-1)$，所以 $\relu(xK^\top)=(0,0)$。
+\item $aV=(0,6)$；这是两行 Value 按权重 $0$ 与 $2$ 求和。
 \item $\vect a\cdot\vect b=6\times5=30$，$\|\vect a\|=6$，$\|\vect b\|=13$，$\cos\theta=5/13$，故 $6\times13\times(5/13)=30$。
-\item $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$V^\top=\begin{bmatrix}2&0\\1&3\end{bmatrix}$；$V^\top\vect a=(1.6,1.4)^\top$。
+\item $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$aV=(1.6,1.4)$，输出为一行。
 \item 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
 \item $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
 \end{enumerate}

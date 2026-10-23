@@ -1,306 +1,71 @@
 \subsection{把 Key 和 Value 堆成矩阵：从匹配到读出}
-
-我们已经知道每条记忆都有一个 Key 和一个 Value。但初学者最容易卡住的恰恰是
-\[
-\sum_i\vect{v}_i\,\sigma(\vect{k}_i^\top\vect{x})
-\quad\longrightarrow\quad
-V^\top\sigma(K\vect{x}).
-\]
-下面通过两条记忆，逐步验证矩阵写法与逐条计算完全一致。
-
-\subsubsection{两条记忆，各用两个数字表示}
-
-先约定两条 Key--Value 关系：
-\[\begin{aligned}
-\vect{k}_1&=\begin{bmatrix}1\\0\end{bmatrix},
-& \vect{v}_1&=\begin{bmatrix}2\\1\end{bmatrix},\\
-\vect{k}_2&=\begin{bmatrix}0.6\\0.8\end{bmatrix},
-& \vect{v}_2&=\begin{bmatrix}0\\3\end{bmatrix}.
-\end{aligned}\]
-给出查询：
-\[
-\vect{x}=\begin{bmatrix}1\\-1\end{bmatrix}.
-\]
-\textbf{不使用矩阵}时，分别计算两个匹配分数：
-\[\begin{aligned}
-s_1&=\vect{k}_1^\top\vect{x}=1\cdot1+0\cdot(-1)=1,\\
-s_2&=\vect{k}_2^\top\vect{x}=0.6\cdot1+0.8\cdot(-1)=-0.2.
-\end{aligned}\]
-所以两个 Key 的匹配程度为 $1$ 和 $-0.2$。现在我们只想把\textbf{这两次点积合并计算}。
-
-\subsubsection{第一个矩阵：每行是一条 Key}
-
-把两条 Key \textbf{横放成两行}：
+设 Query $x:1\times d_k$，$M$ 条 Key 按行排成
+$K:M\times d_k$，Value 按行排成 $V:M\times d_v$。
+一次查询经过三步：
 \begin{equation}
-K=\begin{bmatrix}
-  1 & 0\\
-  0.6 & 0.8
-\end{bmatrix}.
+\boxed{\underbrace{y}_{1\times d_v}
+=\underbrace{\sigma(xK^\top)}_{1\times M}
+\underbrace{V}_{M\times d_v}.}
 \end{equation}
-矩阵乘列向量的规则是：左边每一行，与右边那一列分别点积。
+这与前面 $\softmax(QK^\top)V$ 采用同一个行向量约定。
 
+\subsubsection{两条二维记忆，手算一次}
+\localfixture{二维 Key/Value；独立于三维主例}
+\[
+x=(1,-1),\quad
+K=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix},\quad
+V=\begin{bmatrix}2&1\\0&3\end{bmatrix}.
+\]
+两次点积分别是 $1$ 和 $-0.2$，
+合并成一行：
+\[
+xK^\top=(1,-1)\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}
+=\boxed{(1,-0.2)}.
+\]
+先逐元素 ReLU，再按行混合 Value：
 \begin{example}
-\noindent\emph{用一行乘一列，亲手算两次}\par
-
-\[\begin{aligned}
-K\vect{x}
-&=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix}
-  \begin{bmatrix}1\\-1\end{bmatrix}\\
-&=\begin{bmatrix}
-1\cdot1+0\cdot(-1)\\
-0.6\cdot1+0.8\cdot(-1)
-\end{bmatrix}
-=\boxed{\begin{bmatrix}1\\-0.2\end{bmatrix}}.
-\end{aligned}\]
-第一行的结果恰好是 $s_1$，第二行的结果恰好是 $s_2$。
+\[
+a=\relu(xK^\top)=(1,0),\qquad
+aV=(1,0)\begin{bmatrix}2&1\\0&3\end{bmatrix}
+=\boxed{(2,1)}.
+\]
+第二条记忆的负匹配被筛掉，因此未参与输出。
 \end{example}
+ReLU 是作用于分数，而不是事先作用于 Key 矩阵。
 
-因此，下面两个表达式\textbf{一模一样}：
+\subsubsection{从二维推广到不同维度}
+$M$ 是记忆条数，$d_k$ 是每条 Key 的宽度，$d_v$ 是 Value 的宽度。
 \[
-K\vect{x}
-=
-\begin{bmatrix}\vect{k}_1^\top\vect{x}\\\vect{k}_2^\top\vect{x}\end{bmatrix}
-=
-\begin{bmatrix}s_1\\s_2\end{bmatrix}.
+(1\times d_k)(d_k\times M)(M\times d_v)=(1\times d_v).
 \]
-堆成矩阵并没有添加新的数学假设，只是用一种方便批量计算的记法表示多次点积。
+例如 $M=100$、$d_k=64$、$d_v=32$，
+匹配结果是 $1\times100$，输出是 $1\times32$。
+每个 Token 占一行的规则始终不变。
 
-\begin{center}
-\begin{tikzpicture}[>=Latex,
-box/.style={draw=linegray,rounded corners=3pt,fill=paper,
- minimum height=12mm,align=center,font=\small}]
-\node[box,minimum width=32mm] (key) at (0,0) {$K$\\两行 Key};
-\node[font=\LARGE,color=blue] at (2.8,0) {$\times$};
-\node[box,minimum width=32mm] (query) at (5.6,0) {$\vect{x}$\\一列 Query};
-\node[font=\LARGE,color=teal] at (8.4,0) {$=$};
-\node[box,minimum width=35mm] (score) at (11.2,0) {$K\vect{x}$\\两项分数};
-\end{tikzpicture}
-\end{center}
-
-\subsubsection{用 ReLU 筛选匹配分数}
-
-矩阵乘法算完后，结果已经是一个普通的两维向量：
+\subsubsection{插入非线性究竟改变了什么？}
+如果不插入 ReLU，则
 \[
-\vect{s}=K\vect{x}=\begin{bmatrix}1\\-0.2\end{bmatrix}.
+S=K^\top V=\sum_i k_i^\top v_i,
+\qquad xS=(xK^\top)V.
 \]
-激活函数 $\relu(t)=\max(0,t)$ 只处理\textbf{一个数}。当输入是向量时，约定它\textbf{逐元素处理}：
-\begin{equation}
-\relu(\vect{s})
-=\begin{bmatrix}\relu(1)\\\relu(-0.2)\end{bmatrix}
-=\boxed{\begin{bmatrix}1\\0\end{bmatrix}}.
-\end{equation}
-这一步不是矩阵乘法，也不是对 $K$ 的每个元素先做 ReLU。\textbf{它处理的是 $K\vect{x}$ 计算出的两项匹配分数。}
-
-记新的分数向量为
+这次例子的线性读出是
 \[
-\vect{a}=\relu(K\vect{x})=\begin{bmatrix}1\\0\end{bmatrix}.
+xS=(1,-0.2)V=\boxed{(2,0.4)},
 \]
-直觉是：第一条记忆保留权重 $1$；第二条记忆被压到 $0$。
+而非线性读出为 $\relu(xK^\top)V=(2,1)$。
+\textbf{外积和可先写成固定状态；插入 ReLU 后一般无法与两层线性矩阵合并。}
+这种可合并性不代表普通 Softmax Attention 等价于线性注意力。
 
-\subsubsection{三个重要符号：记忆数量与向量维度}
+\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
+运行 \texttt{python3 scripts/memory\_demo.py}，
+检查两种读出结果、存储形状与串扰。
 
-后面会反复出现 $M$、$d_k$ 和 $d_v$。它们分别回答三个不同的问题：
-
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.35}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{18mm}X p{40mm}@{}}
-\toprule
-符号 & 意思 & 一个例子\\
-\midrule
-$M$ & 有多少\textbf{条 Key--Value 记忆} & 2 条，则 $M=2$\\
-$d_k$ & 每条\textbf{Key 含多少个数字}；Query 也需要有同样的维度 & $(1,0)$ 是二维，$d_k=2$\\
-$d_v$ & 每条\textbf{Value 含多少个数字}；输出向量通常也有这个维度 & $(2,1,0)$ 是三维，$d_v=3$\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-这里的 $d$ 是英文 \emph{dimension}（维度）的缩写；下标 $k$、$v$ 分别表示 Key、Value。\textbf{Key 和 Value 的维度不一定相同。}
-
-例如两条记忆的 Key 都有 2 个数字，而 Value 都有 3 个数字：
-\[
-\vect k_1=(1,0)^\top,\quad \vect k_2=(0,1)^\top;
-\qquad
-\vect v_1=(2,1,0)^\top,\quad \vect v_2=(0,3,4)^\top.
-\]
-此时 $M=2$、$d_k=2$、$d_v=3$，因而
-\[
-\underbrace{K}_{2\times2}
-=\begin{bmatrix}1&0\\0&1\end{bmatrix},
-\qquad
-\underbrace{V}_{2\times3}
-=\begin{bmatrix}2&1&0\\0&3&4\end{bmatrix}.
-\]
-这就是为什么不能把 $M$ 与 $d_k$ 混为一谈：前者\textbf{数记忆的条数}，后者\textbf{数每条 Key 有几个数字}。
-
-\subsubsection{如何安排 Key 和 Value 的行列方向？}
-
-行列方向取决于数字的排布约定。这里以列向量 $\vect x$ 表示单次查询。
-
-若对 $K$ 和 $K^\top$ 的方向有疑问，先看\hyperref[sec:layout-matrix-card]{行列对照图}。学习 Self-Attention 时，再看\hyperref[sec:key-layout-card]{Key 与 Value 并排图}。
-
-\textbf{Key 的任务是和 Query 做点积。}为了让一次乘法得到全部 $M$ 条 Key 的分数，就把 Key 依次放成行：
-\[
-\underbrace{K}_{M\times d_k}
-=\begin{bmatrix}
-\vect k_1^\top\\\vdots\\\vect k_M^\top
-\end{bmatrix},
-\quad
-K\vect x=
-\begin{bmatrix}\vect k_1^\top\vect x\\\vdots\\\vect k_M^\top\vect x\end{bmatrix}.
-\]
-
-Value 的任务是被匹配分数加权相加。如果权重向量是
-$\vect a=(a_1,\ldots,a_M)^\top$，希望得到：
-\[
-\vect y=a_1\vect v_1+\cdots+a_M\vect v_M.
-\]
-为了把它写成一次矩阵乘法，最方便的是把 Value \textbf{按列}放：
-\[
-\underbrace{\widetilde V}_{d_v\times M}
-=\begin{bmatrix}\vect v_1&\cdots&\vect v_M\end{bmatrix},
-\quad
-\boxed{\vect y=\widetilde V\vect a.}
-\]
-
-但如果最初约定把全部 Value \textbf{按行}存成一个叫 $V$ 的矩阵：
-\[
-V=\begin{bmatrix}\vect v_1^\top\\\vdots\\\vect v_M^\top\end{bmatrix}
-\in\mathbb R^{M\times d_v},
-\]
-那么按列排放的矩阵正好就是 $V^\top$：
-\begin{equation}
-\boxed{\widetilde V=V^\top,\qquad \vect y=V^\top\vect a.}
-\label{eq:two-value-orientations}
-\end{equation}
-
-\begin{idea}
-最关键的不是记住转置符号，而是知道这一步要做什么。
-$K\vect x$ 用逐行点积计算\textbf{匹配分数}；$V^\top\vect a$ 用按列加权求和形成\textbf{输出}。
-若直接用 $\widetilde V$ 表示按列排列的 Value，式子就写成 $\widetilde V\vect a$。
-\end{idea}
-
-\subsubsection{按权重读出 Value}
-
-我们希望的输出是按照激活分数，将 Value 加权求和：
-\begin{equation}
-\vect{y}=a_1\vect{v}_1+a_2\vect{v}_2.
-\end{equation}
-现在把两个 Value 排成\textbf{两列}：
-\begin{equation}
-V^\top=
-\begin{bmatrix}
-\vect{v}_1&\vect{v}_2
-\end{bmatrix}
-=
-\begin{bmatrix}
-2&0\\
-1&3
-\end{bmatrix}.
-\end{equation}
-为什么是列？因为矩阵乘列向量也有等价的解释：用右侧的每个数字，对左侧相应列做加权求和。
-
-\begin{example}
-\noindent\emph{矩阵乘向量 = 按列加权求和}\par
-
-\[\begin{aligned}
-V^\top\vect{a}
-&=\begin{bmatrix}2&0\\1&3\end{bmatrix}
-  \begin{bmatrix}1\\0\end{bmatrix}\\
-&=\begin{bmatrix}2\cdot1+0\cdot0\\1\cdot1+3\cdot0\end{bmatrix}\\
-&=1\begin{bmatrix}2\\1\end{bmatrix}
- +0\begin{bmatrix}0\\3\end{bmatrix}
-=\boxed{\begin{bmatrix}2\\1\end{bmatrix}}.
-\end{aligned}\]
-我们取回了第一条 Value，第二条因为激活为 $0$ 而没有参与。
-\end{example}
-
-\subsubsection{整个过程连在一起}
-
-把匹配、筛选和读出连起来：
-\begin{equation}
-\begin{aligned}
-\text{匹配：}\quad
-K\vect{x}
-&=\begin{bmatrix}1\\-0.2\end{bmatrix},\\
-\text{筛选：}\quad
-\relu(K\vect{x})
-&=\begin{bmatrix}1\\0\end{bmatrix},\\
-\text{读出：}\quad
-V^\top\relu(K\vect{x})
-&=\begin{bmatrix}2\\1\end{bmatrix}.
-\end{aligned}
-\end{equation}
-
-\begin{center}
-\begin{tikzpicture}[>=Latex,node distance=5mm,
- n/.style={draw=linegray,rounded corners=3pt,fill=paper,minimum width=102mm,minimum height=11mm,align=center,font=\small}]
-\node[n] (a) {输入 $\vect{x}=(1,-1)^\top$};
-\node[n,below=of a] (b) {$K\vect{x}=(1,-0.2)^\top$：对所有 Key 算匹配分数};
-\node[n,below=of b] (c) {$\relu(K\vect{x})=(1,0)^\top$：逐元素过滤};
-\node[n,below=of c] (d) {$V^\top\relu(K\vect{x})=(2,1)^\top$：按列混合 Value};
-\draw[->,thick,blue] (a)--(b);
-\draw[->,thick,blue] (b)--(c);
-\draw[->,thick,blue] (c)--(d);
-\end{tikzpicture}
-\end{center}
-
-\subsubsection{维度检查：为什么它们可以相乘？}
-
-前面两条记忆、二维 Key、二维 Value，所以恰好都是 $2\times2$ 方阵。但真实情况并不需要是方阵。
-
-沿用前文：$M$ 是记忆条数，$d_k$ 是 Key 的维度，$d_v$ 是 Value 的维度。于是：
-\[
-\underbrace{K}_{M\times d_k}
-\underbrace{\vect{x}}_{d_k\times1}
-=\underbrace{\vect{s}}_{M\times1},
-\qquad
-\underbrace{V^\top}_{d_v\times M}
-\underbrace{\sigma(\vect{s})}_{M\times1}
-=\underbrace{\vect{y}}_{d_v\times1}.
-\]
-从矩阵大小看，\textbf{内侧维度必须相等}：第一个乘法的 $d_k$ 对得上；第二个乘法的 $M$ 对得上。
-
-例如 100 条记忆，Key 维度 64，Value 维度 32：
-\[
-(100\times64)(64\times1)=(100\times1),
-\]
-\[
-(32\times100)(100\times1)=(32\times1).
-\]
-两次相乘都遵循普通的矩阵乘法规则。
-
-\subsubsection{这和外积求和到底是什么关系？}
-
-如果\textbf{不加 ReLU}，之前的外积求和能合并：
-\begin{equation}
-\underbrace{V^\top K}_{W}
-=
-\begin{bmatrix}\vect{v}_1&\vect{v}_2\end{bmatrix}
-\begin{bmatrix}\vect{k}_1^\top\\\vect{k}_2^\top\end{bmatrix}
-=
-\vect{v}_1\vect{k}_1^\top+\vect{v}_2\vect{k}_2^\top.
-\end{equation}
-所以线性召回可以写成：
-\[
-W\vect{x}=(V^\top K)\vect{x}=V^\top(K\vect{x}).
-\]
-一旦把 ReLU 放在中间，通常就不能合并成一个固定的 $W$。以本节数字为例：
-\[\begin{aligned}
-V^\top K\vect{x}
-&=1\vect{v}_1-0.2\vect{v}_2
-=\begin{bmatrix}2\\0.4\end{bmatrix},\\
-V^\top\relu(K\vect{x})
-&=1\vect{v}_1+0\vect{v}_2
-=\begin{bmatrix}2\\1\end{bmatrix}.
-\end{aligned}\]
-前者保留了负匹配；后者把它滤掉了。这就是激活函数引入\textbf{非线性}的实际效果。
-
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:08-stacking-key-value}$K:3\times2$、$V:3\times4$，用三个 Key 的读取权重按行加权 Value 后输出几维？\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad
+\phantomsection\label{check:08-stacking-key-value}
+$K:3\times2$、$V:3\times4$，读取三条 Value 后输出几维？
+\quad{\footnotesize\hyperref[answer:08-stacking-key-value]{核对解答。}}\par\medskip
 
 \begin{conclusion}
-$K\vect x$ 将多次点积合成一组匹配分数，$\sigma$ 逐元素筛选，
-$V^\top\sigma(K\vect x)$ 则按权重组合 Value。
-没有非线性时可把两次矩阵乘法合并；插入 ReLU 后，输出随输入的激活模式而变化。
+统一记住一条式子：$\sigma(xK^\top)V$。
+先匹配所有 Key，再把这些分数当作读取各行 Value 的权重。
 \end{conclusion}
