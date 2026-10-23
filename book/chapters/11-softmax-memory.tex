@@ -2,7 +2,7 @@
 \section{从单 Query 到批量 Self-Attention}
 % This chapter continues the local 2D QKV illustration, not the 5x3 fixture.
 \label{intro:11-softmax-memory}
-\chaptercompass{如何同时处理整句的 Query，而不逐个重复手算？}{将每行匹配合成 $QK^\top$，逐行 Softmax 后一次读取 $AV$。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\to Y:T\times d_v$}{$W_Q,W_K,W_V$ 可学习；回顾示例用单位投影}
+\chaptercompass{如何同时处理整句的 Query，而不逐个重复手算？}{将每行匹配合成 $QK^\top$，逐行 Softmax 后一次读取 $AV$。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\to Y:T\times d_v$}{$W_Q,W_K,W_V$ 可学习；示例仅 $W_Q,W_V$ 为单位投影}
 \modelpipelinefocus{3}{批量 Self-Attention}
 \phantomsection\label{intro:12-self-attention-matrices}
 \phantomsection\label{concept:self-attention}
