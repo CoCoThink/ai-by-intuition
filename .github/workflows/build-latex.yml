@@ -25,7 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Check chapter structure before compilation
-        run: python3 scripts/validate_book.py
+        run: |
+          python3 scripts/validate_book.py
+          python3 scripts/check_latex_references.py --self-test
       - name: Build tagged PDF with TeX Live 2026
         uses: xu-cheng/texlive-action@22c04326a5d855880f9d39bb955138bf11c6df80 # v3
         with:
@@ -89,6 +91,14 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
           python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Book.pdf
+      # LaTeX reports missing \ref targets as warnings, so -halt-on-error
+      # alone does not stop a bad PDF. Fail on final-log diagnostics AND
+      # literal ?? placeholders in the rendered output (including Appendix C).
+      - name: Reject unresolved cross-references in final LaTeX log and PDF
+        run: |
+          python3 scripts/check_latex_references.py \
+            --log book/build/main.log \
+            --pdf book/build/AI-by-Intuition-Book.pdf
       - name: Machine grayscale preflight of every PDF page
         timeout-minutes: 8
         run: |
