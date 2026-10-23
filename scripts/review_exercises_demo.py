@@ -81,6 +81,10 @@ def main() -> None:
                     [0, 0, 1, 1, 0],
                     [0, 0, 0, 1, 1]]
     assert sum(map(sum, mask)) == 9
+    # B2-20 programming extension: same length, window 3 instead of 2.
+    mask3 = sliding_mask(5, 3)
+    assert list(map(sum, mask3)) == [1, 2, 3, 3, 3]
+    assert sum(map(sum, mask3)) == 12
 
     # B2-19. Cross-entropy of an exactly uniform thousand-word vocabulary.
     close(-log(1 / 1000), log(1000))
@@ -99,7 +103,7 @@ def main() -> None:
     close(read[0], 0.7552715289452023)
     close(read[1], 0.9099694268296196)
 
-    print("Review exercises QA passed: B1-15/16, B2-17/18/19, asymmetric Q/K")
+    print("Review exercises QA passed: B1-15/16, B2-17/18/19/20, asymmetric Q/K")
 
 
 if __name__ == "__main__":

@@ -521,13 +521,13 @@ def validate_source() -> None:
     answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
     if len(answer_sections) != 4:
         fail("Expected three distinctly labelled answer sets")
-    expected_counts = (16, 19, 11)  # practice order: mathematics, modern systems, core memory
+    expected_counts = (16, 20, 11)  # practice order: mathematics, modern systems, core memory
     actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
                      for i in range(3))
     if tuple(actual_counts) != expected_counts:
-        fail("Central answer counts do not match 16/19/11 lesson exercises")
-    if math_body.count(r"\item") != 16 or modern_body.count(r"\item") != 19:
-        fail("Core collections must contain sixteen math and nineteen modern items")
+        fail("Central answer counts do not match 16/20/11 lesson exercises")
+    if math_body.count(r"\item") != 16 or modern_body.count(r"\item") != 20:
+        fail("Core collections must contain sixteen math and twenty modern items")
     for name in ("25-integrated-practice", "25b-modern-practice"):
         for label in ("【回忆】", "【手算】", "【迁移】"):
             includes(sources[name], label, f"{name} exercise tier")
@@ -579,6 +579,11 @@ def validate_source() -> None:
              "RAG retrieval coverage regression")
     includes(sources["25b-modern-practice"], "w=2",
              "sliding-window edge count regression")
+    includes(sources["25b-modern-practice"], "review\\_exercises\\_demo.py",
+             "first programming exercise uses locally runnable standard-library script")
+    includes(sources["28-chapter-checks"], r"\boxed{10\%}",
+             "Agent numeric arithmetic self-check")
+
     includes(sources["25b-modern-practice"], "1000",
              "uniform vocabulary loss regression")
     assert sum(min(2, i + 1) for i in range(5)) == 9

@@ -37,7 +37,11 @@ $S_{ij}=x_i\cdot x_j=x_j\cdot x_i=S_{ji}$；
 \item \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 按权重求和：$0.2(1,0)+0.8(0,1)=(0.2,0.8)$。
 \item \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 分数相等时指数也相等，两项归一化后各为 $0.5$。
 \item \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 按特征列而非位置行拼接，输出 $3\times4$。
-\item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{残差与 Block 维度}}\enspace 不会；残差相加要求形状兼容，此例仍是 $T\times d$。
+\item \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{Block 三层自测}}\enspace
+回忆：同形状向量才能逐位置直接残差相加，否则需要投影对齐；
+手算：两个 $3\times2$ 头按特征拼接为 $\boxed{3\times4}$；
+迁移：Encoder--Decoder 原论文的 Cross-Attention 中
+Query 来自 Decoder、Key/Value 来自 Encoder 输出。
 \item \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 上投影 $6\times18$，下投影 $18\times6$。
 \item \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace 初始第 1、2 位置预测错，第 3 位置预测 ID 2“。”正确；将第一输入改为 ID 4 后，第三位置 logits 最大变化约 $0.3520$，并非完全不变。
 \item \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace 三个位置的平均损失使每行梯度都乘以 $1/3$；一次更新后第 2 位置正确答案 ID 4 的概率由约 $0.0507$ 升到 $0.0685$，但贪心仍选择 ID 3“花”。
@@ -45,7 +49,11 @@ $S_{ij}=x_i\cdot x_j=x_j\cdot x_i=S_{ji}$；
 \item \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace $768/12=64$ 维；玩具例的一条训练序列损失下降，只能说明该优化在训练样本上有效，不能证明有大量数据预训练后的泛化和可靠推理能力。
 \item \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace 将示例加入 Prompt 不改变模型权重；真正执行 SFT 会更新权重。两者都不能凭空获取未经授权的最新报表。
 \item \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace SFT 使用目标示范回答；偏好学习利用更偏好的回答与较差回答的比较或相应奖励信号。
-\item \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{工具结果与提示注入}}\enspace 外部网页是不可信数据，不能将其中越权要求当成系统/用户指令；文件外传须经过单独授权及安全检查。
+\item \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{RAG、环比与权限}}\enspace
+回忆：RAG 补充可追溯证据，不直接赋予模型外部操作权限；
+手算：$(132-120)/120=\boxed{10\%}$；
+迁移：网页是不可信数据，越权要求不等于系统或用户指令；
+文件外传必须另经授权与应用侧校验。
 \item \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace $10^9\times2=2\times10^9$ 字节，十进制约 $2$ GB，尚未计算缓存及激活。
 \item \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace 当多个 Query 头共享更少的 K/V 头时，KV Cache 每个 Token 需要存储的键值数通常减少。
 \item \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace KV Cache 减少一半仅说明某项内存指标改善，不能推断质量提高；还需测准确性、延迟、吞吐等，并保持可比评测条件。

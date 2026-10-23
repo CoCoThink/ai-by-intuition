@@ -205,7 +205,14 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 
 \input{figures/original-transformer-map}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测}}\quad\phantomsection\label{check:22-transformer-architecture}一个 $T\times d$ 的隐藏矩阵加上同形状残差后，输出形状会改变吗？\quad{\footnotesize\hyperref[answer:22-transformer-architecture]{核对解答。}}\par\medskip
+\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
+\phantomsection\label{check:22-transformer-architecture}
+\textbf{回忆：}为什么 Block 的残差输入与输出必须形状兼容？
+\textbf{手算：}若 $T=3,d=4$，两个头各输出 $3\times2$，
+拼接后是什么形状？
+\textbf{迁移：}原论文的 Decoder Cross-Attention 里，
+哪一路提供 Query，哪一路提供 Key/Value？
+\quad{\footnotesize\hyperref[answer:22-transformer-architecture]{核对解答。}}\par\medskip
 
 \begin{conclusion}
 一个常见的 Transformer Block 由注意力、逐 Token 的前馈网络、残差与归一化构成，
