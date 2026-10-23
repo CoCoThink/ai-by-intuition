@@ -1,4 +1,5 @@
 \section{用 MLP 的眼光重新理解记忆检索}
+\chaptercompass{匹配分数为什么需要非线性？}{先筛选 Key 的匹配分数，再按权重组合每条 Value。}{$xK^\top:1\times M\to\sigma(\cdot)V:1\times d_v$}{在 MLP 解释中 K/V 对应固定层权重}
 
 上一章的线性读取让所有非零匹配都参与输出。
 现在让权重随匹配强弱非线性变化。

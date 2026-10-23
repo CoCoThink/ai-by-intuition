@@ -1,5 +1,6 @@
 \section{三个位置一起训练：从交叉熵到共享参数更新}
 \label{intro:22c-language-training}
+\chaptercompass{三个位置怎样联合训练同一套参数？}{按三位置平均损失，沿完整计算图反传并统一更新。}{$P:3\times5\to L\to\nabla_\theta L$}{Embedding、位置、Q/K/V、FFN、输出头共同更新}
 
 上一章已经用\textbf{同一组初始参数}得到三个位置的词表概率。
 我们不再只挑最后一行、冻结所有前层参数反复调输出头；

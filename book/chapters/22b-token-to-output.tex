@@ -1,5 +1,6 @@
 \section{三维贯通实验：从 Token ID 到三个位置的输出概率}
 \label{intro:22b-token-to-output}
+\chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[1,3,4]\to H:3\times3\to P:3\times5$}{本章只做前向；参数取自统一三维例子}
 
 前面已学过 Embedding、因果 Mask、Q/K/V、Norm、残差、
 FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。

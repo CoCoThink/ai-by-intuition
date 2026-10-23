@@ -532,7 +532,12 @@ def validate_source() -> None:
              "single-source glossary explanation")
     for core in ("22-transformer-architecture", "23a-from-toy-to-gpt",
                  "04-key-value-outer-product", "23d-agent-systems",
-                 "22d-modern-transformers", "19b-vit"):
+                 "22d-modern-transformers", "19b-vit",
+                 "22a-position-multihead", "22b-token-to-output",
+                 "22c-language-training", "23-llm-systems",
+                 "06-better-linear-memory", "09-nonlinearity-and-memory",
+                 "13-capacity", "23aa-pretraining-icl", "23c-post-training",
+                 "23b-deployment-and-ecosystem", "23e-tech-judgement"):
         includes(sources[core], r"\chaptercompass{",
                  f"{core} one-sentence and shape-first introduction")
 

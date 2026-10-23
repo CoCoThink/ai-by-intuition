@@ -1,5 +1,6 @@
 \section{位置编码、缩放与多头注意力的手算}
 \label{intro:22a-position-multihead}
+\chaptercompass{交换 Token 时，模型怎么知道位置？}{对照位置向量、缩放点积和两个注意力头的独立读取。}{$X:T\times d\to QK^\top:T\times T\to Y:T\times d$}{位置表可学习；Q/K/V 与输出投影由训练确定}
 
 \subsection{交换两个 Token：统一三维参数为什么需要位置？}
 
