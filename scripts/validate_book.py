@@ -361,10 +361,15 @@ def validate_source() -> None:
     includes(sources["20-embeddings"], r"\input{figures/embedding-training-projection}", "embedding delta chart")
     includes((BOOK / "figures" / "embedding-training-projection.tex").read_text(encoding="utf-8"),
              r"E_{20,j}-E_{0,j}", "embedding coordinate difference")
-    # Keep only three full-sized forward-result matrices in the narrative chapter.
+    # All high-precision dense matrices now belong to Appendix B.
     full_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["22b-token-to-output"]))
-    if full_matrices != 3:
-        fail(f"Running forward lesson should contain exactly A/H/P matrices, found {full_matrices}")
+    if full_matrices != 0:
+        fail(f"Forward narrative should have shapes and representative values only, found {full_matrices} dense matrices")
+    appendix_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["00f-transformer-intermediates"]))
+    if appendix_matrices < 15:
+        fail(f"Appendix B lost numerical teaching matrices: {appendix_matrices}")
+    includes(sources["00f-transformer-intermediates"], "0.1211",
+             "full output-head gradient belongs to Appendix B")
     includes(sources["22c-language-training"], r"\input{figures/training-20-step-loss}", "20-step loss curve")
     includes(sources["23a-from-toy-to-gpt"], r"\label{eq:toy-99-parameters}", "99 parameter count")
     includes(sources["23a-from-toy-to-gpt"], "7{,}077{,}888",
