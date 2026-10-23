@@ -7,12 +7,12 @@
 
 **从这里开始：**[目录前阅读路线与时间参考](chapters/00g-reading-routes.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
-## 当前修订目录：八个必读部分、视觉选读（39 章）
+## 当前修订目录：八个必读部分、视觉选读（38 章）
 
 本目录以 [\`book/main.tex\`](main.tex) 的实际输入顺序为准。
 下列旧文件名用于稳定链接；印刷章节号由 LaTeX 生成。
 
-### I–III：从函数到文字（第 1–15 章）
+### I–III：从函数到文字（第 1–14 章）
 I：[函数](chapters/00-functions.tex)、[损失](chapters/16-loss-gradient.tex)、
 [反传](chapters/17-backpropagation.tex)、[泛化](chapters/18-generalization.tex)。
 
@@ -23,7 +23,7 @@ II：[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)�
 III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、
 [Embedding](chapters/20-embeddings.tex)、[任务契约](chapters/20b-task-contract.tex)。
 
-### IV：上下文与 Attention（第 16–21 章）
+### IV：上下文与 Attention（第 15–20 章）
 [上下文缺口](chapters/21a-context-gap.tex) →
 [RNN](chapters/21-rnn.tex) →
 [朴素点积 Attention](chapters/21c-naive-attention.tex) →
@@ -31,7 +31,7 @@ III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classifica
 [矩阵式 Self-Attention](chapters/11-softmax-memory.tex) →
 [位置与多头](chapters/22a-position-multihead.tex)。
 
-### V：Transformer 训练（第 22–27 章）
+### V：Transformer 训练（第 21–26 章）
 [Block](chapters/22-transformer-architecture.tex)、
 [FFN 与输出头](chapters/10b-ffn-output-head.tex)、
 [贯通前向](chapters/22b-token-to-output.tex)、
@@ -39,7 +39,7 @@ III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classifica
 [生成](chapters/23-llm-systems.tex)、
 [从玩具到 GPT-2](chapters/23a-from-toy-to-gpt.tex)。
 
-### VI：Attention 与 FFN 的记忆视角（第 28–31 章）
+### VI：Attention 与 FFN 的记忆视角（第 27–30 章）
 [外积](chapters/04-key-value-outer-product.tex)、
 [串扰](chapters/05-memory-interference.tex)、
 [减少干扰](chapters/06-better-linear-memory.tex)、
@@ -48,7 +48,7 @@ III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classifica
 [高维容量](chapters/13-capacity.tex)。
 本部分统一使用行向量；[memory_demo.py](../scripts/memory_demo.py) 验证二维结果。
 
-### VII–VIII：助手与架构判断（第 32–37 章）
+### VII–VIII：助手与架构判断（第 31–36 章）
 VII：[ICL](chapters/23aa-pretraining-icl.tex)、
 [后训练](chapters/23c-post-training.tex)、
 [Agent/RAG](chapters/23d-agent-systems.tex)、
@@ -58,7 +58,7 @@ VIII：[现代 Transformer](chapters/22d-modern-transformers.tex)、
 [新技术判断](chapters/23e-tech-judgement.tex)、
 [技术底座回顾](chapters/23f-foundation-recap.tex)。
 
-### IX：视觉选读（第 38–39 章）
+### IX：视觉选读（第 37–38 章）
 [CNN](chapters/19-cnn.tex) → [ViT](chapters/19b-vit.tex)。
 
 ## 附录 A–G
