@@ -183,6 +183,38 @@ logits 的完整形状应为 $1\times T\times50{,}257$，
 若权重已经缓存，使用 \texttt{--local-files-only} 可重复本地复算。
 
 
+\begin{example}
+\noindent\emph{一份真实 GPT-2 small 的复算记录}\par
+在公开权重修订 \texttt{607a30d7}、CPU PyTorch 2.5.1、
+Transformers 4.46.3 下，
+英文 Prompt 为 \texttt{The capital of France is}。
+这次真实推理得到：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{41mm}X@{}}
+\toprule
+实测项目 & 输出或检查结果\\\midrule
+真实 Token 数与 ID & $5$；$(464,3139,286,4881,318)$\\
+全位置 logits & $1\times5\times50{,}257$\\
+温度 $0.7,1.0,1.5$ & 各温度的概率总和均为 $1.00000000$\\
+首层首头未来位置 & Attention 上三角最大绝对值为 $0$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+温度 $1.0$ 时，下一 Token 的最高概率候选是
+\texttt{the}（含前导空格，ID 262，约 $0.08459$）；
+\texttt{Paris}（含前导空格，ID 6342）约为 $0.03224$。
+\textbf{下一 Token 分布是在续写文本，不等于查事实后给出确定答案。}
+
+完整依赖版本、Top-5 与第一层注意力热图收录在
+\href{https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969}{真实推理记录 \#39897932969}，
+源代码 SHA 为 \texttt{a20a0c15}。
+可按相同输入和权重修订复算；
+这一份报告只代表该实验环境的一次执行。
+\end{example}
+
 \subsection{Decoder-only 与 Encoder--Decoder 是同一个概念吗？}
 
 经典 Transformer 原论文的翻译架构有编码器和解码器，

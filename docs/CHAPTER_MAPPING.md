@@ -29,7 +29,7 @@
 - [x] R02：行向量记忆与线性 Attention 已连接；第 29 章新增 A/B 残差写入与旧记忆损伤的逐项复算，交替重访收敛回归已加脚本；完整 PDF 复核归 R08。
 - [ ] R03：Agent 已改用报表任务约束／证据／计算／审计的独立叙事，七行图改为核对关口；保留 loop、二维 RAG 与 MCP 实例，仍须人工对照讲稿与发布授权复核
 - [x] R04：第 18 章朴素注意力与第 19 章独立 W_Q/W_K 的非对称原始分数形成真正对照，矩阵、图卡和测试已同步
-- [x] R05：新增固定 revision 的 GPT-2 可选真实实验、温度概率与 Attention 热图、经典 Attention 4d²／FFN 8d² 参数预算；离线自检无需下载权重，真实模型模式将打印 Token 数、logits 形状、概率和、热图上三角最大值；实际权重运行仍需兼容依赖和模型文件
+- [x] R05：真实 GPT-2 已由 [独立运行 #39897932969](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969) 实测 5 个 Token、全 logits 形状、温度概率和及零上三角掩码；模型 revision 与完整依赖存档，PDF 构建不加载模型权重
 - [x] R06：CoT/GRPO、线性状态、公开模型 config、MLA 假设缓存、窗口掩码以及 ViT→LLM 投影算例均已落地；待整本视觉/数值验收
 - [ ] R07：已补外积、串扰、Delta、BPE、滑窗、GRPO 六个术语和英中别名；B1 增两题、B2 增三题，集中答案、数量门禁和独立数值复算均已同步；Agent 来源已改叙事，仍待人工版权与逐页校样
 - [ ] R08：`36e37ff` 的 [CI #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456) 验证 135 页、1,957/1,957 MathML-AF、PDF/UA-2 机器合规；待对新版进行人工逐页灰度审校、来源授权核对与发行签核

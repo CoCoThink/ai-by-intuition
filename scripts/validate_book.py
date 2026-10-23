@@ -354,6 +354,8 @@ def validate_source() -> None:
                                  cwd=ROOT, capture_output=True, text=True)
     if gpt2_result.returncode or "Offline smoke passed:" not in gpt2_result.stdout:
         fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
+    includes(sources["23a-from-toy-to-gpt"], "39897932969",
+             "successful source-pinned real GPT-2 inference reference")
     includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
              "reproducible optional real GPT-2 example (verbatim command)")
     includes(gpt2_source.read_text(encoding="utf-8"), "masked_future",
