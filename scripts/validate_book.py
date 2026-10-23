@@ -425,6 +425,15 @@ def validate_source() -> None:
         if "上一章" in "\n".join(sources[name].splitlines()[:15]):
             fail(f"Redundant prior-chapter recap reintroduced in {name}")
 
+    # A ten-step oral mapping must remain complete and linked to its figure.
+    block_ch22 = sources["22-transformer-architecture"]
+    ten_steps = block_ch22.split(r"\label{sec:transformer-ten-steps}")[1]
+    ten_steps = ten_steps.split(r"\end{enumerate}")[0]
+    if len(re.findall(r"(?m)^\\item ", ten_steps)) != 10:
+        fail("Transformer oral recap must have exactly ten steps")
+    includes(block_ch22, r"\input{figures/original-transformer-map}",
+             "source vs decoder-only architecture component mapping")
+
     # Editorial regression after moving memory into Part VI.
     # These are obsolete book-facing phrases; production policy belongs in docs/.
     stale_reader_phrases = (
