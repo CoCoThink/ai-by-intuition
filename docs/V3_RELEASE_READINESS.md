@@ -8,7 +8,7 @@
 
 | 项目 | 成功验证的明确来源 |
 |---|---|
-| 源码 SHA | [3800ab9e2470939db7b93f047bebfd0176556e7a](https://github.com/CoCoThink/ai-by-intuition/commit/d4f45cd7630239750adb0c71cbec3718fe705aae) |
+| 源码 SHA | [3800ab9e2470939db7b93f047bebfd0176556e7a](https://github.com/CoCoThink/ai-by-intuition/commit/3800ab9e2470939db7b93f047bebfd0176556e7a) |
 | 成功的 main 构建 | [Build one PDF book #39913269593](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39913269593) |
 | 内容结构 | 9 部分、39 个编号章节、A–G 共 7 个附录 |
 | PDF | **143 页** Tagged PDF；页面文字边界检查通过 |

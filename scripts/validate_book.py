@@ -408,6 +408,20 @@ def validate_source() -> None:
         fail(f"Grayscale proof accepted invalid page selection: {bad_selection}")
     print("Grayscale print-proof selector QA passed")
 
+    # Machine grayscale preflight is distinct from the human proof checklist.
+    audit_source = ROOT / "scripts" / "audit_grayscale_pdf.py"
+    if not audit_source.is_file():
+        fail("Missing grayscale full-PDF audit tool")
+    ast.parse(audit_source.read_text(encoding="utf-8"))
+    audit_test = subprocess.run(
+        [sys.executable, str(audit_source), "--self-test"], cwd=ROOT,
+        capture_output=True, text=True,
+    )
+    if audit_test.returncode or "Grayscale PDF audit self-test passed" not in audit_test.stdout:
+        fail("Grayscale PDF audit self-test failed:\n"
+             + audit_test.stdout + audit_test.stderr)
+
+
     # Catch a numerical transition that became stale after changing chapter 19.
     includes(sources["11-softmax-memory"], r"\hyperref[intro:21c-naive-attention]",
              "chapter 20 explicitly reprises the earlier naive example")
