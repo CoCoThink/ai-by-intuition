@@ -1,4 +1,5 @@
 \Needspace{24\baselineskip}
+\chapterrule
 \section{分类损失：预测错了哪一类，怎样调整分数？}
 \label{intro:20c-classification-loss}
 \chaptercompass{为什么原始 logits 不能直接当作概率？}{Softmax 将一行候选分数归一化，交叉熵度量目标类别概率。}{$z:1\times C\to p:1\times C\to L:1\times1$}{Softmax 与交叉熵没有自身可训练参数；上游输出头的权重可学习}
@@ -85,13 +86,9 @@ L=-z_{\rm correct}+\log\!\left(\sum_k e^{z_k}\right).
 不是所有任务都必须改写成分类；连续数值预测等任务可以使用其他输出与损失。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:20c-classification-loss}
-\textbf{回忆：}logits 为什么不能直接当概率？
-\textbf{手算：}三分类 $p=(1/4,1/2,1/4)$，
-标签为第二类，交叉熵与该类 logit 的梯度各是多少？
-\textbf{迁移：}保持标签不变而正确类概率升高，交叉熵会怎样？
-\quad{\footnotesize\hyperref[answer:20c-classification-loss]{核对解答。}}\par\medskip
+\chaptercheck{20c-classification-loss}{logits 为什么不能直接当概率？}{三分类 $p=(1/4,1/2,1/4)$，
+标签为第二类，交叉熵与该类 logit 的梯度各是多少？}{保持标签不变而正确类概率升高，交叉熵会怎样？}
+
 
 \begin{conclusion}
 分类任务先输出 logits，再用 Softmax 得到概率，

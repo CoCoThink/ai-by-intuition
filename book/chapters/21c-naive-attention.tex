@@ -1,4 +1,5 @@
 \Needspace{16\baselineskip}
+\chapterrule
 \section{最朴素的注意力：直接用词向量做点积}
 \label{intro:21c-naive-attention}
 \chaptercompass{不增加 Q/K/V 参数，能否先做一次按需读取？}{用原始词向量点积匹配，再用 Softmax 加权求和。}{$X:3\times2\to XX^\top:3\times3\to Y:3\times2$}{本章无新可训练投影参数}
@@ -42,14 +43,10 @@ $(0.212,0.212,0.576)$，继续把输入作为 Value，
 这便是接下来引入 Query、Key、Value 三种角色的动机。
 
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:21c-naive-attention}
-\textbf{回忆：}为什么直接点积矩阵 $XX^\top$ 必定对称？
-\textbf{手算：}本章 $x_1=(1,0)$、$x_3=(1,1)$，
-求 $S_{13}$ 与 $S_{31}$。
-\textbf{迁移：}对矩阵每行单独做 Softmax，
-权重 $A_{13}$ 和 $A_{31}$ 还必须相等吗？
-\quad{\footnotesize\hyperref[answer:21c-naive-attention]{核对解答。}}\par\medskip
+\chaptercheck{21c-naive-attention}{为什么直接点积矩阵 $XX^\top$ 必定对称？}{本章 $x_1=(1,0)$、$x_3=(1,1)$，
+求 $S_{13}$ 与 $S_{31}$。}{对矩阵每行单独做 Softmax，
+权重 $A_{13}$ 和 $A_{31}$ 还必须相等吗？}
+
 
 \begin{conclusion}
 最朴素的点积已经能计算权重，却把“拿什么提问”和“凭什么被匹配”绑定在一起。

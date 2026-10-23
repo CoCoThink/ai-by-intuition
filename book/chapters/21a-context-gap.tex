@@ -1,4 +1,5 @@
 \Needspace{24\baselineskip}
+\chapterrule
 \section{逐个处理 Token，为什么仍看不到前文？}
 \label{intro:21a-context-gap}
 \chaptercompass{只逐行处理 Token，为什么无法理解前文？}{共享的逐位置函数只能看到本行输入，相同当前 Token 不能区分不同前文。}{$X:T\times d\to Y:T\times d'$，每个 $Y_t$ 只取决于 $X_t$}{逐位置变换的矩阵可学习，但不会自行产生跨行信息流}
@@ -52,13 +53,9 @@ f\bigl(E[\text{开了}]\bigr)
 还需要考虑任务长度、数据、参数量和计算代价。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:21a-context-gap}
-\textbf{回忆：}仅看最后一个 Token 的逐位置 MLP 缺少什么？
-\textbf{手算：}两段上下文最后均输入 $x=3$，
-同一个 $f(x)=2x+1$ 各输出多少？
-\textbf{迁移：}哪一种输入或状态改动能让模型区分这两段前文？
-\quad{\footnotesize\hyperref[answer:21a-context-gap]{核对解答。}}\par\medskip
+\chaptercheck{21a-context-gap}{仅看最后一个 Token 的逐位置 MLP 缺少什么？}{两段上下文最后均输入 $x=3$，
+同一个 $f(x)=2x+1$ 各输出多少？}{哪一种输入或状态改动能让模型区分这两段前文？}
+
 
 \begin{conclusion}
 多维 Embedding 解决了“单个词怎样表示”，却不会自动提供跨位置上下文。

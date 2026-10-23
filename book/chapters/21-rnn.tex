@@ -1,4 +1,5 @@
 \Needspace{24\baselineskip}
+\chapterrule
 \section{RNN 是什么？让网络一个词一个词地读}
 \phantomsection\label{concept:rnn}
 \label{intro:21-rnn}
@@ -155,13 +156,9 @@ LSTM 和 GRU 可以改善一部分信息保留问题，
 
 
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:21-rnn}
-\textbf{回忆：}RNN 的隐藏状态沿什么方向传递？
-\textbf{手算：}$h_t=x_t+0.5h_{t-1}$，$h_0=0$，
-$x_1=2,x_2=0$ 时求 $h_2$。
-\textbf{迁移：}若第三个输入 $x_3=1$，求 $h_3$。
-\quad{\footnotesize\hyperref[answer:21-rnn]{核对解答。}}\par\medskip
+\chaptercheck{21-rnn}{RNN 的隐藏状态沿什么方向传递？}{$h_t=x_t+0.5h_{t-1}$，$h_0=0$，
+$x_1=2,x_2=0$ 时求 $h_2$。}{若第三个输入 $x_3=1$，求 $h_3$。}
+
 
 \begin{conclusion}
 RNN = 当前输入 + 上一步状态 $\to$ 同一个更新函数 $\to$ 下一步状态。

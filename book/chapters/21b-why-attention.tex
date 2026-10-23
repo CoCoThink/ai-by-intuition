@@ -1,4 +1,5 @@
 \Needspace{16\baselineskip}
+\chapterrule
 \section{Attention 是什么？让一个词直接读取其他位置}
 \phantomsection\label{concept:attention}
 \label{intro:21b-why-attention}
@@ -220,14 +221,10 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 下一章会把这一步完整写成矩阵运算。
 \end{enumerate}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:21b-why-attention}
-\textbf{回忆：}Query、Key、Value 各控制匹配还是读取？
-\textbf{手算：}两条 Value 为 $(1,0)$、$(0,1)$，
-权重 $(0.2,0.8)$，输出多少？
-\textbf{迁移：}保持 Query、Key 不变而修改 Value，
-匹配分数会改变吗？输出呢？
-\quad{\footnotesize\hyperref[answer:21b-why-attention]{核对解答。}}\par\medskip
+\chaptercheck{21b-why-attention}{Query、Key、Value 各控制匹配还是读取？}{两条 Value 为 $(1,0)$、$(0,1)$，
+权重 $(0.2,0.8)$，输出多少？}{保持 Query、Key 不变而修改 Value，
+匹配分数会改变吗？输出呢？}
+
 
 \begin{conclusion}
 先记住\textbf{为什么}：

@@ -1,4 +1,5 @@
 \Needspace{24\baselineskip}
+\chapterrule
 \section{Token 与 ID：文字怎样进入数字世界？}
 \label{intro:20a-tokenizer}
 \chaptercompass{文字怎样变成可以查表的 Token ID？}{Tokenizer 依据分词规则与词表把文本切成 Token，再映射为离散整数 ID。}{原始文字 $\to$ $T$ 个 Token ID；长度 $T$ 依分词规则而变}{通常在语言模型训练时固定词表与分词算法，非逐步更新的网络权重}
@@ -81,13 +82,9 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 真实模型并不保证将“春天”或“开了”保留为单个 Token。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:20a-tokenizer}
-\textbf{回忆：}Token ID 是语义大小，还是词表中的离散编号？
-\textbf{手算：}按示意规则合并“今+天”“天+气”，
-五个单字会变成几个 Token？
-\textbf{迁移：}换一张子词词表，同一句话的 Token 数一定相同吗？
-\quad{\footnotesize\hyperref[answer:20a-tokenizer]{核对解答。}}\par\medskip
+\chaptercheck{20a-tokenizer}{Token ID 是语义大小，还是词表中的离散编号？}{按示意规则合并“今+天”“天+气”，
+五个单字会变成几个 Token？}{换一张子词词表，同一句话的 Token 数一定相同吗？}
+
 
 \begin{conclusion}
 Token 化将原始文字变成离散 ID，但 ID 只是类别标签。

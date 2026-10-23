@@ -1,3 +1,4 @@
+\chapterrule
 \section{位置编码、缩放与多头注意力的手算}
 \label{intro:22a-position-multihead}
 \chaptercompass{交换 Token 时，模型怎么知道位置？}{对照位置向量、缩放点积和两个注意力头的独立读取。}{$X:T\times d\to QK^\top:T\times T\to Y:T\times d$}{位置表可学习；Q/K/V 与输出投影由训练确定}
@@ -136,14 +137,10 @@ O_{\rm cat}W_O=(0.990,2.010)\quad(1\times2).
 拼成更宽的特征，再使用 $W_O$ 投影回模型宽度。
 
 \Needspace{12\baselineskip}
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:22a-position-multihead}
-\textbf{回忆：}不同注意力头为什么可以使用不同投影？
-\textbf{手算：}两个头各输出 $3\times2$，
-沿特征轴拼接后的形状是什么？
-\textbf{迁移：}若以 $W_O:4\times6$ 做输出投影，
-矩阵形状变成多少？
-\quad{\footnotesize\hyperref[answer:22a-position-multihead]{核对解答。}}\par\medskip
+\chaptercheck{22a-position-multihead}{不同注意力头为什么可以使用不同投影？}{两个头各输出 $3\times2$，
+沿特征轴拼接后的形状是什么？}{若以 $W_O:4\times6$ 做输出投影，
+矩阵形状变成多少？}
+
 
 \begin{conclusion}
 两种问题需要不同设计：\textbf{位置信息}区分内容位于何处；

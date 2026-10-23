@@ -1,4 +1,5 @@
 \Needspace{24\baselineskip}
+\chapterrule
 \section{Embedding：让 Token ID 变成可训练的向量}
 \label{intro:20-embeddings}
 \phantomsection\label{concept:embedding}
@@ -142,14 +143,10 @@ E_{20}[4]&\approx(0.1734,\,-0.2188,\,1.3136).
 独立的二维注意力、四维双头示例统一标为“局部例”，
 各自使用独立的数值参数；读数时以示例标题为准。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:20-embeddings}
-\textbf{回忆：}Embedding 表每行与哪个输入单位对应？
-\textbf{手算：}词表大小 $5$、向量宽 $3$，查三个 Token ID
-得到什么形状的输入矩阵？
-\textbf{迁移：}一句话中重复出现同一 ID，
-没有上下文层时查到的原始 Embedding 会相同吗？
-\quad{\footnotesize\hyperref[answer:20-embeddings]{核对解答。}}\par\medskip
+\chaptercheck{20-embeddings}{Embedding 表每行与哪个输入单位对应？}{词表大小 $5$、向量宽 $3$，查三个 Token ID
+得到什么形状的输入矩阵？}{一句话中重复出现同一 ID，
+没有上下文层时查到的原始 Embedding 会相同吗？}
+
 
 \begin{conclusion}
 ID 查表得到可训练特征；梯度会改变这些数字，供后续语言预测使用。
