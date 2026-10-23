@@ -6,6 +6,8 @@
 再检查最后答案。数字正确而方向、形状不一致也需要订正。
 
 \subsubsection*{从数学到神经网络的综合练习}
+题目与难度见附录 C 的 B1 同号练习；这里先给\textbf{提示}，再给\textbf{关键步骤}。
+一步回忆题只保留结论，复杂计算题展开中间量。
 
 
 
@@ -29,12 +31,12 @@ $(e,e,e^2)/(2e+e^2)\approx(0.212,0.212,0.576)$，
 按照题设矩阵右乘，logits 约为
 $z=(1.576117,0.788058,0)$，再做 Softmax，
 第二类概率约 $p_2=0.273684$，所以
-$\boxed{L=-\log p_2\approx1.295781}$。
+$\answerresult{L=-\log p_2\approx1.295781}$。
 \textbf{这次预测真正沿着读取向量和输出头得出}；
 若不给出输出头，Attention 权重本身不足以唯一决定词表概率。
 \item 改动后的第一行是
 $X'_1=(0.15,-0.2,1.25)+(0.10,0.05,-0.10)
-=\boxed{(0.25,-0.15,1.15)}$。
+=\answerresult{(0.25,-0.15,1.15)}$。
 因果 Attention 的第二、三位置可读取第一个位置，所以后续表示\textbf{可能}变化；
 这里没有更新任何权重，是一次输入反事实消融。
 \item $XX^\top=
@@ -45,18 +47,22 @@ $(a,a):1$，$(a,b):2$；第一轮合并 $a+b\to ab$，
 得到 \texttt{a ab} 与 \texttt{ab}。
 每段单独切分与合并，不跨段统计相邻对。
 
-\item $w_1=1-0.01\times2=\boxed{0.98}$，
-$w_2=0.98-0.02\times2=\boxed{0.94}$，
-$w_3=0.94-0.03\times2=\boxed{0.88}$。
+\item \textbf{B1-17 提示：}每一步用上一步的权重，不要三次都从 $w_0$ 减。
+\textbf{完整解答：}$w_1=1-0.01\times2=\answerresult{0.98}$，
+$w_2=0.98-0.02\times2=\answerresult{0.94}$，
+$w_3=0.94-0.03\times2=\answerresult{0.88}$。
 Warmup 改变更新步长 $\eta_t$，并不更换损失函数。
-\item $w_1=(1-0.1\times0.05)\times4-0.1\times0.5
-=\boxed{3.93}$；无衰减得到 $\boxed{3.95}$，
+\item \textbf{B1-18 提示：}把权重缩小项和自适应更新项分开计算。
+\textbf{完整解答：}$w_1=(1-0.1\times0.05)\times4-0.1\times0.5
+=\answerresult{3.93}$；无衰减得到 $\answerresult{3.95}$，
 差别为 $0.02$。AdamW 的权重衰减与自适应梯度方向\textbf{解耦}，
 不先把 $\lambda w$ 加入梯度动量。
 \end{enumerate}
 \end{tcolorbox}
 
 \subsubsection*{现代 Transformer 与 Agent 练习}
+B2 同号题目的\textbf{基础／标准／挑战}标签见附录 C；
+涉及多步计算的答案按“提示 $\to$ 解算 $\to$ 检查”阅读。
 
 
 
@@ -92,8 +98,9 @@ $\partial L/\partial W_{\rm down}=u^\top g_h
 故 $\partial L/\partial W_V=a^\top g_u
 \approx\begin{bmatrix}0.04810&0.35895\\0.09765&0.72878\end{bmatrix}$。
 
-\item Q2 环比为 $(125-100)/100=\boxed{25\%}$；
-Q3 环比为 $(132-125)/125=\boxed{5.6\%}$。
+\item \textbf{B2-14 提示：}先固定相邻季度的分母，再分别算两个增长率。
+\textbf{完整解答：}Q2 环比为 $(125-100)/100=\answerresult{25\%}$；
+Q3 环比为 $(132-125)/125=\answerresult{5.6\%}$。
 仅修改 Prompt 输入数据不改变网络权重；
 实际执行 SFT 训练才会进行参数更新。
 \item \textbf{形状纠错：} $Q:2\times3$、$K:4\times3$，
@@ -106,17 +113,21 @@ $QK$ 的内侧维度为 $3$ 和 $4$，不能相乘。
 检索排名不等于来源可信或权限授权；
 网页内容是低信任数据，必须核验来源，
 并由应用层单独校验工具和外发权限。
-\item 新查询分数为
-$qD^\top=(0.2,1,0.96)$，Top-2 为 Q2、Q3；
+\item \textbf{B2-17 提示：}先把查询行向量右乘文档矩阵的转置，再排序。
+\textbf{完整解答：}$q=(0.2,1)$，
+$qD^\top=(0.2\cdot1+1\cdot0,\;0.2\cdot0+1\cdot1,\;
+0.2\cdot0.8+1\cdot0.8)=(0.2,1,0.96)$。
+Top-2 为 Q2、Q3；
 Q1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核对。
-\item 五行可见位置数为 $(1,2,2,2,2)$，
-允许位置对总数 $1+2+2+2+2=\boxed{9}$；
+\item \textbf{B2-18 提示：}窗口包含当前位置，前两行还未填满窗口。
+\textbf{完整解答：}五行可见位置数为 $(1,2,2,2,2)$，
+允许位置对总数 $1+2+2+2+2=\answerresult{9}$；
 这里包含查询自己的当前位置。
 \item 均匀预测 $p=1/1000$，
-所以 $-\ln p=\ln1000\approx\boxed{6.908}$。
+所以 $-\ln p=\ln1000\approx\answerresult{6.908}$。
 \item \textbf{编程验证：}将 $w=3$ 代入五行因果滑窗，
 逐行可见位置数为 $(1,2,3,3,3)$，
-允许位置对共 $\boxed{12}$ 个，比 $w=2$ 多 $3$ 个。
+允许位置对共 $\answerresult{12}$ 个，比 $w=2$ 多 $3$ 个。
 可添加 \texttt{assert sum(map(sum, sliding\_mask(5, 3))) == 12}。
 
 \item 每行指数分数分别为 $(2,1,1)$、$(1,3,1)$、$(1,1,4)$，
@@ -157,9 +168,9 @@ $S_1=k_B^\top v_B=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}$；
 $r_A=(1,-0.6)$，因此
 $S_2=S_1+k_A^\top r_A=
 \boxed{\begin{bmatrix}1&0\\0&0.8\end{bmatrix}}$。
-最新的 A 读取为 $k_AS_2=\boxed{(1,0)}$；
-旧的 B 读取为 $k_BS_2=\boxed{(0.6,0.64)}$，
-误差 $\sqrt{0.6^2+(-0.36)^2}\approx\boxed{0.700}$。
+最新的 A 读取为 $k_AS_2=\answerresult{(1,0)}$；
+旧的 B 读取为 $k_BS_2=\answerresult{(0.6,0.64)}$，
+误差 $\sqrt{0.6^2+(-0.36)^2}\approx\answerresult{0.700}$。
 与正文先 A 后 B 对称：\textbf{最后写入的 Key 当次精确，旧 Key 被扰动}，
 不能推断两条同时精确。
 \end{enumerate}
