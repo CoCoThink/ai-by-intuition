@@ -682,6 +682,22 @@ def validate_source() -> None:
     if check_ids != answer_ids:
         fail(f"Self-check answer mismatch: missing={sorted(check_ids-answer_ids)}, "
              f"unexpected={sorted(answer_ids-check_ids)}")
+    # Every existing numbered check now has a recall/calculation/transfer
+    # trio; do not silently regress to a single isolated question.
+    if len(check_ids) != 47:
+        fail(f"Expected 47 linked chapter and appendix self-checks, got {len(check_ids)}")
+    for lesson_id in sorted(check_ids):
+        source_name = labels["check:" + lesson_id]
+        src = sources[source_name]
+        label = r"\label{check:" + lesson_id + "}"
+        at = src.index(label)
+        near = src[max(0, at-115):at + 950]
+        if r"\textbf{读完自测：回忆／手算／迁移}" not in near:
+            fail(f"Three-level label missing from {lesson_id}")
+        for kind in ("回忆：", "手算：", "迁移："):
+            if r"\textbf{" + kind + "}" not in near:
+                fail(f"Three-level self-check missing {kind} in {lesson_id}")
+
     for name in REQUIRED:
         for destination in re.findall(r"\\hyperref\[((?:check|answer):[^]]+)\]", sources[name]):
             if destination not in labels:
