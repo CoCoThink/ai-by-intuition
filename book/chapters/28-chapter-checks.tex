@@ -1,22 +1,23 @@
 \subsection{全书随堂自测参考解答}
 \phantomsection\label{app:chapter-checks}
 
-正文自测答案\textbf{按当前正文章号与阅读顺序排列}，同章多题共用章号；
+正文自测答案\textbf{按当前正文章号与阅读顺序排列}；阅读指南不占章号，
+损失解析解与梯度下降分别是第 3、4 章，同章多题共用章号。
 若数值与这里不一致，请先核对矩阵的\textbf{维度、乘法方向和输入数据}。
 附录 A 的两项工具自测列在最后。点击每题标题可回到正文中的提问位置。
 
 \begin{enumerate}[leftmargin=6em,labelsep=.7em,itemsep=5pt]
 
-\item[\textbf{第 1 章}] \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 回忆：映射成下一 Token 的概率分布；
+\item[\textbf{阅读指南}] \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{阅读指南与生成流程}}\enspace 回忆：映射成下一 Token 的概率分布；
 手算：贪心选择概率最大的\textbf{第 1 个候选}；
 迁移：不能，预测形式不提供事实核验。
-\item[\textbf{第 2 章}] \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 回忆：遮挡、姿态与光照会让规则枚举失效；
+\item[\textbf{第 1 章}] \phantomsection\label{answer:00d-rules-gap}\textbf{\hyperref[check:00d-rules-gap]{规则为什么写不尽}}\enspace 回忆：遮挡、姿态与光照会让规则枚举失效；
 手算：$\widehat y(4)=2\times4+1=\boxed{9}$，是待验证的预测；
 迁移：优先研究利用标注数据学习可泛化特征，再在独立样本上验证。
-\item[\textbf{第 3 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace 回忆：$w,b$ 是参数，$x$ 是输入；
+\item[\textbf{第 2 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace 回忆：$w,b$ 是参数，$x$ 是输入；
 手算：$2\times3+1=\boxed{7}$；
 迁移：新输出 $2\times3-1=\boxed{5}$，减少 $2$。
-\item[\textbf{第 4 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 回忆：任何实数的平方都非负；
+\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 回忆：任何实数的平方都非负；
 手算：$w=\boxed{2}$ 时 $L_{\min}=\boxed{0}$；
 迁移：$L(3,1)=\frac23(3-2)^2=\boxed{2/3}$。
 \item[\textbf{第 4 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace 回忆：沿负梯度方向更新；
