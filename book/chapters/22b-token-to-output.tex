@@ -11,6 +11,23 @@ FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。
 其余权重与中间矩阵统一放在
 \hyperref[app:transformer-intermediates]{附录 B.1 的逐层数值核对表}，
 所有数值由 \texttt{scripts/teaching\_reference.py} 计算。
+\par\smallskip
+\noindent\textbf{本章运算路线（先看形状，详细数值见附录 B）：}
+\begin{center}
+\small\renewcommand{\arraystretch}{1.16}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{37mm}p{37mm}X@{}}
+\toprule
+环节 & 输入 $\to$ 输出 & 抓住一个代表数字\\\midrule
+查表与位置 & $3$ ID $\to X:3\times3$ & 第 1 行首项 $1.30$\\
+Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
+因果 Attention & $QK^\top\to A:3\times3$ & $A_{2,1}\approx0.1244$\\
+残差与 FFN & $A V\to H:3\times3$ & 每步保留三个位置\\
+输出头与 Softmax & $H\to Z,P:3\times5$ & 每行五个候选概率\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
 
 \subsection{第一步：Token ID、位置向量与输入形状}
 
