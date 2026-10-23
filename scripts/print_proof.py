@@ -79,6 +79,33 @@ def build_manifest(pdf: Path, pages: list[int], scale: int, source_sha: str | No
     }
 
 
+def bind_machine_audit(manifest: dict, audit: dict) -> dict:
+    """Refuse mixed PDF bytes, mixed source commits, or malformed CI evidence.
+
+    Returns a new manifest, leaving the original unmodified on failure.
+    This is an evidence consistency check, not proof of publication approval.
+    """
+    if not isinstance(audit, dict):
+        raise ValueError("Machine audit must be a JSON object")
+    if manifest["pdf_sha256"] != audit.get("pdf_sha256"):
+        raise ValueError("Proof PDF SHA-256 differs from machine audit")
+    result = dict(manifest)
+    audited_sha = audit.get("source_commit_sha")
+    if audited_sha is not None:
+        if not isinstance(audited_sha, str) or not re.fullmatch(
+                r"[0-9a-f]{40}", audited_sha):
+            raise ValueError("Invalid source SHA in machine audit")
+        if result["source_commit_sha"] and result["source_commit_sha"] != audited_sha:
+            raise ValueError("Proof source SHA differs from machine audit")
+        result["source_commit_sha"] = audited_sha
+    run_id = audit.get("github_actions_run_id")
+    if run_id is not None and (type(run_id) is not int or run_id <= 0):
+        raise ValueError("Invalid GitHub Actions run ID in machine audit")
+    result["machine_audit_run_id"] = run_id
+    result["machine_audit_pdf_hash_verified"] = True
+    return result
+
+
 def write_review_materials(pdf: Path, out: Path, pages: list[int], manifest: dict) -> None:
     title = html.escape(pdf.name)
     digest = manifest["pdf_sha256"]
@@ -160,18 +187,7 @@ def main() -> None:
         manifest = build_manifest(args.pdf, pages, args.scale, args.source_sha)
         if args.audit_json is not None:
             audit = json.loads(args.audit_json.read_text(encoding="utf-8"))
-            if manifest["pdf_sha256"] != audit.get("pdf_sha256"):
-                raise ValueError("Proof PDF SHA-256 differs from machine audit")
-            audited_sha = audit.get("source_commit_sha")
-            if audited_sha:
-                if not re.fullmatch(r"[0-9a-f]{40}", audited_sha):
-                    raise ValueError("Invalid source SHA in machine audit")
-                if (manifest["source_commit_sha"] and
-                        manifest["source_commit_sha"] != audited_sha):
-                    raise ValueError("Proof source SHA differs from machine audit")
-                manifest["source_commit_sha"] = audited_sha
-            manifest["machine_audit_run_id"] = audit.get("github_actions_run_id")
-            manifest["machine_audit_pdf_hash_verified"] = True
+            manifest = bind_machine_audit(manifest, audit)
         render_pages(args.pdf, args.out_dir, pages, args.scale)
         write_review_materials(args.pdf, args.out_dir, pages, manifest)
     except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError) as exc:

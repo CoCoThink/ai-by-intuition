@@ -419,6 +419,31 @@ def validate_source() -> None:
                 or manifest["source_commit_sha"] != "a" * 40
                 or manifest["manual_review_completed"] is not False):
             fail("Proof provenance data did not match input bytes")
+        # Reconcile the actual PDF digest and CI source/run provenance.
+        reconcile = proof_helpers["bind_machine_audit"]
+        audit_fixture = {
+            "pdf_sha256": manifest["pdf_sha256"],
+            "source_commit_sha": "a" * 40,
+            "github_actions_run_id": 123456,
+        }
+        bound = reconcile(manifest, audit_fixture)
+        if (bound["source_commit_sha"] != "a" * 40
+                or bound["machine_audit_run_id"] != 123456
+                or bound["machine_audit_pdf_hash_verified"] is not True
+                or bound["manual_review_completed"] is not False):
+            fail("Bound PDF audit provenance is incomplete or marked reviewed")
+        for corrupted in (
+            {**audit_fixture, "pdf_sha256": "b" * 64},
+            {**audit_fixture, "source_commit_sha": "b" * 40},
+            {**audit_fixture, "source_commit_sha": "invalid"},
+            {**audit_fixture, "github_actions_run_id": 0},
+        ):
+            try:
+                reconcile(manifest, corrupted)
+            except ValueError:
+                pass
+            else:
+                fail("Proof accepted audit with mismatched PDF/source/run provenance")
         try:
             proof_helpers["build_manifest"](fixture, [1], 1100, "abc")
         except ValueError:
