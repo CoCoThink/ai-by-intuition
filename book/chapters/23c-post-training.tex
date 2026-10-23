@@ -83,14 +83,17 @@ P(A\succ B)=\sigma(r_A-r_B)
 
 \begin{example}
 \noindent\emph{算一组可验证奖励与相对优势}\par
-若模型对同一道题独立生成四个答案 $(42,41,42,50)$，验证器给予奖励 $(1,0,1,0)$。本组平均奖励为 $\bar r=0.5$；一种直观的中心化相对信号是
+若模型对同一道题独立生成四个答案 $(42,41,42,50)$，验证器给予奖励 $(1,0,1,0)$。本组平均奖励为 $\bar r=0.5$。用四个样本的总体标准差（分母为 $4$）归一化：
 \[
-(r_i-\bar r)=(+0.5,-0.5,+0.5,-0.5).
+\sigma_r=\sqrt{\tfrac14\sum_{i=1}^4(r_i-0.5)^2}=0.5,
+\qquad A_i=\frac{r_i-\bar r}{\sigma_r},
 \]
-正确候选对应正信号，错误候选对应负信号；训练算法再利用这些信号更新策略。
-\textbf{与 GRPO 的关系：}这是一种按组奖励中心化的教学化相对优势信号；
-GRPO（Group Relative Policy Optimization）还涉及组内尺度处理、策略概率比、裁剪等具体训练细节，
-不能将仅仅减去平均奖励的四个数字称为完整 GRPO 算法。
+因此组内相对优势为
+\[
+(A_1,A_2,A_3,A_4)=\boxed{(+1,-1,+1,-1)}.
+\]
+奖励较高的候选得到正优势，较低者得到负优势。若整组奖励相同、$\sigma_r=0$，实现中必须处理零分母，例如加入稳定项；不能直接套用上式。
+\textbf{与完整 GRPO 的边界：}这里仅完成组内优势归一化。GRPO（Group Relative Policy Optimization）的策略目标还包含当前与旧策略的\textbf{概率比}、\textbf{裁剪}及可能的正则化约束，不能把四个优势数当成完整的训练算法。
 可对照 \href{https://arxiv.org/abs/2402.03300}{DeepSeekMath 的 GRPO 方法}
 和 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1 的强化学习实践}。
 \end{example}
