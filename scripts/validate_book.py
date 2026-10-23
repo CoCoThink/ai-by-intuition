@@ -252,6 +252,22 @@ def validate_source() -> None:
         fail("Release gate still hard-codes historical v0.1.0 PDF statistics")
     includes(release, 'summary["pages"] == actual_pages', "PDF page and audit reconciliation")
     includes(release, "failedRules", "PDF/UA-2 release audit enforcement")
+    # Regression gate: each build must check the *last* latexmk log and
+    # extracted full PDF, not merely the presence of source-level labels.
+    includes(production, "python3 scripts/check_latex_references.py --self-test",
+             "reference-gate positive/negative fixture test")
+    includes(production, "Reject unresolved cross-references in final LaTeX log and PDF",
+             "mandatory final cross-reference gate")
+    includes(production, "--log book/build/main.log",
+             "reference-gate final LaTeX log")
+    includes(production, "--pdf book/build/AI-by-Intuition-Book.pdf",
+             "reference-gate rendered PDF")
+    gate_source = ROOT / "scripts" / "check_latex_references.py"
+    if not gate_source.is_file():
+        fail("Missing final-log/PDF unresolved-reference gate")
+    import ast
+    ast.parse(gate_source.read_text(encoding="utf-8"))
+
 
     includes(main, r"\part*{附录：公式、练习与答案}", "main")
     includes(main, r"\ctexset{", "native CTeX heading styling")
