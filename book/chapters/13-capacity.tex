@@ -1,4 +1,5 @@
 \Needspace{13\baselineskip}
+\chapterrule
 \section{进阶探索：高维空间与记忆容量}
 \chaptercompass{提高维度和匹配选择性，会改变哪些干扰尺度？}{从随机 Key 的点积和 Value 的符号抵消估计容量。}{$|k_i k_j^\top|\approx1/\sqrt{d_k}$}{本章分析理想随机状态，不估计实际模型可靠知识量}
 \modelpipelinefocus{3}{高维记忆容量}
@@ -75,13 +76,9 @@ Gated DeltaNet 还包含对已有状态的误差修正或门控，
 这些量级依赖独立性、随机性和激活函数的选择。
 相关的 Key 与 Value 会改变干扰规模；可区分关联的数量也不同于模型可靠掌握的事实数量。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:13-capacity}
-\textbf{回忆：}高维随机 Key 接近正交为何有助于减小串扰？
-\textbf{手算：}二维单位向量 $(1,0)$ 与 $(0,1)$ 的点积是多少？
-\textbf{迁移：}即使许多 Key 近似正交，
-为什么记忆容量仍不能声称无限？
-\quad{\footnotesize\hyperref[answer:13-capacity]{核对解答。}}\par\medskip
+\chaptercheck{13-capacity}{高维随机 Key 接近正交为何有助于减小串扰？}{二维单位向量 $(1,0)$ 与 $(0,1)$ 的点积是多少？}{即使许多 Key 近似正交，
+为什么记忆容量仍不能声称无限？}
+
 
 \begin{conclusion}
 从第 28 章的外积写入，到串扰、残差修正和高维状态，

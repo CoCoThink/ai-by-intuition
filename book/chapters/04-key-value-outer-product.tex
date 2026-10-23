@@ -1,3 +1,4 @@
+\chapterrule
 \section{外积与矩阵：如何真正“写入”一条记忆？}
 \label{intro:04-key-value-outer-product}
 \chaptercompass{一个矩阵怎样保存 Key 和 Value 的关联？}{外积写入 $S=k^\top v$，行查询从左边读取 $xS$。}{$k:1\times d_k,\ v:1\times d_v\to S:d_k\times d_v\to xS$}{这里写入的是示例状态矩阵；是否训练取决于应用场景}
@@ -46,11 +47,7 @@ $K:M\times d_k$、$V:M\times d_v$，
 形式直接对齐主线 Attention 的“权重乘 Value”。
 \end{idea}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:04-key-value-outer-product}
-\textbf{回忆：}行向量 Key 和 Value 怎样写入外积状态？
-\textbf{手算：}$k=(1,0)$、$v=(0,1)$，
-$S=k^\top v$ 是哪个 $2\times2$ 矩阵？
-\textbf{迁移：}如果把单位 Key 缩成 $k'=(0.5,0)$，
-写入后再用 $k'$ 读取，能完全恢复 $v$ 吗？
-\quad{\footnotesize\hyperref[answer:04-key-value-outer-product]{核对解答。}}\par\medskip
+\chaptercheck{04-key-value-outer-product}{行向量 Key 和 Value 怎样写入外积状态？}{$k=(1,0)$、$v=(0,1)$，
+$S=k^\top v$ 是哪个 $2\times2$ 矩阵？}{如果把单位 Key 缩成 $k'=(0.5,0)$，
+写入后再用 $k'$ 读取，能完全恢复 $v$ 吗？}
+

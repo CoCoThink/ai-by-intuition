@@ -1,3 +1,4 @@
+\chapterrule
 \section{线性记忆怎样减少干扰？}
 \chaptercompass{写入 B 时能同时保护旧记忆 A 吗？}{比较最小二乘与逐条残差 Delta 更新，并看旧记忆受损。}{$S:2\times2,\ k:1\times2,\ r:1\times2$}{这里修正外部状态 $S$，不是训练神经网络参数}
 \modelpipelinefocus{3}{Delta 规则与残差记忆}
@@ -93,12 +94,8 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 B3-12}
 交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:06-better-linear-memory}
-\textbf{回忆：}Delta 写入先计算哪一种残差？
-\textbf{手算：}本章先写 A 再写 B 后，
+\chaptercheck{06-better-linear-memory}{Delta 写入先计算哪一种残差？}{本章先写 A 再写 B 后，
 $S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$，
-用 $k_A=(1,0)$ 读出的 Value 是什么？
-\textbf{迁移：}这一次写入 B 后能否据此宣称 A 的记忆改善？
-怎样才能进一步减小误差？
-\quad{\footnotesize\hyperref[answer:06-better-linear-memory]{核对解答。}}\par\medskip
+用 $k_A=(1,0)$ 读出的 Value 是什么？}{这一次写入 B 后能否据此宣称 A 的记忆改善？
+怎样才能进一步减小误差？}
+

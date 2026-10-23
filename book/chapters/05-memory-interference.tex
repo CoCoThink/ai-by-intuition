@@ -46,14 +46,10 @@ k_jS=v_j+\sum_{i\ne j}(k_jk_i^\top)v_i.
 \]
 其他 Key 的匹配分数不为零时，就会产生干扰。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:05-memory-interference}
-\textbf{回忆：}多条记忆直接相加为何会发生串扰？
-\textbf{手算：}$k_A=(1,0),k_B=(0.6,0.8)$，
-$S=k_A^\top(1,0)+k_B^\top(0,1)$，用 $k_A$ 查询得到什么？
-\textbf{迁移：}如果 $k_A$ 与 $k_B$ 完全正交，
-这条交叉污染还存在吗？
-\quad{\footnotesize\hyperref[answer:05-memory-interference]{核对解答。}}\par\medskip
+\chaptercheck{05-memory-interference}{多条记忆直接相加为何会发生串扰？}{$k_A=(1,0),k_B=(0.6,0.8)$，
+$S=k_A^\top(1,0)+k_B^\top(0,1)$，用 $k_A$ 查询得到什么？}{如果 $k_A$ 与 $k_B$ 完全正交，
+这条交叉污染还存在吗？}
+
 
 \begin{conclusion}
 减少串扰可从两边入手：\textbf{写入时消除已知误差}，

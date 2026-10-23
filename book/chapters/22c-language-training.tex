@@ -1,3 +1,4 @@
+\chapterrule
 \section{三个位置一起训练：从交叉熵到共享参数更新}
 \label{intro:22c-language-training}
 \chaptercompass{三个位置怎样联合训练同一套参数？}{按三位置平均损失，沿完整计算图反传并统一更新。}{$P:3\times5\to L\to\nabla_\theta L$}{Embedding、位置、Q/K/V、FFN、输出头共同更新}
@@ -249,13 +250,9 @@ python3 scripts/teaching\_reference.py --json
 下游真正部署的语言模型会有不同宽度、层数、归一化及更多参数，
 但本章的共享训练原则不会改变。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:22c-language-training}
-\textbf{回忆：}三个位置损失取平均时，梯度为什么乘以 $1/3$？
-\textbf{手算：}若某行正确类概率为 $0.3$，
-它的正确类 logit 梯度在三位置平均损失下约为多少？
-\textbf{迁移：}若仅两个位置参与损失，归一化因子如何变化？
-\quad{\footnotesize\hyperref[answer:22c-language-training]{核对解答。}}\par\medskip
+\chaptercheck{22c-language-training}{三个位置损失取平均时，梯度为什么乘以 $1/3$？}{若某行正确类概率为 $0.3$，
+它的正确类 logit 梯度在三位置平均损失下约为多少？}{若仅两个位置参与损失，归一化因子如何变化？}
+
 
 \begin{conclusion}
 三个位置同时提供训练信号，所有共享参数沿完整图累积梯度，

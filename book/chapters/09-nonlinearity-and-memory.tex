@@ -1,3 +1,4 @@
+\chapterrule
 \section{用 MLP 的眼光重新理解记忆检索}
 \chaptercompass{匹配分数为什么需要非线性？}{先筛选 Key 的匹配分数，再按权重组合每条 Value。}{$xK^\top:1\times M\to\sigma(\cdot)V:1\times d_v$}{在 MLP 解释中 K/V 对应固定层权重}
 \modelpipelinefocus{3}{非线性记忆检索}
@@ -35,13 +36,9 @@ MLP 的参数在训练中更新；Attention 的 Key/Value 往往由当前上下�
 但并非同一种记忆存储实现。
 \end{idea}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:09-nonlinearity-and-memory}
-\textbf{回忆：}非线性匹配权重怎样抑制较弱的相似度？
-\textbf{手算：}$0.5^2$ 和 $0.5^3$ 各是多少？
-\textbf{迁移：}正整数次幂增加时，
-相似度恰为 $1$ 的匹配权重会变化吗？
-\quad{\footnotesize\hyperref[answer:09-nonlinearity-and-memory]{核对解答。}}\par\medskip
+\chaptercheck{09-nonlinearity-and-memory}{非线性匹配权重怎样抑制较弱的相似度？}{$0.5^2$ 和 $0.5^3$ 各是多少？}{正整数次幂增加时，
+相似度恰为 $1$ 的匹配权重会变化吗？}
+
 
 \begin{conclusion}
 非线性筛选改变匹配权重，MLP 与联想记忆因此存在计算形式上的联系，

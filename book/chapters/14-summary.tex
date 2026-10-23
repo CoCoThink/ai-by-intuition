@@ -27,11 +27,7 @@ $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 普通 Softmax Attention 不能直接用不带条件的固定 $S$ 精确替代。
 后面的现代架构将讨论一种满足特定条件的\textbf{线性状态更新}。
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:14-summary}
-\textbf{回忆：}外积记忆与 Softmax Attention 都通过哪些角色实现匹配与读取？
-\textbf{手算：}两条 Value 为 $(1,0),(0,1)$，
-权重为 $(0.25,0.75)$，加权输出是什么？
-\textbf{迁移：}不经 Softmax 的线性读出与
-经过 Softmax 的权重能无条件视为等价吗？
-\quad{\footnotesize\hyperref[answer:14-summary]{核对解答。}}\par\medskip
+\chaptercheck{14-summary}{外积记忆与 Softmax Attention 都通过哪些角色实现匹配与读取？}{两条 Value 为 $(1,0),(0,1)$，
+权重为 $(0.25,0.75)$，加权输出是什么？}{不经 Softmax 的线性读出与
+经过 Softmax 的权重能无条件视为等价吗？}
+

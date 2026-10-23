@@ -1,3 +1,4 @@
+\chapterrule
 \section{从一层三维算例，到真正的 GPT 差了什么？}
 \label{intro:23a-from-toy-to-gpt}
 \chaptercompass{三维模型与 GPT-2 的差别是什么？}{训练任务相似，真实模型还需要规模、数据、Tokenizer 与参数细节。}{$\mathrm{IDs}:1\times T\to L:T\times|\mathcal V|$}{GPT-2 的 Embedding、投影、Norm 等参数；本书三维主例只有 99 个训练元素}
@@ -229,14 +230,10 @@ GPT-2 是\textbf{仅解码器式}的自回归语言模型，
 模型上线后还需要考虑训练分布外的可靠性、成本与安全边界。
 \end{warningbox}
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:23a-from-toy-to-gpt}
-\textbf{回忆：}玩具三维训练损失下降能说明什么？
-\textbf{手算：}GPT-2 small 隐藏宽 $768$、有 12 个等宽头，
-每个头的宽度是多少？
-\textbf{迁移：}为何上述手算与单次损失降低都不足以证明
-GPT-2 或玩具模型回答可靠？
-\quad{\footnotesize\hyperref[answer:23a-from-toy-to-gpt]{核对解答。}}\par\medskip
+\chaptercheck{23a-from-toy-to-gpt}{玩具三维训练损失下降能说明什么？}{GPT-2 small 隐藏宽 $768$、有 12 个等宽头，
+每个头的宽度是多少？}{为何上述手算与单次损失降低都不足以证明
+GPT-2 或玩具模型回答可靠？}
+
 
 \begin{conclusion}
 从三维主算例到 GPT，\textbf{同一条训练原则}需要更多参数、层、数据和计算支撑。

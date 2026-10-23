@@ -1,3 +1,4 @@
+\chapterrule
 \section{前馈网络与输出头：两种不同的特征变换}
 \label{intro:10b-ffn-output-head}
 \chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{$X:T\times d_{\rm model}\to F:T\times d_{\rm model}\to L:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm vocab}$（及相应偏置）}
@@ -116,14 +117,10 @@ FFN & 每个 Token 的特征 & 非线性变换当前表示\\
 
 
 
-\par\medskip\noindent{\sffamily\footnotesize\color{blue}\textbf{读完自测：回忆／手算／迁移}}\quad
-\phantomsection\label{check:10b-ffn-output-head}
-\textbf{回忆：}逐 Token FFN 与词表输出头分别改变什么？
-\textbf{手算：}$T=4,d_{\rm model}=6,d_{\rm ff}=18$，
-FFN 上、下投影矩阵各是什么形状？
-\textbf{迁移：}经过 FFN 后 $T$ 会变化吗，
-输出仍是什么形状？
-\quad{\footnotesize\hyperref[answer:10b-ffn-output-head]{核对解答。}}\par\medskip
+\chaptercheck{10b-ffn-output-head}{逐 Token FFN 与词表输出头分别改变什么？}{$T=4,d_{\rm model}=6,d_{\rm ff}=18$，
+FFN 上、下投影矩阵各是什么形状？}{经过 FFN 后 $T$ 会变化吗，
+输出仍是什么形状？}
+
 
 \begin{conclusion}
 同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
