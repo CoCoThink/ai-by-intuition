@@ -21,13 +21,14 @@ PARTS = [
     "让文字进入计算",
     "让词与词交换信息",
     "组装并训练 Transformer",
-    "把 Attention 与 FFN 看作记忆",
+    "提高：把 Attention 与 FFN 看作记忆",
     "从语言模型到助手",
     "架构为什么在变，往哪走",
     "选读：从 CNN 到视觉 Transformer",
 ]
 REQUIRED = [
     "00g-reading-routes",
+    "00h-colophon",
     "00-guide",
     "00-functions",
     "16-loss-gradient",
@@ -75,6 +76,7 @@ REQUIRED = [
     "00e-core-formulas",
     "00b-math-tools",
     "00c-symbols",
+    "30-optimizer-appendix",
     "00f-transformer-intermediates",
     "24e-pytorch-lab",
     "25-integrated-practice",
@@ -735,7 +737,7 @@ def validate_source() -> None:
     includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
     includes(sources["20b-task-contract"], r"50{,}257", "chapter 15 concise GPT-2 scale pointer")
     includes(sources["00b-math-tools"], r"\log", "math prerequisites")
-    for practice, prefix in (("25-integrated-practice", "B1"), ("25b-modern-practice", "B2"), ("15-practice", "B3")):
+    for practice, prefix in (("25-integrated-practice", "C1"), ("25b-modern-practice", "C2"), ("15-practice", "C3")):
         includes(sources[practice], rf"label=\textbf{{{prefix}-\arabic*.}}", "unique exercise number")
         includes(sources["27-answer-key"], rf"label=\textbf{{{prefix}-\arabic*.}}", "matching answer number")
     includes(sources["24d-english-index"], r"\termref{concept:cross-entropy}", "first classification definition in index")
@@ -815,12 +817,12 @@ def validate_source() -> None:
              "modern shape-error exercise")
     includes(sources["25b-modern-practice"], "Dropout",
              "modern conceptual correction exercise")
-    includes(sources["18c-training-engineering"], r"\label{eq:adamw-decoupled}",
+    includes(sources["30-optimizer-appendix"], r"\label{eq:adamw-decoupled}",
              "decoupled AdamW mathematical update")
-    includes(sources["18c-training-engineering"], r"\label{concept:lr-warmup}",
+    includes(sources["30-optimizer-appendix"], r"\label{concept:lr-warmup}",
              "five-step learning-rate scheduling example")
-    includes(sources["28-chapter-checks"], r"\answerresult{0.58}",
-             "warmup self-test answer")
+    includes(sources["30-optimizer-appendix"], r"\boxed{0.58}",
+             "warmup optional worked result")
     from math import isclose
     eta_schedule = (0.02, 0.04, 0.06, 0.06, 0.03)
     w = 1.0
@@ -1254,7 +1256,7 @@ def validate_pdf(path: Path) -> None:
             match = re.match(r"^(?:第)?(\d+)(?:章)?\s+\S", title)
             if match:
                 chapter_numbers.append(int(match.group(1)))
-            elif not (title.startswith("阅读指南：") or
+            elif not (title.startswith("序章：") or
                       title.startswith("技术底座回顾：")):
                 fail(f"Unnumbered PDF chapter bookmark: {title!r}")
     if chapter_numbers != list(range(1, 39)):
