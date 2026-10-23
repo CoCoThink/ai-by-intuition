@@ -4,11 +4,11 @@
 
 ## 当前 V3 修订候选的机器证据
 
-以下是 **commit \`41aec08bd1bcf2f95c478d1c0c07bc8ec841d550\`**
-在 [Build one PDF book #39890022919](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39890022919)
+以下是 **commit \`36e37ff15417f35085bd3bbf9b616ae2ea3f41c9\`**
+在 [Build one PDF book #39895186456](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39895186456)
 成功构建的证据：
-**131 页** Tagged PDF、**9 部分、39 章、7 附录**，
-**1,900／1,900 Formula MathML-AF**，
+**135 页** Tagged PDF、**9 部分、39 章、7 附录**，
+**1,957／1,957 Formula MathML-AF**，
 veraPDF PDF/UA-2 \`compliant=true\`、\`failedRules=0\`、\`failedChecks=0\`。
 
 这是明确 SHA 的机器验证，**不意味着晚于该提交的 main 自动得到相同结果**。
