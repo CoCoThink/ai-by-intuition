@@ -998,7 +998,7 @@ def validate_source() -> None:
     if r"\textbf{补充题（" in sources["28-chapter-checks"]:
         fail("Answer appendix still contains legacy supplemental-task labels")
     print(f"Pedagogy QA: all {len(varied)} chapter checks fully redesigned, "
-          "chapter-end immediate answers and matching detailed keys")
+          "answers deferred to D.2 and matched to detailed keys")
 
     # These numbered chapters span two or more .tex files. Source checks and
     # recaps belong after their final subsection, not inside chapter 5/28/29.
