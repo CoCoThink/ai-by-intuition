@@ -243,7 +243,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
       \pgfmathtruncatemacro{\active}{ifthenelse((\c<=\r)&&(\c>=\r-1),1,0)}
     \fi
     \ifnum\active=1
-      \fill[blueback] (\c,-\r) rectangle ++(.84,-.84);
+      \fill[blue!65] (\c,-\r) rectangle ++(.84,-.84);
     \else
       \fill[paper] (\c,-\r) rectangle ++(.84,-.84);
     \fi
@@ -254,7 +254,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
   \end{scope}
 }
 \end{tikzpicture}
-\captionof{figure}{长度 $T=5$ 时，全量因果 Attention 与宽度 $w=2$ 的滑动窗口可见位置：允许位置对由 15 减为 9}
+\captionof{figure}{长度 $T=5$ 时，全量因果 Attention 与宽度 $w=2$ 的滑动窗口；深蓝格表示可访问，浅色格表示不可见，允许位置对由 15 减为 9}
 \label{fig:causal-versus-window}
 \end{center}
 \tagstructend
