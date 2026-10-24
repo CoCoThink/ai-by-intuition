@@ -263,6 +263,13 @@
 \input{chapters/00h-colophon}
 \clearpage
 \setcounter{tocdepth}{2} % show chapter and numbered subsection navigation
+% Subsection TOC reaches triple-digit folios. LaTeX's default page-number
+% box is too narrow by ~1.27pt and emits hundreds of false table overflows.
+% Enlarge the number field instead of suppressing the overfull-box CI gate.
+\makeatletter
+\renewcommand{\@pnumwidth}{2.3em}
+\renewcommand{\@tocrmarg}{3.2em}
+\makeatother
 \begingroup
 \pagestyle{plain} % do not repeat the word '目录' in the running header
 \small\linespread{1.0}\selectfont\setlength{\parskip}{0pt}
