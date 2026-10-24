@@ -31,6 +31,7 @@ jobs:
       - name: Check chapter structure before compilation
         run: |
           python3 scripts/validate_book.py
+          python3 scripts/check_attention_backward_demo.py
           python3 scripts/check_latex_references.py --self-test
       - name: Guard chapter references and answer numbering against TOC reordering
         run: |

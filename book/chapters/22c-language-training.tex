@@ -58,7 +58,7 @@ C=\begin{bmatrix}
 
 令 $Z=HW_{\rm out}\in\R^{3\times5}$，逐行 Softmax 得到 $\widehat P$。
 一行 logits 是五个未归一化的分数，不是五个独立训练标签；
-每行正确答案是词表中的一个 ID。按数学矩阵行列从 $1$ 起、Token ID 从 $0$ 起的约定，第 $i$ 行交叉熵为
+每行正确答案是词表中的一个 ID。按数学矩阵行列从 $1$ 起、Token ID 从 $0$ 起的约定（对照表见\hyperref[app:math-tools]{附录 A 数学速查}），类别 ID 3 就在概率矩阵的第 4 列；第 $i$ 行交叉熵为
 \[
 L_i=-\log \widehat P_{i,y_i+1},\qquad (y_1,y_2,y_3)=(3,4,2).
 \]
