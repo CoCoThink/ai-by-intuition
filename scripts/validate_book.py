@@ -283,6 +283,10 @@ def validate_source() -> None:
     ast.parse(gate_source.read_text(encoding="utf-8"))
 
 
+    includes(sources["22c-language-training"], r"L_i=-\\log\\widehat P_{i,c_i}",
+             "legible correct-class column indexing in training")
+    includes(sources["00b-math-tools"], "数学概率列号",
+             "canonical ID-to-math-column conversion table")
     includes(main, r"\part*{附录：公式、练习与答案}", "main")
     includes(main, r"\ctexset{", "native CTeX heading styling")
     includes(main, "bookmarksnumbered=true", "numbered PDF outline titles")
