@@ -368,93 +368,7 @@
 \expandafter\gdef\csname quickhint@13-capacity@2\endcsname{$0$、$0.6$}
 \expandafter\gdef\csname quickhint@13-capacity@3\endcsname{平方后的分数非负，不会按原符号相互抵消}
 \expandafter\gdef\csname quickhint@13-capacity@4\endcsname{测真实 Key 的相关性、Value 分布、层内尺度及不同记忆数的读取错误率，不能直接将随机独立极限当作事实数}
-% Compact result-only clues are synchronized with the appendix answer anchors.
-\newcommand{\chapterquickhint}[1]{%
- \ifcsname quickhint@#1\endcsname
- \par\smallskip\noindent{\scriptsize\color{muted}\textbf{答案提示（按题号）：}\csname quickhint@#1\endcsname}\par
- \fi}
-\expandafter\gdef\csname quickhint@00-guide\endcsname{1) 贪心选首位；次候选采样概率 $0.4$；2) 最大概率 $0.5$，其余两项合计 $0.5$；3) 错误：流畅程度是生成形式的表现，既未证明训练资料真实，也未核实新近事实；4) 检查带时间戳的权威或原始来源，交叉核验具体数字与上下文}
-\expandafter\gdef\csname quickhint@00-functions\endcsname{1) $10$；2) $9$；3) 错误：推理是固定当前参数计算新输入；4) 要学习变化后的目标，应收集相应训练或校准样本并更新参数／模型规则}
-\expandafter\gdef\csname quickhint@16-loss-analytic\endcsname{1) 有正负号的误差直接相加可能互相抵消；2) $0$、$2/3$；3) 错误：完整损失由两个非负项相加；4) 从 $3$ 朝 $2$ 移动，$(w-2)^2$ 下降，固定 $b=1$ 时损失下降}
-\expandafter\gdef\csname quickhint@16-loss-gradient\endcsname{1) 学习率为零时仍处于 $(1,0)$，损失为 $5/3$；2) $0.4$；3) 错误：同步更新要在同一旧参数处算完全部梯度后再一起更新；4) 单样本更新计算较少但随机波动通常较大；5) $(3,4)$}
-\expandafter\gdef\csname quickhint@07-functions-relu\endcsname{1) $(ax+b)c+d=(ac)x+(bc+d)$，仍为一次仿射变换；2) $0$、$1$；3) 左侧为常值零、斜率 $0$；4) ReLU 是确定性的激活函数，不是随机屏蔽权重}
-\expandafter\gdef\csname quickhint@17-backpropagation\endcsname{1) $6$；2) $0$；3) 漏掉 $\partial h/\partial w_1$；4) 同一节点收到来自多个输出分支的梯度后求和，再向前传播}
-\expandafter\gdef\csname quickhint@18b-end-to-end-learning\endcsname{1) 前向产生预测，损失读取标签，反传产生各参数梯度，更新才改变参数；2) $4$、$0.5$；3) 同步 SGD 的梯度必须在同一份旧参数下求取，不能把新旧参数混在同一个计算图内；4) 新目标等于预测时这份样本损失为 $0$}
-\expandafter\gdef\csname quickhint@18-generalization\endcsname{1) 训练降、验证升通常提示过拟合，应先检查划分与泄漏，再考虑早停、正则化等；2) $2$、$0.4$；3) Dropout 训练时随机屏蔽\textbf{激活}，不是永久删除参数；4) 在训练集内部采用交叉验证或重复验证切分做模型选择，最终测试集独立保留}
-\expandafter\gdef\csname quickhint@01-vectors\endcsname{1) 有序位置对应不同特征；2) $(3,2)$；3) 即使都为二维，特征定义与单位也不同，不能将年龄与身高直接相加；4) 先统一特征定义和尺度，或将二维向量投影到三维空间，或分别拼接成五维}
-\expandafter\gdef\csname quickhint@02-dot-product\endcsname{1) $5$；2) $0$；3) 错误：点积还受向量范数与训练方式影响；4) 余弦相似度除以两个范数，排除了非零向量整体放大的影响}
-\expandafter\gdef\csname quickhint@03-matrix-multiplication\endcsname{1) $2\times4$；2) $(4,5)$；3) 矩阵乘法不满足一般交换律；4) 每行 $1\times2$ 乘 $2\times3$ 得 $1\times3$，五行堆叠是 $5\times3$}
-\expandafter\gdef\csname quickhint@10-mlp\endcsname{1) $xW_1:1\times3$，随后 $xW_1W_2:1\times2$；2) $0$、$2$；3) 参数共享不代表跨行通信；4) 无激活时可合并为 $x(W_1W_2)$}
-\expandafter\gdef\csname quickhint@20a-tokenizer\endcsname{1) ID 是查表用的离散编号，不是可比较大小的语义强度；2) $3$；3) 错误：BPE 合并规则与词表由训练确定，实际切分还取决于新文本；4) $4T^2$}
-\expandafter\gdef\csname quickhint@20c-classification-loss\endcsname{1) logits 可为负且不要求和为一；2) $\log2\approx0.6931$、$-0.5$；3) $-\log0.4<-\log0.2$，交叉熵下降；4) 错误：$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$}
-\expandafter\gdef\csname quickhint@20-embeddings\endcsname{1) $3\times3$；2) ID 只是任意编号；3) 重复 ID 的原始查表向量相同；4) 不能}
-\expandafter\gdef\csname quickhint@20b-task-contract\endcsname{1) $[3,4,2]$；2) $3\times5$；3) 错误：把未来目标送进了当前位置可见的输入，违反因果预测的可见性约束；4) 训练数据里的真实前缀已知，因果 Mask 允许各位置并行算分数}
-\expandafter\gdef\csname quickhint@21a-context-gap\endcsname{1) 不能；2) $7$；3) 需要固定输入长度／截断和相应参数或计算预算；4) RNN 将历史压入递推状态，长依赖可能衰减、计算串行}
-\expandafter\gdef\csname quickhint@21-rnn\endcsname{1) 每一步根据 $x_t$ 与 $h_{t-1}$ 计算 $h_t$；2) $2$、$1$、$1.5$；3) $0.5$；4) RNN 一步依赖上一步，难并行且可能淡忘远处信息}
-\expandafter\gdef\csname quickhint@21c-naive-attention\endcsname{1) $1$；2) 不必相等；3) 零参数 $XX^\top$ 让 Query/Key 使用同样的输入向量，不能单独学“如何问”和“如何匹配”；4) 独立投影使 $QK^\top$ 一般不对称}
-\expandafter\gdef\csname quickhint@21b-why-attention\endcsname{1) Query 发问、Key 用于匹配、Value 提供读取内容；2) $(0.2,0.8)$；3) 错误：分数来自 Query 与 Key，Value 只进加权求和；4) 把匹配和内容绑定限制灵活度}
-\expandafter\gdef\csname quickhint@11-softmax-memory\endcsname{1) $3\times3$；2) $(0.5,0.5)$；3) 第一权重增大；4) 错误：$QK^\top$ 只生成分数而非内容，须先用 Softmax 得权重，再右乘 Value 才得到读出表示}
-\expandafter\gdef\csname quickhint@22a-position-multihead\endcsname{1) 没有位置机制便缺少 Token 的位置信息，模型可能难以区分仅顺序不同的序列；2) $3\times4$、$3\times6$；3) 错误：除以 $\sqrt{d_k}$ 只是缩放，原分数没有保证上界；4) 每个头可以分别训练 Q/K/V 投影，读取不同子空间}
-\expandafter\gdef\csname quickhint@22-transformer-architecture\endcsname{1) $3\times4$；2) 第 1 位置若读取第 2 位置真实目标，便泄漏未来信息，违反因果自回归预测；3) 错误：原始 Encoder--Decoder 的 Cross-Attention 由 Decoder 提供 Q、Encoder 输出提供 K/V；4) Attention 进行跨位置读取，FFN 每位置改写特征；5) Token ID 查表加位置得到隐藏矩阵，Block 输出上下文化隐藏状态，输出头变 logits，Softmax 变概率}
-\expandafter\gdef\csname quickhint@10b-ffn-output-head\endcsname{1) FFN 在模型隐藏空间内映射特征；2) $4\times6$；3) 错误：FFN 后仍是隐藏向量，还需输出头投影到词表大小，再经 Softmax 得到概率；4) $216$}
-\expandafter\gdef\csname quickhint@22b-token-to-output\endcsname{1) $X,A,H:3\times3$，$Z,\widehat P:3\times5$；2) 初始位置 $1,2$ 错，位置 $3$ 对；3) 错误：说反了：Attention 跨 Token 位置读取；4) 无因果 Mask，前面位置可能读取后面的目标 Token 表示，造成未来信息泄漏}
-\expandafter\gdef\csname quickhint@22c-language-training\endcsname{1) $[3,4,2]$；2) $-0.2333$、$-0.35$；3) 错误：同一训练步必须在一套旧参数上算全部梯度，再一起更新；4) $-\log0.07<-\log0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正；5) 固定小 Batch 上训练到损失下降是排查前向、梯度和更新的 sanity check（先过拟合一个 Batch）}
-\expandafter\gdef\csname quickhint@23-llm-systems\endcsname{1) $0.016$；2) $(0.625,0.375)$、$(0.526,0.316,0.158)$；3) 训练时真实前缀全部已知，因果 Mask 允许不同位置同一轮前向预测；4) 在前 $1000$ 个 Token 已完成 Prefill 的前提下；5) 昨天另一会话的内容未加入本次上下文，就不能直接读取}
-\expandafter\gdef\csname quickhint@23a-from-toy-to-gpt\endcsname{1) $64$；2) Attention 约 $4\cdot768^2$，FFN 约 $8\cdot768^2$，后者约为前者两倍（按题设简化）；3) 训练损失仅反映对应数据目标，还需独立泛化评估与事实／鲁棒性等任务检查；4) 不构成代码错误证明}
-\expandafter\gdef\csname quickhint@19-cnn\endcsname{1) 卷积核在不同位置复用，可显著减少逐像素独立连接需要的参数，并保留局部邻域结构；2) $216$；3) 核参数量不变；4) 池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息}
-\expandafter\gdef\csname quickhint@19b-vit\endcsname{1) $5$、$5\times5$；2) $5\times6$；3) 每维切分数翻倍，Patch 总数约四倍，平方配对数约十六倍（大量 Patch 时可忽略 CLS 常数项）；4) 无序平均抹掉空间身份，难定位左上区域}
-\expandafter\gdef\csname quickhint@23aa-pretraining-icl\endcsname{1) 预训练与 SFT 通过训练更新参数；2) $3$；3) Few-shot 不永久改写权重；4) 格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT}
-\expandafter\gdef\csname quickhint@23c-post-training\endcsname{1) SFT 使用示范答案标签；2) $\log4\approx1.3863$、$(1,-1,1,-1)$；3) 错误：完整目标还涉及新旧策略概率比、裁剪和可能的正则化；4) Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略}
-\expandafter\gdef\csname quickhint@23d-agent-rag\endcsname{1) 缺 Q2，应继续按季度检索或直接读取经授权的 Q2 原件；2) $10\%$；3) 不能；4) 明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比}
-\expandafter\gdef\csname quickhint@23d-agent-tools\endcsname{1) 应用程序负责解析、校验、授权和真实执行；2) $20\%$、$10\%$；3) 错误：把未经执行确认的数据伪装成成功的工具结果；4) 固定 Workflow 更易测试、审计与限制成本}
-\expandafter\gdef\csname quickhint@23d-agent-systems\endcsname{1) 缺 Q2 报告；2) $10\%$、$32\%$；3) 检索相关性不等于来源可信，网页正文不等于高优先级系统指令，外发文件更须经应用侧授权，不能由网页文字授予权限；4) 应用层记忆保存、索引并在获授权后恢复消息或摘要，涉及持久化与隐私成本；5) 记录权限／超时错误，不越权执行}
-\expandafter\gdef\csname quickhint@23b-deployment-and-ecosystem\endcsname{1) 训练代码定义优化流程，权重承载已训练参数，推理引擎执行推理，API 组织外部访问和授权；2) $2\ {\rm GB}$；3) 量化可能引入质量误差；4) $640$}
-\expandafter\gdef\csname quickhint@22d-modern-transformers\endcsname{1) RoPE 修改位置相关的 Query/Key 表示；2) $1/4$、$1/2$；3) 还受投影计算、Kernel、访存、批量、序列长度、质量等影响，不能把 KV 元素比当成端到端时间比；4) 固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本}
-\expandafter\gdef\csname quickhint@23e-tech-judgement\endcsname{1) 更好可能来自训练数据／目标、模型结构、推理优化或产品检索工具等，不能全部归功于网络架构；2) $50\%$；3) 错误：输入长度和硬件同时改变，无法隔离架构效果；4) 固定任务、精度、硬件、输入／输出长度及并发}
-\expandafter\gdef\csname quickhint@04-key-value-outer-product\endcsname{1) $S:2\times3$，$qS:1\times3$；2) $(0,1)$；3) $1/4$；4) $vk^\top$ 对题设 $v:1\times3,k:1\times2$ 根本无法相乘（内维不符）}
-\expandafter\gdef\csname quickhint@05-memory-interference\endcsname{1) $k_A(k_B^\top v_B)=(k_Ak_B^\top)v_B$，非零交叉点积带来别条 Value；2) $(1,0.6)$；3) $(1,0)$；4) 正交化减少写入键的重叠}
-\expandafter\gdef\csname quickhint@06-better-linear-memory\endcsname{1) 先算已有预测 $kS$，残差 $v-kS$ 表示还没存好的部分，只写入误差而非原值全量；2) $(0.64,0.6)$、$(-0.36,0.6)$；3) 错误：非正交 Key 之间存在交叉影响；4) 未必一次足够}
-\expandafter\gdef\csname quickhint@08-stacking-key-value\endcsname{1) $1\times4$；2) $(2,1)$；3) $(2,0.4)$；4) 错误：四条 Key 会得到 $1\times4$ 匹配权重}
-\expandafter\gdef\csname quickhint@09-nonlinearity-and-memory\endcsname{1) 对 $0<s<1$ 的幂次越高，数值越小；2) $0.25$、$0.125$；3) 负相似度平方后会变成正值，不一定等价于“排除负匹配”；4) 可将投影／非线性／读出理解为匹配与加权贡献}
-\expandafter\gdef\csname quickhint@14-summary\endcsname{1) 外积记忆将 Key/Value 写入状态后读出；2) $(0.25,0.75)$；3) 错误：外积线性读出未必有 Softmax 概率归一化；4) 不能从单个神经元激活推出事实可靠}
-\expandafter\gdef\csname quickhint@13-capacity\endcsname{1) 在归一化且近似独立条件下交叉点积通常更接近零，因此别条记忆贡献较弱；2) $0$、$0.6$；3) 平方后的分数非负，不会按原符号相互抵消；4) 测真实 Key 的相关性、Value 分布、层内尺度及不同记忆数的读取错误率，不能直接将随机独立极限当作事实数}
-\expandafter\gdef\csname inlinehintdone@00-guide\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@00-functions\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@16-loss-analytic\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@16-loss-gradient\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@07-functions-relu\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@17-backpropagation\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@18b-end-to-end-learning\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@18-generalization\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@01-vectors\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@02-dot-product\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@03-matrix-multiplication\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@10-mlp\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@20a-tokenizer\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@20c-classification-loss\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@20-embeddings\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@20b-task-contract\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@21a-context-gap\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@21-rnn\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@21c-naive-attention\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@21b-why-attention\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@11-softmax-memory\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@22a-position-multihead\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@22-transformer-architecture\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@10b-ffn-output-head\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@22b-token-to-output\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@22c-language-training\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23-llm-systems\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23a-from-toy-to-gpt\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@19-cnn\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@19b-vit\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23aa-pretraining-icl\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23c-post-training\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23d-agent-rag\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23d-agent-tools\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23d-agent-systems\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@23b-deployment-and-ecosystem\endcsname{1}
-\expandafter\gdef\csname inlinehintdone@22d-modern-transformers\endcsname{1}
+% Each item has a local result clue; detailed solutions remain in Appendix D.
 % Varied chapter self-checks: tasks are explicit, not three predetermined types.
 % Keep the same check:<slug> / answer:<slug> anchors as the legacy form.
 \newcommand{\chapterchecktasks}[3]{%
@@ -469,7 +383,6 @@
 \begin{enumerate}[label=\arabic*.,leftmargin=2.2em,itemsep=3pt,topsep=1pt]
 #3
 \end{enumerate}
-\ifcsname inlinehintdone@#1\endcsname\else\chapterquickhint{#1}\fi
 \chapterpracticejump{#1}
 {\footnotesize\color{muted}完整解答与订正说明见
 \hyperref[answer:#1]{附录~\ref*{app:chapter-checks}（随堂自测解答），第~\pageref*{answer:#1}~页}。}

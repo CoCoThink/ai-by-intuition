@@ -49,17 +49,25 @@ k_jS=v_j+\sum_{i\ne j}(k_jk_i^\top)v_i.
 
 \chapterchecktasks{04-key-value-outer-product}{形状／手算／预测／找错}{
 \item \textbf{形状：}行向量 Key $k:1\times2$、Value $v:1\times3$。外积写入 $S=k^\top v$ 的形状是什么？查询 $q:1\times2$ 后 $qS$ 又是什么形状？
+\chapterinlinehint{04-key-value-outer-product}{1}
 \item \textbf{手算：}$k=(1,0),v=(0,1)$，写出矩阵 $S=k^\top v$，再用 $q=(1,0)$ 读取。
+\chapterinlinehint{04-key-value-outer-product}{2}
 \item \textbf{预测：}同一条记忆若把 Key 写入时改为 $k'=(0.5,0)$，再以 $q=k'$ 读取，恢复的 Value 是多少倍？
+\chapterinlinehint{04-key-value-outer-product}{3}
 \item \textbf{找错：}同学把 $S$ 写成 $vk^\top$，仍称它是按行向量约定可供 $qS$ 查询的状态。说明为何形状或方向不匹配。
+\chapterinlinehint{04-key-value-outer-product}{4}
 }
 \chapterrecallanswer{行向量 Key 的外积写入方向是 $k^\top v$；查询 $qS$ 得到 Value 空间的一行。}
 
 \chapterchecktasks{05-memory-interference}{解释／手算／预测／方案}{
 \item \textbf{解释：}两条记忆各写入 $k_i^\top v_i$，为什么用 $k_A$ 读取时可能含有 $v_B$ 的一部分？指出交叉项。
+\chapterinlinehint{05-memory-interference}{1}
 \item \textbf{手算：}$k_A=(1,0),k_B=(0.6,0.8)$；$v_A=(1,0),v_B=(0,1)$。把两条外积相加，用 $k_A$ 查询得到什么？
+\chapterinlinehint{05-memory-interference}{2}
 \item \textbf{预测：}若把 $k_B$ 改为 $(0,1)$，保持其他项不变，$k_A$ 查询时串扰如何变化？
+\chapterinlinehint{05-memory-interference}{3}
 \item \textbf{方案：}比较让 Key 更接近正交、写入时按残差修正，以及读出时提高选择性的三条方向；它们分别在哪一步处理问题？
+\chapterinlinehint{05-memory-interference}{4}
 }
 \chapterrecallanswer{串扰来自非正交 Key 的交叉匹配项；可在 Key、写入规则或读取权重上减少影响。}
 

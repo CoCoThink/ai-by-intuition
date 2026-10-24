@@ -1053,6 +1053,11 @@ def validate_source() -> None:
         if question_count not in (4, 5) or len(question_types) != question_count:
             fail(f"Redesigned chapter must have 4–5 explicitly typed questions: "
                  f"{lesson_id}: {question_types}")
+        local_clues = re.findall(r"\\chapterinlinehint\{" + re.escape(lesson_id)
+                                 + r"\}\{(\d+)\}", exercises)
+        if local_clues != [str(i) for i in range(1, question_count + 1)]:
+            fail(f"Per-question result clues missing or out of order: "
+                 f"{lesson_id}: {local_clues}")
         normalized_types = [re.sub(r"（[^）]+）", "", label)
                             for label in question_types]
         if len(set(normalized_types)) != question_count:
