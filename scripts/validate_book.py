@@ -366,10 +366,10 @@ def validate_source() -> None:
     includes(sources["20-embeddings"], r"\input{figures/embedding-training-projection}", "embedding delta chart")
     includes((BOOK / "figures" / "embedding-training-projection.tex").read_text(encoding="utf-8"),
              r"E_{20,j}-E_{0,j}", "embedding coordinate difference")
-    # All high-precision dense matrices now belong to Appendix B.
+    # Four compact forward matrices belong in chapter 23; Appendix B keeps intermediate tensors.
     full_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["22b-token-to-output"]))
-    if full_matrices != 0:
-        fail(f"Forward narrative should have shapes and representative values only, found {full_matrices} dense matrices")
+    if full_matrices != 4:
+        fail(f"Expected X/A/H/P forward matrices in chapter 23, found {full_matrices}")
     appendix_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["00f-transformer-intermediates"]))
     if appendix_matrices < 15:
         fail(f"Appendix B lost numerical teaching matrices: {appendix_matrices}")
@@ -627,7 +627,8 @@ def validate_source() -> None:
 
     three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity"]
     for lesson_name in three_tier_memory_and_appendix:
-        owner = ("08-stacking-key-value" if lesson_name == "06-better-linear-memory"
+        owner = ("05-memory-interference" if lesson_name == "04-key-value-outer-product"
+                 else "08-stacking-key-value" if lesson_name == "06-better-linear-memory"
                  else "14-summary" if lesson_name == "09-nonlinearity-and-memory"
                  else lesson_name)
         includes(sources[owner], r"\chapterchecktasks{" + lesson_name + "}",

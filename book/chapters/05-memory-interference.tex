@@ -47,6 +47,14 @@ k_jS=v_j+\sum_{i\ne j}(k_jk_i^\top)v_i.
 \]
 其他 Key 的匹配分数不为零时，就会产生干扰。
 
+\chapterchecktasks{04-key-value-outer-product}{形状／手算／预测／找错}{
+\item \textbf{形状：}行向量 Key $k:1\times2$、Value $v:1\times3$。外积写入 $S=k^\top v$ 的形状是什么？查询 $q:1\times2$ 后 $qS$ 又是什么形状？
+\item \textbf{手算：}$k=(1,0),v=(0,1)$，写出矩阵 $S=k^\top v$，再用 $q=(1,0)$ 读取。
+\item \textbf{预测：}同一条记忆若把 Key 写入时改为 $k'=(0.5,0)$，再以 $q=k'$ 读取，恢复的 Value 是多少倍？
+\item \textbf{找错：}同学把 $S$ 写成 $vk^\top$，仍称它是按行向量约定可供 $qS$ 查询的状态。说明为何形状或方向不匹配。
+}
+\chapterrecallanswer{行向量 Key 的外积写入方向是 $k^\top v$；查询 $qS$ 得到 Value 空间的一行。}
+
 \chapterchecktasks{05-memory-interference}{解释／手算／预测／方案}{
 \item \textbf{解释：}两条记忆各写入 $k_i^\top v_i$，为什么用 $k_A$ 读取时可能含有 $v_B$ 的一部分？指出交叉项。
 \item \textbf{手算：}$k_A=(1,0),k_B=(0.6,0.8)$；$v_A=(1,0),v_B=(0,1)$。把两条外积相加，用 $k_A$ 查询得到什么？
