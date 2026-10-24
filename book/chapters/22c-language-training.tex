@@ -58,16 +58,16 @@ C=\begin{bmatrix}
 
 令 $Z=HW_{\rm out}\in\R^{3\times5}$，逐行 Softmax 得到 $\widehat P$。
 一行 logits 是五个未归一化的分数，不是五个独立训练标签；
-每行正确答案是词表中的一个 ID。第 $i$ 行交叉熵为
+每行正确答案是词表中的一个 ID。按数学矩阵行列从 $1$ 起、Token ID 从 $0$ 起的约定，第 $i$ 行交叉熵为
 \[
-L_i=-\log \widehat P_{i,y_i},\qquad (y_1,y_2,y_3)=(3,4,2).
+L_i=-\log \widehat P_{i,y_i+1},\qquad (y_1,y_2,y_3)=(3,4,2).
 \]
 三行共享\textbf{同一模型参数}，平均损失是
 \begin{equation}
 \boxed{L=-\frac13
-\bigl(\log\widehat P_{1,3}+
-      \log\widehat P_{2,4}+
-      \log\widehat P_{3,2}\bigr).}
+\bigl(\log\widehat P_{1,4}+
+      \log\widehat P_{2,5}+
+      \log\widehat P_{3,3}\bigr).}
 \label{eq:three-position-joint-loss}
 \end{equation}
 将前一章的初始正确类概率 $(0.261653,\ 0.050747,\ 0.341761)$
@@ -104,8 +104,8 @@ ID 3 列梯度为 $0.676124/3\approx0.225375$。
 \]
 因此输出头梯度的形状为 $3\times5$，代表项
 $(\nabla_{W_{\rm out}}L)_{1,4}\approx-0.8595$。
-十五个元素的完整梯度矩阵统一放在附录 B。
-例如 $(W_{\rm out})_{0,3}$ 的原值 $0.2$，
+十五个元素的完整梯度矩阵统一放在附录 B；与 Python 数组下标 $(0,3)$ 对应的是数学下标 $(1,4)$。
+例如 $(W_{\rm out})_{1,4}$ 的原值 $0.2$，
 学习率为 $\eta=0.04$ 时会更新为
 $0.2-0.04(-0.859532)\approx0.23438$。
 \textbf{这里只展示一个元素以便手算，不代表只更新这一个元素。}
@@ -125,10 +125,10 @@ FFN 的权重梯度、ReLU 传导与第二次 LayerNorm
 这条链的非零数值可以核对：
 \[
 \begin{aligned}
-\bigl(\nabla_{W_Q}L\bigr)_{0,0}&\approx 0.014711,&
-\bigl(\nabla_{W_K}L\bigr)_{0,0}&\approx 0.005830,\\
-\bigl(\nabla_{W_V}L\bigr)_{0,0}&\approx-0.119632,&
-\bigl(\nabla_{W_O}L\bigr)_{0,0}&\approx-0.135640.
+\bigl(\nabla_{W_Q}L\bigr)_{1,1}&\approx 0.014711,&
+\bigl(\nabla_{W_K}L\bigr)_{1,1}&\approx 0.005830,\\
+\bigl(\nabla_{W_V}L\bigr)_{1,1}&\approx-0.119632,&
+\bigl(\nabla_{W_O}L\bigr)_{1,1}&\approx-0.135640.
 \end{aligned}
 \]
 输入中的三个 Token ID 为 $1,3,4$，对应的梯度行是
