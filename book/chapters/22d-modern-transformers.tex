@@ -5,9 +5,10 @@
 \modelpipelinefocus{3}{现代注意力与架构}
 
 
-先看 RoPE、RMSNorm 与 GQA 的手算，其余技术只在遇到相应性能瓶颈时选读。\par\smallskip
+先按顺序完成 RoPE、RMSNorm、GQA 和三维数值复核，再根据瓶颈选择后面的扩展专题。\par\smallskip
 
 
+\subsection*{基础必读：位置、归一化与 KV 缓存}
 \subsection{必读 1：RoPE 怎样利用相对位置？}
 \phantomsection\label{concept:rope}
 
@@ -74,66 +75,6 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 \textbf{Pre-Norm 与 Post-Norm} 表示归一化放在子层之前或之后，
 会改变残差路径与训练行为。不能仅凭名称断言一种实现
 在所有模型中总比另一种更强。
-
-\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
-\phantomsection\label{concept:router}
-\phantomsection\label{concept:swiglu}
-\phantomsection\label{concept:moe}
-
-常规 \conceptlink{ffn}{FFN} 使用两次矩阵投影夹一个激活函数。
-现代网络还常使用\textbf{门控 FFN}，例如 SwiGLU 形式：
-\begin{equation}
-\operatorname{FFN}(\vect x)
-=\left[
-\operatorname{SiLU}(\vect x^\top W_g)
-\odot(\vect x^\top W_u)\right]W_{\rm down},
-\label{eq:swiglu-illustration}
-\end{equation}
-其中 $\odot$ 是\textbf{对应位置逐元素相乘}，
-$\operatorname{SiLU}(z)=z/(1+e^{-z})$；
-
-两个分支分别计算“门”和“内容”，然后逐元素组合。
-
-还有一种\textbf{混合专家（MoE）}思路：
-不是让每个 Token 都经过同一个巨大的 FFN，
-而是使用\textbf{路由器}挑选部分专家处理它。
-
-一个最简单的路由示例：三个专家的得分是 $(2,1,0)$，
-如果只选择最高的一个专家，本次仅计算专家 1，
-其他专家并未被本次 Token 调用。
-如果选择 Top-2，就可能计算两个专家并按路由权重组合。
-实际系统还需要处理负载均衡、通信与容量限制。
-
-\par\Needspace{15\baselineskip}
-\tagstructbegin{tag=Figure,alttext={MoE 的单 Token 路由流程。蓝色 Token 进入路由器，三个专家的分数分别为二、一、零；Top-1 只将 Token 送给专家一，其他两个专家此次不计算，专家一的输出送往汇合位置。}}
-\begin{center}
-\begin{tikzpicture}[>=Latex,
- block/.style={draw=linegray,fill=blueback,rounded corners=2pt,
-   minimum width=20mm,minimum height=9mm,align=center,font=\sffamily\small},
- expert/.style={draw=teal,fill=greenback,rounded corners=2pt,
-   minimum width=24mm,minimum height=9mm,align=center,font=\sffamily\small}]
-\node[block] (token) at (0,0) {Token};
-\node[block] (router) at (3.0,0) {Router\\$(2,1,0)$};
-\node[expert] (one) at (6.8,1.15) {专家 1\\Top-1 选中};
-\node[block,fill=paper] (two) at (6.8,0) {专家 2\\未选中};
-\node[block,fill=paper] (three) at (6.8,-1.15) {专家 3\\未选中};
-\node[block] (output) at (10.3,1.15) {输出};
-\draw[->,thick,blue] (token)--(router);
-\draw[->,thick,teal] (router.east)--(one.west);
-\draw[->,thick,teal] (one)--(output);
-\draw[densely dashed,muted] (router.east)--(two.west);
-\draw[densely dashed,muted] (router.east)--(three.west);
-\end{tikzpicture}
-\captionof{figure}{单 Token 的 MoE Top-1 路由：实线是本次实际计算路径，虚线代表未选中的专家；换成 Top-2 会激活两位专家}
-\label{fig:moe-token-routing}
-\end{center}
-\tagstructend
-
-\begin{warningbox}
-稀疏激活并不等于无成本。MoE 可以拥有很大的\emph{总参数量}，
-而每个 Token 只激活其中一部分专家；但设备仍需存储或调度权重，
-还存在路由、通信和内存负担。Dense（稠密）与 MoE 并非简单的谁取代谁。
-\end{warningbox}
 
 \subsection{必读 3：GQA 怎样减少 KV 缓存？}
 \phantomsection\label{concept:mla}
@@ -202,6 +143,109 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 
 \textbf{MLA} 等低秩潜在表示技术则尝试使用另一种缓存压缩方案，
 与简单减少 K/V 头数的设计思路不同；不应把所有缩写视为同一种运算。
+
+\subsection{只替换一次 Norm：落回前面的三维数字}
+
+三维贯通模型在 Attention 前的第一行是
+$\vect x^\top=(1.30,0.05,-0.30)$。
+此前使用固定 $\gamma=1,\beta=0$ 的 LayerNorm：
+\[
+\operatorname{LN}(\vect x^\top)\approx(1.3833,-0.4368,-0.9464).
+\]
+如果\textbf{仅为了比较数值}，在同一输入上改算
+\[
+\operatorname{RMSNorm}(\vect x^\top)
+=\frac{\vect x^\top}{
+\sqrt{(1.30^2+0.05^2+(-0.30)^2)/3+10^{-5}}}
+\approx\answerresult{(1.6865,0.0649,-0.3892)}.
+\]
+两种归一化\textbf{同样输出 $1\times3$}，
+但 LayerNorm 先减均值、RMSNorm 不减均值，
+因此下一步 $Q=XW_Q$ 的输入数值会改变。
+这里只进行\textbf{单个组件的数值对比}，
+并未声称原模型其它权重不变时，整条输出概率和训练效果会更好；
+验证真实替换仍应重新训练并比较多种任务与数值条件。
+
+\subsection{读完三项必读，怎样比较架构？}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}p{45mm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+设计部件 & 你应追问的输入/输出 & 首先检查的权衡\\
+\midrule
+位置表示 & Q/K 如何感知相对位置？ & 长度外推、位置泛化\\
+归一化/残差 & 特征尺度和梯度怎样流动？ & 稳定性、训练成本\\
+FFN/MoE & 每 Token 激活多少专家？ & 总参数、激活成本、通信\\
+MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
+注意力模式 & 哪些 Token 彼此可见？ & 长程依赖、复杂度\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection*{提高选读：FFN、稀疏与线性状态的变体}
+\noindent\textcolor{muted}{以下按需选读；首次阅读可直接跳到章末自测。}\par
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
+\phantomsection\label{concept:router}
+\phantomsection\label{concept:swiglu}
+\phantomsection\label{concept:moe}
+
+常规 \conceptlink{ffn}{FFN} 使用两次矩阵投影夹一个激活函数。
+现代网络还常使用\textbf{门控 FFN}，例如 SwiGLU 形式：
+\begin{equation}
+\operatorname{FFN}(\vect x)
+=\left[
+\operatorname{SiLU}(\vect x^\top W_g)
+\odot(\vect x^\top W_u)\right]W_{\rm down},
+\label{eq:swiglu-illustration}
+\end{equation}
+其中 $\odot$ 是\textbf{对应位置逐元素相乘}，
+$\operatorname{SiLU}(z)=z/(1+e^{-z})$；
+
+两个分支分别计算“门”和“内容”，然后逐元素组合。
+
+还有一种\textbf{混合专家（MoE）}思路：
+不是让每个 Token 都经过同一个巨大的 FFN，
+而是使用\textbf{路由器}挑选部分专家处理它。
+
+一个最简单的路由示例：三个专家的得分是 $(2,1,0)$，
+如果只选择最高的一个专家，本次仅计算专家 1，
+其他专家并未被本次 Token 调用。
+如果选择 Top-2，就可能计算两个专家并按路由权重组合。
+实际系统还需要处理负载均衡、通信与容量限制。
+
+\par\Needspace{15\baselineskip}
+\tagstructbegin{tag=Figure,alttext={MoE 的单 Token 路由流程。蓝色 Token 进入路由器，三个专家的分数分别为二、一、零；Top-1 只将 Token 送给专家一，其他两个专家此次不计算，专家一的输出送往汇合位置。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,
+ block/.style={draw=linegray,fill=blueback,rounded corners=2pt,
+   minimum width=20mm,minimum height=9mm,align=center,font=\sffamily\small},
+ expert/.style={draw=teal,fill=greenback,rounded corners=2pt,
+   minimum width=24mm,minimum height=9mm,align=center,font=\sffamily\small}]
+\node[block] (token) at (0,0) {Token};
+\node[block] (router) at (3.0,0) {Router\\$(2,1,0)$};
+\node[expert] (one) at (6.8,1.15) {专家 1\\Top-1 选中};
+\node[block,fill=paper] (two) at (6.8,0) {专家 2\\未选中};
+\node[block,fill=paper] (three) at (6.8,-1.15) {专家 3\\未选中};
+\node[block] (output) at (10.3,1.15) {输出};
+\draw[->,thick,blue] (token)--(router);
+\draw[->,thick,teal] (router.east)--(one.west);
+\draw[->,thick,teal] (one)--(output);
+\draw[densely dashed,muted] (router.east)--(two.west);
+\draw[densely dashed,muted] (router.east)--(three.west);
+\end{tikzpicture}
+\captionof{figure}{单 Token 的 MoE Top-1 路由：实线是本次实际计算路径，虚线代表未选中的专家；换成 Top-2 会激活两位专家}
+\label{fig:moe-token-routing}
+\end{center}
+\tagstructend
+
+\begin{warningbox}
+稀疏激活并不等于无成本。MoE 可以拥有很大的\emph{总参数量}，
+而每个 Token 只激活其中一部分专家；但设备仍需存储或调度权重，
+还存在路由、通信和内存负担。Dense（稠密）与 MoE 并非简单的谁取代谁。
+\end{warningbox}
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：长上下文与稀疏访问}
 \phantomsection\label{concept:sliding-window-attention}
@@ -414,47 +458,6 @@ $8\times(3+2)=\answerresult{40}$。
 运行 \texttt{python3 scripts/architecture\_demo.py}
 可以检查缓存元素数与 $5\times5$ 掩码的 12 个可见位置。
 
-
-\subsection{只替换一次 Norm：落回前面的三维数字}
-
-三维贯通模型在 Attention 前的第一行是
-$\vect x^\top=(1.30,0.05,-0.30)$。
-此前使用固定 $\gamma=1,\beta=0$ 的 LayerNorm：
-\[
-\operatorname{LN}(\vect x^\top)\approx(1.3833,-0.4368,-0.9464).
-\]
-如果\textbf{仅为了比较数值}，在同一输入上改算
-\[
-\operatorname{RMSNorm}(\vect x^\top)
-=\frac{\vect x^\top}{
-\sqrt{(1.30^2+0.05^2+(-0.30)^2)/3+10^{-5}}}
-\approx\answerresult{(1.6865,0.0649,-0.3892)}.
-\]
-两种归一化\textbf{同样输出 $1\times3$}，
-但 LayerNorm 先减均值、RMSNorm 不减均值，
-因此下一步 $Q=XW_Q$ 的输入数值会改变。
-这里只进行\textbf{单个组件的数值对比}，
-并未声称原模型其它权重不变时，整条输出概率和训练效果会更好；
-验证真实替换仍应重新训练并比较多种任务与数值条件。
-
-\subsection{读完三项必读，怎样比较架构？}
-
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.3}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}p{45mm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-设计部件 & 你应追问的输入/输出 & 首先检查的权衡\\
-\midrule
-位置表示 & Q/K 如何感知相对位置？ & 长度外推、位置泛化\\
-归一化/残差 & 特征尺度和梯度怎样流动？ & 稳定性、训练成本\\
-FFN/MoE & 每 Token 激活多少专家？ & 总参数、激活成本、通信\\
-MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
-注意力模式 & 哪些 Token 彼此可见？ & 长程依赖、复杂度\\
-\bottomrule
-\end{tabularx}
-\end{center}
 
 \chapterchecktasks{22d-modern-transformers}{比较／手算／找错／设计}{
 \item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？
