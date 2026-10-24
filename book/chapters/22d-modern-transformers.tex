@@ -104,6 +104,31 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 如果选择 Top-2，就可能计算两个专家并按路由权重组合。
 实际系统还需要处理负载均衡、通信与容量限制。
 
+\par\Needspace{15\baselineskip}
+\tagstructbegin{tag=Figure,alttext={MoE 的单 Token 路由流程。蓝色 Token 进入路由器，三个专家的分数分别为二、一、零；Top-1 只将 Token 送给专家一，其他两个专家此次不计算，专家一的输出送往汇合位置。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,
+ block/.style={draw=linegray,fill=blueback,rounded corners=2pt,
+   minimum width=20mm,minimum height=9mm,align=center,font=\sffamily\small},
+ expert/.style={draw=teal,fill=greenback,rounded corners=2pt,
+   minimum width=24mm,minimum height=9mm,align=center,font=\sffamily\small}]
+\node[block] (token) at (0,0) {Token};
+\node[block] (router) at (3.0,0) {Router\\$(2,1,0)$};
+\node[expert] (one) at (6.8,1.15) {专家 1\\Top-1 选中};
+\node[block,fill=paper] (two) at (6.8,0) {专家 2\\未选中};
+\node[block,fill=paper] (three) at (6.8,-1.15) {专家 3\\未选中};
+\node[block] (output) at (10.3,1.15) {输出};
+\draw[->,thick,blue] (token)--(router);
+\draw[->,thick,teal] (router.east)--(one.west);
+\draw[->,thick,teal] (one)--(output);
+\draw[densely dashed,muted] (router.east)--(two.west);
+\draw[densely dashed,muted] (router.east)--(three.west);
+\end{tikzpicture}
+\captionof{figure}{单 Token 的 MoE Top-1 路由：实线是本次实际计算路径，虚线代表未选中的专家；换成 Top-2 会激活两位专家}
+\label{fig:moe-token-routing}
+\end{center}
+\tagstructend
+
 \begin{warningbox}
 稀疏激活并不等于无成本。MoE 可以拥有很大的\emph{总参数量}，
 而每个 Token 只激活其中一部分专家；但设备仍需存储或调度权重，
@@ -202,6 +227,37 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$；
 \bottomrule
 \end{tabularx}
 \end{center}
+
+\par\Needspace{16\baselineskip}
+\tagstructbegin{tag=Figure,alttext={同样五个 Token 的两种因果注意力可见性。左侧全量因果注意力五行依次允许一、二、三、四、五个 Key，总计十五个位置对；右侧窗口大小二依次允许一、二、二、二、二个 Key，共九个位置对。蓝色方格表示允许访问，浅色方格表示不可见。}}
+\begin{center}
+\begin{tikzpicture}[x=.68cm,y=.68cm]
+\foreach \shift/\kind/\label in {0/full/全量因果：15,6/local/窗口 2：9}{
+  \begin{scope}[xshift=\shift cm]
+  \node[font=\sffamily\small\bfseries,text=ink] at (2.5,.85) {\label};
+  \foreach \r in {0,...,4}{
+   \foreach \c in {0,...,4}{
+    \ifnum\shift=0
+      \pgfmathtruncatemacro{\active}{ifthenelse(\c<=\r,1,0)}
+    \else
+      \pgfmathtruncatemacro{\active}{ifthenelse((\c<=\r)&&(\c>=\r-1),1,0)}
+    \fi
+    \ifnum\active=1
+      \fill[blueback] (\c,-\r) rectangle ++(.84,-.84);
+    \else
+      \fill[paper] (\c,-\r) rectangle ++(.84,-.84);
+    \fi
+    \draw[linegray] (\c,-\r) rectangle ++(.84,-.84);
+   }
+  }
+  \node[font=\scriptsize,text=muted] at (2.5,-5.25) {横轴 Key 位置，纵轴 Query 位置};
+  \end{scope}
+}
+\end{tikzpicture}
+\captionof{figure}{长度 $T=5$ 时，全量因果 Attention 与宽度 $w=2$ 的滑动窗口可见位置：允许位置对由 15 减为 9}
+\label{fig:causal-versus-window}
+\end{center}
+\tagstructend
 
 复杂度判断必须写清对象。有的改进降低训练的分数矩阵开销，
 有的主要节约解码时的 KV Cache，有的减少单 Token 计算，
