@@ -28,7 +28,12 @@ $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 普通 Softmax Attention 不能直接用不带条件的固定 $S$ 精确替代。
 后面的现代架构将讨论一种满足特定条件的\textbf{线性状态更新}。
 
-\chaptercheck{14-summary}{外积记忆与 Softmax Attention 都通过哪些角色实现匹配与读取？}{两条 Value 为 $(1,0),(0,1)$，
-权重为 $(0.25,0.75)$，加权输出是什么？}{不经 Softmax 的线性读出与
-经过 Softmax 的权重能无条件视为等价吗？}
+\chapterchecktasks{14-summary}{比较／手算／找错／场景}{
+\item \textbf{比较：}分别用一句话描述外积线性记忆、Softmax Attention 和逐 Token FFN 的匹配、读取或特征变换角色。
+\item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？
+\item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。
+\item \textbf{场景：}若模型给出一句看似事实的答案，能否只根据某 FFN 神经元被激活就断言那是一条被验证的事实？应怎样补证？
+}
+\chapterrecallanswer{“匹配—读取”帮助比较结构，不代表 Softmax 与线性记忆等价，更不代表模型事实已被外部验证。}
+
 
