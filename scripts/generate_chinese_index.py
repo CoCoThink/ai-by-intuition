@@ -49,7 +49,7 @@ def main() -> None:
         r"\setlength{\tabcolsep}{3pt}",
         r"\renewcommand{\arraystretch}{1.16}",
         r"\tagpdfsetup{table/header-rows={1}}",
-        r"\begin{longtable}{@{}>{\raggedright\arraybackslash}p{49mm}>{\raggedright\arraybackslash}p{60mm}>{\centering\arraybackslash}p{20mm}@{}}",
+        r"\begin{longtable}{@{}>{\raggedright\arraybackslash}p{47mm}>{\raggedright\arraybackslash}p{60mm}>{\centering\arraybackslash}p{20mm}@{}}",
         r"\toprule",
         r"中文术语 & English & 章／页\\\midrule",
         r"\endfirsthead",
