@@ -260,6 +260,11 @@ def validate_source() -> None:
              "reference-gate positive/negative fixture test")
     includes(production, "python3 scripts/check_chapter_crossrefs.py --self-test",
              "stale chapter-number regression tests")
+    includes(production, "python3 scripts/check_part_references.py --self-test",
+             "Roman/Chinese/Arabic part-reference regression canaries")
+    includes(production, "python3 scripts/check_part_references.py\n",
+             "mandatory semantic part reference gate")
+
     includes(production, "python3 scripts/check_chapter_crossrefs.py\n",
              "mandatory source-order chapter reference check")
 

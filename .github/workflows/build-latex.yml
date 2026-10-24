@@ -32,6 +32,8 @@ jobs:
         run: |
           python3 scripts/check_chapter_crossrefs.py --self-test
           python3 scripts/check_chapter_crossrefs.py
+          python3 scripts/check_part_references.py --self-test
+          python3 scripts/check_part_references.py
       - name: Build tagged PDF with TeX Live 2026
         uses: xu-cheng/texlive-action@22c04326a5d855880f9d39bb955138bf11c6df80 # v3
         with:

@@ -24,7 +24,7 @@
 
 **附录 A–G**：公式、实验、练习、参考答案、术语、文献与勘误；**附录 H–K**：外积记忆、串扰、Delta 更新、非线性检索与高维容量（[专题起点](chapters/04-key-value-outer-product.tex)）。
 
-章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。 CI 在编译前运行 `scripts/check_chapter_crossrefs.py`，拦截写死的“第 N 章”，并依 `main.tex` 的实际 `\\section` 顺序逐项校验附录 D 的章号；编译后仍由 `check_latex_references.py` 拦截未解析引用与 PDF 的 `??`。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
+章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。 CI 在编译前运行 `scripts/check_chapter_crossrefs.py`，拦截写死的“第 N 章”，另由 `scripts/check_part_references.py` 禁止包括“第 VI 部分／第六部分／第6部分”在内的硬编码部分编号，并检查八个 `part:` 标签与实际部分标题、顺序匹配，并依 `main.tex` 的实际 `\\section` 顺序逐项校验附录 D 的章号；编译后仍由 `check_latex_references.py` 拦截未解析引用与 PDF 的 `??`。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
 
 ## 自测题与答案的两级阅读
 
