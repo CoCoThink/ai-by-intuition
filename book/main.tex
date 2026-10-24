@@ -166,10 +166,11 @@
 % Varied chapter self-checks: tasks are explicit, not three predetermined types.
 % Keep the same check:<slug> / answer:<slug> anchors as the legacy form.
 \newcommand{\chapterchecktasks}[3]{%
-\par\Needspace{9\baselineskip}%
+\par\Needspace{14\baselineskip}%
 \markright{\chapterrunning}%
+% Treat all questions and the answer-link footer as one unbreakable exercise unit.
 \begin{tcolorbox}[enhanced,colback=white,colframe=linegray,boxrule=.7pt,
-  arc=1.5mm,breakable,left=4mm,right=4mm,top=2.5mm,bottom=2.5mm,
+  arc=1.5mm,breakable=false,left=4mm,right=4mm,top=2.5mm,bottom=2.5mm,
   borderline west={2pt}{0pt}{ink},
   title={读完自测：#2},fonttitle=\sffamily\bfseries,coltitle=ink]
 \phantomsection\label{check:#1}
