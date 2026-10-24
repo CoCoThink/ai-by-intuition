@@ -53,8 +53,14 @@ f\bigl(E[\text{开了}]\bigr)
 还需要考虑任务长度、数据、参数量和计算代价。
 \end{warningbox}
 
-\chaptercheck{21a-context-gap}{仅看最后一个 Token 的逐位置 MLP 缺少什么？}{两段上下文最后均输入 $x=3$，
-同一个 $f(x)=2x+1$ 各输出多少？}{哪一种输入或状态改动能让模型区分这两段前文？}
+\chapterchecktasks{21a-context-gap}{预测／手算／找错／方案}{
+\item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？
+\item \textbf{手算：}两个序列末尾输入均为 $x=3$，同一个逐位置函数 $f(x)=2x+1$ 分别输出什么？
+\item \textbf{找错：}同学把过去三个 Token 拼起来当特征，就宣布“任意长历史都能无代价地读到”。还缺少哪两个工程条件？
+\item \textbf{方案：}给出两种把前文送到当前位置的途径：一种沿时间传递状态，一种直接按需读取；写出各自潜在成本。
+}
+\chapterrecallanswer{单位置函数不能从相同当前输入推断不同前文；上下文需要递推状态或跨位置读取机制。}
+
 
 
 \begin{conclusion}
