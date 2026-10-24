@@ -80,9 +80,13 @@ xtick={-1,0,1},ytick={-1,0,1,2,3},
 
 \chapterchecktasks{00-functions}{预测／手算／找错／场景}{
 \item \textbf{预测：}取 $y=wx+b$，固定 $x=3$、$b=1$，把 $w$ 从 $2$ 增到 $3$，输出怎样变化？先写变化量，再算新输出。
+\chapterinlinehint{00-functions}{1}
 \item \textbf{手算：}三个训练样本为 $(1,3),(2,5),(3,7)$。写出一个同时通过三点的 $w,b$，再预测 $x=4$。
+\chapterinlinehint{00-functions}{2}
 \item \textbf{找错：}同学说“推理时输入变了，训练好的 $w,b$ 也会自动再训练一遍”。请分别指出训练与推理究竟改变什么。
+\chapterinlinehint{00-functions}{3}
 \item \textbf{场景：}如果同一输入 $x=3$ 的实际目标从 $7$ 改成 $10$，只改变测试输入能解决吗？应调整哪个环节？
+\chapterinlinehint{00-functions}{4}
 }
 \chapterrecallanswer{参数 $w,b$ 定义规则，推理代入新输入；要从新样本学习规则，才需计算损失并更新参数。}
 

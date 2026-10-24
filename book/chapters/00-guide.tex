@@ -76,9 +76,13 @@ left=5mm,right=5mm,top=3mm,bottom=3mm]
 
 \chapterchecktasks{00-guide}{预测／计算／找错／方案}{
 \item \textbf{预测：}下一 Token 的两个候选概率为 $(0.6,0.4)$。贪心会选哪个？若改成随机采样，另一个候选还有机会吗？
+\chapterinlinehint{00-guide}{1}
 \item \textbf{计算：}给三个候选的概率为 $(0.5,0.3,0.2)$，求最大候选概率及其余两项的总和，并说明它们为何必须合为 $1$。
+\chapterinlinehint{00-guide}{2}
 \item \textbf{找错：}有人说：“只要模型逐 Token 生成得通顺，它提供的日期、来源和报价就必然真实。”解释逻辑漏洞。
+\chapterinlinehint{00-guide}{3}
 \item \textbf{方案：}读者希望验证一条模型生成的最新消息。请给出至少两步独立核查动作，说明为什么光改写 Prompt 不足以完成证据核验。
+\chapterinlinehint{00-guide}{4}
 }
 \chapterrecallanswer{贪心按最大概率选下一 Token；预测概率只是模型的条件分布，不是事实核查或来源保证。}
 
