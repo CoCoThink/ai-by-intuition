@@ -97,10 +97,9 @@ ID 3 列梯度为 $0.676124/3\approx0.225375$。
 输出头共享矩阵 $W_{\rm out}:3\times5$，
 因此它的梯度同时累加\textbf{三个位置}的贡献：
 \[
-\frac{\partial L}{\partial W_{\rm out}}
-=\underbrace{H^\top}_{3\times3}
-\underbrace{\frac{\partial L}{\partial Z}}_{3\times5}
-\quad(3\times5).
+\frac{\partial L}{\partial W_{\rm out}}=H^\top G_Z
+\in\mathbb R^{3\times5},\quad
+H^\top:3\times3,\quad G_Z:3\times5.
 \]
 因此输出头梯度的形状为 $3\times5$，代表项
 $(\nabla_{W_{\rm out}}L)_{1,4}\approx-0.8595$。

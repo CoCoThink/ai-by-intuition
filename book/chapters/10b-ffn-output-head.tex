@@ -23,16 +23,22 @@ F_{\rm mid}=\relu(XW_{\rm up}+\vect b_{\rm up}),\qquad
 F_{\rm out}=F_{\rm mid}W_{\rm down}+\vect b_{\rm down}.
 \label{eq:ffn-batched}
 \end{equation}
-这里的偏置向量按行广播，意味着每一行加上同一组数。矩阵形状是：
+这里的偏置向量按行广播，意味着每一行加上同一组数。
+两次矩阵乘法本身只有
 \[
-\underbrace{X}_{T\times d_{\rm model}}
-\underbrace{W_{\rm up}}_{d_{\rm model}\times d_{\rm ff}}
-=\underbrace{Z}_{T\times d_{\rm ff}},
-\quad
-\underbrace{F_{\rm mid}}_{T\times d_{\rm ff}}
-\underbrace{W_{\rm down}}_{d_{\rm ff}\times d_{\rm model}}
-=\underbrace{F_{\rm out}}_{T\times d_{\rm model}}.
+XW_{\rm up}=Z,\qquad F_{\rm mid}W_{\rm down}=F_{\rm out}.
 \]
+形状放在旁边的小表，更容易逐行核对：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{25mm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+步骤 & 左矩阵 $\times$ 右矩阵 $\to$ 结果\\\midrule
+上投影 & $(T\times d_{\rm model})\,(d_{\rm model}\times d_{\rm ff})\to T\times d_{\rm ff}$\\
+下投影 & $(T\times d_{\rm ff})\,(d_{\rm ff}\times d_{\rm model})\to T\times d_{\rm model}$\\
+\bottomrule
+\end{tabularx}
+\end{center}
 $d_{\rm ff}$ 是 FFN 的中间宽度。它可以大于 $d_{\rm model}$，
 但\textbf{不要求固定为四倍}。
 
