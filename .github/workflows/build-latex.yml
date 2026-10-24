@@ -28,6 +28,7 @@ jobs:
         run: |
           python3 -m pip install --disable-pip-version-check pypinyin==0.55.0
           python3 scripts/generate_chinese_index.py
+          git diff --exit-code -- book/chapters/24f-chinese-index.tex
       - name: Check chapter structure before compilation
         run: |
           python3 scripts/validate_book.py
