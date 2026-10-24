@@ -58,6 +58,19 @@ A2A 重点是独立 Agent 间的交互。
 是否使用它们取决于真实的集成需求和授权范围，
 \textbf{不是用上协议就自动更智能}。
 
+
+\begin{example}[breakable=false]
+\noindent\emph{两个 Agent 交接结果时核对数值与出处}\par
+假设 Agent A 经授权从 Q2 报表取回 $120$ 百万元，
+Agent B 从 Q3 报表取回 $132$ 百万元。
+汇总层在确认季度、来源和单位相同时才计算：
+\[
+g_{Q3}=\frac{132-120}{120}=\boxed{10\%}.
+\]
+两个 Agent 只负责分工读取；A2A 消息传递并不自动使数值可信，
+最终核算与授权仍由接收方系统执行。
+\end{example}
+
 \subsection{交付复核：让七个关口落实为检查}
 \phantomsection\label{sec:agent-acceptance}
 最终应用只需按开头表格逐项验收：
