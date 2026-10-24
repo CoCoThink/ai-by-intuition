@@ -22,11 +22,9 @@ Attention（注意力）是一种按相关性读取信息的方法：
 
 前面介绍的 \conceptlink{rnn}{RNN} 让模型按顺序读：
 \[
-\underbrace{\text{春天}}_{\text{第 1 词}}
-\ \to\
-\underbrace{\text{花}}_{\text{第 2 词}}
-\ \to\
-\underbrace{\text{开了}}_{\text{第 3 词}}.
+\text{春天}\ \longrightarrow\
+\text{花}\ \longrightarrow\
+\text{开了}.
 \]
 RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 但如果想重点利用第 1 个词的信息，
@@ -138,11 +136,11 @@ Q=XW_Q=X,\quad
 K=XW_K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix},\quad
 V=XW_V=X.
 \]
-Key 的三行现在是 $(1,0)$、$(1,1)$、$(2,1)$，
+Key 的三行现在是 $(1,0)$、$(1,1)$、$(2,1)$；得分矩阵 $S$ 的尺寸为 $3\times3$，
 它们已经不再与输入向量逐行相同。
 将所有 Query 的点积合成矩阵：
 \begin{equation}
-\underbrace{S}_{3\times3}=QK^\top
+S=QK^\top
 =\boxed{\begin{bmatrix}1&1&2\\0&1&1\\1&2&3\end{bmatrix}}.
 \label{eq:asymmetric-qk-example}
 \end{equation}
