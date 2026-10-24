@@ -1069,6 +1069,13 @@ def validate_source() -> None:
         fail("Self-check core answer must not be printed immediately below questions")
     includes(main, r"arc=1.5mm,breakable=false",
              "each chapter self-check box must stay unbroken on one PDF page")
+    for name, fragment in (
+        ("00g-reading-routes", "联想记忆移至附录"),
+        ("25c-migrated-review", "原自测中剩余"),
+        ("28-chapter-checks", "原题 4／5 移至"),
+    ):
+        if fragment in sources[name]:
+            fail(f"Editorial revision residue remains in reader-facing text: {name}")
     if r"\chapterinlinehint" in main or r"quickhint@" in main:
         fail("Inline numerical clues or old clue bank remain in reader PDF")
     if sources["25c-migrated-review"].count(r"\begin{enumerate}[label=\arabic*.,start=4") != 45:
