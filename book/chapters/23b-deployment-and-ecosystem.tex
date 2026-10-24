@@ -59,7 +59,7 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{31mm}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{35mm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 做法 & 分摊的对象及主要代价\\\midrule
 数据并行（Data Parallelism） & 不同设备处理不同样本批次，再同步或归约梯度；朴素方案每卡仍保留完整权重\\

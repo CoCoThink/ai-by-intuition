@@ -24,11 +24,19 @@ Loss: 1.798430 -> 1.611377
 Shape: (3, 5) Parameters: 99
 \end{verbatim}
 
-\textbf{完整最小复现脚本：}
-\begingroup
-\footnotesize
-\verbatiminput{../scripts/pytorch_starter.py}
-\endgroup
+\textbf{自动求导关键步骤（节选）：}
+\begin{verbatim}
+loss_before, z_before = forward()
+loss_before.backward()
+with torch.no_grad():
+    for value in weights.values():
+        value -= LR * value.grad
+        value.grad.zero_()
+loss_after, z_after = forward()
+\end{verbatim}
+这里展示梯度的收集与同步更新；模型初始化、因果 Attention、
+两次 LayerNorm、FFN 和断言保留在
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/scripts/pytorch_starter.py}{仓库完整可运行脚本}，避免纸质版印出数十行维护性代码。
 
 脚本采用双精度以便与 NumPy 手算基线对齐；
 不是 GPU 优化程序。观察代码时请检查：

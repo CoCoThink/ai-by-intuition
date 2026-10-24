@@ -1281,13 +1281,13 @@ def validate_source() -> None:
 def expected_subsection_bookmarks() -> dict[str, list[str]]:
     """Expected x.y bookmarks in typesetting order, not just PDF outline totals.
 
-    The printed TOC stops at chapters, but hyperref bookmarks include H2.
+    The printed TOC and bookmarks both include numbered subsections.
     Count numbered \section and \subsection commands across the actual
     main.tex input order; never derive expectations from the PDF being tested.
     """
     main = (BOOK / "main.tex").read_text(encoding="utf-8")
     includes(main, "bookmarksdepth=2", "PDF subsection bookmark depth")
-    includes(main, r"\setcounter{tocdepth}{1}", "intentionally chapter-only printed TOC")
+    includes(main, r"\setcounter{tocdepth}{2}", "chapter and subsection printed TOC")
 
     def no_comments(body: str) -> str:
         return re.sub(r"(?<!\\)%[^\n]*", "", body)
@@ -1694,7 +1694,15 @@ def validate_pdf(path: Path) -> None:
           "self-check and substantive conclusion pages")
 
     compact = normalized(text)
-    toc = normalized("".join(pages[1:7]))
+    # The extended subsection TOC may occupy more than six front-matter pages.
+    # Search until the printed reading-guide heading rather than truncating it.
+    guide_index = next(
+        (i for i, body in enumerate(pages) if i > 1 and
+         "怎么读：路线与数学预备" in body),
+        None)
+    if guide_index is None:
+        fail("Front-matter reading guide missing after table of contents")
+    toc = normalized("".join(pages[1:guide_index]))
     for num, title in zip("一二三四五六七八九", PARTS):
         # pdftotext can interleave the page number before the title.
         # Permit a 1-3 digit TOC folio between the part marker and title.

@@ -53,6 +53,8 @@
 \definecolor{blueback}{HTML}{EAF5F9}
 \definecolor{orangeback}{HTML}{FCF5E9}
 \definecolor{greenback}{HTML}{EAF7F3}
+\definecolor{lavender}{HTML}{F3EFF9}
+\definecolor{purple}{HTML}{786398}
 % Q、K、V 统一为蓝／青／橙；文字标签始终与颜色同时出现。
 \newcommand{\Qrole}{\textcolor{blue}{Q}}
 \newcommand{\Krole}{\textcolor{teal}{K}}
@@ -115,6 +117,7 @@
   before-vspace=25pt,
   after-vspace=9pt
 }
+\AddToHook{cmd/subsection/before}{\Needspace{9\baselineskip}}
 \EditInstance{heading}{subsection}{
   heading-decls=\sffamily\large\bfseries\color{ink},
   number-format=\textcolor{blue}{\theheading},
@@ -125,9 +128,9 @@
 \renewcommand{\partname}{}
 \renewcommand{\thepart}{第\chinese{part}部分}
 
-\newtcolorbox{idea}[1][]{enhanced,breakable,colback=blueback,colframe=blueback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{blue},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ◆} 直觉},#1}
-\newtcolorbox{example}[1][]{enhanced,breakable,colback=orangeback,colframe=orangeback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{orange},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▸} 动手算},#1}
-\newtcolorbox{conclusion}[1][]{enhanced,breakable=false,colback=greenback,colframe=greenback,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{teal},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ■} 小结},#1}
+\newtcolorbox{idea}[1][]{enhanced,breakable,colback=lavender,colframe=lavender,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ◆} 直觉},#1}
+\newtcolorbox{example}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▸} 动手算},#1}
+\newtcolorbox{conclusion}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{muted},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ■} 小结},#1}
 \newtcolorbox{warningbox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={! 易错},borderline west={2pt}{0pt}{orange},#1}
 \newtcolorbox{boundarybox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▣} 边界},borderline west={1.6pt}{0pt}{muted},#1}
 \newcommand{\vect}[1]{\boldsymbol{#1}}
@@ -215,7 +218,7 @@
 % Plain core formulas: reserve visible boxing for Appendix A's mathematical quick reference.
 \let\bookboxed\boxed
 \renewcommand{\boxed}[1]{#1}
-\newcommand{\chapterrule}{\Needspace{17\baselineskip}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
+\newcommand{\chapterrule}{\Needspace{24\baselineskip}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
 \begin{document}
 \thispagestyle{empty}
 \vspace*{12mm}
@@ -259,7 +262,7 @@
 % Reader routes precede the TOC; front matter does not add numbered chapters.
 \input{chapters/00h-colophon}
 \clearpage
-\setcounter{tocdepth}{1} % show parts and chapters; omit subsection clutter
+\setcounter{tocdepth}{2} % show chapter and numbered subsection navigation
 \begingroup
 \pagestyle{plain} % do not repeat the word '目录' in the running header
 \small\linespread{1.0}\selectfont\setlength{\parskip}{0pt}
@@ -348,10 +351,13 @@
 \clearpage
 \appendix
 % Clear the previous optional chapter title on BOTH sides of every appendix leaf.
+% A page crossing C/D must keep the first content section in the running header.
+\fancyhead[L]{\parbox[b]{.62\headwidth}{\raggedright\sffamily\scriptsize\color{muted}\nouppercase{\rightmark}}}
+\fancyhead[R]{\parbox[b]{.35\headwidth}{\raggedleft\sffamily\scriptsize\color{muted}AI BY INTUITION}}
 \renewcommand{\sectionmark}[1]{%
   \gdef\chapterrunning{附录~\thesection · #1}%
-  \markboth{附录：公式、练习与答案}{附录~\thesection · #1}}
-\markboth{附录：公式、练习与答案}{}
+  \markboth{附录~\thesection · #1}{附录~\thesection · #1}}
+\markboth{附录：公式、练习与答案}{附录：公式、练习与答案}
 % Appendix section headings retain semantic H1 tags via the native CTeX mechanism.
 \ctexset{section={name={附录~,},number=\Alph{section},
   nameformat=\color{blue},numberformat=\color{blue}}}
@@ -393,7 +399,11 @@
 \input{chapters/29-revision-notes}
 
 \clearpage
-\par\bigskip\noindent{\sffamily\Large\bfseries 提高专题：联想记忆与线性状态}\par\medskip\markboth{提高：把 Attention 与 FFN 看作记忆}{}
+\par\bigskip\noindent{\sffamily\Large\bfseries 提高专题：联想记忆与线性状态}\par\medskip
+\markboth{提高专题：联想记忆与线性状态}{提高专题：联想记忆与线性状态}
+\renewcommand{\sectionmark}[1]{%
+  \gdef\chapterrunning{提高专题 · 附录~\thesection · #1}%
+  \markboth{提高专题 · 附录~\thesection · #1}{提高专题 · 附录~\thesection · #1}}
 \learningbridge{Attention 与 FFN 已能完成上下文读取和特征变换；这里再从“存入与取出”的角度观察它们。}{通过外积、串扰、Delta 更新与非线性检索理解记忆机制，作为前文线性 Attention 与 Delta 规则的延伸复算。}
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
