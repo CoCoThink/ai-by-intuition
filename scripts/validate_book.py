@@ -143,7 +143,7 @@ def test_numeric_examples() -> None:
     q1, q2, q3 = 100, 120, 132
     assert math.isclose((q2 - q1) / q1, 0.20)
     assert math.isclose((q3 - q2) / q2, 0.10)
-    includes(chapter("23d-agent-systems"),
+    includes(chapter("23d-agent-tools"),
              '"revenue":132', "fictitious Q3 tool result")
     # Numeric regression: attention -> projection -> logits -> cross-entropy.
     e = math.e
