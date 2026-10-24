@@ -172,8 +172,9 @@
  \ifcsname chapterpractice@#1\endcsname
  \par\smallskip\noindent{\footnotesize\color{blue}附录 C · 本章对应题号：\csname chapterpractice@#1\endcsname}\par
  \fi}
-% Per-item result clue; full proofs remain linked from Appendix D.
-% Each item has a local result clue; detailed solutions remain in Appendix D.
+% One short result clue follows each question; Appendix D keeps the entry step and proof.
+\newcommand{\chapterinlinehint}[1]{%
+  \par\nobreak\noindent{\footnotesize\color{muted}\textbf{答案提示：}#1}\par}
 % Varied chapter self-checks: tasks are explicit, not three predetermined types.
 % Keep the same check:<slug> / answer:<slug> anchors as the legacy form.
 \newcommand{\chapterchecktasks}[3]{%
@@ -189,13 +190,11 @@
 #3
 \end{enumerate}
 \chapterpracticejump{#1}
-\par\noindent{\footnotesize\color{ink}做完正文三题后，\hyperref[extension:#1:4]{到附录 C 做本章延伸题 4\ifcsname r@extension:#1:5\endcsname 、5\fi}。}\par
 {\footnotesize\color{ink}完整解答与订正说明见
 \hyperref[answer:#1]{附录~\ref*{app:chapter-checks}（随堂自测解答），第~\pageref*{answer:#1}~页}。}
 \end{tcolorbox}\par\smallskip
 }
-% Keep the original editorial recap in source, but do not reveal exercise
-% answers immediately underneath the questions in the rendered reader PDF.
+% Keep the editorial recap in source; each question supplies its own short clue.
 % Detailed worked answers remain available via the individual Appendix D.2 link.
 \newcommand{\chapterrecallanswer}[1]{}
 % The revision identifies the PDF build that generated this artifact, not a release.
@@ -403,8 +402,8 @@
 \section{综合练习与迁移实践}
 \input{chapters/25-integrated-practice}
 \input{chapters/25b-modern-practice}
-\input{chapters/25c-migrated-review}
 \input{chapters/15-practice}
+\input{chapters/25c-migrated-review}
 
 \clearpage
 \section{集中参考答案与随堂解答}

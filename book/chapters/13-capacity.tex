@@ -75,9 +75,9 @@
 容量估算依赖随机性、独立性与非线性假设；可区分关联不等于可靠事实。
 
 \chapterchecktasks{13-capacity}{正文基础三题}{
-\item \textbf{预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？
-\item \textbf{手算：}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。
-\item \textbf{找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？
+\item \textbf{预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？\chapterinlinehint{近似独立且归一化时，交叉点积更接近零。}
+\item \textbf{手算：}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。\chapterinlinehint{分别为 $0$ 和 $0.6$。}
+\item \textbf{找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？\chapterinlinehint{平方后非负，不能靠原符号抵消噪声。}
 }
 \chapterrecallanswer{随机 Key 近似正交可减串扰；容量结论依赖随机性、噪声与读出误差。}
 

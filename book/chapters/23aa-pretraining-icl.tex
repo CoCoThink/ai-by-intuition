@@ -139,9 +139,9 @@ Few-shot 能让某些任务在不更新参数的情况下改善表现，
 其中的实验结论有其模型、数据和评测范围。
 
 \chapterchecktasks{23aa-pretraining-icl}{正文基础三题}{
-\item \textbf{比较：}预训练、SFT、Few-shot ICL 中哪些需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？
-\item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？
-\item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。
+\item \textbf{比较：}预训练、SFT、Few-shot ICL 中哪些需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{预训练／SFT 更新参数，本章 ICL 改上下文。}
+\item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？\chapterinlinehint{共 $3$ 条；未带入另一会话就不可见。}
+\item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。\chapterinlinehint{Few-shot 不改写权重，新数据仍需来源。}
 }
 \chapterrecallanswer{ICL 改变一次请求的上下文，SFT 才通过训练更新参数；真实的新资料还需要合法的检索或输入。}
 

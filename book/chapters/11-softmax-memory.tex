@@ -151,9 +151,9 @@ $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 语言预测还必须借助因果掩码阻止读取未来 Token。
 
 \chapterchecktasks{11-softmax-memory}{正文基础三题}{
-\item \textbf{形状：}输入 $Q:3\times2,K:4\times2,V:4\times3$。写出分数矩阵 $QK^\top$、逐行 Softmax 和最终输出的形状。
-\item \textbf{手算：}仅两条 Key，匹配分数相同，Softmax 权重分别是多少？若 Value 是 $(1,0)$ 与 $(0,1)$，输出是什么？
-\item \textbf{预测：}只把同一行中的第一个匹配分数增大，保持第二个不变，Softmax 第一权重变化方向是什么？两者都加同一个常数呢？
+\item \textbf{形状：}输入 $Q:3\times2,K:4\times2,V:4\times3$。写出分数矩阵 $QK^\top$、逐行 Softmax 和最终输出的形状。\chapterinlinehint{分数及权重 $3\times4$，输出 $3\times3$。}
+\item \textbf{手算：}仅两条 Key，匹配分数相同，Softmax 权重分别是多少？若 Value 是 $(1,0)$ 与 $(0,1)$，输出是什么？\chapterinlinehint{权重 $(0.5,0.5)$，读出 $(0.5,0.5)$。}
+\item \textbf{预测：}只把同一行中的第一个匹配分数增大，保持第二个不变，Softmax 第一权重变化方向是什么？两者都加同一个常数呢？\chapterinlinehint{单项增加会改权重，整行同移不变。}
 }
 \chapterrecallanswer{矩阵 Attention 先算跨位置匹配 $QK^\top$，逐行归一化，再用权重读取 Value。}
 

@@ -57,6 +57,13 @@ Softmax 只在\textbf{类别维度}上归一化；后面 Attention
 \]
 分子分母同时除以 $e^m$ 不改变概率，
 却避免计算巨大的指数。这也是 Attention 每一行 Softmax 的基础技巧。
+一般写成
+\[
+p_j=\frac{e^{z_j-m}}{\sum_k e^{z_k-m}},\qquad m=\max_k z_k.
+\]
+每个指数的输入都不大于零，且至少有一项指数为 $1$。
+\textbf{现在动手：}把两项都再加 $5000$，最大值也增加 $5000$，
+相减后仍是 $(-1,0)$，概率保持不变。
 \end{example}
 
 \subsection{交叉熵：正确类的概率越小，惩罚越大}
@@ -74,6 +81,14 @@ $\log4\approx1.3863$。
 这里用自然对数，$p_j>0$ 由 Softmax 保证；
 实现时直接使用稳定的 logits 交叉熵运算，
 以避免先求极小概率再取对数的数值误差。
+例如正确类是 $(1000,1001)$ 中的第一类，直接从 logits 算：
+\[
+L=(m-z_{\rm correct})+\log\sum_k e^{z_k-m}
+=1+\log(1+e^{-1})\approx1.3133.
+\]
+这个 LogSumExp 写法连极小概率下溢成零的问题也一并避开。
+Attention 遇到因果 Mask 时，对\textbf{每行可见的 Key}减去最大分数；
+每行至少保留一个可见位置，整行全遮住需要另外处理。
 
 \subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}
 \phantomsection\label{concept:logit-gradient}
@@ -104,9 +119,9 @@ L=-z_{\rm correct}+\log\!\left(\sum_k e^{z_k}\right).
 \end{warningbox}
 
 \chapterchecktasks{20c-classification-loss}{正文基础三题}{
-\item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。为什么它们不是合法概率，Softmax 要满足哪些条件？
-\item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。
-\item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？
+\item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。为什么它们不是合法概率，Softmax 要满足哪些条件？\chapterinlinehint{logits 是分数，Softmax 输出和为一的概率。}
+\item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{损失 $\log2\approx0.6931$，正确类梯度 $-0.5$。}
+\item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{正确类概率上升，交叉熵下降。}
 }
 \chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\log p_y$，梯度采用 one-hot 标签。}
 

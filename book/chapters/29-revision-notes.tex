@@ -20,6 +20,9 @@ python3 scripts/pytorch_starter.py
 \item \textbf{预训练数据去重：}
 运行 \texttt{python3 scripts/pretraining\_data\_demo.py}，
 核对小文本的规范化、SHA-256 哈希及二元组 Jaccard 相似度；只用 Python 标准库。
+\item \textbf{测试时计算：}
+运行 \texttt{python3 scripts/test\_time\_compute\_demo.py}，
+枚举核对 Best-of-$N$ 的成功率、候选相关性、错误核验器与 $90\%$ 预算门槛；只用 Python 标准库。
 \item \textbf{联想记忆：}
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查外积写入、串扰、Delta 残差与交替重访。
@@ -41,24 +44,20 @@ python3 scripts/vision_bridge_demo.py
 核对 C1-15、C1-16、C2-17 至 C2-20 的中间计算。
 \end{itemize}
 
-\subsubsection*{与真实 GPT-2 比较}
+\subsubsection*{真实 GPT-2：运行方式与实测来源}
 
 \texttt{python3 scripts/gpt2\_demo.py}
-可在不加载模型的情况下复核概率公式；
-安装兼容的 \texttt{torch} 和 \texttt{transformers} 后，
-使用 \texttt{--real} 加载固定版本的公开 GPT-2 small，
-检查 Token、logits、候选概率与温度变化。
-增加 \texttt{--local-files-only} 可仅从本地缓存读取权重与分词器；
-\texttt{--heatmap} 可在安装 Matplotlib 后保存注意力图。
-结果随输入文本和实际运行环境而变化，建议保留输出的版本信息。下面固定印出本书采用的测试输入与结果，方便纸质版核对。
+不加载权重时复核概率公式。安装兼容的 \texttt{torch} 和 \texttt{transformers} 后，
+用 \texttt{--real} 加载固定版本的 GPT-2 small，核对 Token、logits 与概率。
 
-\subsubsection*{真实 GPT-2 的实验来源}
+\texttt{--local-files-only} 仅读本地缓存，安装 Matplotlib 后可用
+\texttt{--heatmap} 保存注意力图。复现时保留输入、权重修订和环境信息。
+
 正文中的 GPT-2 small 实测示例来自
 \href{https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969}{GitHub Actions 运行记录 \#39897932969}，
 对应源码短 SHA \texttt{a20a0c15}。
-核对 Token ID、Top-5 候选概率及首层注意力热图时，
-应以该运行记录的环境、Prompt 与公开权重修订为准，
-不要与本书 99 参数教学网络混淆。
+Token ID、Top-5 及首层注意力热图以该记录的环境、Prompt 与权重修订为准；
+本书 99 参数网络另属教学设定。
 
 \textbf{2026-10-23 已存档实测（GPT-2 small，$T=1.0$）：}
 Prompt：\texttt{The capital of France is}。
@@ -86,19 +85,16 @@ ID & 解码文本 & 概率\\\midrule
 
 \subsubsection*{版本与勘误}
 \textbf{时效性提示（检索基准：2026-10-23（UTC））：}\hyperref[part:architecture]{架构与技术判断正文}及附录 F 的模型名称、开源配置与技术报告代表本版编辑时已收录的信息；具体模型是否仍可用、配置是否修订，应以所链接的官方页面与最新提交为准。第三方站点与报告若无明确发布修订记录，不能视为实时状态。\par
-当前教材编辑稿为 \textbf{v0.2.0-draft（未发布）}。\textbf{v0.1.0} 是此前已发布的独立版本。\bookbuildsource 文件名与纸面均统一标识为 \textbf{v0.2.0-draft}。
+当前教材编辑稿为 \textbf{v0.2.0-draft（未发布）}。\textbf{v0.1.0} 是此前已发布的独立版本。\bookbuildsource
 
-教学三维初始矩阵是本书独立设计的可复算参数设定。
-不同版本的示例数字应配合其公式、矩阵与脚本阅读。
-发现问题时请记录章节、输入与期待结果。
-\textbf{仓库与纸质版可见入口：}
-\url{https://github.com/CoCoThink/ai-by-intuition}
+教学初始矩阵为本书的独立设定，应配合相应版本的公式与脚本复算。
+反馈问题时请记录章节、输入与期待结果。
 
-发布版本：\url{https://github.com/CoCoThink/ai-by-intuition/releases}
-
-反馈：\url{https://github.com/CoCoThink/ai-by-intuition/issues}
-
-勘误：仓库路径 \texttt{docs/ERRATA.md}
-
-构建与复现：仓库路径 \texttt{docs/BUILD-REPRODUCIBILITY.md}。
-（以上路径均从本页明文印出的仓库根网址打开。）
+\noindent\textbf{仓库与纸质版入口：}\par\nobreak
+\begingroup\small\setlength{\parskip}{2pt}
+\noindent 仓库：\url{https://github.com/CoCoThink/ai-by-intuition}\par
+\noindent 发布版本：\url{https://github.com/CoCoThink/ai-by-intuition/releases}\par
+\noindent 反馈：\url{https://github.com/CoCoThink/ai-by-intuition/issues}\par
+\noindent 勘误：\texttt{docs/ERRATA.md}；构建与复现：\texttt{docs/BUILD-REPRODUCIBILITY.md}。\par
+\noindent 以上路径均从本页明文印出的仓库根网址打开。
+\endgroup

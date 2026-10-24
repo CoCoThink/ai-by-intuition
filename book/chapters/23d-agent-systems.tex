@@ -58,10 +58,9 @@ g_{Q3}=(132-120)/120=10\%.
 \subsection{无状态请求、会话历史与 KV Cache 的区别}
 
 对于\textbf{无状态的模型请求接口}，应用把相关系统约束、用户消息、工具结果和历史重新提交，模型据此继续生成。
-\begin{boundarybox}
 若每一轮都无删减地重传历史，请求 Token 数量会增长；摘要、检索筛选、截断和提示缓存可以帮助控制成本，
 摘要与截断会舍弃部分信息，需按任务保留关键证据。采用服务端会话管理的 API 则由服务保存历史，按该接口约定恢复状态。
-\end{boundarybox}
+
 
 \textbf{KV Cache} 则是模型执行 Attention 时对已处理 Token 的 Key/Value 缓存，
 能减少自回归解码中的重复计算；服务是否跨请求复用缓存取决于具体接口和实现。
@@ -150,9 +149,9 @@ $(132-120)/120=\boxed{10\%}$。
 
 
 \chapterchecktasks{23d-agent-rag}{正文基础三题}{
-\item \textbf{证据：}要比较 Q1--Q3，Top-2 只找到 Q3 和 Q1。缺哪个季度，下一步该怎样办？
-\item \textbf{手算：}已核实 Q2、Q3 收入为 $120$、$132$ 百万元，计算 Q3 环比。
-\item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？
+\item \textbf{证据：}要比较 Q1--Q3，Top-2 只返回 Q3 和 Q1。先不计算增长率，指出缺哪份证据，以及系统下一步该怎样办。\chapterinlinehint{缺 Q2，继续定向检索或读取获授权原件。}
+\item \textbf{手算：}已核实 Q2、Q3 收入为 $120$、$132$ 百万元，计算 Q3 环比。\chapterinlinehint{Q3 环比为 $10\%$。}
+\item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？\chapterinlinehint{排名不保证权威，需查原表、来源与单位。}
 }
 \chapterrecallanswer{检索证据先核对必需季度，再用真实数据计算；缺表时报告缺口。}
 \begin{conclusion}

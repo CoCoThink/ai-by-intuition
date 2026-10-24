@@ -5,7 +5,7 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-**从这里开始：**[目录前的阅读路线](chapters/00g-reading-routes.tex)与[单独版权页、约定](chapters/00h-colophon.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
+**从这里开始：**[目录后的阅读路线与表示约定](chapters/00g-reading-routes.tex)及[版权页](chapters/00h-colophon.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
 ## 当前目录：八部分、36 章、附录 A–K
 
@@ -26,11 +26,13 @@
 
 章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。 CI 在编译前运行 `scripts/check_chapter_crossrefs.py`，拦截写死的“第 N 章”，另由 `scripts/check_part_references.py` 禁止包括“第 VI 部分／第六部分／第6部分”在内的硬编码部分编号，并检查八个 `part:` 标签与实际部分标题、顺序匹配，并依 `main.tex` 的实际 `\\section` 顺序逐项校验附录 D 的章号；编译后仍由 `check_latex_references.py` 拦截未解析引用与 PDF 的 `??`。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
 
-## 自测题与答案的两级阅读
+## 自测题与答案的分步阅读
 
-**45 组随堂／提高自测均有三道正文基础题，另外 50 道延伸题在附录 C**，每组提供预测、计算或形状推导、找错、比较、场景或方案等不同能力的检验，避免将同一数值的二次归一化冒充“迁移”。每一组保留原 `check:` 和 `answer:` 跳转标签；**正文不在题目下面直接剧透答案，完整推导集中在附录**，[附录 D.2](chapters/28-chapter-checks.tex)按 `题 1…题 N` 给出针对题目的“第一步”，再给出解题过程与核验依据，支持从正文直接跳至对应题组。旧版集中在 `book/main.tex` 的 27 组第四题库和速答库已清理，CI 逐章核对题型不重复、编号齐全和答案数量一致。**机器校验不等于完成真实教学试做**：难度梯度、读者理解效果、打印版逐页审校及实际屏读体验仍需人工签核。
+**45 组随堂／提高自测均有三道正文基础题，每题附一行答案提示**。读者可先核对数值或判断，再到[附录 D.2](chapters/28-chapter-checks.tex)查看“第一步”、解题过程与核验依据。每组保留 `check:` 和 `answer:` 跳转标签；CI 核对题型、提示数量、答案标题与题号。附录中的 50 道按章延伸题使用 C4-1 至 C4-50，正文不再另称“延伸题 4／5”。
 
-正文的教学词表 ID、位置与数学行列统一从 1 起。Python 只在查表和标签索引时减 1，矩阵参数与原有数值基线保持一致。附录 C 的 51 道编号练习按题首的章节归属生成章末题号链接；调整归属后运行 `python3 scripts/generate_chapter_navigation.py`，CI 用 `--check` 核对生成文件和 45 组答案标题。
+正文的教学词表 ID、位置与数学行列统一从 1 起，五项依次是“其他、春天、。、花、开了”。Python 只在查表和标签索引时减 1，矩阵参数与数值基线保持一致。附录 C 按 C1、C2、C3、C4 排列，共 101 道题，全部按章节归属生成章末题号链接；调整归属后运行 `python3 scripts/generate_chapter_navigation.py`，CI 用 `--check` 核对生成文件、45 组标题和 C4 解答题号。
+
+测试时计算的概率、候选相关性和核验器反例可用 `python3 scripts/test_time_compute_demo.py` 复算，无须安装额外依赖。
 
 ## 一次构建，一本 Tagged PDF
 

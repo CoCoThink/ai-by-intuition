@@ -1,70 +1,42 @@
 \section*{怎么读：路线与数学预备}
 \phantomsection\label{front:reading-routes}
 \begingroup
+\setlength{\parskip}{4pt}
 
-本书围绕同一条主线：先学参数怎样被训练，
-再把数字扩展为向量和矩阵，之后让 Token 读取上下文、
-预测下一 Token，最后分清模型与外部系统的能力。
-不必在第一次阅读时记住所有矩阵元素。
+本书沿一条主线前进：训练参数，把数字扩展为矩阵，
+让 Token 读取上下文并预测下一 Token，最后接入助手与 Agent。
+首次阅读先抓住每一步的输入、输出和用途，再追踪矩阵元素。
 
-\textbf{三条阅读路线：}
-\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
-\item \textbf{速读：}先掌握训练、矩阵、Token、上下文与 Transformer，随后学习\hyperref[part:vision]{CNN 与 ViT}、\hyperref[part:assistant]{助手}及\hyperref[part:architecture]{架构判断}。联想记忆作为附录 H--K 的提高专题单独选读。先看每部分的“从这里出发”、章首问题与章末小结，
-  浏览形状流程图和三个位置的预测结果；公式只看输入、输出及含义。
-\item \textbf{标准：}按\hyperref[part:learning]{学习与训练}至\hyperref[part:architecture]{架构判断}的正文顺序阅读，亲手完成标量损失、
-  双参数梯度更新、三分类交叉熵以及注意力的一次手算。
-\item \textbf{动手：}完成标准路线后再做附录 C 的练习，
-  使用 PyTorch 单步实验和交互 Notebook 的三个滑块观察参数或概率变化。
+\subsection*{三条阅读路线}
+\begin{itemize}[itemsep=3pt,parsep=0pt]
+\item \textbf{速读：}看每部分地图、章首问题、形状图与章末小结，
+先解释训练、矩阵、Token、Attention、Transformer 和外部系统怎样相连。
+\item \textbf{标准：}按正文顺序阅读，亲手算损失、梯度更新、交叉熵与注意力；
+做完各章三题，用题后的一行答案提示核对，再读附录 D 的解题过程。
+\item \textbf{动手：}按章末题号做附录 C，运行附录 B 的 PyTorch 实验，
+用 Notebook 滑块观察参数与概率变化。联想记忆的提高专题见附录 H--K。
 \end{itemize}
+视觉部分用 CNN 与 ViT 连接图像和语言；助手部分区分模型计算、证据与工具；
+架构部分比较组件替换的收益与代价。按页眉定位章节，以能否独立复算决定阅读速度。
 
-可按页眉定位章节，按能否独立复算决定阅读速度。
+\subsection*{数学预备：先核对四件事}
+需要会解一元一次方程、计算负数和平方，并理解函数、对数与一元导数；
+不熟悉就先读\hyperref[app:math-tools]{附录 A.2 数学速查}。
 
-\subsection*{全书路径：先看输入与输出}
-\begin{center}
-\small\renewcommand{\arraystretch}{1.05}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{46mm}X@{}}
-\toprule
-主线阶段 & 要回答的核心问题\\\midrule
-函数 $\to$ 训练 & 参数从哪里来，怎样被损失与梯度更新？\\
-向量 $\to$ Token & 多个数如何计算，文字如何变成矩阵行？\\
-\mbox{Attention $\to$ Transformer} & 上下文怎样参与下一 Token 的概率？\\
-助手 $\to$ Agent & 外部证据、授权工具与模型本身怎样分工？\\
-\bottomrule
-\end{tabularx}
-\end{center}
-\noindent{\footnotesize\color{muted}提高支线：附录 H--K 的联想记忆与容量；视觉桥接位于\hyperref[part:vision]{CNN 与 ViT 正文部分}。正文最后的“技术底座回顾”附有详细对照表。}
+\noindent 代入 $2(3)+1=7$；平方 $(-2)^2=4$；对数 $\log(e^2)=2$。\par
+\noindent 链式法则：$z=wx+b,\ L=z^2/2$ 时，$\partial L/\partial w=zx$。
 
-\clearpage
-\subsection*{数学预备：开书前的四个小测试}
-需要会解一元一次方程、计算负数和平方，并理解函数、对数与一元导数；不熟悉就先读\hyperref[app:math-tools]{附录 A.2 数学速查}。
+现在就试一次：样本 $(1,3),(2,5),(3,7)$ 满足 $\widehat y=2x+1$，
+代入 $x=4$ 得 $9$。接下来学怎样用损失自动找到参数。
 
-用四个小测试核对准备情况：
-\begin{enumerate}[itemsep=4pt]
-\item 代入：$2(3)+1=7$。
-\item 平方：$(-2)^2=4$。
-\item 对数：$\log(e^2)=2$。
-\item 链式法则：$z=wx+b,\ L=z^2/2$ 时，$\partial L/\partial w=zx$。
-\end{enumerate}
+\subsection*{表示约定：数学从 1 起，代码索引减 1}
+\textbf{ID、位置和矩阵行列都从 1 数。}教学词表是
+$1=\text{其他}$、$2=\text{春天}$、$3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
+第一位置预测“花”的概率写作 $\widehat P_{1,4}$，代码是 \texttt{probs[0,3]}。
 
-\textbf{现在就算第一题：}由三个样本 $(1,3),(2,5),(3,7)$ 猜测
-$\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
-对新输入 $x=4$，得到预测 $\widehat y=9$；
-这一步是代入计算，接下来才学习怎样从损失自动调整参数。
+\textbf{每个 Token 占一行，投影写成 $XW$。}
+Q 蓝色、K 青绿色、V 橙色，同时保留文字标签。
+Python 只在查表和标签索引时减 1；代码实验见\hyperref[app:pytorch-lab]{附录 B}。
 
-
-
-\subsection*{表示约定：先按数学读，写代码时再换下标}
-
-\textbf{编号统一从 1 起。}教学词表 ID 为 $1$--$5$，位置和矩阵行列也从 $1$ 数。
-“花”的 ID 是 $4$，它在词表概率矩阵中就是第 $4$ 列；
-第一个位置预测“花”的概率直接写成 $\widehat P_{1,4}$。
-
-\textbf{每个 Token 占一行。}投影按 $XW$ 计算；Q 蓝色、K 青绿色、V 橙色，并保留文字标签。
-
-\textbf{代码只在索引时减 1。}Python 数组从 $0$ 起，
-数学 $(W_{\rm out})_{1,4}$ 对应 \texttt{W\_out[0,3]}。
-具体查表和标签转换见\hyperref[app:pytorch-lab]{附录 B 的代码实验}。
-
-\textbf{认清例子的身份。}“独立例”使用自己的参数；示意报表与教学奖励均为虚构数据。
+\textbf{认清例子身份。}“独立例”使用自己的参数；教学报表与奖励均为虚构数据。
 \endgroup

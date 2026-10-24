@@ -147,6 +147,9 @@ def run_checks():
     # Semantic IDs must select the same rows and probability columns as the book.
     assert tuple(VOCAB[i - 1] for i in IDS) == ('春天', '花', '开了')
     assert tuple(VOCAB[i - 1] for i in TARGETS) == ('花', '开了', '。')
+    for token_id in range(1, len(VOCAB) + 1):
+        one_hot = np.eye(len(VOCAB))[token_id - 1]
+        assert np.array_equal(one_hot @ w['E'], w['E'][token_id - 1])
     edges = forward(w, ids=(1, 5), targets=(5, 1))
     assert np.allclose(edges['x'], w['E'][[0, 4]] + w['P'][:2])
     assert np.isclose(edges['loss'], -np.log(edges['probs'][[0, 1], [4, 0]]).mean())

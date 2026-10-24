@@ -77,8 +77,8 @@ REQUIRED = [
     "24e-pytorch-lab",
     "25-integrated-practice",
     "25b-modern-practice",
-    "25c-migrated-review",
     "15-practice",
+    "25c-migrated-review",
     "27-answer-key",
     "28-chapter-checks",
     "24e-bilingual-glossary",
@@ -1062,8 +1062,8 @@ def validate_source() -> None:
         fail("Missing generated chapter practice navigation")
     if r"\textbf{补充题（" in sources["28-chapter-checks"]:
         fail("Answer appendix still contains legacy supplemental-task labels")
-    print(f"Pedagogy QA: all {len(varied)} chapter checks fully redesigned, "
-          "answers deferred to D.2 and matched to detailed keys")
+    print(f"Pedagogy QA: all {len(varied)} chapter checks have short clues "
+          "and detailed solutions in D.2")
 
     # These numbered chapters span two or more .tex files. Source checks and
     # recaps belong after their final subsection, not inside chapter 5/28/29.
@@ -1090,10 +1090,11 @@ def validate_source() -> None:
     ):
         if fragment in sources[name]:
             fail(f"Editorial revision residue remains in reader-facing text: {name}")
-    if r"\chapterinlinehint" in main or r"quickhint@" in main:
-        fail("Inline numerical clues or old clue bank remain in reader PDF")
-    if sources["25c-migrated-review"].count(r"\begin{enumerate}[label=\arabic*.,start=4") != 45:
-        fail("Each of the 45 Appendix C chapter groups must begin numbering at 4")
+    includes(main, r"\newcommand{\chapterinlinehint}[1]", "per-question short answer clue")
+    if "到附录 C 做本章延伸题 4" in main or "延伸题 4／5" in sources["28-chapter-checks"]:
+        fail("Obsolete 4/5 numbering must not compete with Appendix C exercise IDs")
+    if sources["25c-migrated-review"].count(r"\begin{enumerate}[label={}") != 45:
+        fail("Appendix C must retain 45 chapter groups with explicit C4 exercise IDs")
     if r"\\hyperref[check:00-guide]{：生成流程" in sources["25c-migrated-review"]:
         fail("Extension appendix reading-guide heading has no readable title")
     if r"\textbf{原题 4：" in sources["25c-migrated-review"]:
@@ -1138,8 +1139,8 @@ def validate_source() -> None:
         if question_count != 3 or len(question_types) != 3:
             fail(f"Each chapter must have exactly three visible foundation questions: "
                  f"{lesson_id}: {question_types}")
-        if r"\chapterinlinehint{" in exercises:
-            fail(f"Answer clues must not appear below questions: {lesson_id}")
+        if exercises.count(r"\chapterinlinehint{") != 3:
+            fail(f"Each question needs one short local clue: {lesson_id}")
         extensions = sorted(int(n) for n in re.findall(
             r"\\label\{extension:" + re.escape(lesson_id) + r":(\d+)\}",
             sources["25c-migrated-review"]))
@@ -1153,9 +1154,11 @@ def validate_source() -> None:
                  f"{lesson_id}: {normalized_types}")
         marker = r"\label{answer:" + lesson_id + "}"
         section = answers.split(marker, 1)[1].split(r"\item[", 1)[0]
-        answer_ids = [int(n) for n in re.findall(
-            r"\\answerpiece\{(\d+)\}\{[^}]+\}", section)]
-        expected_answer_ids = list(range(1, question_count + len(extensions) + 1))
+        answer_ids = re.findall(r"\\answerpiece\{([^}]+)\}\{[^}]+\}", section)
+        extension_ids = re.findall(
+            r"\\label\{exercise:(C4-\d+)\}\\label\{extension:"
+            + re.escape(lesson_id) + r":\d+\}", extension_source)
+        expected_answer_ids = ["1", "2", "3"] + extension_ids
         if answer_ids != expected_answer_ids:
             fail(f"Self-check/appendix extension answer mismatch: "
                  f"{lesson_id}: expected={expected_answer_ids}, found={answer_ids}")
@@ -1707,6 +1710,8 @@ def validate_pdf(path: Path) -> None:
             or question_count != 45):
         fail(f"Expected 45 rendered self-check boxes and unique D.2 / E.1; "
              f"found {question_count} checks")
+    if normalized(text).count("答案提示：") != 135:
+        fail("All 135 self-check clues must survive PDF rendering")
     if "章末先核对：" in text:
         fail("Answer leaked immediately under self-check in reader PDF")
     start_answer, end_answer = answer_starts[0], answer_ends[0]
@@ -1833,6 +1838,10 @@ def validate_pdf(path: Path) -> None:
         None)
     if guide_index is None:
         fail("Front-matter reading guide missing after table of contents")
+    guide = normalized(pages[guide_index])
+    for heading in ("三条阅读路线", "数学预备：先核对四件事", "表示约定：数学从1起"):
+        if heading not in guide:
+            fail(f"Reading routes, prerequisites and conventions must fit one page: {heading}")
     toc = normalized("".join(pages[1:guide_index]))
     for num, title in zip("一二三四五六七八九", PARTS):
         # pdftotext can interleave the page number before the title.

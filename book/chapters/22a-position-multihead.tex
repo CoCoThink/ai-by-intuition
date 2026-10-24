@@ -138,9 +138,9 @@ O_{\rm cat}W_O=(0.990,2.010)\quad(1\times2).
 
 \Needspace{12\baselineskip}
 \chapterchecktasks{22a-position-multihead}{正文基础三题}{
-\item \textbf{预测：}句子里同一个 Token 在不同位置出现，只有内容 Embedding 而没有任何位置机制时，网络失去什么信息？为什么需要位置表示？
-\item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？
-\item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？
+\item \textbf{预测：}句子里同一个 Token 在不同位置出现，只有内容 Embedding 而没有任何位置机制时，网络失去什么信息？为什么需要位置表示？\chapterinlinehint{需为模型提供可区分顺序的位置线索。}
+\item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{拼接 $3\times4$，投影后 $3\times6$。}
+\item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{缩放不等于把分数压进概率范围。}
 }
 \chapterrecallanswer{位置表示携带序列顺序，多头允许独立匹配视角；缩放用于控制点积幅度，不是把分数截成概率。}
 

@@ -83,9 +83,9 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 \end{warningbox}
 
 \chapterchecktasks{20a-tokenizer}{正文基础三题}{
-\item \textbf{解释：}为什么整数 Token ID 只是词表索引，而不是“数字越大、词义越强”的语义分数？
-\item \textbf{手算：}从五个字符“今／天／天／气／好”出发，假设 BPE 按规则依次合并“今+天”“天+气”。合并后有多少个 Token？列出切分结果。
-\item \textbf{找错：}同学认为“BPE 一次合并就会自动在所有句子里产生相同的 Token 数”。用词表和输入文本的关系指出漏洞。
+\item \textbf{解释：}为什么整数 Token ID 只是词表索引，而不是“数字越大、词义越强”的语义分数？\chapterinlinehint{ID 是离散标签，不是语义分数。}
+\item \textbf{手算：}从五个字符“今／天／天／气／好”出发，假设 BPE 按规则依次合并“今+天”“天+气”。合并后有多少个 Token？列出切分结果。\chapterinlinehint{今天／天气／好，共 $3$ 个 Token。}
+\item \textbf{找错：}同学认为“BPE 一次合并就会自动在所有句子里产生相同的 Token 数”。用词表和输入文本的关系指出漏洞。\chapterinlinehint{Token 数同时依赖词表、规则和输入。}
 }
 \chapterrecallanswer{Tokenizer 先决定离散单位及 ID；切分策略会影响序列长度与后续计算规模。}
 

@@ -203,9 +203,8 @@ Transformers 4.46.3 下，
 温度 $1.0$ 时，下一 Token 的最高概率候选是
 \texttt{the}（含前导空格，ID 262，约 $0.08459$）；
 \texttt{Paris}（含前导空格，ID 6342）约为 $0.03224$。
-\begin{boundarybox}
 下一 Token 分布回答的是怎样续写；事实回答需要外部出处支撑。
-\end{boundarybox}
+
 
 本次实验的固定依赖、Top-5 与注意力热图复现入口统一放在
 \hyperref[app:revision-notes]{附录 G 的真实 GPT-2 运行记录}。
@@ -229,9 +228,9 @@ GPT 属于 Transformer 家族中的一类语言模型。
 \end{conclusion}
 
 \chapterchecktasks{23a-from-toy-to-gpt}{正文基础三题}{
-\item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？
-\item \textbf{估算：}忽略偏置，令每层 Attention 投影参数约 $4d^2$、FFN 参数约 $8d^2$。代入 $d=768$，哪个组件占更多层内参数？
-\item \textbf{找错：}同学在三维玩具任务上降低了损失，便声称其真实性与大型模型等同。还缺哪两类独立证据？
+\item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？\chapterinlinehint{每头 $64$ 维；层数另行指定。}
+\item \textbf{估算：}忽略偏置，令每层 Attention 投影参数约 $4d^2$、FFN 参数约 $8d^2$。代入 $d=768$，哪个组件占更多层内参数？\chapterinlinehint{本题简化下 FFN 矩阵参数约为 Attention 的两倍。}
+\item \textbf{找错：}同学在三维玩具任务上降低了损失，便声称其真实性与大型模型等同。还缺哪两类独立证据？\chapterinlinehint{低训练损失仍需独立任务评测。}
 }
 \chapterrecallanswer{玩具与 GPT 可使用相同计算框架，但宽度、层数、数据、参数与外部评测共同决定模型能力。}
 

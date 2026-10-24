@@ -63,16 +63,16 @@ xS=(1,-0.2)V=\boxed{(2,0.4)},
 
 % Chapter 28 comprises the Delta subsection and the stacked K/V subsection.
 \chapterchecktasks{06-better-linear-memory}{正文基础三题}{
-\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？
-\item \textbf{手算：}写入 B 后 $S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？
-\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。
+\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先读取 $kS$，再写入残差 $v-kS$。}
+\item \textbf{手算：}写入 B 后 $S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{读出 $(0.64,0.6)$，读出减目标为 $(-0.36,0.6)$。}
+\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{非正交 Key 会通过共享状态相互影响。}
 }
 \chapterrecallanswer{Delta 规则用读取残差修正当前 Key，但对非正交 Key 的修正可能重新扰动先前记忆。}
 
 \chapterchecktasks{08-stacking-key-value}{正文基础三题}{
-\item \textbf{形状：}$q:1\times2,K:3\times2,V:3\times4$。写出 $qK^\top$ 与最终加权读出的形状。
-\item \textbf{手算：}本章 $qK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？
-\item \textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？
+\item \textbf{形状：}$q:1\times2,K:3\times2,V:3\times4$。写出 $qK^\top$ 与最终加权读出的形状。\chapterinlinehint{匹配 $1\times3$，读出 $1\times4$。}
+\item \textbf{手算：}本章 $qK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{ReLU 权重 $(1,0)$，读出 $(2,1)$。}
+\item \textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留负权重时读出 $(2,0.4)$。}
 }
 \chapterrecallanswer{Key 决定匹配条数，Value 的行数必须与匹配权重一致；非线性可抑制负匹配。}
 

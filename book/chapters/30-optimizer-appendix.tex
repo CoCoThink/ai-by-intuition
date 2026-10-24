@@ -115,11 +115,10 @@ w_1=(1-0.1\times0.05)\times2-0.1\times1
 后者会改变动量和方差的历史统计。
 \end{example}
 
-\begin{boundarybox}
 Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选择}：
 前两者规定每一步的 $\eta_t$，后者规定优化器如何使用梯度
 及独立的权重缩小项。生产训练中的批次、梯度与超参数都需要另外设定。
-\end{boundarybox}
+
 
 \noindent\emph{对应练习：}
 \hyperref[exercise:warmup-schedule]{C1-17 的三步 Warmup}和

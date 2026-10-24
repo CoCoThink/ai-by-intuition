@@ -250,11 +250,8 @@ L_{\rm after}=1.611377.}
 更新后位置 1 预测已变成“花”，位置 2 仍偏向“花”而不是“开了”，
 位置 3 仍预测“。”。概率改善先发生，贪心标签随后才会跨过最高项。
 
-\begin{boundarybox}
-九组可训练参数的梯度均在同一旧参数状态下求取。
-这一小样本上的训练损失下降，只验证优化过程，
-不能代表未见文本的泛化质量。
-\end{boundarybox}
+这次损失下降验证了同一样本上的优化，泛化质量仍需独立数据检验。
+
 
 \subsection{同一网络继续做 20 步，会发生什么？}
 
@@ -311,9 +308,9 @@ python3 scripts/teaching\_reference.py --json
 但本章的共享训练原则不会改变。
 
 \chapterchecktasks{22c-language-training}{正文基础三题}{
-\item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果 Mask 与损失 Mask。
-\item \textbf{手算：}三个位置平均交叉熵；某位置正确类概率为 $0.3$，该类 logit 的梯度是多少？若只计两位置呢？
-\item \textbf{找错：}同学为更新输出头先改了 $W_{\rm out}$，再拿新权重反传得到 $W_Q$ 梯度，称为“同一次同步 SGD”。问题在哪里？
+\item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果 Mask 与损失 Mask。\chapterinlinehint{目标 $[4,5,3]$；因果 Mask 与损失 Mask 各管一事。}
+\item \textbf{手算：}三个位置平均交叉熵；某位置正确类概率为 $0.3$，该类 logit 的梯度是多少？若只计两位置呢？\chapterinlinehint{三位置平均为 $-0.2333$；两位置平均为 $-0.35$。}
+\item \textbf{找错：}同学为更新输出头先改了 $W_{\rm out}$，再拿新权重反传得到 $W_Q$ 梯度，称为“同一次同步 SGD”。问题在哪里？\chapterinlinehint{同一步的全部梯度使用旧参数。}
 }
 \chapterrecallanswer{已知真实前缀可并行计算多个自回归训练位置，但每个位置仍不能读取自己的未来目标；一次梯度必须来自同一旧参数。}
 

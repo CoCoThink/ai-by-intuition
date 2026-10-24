@@ -198,9 +198,9 @@ $(0,-0.4279,0.9325,-0.6140,0.7915)$，
 \noindent{\footnotesize\color{muted}完整数值只使用附录 B 的三维主例参数。}\par
 
 \chapterchecktasks{22b-token-to-output}{正文基础三题}{
-\item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\widehat P$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。
-\item \textbf{预测：}沿用初始正确类概率和贪心预测结果。三个位置中哪两个最初答错？只改第一个 Token 的 ID 后，为什么第三行的分数可能改变？
-\item \textbf{找错：}某人说“FFN 对每一行使用同样的权重，所以 FFN 会在不同 Token 之间交换信息，而 Attention 只在每一行内部运算”。改正两处角色混淆。
+\item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\widehat P$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。\chapterinlinehint{输出头把 $3\times3$ 隐藏状态变成 $3\times5$ 分数。}
+\item \textbf{预测：}沿用初始正确类概率和贪心预测结果。三个位置中哪两个最初答错？只改第一个 Token 的 ID 后，为什么第三行的分数可能改变？\chapterinlinehint{初始位置 1、2 错；首 Token 可影响末位置。}
+\item \textbf{找错：}某人说“FFN 对每一行使用同样的权重，所以 FFN 会在不同 Token 之间交换信息，而 Attention 只在每一行内部运算”。改正两处角色混淆。\chapterinlinehint{Attention 跨行读取，FFN 逐行变换。}
 }
 \chapterrecallanswer{Attention 负责跨位置读取，FFN 逐位置变换；输出头将 $H:3\times3$ 映射到 $Z:3\times5$。}
 

@@ -44,11 +44,10 @@ ID 4 的 One-hot 行向量是 $(0,0,0,1,0)$。
 同层多个功能相同的隐藏单元若从完全相同的权重出发，
 在对称结构下会得到相同梯度，很难学出不同特征；
 适当随机初始化用于打破这种对称性。
-\begin{boundarybox}
 偏置可初始化为零，
 本书词表的某一行 Embedding 初值也恰好为零。
 它们是否能更新，要由实际梯度路径、数据覆盖和结构来判断。
-\end{boundarybox}
+
 
 \textbf{升维、降维与潜在空间：}
 Embedding 把类别身份映射到 $d_{\rm model}$ 维特征空间，
@@ -60,6 +59,14 @@ Embedding 把类别身份映射到 $d_{\rm model}$ 维特征空间，
 
 从这里开始，\textbf{三维贯通实验的唯一初始 Embedding 表}
 使用 $d_{\rm model}=3$，五个 ID 各对应一行：
+\[
+\begin{array}{c|ccccc}
+\text{ID／表的行号}&1&2&3&4&5\\\hline
+\text{Token}&\text{其他}&\text{春天}&\text{。}&\text{花}&\text{开了}
+\end{array}
+\]
+“其他”是这份教学词表中保留的第一个类别，第一行就是它的向量；
+该名称不表示真实 Tokenizer 都用同一个未知词机制。
 \[
 E=\begin{bmatrix}
 0&0&0\\
@@ -93,7 +100,7 @@ X=\begin{bmatrix}
 
 \subsection{按 ID 查表为什么等价于矩阵乘法？}
 
-ID 4 的 One-hot 行向量右乘 $E$，只取出其中一行：
+“花”（ID 4）的五维 One-hot 行向量右乘 $E$，只取出第 4 行：
 \[
 \underbrace{(0,0,0,1,0)}_{1\times5}\,
 \underbrace{E}_{5\times3}
@@ -136,19 +143,17 @@ E_{20}[5]&\approx(0.1734,\,-0.2188,\,1.3136).
 静态词向量为每个词保存一行；现代 Transformer 从同一行出发，
 再由位置与 Attention 形成随上下文变化的隐藏表示。
 
-\begin{boundarybox}
 词向量类比是特定语料和表示空间中的经验现象，也会反映语料偏差。
-本章 20 步实验只验证同一教学样本上的优化，真实语言能力应在独立文本上评测。
-\end{boundarybox}
+
 
 本节数据是\textbf{三维贯通主算例}。
 独立的二维注意力、四维双头示例统一标为“局部例”，
 各自使用独立的数值参数；读数时以示例标题为准。
 
 \chapterchecktasks{20-embeddings}{正文基础三题}{
-\item \textbf{形状：}词表有 $5$ 个 ID，Embedding 宽为 $3$，三个 Token 输入 ID 为 $[2,4,5]$。查表后形状是多少？解释每一行对应什么。
-\item \textbf{比较：}为什么直接拿 ID 数值相乘不能代替 Embedding 查表？one-hot 乘 Embedding 矩阵又为何可以得到同一向量？
-\item \textbf{预测：}一句话中同一 ID 出现在位置 $1$ 和 $3$，原始查表向量是否相同？分别加上可训练位置向量后还必定相同吗？
+\item \textbf{形状：}词表有 $5$ 个 ID，Embedding 宽为 $3$，三个 Token 输入 ID 为 $[2,4,5]$。查表后形状是多少？解释每一行对应什么。\chapterinlinehint{查表结果 $3\times3$，一行一个位置。}
+\item \textbf{比较：}为什么直接拿 ID 数值相乘不能代替 Embedding 查表？one-hot 乘 Embedding 矩阵又为何可以得到同一向量？\chapterinlinehint{one-hot 乘表会选行；整数 ID 只标身份。}
+\item \textbf{预测：}一句话中同一 ID 出现在位置 $1$ 和 $3$，原始查表向量是否相同？分别加上可训练位置向量后还必定相同吗？\chapterinlinehint{查表向量相同，加位置后未必相同。}
 }
 \chapterrecallanswer{Embedding 是可训练的 ID 到向量映射；同 ID 的查表向量相同，位置与上下文可使最终表示不同。}
 

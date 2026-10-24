@@ -217,9 +217,9 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 \input{figures/original-transformer-map}
 
 \chapterchecktasks{22-transformer-architecture}{正文基础三题}{
-\item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？
-\item \textbf{预测：}生成位置 $1$ 时若错误地允许读取位置 $2$ 的真实目标，这会使下一 Token 训练的什么规则失效？
-\item \textbf{找错：}某人把原始 Encoder--Decoder Transformer 的 Cross-Attention 当成 Decoder-only GPT 每层必有的模块。指出差异及真正的数据来源。
+\item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？\chapterinlinehint{拼接 $3\times4$；残差两端形状需兼容。}
+\item \textbf{预测：}生成位置 $1$ 时若错误地允许读取位置 $2$ 的真实目标，这会使下一 Token 训练的什么规则失效？\chapterinlinehint{读到未来目标，造成信息泄漏。}
+\item \textbf{找错：}某人把原始 Encoder--Decoder Transformer 的 Cross-Attention 当成 Decoder-only GPT 每层必有的模块。指出差异及真正的数据来源。\chapterinlinehint{原始模型的交叉注意力：Q 来自 Decoder，K/V 来自 Encoder。}
 }
 \chapterrecallanswer{一个 Block 需要形状兼容的残差；因果 Mask 禁止看未来；Decoder-only 自注意力没有默认的 Encoder Cross-Attention。}
 

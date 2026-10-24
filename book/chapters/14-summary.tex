@@ -30,16 +30,16 @@ $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 
 % Chapter 29 concludes only after the 29.3 unified retrieval section.
 \chapterchecktasks{09-nonlinearity-and-memory}{正文基础三题}{
-\item \textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？
-\item \textbf{手算：}分别算 $0.5^2$、$0.5^3$，再算 $(-0.5)^2$、$(-0.5)^3$。
-\item \textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。用上题反例指出问题。
+\item \textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？\chapterinlinehint{$0<s<1$ 时高次幂更小，$s=1$ 时不变。}
+\item \textbf{手算：}分别算 $0.5^2$、$0.5^3$，再算 $(-0.5)^2$、$(-0.5)^3$。\chapterinlinehint{$0.25,0.125$；负数平方正、立方负。}
+\item \textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。用上题反例指出问题。\chapterinlinehint{负匹配平方后变正，未被排除。}
 }
 \chapterrecallanswer{非线性改变匹配的选择性，但必须说明分数范围；MLP 的记忆类比是计算视角而非事实库存证明。}
 
 \chapterchecktasks{14-summary}{正文基础三题}{
-\item \textbf{比较：}分别用一句话描述外积线性记忆、Softmax Attention 和逐 Token FFN 的匹配、读取或特征变换角色。
-\item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？
-\item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。
+\item \textbf{比较：}分别用一句话描述外积线性记忆、Softmax Attention 和逐 Token FFN 的匹配、读取或特征变换角色。\chapterinlinehint{分别看状态读写、上下文匹配与逐行特征变换。}
+\item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？\chapterinlinehint{读出为 $(0.25,0.75)$。}
+\item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。\chapterinlinehint{线性外积读出未必使用概率归一化。}
 }
 \chapterrecallanswer{“匹配—读取”帮助比较结构；具体输出由各自的归一化和读取规则决定，事实正确性另由外部证据核验。}
 

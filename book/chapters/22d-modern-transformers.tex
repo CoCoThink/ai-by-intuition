@@ -185,6 +185,37 @@ MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
 \end{tabularx}
 \end{center}
 
+\subsection{［复算］从公开配置文件对照两种模型}
+
+只凭宣传名称判断“用了哪些技术”容易出错。
+\texttt{scripts/config\_table.py} 读取带来源和固定修订号的
+\texttt{config.json} 字段快照，生成以下最小对照：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{29mm}p{16mm}p{15mm}p{18mm}X@{}}
+\toprule
+参考模型 & 隐藏宽 & 层数 & Q/KV 头 & 位置／归一化\\\midrule
+GPT-2 small & 768 & 12 & 12/12 & 学习式位置，LayerNorm\\
+Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
+\bottomrule
+\end{tabularx}
+\end{center}
+后一配置写明 SiLU 与 \texttt{use\_sliding\_window=false}：此配置没有启用滑动窗口。
+
+配置字段说明结构元数据；门控 FFN 的完整形式还要核对模型实现。
+
+
+\textbf{复算入口：}
+\texttt{python3 scripts/config\_table.py}
+（只读仓库中固定版本的公开配置摘要，不下载权重）；
+加入 \texttt{--verify-online} 才会联网核对原始 \texttt{config.json}。
+来源：
+\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 config}、
+\href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json}{Qwen2.5 config}。
+这张表只比较\textbf{结构元数据}；
+模型质量与推理速度需由独立基准测量。
+
 \subsection*{提高选读：FFN、稀疏与线性状态的变体}
 \noindent\textcolor{muted}{以下按需选读；首次阅读可直接跳到章末自测。}\par
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
@@ -382,39 +413,6 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 参见 \href{https://arxiv.org/abs/2312.00752}{Mamba} 和
 \href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}。
 
-\subsection{［复算］从公开配置文件对照两种模型}
-
-只凭宣传名称判断“用了哪些技术”容易出错。
-\texttt{scripts/config\_table.py} 读取带来源和固定修订号的
-\texttt{config.json} 字段快照，生成以下最小对照：
-
-\begin{center}\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{29mm}p{16mm}p{15mm}p{18mm}X@{}}
-\toprule
-参考模型 & 隐藏宽 & 层数 & Q/KV 头 & 位置／归一化\\\midrule
-GPT-2 small & 768 & 12 & 12/12 & 学习式位置，LayerNorm\\
-Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
-\bottomrule
-\end{tabularx}
-\end{center}
-后一配置写明 SiLU 与 \texttt{use\_sliding\_window=false}：此配置没有启用滑动窗口。
-
-\begin{boundarybox}
-配置字段说明结构元数据；门控 FFN 的完整形式还要核对模型实现。
-质量、速度与长上下文效果分别用任务基准、延迟测试和长程测试验证。
-\end{boundarybox}
-
-\textbf{复算入口：}
-\texttt{python3 scripts/config\_table.py}
-（只读仓库中固定版本的公开配置摘要，不下载权重）；
-加入 \texttt{--verify-online} 才会联网核对原始 \texttt{config.json}。
-来源：
-\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 config}、
-\href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/config.json}{Qwen2.5 config}。
-这张表只比较\textbf{结构元数据}；
-模型质量与推理速度需由独立基准测量。
-
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：MLA 缓存与窗口}
 
 \localfixture{假设参数下的单层缓存与五位置窗口；不对应特定发布模型}
@@ -457,9 +455,9 @@ $8\times(3+2)=\answerresult{40}$。
 
 
 \chapterchecktasks{22d-modern-transformers}{正文基础三题}{
-\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？
-\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？
-\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。
+\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{RoPE 处理位置，RMSNorm 按均方根缩放。}
+\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{同长度为 $1/4$；长度翻倍后为原来的 $1/2$。}
+\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{KV 元素比不能直接当作延迟比。}
 }
 \chapterrecallanswer{RoPE 编入位置信息，RMSNorm 不减均值；GQA 通过较少 K/V 头降低缓存，但整体性能仍需实测。}
 

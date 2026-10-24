@@ -53,9 +53,9 @@ ReLU 在 $t=0$ 处不可导，训练实现为这个点约定一个次梯度，�
 \end{warningbox}
 
 \chapterchecktasks{07-functions-relu}{正文基础三题}{
-\item \textbf{比较：}为什么两次无激活的仿射变换可以合并成一次？给出一维形式 $(ax+b)c+d$。
-\item \textbf{手算：}$f(x)=\relu(2x-1)$。分别算 $x=0$ 与 $x=1$ 的输出。
-\item \textbf{预测：}当 $2x-1$ 从负值跨到正值时，函数局部斜率如何改变？这个折角为什么有助于拟合分段规律？
+\item \textbf{比较：}为什么两次无激活的仿射变换可以合并成一次？给出一维形式 $(ax+b)c+d$。\chapterinlinehint{合并后仍是仿射变换。}
+\item \textbf{手算：}$f(x)=\relu(2x-1)$。分别算 $x=0$ 与 $x=1$ 的输出。\chapterinlinehint{$f(0)=0$，$f(1)=1$。}
+\item \textbf{预测：}当 $2x-1$ 从负值跨到正值时，函数局部斜率如何改变？这个折角为什么有助于拟合分段规律？\chapterinlinehint{折角两侧斜率分别为 $0$ 和 $2$。}
 }
 \chapterrecallanswer{纯仿射层可合并；ReLU 对负输入输出零，对正输入保持原值，带来分段表达能力。}
 

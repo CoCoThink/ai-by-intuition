@@ -46,9 +46,9 @@ L(w,1)=\frac23(w-2)^2,\qquad
 我们需要能从当前位置逐步改善损失的方法。
 
 \chapterchecktasks{16-loss-analytic}{正文基础三题}{
-\item \textbf{解释：}三点线性拟合的 MSE 为什么是三个平方误差的平均，而不是把带符号误差相加？
-\item \textbf{手算：}固定 $b=1$ 且 $L(w,1)=\frac23(w-2)^2$，分别算 $w=2$ 与 $w=3$ 时的损失。
-\item \textbf{找错：}有人说“$w=2$ 后损失就一定为零，$b$ 可以随便取”。用完整的 $L(w,b)=\frac23(w-2)^2+(b-1)^2$ 订正。
+\item \textbf{解释：}三点线性拟合的 MSE 为什么是三个平方误差的平均，而不是把带符号误差相加？\chapterinlinehint{正负误差会抵消，平方误差不会。}
+\item \textbf{手算：}固定 $b=1$ 且 $L(w,1)=\frac23(w-2)^2$，分别算 $w=2$ 与 $w=3$ 时的损失。\chapterinlinehint{分别为 $0$ 与 $2/3$。}
+\item \textbf{找错：}有人说“$w=2$ 后损失就一定为零，$b$ 可以随便取”。用完整的 $L(w,b)=\frac23(w-2)^2+(b-1)^2$ 订正。\chapterinlinehint{零损失要求 $w=2$ 且 $b=1$。}
 }
 \chapterrecallanswer{平方误差不会正负抵消；完整损失同时由斜率误差和偏置误差决定。}
 

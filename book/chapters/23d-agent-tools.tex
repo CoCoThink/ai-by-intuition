@@ -203,9 +203,9 @@ g_{Q3}=(132-120)/120=10\%.
 如果 \texttt{read\_report(Q2)} 返回权限错误，程序记录 Q2 缺失，并停止依赖 Q2 的环比计算。
 \end{example}
 \chapterchecktasks{23d-agent-tools}{正文基础三题}{
-\item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？
-\item \textbf{计算：}Q1、Q2、Q3 的收入是 $100$、$120$、$132$，求两次环比增长率。
-\item \textbf{找错：}工具拒绝读取 Q2 时，Agent 自行补上 $120$ 并写“已核实”。哪一步失实？
+\item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？\chapterinlinehint{应用负责参数、权限校验与执行。}
+\item \textbf{计算：}Q1、Q2、Q3 的收入是 $100$、$120$、$132$ 百万元，求两次环比增长率。若误把 Q1 作为 Q3 的基期，会得到多少？\chapterinlinehint{Q2 为 $20\%$、Q3 为 $10\%$；误用 Q1 得 $32\%$。}
+\item \textbf{找错：}工具拒绝读取 Q2 时，Agent 自行补上 $120$ 并写“已核实”。哪一步失实？\chapterinlinehint{未经成功返回，却声称工具已核实。}
 }
 \chapterrecallanswer{模型只产生工具请求；应用执行、授权、错误处理与交付核对。}
 \begin{conclusion}

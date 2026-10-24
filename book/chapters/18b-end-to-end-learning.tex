@@ -85,16 +85,16 @@ L'&=\frac12(5.30-5)^2=0.045.
 % The earlier backpropagation lesson belongs to this same numbered chapter.
 % Keep both complete exercise sets after section 5.5, not before it.
 \chapterchecktasks{17-backpropagation}{正文基础三题}{
-\item \textbf{计算：}设 $h=w_1x,\widehat y=w_2h$。当 $x=3,w_2=2$ 时，按链式法则求 $\partial\widehat y/\partial w_1$。
-\item \textbf{预测：}在 $h=\relu(z)$ 且 $z=-2$ 时，从输出侧传来的梯度经过这条 ReLU 分支传向 $z$ 后还剩多少？
-\item \textbf{找错：}同学把 $\partial L/\partial h$ 直接当作 $\partial L/\partial w_1$。缺了哪一个局部导数？
+\item \textbf{计算：}设 $h=w_1x,\widehat y=w_2h$。当 $x=3,w_2=2$ 时，按链式法则求 $\partial\widehat y/\partial w_1$。\chapterinlinehint{$w_2x=6$。}
+\item \textbf{预测：}在 $h=\relu(z)$ 且 $z=-2$ 时，从输出侧传来的梯度经过这条 ReLU 分支传向 $z$ 后还剩多少？\chapterinlinehint{负区间的局部梯度为 $0$。}
+\item \textbf{找错：}同学把 $\partial L/\partial h$ 直接当作 $\partial L/\partial w_1$。缺了哪一个局部导数？\chapterinlinehint{漏乘了 $\partial h/\partial w_1$。}
 }
 \chapterrecallanswer{反传沿计算图用链式法则传递并汇总梯度；优化器才负责把这些梯度变成参数更新。}
 
 \chapterchecktasks{18b-end-to-end-learning}{正文基础三题}{
-\item \textbf{流程：}把一次 SGD 分成“前向／损失／反传／更新”四步；哪一步读取训练目标，哪一步改变参数？
-\item \textbf{手算：}$x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$，$h=\relu(w_1x+b_1)$。求 $\widehat y$ 与 $\tfrac12(\widehat y-y)^2$。
-\item \textbf{找错：}某同学先更新 $w_2$，再用新 $w_2$ 算本次 $w_1$ 的梯度，称它是“同一步同步 SGD”。指出问题。
+\item \textbf{流程：}把一次 SGD 分成“前向／损失／反传／更新”四步；哪一步读取训练目标，哪一步改变参数？\chapterinlinehint{前向、损失、反传、更新。}
+\item \textbf{手算：}$x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$，$h=\relu(w_1x+b_1)$。求 $\widehat y$ 与 $\tfrac12(\widehat y-y)^2$。\chapterinlinehint{$h=2$，预测 $4$，损失 $0.5$。}
+\item \textbf{找错：}某同学先更新 $w_2$，再用新 $w_2$ 算本次 $w_1$ 的梯度，称它是“同一步同步 SGD”。指出问题。\chapterinlinehint{同一步不能混用新旧参数。}
 }
 \chapterrecallanswer{训练一步先用同一组旧参数求出完整梯度，再统一更新；单样本损失低不等于模型泛化好。}
 

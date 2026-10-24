@@ -114,9 +114,9 @@ Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 外积与读取的另一种理解路径，放在\hyperref[intro:04-key-value-outer-product]{附录 H--K 的联想记忆提高专题}。
 
 \chapterchecktasks{10-mlp}{正文基础三题}{
-\item \textbf{形状：}输入行 $x:1\times2$，两层权重分别 $W_1:2\times3,W_2:3\times2$。写出隐藏层与输出层的形状。
-\item \textbf{手算：}计算 $\relu(-1)$ 和 $\relu(2)$，说明对负值隐藏单元发生了什么。
-\item \textbf{找错：}同学认为两个 Token 共用 FFN 权重，故第二行的输入会直接改变第一行 FFN 的输出。指出错误。
+\item \textbf{形状：}输入行 $x:1\times2$，两层权重分别 $W_1:2\times3,W_2:3\times2$。写出隐藏层与输出层的形状。\chapterinlinehint{依次为 $1\times3$、$1\times2$。}
+\item \textbf{手算：}计算 $\relu(-1)$ 和 $\relu(2)$，说明对负值隐藏单元发生了什么。\chapterinlinehint{分别为 $0$ 和 $2$。}
+\item \textbf{找错：}同学认为两个 Token 共用 FFN 权重，故第二行的输入会直接改变第一行 FFN 的输出。指出错误。\chapterinlinehint{共享 FFN 参数不等于跨位置读取。}
 }
 \chapterrecallanswer{MLP 的逐行变换改变隐藏特征但不直接交换 Token；非线性让两层不等同于一层仿射。}
 
