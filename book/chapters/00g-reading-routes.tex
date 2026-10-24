@@ -9,9 +9,9 @@
 
 \textbf{三条阅读路线：}
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
-\item \textbf{速读：}依第一至第五部分掌握训练与 Transformer，再读第六部分视觉桥接、第七部分助手与第八部分架构判断。联想记忆移至文末提高专题。先看每部分的“从这里出发”、章首问题与章末小结，
+\item \textbf{速读：}先掌握训练、矩阵、Token、上下文与 Transformer，随后学习\hyperref[part:vision]{CNN 与 ViT}、\hyperref[part:assistant]{助手}及\hyperref[part:architecture]{架构判断}。联想记忆移至附录 H--K。先看每部分的“从这里出发”、章首问题与章末小结，
   浏览形状流程图和三个位置的预测结果；公式只看输入、输出及含义。
-\item \textbf{标准：}依第一至第八部分的顺序阅读正文，亲手完成标量损失、
+\item \textbf{标准：}按\hyperref[part:learning]{学习与训练}至\hyperref[part:architecture]{架构判断}的正文顺序阅读，亲手完成标量损失、
   双参数梯度更新、三分类交叉熵以及注意力的一次手算。
 \item \textbf{动手：}完成标准路线后再做附录 C 的练习，
   使用 PyTorch 单步实验和交互 Notebook 的三个滑块观察参数或概率变化。
@@ -46,7 +46,7 @@ $\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
 \bottomrule
 \end{tabularx}
 \end{center}
-\noindent{\footnotesize\color{muted}提高支线：附录 H--K 的联想记忆与容量；视觉桥接纳入第六部分。正文最后的“技术底座回顾”附有详细对照表。}
+\noindent{\footnotesize\color{muted}提高支线：附录 H--K 的联想记忆与容量；视觉桥接位于\hyperref[part:vision]{CNN 与 ViT 正文部分}。正文最后的“技术底座回顾”附有详细对照表。}
 
 \par\smallskip\noindent\textbf{贯穿全书的表示约定}\par
 Token ID 从 $0$ 编码，位置从 $1$ 数；数学矩阵元素下标从 $1$ 起，

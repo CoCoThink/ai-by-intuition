@@ -6,7 +6,7 @@
 \chaptercompass{多维输入怎样组成一个两层网络？}{矩阵投影中加入非线性激活，使模型能表达更复杂的关系。}{$X:N\times d_0\to H:N\times d_1\to Y:N\times d_2$}{$W_1,W_2$ 及各层偏置}
 \modelpipelinefocus{0}{MLP 与训练基础}
 
-前面已学会行向量右乘矩阵；第一部分也亲手训练过两层标量网络。
+前面已学会行向量右乘矩阵；\hyperref[part:learning]{训练基础部分}也亲手训练过两层标量网络。
 现在不再重复完整推导梯度，而是把同一结构推广到多个输入特征与隐藏单元。
 MLP（多层感知机）把两个可训练线性层与一个非线性激活串联起来。
 
@@ -109,7 +109,7 @@ Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 三行分别对应三个 Token；FFN 虽改变每行的特征，
 却没有在不同 Token 之间交换信息。
 
-第 VI 部分将用联想记忆的外积与读取，从另一个角度理解这类矩阵运算。
+外积与读取的另一种理解路径，放在\hyperref[intro:04-key-value-outer-product]{附录 H--K 的联想记忆提高专题}。
 
 \chapterchecktasks{10-mlp}{形状／手算／找错／比较}{
 \item \textbf{形状：}输入行 $x:1\times2$，两层权重分别 $W_1:2\times3,W_2:3\times2$。写出隐藏层与输出层的形状。
