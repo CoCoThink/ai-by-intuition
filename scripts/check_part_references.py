@@ -76,6 +76,14 @@ def lint(main: str, chapters: dict[str, str]) -> list[str]:
                     f"{path}: invalid semantic part target part:{match.group(1)}"
                 )
 
+    # A valid link can still have the wrong semantic target: e.g. a link
+    # labelled "associative memory" that silently jumps to CNN/ViT Part VI.
+    for path, body in texts.items():
+        if re.search(r"\\hyperref\[part:vision\]\{[^}]{0,100}联想记忆[^}]*\}", body):
+            errors.append(
+                f"{path}: associative-memory link incorrectly targets CNN/ViT Part VI"
+            )
+
     # Memory is an APPENDIX; a future reorder must not move it back into VI.
     app = cleaned.find(r"\appendix")
     memory = cleaned.find(r"\input{chapters/04-key-value-outer-product}")
@@ -84,6 +92,15 @@ def lint(main: str, chapters: dict[str, str]) -> list[str]:
             "book/main.tex: associative memory moved into main parts "
             "(expected appendix H--K)"
         )
+    elif memory >= 0:
+        earlier_appendices = len(re.findall(
+            r"\\section\{", cleaned[app:memory]
+        ))
+        if earlier_appendices != 7:
+            errors.append(
+                "book/main.tex: associative memory must begin in appendix H; "
+                f"found {earlier_appendices} earlier appendix sections"
+            )
     return errors
 
 
@@ -108,9 +125,21 @@ def self_test() -> None:
     assert any("invalid semantic part target" in e for e in lint(
         base, {"example": r"\hyperref[part:memory]{记忆}"}
     ))
+    misdirected = lint(base, {
+        "example": r"\\hyperref[part:vision]{联想记忆}"
+    })
+    assert any("incorrectly targets" in issue for issue in misdirected)
+    with_memory = parts + r"\\appendix" + ("\\section{Topic}\n" * 7)
+    with_memory += r"\\input{chapters/04-key-value-outer-product}"
+    assert lint(with_memory, {"04-key-value-outer-product": r"\\section{Memory}"}) == []
+    misordered = with_memory.replace(
+        "\\section{Topic}\n", "", 1
+    )
+    assert any("must begin in appendix H" in issue
+               for issue in lint(misordered, {"04-key-value-outer-product": r"\\section{Memory}"}))
     assert not HARDCODED.search(strip_comments("% 第 VI 部分\n普通文字"))
     print("Part reference regression QA passed: 6 invalid ordinals, "
-          "wrong semantic part, wrong target and commented prose")
+          "wrong part order, wrong topic link and commented prose")
 
 
 def main() -> int:
