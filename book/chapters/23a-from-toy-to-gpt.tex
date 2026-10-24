@@ -224,11 +224,13 @@ GPT-2 是\textbf{仅解码器式}的自回归语言模型，
 通过因果 Self-Attention 处理已有文本并持续预测下一 Token。
 不能将“Transformer”与“GPT”当作完全同义词。
 
-\begin{warningbox}
-本章比较的是一类\textbf{经典、可查证的参考配置}，
-不是对所有现代模型的排名；“参数更多”也不单独保证每项能力更强。
-模型上线后还需要考虑训练分布外的可靠性、成本与安全边界。
-\end{warningbox}
+\noindent{\footnotesize\color{muted}本章以可复算的经典配置做对照；模型能力仍须按任务、数据与部署条件评估。}
+
+\begin{conclusion}
+从三维主算例到 GPT，训练与预测原则相通，而能力还依赖模型规模、数据和计算。
+下一部分把图像切块与特征提取接入这条主线，对照 CNN 的局部卷积与 ViT 的跨位置读取。
+联想记忆与 Delta 更新则放在文末提高专题。
+\end{conclusion}
 
 \chapterchecktasks{23a-from-toy-to-gpt}{形状／估算／找错／诊断}{
 \item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？
@@ -244,8 +246,4 @@ GPT-2 是\textbf{仅解码器式}的自回归语言模型，
 
 
 
-\begin{conclusion}
-从三维主算例到 GPT，\textbf{同一条训练原则}需要更多参数、层、数据和计算支撑。
-第 VI 部分将从\textbf{写入、匹配与读取}观察 Attention 与 FFN，
-并用线性记忆的串扰与修正建立另一条数学直觉。
-\end{conclusion}
+
