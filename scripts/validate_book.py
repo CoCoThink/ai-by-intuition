@@ -76,6 +76,7 @@ REQUIRED = [
     "24e-pytorch-lab",
     "25-integrated-practice",
     "25b-modern-practice",
+    "25c-migrated-review",
     "15-practice",
     "27-answer-key",
     "28-chapter-checks",
@@ -1050,6 +1051,11 @@ def validate_source() -> None:
         fail("Self-check core answer must not be printed immediately below questions")
     includes(main, r"arc=1.5mm,breakable=false",
              "each chapter self-check box must stay unbroken on one PDF page")
+    if r"\chapterinlinehint" in main or r"quickhint@" in main:
+        fail("Inline numerical clues or old clue bank remain in reader PDF")
+    if len(re.findall(r"\\label\{extension:[^}]+\}",
+                      sources["25c-migrated-review"])) != 50:
+        fail("Appendix C must hold exactly 50 relocated self-check questions")
 
     answers = sources["28-chapter-checks"]
     for lesson_id in varied:
@@ -1060,14 +1066,17 @@ def validate_source() -> None:
         question_types = re.findall(
             r"\\item\s+\\textbf\{([^：:}]+)[：:]", exercises)
         question_count = exercises.count(r"\item ")
-        if question_count not in (4, 5) or len(question_types) != question_count:
-            fail(f"Redesigned chapter must have 4–5 explicitly typed questions: "
+        if question_count != 3 or len(question_types) != 3:
+            fail(f"Each chapter must have exactly three visible foundation questions: "
                  f"{lesson_id}: {question_types}")
-        local_clues = re.findall(r"\\chapterinlinehint\{" + re.escape(lesson_id)
-                                 + r"\}\{(\d+)\}", exercises)
-        if local_clues != [str(i) for i in range(1, question_count + 1)]:
-            fail(f"Per-question result clues missing or out of order: "
-                 f"{lesson_id}: {local_clues}")
+        if r"\chapterinlinehint{" in exercises:
+            fail(f"Answer clues must not appear below questions: {lesson_id}")
+        extensions = sorted(int(n) for n in re.findall(
+            r"\\label\{extension:" + re.escape(lesson_id) + r":(\d+)\}",
+            sources["25c-migrated-review"]))
+        if extensions not in ([4], [4, 5]):
+            fail(f"Expected one or two migrated appendix C questions: "
+                 f"{lesson_id}: {extensions}")
         normalized_types = [re.sub(r"（[^）]+）", "", label)
                             for label in question_types]
         if len(set(normalized_types)) != question_count:
@@ -1077,9 +1086,10 @@ def validate_source() -> None:
         section = answers.split(marker, 1)[1].split(r"\item[", 1)[0]
         answer_ids = [int(n) for n in re.findall(
             r"\\answerpiece\{(\d+)\}\{[^}]+\}", section)]
-        if answer_ids != list(range(1, question_count + 1)):
-            fail(f"Redesigned self-check answer numbering mismatch: "
-                 f"{lesson_id}: questions={question_count}, answers={answer_ids}")
+        expected_answer_ids = list(range(1, question_count + len(extensions) + 1))
+        if answer_ids != expected_answer_ids:
+            fail(f"Self-check/appendix extension answer mismatch: "
+                 f"{lesson_id}: expected={expected_answer_ids}, found={answer_ids}")
 
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
@@ -1088,7 +1098,7 @@ def validate_source() -> None:
             fail(f"Missing/repeated fully redesigned chapter check: {lesson_id}")
         fragment = src.split(task, 1)[1].split(
             r"\chapterrecallanswer{", 1)[0]
-        if fragment.count(r"\item ") < 4 or r"\chapterrecallanswer{" not in src:
+        if fragment.count(r"\item ") != 3 or r"\chapterrecallanswer{" not in src:
             fail(f"Missing substantive exercises or local recall answer: {lesson_id}")
 
     for name in REQUIRED:

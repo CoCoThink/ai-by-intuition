@@ -1,23 +1,17 @@
 \subsection{全书随堂自测参考解答}
 \phantomsection\label{app:chapter-checks}
 
-答案\textbf{先按正文章号、再按提高专题排列}；建议先独立完成各题，再依次阅读“提示—解答”；正文提供简短答案线索，详细推导仍保留在本附录。阅读指南不占章号，
+答案\textbf{先按正文章号、再按提高专题排列}；正文每章先做三道题，原题 4／5 移至附录 C。建议先独立完成，再来这里查看逐题的\textbf{解题过程与核验依据}。阅读指南不占章号，
 损失解析解与梯度下降分列两章，同章多题共用章号。
 若数值与这里不一致，请先核对矩阵的\textbf{维度、乘法方向和输入数据}。
 附录 A 汇总核心公式、数学速查和优化器提高选读，不再设置随堂自测。点击题目标题可返回正文。
 
-% Each exercise gets its own two-stage reading unit, not one dense answer paragraph.
-% All hints are procedural; they do not reveal the numerical result.
+% Answers provide the concrete method and result directly.
+% Do not repeat generic "first identify the conditions" template hints 185 times.
 \newcommand{\answerpiece}[2]{%
   \par\smallskip\noindent
   {\sffamily\bfseries\color{blue}题~#1 \textnormal{·} #2}\par\nobreak
-  {\footnotesize\color{muted}\textbf{提示：}%
-   \ifstrequal{#2}{手算}{先确定输入、维度与需要归一化的分母。}{%
-   \ifstrequal{#2}{找错}{先辨认混淆的是形状、因果顺序还是参数与状态。}{%
-   \ifstrequal{#2}{预测}{先判断变化方向，再决定是否需要精确计算。}{%
-   \ifstrequal{#2}{比较}{先列出共同前提，再区分机制及其代价。}{%
-   先写下本题前提与判据，核对边界条件。}}}}}\par\nobreak
-  \noindent\textbf{解答：}\ignorespaces
+  \noindent\textbf{解题过程：}\ignorespaces
 }
 \begingroup
 \setlength{\parskip}{3pt}
