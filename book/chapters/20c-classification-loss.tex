@@ -42,6 +42,21 @@ Softmax 只在\textbf{类别维度}上归一化；后面 Attention
 也会用同一运算把匹配分数变成读取权重，不过那里归一化的是可见 Key，
 不是词表候选类别。
 
+
+\begin{example}[breakable=false]
+\noindent\emph{数值稳定的 Softmax：先减最大 logit}\par
+面对 logits $(1000,1001)$，直接计算 $e^{1000}$ 容易溢出。
+令 $m=\max_jz_j=1001$，统一减去 $m$：
+\[
+\frac{(e^{1000-1001},e^{1001-1001})}
+{e^{1000-1001}+e^{1001-1001}}
+=\frac{(e^{-1},1)}{e^{-1}+1}
+\approx(0.2689,0.7311).
+\]
+分子分母同时除以 $e^m$ 不改变概率，
+却避免计算巨大的指数。这也是 Attention 每一行 Softmax 的基础技巧。
+\end{example}
+
 \subsection{交叉熵：正确类的概率越小，惩罚越大}
 \phantomsection\label{concept:cross-entropy}
 
