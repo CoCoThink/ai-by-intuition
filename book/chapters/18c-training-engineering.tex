@@ -14,23 +14,10 @@
 
 \noindent\textbf{先记主线：}SGD 用当前批次的梯度和学习率直接更新参数；出现不稳定时，先检查数据、梯度大小与学习率，而不是一次背完所有优化器。动量、Adam、AdamW 与 Warmup 的独立手算已集中到\hyperref[app:optimizer-details]{附录 A 的提高选读}。\par\medskip
 
-\Needspace{24\baselineskip}
-\subsubsection{训练不稳定时先诊断什么？}
-
-\textbf{梯度消失}先排查初始化、激活与残差路径；
-\textbf{梯度爆炸}检查学习率并考虑裁剪；
-\textbf{更新震荡}核对学习率、动量与 Adam；
-\textbf{样本过多}则通过 Mini-batch 和硬件并行降低单次更新成本。
-这些操作分别处理数值传播、优化步长或吞吐问题，
-不能互相替代。
-
-\textbf{超参数}是训练前或训练过程中设定的控制量，如学习率、正则化系数、批次大小；\textbf{模型参数}则是通过优化直接学习的权重。
-
-\begin{example}
-\noindent\emph{一次实际的梯度裁剪}\par
-
-设当前参数梯度为 $(6,8)$，其 L2 长度是 $10$。如果阈值设为 $5$，整体乘以 $5/10=0.5$，得到裁剪后的梯度 $(3,4)$；方向不变，长度变为 $5$。用学习率 $0.1$ 更新时，两个参数分别减去 $0.3$ 和 $0.4$。裁剪的对象是梯度，不是原始训练数据。
-\end{example}
+\noindent\textbf{第二遍再读：}梯度消失／爆炸、更新震荡、
+梯度裁剪与优化器超参数的完整诊断及例题，移至
+\hyperref[app:optimizer-details]{附录 A.4 的提高选读}。
+本章先掌握 Mini-batch、Epoch 与同步 SGD 的参数更新。\par\medskip
 
 \chapterchecktasks{16-loss-gradient}{预测／手算／找错／权衡／诊断}{
 \item \textbf{预测：}沿用三点损失 $L(w,b)=\frac23(w-2)^2+(b-1)^2$，从 $(1,0)$ 出发。若学习率由 $0.3$ 改为 $0$，参数与损失会怎样变化？这为什么不等于“模型已收敛”？
