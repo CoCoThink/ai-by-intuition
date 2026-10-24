@@ -179,9 +179,14 @@
 \hyperref[answer:#1]{附录~\ref*{app:chapter-checks}（随堂自测解答），第~\pageref*{answer:#1}~页}。}
 \end{tcolorbox}\par\smallskip
 }
-\newcommand{\chapterrecallanswer}[1]{%
-\par\noindent{\sffamily\footnotesize\color{muted}\textbf{章末先核对：}#1}\par\smallskip
-}
+% Keep the original editorial recap in source, but do not reveal exercise
+% answers immediately underneath the questions in the rendered reader PDF.
+% Detailed worked answers remain available via the individual Appendix D.2 link.
+\newcommand{\chapterrecallanswer}[1]{}
+% The revision identifies the PDF build that generated this artifact, not a release.
+% GITHUB_SHA is injected by Actions; local exploratory builds are labeled as such.
+\newcommand{\bookbuildsha}{\directlua{tex.sprint(string.sub(os.getenv("GITHUB_SHA") or "local-build",1,12))}}
+
 \newcommand{\answerresult}[1]{\boldsymbol{#1}}
 % Plain core formulas: reserve visible boxing for Appendix A's mathematical quick reference.
 \let\bookboxed\boxed
@@ -222,7 +227,7 @@
 \vspace{8mm}
 {\large\color{ink}从一个可手算的函数开始，逐层理解数据怎样训练模型、上下文怎样参与预测，以及工具怎样进入系统。}\par
 \vfill
-\noindent{\sffamily\small\color{muted}CoCoThink and contributors \quad · \quad v0.2.0-draft · 2026 年 10 月}\par
+\noindent{\sffamily\small\color{muted}CoCoThink and contributors \quad · \quad v0.2.0-draft（未发布） · 2026 年 10 月}\par
 \noindent{\sffamily\small\color{muted}https://github.com/CoCoThink/ai-by-intuition}\par
 \noindent{\sffamily\small\color{muted}原创内容 · CC BY 4.0（叙述借鉴与第三方许可见版权页）}\par
 \clearpage
