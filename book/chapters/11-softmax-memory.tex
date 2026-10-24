@@ -67,10 +67,19 @@ $V:M\times d_v$；Self-Attention 中 $N=M=T$。
 第 $i$ 行 Query 与每条 Key 依次匹配，
 一次矩阵乘法即可完成全部 Query 的匹配：
 \[
-\underbrace{Q}_{N\times d_k}
-\underbrace{K^\top}_{d_k\times M}
-=\underbrace{S}_{N\times M}.
+QK^\top=S.
 \]
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}lll@{}}
+\toprule
+计算 & 输入形状 & 输出形状\\\midrule
+匹配 $QK^\top$ & $(N\times d_k)(d_k\times M)$ & $S:N\times M$\\
+逐行 Softmax & $S:N\times M$ & $A:N\times M$\\
+读取 $AV$ & $(N\times M)(M\times d_v)$ & $Y:N\times d_v$\\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \subsection{\texorpdfstring{完整三行复算：$S\to A\to Y$}{完整三行复算：S 到 A 到 Y}}
 \localfixture{承接上一章的三位置非对称 Q/K/V 数值例}
@@ -121,8 +130,7 @@ Y=AV=
 \subsection{缩放点积 Attention 的通用式}
 \begin{equation}
 \boxed{\operatorname{Attention}(Q,K,V)
-=\underbrace{\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)}_{A:N\times M}
-\underbrace{V}_{M\times d_v}.}
+=\softmax\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V=AV.}
 \label{eq:attention-transformer}
 \end{equation}
 \phantomsection\label{eq:multi-query-attention}

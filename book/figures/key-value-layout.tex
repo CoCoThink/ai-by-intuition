@@ -49,14 +49,12 @@ $K^\top\in\R^{d_k\times M}$\\
 {\footnotesize 每列一条 Key}
 \end{minipage}
 
-\[\begin{aligned}
-\underbrace{K}_{M\times d_k}
-\underbrace{\vect q}_{d_k\times1}
-&=\underbrace{\vect s}_{M\times1},\\
-\underbrace{\vect q^\top}_{1\times d_k}
-\underbrace{K^\top}_{d_k\times M}
-&=\underbrace{\vect s^\top}_{1\times M}.
-\end{aligned}\]
+\[
+K\vect q=\vect s,\qquad
+\vect q^\top K^\top=\vect s^\top.
+\]
+{\footnotesize\color{muted}形状：$K:M\times d_k$，$\vect q:d_k\times1$，
+$\vect s:M\times1$；转置后为 $1\times d_k$ 乘 $d_k\times M$。}\par
 \begin{center}
 {\color{blue}\bfseries $(K\vect q)^\top=\vect q^\top K^\top$}
 \end{center}
@@ -64,18 +62,12 @@ $K^\top\in\R^{d_k\times M}$\\
 \textbf{Value 同理：}约定 $V$ 的\textbf{每行是一条 Value}，
 可以按需转置，读取相同的加权结果：
 \[
-\underbrace{V}_{M\times d_v}
-\quad\xleftrightarrow{\text{转置}}\quad
-\underbrace{V^\top}_{d_v\times M}.
+V\ \xleftrightarrow{\text{转置}}\ V^\top,\qquad
+V^\top\vect a=\vect y,\quad \vect a^\top V=\vect y^\top.
 \]
-\[\begin{aligned}
-\underbrace{V^\top}_{d_v\times M}
-\underbrace{\vect a}_{M\times1}
-&=\underbrace{\vect y}_{d_v\times1},\\
-\underbrace{\vect a^\top}_{1\times M}
-\underbrace{V}_{M\times d_v}
-&=\underbrace{\vect y^\top}_{1\times d_v}.
-\end{aligned}\]
+{\footnotesize\color{muted}形状：$V:M\times d_v$，
+$V^\top:d_v\times M$，$\vect a:M\times1$，
+$\vect y:d_v\times1$。}\par
 \textbf{检查：}若 $M=3$、$d_k=2$、$d_v=4$，
 则 $K:3\times2$、$K^\top:2\times3$、
 $V:3\times4$、$V^\top:4\times3$。
