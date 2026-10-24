@@ -1037,7 +1037,7 @@ def validate_source() -> None:
         marker = r"\label{answer:" + lesson_id + "}"
         section = answers.split(marker, 1)[1].split(r"\item[", 1)[0]
         answer_ids = [int(n) for n in re.findall(
-            r"\\textbf\{题 (\d+)（", section)]
+            r"\\answerpiece\{(\d+)\}\{[^}]+\}", section)]
         if answer_ids != list(range(1, question_count + 1)):
             fail(f"Redesigned self-check answer numbering mismatch: "
                  f"{lesson_id}: questions={question_count}, answers={answer_ids}")
