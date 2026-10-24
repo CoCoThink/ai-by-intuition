@@ -119,9 +119,13 @@ FFN & 每个 Token 的特征 & 非线性变换当前表示\\
 
 \chapterchecktasks{10b-ffn-output-head}{定位／手算／找错／估算}{
 \item \textbf{定位：}给出 FFN 与词表输出头各自的输入／输出单位：它们是隐藏特征变换还是词表类别打分？
+\chapterinlinehint{10b-ffn-output-head}{1}
 \item \textbf{手算：}若 $T=4,d=6,d_{\rm ff}=18$，求 FFN 上投影和下投影的矩阵形状，以及整个 FFN 的输出形状。
+\chapterinlinehint{10b-ffn-output-head}{2}
 \item \textbf{找错：}有人说“FFN 把每行的特征变成词表概率，因此无需再接输出头或 Softmax”。指出两个漏掉的步骤。
+\chapterinlinehint{10b-ffn-output-head}{3}
 \item \textbf{估算：}不计偏置，宽度 $d=6$、中间宽度 $18$ 的两层 FFN 总共有多少个矩阵权重？为什么这一数目不直接等于词表大小？
+\chapterinlinehint{10b-ffn-output-head}{4}
 }
 \chapterrecallanswer{FFN 在各 Token 内逐行改变隐藏特征；输出头才把隐藏宽度映射为词表 logits，Softmax 再变概率。}
 
