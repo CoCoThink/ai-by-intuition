@@ -982,20 +982,35 @@ def validate_source() -> None:
     varied = {key for key in check_ids
               if r"\chapterchecktasks{" + key + "}" in
               sources[labels["check:" + key]]}
-    if varied != {"16-loss-gradient", "22b-token-to-output",
-                  "23-llm-systems", "23d-agent-systems"}:
-        fail(f"Expected four complete teaching-redesign exemplars, got {sorted(varied)}")
+    mandatory_redesigns = {
+        "16-loss-gradient", "22b-token-to-output", "23-llm-systems",
+        "23d-agent-systems", "00-functions", "16-loss-analytic",
+        "18-generalization", "03-matrix-multiplication", "20a-tokenizer",
+        "20-embeddings", "21c-naive-attention", "21b-why-attention",
+        "22-transformer-architecture", "22c-language-training",
+        "23aa-pretraining-icl", "22d-modern-transformers",
+    }
+    if varied != mandatory_redesigns:
+        fail(f"Fully redesigned self-check coverage drift: "
+             f"missing={sorted(mandatory_redesigns-varied)}; "
+             f"unexpected={sorted(varied-mandatory_redesigns)}")
     legacy = check_ids - varied
-    if len(legacy) != 39:
-        fail(f"Expected 39 legacy chapters with new diagnostic fourth item, got {len(legacy)}")
-    if main.count(r"\csname chapterchallenge@") != 40:
-        fail("Missing a per-chapter challenge bank entry (39 definitions plus expansion)")
-    if main.count(r"\csname chapterrecall@") != 40:
-        fail("Missing one of the 39 direct chapter-end recall answers")
-    if sources["28-chapter-checks"].count(r"\textbf{补充题（") != 39:
-        fail("Appendix D.2 must give worked solutions for all 39 added diagnostic tasks")
+    if len(legacy) != 27:
+        fail(f"Expected 27 still-legacy checks, got {len(legacy)}")
+    if main.count(r"\csname chapterchallenge@") != 28:
+        fail("Expected 27 legacy diagnostic tasks plus macro expansion")
+    if main.count(r"\csname chapterrecall@") != 28:
+        fail("Expected 27 direct chapter-end legacy recall answers")
+    if sources["28-chapter-checks"].count(r"\textbf{补充题（") != 27:
+        fail("Appendix D.2 must solve all 27 remaining legacy diagnostics")
     if main.count(r"\item \csname chapterchallenge@#1\endcsname") != 1:
-        fail("Legacy chapter checks must render the fourth lesson-specific task")
+        fail("Legacy chapter checks must render their fourth chapter-specific task")
+    answers = sources["28-chapter-checks"]
+    for lesson_id in varied:
+        marker = r"\label{answer:" + lesson_id + "}"
+        section = answers.split(marker, 1)[1].split(r"\item[", 1)[0]
+        if section.count(r"\textbf{题 ") < 4:
+            fail(f"Redesigned chapter needs four or more complete answer entries: {lesson_id}")
 
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
