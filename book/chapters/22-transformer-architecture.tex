@@ -77,7 +77,7 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 \operatorname{LayerNorm}(2,4)
 =\left(\frac{2-3}{1},\frac{4-3}{1}\right)=\boxed{(-1,1)}.
 \]
-为什么要归一化？不同层的隐藏值尺度可能改变，
+为什么要归一化？隐藏值的尺度会随层内计算变化，
 导致训练的数值不稳定。LayerNorm 对单个 Token 的特征中心化并缩放，
 帮助控制输入子层的尺度；它仍配合可学习的缩放、平移参数。
 归一化在\textbf{该 Token 的特征维度}进行，
@@ -163,7 +163,7 @@ Decoder 输入\textbf{右移后的真实目标前缀}
 $[\text{I},\ \text{love},\ \text{you},\ \texttt{<EOS>}]$。
 Decoder 的四个位置可以并行计算，
 但第 $i$ 个位置的\textbf{自注意力}只能读取目标输入的前 $i$ 项，
-例如第二位置不能通过 Self-Attention 读到第三位置的“love”。
+例如第二位置的 Self-Attention 只读取前两个位置。
 另一方面，每一个 Decoder 位置的\textbf{Cross-Attention}
 都可以读取完整 Encoder 输出的三个源位置：
 它看到的是\textbf{源语句}，不是未来目标标签。
@@ -173,12 +173,12 @@ Decoder 的四个位置可以并行计算，
 \textbf{Decoder Self-Attention} 要因果遮挡，
 \textbf{Cross-Attention} 通常可访问整段已输入的源语句，
 但仍需遮挡源语句的 Padding。
-原论文与现代模型在 Norm 放置、位置编码、层数等细节上可能不同；
+原论文与现代模型在 Norm 放置、位置编码、层数等细节上各有设计；
 对照时先认清数据流，而不是把架构图所有框都当成同一配置。
 
 \subsection{最后如何得到下一个 Token 的概率？}
 
-对最后位置的隐藏状态 $\vect h_T$ 做输出线性投影，得到与词表大小一样多的\textbf{logits（未归一化的候选分数）}。它们还不是概率，也可能为负：
+对最后位置的隐藏状态 $\vect h_T$ 做输出线性投影，得到与词表大小一样多的\textbf{logits（未归一化的候选分数）}。它们是可正可负的实数分数：
 \[
 \vect z^\top=\vect h_T^\top W_{\rm vocab}+\vect b_{\rm vocab}^\top,
 \quad W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.

@@ -17,7 +17,7 @@
 Transformer 的最后位置产生一条隐藏向量，
 通过 \conceptlink{output-head}{词表输出头} 变成 $|\mathcal V|$ 个 \conceptlink{logits}{logits}。
 这些分数并不是概率，必须经过 \conceptlink{softmax}{Softmax} 归一化。
-比如只看三个候选，概率可能是
+比如只看三个候选，例如概率为
 \[
 p=(0.6,\ 0.3,\ 0.1).
 \]
@@ -29,7 +29,7 @@ p=(0.6,\ 0.3,\ 0.1).
 \phantomsection\label{concept:sampling}
 
 如果每次都只取最大概率的候选，
-结果相对确定，却可能缺乏多样性。
+相同上下文给出确定的选择，多样性较低。
 一种做法是改变\textbf{候选的分布或选择范围}：
 \begin{enumerate}
 \item \textbf{温度（Temperature）}：把 logits 除以一个正数，
@@ -100,14 +100,14 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 因此，后面讲现代架构时再遇到 MQA、GQA，
 你就能理解它们为什么关注\textbf{减少 K/V 头数}。
 
-\subsection{上下文窗口不能当成永久记忆}
+\subsection{上下文窗口保存本次计算可见的信息}
 
 \textbf{上下文窗口}是一次模型计算允许使用的 Token 范围。
+\begin{boundarybox}
 即使输入非常长，也不能保证模型无遗漏地利用每一处信息。
 当历史超过限制时，应用可能截断、摘要或重新检索；
 这些是应用层的策略，不能误认为模型参数在对话中被永久改写。
-
-
+\end{boundarybox}
 
 \chapterchecktasks{23-llm-systems}{正文基础三题}{
 \item \textbf{预测（先不计算）：}沿用本章 logits $(2,1,0)$。温度从 $\tau=1$ 降到 $0.5$，最小候选 C 的概率变大还是变小？温度趋于很大时，三个候选分别趋于多少？

@@ -10,6 +10,8 @@
 现在不再重复完整推导梯度，而是把同一结构推广到多个输入特征与隐藏单元。
 MLP（多层感知机）把两个可训练线性层与一个非线性激活串联起来。
 
+\input{figures/batch-linear-map}
+
 \subsection{什么是神经元、输入层、隐藏层与输出层？}
 \phantomsection\label{concept:neuron}
 
@@ -121,10 +123,8 @@ Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 
 
 \begin{conclusion}
-你现在可以用行向量手算两层 MLP，并核对每一步的形状。
-一个输入行从 $1\times2$ 经第一层变为 $1\times3$，由 ReLU 筛选激活后再映射回 $1\times2$；不能仅看到两次矩阵乘法就把中间非线性忽略。对不同输入，隐藏单元可能分别处于正值分支和零值分支，这正是简单线性组合不能完全替代的地方。
-
-多个 Token 可以共用 FFN 的参数，但仍各自在自己的那一行计算。共享参数不等于共享输入：第二个 Token 的变化不会直接让第一个 Token 的逐行 FFN 输出变化，只有经过 Attention 等跨位置读取，其他位置的内容才可能进入这一行。这一判断既可用来发现形状错误，也能帮助你在后面的 Transformer Block 中明确区分“逐位置变换”和“交换上下文信息”。
+MLP 将每行输入先扩展、经非线性激活，再映射到输出宽度。
+多个 Token 共用同一组参数，各自独立计算；Attention 负责随后要学的跨位置读取。
 
 Mini-batch 与 SGD 见第~\ref*{intro:16a-gradient-descent}~章；Adam、AdamW 和 Warmup 的手算见附录 A。
 \end{conclusion}

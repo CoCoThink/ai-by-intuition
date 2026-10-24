@@ -44,21 +44,17 @@ $w_{\rm new}=w-\eta\,\mathrm dL/\mathrm dw$。
 
 \subsubsection*{一张对照表解决 Token ID 和矩阵下标}
 
-本书保留可运行脚本所用的 \textbf{Token ID 从 0 起} 的约定：
-ID 只是词表标签，\textbf{不等于数学矩阵的列号}。
-从一个 ID 找到概率矩阵的对应列，只需在数学记号中加 $1$；
-Python 的数组下标则直接等于 ID：
+教学词表 ID、位置与数学行列都从 $1$ 起，直接按编号查表：
 \[
 \begin{array}{c|ccc}
-\text{词表 ID} & 0 & 3 & 4\\\hline
-\text{数学概率列号} & 1 & 4 & 5\\
+\text{词表 ID／数学列号} & 1 & 4 & 5\\\hline
 \text{Python 列下标} & 0 & 3 & 4
 \end{array}
 \]
-因此“花”（ID 3）的第一位置概率写为
-$\widehat P_{1,4}$，代码中读取 \texttt{probs[0,3]}。
-这是同一个数；括号、方括号和列号的起点不同，
-模型预测的类别并没有改变。
+“花”（ID 4）的第一位置概率是 $\widehat P_{1,4}$。
+写 Python 时，在数组索引处统一减 $1$，读取 \texttt{probs[0,3]}。
+脚本保留从 $1$ 起的 ID，并将 \texttt{ids - 1} 用于查表、
+\texttt{targets - 1} 用于交叉熵标签。
 
 \subsubsection*{不要把矩阵的行列和向量方向混用}
 

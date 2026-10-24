@@ -11,8 +11,8 @@ import json
 import math
 import numpy as np
 
-IDS = (1, 3, 4)
-TARGETS = (3, 4, 2)
+IDS = (2, 4, 5)
+TARGETS = (4, 5, 3)
 VOCAB = ('其他', '春天', '。', '花', '开了')
 EPS = 1e-5
 LR = 0.04
@@ -64,7 +64,12 @@ def forward(weights, ids=IDS, targets=TARGETS):
     """One decoder Block. Loss averaged over every predicted position."""
     t = len(ids)
     assert 1 <= t <= weights['P'].shape[0]
-    x = weights['E'][list(ids)] + weights['P'][:t]
+    # Book IDs and mathematical rows start at 1; NumPy indices start at 0.
+    indices = np.asarray(ids, dtype=int) - 1
+    assert np.all((0 <= indices) & (indices < len(VOCAB)))
+    if targets is not None:
+        assert len(targets) == t and all(1 <= y <= len(VOCAB) for y in targets)
+    x = weights['E'][indices] + weights['P'][:t]
     u = norm(x)
     q, k, v = u @ weights['Wq'], u @ weights['Wk'], u @ weights['Wv']
     scores = (q @ k.T) / math.sqrt(q.shape[1])
@@ -79,7 +84,7 @@ def forward(weights, ids=IDS, targets=TARGETS):
     h = r + hid @ weights['Wdown']
     logits = h @ weights['Wout']
     probs = softmax(logits)
-    loss = None if targets is None else float(-np.log(probs[np.arange(t), list(targets)]).mean())
+    loss = None if targets is None else float(-np.log(probs[np.arange(t), np.asarray(targets) - 1]).mean())
     return locals()
 
 
@@ -88,7 +93,7 @@ def backward(weights, state):
     t = len(state['ids'])
     g = {}
     gz = state['probs'].copy()
-    gz[np.arange(t), list(state['targets'])] -= 1.
+    gz[np.arange(t), np.asarray(state['targets']) - 1] -= 1.
     gz /= t
     g['Wout'] = state['h'].T @ gz
     gh = gz @ weights['Wout'].T
@@ -113,7 +118,7 @@ def backward(weights, state):
     g['P'] = np.zeros_like(weights['P'])
     g['P'][:t] += gx
     g['E'] = np.zeros_like(weights['E'])
-    np.add.at(g['E'], list(state['ids']), gx)
+    np.add.at(g['E'], state['indices'], gx)
     return g
 
 
@@ -122,7 +127,7 @@ def finite_difference_check(weights, grads, tol=3e-6):
     for name, value in weights.items():
         idx = (0,) * value.ndim
         if name == 'E':
-            idx = (1, 0)  # token ID 0 is unused in this example
+            idx = (1, 0)  # token ID 1 is unused in this example
         h = 1e-5
         old = value[idx]
         value[idx] = old + h
@@ -139,6 +144,12 @@ def finite_difference_check(weights, grads, tol=3e-6):
 def run_checks():
     w = parameters()
     assert abs(float(np.linalg.det(w['E'][[1, 3, 4]]))) > 1e-4
+    # Semantic IDs must select the same rows and probability columns as the book.
+    assert tuple(VOCAB[i - 1] for i in IDS) == ('春天', '花', '开了')
+    assert tuple(VOCAB[i - 1] for i in TARGETS) == ('花', '开了', '。')
+    edges = forward(w, ids=(1, 5), targets=(5, 1))
+    assert np.allclose(edges['x'], w['E'][[0, 4]] + w['P'][:2])
+    assert np.isclose(edges['loss'], -np.log(edges['probs'][[0, 1], [4, 0]]).mean())
     st = forward(w)
     assert st['x'].shape == (3, 3) and st['a'].shape == (3, 3)
     assert st['h'].shape == (3, 3) and st['probs'].shape == (3, 5)
@@ -147,7 +158,7 @@ def run_checks():
     assert st['probs'][1, 4] < st['probs'][1, 3], 'Middle position should initially err'
     # Replacing an earlier token while leaving the last token unchanged
     # must affect last-position logits (context sensitivity).
-    counter = forward(w, ids=(4, 3, 4), targets=None)
+    counter = forward(w, ids=(5, 4, 5), targets=None)
     delta = float(np.max(np.abs(counter['logits'][-1] - st['logits'][-1])))
     assert delta > 1e-4, f'Counterfactual too weak: {delta}'
     # Independent ablations: location and Value path, with everything else fixed.
@@ -176,17 +187,17 @@ def position_swap_example():
     """Independent two-token unmasked ablation using canonical 3D E, P, Q/K/V."""
     weights = parameters()
     def calc(ids, with_positions):
-        x = weights['E'][list(ids)].copy()
+        x = weights['E'][np.asarray(ids) - 1].copy()
         if with_positions:
             x += weights['P'][:len(ids)]
         q, k, v = (x @ weights[key] for key in ('Wq', 'Wk', 'Wv'))
         scores = q @ k.T / math.sqrt(q.shape[1])
         return softmax(scores) @ v
 
-    original = calc((1, 3), False)
-    reversed_ = calc((3, 1), False)
-    with_position = calc((1, 3), True)
-    reversed_position = calc((3, 1), True)
+    original = calc((2, 4), False)
+    reversed_ = calc((4, 2), False)
+    with_position = calc((2, 4), True)
+    reversed_position = calc((4, 2), True)
     assert np.allclose(reversed_, original[::-1], atol=1e-12)
     assert np.max(np.abs(reversed_position - with_position[::-1])) > 0.04
     assert np.allclose(with_position[0], [0.76804159, 0.51382512, -0.02654692], atol=3e-6)
@@ -231,11 +242,11 @@ def report():
         'learning_rate': LR, 'layernorm_epsilon': EPS,
         'shapes': {key: list(st[key].shape) for key in
                    ('x', 'q', 'k', 'v', 'a', 'r', 'b', 'hid', 'h', 'logits', 'probs')},
-        'position_losses_before': [-float(np.log(st['probs'][i, y])) for i, y in enumerate(TARGETS)],
-        'position_losses_after': [-float(np.log(st1['probs'][i, y])) for i, y in enumerate(TARGETS)],
+        'position_losses_before': [-float(np.log(st['probs'][i, y - 1])) for i, y in enumerate(TARGETS)],
+        'position_losses_after': [-float(np.log(st1['probs'][i, y - 1])) for i, y in enumerate(TARGETS)],
         'mean_loss_before': st['loss'], 'mean_loss_after': st1['loss'],
-        'true_probabilities_before': [float(st['probs'][i, y]) for i, y in enumerate(TARGETS)],
-        'true_probabilities_after': [float(st1['probs'][i, y]) for i, y in enumerate(TARGETS)],
+        'true_probabilities_before': [float(st['probs'][i, y - 1]) for i, y in enumerate(TARGETS)],
+        'true_probabilities_after': [float(st1['probs'][i, y - 1]) for i, y in enumerate(TARGETS)],
         'states_before': {key: st[key].tolist() for key in
                           ('x', 'u', 'q', 'k', 'v', 'a', 'raw', 'r', 'b',
                            'pre', 'hid', 'h', 'logits', 'probs')},
@@ -247,7 +258,7 @@ def report():
         'counterfactual_last_logit_max_delta': delta,
         'position_perturbation_logit_delta': position_delta,
         'value_projection_perturbation_logit_delta': value_delta,
-        'embedding_det_1_3_4': float(np.linalg.det(w['E'][[1, 3, 4]])),
+        'embedding_det_2_4_5': float(np.linalg.det(w['E'][[1, 3, 4]])),
     }
 
 

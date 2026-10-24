@@ -27,8 +27,9 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 于是$\vect a$ 的长度乘以$\vect b$ 在$\vect a$ 方向上的投影是 $4\times3=12$。
 而点积按坐标计算也等于 $4\times3+0\times4=12$。
 
+\tagstructbegin{tag=Figure,alttext={向量 a 为四零，向量 b 为三四；b 在 a 方向上的投影长三，夹角余弦为五分之三，点积为十二。}}
 \begin{center}
-\begin{tikzpicture}[scale=.77,>=Latex]
+\begin{tikzpicture}[scale=1.05,>=Latex]
 \draw[->,linegray,thick] (-.2,0)--(5.3,0);
 \draw[->,linegray,thick] (0,-.2)--(0,4.7);
 \draw[->,very thick,blue] (0,0)--(4,0) node[below right] {$\vect a=(4,0)$};
@@ -39,7 +40,10 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 \node[font=\small] at (1.12,.36) {$\theta$};
 \node[font=\small,below] at (1.5,0) {投影为 $3$};
 \end{tikzpicture}
+\captionof{figure}{点积等于一条向量的长度乘以另一条在该方向上的投影：$4\times3=12$}
+\label{fig:dot-product-projection}
 \end{center}
+\tagstructend
 
 \subsection{用余弦定理推广到任意向量}
 
@@ -74,10 +78,11 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 方向越接近，点积越接近 $1$；垂直为 $0$；方向相反为 $-1$。
 
 \begin{warningbox}
-非单位向量的点积不等于纯粹的角度相似度。
+原始点积同时包含长度和角度。
 例如 $(100,0)\cdot(1,0)=100$。后面用 Query 和 Key 计算匹配分数时，长度也会影响点积。
 \end{warningbox}
 
+\tagstructbegin{tag=Figure,alttext={三组单位向量夹角依次为十七度、九十度和一百六十五度，点积约为零点九六、零和负零点九七。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,x=19mm,y=19mm]
 \foreach \x/\ang/\score/\lab in {0/17/{\approx 0.96}/同向附近,2.9/90/{0}/垂直,5.8/165/{\approx -0.97}/反方向附近} {
@@ -90,8 +95,9 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 }
 \end{tikzpicture}
 
-{\footnotesize 三组箭头都按单位长度绘制；点积就是夹角的余弦。}
+\captionof{figure}{单位向量的夹角与点积：接近同向为正、垂直为零、接近反向为负}\label{fig:dot-product-angles}
 \end{center}
+\tagstructend
 
 如果以后需要比较一条\textbf{查询向量} $\vect q$
 与一条\textbf{候选向量} $\vect k_i$，可以用点积定义匹配分数：
@@ -107,8 +113,9 @@ s_i=\vect k_i^\top\vect q.
 这个求和过程叫\textbf{归约}（reduction）。
 若有许多不同的 Query--Key 配对，每对的分数可以分别计算，
 大量乘加和局部归约适合在 GPU 上并行执行。
-下一章把许多点积排成矩阵乘法；并行不意味着每次都更快，
-很小的计算还可能受启动及数据搬运开销限制。
+下一章把许多点积排成矩阵乘法；\begin{boundarybox}
+小规模运算的启动和数据搬运开销会抵消并行收益；实际速度要连同这些开销测量。
+\end{boundarybox}
 
 \chapterchecktasks{02-dot-product}{正文基础三题}{
 \item \textbf{手算：}求 $(1,2)\cdot(3,1)$，并说明点积为何是标量。

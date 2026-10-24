@@ -61,7 +61,7 @@
  "arguments":{"quarter":"2026Q3"}}
 \end{Verbatim}
 \end{tcolorbox}
-工具返回的可能是
+例如工具返回
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
 {"ok":true,"revenue":132,"unit":"million_CNY"}
@@ -200,7 +200,7 @@ Subagent/子任务分工 & 隔离部分上下文和工作；会带来协调与�
 g_{Q2}=(120-100)/100=20\%,\qquad
 g_{Q3}=(132-120)/120=10\%.
 \]
-如果 \texttt{read\_report(Q2)} 返回权限错误，程序不能用 Q1 代替 Q2。
+如果 \texttt{read\_report(Q2)} 返回权限错误，程序记录 Q2 缺失，并停止依赖 Q2 的环比计算。
 \end{example}
 \chapterchecktasks{23d-agent-tools}{正文基础三题}{
 \item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？

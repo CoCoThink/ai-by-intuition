@@ -1,5 +1,5 @@
 % Uniform 5-by-3 teaching E, from scripts/teaching_reference.py
-\tagstructbegin{tag=Figure,alttext={根据 Token ID 在五行三列的嵌入表中选取一行；ID 3 花对应负零点三、一点一、零点二}}
+\tagstructbegin{tag=Figure,alttext={根据 Token ID 在五行三列的嵌入表中选取一行；ID 4 花对应负零点三、一点一、零点二}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,x=11mm,y=7.5mm]
 \node[font=\small\bfseries,anchor=south] at (1.5,1.36) {Embedding 表 $E$（$5\times3$）};
@@ -11,14 +11,14 @@
 \node[font=\scriptsize] at (.5,{.5-\rr}) {$\aa$};
 \node[font=\scriptsize] at (1.5,{.5-\rr}) {$\bb$};
 \node[font=\scriptsize] at (2.5,{.5-\rr}) {$\cc$};
-\node[font=\footnotesize,anchor=east] at (-.25,{.5-\rr}) {ID \rr};
+\node[font=\footnotesize,anchor=east] at (-.25,{.5-\rr}) {ID \the\numexpr\rr+1\relax};
 }
 \draw[orange,very thick] (0,-3) rectangle (3,-2);
 \draw[->,orange,very thick] (3.16,-2.5)--(4.08,-2.5);
 \node[font=\small,align=left,anchor=west] at (4.22,-2.5)
- {ID 3（“花”）\\行向量 $(-0.3,1.1,0.2)$};
+ {ID 4（“花”）\\行向量 $(-0.3,1.1,0.2)$};
 \node[font=\scriptsize,anchor=west] at (0,-4.65)
- {编号从 0 开始；查表不是把 ID 本身当成特征。};
+ {编号从 1 开始；查表不是把 ID 本身当成特征。};
 \end{tikzpicture}
 \end{center}
 \begin{center}\captionof{figure}{三维 Embedding 按 ID 查表；数值均为教学设定}\label{fig:embedding-table}\end{center}

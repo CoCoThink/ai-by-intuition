@@ -15,7 +15,7 @@ def norm(x):
     return centered / torch.sqrt(centered.square().mean(dim=-1, keepdim=True) + EPS)
 
 def forward():
-    x = weights["E"][ids] + weights["P"]
+    x = weights["E"][ids - 1] + weights["P"]
     u = norm(x)
     q, k, v = (u @ weights[name] for name in ("Wq", "Wk", "Wv"))
     score = (q @ k.T) / math.sqrt(q.shape[1])
@@ -24,7 +24,7 @@ def forward():
     residual = x + (attention @ v) @ weights["Wo"]
     hidden = residual + torch.relu(norm(residual) @ weights["Wup"]) @ weights["Wdown"]
     logits = hidden @ weights["Wout"]
-    return torch.nn.functional.cross_entropy(logits, targets), logits
+    return torch.nn.functional.cross_entropy(logits, targets - 1), logits
 
 loss_before, z_before = forward()
 loss_before.backward()

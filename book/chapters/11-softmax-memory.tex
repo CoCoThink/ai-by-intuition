@@ -59,7 +59,7 @@ W_V:d_{\rm model}\times d_v.
 $W_Q=\begin{bmatrix}1&1\\0&2\end{bmatrix}$，
 则 $\vect q^\top=\vect x^\top W_Q=(2,8)$。
 如果用列向量写同一映射，必须写
-$\vect q=W_Q^\top\vect x$；不能只转置输入、不转置权重。
+$\vect q=W_Q^\top\vect x$；输入与权重需要一起转置。
 
 若一次有 $N$ 个 Query 和 $M$ 个 Key，
 $Q:N\times d_k$、$K:M\times d_k$、
@@ -144,7 +144,7 @@ Softmax 对每个 Query 的一行单独归一化，输出 $N\times d_v$。
 $(0.75,0.25)\begin{bmatrix}2&0\\0&4\end{bmatrix}=(1.5,1)$。
 \end{example}
 
-\subsection{为什么 FFN 不等于 Attention？}
+\subsection{FFN 与 Attention 分别处理什么？}
 $XW$ 对每个 Token 行做固定特征组合，
 $\sigma(XW_1)W_2$ 对每个 Token 行再施加非线性；
 $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。

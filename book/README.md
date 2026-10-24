@@ -28,7 +28,9 @@
 
 ## 自测题与答案的两级阅读
 
-**45 组随堂／提高自测均有三道正文基础题，另外 50 道延伸题在附录 C**，每组提供预测、计算或形状推导、找错、比较、场景或方案等不同能力的检验，避免将同一数值的二次归一化冒充“迁移”。每一组保留原 `check:` 和 `answer:` 跳转标签；**正文不在题目下面直接剧透答案，完整推导集中在附录**，[附录 D.2](chapters/28-chapter-checks.tex)按 `题 1…题 N` 给出独立的解题过程与核验依据，支持从正文直接跳至对应题组。旧版集中在 `book/main.tex` 的 27 组第四题库和速答库已清理，CI 逐章核对题型不重复、编号齐全和答案数量一致。**机器校验不等于完成真实教学试做**：难度梯度、读者理解效果、打印版逐页审校及实际屏读体验仍需人工签核。
+**45 组随堂／提高自测均有三道正文基础题，另外 50 道延伸题在附录 C**，每组提供预测、计算或形状推导、找错、比较、场景或方案等不同能力的检验，避免将同一数值的二次归一化冒充“迁移”。每一组保留原 `check:` 和 `answer:` 跳转标签；**正文不在题目下面直接剧透答案，完整推导集中在附录**，[附录 D.2](chapters/28-chapter-checks.tex)按 `题 1…题 N` 给出针对题目的“第一步”，再给出解题过程与核验依据，支持从正文直接跳至对应题组。旧版集中在 `book/main.tex` 的 27 组第四题库和速答库已清理，CI 逐章核对题型不重复、编号齐全和答案数量一致。**机器校验不等于完成真实教学试做**：难度梯度、读者理解效果、打印版逐页审校及实际屏读体验仍需人工签核。
+
+正文的教学词表 ID、位置与数学行列统一从 1 起。Python 只在查表和标签索引时减 1，矩阵参数与原有数值基线保持一致。附录 C 的 51 道编号练习按题首的章节归属生成章末题号链接；调整归属后运行 `python3 scripts/generate_chapter_navigation.py`，CI 用 `--check` 核对生成文件和 45 组答案标题。
 
 ## 一次构建，一本 Tagged PDF
 
@@ -38,6 +40,7 @@ CI 使用 **TeX Live 2026 + LuaLaTeX**，启动时要求 Noto 中文及西文字
 # 中文索引由双语术语表生成；先生成，避免直接编译占位页
 python3 -m pip install pypinyin==0.55.0
 python3 scripts/generate_chinese_index.py
+python3 scripts/generate_chapter_navigation.py --check
 python3 scripts/validate_book.py
 cd book
 latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex

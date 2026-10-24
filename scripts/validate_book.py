@@ -283,10 +283,10 @@ def validate_source() -> None:
     ast.parse(gate_source.read_text(encoding="utf-8"))
 
 
-    includes(sources["22c-language-training"], r"L_i=-\log\widehat P_{i,c_i}",
-             "legible correct-class column indexing in training")
-    includes(sources["00b-math-tools"], "数学概率列号",
-             "canonical ID-to-math-column conversion table")
+    includes(sources["22c-language-training"], r"L_i=-\log\widehat P_{i,y_i}",
+             "one-based target IDs directly index training probabilities")
+    includes(sources["00b-math-tools"], "词表 ID／数学列号",
+             "shared one-based ID and mathematical column numbering")
     includes(main, r"\part*{附录：公式、练习与答案}", "main")
     includes(main, r"\ctexset{", "native CTeX heading styling")
     includes(main, "bookmarksnumbered=true", "numbered PDF outline titles")
@@ -1037,15 +1037,13 @@ def validate_source() -> None:
     for old_bank in ("chapterchallenge@", "chapterchallengetype@", "chapterrecall@"):
         if old_bank in main:
             fail(f"Obsolete legacy per-chapter question bank remains: {old_bank}")
-    # Selected chapter-local practice links must land on actual appendix C problems.
-    chapter_practice = re.findall(
-        r"\\csname chapterpractice@([^\\]+)\\endcsname\{\\hyperref\[([^]]+)\]",
-        main)
-    if len(chapter_practice) != 12 or len({key for key, _ in chapter_practice}) != 12:
-        fail(f"Expected 12 distinct chapter practice links, got {chapter_practice}")
-    for chapter_id, target in chapter_practice:
-        if target not in labels:
-            fail(f"Missing appendix C practice target for {chapter_id}: {target}")
+    from pretraining_data_demo import run_checks as check_corpus_dedup
+    check_corpus_dedup()
+    from generate_chapter_navigation import validate_navigation
+    for problem in validate_navigation():
+        fail(problem)
+    if r"\input{chapter-practice}" not in main:
+        fail("Missing generated chapter practice navigation")
     if r"\textbf{补充题（" in sources["28-chapter-checks"]:
         fail("Answer appendix still contains legacy supplemental-task labels")
     print(f"Pedagogy QA: all {len(varied)} chapter checks fully redesigned, "
@@ -1744,9 +1742,11 @@ def validate_pdf(path: Path) -> None:
              "the route table must start on the same page")
 
     # R01 explicit pagination regression: after compressing the two-line locator,
-    # chapters 11 and 15 must end with a self-check AND a conclusion on the same
+    # chapters 10 and 14 must end with a self-check AND a conclusion on the same
     # substantive page. Never lower the generic orphan/blank-page thresholds.
     numbered_pages: dict[int, int] = {}
+    part_pages = [reader.get_destination_page_number(item)
+                  for item in reader.outline if not isinstance(item, list)]
     for item in reader.outline:
         if isinstance(item, list):
             for bookmark in item:
@@ -1759,7 +1759,13 @@ def validate_pdf(path: Path) -> None:
     for chapter_number in (10, 14):
         if chapter_number not in numbered_pages or chapter_number + 1 not in numbered_pages:
             fail(f"Missing chapter bookmarks for R01 page regression: {chapter_number}")
-        last_page_index = numbered_pages[chapter_number + 1] - 1
+        # A part's introduction can have its own page before its first chapter.
+        # End the preceding chapter at that boundary, not at the next chapter.
+        next_boundary = min([numbered_pages[chapter_number + 1]] + [
+            p for p in part_pages
+            if numbered_pages[chapter_number] < p < numbered_pages[chapter_number + 1]
+        ])
+        last_page_index = next_boundary - 1
         if last_page_index < numbered_pages[chapter_number]:
             fail(f"Chapter {chapter_number} has invalid physical page range")
         closing_page = pages[last_page_index]
@@ -1770,7 +1776,7 @@ def validate_pdf(path: Path) -> None:
             fail(f"R01 chapter {chapter_number} stranded its conclusion on PDF "
                  f"page {last_page_index + 1} (Han={han_count}); "
                  "retain the compact locator and real orphan gate")
-    print("R01 chapter-end pagination QA passed: chapters 11 and 15 retain "
+    print("R01 chapter-end pagination QA passed: chapters 10 and 14 retain "
           "self-check and substantive conclusion pages")
 
     compact = normalized(text)
@@ -1796,6 +1802,20 @@ def validate_pdf(path: Path) -> None:
                  "附录", "集中参考答案", "Key", "Value"):
         if normalized(item) not in compact:
             fail(f"Rendered PDF does not contain required material: {item}")
+    # Dedicated part introductions are intentional short pages. Accept only
+    # actual part bookmark destinations with both complete learning-bridge rows;
+    # all ordinary chapter pages retain the same orphan thresholds below.
+    part_openers = set()
+    for item in reader.outline:
+        if isinstance(item, list):
+            continue
+        if re.match(r"^第[一二三四五六七八九十]+部分", str(item.title)):
+            index = reader.get_destination_page_number(item)
+            if not all(label in pages[index] for label in ("从这里出发", "本部分你会学会")):
+                fail(f"Part introduction incomplete on page {index + 1}")
+            part_openers.add(index + 1)
+    if len(part_openers) != 8:
+        fail(f"Expected eight dedicated part introductions, got {sorted(part_openers)}")
     for i, page in enumerate(pages, 1):
         if i < 4 or not page.strip():
             continue
@@ -1816,7 +1836,8 @@ def validate_pdf(path: Path) -> None:
         # A short final bibliography page is legitimate, but an almost empty
         # intermediate page with a stranded conclusion is not. This caught the
         # prior ViT conclusion that occupied an entire page by itself.
-        if i < len(pages) - 1 and han_count < 90 and latin_words < 80 and not math_dense_page:
+        if (i < len(pages) - 1 and i not in part_openers
+                and han_count < 90 and latin_words < 80 and not math_dense_page):
             fail(f"Likely stranded content on interior page {i}: {han_count} Han chars")
     # Read only tag attributes: PDF text can contain literal control chars
     # that make pdftotext's XHTML *text nodes* invalid XML.

@@ -1,0 +1,19 @@
+\tagstructbegin{tag=Figure,alttext={四条小文本经规范化后：A 与 B 都是春天花开了，SHA256 前八位同为 c0ac0b65，合并精确重复；C 是春天的花开了，哈希不同但与 A 的二字片段 Jaccard 相似度为二分之一，进入近重复复核；D 是春天花谢了，相似度三分之一，且事实相反，应保留。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ n/.style={draw=linegray,rounded corners=2pt,fill=paper,align=left,
+ font=\small,minimum height=12mm,text width=58mm}]
+\node[n] (a) at (0,0) {A：春天花开了\\B：春天 花 开了。};
+\node[n,fill=blueback] (ab) at (78,0) {规范化后完全相同\\哈希 \texttt{c0ac0b65}，保留一份};
+\node[n] (c) at (0,-21) {C：春天的花开了\\哈希 \texttt{db2d9197}};
+\node[n,fill=orangeback] (near) at (78,-21) {$J(A,C)=3/6=0.5$\\近重复候选 $\to$ 内容复核};
+\node[n] (d) at (0,-42) {D：春天花谢了\\哈希 \texttt{b3dc2f3b}};
+\node[n,fill=greenback] (keep) at (78,-42) {$J(A,D)=2/6\approx0.333$\\含义相反，保留不同事实};
+\draw[->,thick,blue] (a)--(ab);
+\draw[->,thick,orange] (c)--(near);
+\draw[->,thick,teal] (d)--(keep);
+\end{tikzpicture}
+\captionof{figure}{先识别完全重复，再复核近重复；相似文本中的事实差异值得保留}
+\label{fig:corpus-dedup}
+\end{center}
+\tagstructend

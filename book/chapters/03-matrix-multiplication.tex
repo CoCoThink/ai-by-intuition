@@ -131,7 +131,7 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 \input{figures/row-column-intuition}
 
 \begin{warningbox}
-不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），甚至 $BA$ 可能根本无法相乘；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
+不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），交换后还须重新检查 $BA$ 的形状；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
 \end{warningbox}
 
 \chapterchecktasks{03-matrix-multiplication}{正文基础三题}{

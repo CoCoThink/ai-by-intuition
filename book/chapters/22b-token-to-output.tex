@@ -1,7 +1,7 @@
 \chapterrule
 \section{三维贯通实验：从 Token ID 到三个位置的输出概率}
 \label{intro:22b-token-to-output}
-\chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[1,3,4]\to H:3\times3\to P:3\times5$}{本章只做前向；参数取自统一三维例子}
+\chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to P:3\times5$}{本章只做前向；参数取自统一三维例子}
 \modelpipelinefocus{5}{输出头}
 
 前面已学过 Embedding、因果 Mask、Q/K/V、Norm、残差、
@@ -31,13 +31,13 @@ Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
 
 \subsection{第一步：Token ID、位置向量与输入形状}
 
-本书词表 ID 0--4 为“其他、春天、。、花、开了”。
-完整句子 $[1,3,4,2]$，此处输入 $[1,3,4]$，
-三位置的下一 Token 目标 $[3,4,2]$。
+本书词表 ID 1--5 为“其他、春天、。、花、开了”。
+完整句子 $[2,4,5,3]$，此处输入 $[2,4,5]$，
+三位置的下一 Token 目标 $[4,5,3]$。
 查 $5\times3$ 的 Embedding，逐行加 $3\times3$ 的位置向量后，
-Block 输入 $X=E_{[1,3,4]}+P$ 有三行：
+Block 输入 $X=E_{[2,4,5]}+P$ 有三行：
 \begin{equation}
-X=E_{[1,3,4]}+P\in\R^{3\times3},
+X=E_{[2,4,5]}+P\in\R^{3\times3},
 \qquad X_{1,:}=(1.30,\ 0.05,\ -0.30).
 \label{eq:running-three-token-x}
 \end{equation}
@@ -125,9 +125,9 @@ H=X_{\rm att}+F_{\rm mid}W_{\rm down}\in\R^{3\times3},
 \par\medskip
 \input{figures/three-position-probabilities}
 
-第一位置最大概率对应 ID 1“春天”，目标却是 ID 3“花”；
-第二位置最大概率对应 ID 3“花”，目标却是 ID 4“开了”；
-第三位置预测 ID 2“。”，与目标相同。
+第一位置最大概率对应 ID 2“春天”，目标却是 ID 4“花”；
+第二位置最大概率对应 ID 4“花”，目标却是 ID 5“开了”；
+第三位置预测 ID 3“。”，与目标相同。
 \textbf{训练前两题错、一题对}，并非预设三题全错。
 
 \begin{center}\small
@@ -187,7 +187,7 @@ Value + 输出投影 & $3\times3$ & $3\times3$ & 跨位置读取\\
 \subsection{改变前文，最后一行还会相同吗？}
 
 保持最后两个 Token 不变，
-仅把第一个输入由 ID 1 换成 ID 4，得到 $[4,3,4]$。
+仅把第一个输入由 ID 2 换成 ID 5，得到 $[5,4,5]$。
 第三行 logits 从约
 $(0,-0.3064,0.8002,-0.2620,0.5776)$
 变为

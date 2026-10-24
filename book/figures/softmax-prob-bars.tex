@@ -1,22 +1,24 @@
-% Discrete score bars become a normalized probability distribution.
-\tagstructbegin{tag=Figure,alttext={三个类别的 logits 为零、自然对数二、零；Softmax 后权重分别为零点二五、零点五零和零点二五，总和为一。}}
+\Needspace{90mm}
+% Show every score becoming a positive weight, then a probability bar.
+\tagstructbegin{tag=Figure,alttext={Softmax 的三步对应图：三类分数为零、自然对数二、零；取指数得到一、二、一；各除以总和四，得到零点二五、零点五零、零点二五。三条概率柱长度按一比二比一绘制，总和为一。}}
 \begin{center}
-\begin{tikzpicture}[x=15mm,y=8mm,>=Latex]
-\draw[->,muted] (-.1,0)--(8.5,0);
-\draw[->,muted] (0,0)--(0,5.1) node[above,font=\footnotesize] {Softmax 概率};
-\foreach \x/\p/\name/\prob in {
-  1.3/2.5/第一类/0.25,
-  3.9/5.0/第二类/0.50,
-  6.5/2.5/第三类/0.25
-}{
- \fill[purple!75] (\x,0) rectangle ++(1.2,{\p*.75});
- \node[font=\small] at ({\x+.6},{\p*.75+.35}) {$\prob$};
- \node[font=\footnotesize] at ({\x+.6},-.55) {\name};
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex,
+ n/.style={draw=linegray,rounded corners=2pt,fill=paper,minimum width=18mm,minimum height=9mm,font=\small}]
+\node[font=\small\bfseries] at (0,13) {分数 $z$};
+\node[font=\small\bfseries] at (43,13) {指数 $e^z$};
+\node[font=\small\bfseries] at (104,13) {概率 $p$};
+\foreach \y/\z/\e/\width/\prob/\class in {0/0/1/15/0.25/1,-16/{\log2}/2/30/0.50/2,-32/0/1/15/0.25/3}{
+ \node[font=\footnotesize,anchor=east] at (-13,\y) {类 \class};
+ \node[n] (z\class) at (0,\y) {$\z$};
+ \node[n,fill=blueback] (e\class) at (43,\y) {$\e$};
+ \draw[->,thick,blue] (z\class)--(e\class) node[midway,above,font=\scriptsize] {取指数};
+ \draw[->,thick,teal] (e\class.east)--(79,\y) node[midway,above,font=\scriptsize] {除以 $4$};
+ \filldraw[fill=purple!65,draw=purple] (82,{\y-3.5}) rectangle ({82+\width},{\y+3.5});
+ \node[font=\small,anchor=west] at ({84+\width},\y) {$\prob$};
 }
-\node[font=\footnotesize,anchor=west] at (.2,5.0) {原始分数 $(0,\log2,0)$};
-\node[font=\footnotesize,anchor=west] at (.2,4.35) {指数 $(1,2,1)$；分母 $4$};
-\node[font=\footnotesize,anchor=west] at (.2,-1.45) {概率相加 $1/4+1/2+1/4=1$};
+\node[font=\footnotesize,text=muted] at (55,-44) {分母 $1+2+1=4$；最终 $0.25+0.50+0.25=1$};
 \end{tikzpicture}
+\captionof{figure}{Softmax 逐项对应：分数取指数，再除以共同总和，得到和为一的权重}
+\label{fig:softmax-prob-bars}
 \end{center}
-\begin{center}\captionof{figure}{三类 Softmax：相对分数变成和为一的柱状概率}\label{fig:softmax-prob-bars}\end{center}
 \tagstructend

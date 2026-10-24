@@ -118,7 +118,7 @@ Softmax 后仍是 $4\times4$，
 输出 $AV$ 为 $4\times3$。
 这里通常\textbf{不使用语言生成时的因果掩码}，
 因为整张图已经可用；如果是图像生成或其他特殊任务，
-则可能采用不同的注意力可见性规则。
+则按其任务设计注意力可见性规则。
 
 图像分类 ViT 可以在 Patch 前加可训练的\textbf{分类 Token}
 \texttt{[CLS]}，让输入由 $4\times3$ 变成 $5\times3$，
@@ -169,13 +169,14 @@ X_{\rm LLM}=
 如果 Decoder-only 模型对这六个位置使用因果 Self-Attention，
 最后一个文字位置可以读取前面四个视觉位置和两个文字位置，
 其注意力分数矩阵是 $6\times6$；
-\textbf{还要加入适当的模态／位置信息}，
-不能仅拼两组数就自动学会看图回答。
+模型通过模态／位置信息和图文训练，学习如何联合使用这六行表示。
 
+\begin{boundarybox}
 \textbf{这是视觉前缀路线的一种教学简化。}
-实际多模态系统也可能重采样视觉 Token、
+实际多模态系统还可重采样视觉 Token、
 通过 Cross-Attention 注入视觉信息，或采用专门的融合模块；
 ViT 本身输出向量，不会直接生成自然语言。
+\end{boundarybox}
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 运行 \texttt{python3 scripts/vision\_bridge\_demo.py}

@@ -6,7 +6,7 @@ from teaching_reference import LR, backward, forward, parameters
 weights = parameters()
 for step in range(21):
     state = forward(weights)
-    predictions = np.argmax(state["probs"], axis=1).tolist()
+    predictions = (np.argmax(state["probs"], axis=1) + 1).tolist()
     print(f"{step:02d} {state['loss']:.6f} {predictions}")
     if step != 20:
         grads = backward(weights, state)

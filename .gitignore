@@ -26,3 +26,6 @@
 .DS_Store
 .vscode/
 .idea/
+
+# Python teaching and validation imports
+__pycache__/

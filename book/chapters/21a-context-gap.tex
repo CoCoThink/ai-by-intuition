@@ -2,7 +2,7 @@
 \chapterrule
 \section{逐个处理 Token，为什么仍看不到前文？}
 \label{intro:21a-context-gap}
-\chaptercompass{只逐行处理 Token，为什么无法理解前文？}{共享的逐位置函数只能看到本行输入，相同当前 Token 不能区分不同前文。}{$X:T\times d\to Y:T\times d'$，每个 $Y_t$ 只取决于 $X_t$}{逐位置变换的矩阵可学习，但不会自行产生跨行信息流}
+\chaptercompass{只逐行处理 Token，为什么无法理解前文？}{共享的逐位置函数只能看到本行输入，相同当前输入得到相同输出。}{$X:T\times d\to Y:T\times d'$，每个 $Y_t$ 只取决于 $X_t$}{逐位置变换的矩阵可学习，但不会自行产生跨行信息流}
 \modelpipelinefocus{3}{上下文信息缺口}
 
 独立处理每个 Token 的 MLP，只接收当前位置的向量。
@@ -28,8 +28,7 @@ f\bigl(E[\text{开了}]\bigr)
 =f\bigl(E[\text{开了}]\bigr).
 \]
 它无法仅凭这一行区分不同前文。
-\textbf{不是 MLP 永远不能用于语言建模，而是没有接收前文的
-逐 Token 计算结构，无法凭空获取前文信息。}
+要用 MLP 处理上下文，就要把前文也送进它的输入。
 
 \subsection{朴素办法：把前几个 Token 直接拼起来}
 
@@ -46,12 +45,12 @@ f\bigl(E[\text{开了}]\bigr)
 下一章先采用容易理解的方案：沿序列传递一份不断更新的状态。
 这叫 RNN。再下一步才尝试不经过一长串状态，直接读取某个位置。
 
-\begin{warningbox}
+\begin{boundarybox}
 这里比较的是三种具体输入机制：只看当前 Token、
 固定窗口拼接和逐步更新状态。
 不能据此断言某种网络“完全没有能力”或 Attention 总优于所有其他架构；
 还需要考虑任务长度、数据、参数量和计算代价。
-\end{warningbox}
+\end{boundarybox}
 
 \chapterchecktasks{21a-context-gap}{正文基础三题}{
 \item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？

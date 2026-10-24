@@ -41,7 +41,7 @@ L(w,1)=\frac23(w-2)^2,\qquad
 \]
 令导数为零，可直接解出 $w=2$，因此找到全局最小值。
 为什么复杂神经网络不总这么做？
-多层非线性网络的所有参数通常不能通过一个简单方程组直接解出，
+多层非线性网络通常需要用迭代优化求参数，
 而且导数为零并不总是全局最小值。
 我们需要能从当前位置逐步改善损失的方法。
 
@@ -137,10 +137,10 @@ L(1.4,0.6)
 \input{figures/loss-two-parameter-contours}
 
 
-\begin{warningbox}
+\begin{boundarybox}
 梯度指出局部下降方向，不保证任意学习率都使损失下降，
 也不能保证复杂非凸网络找到全局最优；学习率太大可能震荡或发散。
-\end{warningbox}
+\end{boundarybox}
 
 \subsection{一次训练要做哪四件事？}
 \begin{enumerate}

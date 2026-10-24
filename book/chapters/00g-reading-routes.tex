@@ -1,6 +1,6 @@
 \section*{怎么读：路线与数学预备}
 \phantomsection\label{front:reading-routes}
-\begingroup\small\setlength{\parskip}{1pt}\linespread{1.0}\selectfont
+\begingroup
 
 本书围绕同一条主线：先学参数怎样被训练，
 再把数字扩展为向量和矩阵，之后让 Token 读取上下文、
@@ -19,19 +19,6 @@
 
 可按页眉定位章节，按能否独立复算决定阅读速度。
 
-\subsection*{数学预备：开书前的四个小测试}
-试算 $2(3)+1=7$，$(-2)^2=4$，
-$\log(e^2)=2$，以及当 $z=wx+b,\ L=z^2/2$ 时
-$\partial L/\partial w=zx$。
-如果对数或最后一步不熟悉，可以先继续阅读，在梯度一章补上链式法则。
-\textbf{阅读门槛：}熟悉一元一次方程、负数和平方；在开始损失与梯度章节前，需要理解函数、对数与一元导数（例如 $(x^2)'=2x$）。不会的读者可先读\hyperref[app:math-tools]{附录 A 的数学速查}，再回到主线。
-
-\textbf{现在就算第一题：}由三个样本 $(1,3),(2,5),(3,7)$ 猜测
-$\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
-对新输入 $x=4$，得到预测 $\widehat y=9$；
-这一步是代入计算，接下来才学习怎样从损失自动调整参数。
-
-
 \subsection*{全书路径：先看输入与输出}
 \begin{center}
 \small\renewcommand{\arraystretch}{1.05}
@@ -48,14 +35,36 @@ $\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
 \end{center}
 \noindent{\footnotesize\color{muted}提高支线：附录 H--K 的联想记忆与容量；视觉桥接位于\hyperref[part:vision]{CNN 与 ViT 正文部分}。正文最后的“技术底座回顾”附有详细对照表。}
 
-\par\smallskip\noindent\textbf{贯穿全书的表示约定}\par
-Token ID 从 $0$ 编码，位置从 $1$ 数；数学矩阵元素下标从 $1$ 起，
-Python 数组下标从 $0$ 起。因此数学
-$(W_{\rm out})_{1,4}$ 与 \texttt{W\_out[0,3]} 是同一元素。
-如类别 ID 为 $y_i$，数学概率列号记为 $c_i=y_i+1$；
-联合训练的正确类别概率写成 $\widehat P_{i,c_i}$，脚本按 ID $y_i$ 查询数组列。
+\clearpage
+\subsection*{数学预备：开书前的四个小测试}
+需要会解一元一次方程、计算负数和平方，并理解函数、对数与一元导数；不熟悉就先读\hyperref[app:math-tools]{附录 A.2 数学速查}。
 
-每个 Token 占一行，投影按 $XW$ 计算；Q 蓝色、K 青绿色、V 橙色，
-并保留文字标签。“独立例”不使用三维贯通参数；
-示意报表与教学奖励均为虚构数据。
+用四个小测试核对准备情况：
+\begin{enumerate}[itemsep=4pt]
+\item 代入：$2(3)+1=7$。
+\item 平方：$(-2)^2=4$。
+\item 对数：$\log(e^2)=2$。
+\item 链式法则：$z=wx+b,\ L=z^2/2$ 时，$\partial L/\partial w=zx$。
+\end{enumerate}
+
+\textbf{现在就算第一题：}由三个样本 $(1,3),(2,5),(3,7)$ 猜测
+$\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
+对新输入 $x=4$，得到预测 $\widehat y=9$；
+这一步是代入计算，接下来才学习怎样从损失自动调整参数。
+
+
+
+\subsection*{表示约定：先按数学读，写代码时再换下标}
+
+\textbf{编号统一从 1 起。}教学词表 ID 为 $1$--$5$，位置和矩阵行列也从 $1$ 数。
+“花”的 ID 是 $4$，它在词表概率矩阵中就是第 $4$ 列；
+第一个位置预测“花”的概率直接写成 $\widehat P_{1,4}$。
+
+\textbf{每个 Token 占一行。}投影按 $XW$ 计算；Q 蓝色、K 青绿色、V 橙色，并保留文字标签。
+
+\textbf{代码只在索引时减 1。}Python 数组从 $0$ 起，
+数学 $(W_{\rm out})_{1,4}$ 对应 \texttt{W\_out[0,3]}。
+具体查表和标签转换见\hyperref[app:pytorch-lab]{附录 B 的代码实验}。
+
+\textbf{认清例子的身份。}“独立例”使用自己的参数；示意报表与教学奖励均为虚构数据。
 \endgroup

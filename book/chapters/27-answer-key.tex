@@ -1,31 +1,44 @@
 \subsection{集中参考答案与计算检查}
 \phantomsection\label{app:answers}
 
-本附录采用\textbf{提示 $\to$ 解答}的两级阅读方式；全部题目及\textbf{难度、对应章号}在附录 C。
+本附录采用\textbf{第一步 $\to$ 解答}的两级阅读方式；全部题目及\textbf{难度、对应章号}在附录 C。
 建议先核对\textbf{输入数字、运算步骤和输出维度}，
 再检查最后答案。数字正确而方向、形状不一致也需要订正。
 
 \subsubsection*{从数学到神经网络的综合练习}
-题目与难度见附录 C 的 C1 组练习；这里先给\textbf{提示}，再给\textbf{关键步骤}。
+题目与难度见附录 C 的 C1 组练习；这里先给\textbf{第一步}，再给\textbf{关键步骤}。
 一步回忆题只保留结论，复杂计算题展开中间量。
 
 
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
 \begin{enumerate}[label=\textbf{C1-\arabic*.},leftmargin=2.5em,itemsep=5pt]
-\item {\footnotesize\textbf{提示：}逐个把 $x$ 代入 $2x+1$。}\enspace \textbf{解答：} $(-1,1,5)$。
-\item {\footnotesize\textbf{提示：}先列出三项残差，再平方求平均。}\enspace \textbf{解答：} 预测为 $(-1,0,1)$、真实值为 $(-1,1,3)$，故 $\mathrm{MSE}=(0^2+(-1)^2+(-2)^2)/3=5/3$。
-\item {\footnotesize\textbf{提示：}先分别求 $\partial L/\partial w$ 与 $\partial L/\partial b$。}\enspace \textbf{解答：} $\nabla L(1,0)=(-4/3,-2)$；以 $\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。
-\item {\footnotesize\textbf{提示：}先算 $h$ 和预测，再用链式法则求权重梯度。}\enspace \textbf{解答：} $h=6$，$\widehat y=6$，$L=2$；$\partial L/\partial w_2=(\widehat y-y)h=(-2)\times6=-12$。
-\item {\footnotesize\textbf{提示：}对比训练和验证曲线的变化方向。}\enspace \textbf{解答：} 可能过拟合；可考虑更多合适数据、数据增强、L2 惩罚、Dropout、提前停止等，需用独立验证数据评估。
-\item {\footnotesize\textbf{提示：}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。}\enspace \textbf{解答：} 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。
-\item {\footnotesize\textbf{提示：}词表项数确定行数，特征宽度确定列数。}\enspace \textbf{解答：} $E:4\times3$；每个 Token 嵌入为 3 维。
-\item {\footnotesize\textbf{提示：}从 $h_0=0$ 开始依次代入递推式。}\enspace \textbf{解答：} $h_1=2$，$h_2=1$，$h_3=1.5$。
-\item {\footnotesize\textbf{提示：}依次核对 $QK^\top$、权重以及权重乘 $V$ 的形状。}\enspace \textbf{解答：} $QK^\top:3\times5$；权重仍为 $3\times5$；最终输出 $3\times6$。
-\item {\footnotesize\textbf{提示：}多头结果按列拼接，再确定输出矩阵的输入宽度。}\enspace \textbf{解答：} 拼接后 $3\times4$；若按行向量约定，$W_O:4\times4$。
-\item {\footnotesize\textbf{提示：}把真实类别概率代入 $-\log p$。}\enspace \textbf{解答：} $-\log(0.25)=\log4\approx1.386$。
-\item {\footnotesize\textbf{提示：}分别检查检索、来源和生成步骤可能引入的错误。}\enspace \textbf{解答：} 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。
-\item {\footnotesize\textbf{提示：}按点积、Softmax、读出、输出头、交叉熵的顺序算。}\enspace \textbf{解答：} $qK^\top=(1,1,2)$；Softmax 为
+\item {\footnotesize\textbf{第一步：}逐个把 $x$ 代入 $2x+1$。}\par\nobreak
+\textbf{解答：} $(-1,1,5)$。
+\item {\footnotesize\textbf{第一步：}先列出三项残差，再平方求平均。}\par\nobreak
+\textbf{解答：} 预测为 $(-1,0,1)$、真实值为 $(-1,1,3)$，故 $\mathrm{MSE}=(0^2+(-1)^2+(-2)^2)/3=5/3$。
+\item {\footnotesize\textbf{第一步：}先分别求 $\partial L/\partial w$ 与 $\partial L/\partial b$。}\par\nobreak
+\textbf{解答：} $\nabla L(1,0)=(-4/3,-2)$；以 $\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。
+\item {\footnotesize\textbf{第一步：}先算 $h$ 和预测，再用链式法则求权重梯度。}\par\nobreak
+\textbf{解答：} $h=6$，$\widehat y=6$，$L=2$；$\partial L/\partial w_2=(\widehat y-y)h=(-2)\times6=-12$。
+\item {\footnotesize\textbf{第一步：}对比训练和验证曲线的变化方向。}\par\nobreak
+\textbf{解答：} 可能过拟合；可考虑更多合适数据、数据增强、L2 惩罚、Dropout、提前停止等，需用独立验证数据评估。
+\item {\footnotesize\textbf{第一步：}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。}\par\nobreak
+\textbf{解答：} 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。
+\item {\footnotesize\textbf{第一步：}词表项数确定行数，特征宽度确定列数。}\par\nobreak
+\textbf{解答：} $E:4\times3$；每个 Token 嵌入为 3 维。
+\item {\footnotesize\textbf{第一步：}从 $h_0=0$ 开始依次代入递推式。}\par\nobreak
+\textbf{解答：} $h_1=2$，$h_2=1$，$h_3=1.5$。
+\item {\footnotesize\textbf{第一步：}依次核对 $QK^\top$、权重以及权重乘 $V$ 的形状。}\par\nobreak
+\textbf{解答：} $QK^\top:3\times5$；权重仍为 $3\times5$；最终输出 $3\times6$。
+\item {\footnotesize\textbf{第一步：}多头结果按列拼接，再确定输出矩阵的输入宽度。}\par\nobreak
+\textbf{解答：} 拼接后 $3\times4$；若按行向量约定，$W_O:4\times4$。
+\item {\footnotesize\textbf{第一步：}把真实类别概率代入 $-\log p$。}\par\nobreak
+\textbf{解答：} $-\log(0.25)=\log4\approx1.386$。
+\item {\footnotesize\textbf{第一步：}分别检查检索、来源和生成步骤可能引入的错误。}\par\nobreak
+\textbf{解答：} 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。
+\item {\footnotesize\textbf{第一步：}按点积、Softmax、读出、输出头、交叉熵的顺序算。}\par\nobreak
+\textbf{解答：} $qK^\top=(1,1,2)$；Softmax 为
 $(e,e,e^2)/(2e+e^2)\approx(0.212,0.212,0.576)$，
 读取 $r\approx(0.788058,0.788058)$。
 按照题设矩阵右乘，logits 约为
@@ -34,25 +47,28 @@ $z=(1.576117,0.788058,0)$，再做 Softmax，
 $\answerresult{L=-\log p_2\approx1.295781}$。
 \textbf{这次预测真正沿着读取向量和输出头得出}；
 若不给出输出头，Attention 权重本身不足以唯一决定词表概率。
-\item {\footnotesize\textbf{提示：}新输入的首行等于新 Embedding 行与相同位置向量之和。}\enspace \textbf{解答：} 改动后的第一行是
+\item {\footnotesize\textbf{第一步：}新输入的首行等于新 Embedding 行与相同位置向量之和。}\par\nobreak
+\textbf{解答：} 改动后的第一行是
 $X'_1=(0.15,-0.2,1.25)+(0.10,0.05,-0.10)
 =\answerresult{(0.25,-0.15,1.15)}$。
 因果 Attention 的第二、三位置可读取第一个位置，所以后续表示\textbf{可能}变化；
 这里没有更新任何权重，是一次输入反事实消融。
-\item {\footnotesize\textbf{提示：}逐行两两点积可形成 $XX^\top$。}\enspace \textbf{解答：} $XX^\top=
+\item {\footnotesize\textbf{第一步：}逐行两两点积可形成 $XX^\top$。}\par\nobreak
+\textbf{解答：} $XX^\top=
 \begin{bmatrix}2&0\\0&2\end{bmatrix}$，两条查询之间的点积都为 0，
 原始分数对称；若使用不同的可学习 Q/K 投影则不必对称。
-\item {\footnotesize\textbf{提示：}独立序列内部统计相邻对，比较次数。}\enspace \textbf{解答：} 两段内相邻对的总计数为
+\item {\footnotesize\textbf{第一步：}独立序列内部统计相邻对，比较次数。}\par\nobreak
+\textbf{解答：} 两段内相邻对的总计数为
 $(a,a):1$，$(a,b):2$；第一轮合并 $a+b\to ab$，
 得到 \texttt{a ab} 与 \texttt{ab}。
 每段单独切分与合并，不跨段统计相邻对。
 
-\item \textbf{提示：}每一步用上一步的权重，不要三次都从 $w_0$ 减。
+\item \textbf{第一步：}每一步用上一步的权重，不要三次都从 $w_0$ 减。
 \textbf{完整解答：}$w_1=1-0.01\times2=\answerresult{0.98}$，
 $w_2=0.98-0.02\times2=\answerresult{0.94}$，
 $w_3=0.94-0.03\times2=\answerresult{0.88}$。
 Warmup 改变更新步长 $\eta_t$，并不更换损失函数。
-\item \textbf{提示：}把权重缩小项和自适应更新项分开计算。
+\item \textbf{第一步：}把权重缩小项和自适应更新项分开计算。
 \textbf{完整解答：}$w_1=(1-0.1\times0.05)\times4-0.1\times0.5
 =\answerresult{3.93}$；无衰减得到 $\answerresult{3.95}$，
 差别为 $0.02$。AdamW 的权重衰减与自适应梯度方向\textbf{解耦}，
@@ -62,75 +78,93 @@ Warmup 改变更新步长 $\eta_t$，并不更换损失函数。
 
 \subsubsection*{现代 Transformer 与 Agent 练习}
 C2 组练习的\textbf{基础／标准／挑战}标签见附录 C；
-涉及多步计算的答案按“提示 $\to$ 解算 $\to$ 检查”阅读。
+涉及多步计算的答案按“第一步 $\to$ 解算 $\to$ 检查”阅读。
 
 
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,
  title={\sffamily\bfseries 参考答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
 \begin{enumerate}[label=\textbf{C2-\arabic*.},leftmargin=2.5em,itemsep=5pt]
-\item {\footnotesize\textbf{提示：}训练时输入序列和目标序列错开一个位置。}\enspace \textbf{解答：} 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
-\item {\footnotesize\textbf{提示：}先检查 $W_{\rm up}$ 和 $W_{\rm down}$ 的内侧维度。}\enspace \textbf{解答：} $W_{\rm up}:6\times18$，$W_{\rm down}:18\times6$；
+\item {\footnotesize\textbf{第一步：}训练时输入序列和目标序列错开一个位置。}\par\nobreak
+\textbf{解答：} 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
+\item {\footnotesize\textbf{第一步：}先检查 $W_{\rm up}$ 和 $W_{\rm down}$ 的内侧维度。}\par\nobreak
+\textbf{解答：} $W_{\rm up}:6\times18$，$W_{\rm down}:18\times6$；
 FFN 输出为 $4\times6$，词表 logits 为 $4\times100$。
-\item {\footnotesize\textbf{提示：}先进行上投影，再 ReLU，再下投影。}\enspace \textbf{解答：} 上投影是 $(2,1,1)$，ReLU 后为 $(2,1,1)$，
+\item {\footnotesize\textbf{第一步：}先进行上投影，再 ReLU，再下投影。}\par\nobreak
+\textbf{解答：} 上投影是 $(2,1,1)$，ReLU 后为 $(2,1,1)$，
 下投影结果是 $(5,2)$。
-\item {\footnotesize\textbf{提示：}因果掩码只允许当前位置读取自己及此前位置。}\enspace \textbf{解答：} 第 2 个位置能看到位置 $1,2$；第 1 个位置不能看到位置 $4$。
-\item {\footnotesize\textbf{提示：}正确类别的负对数就是单位置交叉熵。}\enspace \textbf{解答：} $-\log(0.2)=\log5\approx1.609$。
-\item {\footnotesize\textbf{提示：}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。}\enspace \textbf{解答：} MHA：$2\times120\times6\times4=5{,}760$ 个数；
+\item {\footnotesize\textbf{第一步：}因果掩码只允许当前位置读取自己及此前位置。}\par\nobreak
+\textbf{解答：} 第 2 个位置能看到位置 $1,2$；第 1 个位置不能看到位置 $4$。
+\item {\footnotesize\textbf{第一步：}正确类别的负对数就是单位置交叉熵。}\par\nobreak
+\textbf{解答：} $-\log(0.2)=\log5\approx1.609$。
+\item {\footnotesize\textbf{第一步：}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。}\par\nobreak
+\textbf{解答：} MHA：$2\times120\times6\times4=5{,}760$ 个数；
 GQA：$2\times120\times2\times4=1{,}920$ 个数；
 每个两字节时是 $3{,}840$ 字节（仅本层这些缓存数值）。
-\item {\footnotesize\textbf{提示：}相对旋转只取位置差 $n-m$。}\enspace \textbf{解答：} 相对角为 $(5-2)\theta=3\theta$。
-\item {\footnotesize\textbf{提示：}对分数排序即可确定 Top-1 与 Top-2。}\enspace \textbf{解答：} Top-1 选专家 2；Top-2 选专家 2 和 3。
+\item {\footnotesize\textbf{第一步：}相对旋转只取位置差 $n-m$。}\par\nobreak
+\textbf{解答：} 相对角为 $(5-2)\theta=3\theta$。
+\item {\footnotesize\textbf{第一步：}对分数排序即可确定 Top-1 与 Top-2。}\par\nobreak
+\textbf{解答：} Top-1 选专家 2；Top-2 选专家 2 和 3。
 只激活选中的专家，并不代表每次都运行全部专家。
-\item {\footnotesize\textbf{提示：}区分读取权限掩码和损失统计掩码。}\enspace \textbf{解答：} 因果掩码限制当前位置能够读取的 Key；
+\item {\footnotesize\textbf{第一步：}区分读取权限掩码和损失统计掩码。}\par\nobreak
+\textbf{解答：} 因果掩码限制当前位置能够读取的 Key；
 损失掩码决定哪些位置的预测误差参加训练目标的统计。
-\item {\footnotesize\textbf{提示：}先区分工具返回数据与用户授权指令。}\enspace \textbf{解答：} 那句话是\textbf{不可信外部内容}而非用户授权指令；
+\item {\footnotesize\textbf{第一步：}先区分工具返回数据与用户授权指令。}\par\nobreak
+\textbf{解答：} 那句话是\textbf{不可信外部内容}而非用户授权指令；
 未经适当验证和明确授权，不应执行向陌生外部地址发送文件的动作。
-\item {\footnotesize\textbf{提示：}判断任务是否有稳定步骤，及如何独立复核。}\enspace \textbf{解答：} 示例：固定格式的发票字段抽取可以使用确定工作流并做字段校验；
+\item {\footnotesize\textbf{第一步：}判断任务是否有稳定步骤，及如何独立复核。}\par\nobreak
+\textbf{解答：} 示例：固定格式的发票字段抽取可以使用确定工作流并做字段校验；
 跨多种格式的资料比较可以用 Agent 选择读取工具，
 最终均需核对来源、单位与输出内容。
-\item {\footnotesize\textbf{提示：}看训练是否会更新权重，还是只改变当前提示。}\enspace \textbf{解答：} SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；
-CoT 提示改变输入或生成形式，本身通常不更新参数。
-\item {\footnotesize\textbf{提示：}先求 $u^\top g_h$，再沿残差路径反传。}\enspace \textbf{解答：} 因 $h=u+\relu(u)W_{\rm down}$ 且 $u$ 两个分量均为正，
+\item {\footnotesize\textbf{第一步：}看训练是否会更新权重，还是只改变当前第一步。}\par\nobreak
+\textbf{解答：} SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；
+CoT 第一步改变输入或生成形式，本身通常不更新参数。
+\item {\footnotesize\textbf{第一步：}先求 $u^\top g_h$，再沿残差路径反传。}\par\nobreak
+\textbf{解答：} 因 $h=u+\relu(u)W_{\rm down}$ 且 $u$ 两个分量均为正，
 $\partial L/\partial W_{\rm down}=u^\top g_h
 \approx\begin{bmatrix}0.03206&0.23930\\0.16226&1.21101\end{bmatrix}$。
 上游梯度 $g_u=g_h(I_2+0.5I_2)=1.5g_h$，
 故 $\partial L/\partial W_V=a^\top g_u
 \approx\begin{bmatrix}0.04810&0.35895\\0.09765&0.72878\end{bmatrix}$。
 
-\item \textbf{提示：}先固定相邻季度的分母，再分别算两个增长率。
+\item \textbf{第一步：}先固定相邻季度的分母，再分别算两个增长率。
 \textbf{完整解答：}Q2 环比为 $(125-100)/100=\answerresult{25\%}$；
 Q3 环比为 $(132-125)/125=\answerresult{5.6\%}$。
 仅修改 Prompt 输入数据不改变网络权重；
 实际执行 SFT 训练才会进行参数更新。
-\item {\footnotesize\textbf{提示：}核对内侧维度是否相等；必要时转置 K。}\enspace \textbf{解答：} \textbf{形状纠错：} $Q:2\times3$、$K:4\times3$，
+\item {\footnotesize\textbf{第一步：}核对内侧维度是否相等；必要时转置 K。}\par\nobreak
+\textbf{解答：} \textbf{形状纠错：} $Q:2\times3$、$K:4\times3$，
 $QK$ 的内侧维度为 $3$ 和 $4$，不能相乘。
 必须先转置 Key：$QK^\top:2\times4$，
 逐行 Softmax 权重仍为 $2\times4$，
 再乘 $V:4\times5$，输出为 $2\times5$。
-\item {\footnotesize\textbf{提示：}分别区分随机激活屏蔽和检索数据的权限边界。}\enspace \textbf{解答：} \textbf{系统纠错：} Dropout 训练时随机屏蔽或缩放部分\textbf{激活}，
+\item {\footnotesize\textbf{第一步：}分别区分随机激活屏蔽和检索数据的权限边界。}\par\nobreak
+\textbf{解答：} \textbf{系统纠错：} Dropout 训练时随机屏蔽或缩放部分\textbf{激活}，
 不是永久删除参数；推理时通常停用随机屏蔽并使用匹配的尺度约定。
 检索排名不等于来源可信或权限授权；
 网页内容是低信任数据，必须核验来源，
 并由应用层单独校验工具和外发权限。
-\item \textbf{提示：}先把查询行向量右乘文档矩阵的转置，再排序。
+\item \textbf{第一步：}先把查询行向量右乘文档矩阵的转置，再排序。
 \textbf{完整解答：}$q=(0.2,1)$，
 $qD^\top=(0.2\cdot1+1\cdot0,\;0.2\cdot0+1\cdot1,\;
 0.2\cdot0.8+1\cdot0.8)=(0.2,1,0.96)$。
 Top-2 为 Q2、Q3；
 Q1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核对。
-\item \textbf{提示：}窗口包含当前位置，前两行还未填满窗口。
+\item \textbf{第一步：}窗口包含当前位置，前两行还未填满窗口。
 \textbf{完整解答：}五行可见位置数为 $(1,2,2,2,2)$，
 允许位置对总数 $1+2+2+2+2=\answerresult{9}$；
 这里包含查询自己的当前位置。
-\item {\footnotesize\textbf{提示：}均匀预测的正确类概率为 $1/1000$。}\enspace \textbf{解答：} 均匀预测 $p=1/1000$，
+\item {\footnotesize\textbf{第一步：}均匀预测的正确类概率为 $1/1000$。}\par\nobreak
+\textbf{解答：} 均匀预测 $p=1/1000$，
 所以 $-\ln p=\ln1000\approx\answerresult{6.908}$。
-\item {\footnotesize\textbf{提示：}修改窗口宽度，逐行数出允许位置对。}\enspace \textbf{解答：} \textbf{编程验证：}将 $w=3$ 代入五行因果滑窗，
+\item {\footnotesize\textbf{第一步：}修改窗口宽度，逐行数出允许位置对。}\par\nobreak
+\textbf{解答：} \textbf{编程验证：}将 $w=3$ 代入五行因果滑窗，
 逐行可见位置数为 $(1,2,3,3,3)$，
 允许位置对共 $\answerresult{12}$ 个，比 $w=2$ 多 $3$ 个。
 可添加 \texttt{assert sum(map(sum, sliding\_mask(5, 3))) == 12}。
 
-\item {\footnotesize\textbf{提示：}每行先做指数归一化，再右乘同一 $V$。}\enspace \textbf{解答：} 每行指数分数分别为 $(2,1,1)$、$(1,3,1)$、$(1,1,4)$，
+\item {\footnotesize\textbf{第一步：}每行先做指数归一化，再右乘同一 $V$。}\par\nobreak
+\textbf{解答：} 每行指数分数分别为 $(2,1,1)$、$(1,3,1)$、$(1,1,4)$，
 故 $A'=\boxed{\begin{bmatrix}
 1/2&1/4&1/4\\
 1/5&3/5&1/5\\
@@ -150,19 +184,31 @@ $Y'=\boxed{\begin{bmatrix}
 
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案},fonttitle=\sffamily\bfseries,coltitle=ink,breakable]
 \begin{enumerate}[label=\textbf{C3-\arabic*.}]
-\item {\footnotesize\textbf{提示：}先回顾两个单位向量点积与夹角的关系。}\enspace \textbf{解答：} $0.8$，两单位向量方向比较接近。
-\item {\footnotesize\textbf{提示：}单位 Key 满足 $kk^\top=1$。}\enspace \textbf{解答：} $kS=(kk^\top)v=v$（单位 Key 满足 $kk^\top=1$）。
-\item {\footnotesize\textbf{提示：}写出各个 Key 与查询的内积。}\enspace \textbf{解答：} 因为其他 Key 与查询的点积可能非零，它们的 Value 也会被加进输出。
-\item {\footnotesize\textbf{提示：}直接计算 $0.5$ 的二、三次方。}\enspace \textbf{解答：} 它们分别是 $0.5,0.25,0.125$；高次激活能更快压低小于 $1$ 的相似度。
-\item {\footnotesize\textbf{提示：}比较同一组分数在不同指数强度下的相对权重。}\enspace \textbf{解答：} 第一条（分数为 $1$）的相对权重上升；当 $\beta$ 很大时趋近于 $1$。
-\item {\footnotesize\textbf{提示：}ReLU 会将负匹配分数置零。}\enspace \textbf{解答：} $xK^\top=(-1,-1)$，所以 $\relu(xK^\top)=(0,0)$。
-\item {\footnotesize\textbf{提示：}先取匹配权重，再按行加权求和 Value。}\enspace \textbf{解答：} $aV=(0,6)$；这是两行 Value 按权重 $0$ 与 $2$ 求和。
-\item {\footnotesize\textbf{提示：}利用点积等于长度乘积乘余弦。}\enspace \textbf{解答：} $\vect a\cdot\vect b=6\times5=30$，$\|\vect a\|=6$，$\|\vect b\|=13$，$\cos\theta=5/13$，故 $6\times13\times(5/13)=30$。
-\item {\footnotesize\textbf{提示：}核对权重行乘 Value 矩阵的结果。}\enspace \textbf{解答：} $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$aV=(1.6,1.4)$，输出为一行。
-\item {\footnotesize\textbf{提示：}查询向量可以来自可学习投影。}\enspace \textbf{解答：} 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
-\item {\footnotesize\textbf{提示：}先得分矩阵，再看它右乘 $V$ 后的形状。}\enspace \textbf{解答：} $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
+\item {\footnotesize\textbf{第一步：}先回顾两个单位向量点积与夹角的关系。}\par\nobreak
+\textbf{解答：} $0.8$，两单位向量方向比较接近。
+\item {\footnotesize\textbf{第一步：}单位 Key 满足 $kk^\top=1$。}\par\nobreak
+\textbf{解答：} $kS=(kk^\top)v=v$（单位 Key 满足 $kk^\top=1$）。
+\item {\footnotesize\textbf{第一步：}写出各个 Key 与查询的内积。}\par\nobreak
+\textbf{解答：} 因为其他 Key 与查询的点积可能非零，它们的 Value 也会被加进输出。
+\item {\footnotesize\textbf{第一步：}直接计算 $0.5$ 的二、三次方。}\par\nobreak
+\textbf{解答：} 它们分别是 $0.5,0.25,0.125$；高次激活能更快压低小于 $1$ 的相似度。
+\item {\footnotesize\textbf{第一步：}比较同一组分数在不同指数强度下的相对权重。}\par\nobreak
+\textbf{解答：} 第一条（分数为 $1$）的相对权重上升；当 $\beta$ 很大时趋近于 $1$。
+\item {\footnotesize\textbf{第一步：}ReLU 会将负匹配分数置零。}\par\nobreak
+\textbf{解答：} $xK^\top=(-1,-1)$，所以 $\relu(xK^\top)=(0,0)$。
+\item {\footnotesize\textbf{第一步：}先取匹配权重，再按行加权求和 Value。}\par\nobreak
+\textbf{解答：} $aV=(0,6)$；这是两行 Value 按权重 $0$ 与 $2$ 求和。
+\item {\footnotesize\textbf{第一步：}利用点积等于长度乘积乘余弦。}\par\nobreak
+\textbf{解答：} $\vect a\cdot\vect b=6\times5=30$，$\|\vect a\|=6$，$\|\vect b\|=13$，$\cos\theta=5/13$，故 $6\times13\times(5/13)=30$。
+\item {\footnotesize\textbf{第一步：}核对权重行乘 Value 矩阵的结果。}\par\nobreak
+\textbf{解答：} $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$aV=(1.6,1.4)$，输出为一行。
+\item {\footnotesize\textbf{第一步：}查询向量可以来自可学习投影。}\par\nobreak
+\textbf{解答：} 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
+\item {\footnotesize\textbf{第一步：}先得分矩阵，再看它右乘 $V$ 后的形状。}\par\nobreak
+\textbf{解答：} $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
 
-\item {\footnotesize\textbf{提示：}依次写入 B、计算 A 的残差、再重读旧 B。}\enspace \textbf{解答：} 先写 B 得
+\item {\footnotesize\textbf{第一步：}依次写入 B、计算 A 的残差、再重读旧 B。}\par\nobreak
+\textbf{解答：} 先写 B 得
 $S_1=k_B^\top v_B=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}$；
 再写 A 时，$k_AS_1=(0,0.6)$，残差
 $r_A=(1,-0.6)$，因此

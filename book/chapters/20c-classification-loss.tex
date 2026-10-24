@@ -2,11 +2,11 @@
 \chapterrule
 \section{分类损失：预测错了哪一类，怎样调整分数？}
 \label{intro:20c-classification-loss}
-\chaptercompass{为什么原始 logits 不能直接当作概率？}{Softmax 将一行候选分数归一化，交叉熵度量目标类别概率。}{$z:1\times C\to p:1\times C\to L:1\times1$}{Softmax 与交叉熵没有自身可训练参数；上游输出头的权重可学习}
+\chaptercompass{怎样把 logits 变成概率？}{Softmax 将一行候选分数归一化，交叉熵度量目标类别概率。}{$z:1\times C\to p:1\times C\to L:1\times1$}{Softmax 与交叉熵没有自身可训练参数；上游输出头的权重可学习}
 \modelpipelinefocus{6}{词表 Softmax 与交叉熵}
 
 预测下一 Token 是一个\textbf{多类别预测}问题：
-模型要为词表里的每个候选 ID 打分，才能判断哪个更可能。
+模型要为词表里的每个候选 ID 打分，据此比较下一 Token 的候选。
 回归问题可以用均方误差（MSE）；这里先算适用于类别概率的交叉熵，
 再研究 Embedding 和网络怎样产生这些分数。
 
@@ -18,7 +18,7 @@
 \vect z=(0,\log 2,0)\quad(1\times3).
 \]
 这三个数称为 \textbf{logits（未归一化分数）}，
-可大可小，甚至为负，\textbf{不能直接当作概率}。
+是实数分数；经过 Softmax 才得到概率。
 输出维度为类别数：三分类有三个 logits；
 本书五项词表的下一 Token 预测则有五个 logits。
 二分类可以采用两个 logits，也可以采用一个 logit 加 Sigmoid，
