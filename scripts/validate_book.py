@@ -1547,50 +1547,54 @@ def validate_pdf(path: Path) -> None:
                      if "全书随堂自测参考解答" in body]
     answer_ends = [i for i, body in enumerate(pages)
                    if "全量中英对照" in body]
+    # Some chapters contain two distinct and intentionally adjacent exercise
+    # groups, both on the same PDF page. Count headings, not pages.
     question_pages = [i for i, body in enumerate(pages)
                       if "读完自测" in body]
-    if len(answer_starts) != 1 or len(answer_ends) != 1 or len(question_pages) != 43:
-        fail("Cannot locate exactly 43 checks and unique Appendix D.2 / E.1 bounds")
+    question_count = sum(body.count("读完自测") for body in pages)
+    if (len(answer_starts) != 1 or len(answer_ends) != 1
+            or question_count != 43):
+        fail(f"Expected 43 rendered self-check boxes and unique D.2 / E.1; "
+             f"found {question_count} checks")
+    if "章末先核对：" in text:
+        fail("Answer leaked immediately under self-check in reader PDF")
     start_answer, end_answer = answer_starts[0], answer_ends[0]
     if not 0 <= start_answer < end_answer < len(reader.pages):
         fail("Invalid Appendix D.2 answer pages")
     named_destinations = reader.named_destinations
-    distinct_targets = []
     question_page_set = set(question_pages)
-    for check_page in question_pages:
-        # Some longer lists put the link on the following page. However,
-        # adjacent *different* chapter checks (e.g. pages 52 and 53) must
-        # not be conflated, or the earlier check appears to have two links.
-        inspect_pages = [check_page]
-        if (check_page + 1 < len(reader.pages)
-                and check_page + 1 not in question_page_set):
-            inspect_pages.append(check_page + 1)
-        destinations = set()
-        for page_index in inspect_pages:
-            for ref in reader.pages[page_index].get("/Annots", []):
-                annot = ref.get_object()
-                action = annot.get("/A")
-                if action is None:
-                    continue
-                if hasattr(action, "get_object"):
-                    action = action.get_object()
-                if action.get("/S") != "/GoTo":
-                    continue
-                dest_name = str(action.get("/D", ""))
-                if dest_name not in named_destinations:
-                    continue
-                target_page = reader.get_destination_page_number(
-                    named_destinations[dest_name])
-                if start_answer <= target_page <= end_answer:
-                    destinations.add(dest_name)
-        if len(destinations) != 1:
-            fail(f"Chapter self-check on PDF page {check_page + 1} must have "
-                 f"exactly one clickable answer destination, got {sorted(destinations)}")
-        distinct_targets.extend(destinations)
-    if len(set(distinct_targets)) != 43:
-        fail(f"Chapter answers must have 43 distinct clickable destinations; "
-             f"found {len(set(distinct_targets))} (appendix-start-link regression)")
-    print("Chapter answer navigation QA: 43 check links resolve to "
+    # Include the immediately following page only if it has no new exercise
+    # heading: a breakable tcolorbox may place its answer link there.
+    inspect_pages = set(question_pages)
+    for question_page in question_pages:
+        if (question_page + 1 < len(reader.pages)
+                and question_page + 1 not in question_page_set):
+            inspect_pages.add(question_page + 1)
+    # Scan each candidate page only once, even when two self-checks share a
+    # page or adjacent earlier boxes flow into the same continuation page.
+    answer_links = []
+    for page_index in sorted(inspect_pages):
+        for ref in reader.pages[page_index].get("/Annots", []):
+            annot = ref.get_object()
+            action = annot.get("/A")
+            if action is None:
+                continue
+            if hasattr(action, "get_object"):
+                action = action.get_object()
+            if action.get("/S") != "/GoTo":
+                continue
+            dest_name = str(action.get("/D", ""))
+            if dest_name not in named_destinations:
+                continue
+            target_page = reader.get_destination_page_number(
+                named_destinations[dest_name])
+            if start_answer <= target_page < end_answer:
+                answer_links.append(dest_name)
+    if len(answer_links) != 43 or len(set(answer_links)) != 43:
+        fail(f"Every self-check must link to its unique answer: "
+             f"{len(answer_links)} links to {len(set(answer_links))} "
+             "distinct D.2 targets (expected 43 each)")
+    print("Chapter answer navigation QA: 43 self-check links resolve to "
           "43 distinct destinations within Appendix D.2")
     # Page-bottom regression: the "shape-first route" introduction may not be
     # stranded on a separate page from the first row of its table.
