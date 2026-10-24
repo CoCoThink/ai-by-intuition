@@ -120,3 +120,36 @@
 \subsubsection*{\hyperref[check:23a-from-toy-to-gpt]{23a-from-toy-to-gpt：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
 \item \phantomsection\label{extension:23a-from-toy-to-gpt:4}\textbf{原题 4：}\textbf{诊断：}五词表的均匀预测基线交叉熵为 $\ln5$；若手设初值的三维模型损失略高于此值，是否足以证明实现错误？先核对什么？ \hyperref[answer:23a-from-toy-to-gpt]{附录 D 本题解答}
 \end{enumerate}
+
+\subsubsection*{\hyperref[check:19-cnn]{19-cnn：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:19-cnn:4}\textbf{原题 4：}\textbf{方案：}图像分类时，何时可能使用池化减小空间分辨率？指出它可能丢失的一类细节信息。 \hyperref[answer:19-cnn]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:19b-vit]{19b-vit：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:19b-vit:4}\textbf{原题 4：}\textbf{场景：}模型要回答“图中左上角有什么？”，为什么不能只把四个 Patch 特征无序求平均后交给语言模型？给出保留位置的一种方法。 \hyperref[answer:19b-vit]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23aa-pretraining-icl]{23aa-pretraining-icl：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23aa-pretraining-icl:4}\textbf{原题 4：}\textbf{方案：}一份用户授权的季度报告需要按固定字段输出。只改格式、不读新资料与必须读取最新报告这两种目标，分别考虑 Prompt、SFT 与检索工具的作用。 \hyperref[answer:23aa-pretraining-icl]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23c-post-training]{23c-post-training：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23c-post-training:4}\textbf{原题 4：}\textbf{方案：}要使模型写出可核验的数学推导，比较“在 Prompt 中要求分步”“用示范数据 SFT”“根据最终答案正确与否作可验证奖励”改变了什么。 \hyperref[answer:23c-post-training]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23d-agent-rag]{23d-agent-rag：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23d-agent-rag:4}\textbf{原题 4：}\textbf{行动：}未找到 Q2 的原始表格时，应用应该怎样在结果中表示缺口？ \hyperref[answer:23d-agent-rag]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23d-agent-tools]{23d-agent-tools：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23d-agent-tools:4}\textbf{原题 4：}\textbf{选择：}三个固定格式文件按固定顺序处理，用 Workflow 还是动态 Agent 更容易审计？ \hyperref[answer:23d-agent-tools]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23d-agent-systems]{23d-agent-systems：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23d-agent-systems:4}\textbf{原题 4：}\textbf{权衡：}为继续多轮报告对话，比较应用层保存／检索历史与模型 KV Cache：分别保存什么、能否跨新会话恢复、有什么成本或限制？ \hyperref[answer:23d-agent-systems]{附录 D 本题解答}
+\item \phantomsection\label{extension:23d-agent-systems:5}\textbf{原题 5：}\textbf{场景：}执行 \texttt{read\_report(Q2)} 遇到拒绝访问或超时。设计至少两项应用侧处理步骤和一句给用户的明确反馈，不允许编造 Q2 数字补齐环比。 \hyperref[answer:23d-agent-systems]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23b-deployment-and-ecosystem]{23b-deployment-and-ecosystem：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23b-deployment-and-ecosystem:4}\textbf{原题 4：}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ \hyperref[answer:23b-deployment-and-ecosystem]{附录 D 本题解答}
+\end{enumerate}

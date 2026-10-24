@@ -138,15 +138,10 @@ $(132-120)/120=\boxed{10\%}$。
 运行 \texttt{python3 scripts/rag\_demo.py} 可核对向量形状、三项分数、top-k 排序及两种增长率。
 
 
-\chapterchecktasks{23d-agent-rag}{证据／手算／找错／行动}{
+\chapterchecktasks{23d-agent-rag}{正文基础三题}{
 \item \textbf{证据：}要比较 Q1--Q3，Top-2 只找到 Q3 和 Q1。缺哪个季度，下一步该怎样办？
-\chapterinlinehint{23d-agent-rag}{1}
 \item \textbf{手算：}已核实 Q2、Q3 收入为 $120$、$132$ 百万元，计算 Q3 环比。
-\chapterinlinehint{23d-agent-rag}{2}
 \item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？
-\chapterinlinehint{23d-agent-rag}{3}
-\item \textbf{行动：}未找到 Q2 的原始表格时，应用应该怎样在结果中表示缺口？
-\chapterinlinehint{23d-agent-rag}{4}
 }
 \chapterrecallanswer{检索证据先核对必需季度，再用真实数据计算；缺表时报告缺口。}
 \begin{conclusion}
