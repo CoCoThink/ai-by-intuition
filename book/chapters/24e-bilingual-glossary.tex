@@ -2,7 +2,8 @@
 \subsection{全量中英对照：136 项术语速查}
 \phantomsection\label{app:bilingual-glossary}
 
-这张表汇集基础与现代概念，按中文和 English 并排查找。
+这张表按 English 名称首字母分为 A--D 至 U--Z 六组；
+中英文并排列出基础与现代概念。
 先看一句话含义，再点击最右侧章节／页码，
 返回正文中的解释、公式或可手算的例子。
 
@@ -19,142 +20,154 @@
 \endhead
 \bottomrule
 \endfoot
-函数 & Function & 输入经过确定的计算规则得到输出，例如 $y=2x+1$。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-模型 & Model & 为完成任务选定的一套计算结构和参数。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-参数 & Parameter & 训练中直接学习的数，如权重 $w$ 和偏置 $b$。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-权重 & Weight & 控制输入特征对输出贡献的参数。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-偏置 & Bias & 线性变换后添加的常数或向量，使模型不必经过原点。 & \hyperref[intro:10-mlp]{\ref*{intro:10-mlp}/\pageref*{intro:10-mlp}}\\
-超参数 & Hyperparameter & 控制训练或结构的设置，如学习率、层数与批量大小。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-训练 & Training & 利用数据和损失函数更新模型参数。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-推理 & Inference & 用已训练的模型对新输入产生输出。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-样本 & Sample & 用于训练或评估的一组输入及可能的目标值。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
-标签 & Label & 监督学习中为样本提供的目标或正确类别。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-向量 & Vector & 有顺序的一列数字；可用来表示一个对象的多个特征。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
-维度 & Dimension & 向量有几个数，或矩阵有几行几列。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
-矩阵 & Matrix & 按行和列排列的数字表；可同时执行多个点积。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
-转置 & Transpose & 交换行与列，例如 $V$ 转成 $V^\top$。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
-点积 & Dot product & 对应分量相乘后求和；若向量归一化，可反映夹角余弦。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
-范数 & Norm & 衡量向量长度或大小的一类函数。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
-余弦相似度 & Cosine similarity & 点积除以两向量长度之积，关注方向。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
-线性变换 & Linear transformation & 可写成 $W\vect x$ 的运算；满足叠加规则。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
-非线性 & Nonlinearity & 不满足简单线性叠加的变化，例如 ReLU。 & \hyperref[intro:07-functions-relu]{\ref*{intro:07-functions-relu}/\pageref*{intro:07-functions-relu}}\\
+\addlinespace[4pt]
+\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English A--D / 英文首字母索引}\\*
 激活函数 & Activation function & 应用在线性层输出上的函数，扩展模型表达能力。 & \hyperref[intro:07-functions-relu]{\ref*{intro:07-functions-relu}/\pageref*{intro:07-functions-relu}}\\
-前向传播 & Forward propagation & 从输入沿计算图得到输出与损失。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-损失函数 & Loss function & 用数字评估预测与目标之间的差距。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-均方误差 & Mean squared error & 误差平方再取平均，常用于回归。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-交叉熵 & Cross-entropy & 衡量预测概率分布与目标之间差距的常用损失。 & \hyperref[concept:cross-entropy]{\ref*{concept:cross-entropy}/\pageref*{concept:cross-entropy}}\\
-导数 & Derivative & 衡量函数在某一点的局部变化率。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-偏导数 & Partial derivative & 多变量函数对某个变量求变化率，其他变量暂时固定。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-梯度 & Gradient & 将各个参数方向的偏导数组合起来。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-学习率 & Learning rate & 控制每次梯度更新步长的系数。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
-梯度下降 & Gradient descent & 沿梯度反方向逐步调整参数，尝试降低损失。 & \hyperref[intro:16a-gradient-descent]{\ref*{intro:16a-gradient-descent}/\pageref*{intro:16a-gradient-descent}}\\
-反向传播 & Backpropagation & 利用链式法则高效计算计算图中全部参数的梯度。 & \hyperref[intro:17-backpropagation]{\ref*{intro:17-backpropagation}/\pageref*{intro:17-backpropagation}}\\
-训练集 & Training set & 用于直接计算参数梯度与更新权重的数据。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-验证集 & Validation set & 用于选择超参数、模型方案和提前停止的数据。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-测试集 & Test set & 尽量保留到最后，估计泛化性能的数据。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-过拟合 & Overfitting & 训练表现优异但未见数据表现较差。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-欠拟合 & Underfitting & 模型没学到主要规律，训练和评估表现都不理想。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-泛化 & Generalization & 从已见样本学到能应用于新样本的规律。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-数据增强 & Data augmentation & 在标签语义不变的前提下变换样本，增加训练多样性。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-正则化 & Regularization & 通过参数惩罚或其他限制降低过拟合风险。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-随机失活 & Dropout & 训练时随机屏蔽一部分激活；推理时通常关闭。 & \hyperref[concept:dropout]{\ref*{concept:dropout}/\pageref*{concept:dropout}}\\
-提前停止 & Early stopping & 根据验证表现决定停止训练的时机。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
-小批次 & Mini-batch & 将数据分为较小的批次计算梯度。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-训练轮次 & Epoch & 训练过程完整遍历一次训练数据。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-批量大小 & Batch size & 一个批次包含多少训练样本。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-优化器 & Optimizer & 根据梯度与状态计算参数更新的算法。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
 Adam 优化器 & Adam & 结合动量和自适应尺度估计的常用优化器。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-梯度裁剪 & Gradient clipping & 限制梯度幅度，减少过大更新的风险。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-梯度消失 & Vanishing gradient & 反向传播到较早层时梯度变得过小。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-梯度爆炸 & Exploding gradient & 反向传播中梯度幅度变得过大。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
-残差连接 & Residual connection & 把输入直接加回模块输出，为信息传播提供旁路。 & \hyperref[concept:residual]{\ref*{concept:residual}/\pageref*{concept:residual}}\\
-归一化 & Normalization & 调整激活尺度或统计分布以辅助稳定训练。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
-多层感知机 & Multi-layer perceptron & 多层感知机；组合矩阵乘法、偏置和非线性激活。 & \hyperref[intro:10-mlp]{\ref*{intro:10-mlp}/\pageref*{intro:10-mlp}}\\
-全连接层 & Fully connected layer & 本层各输出单元能使用前一层所有输入特征。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
-卷积神经网络 & Convolutional neural network & 卷积神经网络；利用局部运算和共享权重处理空间模式。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+AdamW 优化器 & AdamW & 保留 Adam 的自适应更新并独立施加权重衰减。 & \hyperref[concept:adamw]{\ref*{concept:adamw}/\pageref*{concept:adamw}}\\
+智能体 & Agent & 围绕目标选择工具、执行动作并利用结果继续决策的系统。 & \hyperref[concept:agent]{\ref*{concept:agent}/\pageref*{concept:agent}}\\
+应用记忆 & Application memory & 应用保存并在需要时恢复的信息，不等于模型权重或 KV Cache。 & \hyperref[concept:app-memory]{\ref*{concept:app-memory}/\pageref*{concept:app-memory}}\\
+联想记忆串扰 & Associative memory interference & 多个不正交 Key 的读取贡献叠加，污染目标 Value。 & \hyperref[concept:memory-interference]{\ref*{concept:memory-interference}/\pageref*{concept:memory-interference}}\\
+反向传播 & Backpropagation & 利用链式法则高效计算计算图中全部参数的梯度。 & \hyperref[intro:17-backpropagation]{\ref*{intro:17-backpropagation}/\pageref*{intro:17-backpropagation}}\\
+批量大小 & Batch size & 一个批次包含多少训练样本。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+偏置 & Bias & 线性变换后添加的常数或向量，使模型不必经过原点。 & \hyperref[intro:10-mlp]{\ref*{intro:10-mlp}/\pageref*{intro:10-mlp}}\\
+字节对编码 & Byte pair encoding (BPE) & 在语料中反复合并高频相邻 Token 对，建立子词单元。 & \hyperref[concept:bpe]{\ref*{concept:bpe}/\pageref*{concept:bpe}}\\
+因果掩码 & Causal mask & 防止生成位置注意到未来 Token 的约束。 & \hyperref[concept:causal-mask]{\ref*{concept:causal-mask}/\pageref*{concept:causal-mask}}\\
+思维链提示 & Chain-of-thought (CoT) prompting & 可能要求模型输出中间步骤的提示形式，不等同于直接观察内部计算。 & \hyperref[concept:cot-prompt]{\ref*{concept:cot-prompt}/\pageref*{concept:cot-prompt}}\\
+上下文 & Context & 一次推理可读取的对话、检索片段和工具结果等上下文内容。 & \hyperref[concept:context]{\ref*{concept:context}/\pageref*{concept:context}}\\
+上下文窗口 & Context window & 单次处理所允许使用的 Token 长度范围。 & \hyperref[intro:23-llm-systems]{\ref*{intro:23-llm-systems}/\pageref*{intro:23-llm-systems}}\\
 卷积核 & Convolution kernel & 在图片局部区域滑动的可训练权重小矩阵。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
-步幅 & Stride & 卷积核在相邻位置移动的距离。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
-填充 & Padding & 在输入边界增添数值，用于调节输出大小与边界处理。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
-特征图 & Feature map & 卷积层输出的空间数字表。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
-池化 & Pooling & 对局部区域做最大值或平均等汇总。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
-循环神经网络 & Recurrent neural network & 循环神经网络；用递推隐藏状态处理序列。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
-隐藏状态 & Hidden state & 序列模型随位置传递的中间向量。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
-词元 & Token & 模型分词器定义的文本处理单元，不一定是一个完整词。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
-分词器 & Tokenizer & 将文本切成 Token 并映射到整数 ID 的方法。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
-词表 & Vocabulary & 允许的 Token 与其 ID 的集合。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
-独热编码 & One-hot encoding & 只有对应类别位置为一，其余为零的编码。 & \hyperref[intro:20-embeddings]{\ref*{intro:20-embeddings}/\pageref*{intro:20-embeddings}}\\
+卷积神经网络 & Convolutional neural network & 卷积神经网络；利用局部运算和共享权重处理空间模式。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+余弦相似度 & Cosine similarity & 点积除以两向量长度之积，关注方向。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
+交叉注意力 & Cross-attention & Query 来自一个序列，Key/Value 来自另一序列的注意力。 & \hyperref[concept:cross-attention]{\ref*{concept:cross-attention}/\pageref*{concept:cross-attention}}\\
+交叉熵 & Cross-entropy & 衡量预测概率分布与目标之间差距的常用损失。 & \hyperref[concept:cross-entropy]{\ref*{concept:cross-entropy}/\pageref*{concept:cross-entropy}}\\
+数据增强 & Data augmentation & 在标签语义不变的前提下变换样本，增加训练多样性。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+解码器 & Decoder & 按任务条件产生输出序列的网络部分。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
+Delta 更新规则 & Delta rule & 先读旧状态，用目标与旧输出的残差修正写入。 & \hyperref[concept:delta-rule]{\ref*{concept:delta-rule}/\pageref*{concept:delta-rule}}\\
+导数 & Derivative & 衡量函数在某一点的局部变化率。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+维度 & Dimension & 向量有几个数，或矩阵有几行几列。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
+点积 & Dot product & 对应分量相乘后求和；若向量归一化，可反映夹角余弦。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
+随机失活 & Dropout & 训练时随机屏蔽一部分激活；推理时通常关闭。 & \hyperref[concept:dropout]{\ref*{concept:dropout}/\pageref*{concept:dropout}}\\
+\addlinespace[4pt]
+\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English E--H / 英文首字母索引}\\*
+提前停止 & Early stopping & 根据验证表现决定停止训练的时机。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
 嵌入 & Embedding & 把离散 Token ID 映射到可学习的稠密向量。 & \hyperref[intro:20-embeddings]{\ref*{intro:20-embeddings}/\pageref*{intro:20-embeddings}}\\
 嵌入矩阵 & Embedding matrix & 存放词表各 Token 向量的一张权重表。 & \hyperref[intro:20-embeddings]{\ref*{intro:20-embeddings}/\pageref*{intro:20-embeddings}}\\
-序列 & Sequence & 有顺序的输入元素集合，例如一串 Token。 & \hyperref[intro:20-embeddings]{\ref*{intro:20-embeddings}/\pageref*{intro:20-embeddings}}\\
-时间步 & Time step & RNN 递推中当前处理到的序列位置。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
-长期依赖 & Long-range dependency & 较早位置的信息影响较晚位置的预测。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
-长短期记忆网络 & Long short-term memory & 利用门控状态改进长期信息传播的一类循环网络。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
-查询向量 & Query & 查询向量，表达当前这个位置想寻找什么。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
-键向量 & Key & 与 Query 做匹配的向量。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
-值向量 & Value & 被注意力权重组合后形成输出的向量。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
-自注意力 & Self-attention & Query、Key、Value 都来源于同一序列的注意力机制。 & \hyperref[concept:self-attention]{\ref*{concept:self-attention}/\pageref*{concept:self-attention}}\\
-交叉注意力 & Cross-attention & Query 来自一个序列，Key/Value 来自另一序列的注意力。 & \hyperref[concept:cross-attention]{\ref*{concept:cross-attention}/\pageref*{concept:cross-attention}}\\
-缩放点积 & Scaled dot-product attention & 把 Query 与 Key 的点积按维度尺度缩放。 & \hyperref[concept:scaled-dot-product]{\ref*{concept:scaled-dot-product}/\pageref*{concept:scaled-dot-product}}\\
-Softmax 归一化 & Softmax & 将分数转成非负且总和为一的一组权重。 & \hyperref[concept:softmax]{\ref*{concept:softmax}/\pageref*{concept:softmax}}\\
-因果掩码 & Causal mask & 防止生成位置注意到未来 Token 的约束。 & \hyperref[concept:causal-mask]{\ref*{concept:causal-mask}/\pageref*{concept:causal-mask}}\\
-多头注意力 & Multi-head attention & 用多组可训练投影并行学习不同注意力模式。 & \hyperref[concept:multihead]{\ref*{concept:multihead}/\pageref*{concept:multihead}}\\
-Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归一化等组合的架构。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
 编码器 & Encoder & 用于将输入转成上下文化表示的网络部分。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
-解码器 & Decoder & 按任务条件产生输出序列的网络部分。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
-预训练 & Pretraining & 通过大规模数据先学习一般的表示和模式。 & \hyperref[concept:pretraining]{\ref*{concept:pretraining}/\pageref*{concept:pretraining}}\\
+训练轮次 & Epoch & 训练过程完整遍历一次训练数据。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+专家路由器 & Expert router & 决定当前 Token 由哪些专家处理。 & \hyperref[concept:router]{\ref*{concept:router}/\pageref*{concept:router}}\\
+梯度爆炸 & Exploding gradient & 反向传播中梯度幅度变得过大。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+特征图 & Feature map & 卷积层输出的空间数字表。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+少样本提示 & Few-shot prompting & 在 Prompt 中放入少量示例以引导任务格式，是上下文学习的常见形式。 & \hyperref[concept:few-shot]{\ref*{concept:few-shot}/\pageref*{concept:few-shot}}\\
 微调 & Fine-tuning & 在已有模型权重上针对任务或行为继续训练。 & \hyperref[intro:23c-post-training]{\ref*{intro:23c-post-training}/\pageref*{intro:23c-post-training}}\\
-监督微调 & Supervised fine-tuning & 利用示范输入输出对继续调整模型。 & \hyperref[concept:sft]{\ref*{concept:sft}/\pageref*{concept:sft}}\\
-人类反馈强化学习 & Reinforcement learning from human feedback & 用人类反馈相关的偏好信号辅助模型行为优化。 & \hyperref[concept:rlhf]{\ref*{concept:rlhf}/\pageref*{concept:rlhf}}\\
-低秩适配 & Low-rank adaptation & 冻结多数基础权重并训练低秩参数的微调方法。 & \hyperref[concept:lora]{\ref*{concept:lora}/\pageref*{concept:lora}}\\
+前向传播 & Forward propagation & 从输入沿计算图得到输出与损失。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+全连接层 & Fully connected layer & 本层各输出单元能使用前一层所有输入特征。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+函数 & Function & 输入经过确定的计算规则得到输出，例如 $y=2x+1$。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
+泛化 & Generalization & 从已见样本学到能应用于新样本的规律。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+梯度 & Gradient & 将各个参数方向的偏导数组合起来。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+梯度裁剪 & Gradient clipping & 限制梯度幅度，减少过大更新的风险。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+梯度下降 & Gradient descent & 沿梯度反方向逐步调整参数，尝试降低损失。 & \hyperref[intro:16a-gradient-descent]{\ref*{intro:16a-gradient-descent}/\pageref*{intro:16a-gradient-descent}}\\
+组相对策略优化 & Group Relative Policy Optimization (GRPO) & 以组内相对奖励构造策略更新信号；还涉及归一化和裁剪等训练步骤。 & \hyperref[concept:grpo]{\ref*{concept:grpo}/\pageref*{concept:grpo}}\\
+分组查询注意力 & Grouped-query attention (GQA) & 让一组 Query 头共享 K/V 头，降低缓存规模。 & \hyperref[concept:gqa]{\ref*{concept:gqa}/\pageref*{concept:gqa}}\\
+幻觉 & Hallucination & 模型生成流畅但事实不可靠或没有证据的内容。 & \hyperref[intro:23d-agent-systems]{\ref*{intro:23d-agent-systems}/\pageref*{intro:23d-agent-systems}}\\
+隐藏状态 & Hidden state & 序列模型随位置传递的中间向量。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
+超参数 & Hyperparameter & 控制训练或结构的设置，如学习率、层数与批量大小。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+\addlinespace[4pt]
+\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English I--L / 英文首字母索引}\\*
+上下文学习 & In-context learning (ICL) & 利用当前请求中的任务说明和示例适配输出，不直接更新模型权重。 & \hyperref[concept:in-context-learning]{\ref*{concept:in-context-learning}/\pageref*{concept:in-context-learning}}\\
+推理 & Inference & 用已训练的模型对新输入产生输出。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
+键向量 & Key & 与 Query 做匹配的向量。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
+键值缓存 & KV cache & 保存过去 Token 的 Key/Value 表示供自回归解码复用。 & \hyperref[concept:kv-cache]{\ref*{concept:kv-cache}/\pageref*{concept:kv-cache}}\\
+标签 & Label & 监督学习中为样本提供的目标或正确类别。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+学习率 & Learning rate & 控制每次梯度更新步长的系数。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+学习率升温 & Learning rate warmup & 训练前几步由小到大调度学习率，控制初期更新步长。 & \hyperref[concept:lr-warmup]{\ref*{concept:lr-warmup}/\pageref*{concept:lr-warmup}}\\
+线性注意力 & Linear attention & 通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 & \hyperref[concept:linear-attention]{\ref*{concept:linear-attention}/\pageref*{concept:linear-attention}}\\
+线性变换 & Linear transformation & 可写成 $W\vect x$ 的运算；满足叠加规则。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
 未归一化分数 & Logits & 进入 Softmax 前、还没归一化的分数。 & \hyperref[concept:logits]{\ref*{concept:logits}/\pageref*{concept:logits}}\\
+长短期记忆网络 & Long short-term memory & 利用门控状态改进长期信息传播的一类循环网络。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
+长期依赖 & Long-range dependency & 较早位置的信息影响较晚位置的预测。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
+损失函数 & Loss function & 用数字评估预测与目标之间的差距。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+损失掩码 & Loss mask & 选择哪些位置参与损失统计，区别于因果注意力掩码。 & \hyperref[concept:loss-mask]{\ref*{concept:loss-mask}/\pageref*{concept:loss-mask}}\\
+低秩适配 & Low-rank adaptation & 冻结多数基础权重并训练低秩参数的微调方法。 & \hyperref[concept:lora]{\ref*{concept:lora}/\pageref*{concept:lora}}\\
+\addlinespace[4pt]
+\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English M--P / 英文首字母索引}\\*
+矩阵 & Matrix & 按行和列排列的数字表；可同时执行多个点积。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
+均方误差 & Mean squared error & 误差平方再取平均，常用于回归。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+小批次 & Mini-batch & 将数据分为较小的批次计算梯度。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+混合专家 & Mixture of experts (MoE) & 让不同 Token 按路由选择少数专家网络进行计算。 & \hyperref[concept:moe]{\ref*{concept:moe}/\pageref*{concept:moe}}\\
+模型 & Model & 为完成任务选定的一套计算结构和参数。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
+模型上下文协议 & Model Context Protocol & 模型应用连接外部工具和数据源的一种标准协议。 & \hyperref[concept:mcp]{\ref*{concept:mcp}/\pageref*{concept:mcp}}\\
+多头注意力 & Multi-head attention & 用多组可训练投影并行学习不同注意力模式。 & \hyperref[concept:multihead]{\ref*{concept:multihead}/\pageref*{concept:multihead}}\\
+多头潜在注意力 & Multi-head latent attention (MLA) & 通过潜在表示等机制尝试压缩注意力缓存。 & \hyperref[concept:mla]{\ref*{concept:mla}/\pageref*{concept:mla}}\\
+多层感知机 & Multi-layer perceptron & 多层感知机；组合矩阵乘法、偏置和非线性激活。 & \hyperref[intro:10-mlp]{\ref*{intro:10-mlp}/\pageref*{intro:10-mlp}}\\
+多查询注意力 & Multi-query attention (MQA) & 让多个 Query 头共享一组 K/V 头。 & \hyperref[concept:mqa]{\ref*{concept:mqa}/\pageref*{concept:mqa}}\\
+非线性 & Nonlinearity & 不满足简单线性叠加的变化，例如 ReLU。 & \hyperref[intro:07-functions-relu]{\ref*{intro:07-functions-relu}/\pageref*{intro:07-functions-relu}}\\
+范数 & Norm & 衡量向量长度或大小的一类函数。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
+归一化 & Normalization & 调整激活尺度或统计分布以辅助稳定训练。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
+独热编码 & One-hot encoding & 只有对应类别位置为一，其余为零的编码。 & \hyperref[intro:20-embeddings]{\ref*{intro:20-embeddings}/\pageref*{intro:20-embeddings}}\\
+开放权重 & Open weights & 允许获取模型权重；不必然意味着训练代码和数据完全开放。 & \hyperref[intro:23b-deployment-and-ecosystem]{\ref*{intro:23b-deployment-and-ecosystem}/\pageref*{intro:23b-deployment-and-ecosystem}}\\
+优化器 & Optimizer & 根据梯度与状态计算参数更新的算法。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+外积 & Outer product & 将列形式 Key 与行形式 Value 相乘，写成关联矩阵。 & \hyperref[concept:outer-product]{\ref*{concept:outer-product}/\pageref*{concept:outer-product}}\\
+输出头 & Output head & 把每个 Token 的隐藏向量映射为词表 logits，不等同于内部 FFN。 & \hyperref[concept:output-head]{\ref*{concept:output-head}/\pageref*{concept:output-head}}\\
+过拟合 & Overfitting & 训练表现优异但未见数据表现较差。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+填充 & Padding & 在输入边界增添数值，用于调节输出大小与边界处理。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+参数 & Parameter & 训练中直接学习的数，如权重 $w$ 和偏置 $b$。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
+偏导数 & Partial derivative & 多变量函数对某个变量求变化率，其他变量暂时固定。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
+池化 & Pooling & 对局部区域做最大值或平均等汇总。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+前置归一化 & Pre-Norm & 在某个计算子层之前进行归一化。 & \hyperref[concept:pre-norm]{\ref*{concept:pre-norm}/\pageref*{concept:pre-norm}}\\
+预训练 & Pretraining & 通过大规模数据先学习一般的表示和模式。 & \hyperref[concept:pretraining]{\ref*{concept:pretraining}/\pageref*{concept:pretraining}}\\
+提示输入 & Prompt & 提供给模型的任务说明、示例、问题等提示输入。 & \hyperref[concept:prompt]{\ref*{concept:prompt}/\pageref*{concept:prompt}}\\
+\addlinespace[4pt]
+\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English Q--T / 英文首字母索引}\\*
+量化 & Quantization & 用更低数值精度保存或计算部分权重与激活。 & \hyperref[concept:quant]{\ref*{concept:quant}/\pageref*{concept:quant}}\\
+查询向量 & Query & 查询向量，表达当前这个位置想寻找什么。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
+循环神经网络 & Recurrent neural network & 循环神经网络；用递推隐藏状态处理序列。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
+正则化 & Regularization & 通过参数惩罚或其他限制降低过拟合风险。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+人类反馈强化学习 & Reinforcement learning from human feedback & 用人类反馈相关的偏好信号辅助模型行为优化。 & \hyperref[concept:rlhf]{\ref*{concept:rlhf}/\pageref*{concept:rlhf}}\\
+可验证奖励强化学习 & Reinforcement learning with verifiable rewards (RLVR) & 利用可程序化核验的任务奖励进行学习。 & \hyperref[concept:rlvr]{\ref*{concept:rlvr}/\pageref*{concept:rlvr}}\\
+残差连接 & Residual connection & 把输入直接加回模块输出，为信息传播提供旁路。 & \hyperref[concept:residual]{\ref*{concept:residual}/\pageref*{concept:residual}}\\
+检索增强生成 & Retrieval-augmented generation & 检索外部资料并将结果提供给生成模型。 & \hyperref[concept:rag]{\ref*{concept:rag}/\pageref*{concept:rag}}\\
+可复用技能 & Reusable skill & 把一类任务的说明、约束和脚本包装为可复用能力。 & \hyperref[concept:skill]{\ref*{concept:skill}/\pageref*{concept:skill}}\\
+奖励模型 & Reward model & 从评价或偏好数据学习对候选回答的评分，不保证评分等同事实真值。 & \hyperref[concept:reward-model]{\ref*{concept:reward-model}/\pageref*{concept:reward-model}}\\
+均方根归一化 & Root Mean Square Normalization (RMSNorm) & 按特征的均方根控制数值尺度。 & \hyperref[concept:rmsnorm]{\ref*{concept:rmsnorm}/\pageref*{concept:rmsnorm}}\\
+旋转位置编码 & Rotary position embedding (RoPE) & 对 Q/K 中的分量对做位置相关旋转。 & \hyperref[concept:rope]{\ref*{concept:rope}/\pageref*{concept:rope}}\\
+样本 & Sample & 用于训练或评估的一组输入及可能的目标值。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
+缩放点积 & Scaled dot-product attention & 把 Query 与 Key 的点积按维度尺度缩放。 & \hyperref[concept:scaled-dot-product]{\ref*{concept:scaled-dot-product}/\pageref*{concept:scaled-dot-product}}\\
+自注意力 & Self-attention & Query、Key、Value 都来源于同一序列的注意力机制。 & \hyperref[concept:self-attention]{\ref*{concept:self-attention}/\pageref*{concept:self-attention}}\\
+序列 & Sequence & 有顺序的输入元素集合，例如一串 Token。 & \hyperref[intro:20-embeddings]{\ref*{intro:20-embeddings}/\pageref*{intro:20-embeddings}}\\
+目标位置错位 & Shifted targets & 每个输入位置的目标为下一位置 Token。 & \hyperref[concept:shifted-targets]{\ref*{concept:shifted-targets}/\pageref*{concept:shifted-targets}}\\
+滑动窗口注意力 & Sliding-window attention & 每个位置只读取一个有限的可见前缀窗口。 & \hyperref[concept:sliding-window-attention]{\ref*{concept:sliding-window-attention}/\pageref*{concept:sliding-window-attention}}\\
+Softmax 归一化 & Softmax & 将分数转成非负且总和为一的一组权重。 & \hyperref[concept:softmax]{\ref*{concept:softmax}/\pageref*{concept:softmax}}\\
+稀疏注意力 & Sparse attention & 只计算选择的 Token 对，不要求全部两两比较。 & \hyperref[concept:sparse-attention]{\ref*{concept:sparse-attention}/\pageref*{concept:sparse-attention}}\\
+步幅 & Stride & 卷积核在相邻位置移动的距离。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+子智能体与 A2A 通信 & Subagent and agent-to-agent (A2A) & 前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 & \hyperref[concept:subagent]{\ref*{concept:subagent}/\pageref*{concept:subagent}}\\
+监督微调 & Supervised fine-tuning & 利用示范输入输出对继续调整模型。 & \hyperref[concept:sft]{\ref*{concept:sft}/\pageref*{concept:sft}}\\
+SwiGLU 门控 & SwiGLU & 使用两个投影分支与逐元素门控的 FFN 变体。 & \hyperref[concept:swiglu]{\ref*{concept:swiglu}/\pageref*{concept:swiglu}}\\
+任务契约 & Task contract & 事先约定输入、目标、张量尺寸和结果的含义。 & \hyperref[concept:task-contract]{\ref*{concept:task-contract}/\pageref*{concept:task-contract}}\\
+教师强制 & Teacher forcing & 训练时以已知真实序列作为条件，一次预测多个后续位置。 & \hyperref[concept:teacher-forcing]{\ref*{concept:teacher-forcing}/\pageref*{concept:teacher-forcing}}\\
 温度 & Temperature & 通过缩放 logits 控制输出分布尖锐程度的参数。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\
+测试集 & Test set & 尽量保留到最后，估计泛化性能的数据。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+时间步 & Time step & RNN 递推中当前处理到的序列位置。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
+词元 & Token & 模型分词器定义的文本处理单元，不一定是一个完整词。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
+分词器 & Tokenizer & 将文本切成 Token 并映射到整数 ID 的方法。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
+工具调用 & Tool calling & 模型提出结构化请求，系统在检查后调用外部工具。 & \hyperref[concept:tool-calling]{\ref*{concept:tool-calling}/\pageref*{concept:tool-calling}}\\
 Top-k 采样 & Top-k sampling & 只在概率最高的若干候选中继续采样。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\
 Top-p 采样 & Top-p sampling & 保留累积概率达到阈值的一组高概率候选。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\
-上下文窗口 & Context window & 单次处理所允许使用的 Token 长度范围。 & \hyperref[intro:23-llm-systems]{\ref*{intro:23-llm-systems}/\pageref*{intro:23-llm-systems}}\\
-幻觉 & Hallucination & 模型生成流畅但事实不可靠或没有证据的内容。 & \hyperref[intro:23d-agent-systems]{\ref*{intro:23d-agent-systems}/\pageref*{intro:23d-agent-systems}}\\
-检索增强生成 & Retrieval-augmented generation & 检索外部资料并将结果提供给生成模型。 & \hyperref[concept:rag]{\ref*{concept:rag}/\pageref*{concept:rag}}\\
+训练 & Training & 利用数据和损失函数更新模型参数。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
+训练集 & Training set & 用于直接计算参数梯度与更新权重的数据。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归一化等组合的架构。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
+转置 & Transpose & 交换行与列，例如 $V$ 转成 $V^\top$。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
+\addlinespace[4pt]
+\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English U--Z / 英文首字母索引}\\*
+欠拟合 & Underfitting & 模型没学到主要规律，训练和评估表现都不理想。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+验证集 & Validation set & 用于选择超参数、模型方案和提前停止的数据。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
+值向量 & Value & 被注意力权重组合后形成输出的向量。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
+梯度消失 & Vanishing gradient & 反向传播到较早层时梯度变得过小。 & \hyperref[intro:18c-training-engineering]{\ref*{intro:18c-training-engineering}/\pageref*{intro:18c-training-engineering}}\\
+向量 & Vector & 有顺序的一列数字；可用来表示一个对象的多个特征。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
 向量检索 & Vector retrieval & 通过查询向量和候选向量的相似性寻找内容。 & \hyperref[intro:23d-agent-systems]{\ref*{intro:23d-agent-systems}/\pageref*{intro:23d-agent-systems}}\\
-模型上下文协议 & Model Context Protocol & 模型应用连接外部工具和数据源的一种标准协议。 & \hyperref[concept:mcp]{\ref*{concept:mcp}/\pageref*{concept:mcp}}\\
-智能体 & Agent & 围绕目标选择工具、执行动作并利用结果继续决策的系统。 & \hyperref[concept:agent]{\ref*{concept:agent}/\pageref*{concept:agent}}\\
+词表 & Vocabulary & 允许的 Token 与其 ID 的集合。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
+权重 & Weight & 控制输入特征对输出贡献的参数。 & \hyperref[intro:00-functions]{\ref*{intro:00-functions}/\pageref*{intro:00-functions}}\\
 工作流 & Workflow & 把多个固定或动态步骤组合成一个业务过程。 & \hyperref[concept:workflow]{\ref*{concept:workflow}/\pageref*{concept:workflow}}\\
-量化 & Quantization & 用更低数值精度保存或计算部分权重与激活。 & \hyperref[concept:quant]{\ref*{concept:quant}/\pageref*{concept:quant}}\\
-开放权重 & Open weights & 允许获取模型权重；不必然意味着训练代码和数据完全开放。 & \hyperref[intro:23b-deployment-and-ecosystem]{\ref*{intro:23b-deployment-and-ecosystem}/\pageref*{intro:23b-deployment-and-ecosystem}}\\
-任务契约 & Task contract & 事先约定输入、目标、张量尺寸和结果的含义。 & \hyperref[concept:task-contract]{\ref*{concept:task-contract}/\pageref*{concept:task-contract}}\\
-输出头 & Output head & 把每个 Token 的隐藏向量映射为词表 logits，不等同于内部 FFN。 & \hyperref[concept:output-head]{\ref*{concept:output-head}/\pageref*{concept:output-head}}\\
-上下文学习 & In-context learning (ICL) & 利用当前请求中的任务说明和示例适配输出，不直接更新模型权重。 & \hyperref[concept:in-context-learning]{\ref*{concept:in-context-learning}/\pageref*{concept:in-context-learning}}\\
-少样本提示 & Few-shot prompting & 在 Prompt 中放入少量示例以引导任务格式，是上下文学习的常见形式。 & \hyperref[concept:few-shot]{\ref*{concept:few-shot}/\pageref*{concept:few-shot}}\\
-教师强制 & Teacher forcing & 训练时以已知真实序列作为条件，一次预测多个后续位置。 & \hyperref[concept:teacher-forcing]{\ref*{concept:teacher-forcing}/\pageref*{concept:teacher-forcing}}\\
-字节对编码 & Byte pair encoding (BPE) & 在语料中反复合并高频相邻 Token 对，建立子词单元。 & \hyperref[concept:bpe]{\ref*{concept:bpe}/\pageref*{concept:bpe}}\\
-目标位置错位 & Shifted targets & 每个输入位置的目标为下一位置 Token。 & \hyperref[concept:shifted-targets]{\ref*{concept:shifted-targets}/\pageref*{concept:shifted-targets}}\\
-损失掩码 & Loss mask & 选择哪些位置参与损失统计，区别于因果注意力掩码。 & \hyperref[concept:loss-mask]{\ref*{concept:loss-mask}/\pageref*{concept:loss-mask}}\\
-可验证奖励强化学习 & Reinforcement learning with verifiable rewards (RLVR) & 利用可程序化核验的任务奖励进行学习。 & \hyperref[concept:rlvr]{\ref*{concept:rlvr}/\pageref*{concept:rlvr}}\\
-奖励模型 & Reward model & 从评价或偏好数据学习对候选回答的评分，不保证评分等同事实真值。 & \hyperref[concept:reward-model]{\ref*{concept:reward-model}/\pageref*{concept:reward-model}}\\
-组相对策略优化 & Group Relative Policy Optimization (GRPO) & 以组内相对奖励构造策略更新信号；还涉及归一化和裁剪等训练步骤。 & \hyperref[concept:grpo]{\ref*{concept:grpo}/\pageref*{concept:grpo}}\\
-学习率升温 & Learning rate warmup & 训练前几步由小到大调度学习率，控制初期更新步长。 & \hyperref[concept:lr-warmup]{\ref*{concept:lr-warmup}/\pageref*{concept:lr-warmup}}\\
-AdamW 优化器 & AdamW & 保留 Adam 的自适应更新并独立施加权重衰减。 & \hyperref[concept:adamw]{\ref*{concept:adamw}/\pageref*{concept:adamw}}\\
-思维链提示 & Chain-of-thought (CoT) prompting & 可能要求模型输出中间步骤的提示形式，不等同于直接观察内部计算。 & \hyperref[concept:cot-prompt]{\ref*{concept:cot-prompt}/\pageref*{concept:cot-prompt}}\\
-旋转位置编码 & Rotary position embedding (RoPE) & 对 Q/K 中的分量对做位置相关旋转。 & \hyperref[concept:rope]{\ref*{concept:rope}/\pageref*{concept:rope}}\\
-均方根归一化 & Root Mean Square Normalization (RMSNorm) & 按特征的均方根控制数值尺度。 & \hyperref[concept:rmsnorm]{\ref*{concept:rmsnorm}/\pageref*{concept:rmsnorm}}\\
-前置归一化 & Pre-Norm & 在某个计算子层之前进行归一化。 & \hyperref[concept:pre-norm]{\ref*{concept:pre-norm}/\pageref*{concept:pre-norm}}\\
-SwiGLU 门控 & SwiGLU & 使用两个投影分支与逐元素门控的 FFN 变体。 & \hyperref[concept:swiglu]{\ref*{concept:swiglu}/\pageref*{concept:swiglu}}\\
-混合专家 & Mixture of experts (MoE) & 让不同 Token 按路由选择少数专家网络进行计算。 & \hyperref[concept:moe]{\ref*{concept:moe}/\pageref*{concept:moe}}\\
-专家路由器 & Expert router & 决定当前 Token 由哪些专家处理。 & \hyperref[concept:router]{\ref*{concept:router}/\pageref*{concept:router}}\\
-多查询注意力 & Multi-query attention (MQA) & 让多个 Query 头共享一组 K/V 头。 & \hyperref[concept:mqa]{\ref*{concept:mqa}/\pageref*{concept:mqa}}\\
-分组查询注意力 & Grouped-query attention (GQA) & 让一组 Query 头共享 K/V 头，降低缓存规模。 & \hyperref[concept:gqa]{\ref*{concept:gqa}/\pageref*{concept:gqa}}\\
-多头潜在注意力 & Multi-head latent attention (MLA) & 通过潜在表示等机制尝试压缩注意力缓存。 & \hyperref[concept:mla]{\ref*{concept:mla}/\pageref*{concept:mla}}\\
-键值缓存 & KV cache & 保存过去 Token 的 Key/Value 表示供自回归解码复用。 & \hyperref[concept:kv-cache]{\ref*{concept:kv-cache}/\pageref*{concept:kv-cache}}\\
-滑动窗口注意力 & Sliding-window attention & 每个位置只读取一个有限的可见前缀窗口。 & \hyperref[concept:sliding-window-attention]{\ref*{concept:sliding-window-attention}/\pageref*{concept:sliding-window-attention}}\\
-稀疏注意力 & Sparse attention & 只计算选择的 Token 对，不要求全部两两比较。 & \hyperref[concept:sparse-attention]{\ref*{concept:sparse-attention}/\pageref*{concept:sparse-attention}}\\
-线性注意力 & Linear attention & 通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 & \hyperref[concept:linear-attention]{\ref*{concept:linear-attention}/\pageref*{concept:linear-attention}}\\
-外积 & Outer product & 将列形式 Key 与行形式 Value 相乘，写成关联矩阵。 & \hyperref[concept:outer-product]{\ref*{concept:outer-product}/\pageref*{concept:outer-product}}\\
-联想记忆串扰 & Associative memory interference & 多个不正交 Key 的读取贡献叠加，污染目标 Value。 & \hyperref[concept:memory-interference]{\ref*{concept:memory-interference}/\pageref*{concept:memory-interference}}\\
-Delta 更新规则 & Delta rule & 先读旧状态，用目标与旧输出的残差修正写入。 & \hyperref[concept:delta-rule]{\ref*{concept:delta-rule}/\pageref*{concept:delta-rule}}\\
-提示输入 & Prompt & 提供给模型的任务说明、示例、问题等提示输入。 & \hyperref[concept:prompt]{\ref*{concept:prompt}/\pageref*{concept:prompt}}\\
-上下文 & Context & 一次推理可读取的对话、检索片段和工具结果等上下文内容。 & \hyperref[concept:context]{\ref*{concept:context}/\pageref*{concept:context}}\\
-应用记忆 & Application memory & 应用保存并在需要时恢复的信息，不等于模型权重或 KV Cache。 & \hyperref[concept:app-memory]{\ref*{concept:app-memory}/\pageref*{concept:app-memory}}\\
-工具调用 & Tool calling & 模型提出结构化请求，系统在检查后调用外部工具。 & \hyperref[concept:tool-calling]{\ref*{concept:tool-calling}/\pageref*{concept:tool-calling}}\\
-可复用技能 & Reusable skill & 把一类任务的说明、约束和脚本包装为可复用能力。 & \hyperref[concept:skill]{\ref*{concept:skill}/\pageref*{concept:skill}}\\
-子智能体与 A2A 通信 & Subagent and agent-to-agent (A2A) & 前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 & \hyperref[concept:subagent]{\ref*{concept:subagent}/\pageref*{concept:subagent}}\\
 \end{longtable}
 \endgroup
 

@@ -934,6 +934,13 @@ def validate_source() -> None:
              "unified bilingual table anchor")
     includes(sources["24e-bilingual-glossary"], r"\pageref*{",
              "page-linked single typeset glossary")
+    english_groups = re.findall(
+        r"English ([A-Z]--[A-Z]) / 英文首字母索引",
+        sources["24e-bilingual-glossary"])
+    if english_groups != ["A--D", "E--H", "I--L", "M--P", "Q--T", "U--Z"]:
+        fail(f"Glossary alphabetical sections missing or out of order: {english_groups}")
+    if len(re.findall(r"\\hyperref\[", sources["24e-bilingual-glossary"])) != 136:
+        fail("Alphabetical glossary must retain 136 clickable entries")
     for unused in ("24-lexicon", "24b-modern-lexicon", "24d-english-index"):
         if rf"\input{{chapters/{unused}}}" in main:
             fail(f"Canonical glossary source must not be typeset: {unused}")
