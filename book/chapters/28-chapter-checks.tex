@@ -89,14 +89,16 @@
 \par\textbf{题 2（形状）：}三个位置乘五类分数，logits 为 $\answerresult{3\times5}$。
 \par\textbf{题 3（找错）：}把未来目标送进了当前位置可见的输入，违反因果预测的可见性约束。
 \par\textbf{题 4（方案）：}训练数据里的真实前缀已知，因果 Mask 允许各位置并行算分数；生成的下一输入取决于前一步实际选出的 Token，必须依次确定。
-\item[\textbf{第 15 章}] \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace 回忆：缺少此前位置的信息；
-手算：两次输出均为 $\answerresult{7}$；
-辨析：可将前文表示加入输入、递推状态或 Attention 可见位置。
-\par\textbf{补充题（比较）：}独立逐词函数看不到历史；上下文模型可以据不同前文作不同预测。
-\item[\textbf{第 16 章}] \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace 回忆：状态按序列位置向后递推；
-手算：$h_1=2,h_2=\answerresult{1}$；
-辨析：$h_3=1+0.5\times1=\answerresult{1.5}$。
-\par\textbf{补充题（预测）：}可能变化，递推状态把初态的影响传给后续位置。
+\item[\textbf{第 15 章}] \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{为什么需要上下文}}\enspace
+\textbf{题 1（预测）：}不能。输入只保留当前 Token 时，两句进入函数的是同一个表示，输出无法仅因不可见的前文改变。
+\par\textbf{题 2（手算）：}两句都得到 $\answerresult{7}$。
+\par\textbf{题 3（找错）：}需要固定输入长度／截断和相应参数或计算预算；直接拼接不能免费覆盖无限历史。
+\par\textbf{题 4（方案）：}RNN 将历史压入递推状态，长依赖可能衰减、计算串行；Attention 对历史位置直接算匹配，可能增加随长度增长的存储与算力开销。
+\item[\textbf{第 16 章}] \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 递推状态}}\enspace
+\textbf{题 1（流程）：}每一步根据 $x_t$ 与 $h_{t-1}$ 计算 $h_t$；状态把部分历史摘要传给未来位置。
+\par\textbf{题 2（手算）：}$h_1=\answerresult{2}$，$h_2=0+0.5\cdot2=\answerresult{1}$，$h_3=1+0.5\cdot1=\answerresult{1.5}$。
+\par\textbf{题 3（预测）：}第一个输入增加 $2$，经两次系数 $0.5$ 传播，到 $h_3$ 增加 $2(0.5)^2=\answerresult{0.5}$，变为 $2$。
+\par\textbf{题 4（权衡）：}RNN 一步依赖上一步，难并行且可能淡忘远处信息；全 Attention 可直接访问历史，但全序列匹配存储／运算可能随长度平方增长。
 \item[\textbf{第 17 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace
 \textbf{题 1（手算）：}第一行 $(1,0,1)$，第三行 $(1,1,2)$，$S_{13}=S_{31}=\answerresult{1}$。
 \par\textbf{题 2（预测）：}不必相等。$A_{13}=e/(2e+1)$，$A_{31}=e/(2e+e^2)$；虽然对应原始分数同为 $1$，每行 Softmax 的分母不同。
@@ -107,24 +109,27 @@
 \par\textbf{题 2（手算）：}$0.2(1,0)+0.8(0,1)=\answerresult{(0.2,0.8)}$。
 \par\textbf{题 3（找错）：}分数来自 Query 与 Key，Value 只进加权求和。改 Value 不直接改 Q/K 原始分数，但可能改变读出。
 \par\textbf{题 4（设计）：}把匹配和内容绑定限制灵活度；独立 $W_Q,W_K,W_V$ 能分别学习匹配视角和提供的内容。
-\item[\textbf{第 19 章}] \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 回忆：用 $QK^\top$ 得到完整分数矩阵；
-手算：两条权重都是 $\answerresult{0.5}$；
-辨析：其他分数固定时，提高某条分数会增大其 Softmax 权重。
-\par\textbf{补充题（预测）：}权重不变，因为分子分母共同乘以相同指数因子。
-\item[\textbf{第 20 章}] \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace 回忆：不同投影可学习不同的匹配与读取表示；
-手算：拼接输出 $\answerresult{3\times4}$；
-辨析：再右乘 $4\times6$，得到 $\answerresult{3\times6}$。
-\par\textbf{补充题（找错）：}多头需要不同的可训练投影；重复同一头不能带来额外匹配视角。
+\item[\textbf{第 19 章}] \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace
+\textbf{题 1（形状）：}匹配分数及 Softmax 均为 $3\times4$，乘 $V:4\times3$ 后输出 $\answerresult{3\times3}$。
+\par\textbf{题 2（手算）：}两个相同分数对应权重 $(1/2,1/2)$，读出为 $\answerresult{(0.5,0.5)}$。
+\par\textbf{题 3（预测）：}第一权重增大；若同时加相同常数，分子分母共同缩放，权重不变。
+\par\textbf{题 4（找错）：}$QK^\top$ 只生成分数而非内容，须先用 Softmax 得权重，再右乘 Value 才得到读出表示。
+\item[\textbf{第 20 章}] \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{多头的矩阵尺寸}}\enspace
+\textbf{题 1（预测）：}没有位置机制便缺少 Token 的位置信息，模型可能难以区分仅顺序不同的序列；位置编码提供可辨的序列身份。
+\par\textbf{题 2（形状）：}拼接为 $\answerresult{3\times4}$；输出投影后为 $\answerresult{3\times6}$。
+\par\textbf{题 3（找错）：}除以 $\sqrt{d_k}$ 只是缩放，原分数没有保证上界；只有 Softmax 之后的概率落在 $[0,1]$。
+\par\textbf{题 4（比较）：}每个头可以分别训练 Q/K/V 投影，读取不同子空间；复制相同头不创造独立表示能力。
 \item[\textbf{第 21 章}] \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{Block 三层自测}}\enspace
 \textbf{题 1（形状）：}拼接得 $\answerresult{3\times4}$；残差相加要求两侧形状兼容，否则需投影对齐。
 \par\textbf{题 2（预测）：}第 1 位置若读取第 2 位置真实目标，便泄漏未来信息，违反因果自回归预测。
 \par\textbf{题 3（找错）：}原始 Encoder--Decoder 的 Cross-Attention 由 Decoder 提供 Q、Encoder 输出提供 K/V；通常的 Decoder-only GPT 采用因果 Self-Attention，不默认有 Encoder。
 \par\textbf{题 4（对照）：}Attention 进行跨位置读取，FFN 每位置改写特征；残差帮助保留信息与梯度通路。
 \par\textbf{题 5（流程）：}Token ID 查表加位置得到隐藏矩阵，Block 输出上下文化隐藏状态，输出头变 logits，Softmax 变概率；训练把概率与目标比较得到损失，再反传更新参数。
-\item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 回忆：FFN 改写隐藏特征，输出头产生词表 logits；
-手算：上投影 $\answerresult{6\times18}$、下投影 $\answerresult{18\times6}$；
-辨析：Token 数不变，FFN 输出仍为 $4\times6$。
-\par\textbf{补充题（估算）：}上投影 $6\cdot18=108$、下投影 $18\cdot6=108$，总计 $\answerresult{216}$；FFN 参数数并不由词表大小直接决定，输出头另行映射到词表维度。
+\item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace
+\textbf{题 1（定位）：}FFN 在模型隐藏空间内映射特征；词表输出头把隐藏向量变为各 Token 类别的 logits。
+\par\textbf{题 2（手算）：}$W_{\rm up}:6\times18$、$W_{\rm down}:18\times6$，整体输出 $\answerresult{4\times6}$。
+\par\textbf{题 3（找错）：}FFN 后仍是隐藏向量，还需输出头投影到词表大小，再经 Softmax 得到概率。
+\par\textbf{题 4（估算）：}$6\cdot18+18\cdot6=\answerresult{216}$ 个权重；FFN 宽度与词表大小不同，词表输出头另计。
 \item[\textbf{第 23 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace
  \textbf{题 1（定位）：}$X,A,H:3\times3$，$Z,\widehat P:3\times5$；输出头 $W_{\rm out}:3\times5$ 从隐藏特征生成词表分数。
 \par\textbf{题 2（预测）：}初始位置 $1,2$ 错，位置 $3$ 对。因果 Attention 允许第三位置读取第一位置，所以首 Token 改变可影响末位置 logits。
@@ -142,26 +147,26 @@
 \par\textbf{题 3（找错）：}训练时真实前缀全部已知，因果 Mask 允许不同位置同一轮前向预测；生成时新输入由上一步选出的未知 Token 决定，必须顺序生成。
 \par\textbf{题 4（权衡）：}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。
 \par\textbf{题 5（场景）：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。
-\item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace 回忆：玩具损失下降只验证一次已给定数据上的更新；
-手算：$768/12=\answerresult{64}$；
-辨析：还要用独立任务评价事实、泛化与错误率，
-头宽和训练单步结果都不足以证明可靠性。
-\par\textbf{补充题（诊断）：}不证明出错。主例的初始参数是固定手设的，产生的正确类概率并不均匀，损失可以高于 $\ln5$；先核对 logits、Softmax、标签错位和损失平均方式。
-\item[\textbf{第 27 章}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace 回忆：$S=k^\top v$，查询为 $kS=(kk^\top)v$；
-手算：$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$；
-辨析：不能，$k'k'^\top=0.25$，读出 $0.25v$，
-说明单位 Key 条件的重要性。
-\par\textbf{补充题（预测）：}线性读出 $qS$ 随 $q$ 加倍而加倍。
-\item[\textbf{第 27 章}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace 回忆：查询与其他 Key 的非零点积会带入别的 Value；
-手算：$S=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}$，
-$k_AS=\answerresult{(1,0.6)}$；
-辨析：当两个 Key 正交时此交叉项为零。
-\par\textbf{补充题（找错）：}非正交 Key 存在非零交叉点积，召回时串入其他 Value。
-\item[\textbf{第 28 章}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace 回忆：残差是目标 Value 减去旧状态的查询结果；
-手算：$k_AS_2=\answerresult{(0.64,0.6)}$；
-辨析：不能，此时 A 已偏离目标 $(1,0)$；
-可交替重访 A 与 B、持续修正残差。
-\par\textbf{补充题（比较）：}不能保证；对当前 Key 的校正可能扰动先前 Key。
+\item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{玩具与真实 GPT}}\enspace
+\textbf{题 1（形状）：}$768/12=\answerresult{64}$；每头宽度不直接给出层数。
+\par\textbf{题 2（估算）：}Attention 约 $4\cdot768^2$，FFN 约 $8\cdot768^2$，后者约为前者两倍（按题设简化）。
+\par\textbf{题 3（找错）：}训练损失仅反映对应数据目标，还需独立泛化评估与事实／鲁棒性等任务检查。
+\par\textbf{题 4（诊断）：}不构成代码错误证明；初值并非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。
+\item[\textbf{第 27 章}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace
+\textbf{题 1（形状）：}$S:2\times3$，$qS:1\times3$。
+\par\textbf{题 2（手算）：}$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$，$(1,0)S=\answerresult{(0,1)}$。
+\par\textbf{题 3（预测）：}写入与查询都缩为原 Key 的一半，幅度乘 $(0.5)^2=\answerresult{1/4}$，输出为原 Value 的四分之一。
+\par\textbf{题 4（找错）：}$vk^\top$ 对题设 $v:1\times3,k:1\times2$ 根本无法相乘（内维不符）；即使另转置也会改变状态的轴方向，不能替代 $k^\top v$。
+\item[\textbf{第 27 章}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace
+\textbf{题 1（解释）：}$k_A(k_B^\top v_B)=(k_Ak_B^\top)v_B$，非零交叉点积带来别条 Value。
+\par\textbf{题 2（手算）：}$k_Ak_A^\top=1$、$k_Ak_B^\top=0.6$，读出 $\answerresult{(1,0.6)}$。
+\par\textbf{题 3（预测）：}两 Key 正交后交叉点积为零，查询结果回到 $\answerresult{(1,0)}$。
+\par\textbf{题 4（方案）：}正交化减少写入键的重叠；残差写入先校准已有读出误差；选择性非线性主要作用于读取分数。
+\item[\textbf{第 28 章}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace
+\textbf{题 1（定位）：}先算已有预测 $kS$，残差 $v-kS$ 表示还没存好的部分，只写入误差而非原值全量。
+\par\textbf{题 2（手算）：}读出 $\answerresult{(0.64,0.6)}$；相对目标误差为 $\answerresult{(-0.36,0.6)}$，若以目标减读出，则为 $(0.36,-0.6)$。
+\par\textbf{题 3（找错）：}非正交 Key 之间存在交叉影响；修正 B 会沿共享状态改变 A 的读出。
+\par\textbf{题 4（权衡）：}未必一次足够；可交替修正直到误差收敛，或在条件满足时用线性方程求联合解，代价更高。
 \item[\textbf{第 28 章}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace 回忆：$xK^\top$ 给出各 Key 的匹配分数；
 手算：$xK^\top:1\times3$，输出 $\answerresult{1\times4}$；
 辨析：不能，Key 与 Value 的记录行数不一致。
