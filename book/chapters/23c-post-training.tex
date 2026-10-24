@@ -170,9 +170,14 @@ CoT 提示 & 改变输入组织方式，不必修改模型权重\\
 \end{tabularx}
 \end{center}
 
-\chaptercheck{23c-post-training}{SFT 与偏好学习的训练信号分别是什么？}{若某 SFT 目标 Token 的预测概率是 $0.25$，
-单位置交叉熵约为多少？}{用户更偏好回答 A 而非 B，
-哪一种训练方法可以利用这种成对比较信号？}
+\chapterchecktasks{23c-post-training}{比较／手算／找错／方案}{
+\item \textbf{比较：}SFT、成对偏好学习与可验证奖励的反馈信号有何不同？各举一个适合的任务。
+\item \textbf{手算：}SFT 目标 Token 的概率为 $0.25$，求单位置交叉熵；若四个组内奖励是 $(1,0,1,0)$，按总体标准差标准化得到哪些相对优势？
+\item \textbf{找错：}同学把这四个相对优势直接当成完整 GRPO 更新，遗漏了什么策略目标与数值边界？
+\item \textbf{方案：}要使模型写出可核验的数学推导，比较“在 Prompt 中要求分步”“用示范数据 SFT”“根据最终答案正确与否作可验证奖励”改变了什么。
+}
+\chapterrecallanswer{后训练应按反馈来源与参数更新规则区分；相对优势仅是强化学习目标的一部分。}
+
 
 
 \begin{conclusion}
