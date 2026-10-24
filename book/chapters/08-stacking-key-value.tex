@@ -61,6 +61,15 @@ xS=(1,-0.2)V=\boxed{(2,0.4)},
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查两种读出结果、存储形状与串扰。
 
+% Chapter 28 comprises the Delta subsection and the stacked K/V subsection.
+\chapterchecktasks{06-better-linear-memory}{定位／手算／找错／权衡}{
+\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？
+\item \textbf{手算：}写入 B 后 $S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？
+\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。
+\item \textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。
+}
+\chapterrecallanswer{Delta 规则用读取残差修正当前 Key，但对非正交 Key 的修正可能重新扰动先前记忆。}
+
 \chapterchecktasks{08-stacking-key-value}{形状／手算／比较／找错}{
 \item \textbf{形状：}$q:1\times2,K:3\times2,V:3\times4$。写出 $qK^\top$ 与最终加权读出的形状。
 \item \textbf{手算：}本章 $qK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？
