@@ -208,18 +208,10 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 \end{tabularx}
 \end{center}
 
-使用 Attention 还要考虑三个问题：
-\begin{enumerate}
-\item 普通注意力不等于任意偷看未来。
-预测下一个 Token 时，只允许读取当前及此前可见的位置；
-后面的\textbf{因果 Mask} 将明确实现这个限制。
-\item \textbf{Attention 不等于无限长记忆。}
-如果每个位置都和很多位置比较，计算量和存储会增长。
-\item \textbf{本章重点手算最后一个 Query。}
-虽已列出 $QK^\top$ 的三行原始分数，
-还需要对\textbf{每一行分别归一化和读取 Value}；
-下一章会把这一步完整写成矩阵运算。
-\end{enumerate}
+回到主线，需要把两条规则放进模型：\textbf{因果 Mask}
+让当前位置只读取已经可见的 Token；序列变长时，
+注意力的匹配与缓存也要支付相应成本。
+本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算。
 
 \chapterchecktasks{21b-why-attention}{定位／手算／找错／设计}{
 \item \textbf{定位：}一句话说明 Query、Key、Value 三者在“计算匹配／提供内容”中的分工，并标出分数和读出的形状：$q:1\times2,K:3\times2,V:3\times2$。
