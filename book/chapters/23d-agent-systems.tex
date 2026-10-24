@@ -71,6 +71,17 @@ RAG 可以检索外部材料，帮助模型获取新证据，
 但检索可能遗漏资料、返回过期内容，模型也可能误读检索结果。
 因此，检索结果还需要来源核对、事实检查和权限控制。
 
+\begin{example}
+\textbf{真实失败案例：编造判例不等于找到依据。}
+在美国联邦法院的 \emph{Mata v.\ Avianca} 案中，
+律师提交的材料引用了不存在的司法判例和捏造的引文；
+法院于 2023 年 6 月 22 日在制裁裁定中明确描述了
+使用生成式 AI 制造虚假引文且未尽核查责任的问题。
+可查阅\href{https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/}{该案裁定原文（Docket 54）}。
+\textbf{失效点}并非文字不通顺，而是把生成的出处当成真实证据；
+\textbf{正确动作}是打开可核验的原始文件，逐项核对案名、引用和结论。
+\end{example}
+
 \subsection{RAG 解决“找资料”，工具调用解决“执行动作”}
 \phantomsection\label{concept:rag}
 
