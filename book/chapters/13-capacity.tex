@@ -66,16 +66,13 @@
 这一结构与前面的\hyperref[intro:04-key-value-outer-product]{外积写入}
 完全同形。
 
-它是一类\textbf{未归一化线性状态}的教学基例。
-核化线性 Attention 往往还需要特征映射、归一化分母等设计，
-Gated DeltaNet 还包含对已有状态的误差修正或门控，
-不能把这里的公式视为所有线性注意力模型的精确实现。
+这是\textbf{未归一化线性状态}的教学例；实际线性 Attention
+还需特征映射或归一化，Gated DeltaNet 另有误差修正和门控。
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。
 
-这些量级依赖独立性、随机性和激活函数的选择。
-相关的 Key 与 Value 会改变干扰规模；可区分关联的数量也不同于模型可靠掌握的事实数量。
+容量估算依赖随机性、独立性与非线性假设；可区分关联不等于可靠事实。
 
 \chapterchecktasks{13-capacity}{预测／手算／找错／判断}{
 \item \textbf{预测：}随机独立 Key 的维度增大时，典型交叉点积和串扰怎样变化？
@@ -88,7 +85,6 @@ Gated DeltaNet 还包含对已有状态的误差修正或门控，
 
 
 \begin{conclusion}
-从第~\ref*{intro:04-key-value-outer-product}~章的外积写入，到串扰、残差修正和高维状态，
-我们完成了一条\textbf{解释 Transformer 内部读取方式}的支线。
+外积、串扰、Delta 修正与容量估算，连成一条\textbf{匹配与读取}主线。
 \end{conclusion}
 
