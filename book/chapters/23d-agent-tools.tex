@@ -1,0 +1,182 @@
+\Needspace{13\baselineskip}
+\chapterrule
+\section{工具调用与 Agent 循环：从请求到执行}
+\label{intro:23d-agent-tools}
+\chaptercompass{模型能自己执行请求吗？}{模型产生结构化动作建议，应用负责授权、调用、结果与终止条件。}{请求 $\to$ 权限检查 $\to$ 工具结果 $\to$ 继续生成}{工具历史是应用状态，不是自动训练权重}
+\modelpipelinefocus{8}{工具与 Agent 循环}
+
+\subsection{一次工具调用实际发生了什么？}
+\phantomsection\label{concept:tool-calling}
+
+\begin{center}
+\tagstructbegin{tag=Figure,alttext={工具调用的三泳道：用户目标进入模型，模型输出请求；应用系统校验权限并调用外部工具；工具返回数据后由应用检查并供模型生成回答，最终再经复核交付}}
+\begin{tikzpicture}[>=Latex,scale=.94,transform shape,
+ lane/.style={rounded corners=3pt,draw=linegray,thick},
+ n/.style={rounded corners=3pt,draw=linegray,fill=white,minimum width=30mm,minimum height=10mm,align=center,font=\small}]
+\fill[blueback] (0,0) rectangle (4.1,7.0);
+\fill[greenback] (4.3,0) rectangle (8.4,7.0);
+\fill[orangeback] (8.6,0) rectangle (12.7,7.0);
+\draw[lane] (0,0) rectangle (4.1,7.0);
+\draw[lane] (4.3,0) rectangle (8.4,7.0);
+\draw[lane] (8.6,0) rectangle (12.7,7.0);
+\node[font=\bfseries\small,blue] at (2.05,6.65) {应用与权限系统};
+\node[font=\bfseries\small,teal] at (6.35,6.65) {语言模型};
+\node[font=\bfseries\small,orange] at (10.65,6.65) {外部工具};
+\node[n] (request) at (2.05,5.65) {用户提供目标与范围};
+\node[n] (plan) at (6.35,4.85) {输出结构化请求\\（不是执行）};
+\node[n] (auth) at (2.05,4.00) {验证参数、授权\\与资源边界};
+\node[n] (exec) at (10.65,3.20) {真实读取与计算\\返回结果或错误};
+\node[n] (check) at (2.05,2.15) {检查工具结果\\作为数据加入上下文};
+\node[n] (answer) at (6.35,1.20) {生成带来源的回答};
+\node[n] (final) at (2.05,.55) {输出复核与交付};
+\draw[->,thick,blue] (request.east)--(plan.north west);
+\draw[->,thick,teal] (plan.south west)--(auth.north east);
+\draw[->,thick,orange] (auth.east) to[out=0,in=170] (exec.west);
+\draw[->,thick,orange] (exec.south) to[out=-100,in=0] (check.east);
+\draw[->,thick,blue] (check.east)--(answer.north west);
+\draw[->,thick,teal] (answer.south west)--(final.east);
+\end{tikzpicture}
+\captionof{figure}{模型／应用／工具三泳道：请求与执行属于不同主体}
+\label{fig:tool-swimlanes}
+\tagstructend
+\end{center}
+
+模型输出的是工具请求；文件修改、搜索和网络请求由外部程序执行，
+并受工具配置、授权与安全策略约束。
+
+\subsection{请求和返回值长什么样？}
+
+例如要读取一份允许访问的 Q3 教学报表，模型可以\textbf{提出}下述 JSON 请求；
+\textbf{这是本书的应用层示意格式，不是任一厂商的可直接调用 API。}\texttt{id} 用于关联请求与结果；
+应用程序仍需验证参数并决定是否执行：
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
+{"id":"call_q3_01","tool":"read_reports",
+ "arguments":{"quarter":"2026Q3"}}
+\end{Verbatim}
+\end{tcolorbox}
+工具返回的可能是
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
+{"ok":true,"revenue":132,"unit":"million_CNY"}
+\end{Verbatim}
+\end{tcolorbox}
+应用需要确认工具实际执行的结果，再把数据转交模型，
+并核对数据来源、单位和授权范围。
+
+
+\subsection{Agent loop：一次任务在消息里怎样向前推进？}
+\par\medskip
+\tagstructbegin{tag=Figure,alttext={Agent 逐轮执行流程：模型规划动作，应用进行授权和参数检查，工具在限制内执行或返回拒绝，结果追加到消息列表，再由模型判断是否结束；任务未完成则重新规划，完成后输出最终答复。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,node distance=4mm,
+ agentnode/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=98mm,minimum height=9mm,align=center,font=\small},
+ agentline/.style={->,line width=.75pt,draw=blue}]
+\node[agentnode] (plan) {模型：读消息、提出下一步或直接给出最终答复};
+\node[agentnode,below=of plan] (gate) {应用：检查工具白名单、参数、用户授权与步数预算};
+\node[agentnode,below=of gate] (exec) {执行：受限工具调用；拒绝时返回错误而非执行};
+\node[agentnode,below=of exec] (feedback) {应用：将工具结果及来源追加到消息历史};
+\node[agentnode,below=of feedback,fill=greenback] (done) {完成条件满足时：答复用户并保留可核对的证据};
+\draw[agentline] (plan)--(gate);
+\draw[agentline] (gate)--(exec);
+\draw[agentline] (exec)--(feedback);
+\draw[agentline] (feedback)--node[right,font=\scriptsize]{完成} (done);
+\draw[agentline,teal] (feedback.east)--++(7mm,0) |- node[pos=.47,right,font=\scriptsize,text=teal]{未完成：下一轮} (plan.east);
+\end{tikzpicture}
+\captionof{figure}{Agent loop：模型提出动作，应用负责权限与执行，每轮工具结果返回模型；实际应用还需终止与超时机制}
+\label{fig:agent-loop}
+\end{center}
+\tagstructend
+
+
+前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\small]
+messages = [system_message, user_message]
+for step in range(MAX_STEPS):
+    answer = model(messages, allowed_tools)
+    messages.append(answer)
+    if not answer.tool_calls:
+        return answer.text
+    for call in answer.tool_calls:
+        if not is_authorized(call):
+            result = {"error": "permission_denied"}
+        else:
+            result = execute_with_limits(call)
+        messages.append(tool_message(call.id, result))
+return {"error": "step_budget_exceeded"}
+\end{Verbatim}
+\end{tcolorbox}
+\textbf{循环次数和权限检查由应用控制，模型不会替应用执行工具。}
+示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{15mm}p{39mm}X@{}}
+\toprule
+回合 & 消息角色／动作 & 追加到消息列表的内容（教学简写）\\\midrule
+0 & system + user & 仅读授权季度报告；比较 Q1--Q3，必须保留单位与来源\\
+1 & assistant / tool call & 请求 \texttt{read\_report(Q1)}\\
+2 & tool / result & Q1 = 100，单位百万元，来源 Q1-report/table-A\\
+3 & assistant / tool call & 请求 \texttt{read\_report(Q2)}\\
+4 & tool / result & Q2 = 120，单位百万元，来源 Q2-report/table-A\\
+5 & assistant / tool call & 请求 \texttt{read\_report(Q3)}\\
+6 & tool / result & Q3 = 132，单位百万元，来源 Q3-report/table-A\\
+7 & assistant / final & 环比 20\%、10\%；分别注明 Q1--Q3 来源\\
+\bottomrule
+\end{tabularx}
+\end{center}
+这八条是\textbf{应用层消息记录}，不是模型内部神经元状态。
+若 Q2 工具失败或无权限，应返回错误，不能跳过证据仍声称得到了可靠环比。
+
+\par\smallskip\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}\enspace
+运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹。
+
+\subsection{什么时候用固定工作流，什么时候用 Agent？}
+\phantomsection\label{concept:workflow}
+
+同样是处理报告，若每次步骤都固定为
+“读取表格 $\to$ 计算增长率 $\to$ 套模板”，
+\textbf{固定工作流}通常更容易测试、审计和控制成本。
+
+如果每次文件格式不同、需要动态选择工具，
+而目标和安全边界仍能明确指定，
+可以使用\textbf{带决策的 Agent 流程}。
+但灵活度增加也意味着路径和结果更难完全预测。
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{26mm}X@{}}
+\toprule
+组织方式 & 合适的情况与注意事项\\
+\midrule
+固定流程 & 步骤稳定，便于重复测试；变化过大可能需增添分支\\
+Agent & 动态选工具和步骤；需要权限、预算与终止条件\\
+Skill/操作指南 & 为某类任务提供步骤、示例与脚本；内容本身不是额外模型权重\\
+Subagent/子任务分工 & 隔离部分上下文和工作；会带来协调与复核成本\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+
+\begin{example}[breakable=false]
+\noindent\emph{工具读数之后再做算术}\par
+工具返回 Q1 = $100$、Q2 = $120$、Q3 = $132$（百万元），程序计算：
+\[
+g_{Q2}=(120-100)/100=20\%,\qquad
+g_{Q3}=(132-120)/120=10\%.
+\]
+如果 \texttt{read\_report(Q2)} 返回权限错误，程序不能用 Q1 代替 Q2。
+\end{example}
+\chapterchecktasks{23d-agent-tools}{分工／计算／找错／选择}{
+\item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？
+\item \textbf{计算：}Q1、Q2、Q3 的收入是 $100$、$120$、$132$，求两次环比增长率。
+\item \textbf{找错：}工具拒绝读取 Q2 时，Agent 自行补上 $120$ 并写“已核实”。哪一步失实？
+\item \textbf{选择：}三个固定格式文件按固定顺序处理，用 Workflow 还是动态 Agent 更容易审计？
+}
+\begin{conclusion}
+Agent 循环由应用控制：授权、预算、错误返回和输出检查都是显式步骤。
+下一章解决工具接入与跨 Agent 协作的接口问题。
+\end{conclusion}
