@@ -808,6 +808,8 @@ def validate_source() -> None:
     includes(sources["24d-english-index"], r"\termref{concept:pretraining}", "pretraining index destination")
     includes(sources["27-answer-key"], r"\|\vect a\|=6", "corrected cosine exercise")
     includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
+    includes(sources["23d-agent-tools"], "read\\_observations",
+             "Agent tool loop must reconnect to the Spring Token teaching example")
     includes(sources["10b-ffn-output-head"], r"\begin{bmatrix}4&2\\1&1\end{bmatrix}", "nonidentity FFN")
     includes(sources["25b-modern-practice"], "输入行向量 $(2,1)$", "independent FFN exercise")
     for category in (r"title={{\symboliconfont ◆} 直觉}", r"title={{\symboliconfont ▸} 动手算}", "title={! 易错}", r"title={{\symboliconfont ■} 小结}"):

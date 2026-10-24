@@ -126,7 +126,7 @@ return {"error": "step_budget_exceeded"}
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{15mm}p{39mm}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{15mm}>{\raggedright\arraybackslash}p{39mm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 回合 & 消息角色／动作 & 追加到消息列表的内容（教学简写）\\\midrule
 0 & system + user & 仅读授权季度报告；比较 Q1--Q3，必须保留单位与来源\\
@@ -145,6 +145,24 @@ return {"error": "step_budget_exceeded"}
 
 \par\smallskip\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}\enspace
 运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹。
+
+\subsection*{再回到“春天 花 开了 。”：查证今天的花期}
+仍以\hyperref[intro:23d-agent-systems]{前章那句“春天花开了”}为例。
+用户问“今天甲园的花开了吗？”，这里需要核实的是\textbf{某一天、某个地点的观测}，
+而不是计算续写“开了”的概率。下面是完全虚构的工具记录：
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+\item \textbf{提出请求：}模型建议调用
+\texttt{read\_observations(park="A", date="04-06")}；
+\item \textbf{检查权限：}应用核对用户允许的园区资料范围，才执行检索；
+\item \textbf{返回证据：}工具找到“4 月 1 日盛开”和“4 月 5 日花期结束”
+两份带日期的记录，却没有 4 月 6 日现场观测；
+\item \textbf{交付结论：}系统可说明“4 月 5 日记录为花期结束，
+4 月 6 日尚无直接观测”，并链接来源，不把 4 月 1 日的照片当成当天证据。
+\end{enumerate}
+这段教学记录与季度收入例子共享同一组关口：
+\textbf{明确任务 $\to$ 获得授权 $\to$ 返回有时效的证据
+$\to$ 核查缺口 $\to$ 给出带来源的答案}。
+既能复用最初的四个 Token，也展示了工具失败或证据不全时的正确处理。
 
 \subsection{什么时候用固定工作流，什么时候用 Agent？}
 \phantomsection\label{concept:workflow}
