@@ -133,9 +133,14 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），甚至 $BA$ 可能根本无法相乘；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。只要中间插入 ReLU 一类非线性函数，通常就不能再把两层合并成一个固定矩阵。
 \end{warningbox}
 
-\chaptercheck{03-matrix-multiplication}{矩阵乘法要求内侧哪两个维度相同？}{若 $A:2\times3$、$B:3\times4$，
-$AB$ 是什么形状？}{若把 $B$ 换成 $4\times3$，
-$AB$ 还能直接相乘吗？}
+\chapterchecktasks{03-matrix-multiplication}{形状／手算／找错／比较}{
+\item \textbf{形状：}若 $A:2\times3$、$B:3\times4$，说明为什么 $AB$ 合法，并给出输出形状。若 $B$ 换为 $4\times3$ 呢？
+\item \textbf{手算：}行向量 $x=(2,1)$，$W=\begin{bmatrix}1&3\\2&-1\end{bmatrix}$，计算 $xW$，并标出行与列。
+\item \textbf{找错：}某人断言“矩阵相乘和数字相乘一样，可以把 $AB$ 随意换成 $BA$”。用形状或一次反例指出问题。
+\item \textbf{比较：}批量输入 $X:5\times2$ 都使用同一个 $W:2\times3$。从逐行点积与整体矩阵乘法两个角度解释结果为何都是 $5\times3$。
+}
+\chapterrecallanswer{矩阵乘法必须让内侧维度相同，结果由外侧维度决定；交换乘法顺序一般不成立。}
+
 
 
 \begin{conclusion}
