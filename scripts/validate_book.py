@@ -1317,17 +1317,17 @@ def validate_subsection_bookmarks(reader) -> None:
         return result
 
     roots = nested(reader.outline)
-    if len(roots) != 10:
-        fail("PDF bookmark tree must have 9 part roots and 1 appendix root")
+    if len(roots) != 9:
+        fail("PDF bookmark tree must have 8 part roots and 1 appendix root")
     chapter_re = re.compile(r"^(?:第)?(\d+)(?:章)?\s+\S")
-    appendix_re = re.compile(r"^(?:附录\s*)?([A-G])\s+\S")
-    subsection_re = re.compile(r"^(\d+|[A-G])\.(\d+)\s+\S")
+    appendix_re = re.compile(r"^(?:附录\s*)?([A-K])\s+\S")
+    subsection_re = re.compile(r"^(\d+|[A-K])\.(\d+)\s+\S")
     by_parent = {}
     for root_number, root in enumerate(roots):
         for node in root["children"]:
             if subsection_re.match(node["title"]):
                 fail(f"PDF subsection is at part level: {node['title']!r}")
-            match = (appendix_re if root_number == 9 else chapter_re).match(
+            match = (appendix_re if root_number == 8 else chapter_re).match(
                 node["title"])
             if match is None:
                 continue  # The unnumbered reading guide/recap.
