@@ -591,6 +591,7 @@ def validate_source() -> None:
     three_tier_first_ten = ["00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
     for lesson_name in three_tier_first_ten:
         check_owner = ("18c-training-engineering" if lesson_name == "16-loss-gradient"
+                       else "18b-end-to-end-learning" if lesson_name == "17-backpropagation"
                        else lesson_name)
         if not any(token in sources[check_owner] for token in
                    (r"\chaptercheck{", r"\chapterchecktasks{")):
@@ -621,8 +622,11 @@ def validate_source() -> None:
 
     three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity"]
     for lesson_name in three_tier_memory_and_appendix:
-        includes(sources[lesson_name], r"\chapterchecktasks{",
-                 f"memory/vision/math redesigned check: {lesson_name}")
+        owner = ("08-stacking-key-value" if lesson_name == "06-better-linear-memory"
+                 else "14-summary" if lesson_name == "09-nonlinearity-and-memory"
+                 else lesson_name)
+        includes(sources[owner], r"\chapterchecktasks{" + lesson_name + "}",
+                 f"memory/vision/math check at chapter end: {lesson_name}")
     assert (1 * 0 + 0 * 1) == 0
     assert (3 * 3 * 3 * 8) == 216
 
@@ -995,6 +999,23 @@ def validate_source() -> None:
         fail("Answer appendix still contains legacy supplemental-task labels")
     print(f"Pedagogy QA: all {len(varied)} chapter checks fully redesigned, "
           "chapter-end immediate answers and matching detailed keys")
+
+    # These numbered chapters span two or more .tex files. Source checks and
+    # recaps belong after their final subsection, not inside chapter 5/28/29.
+    for early, late, check_id in (
+        ("17-backpropagation", "18b-end-to-end-learning", "17-backpropagation"),
+        ("06-better-linear-memory", "08-stacking-key-value", "06-better-linear-memory"),
+        ("09-nonlinearity-and-memory", "14-summary", "09-nonlinearity-and-memory"),
+    ):
+        marker = r"\chapterchecktasks{" + check_id + "}"
+        if marker in sources[early] or marker not in sources[late]:
+            fail(f"Chapter self-check not relocated to final subsection: {check_id}")
+    if r"\subsubsection*{联想记忆的关键结论}" in sources["15-practice"]:
+        fail("Memory-part conclusion must not drift into Appendix C")
+    if "第六部分收束：联想记忆的关键结论" not in sources["13-capacity"]:
+        fail("Part-six conclusion missing from chapter 30")
+    if r"\newcommand{\chapterrecallanswer}[1]{}" not in main:
+        fail("Self-check core answer must not be printed immediately below questions")
 
     answers = sources["28-chapter-checks"]
     for lesson_id in varied:
