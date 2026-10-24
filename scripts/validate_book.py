@@ -603,8 +603,9 @@ def validate_source() -> None:
 
     three_tier_attention = ["10-mlp","20a-tokenizer","20c-classification-loss","20-embeddings","20b-task-contract","21a-context-gap","21-rnn","21c-naive-attention","21b-why-attention","11-softmax-memory","22a-position-multihead"]
     for lesson_name in three_tier_attention:
-        includes(sources[lesson_name], r"\chaptercheck{",
-                 f"attention and text three-level check: {lesson_name}")
+        if not any(token in sources[lesson_name] for token in
+                   (r"\chaptercheck{", r"\chapterchecktasks{")):
+            fail(f"Missing attention/text self-check: {lesson_name}")
     assert (1 * 0 + 0 * 1) == 0
     assert (1 * 1 + 0 * 1) == 1
 
