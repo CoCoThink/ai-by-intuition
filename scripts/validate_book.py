@@ -1061,6 +1061,28 @@ def validate_source() -> None:
     if len(re.findall(r"\\label\{extension:[^}]+\}",
                       sources["25c-migrated-review"])) != 50:
         fail("Appendix C must hold exactly 50 relocated self-check questions")
+    # Each moved question must reach its own numbered solution, rather than
+    # only the opening paragraph of the chapter's answer group.
+    extension_source = sources["25c-migrated-review"]
+    appendix_answers = sources["28-chapter-checks"]
+    direct_links = set(re.findall(
+        r"\\hyperref\[answerpiece:([^]]+)\]", extension_source))
+    direct_destinations = set(re.findall(
+        r"\\label\{answerpiece:([^}]+)\}", appendix_answers))
+    if len(direct_links) != 50 or direct_links != direct_destinations:
+        fail(f"Broken per-question extension solution links: "
+             f"links={len(direct_links)}, answers={len(direct_destinations)}, "
+             f"missing={sorted(direct_links - direct_destinations)}")
+    if re.search(r"\\subsubsection\*\{\\hyperref\[check:[^]]+\]\{"
+                 r"[a-z0-9]+-[a-z0-9-]+：", extension_source):
+        fail("Reader-facing appendix C must use lesson titles rather than file slugs")
+    for file_name in ("00h-colophon", "23d-agent-systems", "26-sources",
+                      "29-revision-notes", "16-loss-gradient"):
+        for stale in ("沿用前言", "前言所述", "本轮校订", "旧 PDF 页码",
+                      "这才兑现"):
+            if stale in sources[file_name]:
+                fail(f"Reader edition still contains an editorial artifact: "
+                     f"{file_name}: {stale}")
 
     answers = sources["28-chapter-checks"]
     for lesson_id in varied:
