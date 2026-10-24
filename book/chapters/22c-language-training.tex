@@ -58,9 +58,14 @@ C=\begin{bmatrix}
 
 令 $Z=HW_{\rm out}\in\R^{3\times5}$，逐行 Softmax 得到 $\widehat P$。
 一行 logits 是五个未归一化的分数，不是五个独立训练标签；
-每行正确答案是词表中的一个 ID。按数学矩阵行列从 $1$ 起、Token ID 从 $0$ 起的约定（对照表见\hyperref[app:math-tools]{附录 A 数学速查}），类别 ID 3 就在概率矩阵的第 4 列；第 $i$ 行交叉熵为
+每行正确答案是词表中的一个 ID。为把词表 ID 与数学矩阵列号分开，
+记正确类别的\textbf{列号}为 $c_i=y_i+1$：Token ID 从 $0$ 起，
+数学列号从 $1$ 起；Python 列下标仍是 $y_i$。
+三个位置的目标 ID 为 $(3,4,2)$，相应列号为 $(4,5,3)$
+（对照表见\hyperref[app:math-tools]{附录 A 数学速查}）。
+这样交叉熵统一写成
 \[
-L_i=-\log \widehat P_{i,y_i+1},\qquad (y_1,y_2,y_3)=(3,4,2).
+L_i=-\log\widehat P_{i,c_i},\qquad(c_1,c_2,c_3)=(4,5,3).
 \]
 三行共享\textbf{同一模型参数}，平均损失是
 \begin{equation}

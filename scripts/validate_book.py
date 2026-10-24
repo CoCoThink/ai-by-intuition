@@ -987,6 +987,13 @@ def validate_source() -> None:
     active_tex.extend(path.read_text(encoding="utf-8")
                       for path in (BOOK / "figures").glob("*.tex"))
     combined_source = "\n".join(active_tex)
+    # A build can compile even when the reader edition contains orphaned
+    # references to nonexistent front matter or stale editorial revisions.
+    visible_source = re.sub(r"(?<!\\)%[^\n]*", "", combined_source)
+    for stale in ("沿用前言", "前言所述", "本轮校订",
+                  "旧 PDF 页码", "这才兑现", "移至附录 A.4"):
+        if stale in visible_source:
+            fail(f"Reader-facing editing residue or orphaned premise: {stale}")
     known_targets = set(re.findall(r"\\label\{([^}]+)\}", combined_source))
     known_targets.update("check:" + check_id
                          for body in sources.values()

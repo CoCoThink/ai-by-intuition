@@ -68,6 +68,9 @@
 推荐使用 **TeX Live 2026、LuaLaTeX**，安装中文/西文字体 **Noto Serif CJK SC、Noto Sans CJK SC、Noto Serif、Noto Sans**，并具备 `latexmk`、TikZ/PGF、`poppler-utils` 和 `pypdf==5.9.0`。CI 选择 TeX Live 2026 并固定执行 Action 的 commit SHA，但 TeX Live 基础镜像和 apt 软件包尚未达到字节级冻结；详见[构建复现说明](docs/BUILD-REPRODUCIBILITY.md)。旧版本内核不保证能正确处理 Tagged PDF。
 
 ```bash
+# 中文索引由双语术语表生成；先生成，避免直接编译占位页
+python3 -m pip install pypinyin==0.55.0
+python3 scripts/generate_chinese_index.py
 python3 scripts/validate_book.py
 cd book
 latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex

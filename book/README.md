@@ -35,6 +35,9 @@
 CI 使用 **TeX Live 2026 + LuaLaTeX**，启动时要求 Noto 中文及西文字体。可以从仓库根目录先检查源码，再构建整本书：
 
 ```bash
+# 中文索引由双语术语表生成；先生成，避免直接编译占位页
+python3 -m pip install pypinyin==0.55.0
+python3 scripts/generate_chinese_index.py
 python3 scripts/validate_book.py
 cd book
 latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex
