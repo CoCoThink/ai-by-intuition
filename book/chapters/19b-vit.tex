@@ -195,11 +195,7 @@ ViT 本身输出向量，不会直接生成自然语言。
 核对两次矩阵乘法、首个视觉向量以及最终 $6\times4$ 的输入。
 
 
-\begin{warningbox}
-Patch 是\textbf{像素块线性投影}，文字 Embedding 是
-\textbf{Token ID 查表}；两者都能形成向量序列，
-却不表示视觉与语言模型具有相同的训练目标。
-\end{warningbox}
+
 
 \begin{conclusion}
 Patch 投影形成图像序列，位置编码保留空间身份，
