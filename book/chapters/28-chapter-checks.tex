@@ -167,59 +167,65 @@
 \par\textbf{题 2（手算）：}读出 $\answerresult{(0.64,0.6)}$；相对目标误差为 $\answerresult{(-0.36,0.6)}$，若以目标减读出，则为 $(0.36,-0.6)$。
 \par\textbf{题 3（找错）：}非正交 Key 之间存在交叉影响；修正 B 会沿共享状态改变 A 的读出。
 \par\textbf{题 4（权衡）：}未必一次足够；可交替修正直到误差收敛，或在条件满足时用线性方程求联合解，代价更高。
-\item[\textbf{第 28 章}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace 回忆：$xK^\top$ 给出各 Key 的匹配分数；
-手算：$xK^\top:1\times3$，输出 $\answerresult{1\times4}$；
-辨析：不能，Key 与 Value 的记录行数不一致。
-\par\textbf{补充题（比较）：}线性读出 $(1,-0.2)V=\answerresult{(2,0.4)}$；先 ReLU 后得 $(1,0)V=\answerresult{(2,1)}$，差别来自负匹配被抑制，不是修改了 Value。
-\item[\textbf{第 29 章}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace 回忆：大于一的幂可压低 $0$ 到 $1$ 之间的弱匹配；
-手算：$\answerresult{0.25}$ 和 $\answerresult{0.125}$；
-辨析：相似度为 $1$ 时 $1^n=1$，此项保持不变。
-\par\textbf{补充题（找错）：}$(-0.5)^2=\answerresult{0.25}$ 会变成正数，立方则为 $\answerresult{-0.125}$；直接平方负匹配不一定代表“抑制”，需限定范围或另外设计非线性。
-\item[\textbf{第 29 章}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace 回忆：都以 Query/Key 匹配、用权重组合 Value；
-手算：$\answerresult{(0.25,0.75)}$；
-辨析：不能，归一化和非线性规则不同，读取结果一般不等价。
-\par\textbf{补充题（找错）：}这种说法把数学类比误作真实知识的一对一存储，不能推出逐神经元事实可靠。
-\item[\textbf{第 30 章}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace 回忆：其他 Key 的点积通常较小，交叉项的影响可能降低；
-手算：$\answerresult{0}$；
-辨析：噪声、Key 的相关性、读出误差和具体容量定义仍构成限制。
-\par\textbf{补充题（权衡）：}独立随机假设、Key 相关性与 Value 噪声在真实模型中不成立，不能把理论容量当作可靠事实数量。
+\item[\textbf{第 28 章}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace
+\textbf{题 1（形状）：}$qK^\top:1\times3$，最终乘 $V$ 为 $\answerresult{1\times4}$。
+\par\textbf{题 2（手算）：}$\relu(1,-0.2)=(1,0)$，读出 $(1,0)V=\answerresult{(2,1)}$。
+\par\textbf{题 3（比较）：}不加 ReLU 得 $(1,-0.2)V=\answerresult{(2,0.4)}$；差异来自负匹配权重是否保留。
+\par\textbf{题 4（找错）：}四条 Key 会得到 $1\times4$ 匹配权重，而三条 Value 只有三行，$1\times4$ 与 $3\times4$ 不能相乘。
+\item[\textbf{第 29 章}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace
+\textbf{题 1（预测）：}对 $0<s<1$ 的幂次越高，数值越小；$1$ 的任何正整数次幂仍是 $1$。
+\par\textbf{题 2（手算）：}$0.5^2=\answerresult{0.25}$、$0.5^3=\answerresult{0.125}$；$(-0.5)^2=0.25$、$(-0.5)^3=-0.125$。
+\par\textbf{题 3（找错）：}负相似度平方后会变成正值，不一定等价于“排除负匹配”；选择激活前必须核对输入范围。
+\par\textbf{题 4（比较）：}可将投影／非线性／读出理解为匹配与加权贡献；但参数分布和事实可靠性不满足逐神经元一一对应。
+\item[\textbf{第 29 章}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace
+\textbf{题 1（比较）：}外积记忆将 Key/Value 写入状态后读出；Softmax Attention 先匹配历史位置再归一化读取；FFN 逐行变换特征。
+\par\textbf{题 2（手算）：}$0.25(1,0)+0.75(0,1)=\answerresult{(0.25,0.75)}$。
+\par\textbf{题 3（找错）：}外积线性读出未必有 Softmax 概率归一化；状态容量、写入与上下文匹配的实现不同。
+\par\textbf{题 4（场景）：}不能从单个神经元激活推出事实可靠；需独立核查来源、任务语境与实际输出。
+\item[\textbf{第 30 章}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace
+\textbf{题 1（预测）：}在归一化且近似独立条件下交叉点积通常更接近零，因此别条记忆贡献较弱。
+\par\textbf{题 2（手算）：}正交点积 $\answerresult{0}$；另一组为 $\answerresult{0.6}$。
+\par\textbf{题 3（找错）：}平方后的分数非负，不会按原符号相互抵消；必须单独分析均值、方差与累积噪声，不能宣称无限容量。
+\par\textbf{题 4（判断）：}测真实 Key 的相关性、Value 分布、层内尺度及不同记忆数的读取错误率，不能直接将随机独立极限当作事实数。
 \item[\textbf{第 31 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace
 \textbf{题 1（比较）：}预训练与 SFT 通过训练更新参数；Few-shot ICL 通常仅将样例加进当前上下文。
 \par\textbf{题 2（手算）：}两例加一待答共 $\answerresult{3}$ 条记录；另一会话没有带入时，原例不在新的上下文中。
 \par\textbf{题 3（找错）：}Few-shot 不永久改写权重；新 Q3 数据须来自有权限、可核验的报告或工具读取。
 \par\textbf{题 4（方案）：}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。
-\item[\textbf{第 32 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace 回忆：SFT 用目标示范回答，偏好学习用回答间偏好或奖励；
-手算：$-\ln0.25=\ln4\approx\answerresult{1.386}$；
-辨析：偏好学习可以利用 A 优于 B 的比较信号。
-\par\textbf{补充题（找错）：}组内优势只是中间量；完整目标还包含策略概率比、裁剪、正则化与零方差处理。
+\item[\textbf{第 32 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace
+\textbf{题 1（比较）：}SFT 使用示范答案标签；偏好训练使用回答排序／比较；可验证奖励以程序、判题器等可复现结果评分。
+\par\textbf{题 2（手算）：}$-\log0.25=\answerresult{\log4\approx1.3863}$；奖励均值 $0.5$、总体标准差 $0.5$，优势为 $\answerresult{(1,-1,1,-1)}$。
+\par\textbf{题 3（找错）：}完整目标还涉及新旧策略概率比、裁剪和可能的正则化；奖励完全相同时标准差为零，需数值稳定处理。
+\par\textbf{题 4（方案）：}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。
 \item[\textbf{第 33 章}] \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{RAG、环比与权限}}\enspace
  \textbf{题 1（覆盖）：}缺 Q2 报告。先对必需季度逐项检查、定向检索或申请合法数据访问；若缺失仍无法计算，明确报告缺口。
 \par\textbf{题 2（手算）：}正确 Q3 环比 $(132-120)/120=\answerresult{10\%}$；误用 Q1 为基期则 $(132-100)/100=\answerresult{32\%}$。
 \par\textbf{题 3（找错）：}检索相关性不等于来源可信，网页正文不等于高优先级系统指令，外发文件更须经应用侧授权，不能由网页文字授予权限。
 \par\textbf{题 4（权衡）：}应用层记忆保存、索引并在获授权后恢复消息或摘要，涉及持久化与隐私成本；KV Cache 存已处理 Token 的注意力 K/V，减少重复计算却占运行内存，不默认跨独立会话保存。
 \par\textbf{题 5（场景）：}记录权限／超时错误，不越权执行；在预算内重试或请求用户授权／提供原始报告，无法核验时停止相关计算。可答：“Q2 报表读取失败，当前无法核对 Q3 环比，请提供获授权的 Q2 数据。”
-\item[\textbf{第 34 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace 回忆：权重与随上下文增长的 KV Cache 不同；
-手算：$10^9\times2=2\times10^9$ 字节，为 $\answerresult{2\ {\rm GB}}$；
-辨析：通常更多，还包括缓存、激活及运行时开销。
-\par\textbf{补充题（估算）：}$2\times2\times2\times8\times10\times2=640$ 字节；不计管理开销。
+\item[\textbf{第 34 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{权重存储估算}}\enspace
+\textbf{题 1（区分）：}训练代码定义优化流程，权重承载已训练参数，推理引擎执行推理，API 组织外部访问和授权。
+\par\textbf{题 2（估算）：}$10^9\cdot2=2\cdot10^9$ 字节，即 $\answerresult{2\ {\rm GB}}$；加 $0.5$ GB 至少 $2.5$ GB。
+\par\textbf{题 3（找错）：}量化可能引入质量误差；推理延迟还受 Kernel、访存、缓存、负载等影响，并不按字节线性变化。
+\par\textbf{题 4（权衡）：}$2\text{(K/V)}\cdot2\text{层}\cdot2\text{头}\cdot8\text{维}\cdot10\text{位置}\cdot2\text{字节}=\answerresult{640}$ 字节；KV Cache 随请求长度／并发变化，权重通常随模型固定。
 \item[\textbf{第 35 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace
 \textbf{题 1（比较）：}RoPE 修改位置相关的 Query/Key 表示；RMSNorm 根据均方根缩放，一般不做 LayerNorm 的减均值操作。
 \par\textbf{题 2（手算）：}原长度下为 $3/12=\answerresult{1/4}$，长度翻倍后相对原 MHA、原长度为 $2(3/12)=\answerresult{1/2}$（只比较 KV 元素）。
 \par\textbf{题 3（找错）：}还受投影计算、Kernel、访存、批量、序列长度、质量等影响，不能把 KV 元素比当成端到端时间比。
 \par\textbf{题 4（设计）：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。
-\item[\textbf{第 36 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace 回忆：单一资源指标不代表模型质量；
-手算：$(100-50)/100=\answerresult{50\%}$；
-辨析：至少测任务质量（如正确率）与效率
-（如延迟、吞吐），并固定输入和硬件条件。
-\par\textbf{补充题（找错）：}输入长度与硬件条件不一致，不能把速度差直接归因于架构。固定设备、精度、Batch、输入／输出长度和质量目标，再比较延迟与吞吐。
-\item[\textbf{第 37 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace 回忆：同一卷积核在多个空间位置共享参数；
-手算：$3\times3\times3\times8=\answerresult{216}$；
-辨析：核参数数目不随输入宽高翻倍而变，
-但输出位置数与运算量通常增加。
-\par\textbf{补充题（比较）：}卷积核权重仍共享，参数量不随宽高变化；若边界与步长条件相近，输出位置数通常约为原来的四倍，实际运算量随之增长。
-\item[\textbf{第 38 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace 回忆：将局部图像块变成一串向量供 Transformer 处理；
-手算：Patch 为 $4\times3$，加 CLS 后共有 5 行，
-分数形状 $\answerresult{5\times5}$；
-辨析：Patch 更小使 Token 数增多，全局 Attention 对数随之增加。
-\par\textbf{补充题（场景）：}用 $W_{\rm vis}:3\times6$ 映射每个视觉向量；五个位置投影后为 $\answerresult{5\times6}$。还需安排位置及与文字 Token 的接口。
+\item[\textbf{第 36 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace
+\textbf{题 1（分类）：}更好可能来自训练数据／目标、模型结构、推理优化或产品检索工具等，不能全部归功于网络架构。
+\par\textbf{题 2（手算）：}$(100-50)/100=\answerresult{50\%}$；不能由这一局部存储比例推出质量或响应延迟。
+\par\textbf{题 3（找错）：}输入长度和硬件同时改变，无法隔离架构效果；须统一测试条件。
+\par\textbf{题 4（设计）：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。
+\item[\textbf{第 37 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace
+\textbf{题 1（比较）：}卷积核在不同位置复用，可显著减少逐像素独立连接需要的参数，并保留局部邻域结构。
+\par\textbf{题 2（手算）：}$3\cdot3\cdot3\cdot8=\answerresult{216}$ 个权重。
+\par\textbf{题 3（预测）：}核参数量不变；边界与步长条件相近时，空间输出位置约变为原来的四倍，计算量通常上升。
+\par\textbf{题 4（方案）：}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。
+\item[\textbf{第 38 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace
+\textbf{题 1（形状）：}四个 Patch 加 CLS 得 $\answerresult{5}$ 行，注意力分数为 $\answerresult{5\times5}$。
+\par\textbf{题 2（手算）：}$W_{\rm vis}:3\times6$，序列映射后为 $\answerresult{5\times6}$。
+\par\textbf{题 3（预测）：}每维切分数翻倍，Patch 总数约四倍，平方配对数约十六倍（大量 Patch 时可忽略 CLS 常数项）。
+\par\textbf{题 4（场景）：}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。
 \end{enumerate}
