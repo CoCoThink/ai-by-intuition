@@ -11,6 +11,15 @@
 \item \textbf{三维 Transformer：}
 运行 \texttt{python3 scripts/teaching\_reference.py --json}，
 检查三个位置的概率、损失和一次联合参数更新。
+\item \textbf{连续训练与自动求导：}以下命令各自运行：
+\begin{verbatim}
+python3 scripts/teaching_trace.py
+python3 scripts/pytorch_starter.py
+\end{verbatim}
+前者打印第 0--20 步的损失与贪心预测（需要 NumPy）；后者用 PyTorch 自动求导复核同一模型的梯度和更新（需要 NumPy、PyTorch）。
+\item \textbf{预训练数据去重：}
+运行 \texttt{python3 scripts/pretraining\_data\_demo.py}，
+核对小文本的规范化、SHA-256 哈希及二元组 Jaccard 相似度；只用 Python 标准库。
 \item \textbf{联想记忆：}
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查外积写入、串扰、Delta 残差与交替重访。
@@ -77,10 +86,9 @@ ID & 解码文本 & 概率\\\midrule
 
 \subsubsection*{版本与勘误}
 \textbf{时效性提示（检索基准：2026-10-23（UTC））：}\hyperref[part:architecture]{架构与技术判断正文}及附录 F 的模型名称、开源配置与技术报告代表本版编辑时已收录的信息；具体模型是否仍可用、配置是否修订，应以所链接的官方页面与最新提交为准。第三方站点与报告若无明确发布修订记录，不能视为实时状态。\par
-当前教材编辑稿为 \textbf{v0.2.0-draft（未发布）}。\textbf{v0.1.0} 是此前已发布的独立版本；本次编译对应 Git 提交 \texttt{\bookbuildsha}，文件名与纸面均统一标识为 \textbf{v0.2.0-draft}，并非新的正式 Release。
+当前教材编辑稿为 \textbf{v0.2.0-draft（未发布）}。\textbf{v0.1.0} 是此前已发布的独立版本。\bookbuildsource 文件名与纸面均统一标识为 \textbf{v0.2.0-draft}。
 
-教学三维初始矩阵是本书的可复算参数设定，
-并非真实大模型的训练结果。
+教学三维初始矩阵是本书独立设计的可复算参数设定。
 不同版本的示例数字应配合其公式、矩阵与脚本阅读。
 发现问题时请记录章节、输入与期待结果。
 \textbf{仓库与纸质版可见入口：}

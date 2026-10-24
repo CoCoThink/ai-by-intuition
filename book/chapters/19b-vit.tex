@@ -65,7 +65,7 @@ X_{\rm patch}=
 \subsection{第二步：给每个 Patch 学一条短向量}
 
 文字的 Embedding 使用 Token ID 查表，
-图像的 Patch 通常使用一套\textbf{共享的线性投影}：
+图像的 Patch 使用一套\textbf{共享的线性投影}：
 \[
 W_{\rm patch}=
 \begin{bmatrix}
@@ -88,7 +88,7 @@ E_{\rm patch}=X_{\rm patch}W_{\rm patch}
 }
 \label{eq:vit-patch-embedding}
 \end{equation}
-这里是\textbf{人为设置的教学权重}，并非实际预训练模型参数。
+这里的矩阵是\textbf{人为设置的教学权重}。
 可训练的 $W_{\rm patch}$ 将像素块变成特征；
 行数由 Patch 数决定，列数由投影宽度决定。
 
@@ -116,22 +116,20 @@ Q=Z_0W_Q,\qquad K=Z_0W_K,\qquad V=Z_0W_V.
 则 $QK^\top/\sqrt3$ 的形状为 $4\times4$，
 Softmax 后仍是 $4\times4$，
 输出 $AV$ 为 $4\times3$。
-这里通常\textbf{不使用语言生成时的因果掩码}，
-因为整张图已经可用；如果是图像生成或其他特殊任务，
-则按其任务设计注意力可见性规则。
+这里使用\textbf{双向可见性}，因为整张图片已经可用。
 
 图像分类 ViT 可以在 Patch 前加可训练的\textbf{分类 Token}
 \texttt{[CLS]}，让输入由 $4\times3$ 变成 $5\times3$，
 Attention 分数由 $4\times4$ 变成 $5\times5$。
 分类头可使用 CLS 输出，也能使用池化。
-\textbf{CLS 并非所有 ViT 的必备结构。}
+池化路线可直接汇总 Patch 输出。
 
 \subsection{第五步：视觉编码器输出怎样进入语言模型？}
 
 \localfixture{四个图像 Patch 加两个文字 Token；独立的接口算例}
 将“图片编码”与“语言生成”连接起来，
 还缺一件事：\textbf{两端的特征宽度不一定相同}。
-本书先做最简单的形状桥接，不假装这套数字来自真实训练。
+本书用独立教学矩阵演示最简单的形状桥接。
 
 假定视觉编码器将四个 Patch 输出为
 $H_{\rm img}:4\times3$。为了只研究接口，
@@ -171,6 +169,8 @@ X_{\rm LLM}=
 其注意力分数矩阵是 $6\times6$；
 模型通过模态／位置信息和图文训练，学习如何联合使用这六行表示。
 
+\input{figures/vision-language-prefix}
+
 \begin{boundarybox}
 \textbf{这是视觉前缀路线的一种教学简化。}
 实际多模态系统还可重采样视觉 Token、
@@ -186,13 +186,13 @@ ViT 本身输出向量，不会直接生成自然语言。
 
 CNN 直接引入\textbf{局部性与权重共享}；
 ViT 将图片拆为 Patch，学习跨位置组合特征。
-\textbf{ViT 并不因此保证在所有图像任务上优于 CNN。}
+两者的效果应在同一图像任务与预算下比较。
 
 例如 $224\times224$ 彩色图片切成 $16\times16$ Patch，
 共有 $(224/16)^2=196$ 块，每块展开为
 $16\times16\times3=768$ 维。投影宽度若也是 $768$，
 则输入为 $196\times768$，权重为 $768\times768$。
-这仅是\textbf{尺寸演示}，不代表性能承诺。
+这组数字用于核对\textbf{序列长度与矩阵尺寸}。
 详见\href{https://arxiv.org/abs/2010.11929}{ViT 原始论文}。
 
 \begin{conclusion}

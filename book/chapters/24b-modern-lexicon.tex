@@ -42,7 +42,7 @@
 \item \textbf{KV Cache}：保存过去 Token 的 Key/Value 表示供自回归解码复用。 \termref{concept:kv-cache}
 \item \textbf{滑动窗口 Attention}：每个位置只读取一个有限的可见前缀窗口。 \termref{concept:sliding-window-attention}
 \item \textbf{稀疏 Attention}：只计算选择的 Token 对，不要求全部两两比较。 \termref{concept:sparse-attention}
-\item \textbf{线性 Attention}：通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 \termref{concept:linear-attention}
+\item \textbf{线性 Attention}：通过不同运算结构改善长序列计算或状态扩展性，读取规则由具体的核或状态更新公式定义。 \termref{concept:linear-attention}
 \item \textbf{外积（Outer product）}：将列形式 Key 与行形式 Value 相乘，写成关联矩阵。 \termref{concept:outer-product}
 \item \textbf{串扰（Interference）}：多个不正交 Key 的读取贡献叠加，污染目标 Value。 \termref{concept:memory-interference}
 \item \textbf{Delta 规则}：先读旧状态，用目标与旧输出的残差修正写入。 \termref{concept:delta-rule}

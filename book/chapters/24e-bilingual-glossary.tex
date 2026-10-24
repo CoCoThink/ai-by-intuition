@@ -47,7 +47,7 @@ Delta 更新规则 & Delta rule & 先读旧状态，用目标与旧输出的残�
 导数 & Derivative & 衡量函数在某一点的局部变化率。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
 维度 & Dimension & 向量有几个数，或矩阵有几行几列。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
 点积 & Dot product & 对应分量相乘后求和；若向量归一化，可反映夹角余弦。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
-随机失活 & Dropout & 训练时随机屏蔽一部分激活；推理时通常关闭。 & \hyperref[concept:dropout]{\ref*{concept:dropout}/\pageref*{concept:dropout}}\\
+随机失活 & Dropout & 训练时随机屏蔽一部分激活；标准推理时关闭。 & \hyperref[concept:dropout]{\ref*{concept:dropout}/\pageref*{concept:dropout}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} English E--H / 英文首字母索引}\\*
 提前停止 & Early stopping & 根据验证表现决定停止训练的时机。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
@@ -81,7 +81,7 @@ Delta 更新规则 & Delta rule & 先读旧状态，用目标与旧输出的残�
 标签 & Label & 监督学习中为样本提供的目标或正确类别。 & \hyperref[intro:18-generalization]{\ref*{intro:18-generalization}/\pageref*{intro:18-generalization}}\\
 学习率 & Learning rate & 控制每次梯度更新步长的系数。 & \hyperref[intro:16-loss-gradient]{\ref*{intro:16-loss-gradient}/\pageref*{intro:16-loss-gradient}}\\
 学习率升温 & Learning rate warmup & 训练前几步由小到大调度学习率，控制初期更新步长。 & \hyperref[concept:lr-warmup]{\ref*{concept:lr-warmup}/\pageref*{concept:lr-warmup}}\\
-线性注意力 & Linear attention & 通过不同运算结构改善长序列计算或状态扩展性，通常不等同于原 Softmax 公式。 & \hyperref[concept:linear-attention]{\ref*{concept:linear-attention}/\pageref*{concept:linear-attention}}\\
+线性注意力 & Linear attention & 通过不同运算结构改善长序列计算或状态扩展性，读取规则由具体的核或状态更新公式定义。 & \hyperref[concept:linear-attention]{\ref*{concept:linear-attention}/\pageref*{concept:linear-attention}}\\
 线性变换 & Linear transformation & 可写成 $W\vect x$ 的运算；满足叠加规则。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
 未归一化分数 & Logits & 进入 Softmax 前、还没归一化的分数。 & \hyperref[concept:logits]{\ref*{concept:logits}/\pageref*{concept:logits}}\\
 长短期记忆网络 & Long short-term memory & 利用门控状态改进长期信息传播的一类循环网络。 & \hyperref[intro:21-rnn]{\ref*{intro:21-rnn}/\pageref*{intro:21-rnn}}\\
@@ -174,7 +174,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \subsubsection*{不要混淆的五对概念}
 \begin{itemize}
 \item \textbf{参数与超参数}：前者主要由训练算法学习，后者控制模型或训练设计。
-\item \textbf{训练与推理}：训练会更新参数，普通推理通常使用固定参数。
+\item \textbf{训练与推理}：训练会更新参数，普通推理使用固定参数。
 \item \textbf{模型与 Agent}：模型负责计算预测，Agent 系统还涉及工具、状态与动作。
 \item \textbf{Embedding 与检索}：向量表示是检索的一种工具，检索本身还需索引、过滤和验证。
 \item \textbf{开放权重与开源}：开放模型参数不等于所有训练数据、代码和许可均公开。

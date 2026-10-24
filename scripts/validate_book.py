@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import math
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -241,13 +242,28 @@ def validate_source() -> None:
     inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
     if inputs != REQUIRED or len(inputs) != len(set(inputs)):
         fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
+    maps = re.findall(r"(?m)^\\(partmap[a-z]+)\s*$", main)
+    if len(maps) != len(PARTS) or len(set(maps)) != len(PARTS):
+        fail("Each of the eight parts needs its own chapter map")
     sources = {name: chapter(name) for name in REQUIRED + [
         "00d-rules-gap",  # archived merged lesson, not typeset
         "24-lexicon", "24b-modern-lexicon", "24d-english-index",
     ]}  # data-only canonical glossary sources; never typeset
+    if "local-build" in main:
+        fail("Build provenance must omit unknown revisions rather than print a placeholder")
+    for name in ("00h-colophon", "29-revision-notes"):
+        includes(sources[name], r"\bookbuildsource", "optional complete provenance sentence")
+    if sources["28-chapter-checks"].count(r"\par\Needspace{8\baselineskip}") != 45:
+        fail("Every answer chapter needs space for its heading and first answer")
+    for script in ("pretraining_data_demo", "pytorch_starter", "teaching_trace"):
+        includes(sources["29-revision-notes"], script.replace("_", r"\_")
+                 if script == "pretraining_data_demo" else script,
+                 "Appendix G reproduction entry")
     includes(main, r"\appendix", "main")
     # The manual release gate must consume exactly the PDF artifact built here.
     production = (ROOT / ".github/workflows/build-latex.yml").read_text(encoding="utf8")
+    includes(production, "export BOOK_BUILD_SHA='${{ github.sha }}'", "container source SHA")
+    includes(production, "bash ../scripts/build_book.sh", "shared build entry point")
     release = (ROOT / ".github/workflows/publish-release.yml").read_text(encoding="utf8")
     for workflow in (production, release):
         includes(workflow, "ai-by-intuition-book", "matching build/release artifact")
@@ -1535,6 +1551,9 @@ def validate_pdf(path: Path) -> None:
         len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", chapter(name)))
         for name in REQUIRED
     )
+    # The reusable part-map table is expanded once on each part opener.
+    expected_tables += len(re.findall(r"(?m)^\\partmap[a-z]+\s*$",
+                                     (BOOK / "main.tex").read_text()))
     if len(table_nodes) != expected_tables:
         fail(f"Expected {expected_tables} tagged data tables, found {len(table_nodes)}")
     for index, table_node in enumerate(table_nodes, 1):
@@ -1639,6 +1658,11 @@ def validate_pdf(path: Path) -> None:
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
+    if "local-build" in text:
+        fail("Rendered PDF still contains the unknown-revision placeholder")
+    expected_sha = os.environ.get("BOOK_BUILD_SHA") or os.environ.get("GITHUB_SHA")
+    if expected_sha and normalized(text).count(expected_sha[:12]) != 2:
+        fail("Copyright page and Appendix G must both identify the actual build commit")
     # Specific illustrated explainer that previously split after only its
     # first sentence. The caption, body and Value comparison must stay together.
     diagram_intro = [i for i, body in enumerate(pages)
@@ -1730,6 +1754,27 @@ def validate_pdf(path: Path) -> None:
              "distinct D.2 targets (expected 45 each)")
     print("Chapter answer navigation QA: 45 self-check links resolve to "
           "45 distinct destinations within Appendix D.2")
+    # Each answer-group title links back to its source self-check. Reject a
+    # title sitting in the bottom 30 mm, where its first answer cannot follow.
+    answer_heading_targets = set()
+    for page_index in range(start_answer, end_answer):
+        for ref in reader.pages[page_index].get("/Annots", []):
+            annot = ref.get_object()
+            action = annot.get("/A")
+            if action is None:
+                continue
+            action = action.get_object()
+            dest_name = str(action.get("/D", ""))
+            if action.get("/S") != "/GoTo" or dest_name not in named_destinations:
+                continue
+            target = reader.get_destination_page_number(named_destinations[dest_name])
+            if target in question_page_set:
+                answer_heading_targets.add(dest_name)
+                if float(annot["/Rect"][1]) < 85:
+                    fail(f"Answer chapter heading stranded at bottom of PDF page {page_index + 1}")
+    if len(answer_heading_targets) != 45:
+        fail("Expected 45 rendered answer chapter headings with links back to questions")
+    print("Answer heading pagination QA: all 45 titles leave room for their first answer")
     # Page-bottom regression: the "shape-first route" introduction may not be
     # stranded on a separate page from the first row of its table.
     route_pages = [i for i, page_text in enumerate(pages, 1)
@@ -1811,7 +1856,9 @@ def validate_pdf(path: Path) -> None:
             continue
         if re.match(r"^第[一二三四五六七八九十]+部分", str(item.title)):
             index = reader.get_destination_page_number(item)
-            if not all(label in pages[index] for label in ("从这里出发", "本部分你会学会")):
+            if not all(label in pages[index] for label in ("从这里出发", "本部分你会学会",
+                                                          "本部分地图", "全书路线中的位置",
+                                                          "读完试试看")):
                 fail(f"Part introduction incomplete on page {index + 1}")
             part_openers.add(index + 1)
     if len(part_openers) != 8:

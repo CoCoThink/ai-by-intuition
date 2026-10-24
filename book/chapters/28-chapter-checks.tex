@@ -17,232 +17,277 @@
 \setlength{\parskip}{3pt}
 \begin{enumerate}[leftmargin=5.4em,labelsep=.7em,itemsep=9pt]
 
-\item[\textbf{阅读指南}] \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{序章：为什么 AI 能接住我们说的话？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{阅读指南}] \phantomsection\label{answer:00-guide}\textbf{\hyperref[check:00-guide]{序章：为什么 AI 能接住我们说的话？}}\par\nobreak
 \answerpiece{1}{预测}{先区分取最大值和按概率抽样。}贪心选第一候选；随机采样时第二候选仍有 $0.4$ 的概率被选中。
 \par\answerpiece{2}{计算}{先找最大项，再把其余概率相加。}最大概率 $0.5$，其余两项合计 $0.5$；概率总和应为 $1$ 才构成分布。
 \par\answerpiece{3}{找错}{分别问：文字流畅和事实正确由什么检验？}流畅程度是生成形式的表现，既未证明训练资料真实，也未核实新近事实。
 \par\phantomsection\label{answerpiece:00-guide:4}\answerpiece{4}{方案}{先找带日期的原始出处。}检查带时间戳的权威或原始来源，交叉核验具体数字与上下文；Prompt 不能代替外部证据。
-\item[\textbf{第 1 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{为什么从函数开始学 AI？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 1 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{为什么从函数开始学 AI？}}\par\nobreak
 \answerpiece{1}{预测}{先只计算 $w$ 增加的那一份输出。}变化量 $(3-2)\cdot3=3$；原输出 $7$，新输出 $\answerresult{10}$。
 \par\answerpiece{2}{手算}{用任意两点求斜率，再求偏置。}$w=2,b=1$ 通过三点，$x=4$ 预测 $\answerresult{9}$。
 \par\answerpiece{3}{找错}{先问参数有没有被更新。}推理是固定当前参数计算新输入；训练要用数据、损失和梯度更新参数，不能因更换推理输入便认为已再次训练。
 \par\phantomsection\label{answerpiece:00-functions:4}\answerpiece{4}{场景}{先检查变化发生在输入还是目标。}要学习变化后的目标，应收集相应训练或校准样本并更新参数／模型规则；仅更换测试输入不能解决同一 $x$ 对应新标签的问题。
-\item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{怎样量“猜得多差”？损失与一次直接求解}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{怎样量“猜得多差”？损失与一次直接求解}}\par\nobreak
 \answerpiece{1}{解释}{试把一个正误差和一个负误差相加。}有正负号的误差直接相加可能互相抵消；平方误差非负，平均能衡量整体偏离。
 \par\answerpiece{2}{手算}{把两组参数分别代入两个平方项。}$L(2,1)=\answerresult{0}$；$L(3,1)=\frac23(1)^2=\answerresult{2/3}$。
 \par\answerpiece{3}{找错}{先写出两个平方项各自为零的条件。}完整损失由两个非负项相加；要同时为零需 $w=2$ \textbf{且} $b=1$，不能任意取偏置。
 \par\phantomsection\label{answerpiece:16-loss-analytic:4}\answerpiece{4}{预测}{固定偏置，只观察 $(w-2)^2$。}从 $3$ 朝 $2$ 移动，$(w-2)^2$ 下降，固定 $b=1$ 时损失下降；靠近极小值的方向才重要。
-\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{当解析解不现实时：梯度下降怎样调参数？}}\enspace
- \answerpiece{1}{预测}{把学习率零代入更新式。}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；没更新不代表已收敛。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{当解析解不现实时：梯度下降怎样调参数？}}\par\nobreak
+ \answerpiece{1}{预测}{把学习率零代入更新式。}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；它只执行了零步长更新。
 \par\answerpiece{2}{手算}{先在旧参数处同时求两个偏导。}$\nabla L=(-4/3,-2)$；以 $\eta=0.3$ 同步更新到 $(1.4,0.6)$，损失为 $\frac23(1.4-2)^2+(0.6-1)^2=\answerresult{0.4}$。
 \par\answerpiece{3}{找错}{圈出本次梯度使用的是哪一版参数。}同步更新要在同一旧参数处算完全部梯度后再一起更新；不能将新参数混进本次剩余梯度。
-\par\phantomsection\label{answerpiece:16-loss-gradient:4}\answerpiece{4}{权衡}{分别比较每步读取的样本量和梯度波动。}单样本更新计算较少但随机波动通常较大；全批次更稳但单次计算较重。Mini-batch 折中内存、吞吐量与梯度方差。
+\par\phantomsection\label{answerpiece:16-loss-gradient:4}\answerpiece{4}{权衡}{分别比较每步读取的样本量和梯度波动。}单样本更新计算较少但梯度更受当前样本影响；全批次更稳但单次计算较重。Mini-batch 折中内存、吞吐量与梯度方差。
 \par\phantomsection\label{answerpiece:16-loss-gradient:5}\answerpiece{5}{诊断}{先求 $(6,8)$ 的长度，再与阈值比较。}$\|(6,8)\|_2=10$，乘 $5/10$ 得 $\answerresult{(3,4)}$；梯度裁剪不是对预测概率归一化。高级优化器手算见附录 A。
-\item[\textbf{第 4 章}] \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{非线性：为什么多叠两层直线仍不够？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 4 章}] \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{非线性：为什么多叠两层直线仍不够？}}\par\nobreak
 \answerpiece{1}{比较}{先展开两个仿射变换的复合式。}$(ax+b)c+d=(ac)x+(bc+d)$，仍为一次仿射变换。
 \par\answerpiece{2}{手算}{先算 ReLU 括号里的数。}$f(0)=\relu(-1)=\answerresult{0}$；$f(1)=\relu(1)=\answerresult{1}$。
 \par\answerpiece{3}{预测}{分别看折角两侧的斜率。}左侧为常值零、斜率 $0$；右侧斜率为 $2$，因此可以表示折角两边不同的变化率。
 \par\phantomsection\label{answerpiece:07-functions-relu:4}\answerpiece{4}{找错}{先问被置零的是激活还是权重。}ReLU 是确定性的激活函数，不是随机屏蔽权重；随机激活屏蔽属于训练期 Dropout 的另一种机制。
-\item[\textbf{第 5 章}] \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{反向传播究竟在传什么？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 5 章}] \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{反向传播究竟在传什么？}}\par\nobreak
 \answerpiece{1}{计算}{沿 $w_1\to h\to\widehat y$ 逐段求导。}$\partial\widehat y/\partial w_1=w_2x=\answerresult{6}$。
 \par\answerpiece{2}{预测}{先写出负区间 ReLU 的局部导数。}$z<0$ 时 ReLU 的局部导数为零，所以该分支反传梯度为 $\answerresult{0}$。
 \par\answerpiece{3}{找错}{把从损失到参数的路径画全。}漏掉 $\partial h/\partial w_1$；应求 $(\partial L/\partial h)(\partial h/\partial w_1)$。
 \par\phantomsection\label{answerpiece:17-backpropagation:4}\answerpiece{4}{权衡}{先把到达同一节点的各分支梯度汇总。}同一节点收到来自多个输出分支的梯度后求和，再向前传播；可复用保存的中间值与局部导数。
-\item[\textbf{第 5 章}] \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{反向传播究竟在传什么？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 5 章}] \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{反向传播究竟在传什么？}}\par\nobreak
 \answerpiece{1}{流程}{按前向、损失、反传、更新排列动作。}前向产生预测，损失读取标签，反传产生各参数梯度，更新才改变参数。
 \par\answerpiece{2}{手算}{先求隐藏激活，再代入输出层。}$h=2,\widehat y=2\cdot2=\answerresult{4}$；损失为 $(4-5)^2/2=\answerresult{0.5}$。
 \par\answerpiece{3}{找错}{给更新前后的参数标上不同版本。}同步 SGD 的梯度必须在同一份旧参数下求取，不能把新旧参数混在同一个计算图内。
 \par\phantomsection\label{answerpiece:18b-end-to-end-learning:4}\answerpiece{4}{诊断}{先分别看训练样本与独立样本。}新目标等于预测时这份样本损失为 $0$；仍要用独立数据检验，且需排除数据泄漏。
-\item[\textbf{第 6 章}] \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{训练得很好，为什么新题反而做错？}}\enspace
-\answerpiece{1}{预测}{对比训练与验证曲线的方向。}训练降、验证升通常提示过拟合，应先检查划分与泄漏，再考虑早停、正则化等。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 6 章}] \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{训练得很好，为什么新题反而做错？}}\par\nobreak
+\answerpiece{1}{预测}{对比训练与验证曲线的方向。}训练降、验证升提示先排查过拟合，应先检查划分与泄漏，再考虑早停、正则化等。
 \par\answerpiece{2}{手算}{逐轮比较验证损失。}第 $\answerresult{2}$ 轮验证损失最低，为 $\answerresult{0.4}$。
 \par\answerpiece{3}{找错}{先查 Dropout 屏蔽的对象及测试集用途。}Dropout 训练时随机屏蔽\textbf{激活}，不是永久删除参数；超参数在验证数据上选择，不可反复用最终测试集挑选。
 \par\phantomsection\label{answerpiece:18-generalization:4}\answerpiece{4}{权衡}{先把最终测试集保留在选择过程之外。}在训练集内部采用交叉验证或重复验证切分做模型选择，最终测试集独立保留；代价是多次训练成本。
-\item[\textbf{第 7 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量：如何用数字表示一个东西？}}\enspace
-\answerpiece{1}{定义}{先为每个坐标写上特征名称。}有序位置对应不同特征；交换位置通常就交换了意义。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 7 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量：如何用数字表示一个东西？}}\par\nobreak
+\answerpiece{1}{定义}{先为每个坐标写上特征名称。}有序位置对应不同特征；交换位置就交换了对应特征。
 \par\answerpiece{2}{手算}{按相同坐标逐项相加。}$(2,3)+(1,-1)=\answerresult{(3,2)}$，仍是二维向量。
 \par\answerpiece{3}{找错}{先检查两个向量的特征定义和单位。}即使都为二维，特征定义与单位也不同，不能将年龄与身高直接相加。
 \par\phantomsection\label{answerpiece:01-vectors:4}\answerpiece{4}{场景}{先选择统一特征、投影或拼接中的一种。}先统一特征定义和尺度，或将二维向量投影到三维空间，或分别拼接成五维；不可无规则地逐项相加。
-\item[\textbf{第 8 章}] \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积：如何判断两条线索相不相似？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 8 章}] \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积：如何判断两条线索相不相似？}}\par\nobreak
 \answerpiece{1}{手算}{按坐标配对相乘，再相加。}$1\cdot3+2\cdot1=\answerresult{5}$，同位置乘积求和得到标量。
 \par\answerpiece{2}{预测}{先用正交性判断反向是否改变零点积。}新点积 $-0=\answerresult{0}$，反向后仍正交。
 \par\answerpiece{3}{找错}{先列出点积中除角度外的因素。}点积还受向量范数与训练方式影响；相似分数本身不能保证语义正确或事实一致。
 \par\phantomsection\label{answerpiece:02-dot-product:4}\answerpiece{4}{设计}{先把每条向量除以自己的长度。}余弦相似度除以两个范数，排除了非零向量整体放大的影响；原始点积则会随长度变化。
-\item[\textbf{第 9 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法到底在算什么？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 9 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法到底在算什么？}}\par\nobreak
 \answerpiece{1}{形状}{先比较内侧两个维度。}$2\times3$ 乘 $3\times4$ 内侧维度相同，输出 $\answerresult{2\times4}$；若右矩阵变为 $4\times3$，内侧 $3\ne4$，不合法。
 \par\answerpiece{2}{手算}{用输入行分别点乘权重的两列。}$(2,1)\begin{bmatrix}1&3\\2&-1\end{bmatrix}=(2+2,\ 6-1)=\answerresult{(4,5)}$，一行两列。
-\par\answerpiece{3}{找错}{先检查交换后内侧维度是否相等。}矩阵乘法不满足一般交换律。前例 $AB$ 合法，但 $BA$ 连形状也不合法；即使均合法，元素值通常也不同。
+\par\answerpiece{3}{找错}{先检查交换后内侧维度是否相等。}矩阵乘法不满足一般交换律。前例 $AB$ 合法，但 $BA$ 连形状也不合法；即使均合法，可取具体数字检验结果是否相等。
 \par\phantomsection\label{answerpiece:03-matrix-multiplication:4}\answerpiece{4}{比较}{先算一行的输出宽度，再数行数。}每行 $1\times2$ 乘 $2\times3$ 得 $1\times3$，五行堆叠是 $5\times3$；整批一次 $XW$ 也得 $5\times3$。
-\item[\textbf{第 10 章}] \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{MLP：把矩阵与激活函数组成两层网络}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 10 章}] \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{MLP：把矩阵与激活函数组成两层网络}}\par\nobreak
 \answerpiece{1}{形状}{先算 $xW_1$ 的形状。}$xW_1:1\times3$，随后 $xW_1W_2:1\times2$。
 \par\answerpiece{2}{手算}{逐项判断 ReLU 输入的正负。}$\relu(-1)=\answerresult{0}$，$\relu(2)=\answerresult{2}$，负值支路被截为零。
-\par\answerpiece{3}{找错}{先检查公式中有没有读取别的行。}参数共享不代表跨行通信；逐 Token FFN 对每行单独计算，Attention 等机制才负责跨位置读取。
-\par\phantomsection\label{answerpiece:10-mlp:4}\answerpiece{4}{比较}{先试把相邻的两个矩阵合并。}无激活时可合并为 $x(W_1W_2)$；含 ReLU 时计算分支依赖输入，通常无法用一个固定线性矩阵替代。
-\item[\textbf{第 11 章}] \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID：文字怎样进入数字世界？}}\enspace
+\par\answerpiece{3}{找错}{先检查公式中有没有读取别的行。}参数共享让各行使用同一函数；逐 Token FFN 对每行单独计算，Attention 等机制才负责跨位置读取。
+\par\phantomsection\label{answerpiece:10-mlp:4}\answerpiece{4}{比较}{先试把相邻的两个矩阵合并。}无激活时可合并为 $x(W_1W_2)$；含 ReLU 时计算分支依赖输入，能表达固定线性矩阵无法表达的函数。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 11 章}] \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID：文字怎样进入数字世界？}}\par\nobreak
 \answerpiece{1}{解释}{先把 ID 看作词表标签。}ID 是查表用的离散编号，不是可比较大小的语义强度。
 \par\answerpiece{2}{手算}{按给定合并规则从左到右切分。}按指定合并得到“今天／天气／好”，共 $\answerresult{3}$ 个 Token。
 \par\answerpiece{3}{找错}{先检查切分结果依赖哪些输入。}BPE 合并规则与词表由训练确定，实际切分还取决于新文本；不同文本或词表不保证相同 Token 数。
 \par\phantomsection\label{answerpiece:20a-tokenizer:4}\answerpiece{4}{权衡}{先把长度代入 $T\times T$。}分数矩阵由 $T^2$ 增到 $(2T)^2=\answerresult{4T^2}$，元素数四倍；端到端耗时还受实现、投影、硬件和序列生成方式等影响。
-\item[\textbf{第 12 章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类损失：预测错了哪一类，怎样调整分数？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 12 章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类损失：预测错了哪一类，怎样调整分数？}}\par\nobreak
 \answerpiece{1}{辨析}{先核对概率的取值范围与总和。}logits 可为负且不要求和为一；Softmax 后各项非负、总和为一。
 \par\answerpiece{2}{手算}{先找到正确类别的那一项概率。}$-\log(1/2)=\answerresult{\log2\approx0.6931}$，该类梯度 $1/2-1=\answerresult{-0.5}$。
 \par\answerpiece{3}{预测}{比较 $-\log p$ 随 $p$ 增大的方向。}$-\log0.4<-\log0.2$，交叉熵下降。
 \par\phantomsection\label{answerpiece:20c-classification-loss:4}\answerpiece{4}{找错}{先把类别标签写成与 $p$ 同形的向量。}$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$；整数 ID 只用于索引。
-\item[\textbf{第 13 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding：让 Token ID 变成可训练的向量}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 13 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding：让 Token ID 变成可训练的向量}}\par\nobreak
 \answerpiece{1}{形状}{先数查出的行数与每行宽度。}Embedding 表为 $5\times3$，三个 ID 查表为 $\answerresult{3\times3}$，每行属于输入的一个位置。
 \par\answerpiece{2}{比较}{把 one-hot 与表的每一行分别配对。}ID 只是任意编号；one-hot 行仅有对应 ID 列为 $1$，右乘 Embedding 表正好选出对应行，与查表同义。
 \par\answerpiece{3}{预测}{先区分查表向量和加位置后的向量。}重复 ID 的原始查表向量相同；第 1、3 位置的可训练位置向量可能不同，因此二者叠加后不必相同。
 \par\phantomsection\label{answerpiece:20-embeddings:4}\answerpiece{4}{诊断}{画出输入 Embedding 和输出头两条梯度路径。}不能。目标类的输出头仍有梯度；输入 Embedding 的查表梯度与输出头的词表梯度是不同路径，未作输入的 ID 仍可更新输出头列。
-\item[\textbf{第 14 章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{把语言练习变成一道可计算的预测题}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 14 章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{把语言练习变成一道可计算的预测题}}\par\nobreak
 \answerpiece{1}{对齐}{把原序列整体向右错开一位。}三个目标是 $\answerresult{[4,5,3]}$。
 \par\answerpiece{2}{形状}{先数预测位置，再数每行候选。}三个位置乘五类分数，logits 为 $\answerresult{3\times5}$。
 \par\answerpiece{3}{找错}{先检查预测位置是否读到了未来输入。}把未来目标送进了当前位置可见的输入，违反因果预测的可见性约束。
 \par\phantomsection\label{answerpiece:20b-task-contract:4}\answerpiece{4}{方案}{分别问两个 Mask 控制读取还是计分。}训练数据里的真实前缀已知，因果 Mask 允许各位置并行算分数；生成的下一输入取决于前一步实际选出的 Token，必须依次确定。
-\item[\textbf{第 15 章}] \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{逐个处理 Token，为什么仍看不到前文？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 15 章}] \phantomsection\label{answer:21a-context-gap}\textbf{\hyperref[check:21a-context-gap]{逐个处理 Token，为什么仍看不到前文？}}\par\nobreak
 \answerpiece{1}{预测}{先比较两句传给当前 Token 函数的输入。}不能。输入只保留当前 Token 时，两句进入函数的是同一个表示，输出无法仅因不可见的前文改变。
 \par\answerpiece{2}{手算}{先把 $x=3$ 代入同一个函数。}两句都得到 $\answerresult{7}$。
 \par\answerpiece{3}{找错}{先问可变历史如何放进固定宽度输入。}需要固定输入长度／截断和相应参数或计算预算；直接拼接不能免费覆盖无限历史。
 \par\phantomsection\label{answerpiece:21a-context-gap:4}\answerpiece{4}{方案}{分别画递推状态与直接读取历史的路径。}RNN 将历史压入递推状态，长依赖可能衰减、计算串行；Attention 对历史位置直接算匹配，可能增加随长度增长的存储与算力开销。
-\item[\textbf{第 16 章}] \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 是什么？让网络一个词一个词地读}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 16 章}] \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{RNN 是什么？让网络一个词一个词地读}}\par\nobreak
 \answerpiece{1}{流程}{先看公式里前一步的状态从哪里进入。}每一步根据 $x_t$ 与 $h_{t-1}$ 计算 $h_t$；状态把部分历史摘要传给未来位置。
 \par\answerpiece{2}{手算}{从 $h_0=0$ 起逐步代入。}$h_1=\answerresult{2}$，$h_2=0+0.5\cdot2=\answerresult{1}$，$h_3=1+0.5\cdot1=\answerresult{1.5}$。
 \par\answerpiece{3}{预测}{检查更新状态所需的先后依赖。}第一个输入增加 $2$，经两次系数 $0.5$ 传播，到 $h_3$ 增加 $2(0.5)^2=\answerresult{0.5}$，变为 $2$。
 \par\phantomsection\label{answerpiece:21-rnn:4}\answerpiece{4}{权衡}{分别比较直接访问与逐步传递的代价。}RNN 一步依赖上一步，难并行且可能淡忘远处信息；全 Attention 可直接访问历史，但全序列匹配存储／运算可能随长度平方增长。
-\item[\textbf{第 17 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{最朴素的注意力：直接用词向量做点积}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 17 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{最朴素的注意力：直接用词向量做点积}}\par\nobreak
 \answerpiece{1}{手算}{先用第一行和各行做点积。}第一行 $(1,0,1)$，第三行 $(1,1,2)$，$S_{13}=S_{31}=\answerresult{1}$。
 \par\answerpiece{2}{预测}{分别写出两行 Softmax 的分母。}不必相等。$A_{13}=e/(2e+1)$，$A_{31}=e/(2e+e^2)$；虽然对应原始分数同为 $1$，每行 Softmax 的分母不同。
 \par\answerpiece{3}{找错}{先问 Query 和 Key 是否有独立投影。}零参数 $XX^\top$ 让 Query/Key 使用同样的输入向量，不能单独学“如何问”和“如何匹配”。
 \par\phantomsection\label{answerpiece:21c-naive-attention:4}\answerpiece{4}{比较}{把两个独立投影写进分数矩阵。}独立投影使 $QK^\top$ 一般不对称；各位置的发问与匹配表示可以分开学习。
-\item[\textbf{第 18 章}] \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{Attention 是什么？让一个词直接读取其他位置}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 18 章}] \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{Attention 是什么？让一个词直接读取其他位置}}\par\nobreak
 \answerpiece{1}{定位}{先给 Q、K、V 分配查询、匹配、内容角色。}Query 发问、Key 用于匹配、Value 提供读取内容；$qK^\top:1\times3$，乘 $V$ 后输出 $1\times2$。
 \par\answerpiece{2}{手算}{将两个 Value 分别乘对应权重。}$0.2(1,0)+0.8(0,1)=\answerresult{(0.2,0.8)}$。
 \par\answerpiece{3}{找错}{先找 Value 出现在分数公式还是读出公式中。}分数来自 Query 与 Key，Value 只进加权求和。改 Value 不直接改 Q/K 原始分数，但可能改变读出。
 \par\phantomsection\label{answerpiece:21b-why-attention:4}\answerpiece{4}{设计}{先比较匹配特征与内容特征是否必须相同。}把匹配和内容绑定限制灵活度；独立 $W_Q,W_K,W_V$ 能分别学习匹配视角和提供的内容。
-\item[\textbf{第 19 章}] \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{从单 Query 到批量 Self-Attention}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 19 章}] \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{从单 Query 到批量 Self-Attention}}\par\nobreak
 \answerpiece{1}{形状}{先算 $QK^\top$，再接上 $V$。}匹配分数及 Softmax 均为 $3\times4$，乘 $V:4\times3$ 后输出 $\answerresult{3\times3}$。
 \par\answerpiece{2}{手算}{先比较相同分数的两个指数。}两个相同分数对应权重 $(1/2,1/2)$，读出为 $\answerresult{(0.5,0.5)}$。
 \par\answerpiece{3}{预测}{分别试只改一项和同时平移两项。}第一权重增大；若同时加相同常数，分子分母共同缩放，权重不变。
 \par\phantomsection\label{answerpiece:11-softmax-memory:4}\answerpiece{4}{找错}{先区分分数矩阵与读出矩阵。}$QK^\top$ 只生成分数而非内容，须先用 Softmax 得权重，再右乘 Value 才得到读出表示。
-\item[\textbf{第 20 章}] \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{位置编码、缩放与多头注意力的手算}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 20 章}] \phantomsection\label{answer:22a-position-multihead}\textbf{\hyperref[check:22a-position-multihead]{位置编码、缩放与多头注意力的手算}}\par\nobreak
 \answerpiece{1}{预测}{先交换两个 Token，检查模型还剩什么顺序线索。}没有位置机制便缺少 Token 的位置信息，模型可能难以区分仅顺序不同的序列；位置编码提供可辨的序列身份。
 \par\answerpiece{2}{形状}{先把两个头的特征列拼起来。}拼接为 $\answerresult{3\times4}$；输出投影后为 $\answerresult{3\times6}$。
 \par\answerpiece{3}{找错}{给原始分数取一个很大的正数试算。}除以 $\sqrt{d_k}$ 只是缩放，原分数没有保证上界；只有 Softmax 之后的概率落在 $[0,1]$。
 \par\phantomsection\label{answerpiece:22a-position-multihead:4}\answerpiece{4}{比较}{先比较两个头是否拥有独立参数。}每个头可以分别训练 Q/K/V 投影，读取不同子空间；复制相同头不创造独立表示能力。
-\item[\textbf{第 21 章}] \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{把 Attention 组装起来：Transformer 不只是一个公式}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 21 章}] \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{把 Attention 组装起来：Transformer 不只是一个公式}}\par\nobreak
 \answerpiece{1}{形状}{先数拼接后的宽度，再核对残差两端。}拼接得 $\answerresult{3\times4}$；残差相加要求两侧形状兼容，否则需投影对齐。
 \par\answerpiece{2}{预测}{在位置图上标出允许读取的上三角区域。}第 1 位置若读取第 2 位置真实目标，便泄漏未来信息，违反因果自回归预测。
-\par\answerpiece{3}{找错}{先标明 Cross-Attention 的 Q 和 K/V 来源。}原始 Encoder--Decoder 的 Cross-Attention 由 Decoder 提供 Q、Encoder 输出提供 K/V；通常的 Decoder-only GPT 采用因果 Self-Attention，不默认有 Encoder。
+\par\answerpiece{3}{找错}{先标明 Cross-Attention 的 Q 和 K/V 来源。}原始 Encoder--Decoder 的 Cross-Attention 由 Decoder 提供 Q、Encoder 输出提供 K/V；Decoder-only GPT 采用因果 Self-Attention，不默认有 Encoder。
 \par\phantomsection\label{answerpiece:22-transformer-architecture:4}\answerpiece{4}{对照}{分别标出跨位置、逐位置与保留通路。}Attention 进行跨位置读取，FFN 每位置改写特征；残差帮助保留信息与梯度通路。
 \par\phantomsection\label{answerpiece:22-transformer-architecture:5}\answerpiece{5}{流程}{先从 ID 查表画到 logits 和损失。}Token ID 查表加位置得到隐藏矩阵，Block 输出上下文化隐藏状态，输出头变 logits，Softmax 变概率；训练把概率与目标比较得到损失，再反传更新参数。
-\item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{前馈网络与输出头：两种不同的特征变换}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{前馈网络与输出头：两种不同的特征变换}}\par\nobreak
 \answerpiece{1}{定位}{先看两种输出各自属于隐藏空间还是词表。}FFN 在模型隐藏空间内映射特征；词表输出头把隐藏向量变为各 Token 类别的 logits。
 \par\answerpiece{2}{手算}{先写出上投影和下投影的内侧维度。}$W_{\rm up}:6\times18$、$W_{\rm down}:18\times6$，整体输出 $\answerresult{4\times6}$。
 \par\answerpiece{3}{找错}{先比较隐藏宽度和词表大小。}FFN 后仍是隐藏向量，还需输出头投影到词表大小，再经 Softmax 得到概率。
 \par\phantomsection\label{answerpiece:10b-ffn-output-head:4}\answerpiece{4}{估算}{分别数两张 FFN 权重表的元素。}$6\cdot18+18\cdot6=\answerresult{216}$ 个权重；FFN 宽度与词表大小不同，词表输出头另计。
-\item[\textbf{第 23 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三维贯通实验：从 Token ID 到三个位置的输出概率}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 23 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三维贯通实验：从 Token ID 到三个位置的输出概率}}\par\nobreak
  \answerpiece{1}{定位}{沿形状地图找出首次从三列变成五列的位置。}$X,A,H:3\times3$，$Z,\widehat P:3\times5$；输出头 $W_{\rm out}:3\times5$ 从隐藏特征生成词表分数。
 \par\answerpiece{2}{预测}{先把最高概率 ID 与目标 ID 逐行对照。}初始位置 $1,2$ 错，位置 $3$ 对。因果 Attention 允许第三位置读取第一位置，所以首 Token 改变可影响末位置 logits。
 \par\answerpiece{3}{找错}{先在公式里找跨行读取发生在哪一步。}说反了：Attention 跨 Token 位置读取；FFN 使用共享权重逐行做非线性变换，不交换 Token 信息。
 \par\phantomsection\label{answerpiece:22b-token-to-output:4}\answerpiece{4}{比较}{先在被遮住的区域标出未来目标。}无因果 Mask，前面位置可能读取后面的目标 Token 表示，造成未来信息泄漏；自回归训练必须限制可见性。
-\item[\textbf{第 24 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三个位置一起训练：从交叉熵到共享参数更新}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 24 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三个位置一起训练：从交叉熵到共享参数更新}}\par\nobreak
 \answerpiece{1}{对齐}{将输入与右移一位的目标逐行配对。}三位置目标为 $\answerresult{[4,5,3]}$；因果 Mask 限制 Attention 可见位置，损失 Mask 选择参与计分的位置。
 \par\answerpiece{2}{手算}{先写出 $(p-y)/N$。}$(0.3-1)/3=\answerresult{-0.2333}$；若仅两位置参与，$(0.3-1)/2=\answerresult{-0.35}$。
 \par\answerpiece{3}{找错}{先给每份参数标上更新步号。}同一训练步必须在一套旧参数上算全部梯度，再一起更新；混用更新后的输出头计算前层梯度不属于标准同步 SGD。
 \par\phantomsection\label{answerpiece:22c-language-training:4}\answerpiece{4}{预测}{比较同一正确类两次的 $-\log p$。}$-\log0.07<-\log0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。
 \par\phantomsection\label{answerpiece:22c-language-training:5}\answerpiece{5}{诊断}{先问这个检查覆盖了训练闭环还是未见数据。}固定小 Batch 上训练到损失下降是排查前向、梯度和更新的 sanity check（先过拟合一个 Batch）；不能据此证明未见数据的泛化。
-\item[\textbf{第 25 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{训练好了，模型怎样逐词生成文字？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 25 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{训练好了，模型怎样逐词生成文字？}}\par\nobreak
  \answerpiece{1}{预测}{先看除以更小温度后分数差如何变化。}C 从 $\tau=1$ 时约 $0.090$ 降至 $\tau=0.5$ 时约 $\answerresult{0.016}$；$\tau$ 趋于无穷时三个概率均趋 $1/3$。
 \par\answerpiece{2}{手算}{按概率降序累加到阈值，再重新归一化。}Top-$p=0.8$ 累计 $0.5+0.3=0.8$，按大于等于阈值保留 A、B，归一化为 $\answerresult{(0.625,0.375)}$。Top-$k=3$ 保留前三，总和 $0.95$，归一化约 $\answerresult{(0.526,0.316,0.158)}$；保留集合不同。
 \par\answerpiece{3}{找错}{先区分已知训练前缀与尚未生成的新 Token。}训练时真实前缀全部已知，因果 Mask 允许不同位置同一轮前向预测；生成时新输入由上一步选出的未知 Token 决定，必须顺序生成。
 \par\phantomsection\label{answerpiece:23-llm-systems:4}\answerpiece{4}{权衡}{先分开数首次 Prefill 和追加一步的 K/V。}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。
 \par\phantomsection\label{answerpiece:23-llm-systems:5}\answerpiece{5}{场景}{先检查旧会话文本有没有进入本次上下文。}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。
-\item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{从一层三维算例，到真正的 GPT 差了什么？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{从一层三维算例，到真正的 GPT 差了什么？}}\par\nobreak
 \answerpiece{1}{形状}{用模型宽度除以头数。}$768/12=\answerresult{64}$；每头宽度不直接给出层数。
 \par\answerpiece{2}{估算}{分别写出四张 Attention 投影和两张 FFN 的元素数。}Attention 约 $4\cdot768^2$，FFN 约 $8\cdot768^2$，后者约为前者两倍（按题设简化）。
 \par\answerpiece{3}{找错}{先问损失来自哪份数据和哪种目标。}训练损失仅反映对应数据目标，还需独立泛化评估与事实／鲁棒性等任务检查。
-\par\phantomsection\label{answerpiece:23a-from-toy-to-gpt:4}\answerpiece{4}{诊断}{先检查初始 logits 是否均匀。}不构成代码错误证明；初值并非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。
-\item[\textbf{第 27 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{为什么图片不能只靠大矩阵？从局部特征到 CNN}}\enspace
+\par\phantomsection\label{answerpiece:23a-from-toy-to-gpt:4}\answerpiece{4}{诊断}{先检查初始 logits 是否均匀。}不构成代码错误证明；初值给出非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 27 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{为什么图片不能只靠大矩阵？从局部特征到 CNN}}\par\nobreak
 \answerpiece{1}{比较}{先看同一个卷积核在哪些位置复用。}卷积核在不同位置复用，可显著减少逐像素独立连接需要的参数，并保留局部邻域结构。
 \par\answerpiece{2}{手算}{按高、宽、输入通道、输出通道相乘。}$3\cdot3\cdot3\cdot8=\answerresult{216}$ 个权重。
-\par\answerpiece{3}{预测}{先区分核的形状与滑动位置数量。}核参数量不变；边界与步长条件相近时，空间输出位置约变为原来的四倍，计算量通常上升。
+\par\answerpiece{3}{预测}{先区分核的形状与滑动位置数量。}核参数量不变；边界与步长条件相近时，空间输出位置约变为原来的四倍，逐位置卷积的乘加次数相应上升。
 \par\phantomsection\label{answerpiece:19-cnn:4}\answerpiece{4}{方案}{先看下采样保留了哪些空间信息。}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。
-\item[\textbf{第 28 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{从 CNN 到 ViT：如何把图片变成一串 Token？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 28 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{从 CNN 到 ViT：如何把图片变成一串 Token？}}\par\nobreak
 \answerpiece{1}{形状}{先数 Patch，再把 CLS 算进去。}四个 Patch 加 CLS 得 $\answerresult{5}$ 行，注意力分数为 $\answerresult{5\times5}$。
 \par\answerpiece{2}{手算}{先让投影内侧维度与视觉宽度匹配。}$W_{\rm vis}:3\times6$，序列映射后为 $\answerresult{5\times6}$。
 \par\answerpiece{3}{预测}{先数每边切成多少块，再考虑平方配对。}每维切分数翻倍，Patch 总数约四倍，平方配对数约十六倍（大量 Patch 时可忽略 CLS 常数项）。
 \par\phantomsection\label{answerpiece:19b-vit:4}\answerpiece{4}{场景}{先问平均后是否还能定位原来的区域。}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。
-\item[\textbf{第 29 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练已经学会续写，为什么还能临时学会新任务？}}\enspace
-\answerpiece{1}{比较}{逐项检查是否发生损失反传和参数更新。}预训练与 SFT 通过训练更新参数；Few-shot ICL 通常仅将样例加进当前上下文。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 29 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练已经学会续写，为什么还能临时学会新任务？}}\par\nobreak
+\answerpiece{1}{比较}{逐项检查是否发生损失反传和参数更新。}预训练与 SFT 通过训练更新参数；本章的 Few-shot ICL 将样例加进当前上下文，权重保持固定。
 \par\answerpiece{2}{手算}{先数当前 Prompt 里的任务记录。}两例加一待答共 $\answerresult{3}$ 条记录；另一会话没有带入时，原例不在新的上下文中。
 \par\answerpiece{3}{找错}{先检查复制示例后是否执行了优化步骤。}Few-shot 不永久改写权重；新 Q3 数据须来自有权限、可核验的报告或工具读取。
 \par\phantomsection\label{answerpiece:23aa-pretraining-icl:4}\answerpiece{4}{方案}{先区分格式需求与新季度事实来源。}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。
-\item[\textbf{第 30 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{会接龙，还要怎样学会对话与解决任务？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 30 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{会接龙，还要怎样学会对话与解决任务？}}\par\nobreak
 \answerpiece{1}{比较}{先分别写出示范、比较和程序核验的标签来源。}SFT 使用示范答案标签；偏好训练使用回答排序／比较；可验证奖励以程序、判题器等可复现结果评分。
 \par\answerpiece{2}{手算}{先算交叉熵，再求奖励均值与标准差。}$-\log0.25=\answerresult{\log4\approx1.3863}$；奖励均值 $0.5$、总体标准差 $0.5$，优势为 $\answerresult{(1,-1,1,-1)}$。
 \par\answerpiece{3}{找错}{先查相对优势之外还有哪些策略目标项。}完整目标还涉及新旧策略概率比、裁剪和可能的正则化；奖励完全相同时标准差为零，需数值稳定处理。
 \par\phantomsection\label{answerpiece:23c-post-training:4}\answerpiece{4}{方案}{逐项检查改变的是上下文、参数还是候选选择。}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。
-\item[\textbf{第 31 章}] \phantomsection\label{answer:23d-agent-rag}\textbf{\hyperref[check:23d-agent-rag]{检索与证据：RAG 怎样回答有来源的问题？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 31 章}] \phantomsection\label{answer:23d-agent-rag}\textbf{\hyperref[check:23d-agent-rag]{检索与证据：RAG 怎样回答有来源的问题？}}\par\nobreak
 \answerpiece{1}{证据}{先把所需季度与已检索季度对齐。}缺 Q2，应继续按季度检索或直接读取经授权的 Q2 原件。
 \par\answerpiece{2}{手算}{先把上一季度放在增长率分母。}$(132-120)/120=\answerresult{10\%}$。
 \par\answerpiece{3}{找错}{先查看数字对应的原表出处。}不能；相似度是排序信号，不等于权威性，需核对来源与单位。
 \par\phantomsection\label{answerpiece:23d-agent-rag:4}\answerpiece{4}{行动}{先标出缺失证据影响哪一步计算。}明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比。
-\item[\textbf{第 32 章}] \phantomsection\label{answer:23d-agent-tools}\textbf{\hyperref[check:23d-agent-tools]{工具调用与 Agent 循环：从请求到执行}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 32 章}] \phantomsection\label{answer:23d-agent-tools}\textbf{\hyperref[check:23d-agent-tools]{工具调用与 Agent 循环：从请求到执行}}\par\nobreak
 \answerpiece{1}{分工}{先分开模型提出请求与程序执行请求。}应用程序负责解析、校验、授权和真实执行。
 \par\answerpiece{2}{计算}{分别用 Q1、Q2 作为两个环比的基期。}Q2 环比 $20\%$，Q3 环比 $\answerresult{10\%}$。
 \par\answerpiece{3}{找错}{先检查是否收到真实工具的成功返回。}把未经执行确认的数据伪装成成功的工具结果。
 \par\phantomsection\label{answerpiece:23d-agent-tools:4}\answerpiece{4}{选择}{先看步骤和输入格式能否预先确定。}固定 Workflow 更易测试、审计与限制成本。
-\item[\textbf{第 33 章}] \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{协议、Skill 与多 Agent：怎样在边界内协作？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 33 章}] \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{协议、Skill 与多 Agent：怎样在边界内协作？}}\par\nobreak
  \answerpiece{1}{覆盖}{先列出三个必需季度的证据格。}缺 Q2 报告。先对必需季度逐项检查、定向检索或申请合法数据访问；若缺失仍无法计算，明确报告缺口。
 \par\answerpiece{2}{手算}{先核对 Q3 的相邻基期是哪个季度。}正确 Q3 环比 $(132-120)/120=\answerresult{10\%}$；误用 Q1 为基期则 $(132-100)/100=\answerresult{32\%}$。
 \par\answerpiece{3}{找错}{分别检查排序、来源和执行权限。}检索相关性不等于来源可信，网页正文不等于高优先级系统指令，外发文件更须经应用侧授权，不能由网页文字授予权限。
 \par\phantomsection\label{answerpiece:23d-agent-systems:4}\answerpiece{4}{权衡}{先列出应用记忆与 KV Cache 保存的对象。}应用层记忆保存、索引并在获授权后恢复消息或摘要，涉及持久化与隐私成本；KV Cache 存已处理 Token 的注意力 K/V，减少重复计算却占运行内存，不默认跨独立会话保存。
 \par\phantomsection\label{answerpiece:23d-agent-systems:5}\answerpiece{5}{场景}{先记录工具错误及当前授权范围。}记录权限／超时错误，不越权执行；在预算内重试或请求用户授权／提供原始报告，无法核验时停止相关计算。可答：“Q2 报表读取失败，当前无法核对 Q3 环比，请提供获授权的 Q2 数据。”
-\item[\textbf{第 34 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{系统已经会用工具了，怎样稳定部署并控制成本？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 34 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{系统已经会用工具了，怎样稳定部署并控制成本？}}\par\nobreak
 \answerpiece{1}{区分}{先把训练、参数保存、执行和访问四层拆开。}训练代码定义优化流程，权重承载已训练参数，推理引擎执行推理，API 组织外部访问和授权。
 \par\answerpiece{2}{估算}{用参数量乘每个参数的字节数。}$10^9\cdot2=2\cdot10^9$ 字节，即 $\answerresult{2\ {\rm GB}}$；加 $0.5$ GB 至少 $2.5$ GB。
 \par\answerpiece{3}{找错}{先把存储字节与任务质量、延迟分开计量。}量化可能引入质量误差；推理延迟还受 Kernel、访存、缓存、负载等影响，并不按字节线性变化。
-\par\phantomsection\label{answerpiece:23b-deployment-and-ecosystem:4}\answerpiece{4}{权衡}{先按 K/V、层、头、维、位置、字节展开。}$2\text{(K/V)}\cdot2\text{层}\cdot2\text{头}\cdot8\text{维}\cdot10\text{位置}\cdot2\text{字节}=\answerresult{640}$ 字节；KV Cache 随请求长度／并发变化，权重通常随模型固定。
-\item[\textbf{第 35 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{现代 Transformer 为什么看起来越来越不像原版？}}\enspace
+\par\phantomsection\label{answerpiece:23b-deployment-and-ecosystem:4}\answerpiece{4}{权衡}{先按 K/V、层、头、维、位置、字节展开。}$2\text{(K/V)}\cdot2\text{层}\cdot2\text{头}\cdot8\text{维}\cdot10\text{位置}\cdot2\text{字节}=\answerresult{640}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 35 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{现代 Transformer 为什么看起来越来越不像原版？}}\par\nobreak
 \answerpiece{1}{比较}{先看两种方法分别作用在哪个张量。}RoPE 修改位置相关的 Query/Key 表示；RMSNorm 根据均方根缩放，一般不做 LayerNorm 的减均值操作。
 \par\answerpiece{2}{手算}{先比较 K/V 头数，再乘长度变化率。}原长度下为 $3/12=\answerresult{1/4}$，长度翻倍后相对原 MHA、原长度为 $2(3/12)=\answerresult{1/2}$（只比较 KV 元素）。
 \par\answerpiece{3}{找错}{先列出端到端延迟由哪些阶段组成。}还受投影计算、Kernel、访存、批量、序列长度、质量等影响，不能把 KV 元素比当成端到端时间比。
 \par\phantomsection\label{answerpiece:22d-modern-transformers:4}\answerpiece{4}{设计}{先固定质量、数据、硬件和负载条件。}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。
-\item[\textbf{第 36 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{面对新模型与新缩写，怎么判断它值不值得学？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{第 36 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{面对新模型与新缩写，怎么判断它值不值得学？}}\par\nobreak
 \answerpiece{1}{分类}{先把改进按数据、结构、执行和产品分层。}更好可能来自训练数据／目标、模型结构、推理优化或产品检索工具等，不能全部归功于网络架构。
 \par\answerpiece{2}{手算}{先用节省量除以原存储量。}$(100-50)/100=\answerresult{50\%}$；不能由这一局部存储比例推出质量或响应延迟。
 \par\answerpiece{3}{找错}{先找实验中同时改变的条件。}输入长度和硬件同时改变，无法隔离架构效果；须统一测试条件。
 \par\phantomsection\label{answerpiece:23e-tech-judgement:4}\answerpiece{4}{设计}{先写出双方共用的测试条件表。}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。
-\item[\textbf{附录 H}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积与矩阵：如何真正“写入”一条记忆？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 H}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积与矩阵：如何真正“写入”一条记忆？}}\par\nobreak
 \answerpiece{1}{形状}{先把 Key 转成列，再与 Value 行相乘。}$S:2\times3$，$qS:1\times3$。
 \par\answerpiece{2}{手算}{先写外积，再用查询左乘状态。}$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$，$(1,0)S=\answerresult{(0,1)}$。
 \par\answerpiece{3}{预测}{把 Key 的缩放分别带入写入和查询。}写入与查询都缩为原 Key 的一半，幅度乘 $(0.5)^2=\answerresult{1/4}$，输出为原 Value 的四分之一。
 \par\phantomsection\label{answerpiece:04-key-value-outer-product:4}\answerpiece{4}{找错}{先写出两个向量转置前后的形状。}$vk^\top$ 对题设 $v:1\times3,k:1\times2$ 根本无法相乘（内维不符）；即使另转置也会改变状态的轴方向，不能替代 $k^\top v$。
-\item[\textbf{附录 H}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{外积与矩阵：如何真正“写入”一条记忆？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 H}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{外积与矩阵：如何真正“写入”一条记忆？}}\par\nobreak
 \answerpiece{1}{解释}{将查询对状态的乘法按每条记忆展开。}$k_A(k_B^\top v_B)=(k_Ak_B^\top)v_B$，非零交叉点积带来别条 Value。
 \par\answerpiece{2}{手算}{先算自身点积，再算交叉点积。}$k_Ak_A^\top=1$、$k_Ak_B^\top=0.6$，读出 $\answerresult{(1,0.6)}$。
 \par\answerpiece{3}{预测}{先把交叉点积替换为零。}两 Key 正交后交叉点积为零，查询结果回到 $\answerresult{(1,0)}$。
 \par\phantomsection\label{answerpiece:05-memory-interference:4}\answerpiece{4}{方案}{先选一种方法，指出它改变写入还是读取。}正交化减少写入键的重叠；残差写入先校准已有读出误差；选择性非线性主要作用于读取分数。
-\item[\textbf{附录 I}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{线性记忆怎样减少干扰？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 I}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{线性记忆怎样减少干扰？}}\par\nobreak
 \answerpiece{1}{定位}{先计算当前状态对新 Key 的读出。}先算已有预测 $kS$，残差 $v-kS$ 表示还没存好的部分，只写入误差而非原值全量。
 \par\answerpiece{2}{手算}{按两次写入的顺序更新状态。}读出 $\answerresult{(0.64,0.6)}$；相对目标误差为 $\answerresult{(-0.36,0.6)}$，若以目标减读出，则为 $(0.36,-0.6)$。
 \par\answerpiece{3}{找错}{先计算修改 B 的状态会怎样作用于 A。}非正交 Key 之间存在交叉影响；修正 B 会沿共享状态改变 A 的读出。
 \par\phantomsection\label{answerpiece:06-better-linear-memory:4}\answerpiece{4}{权衡}{先检查两条 Key 是否正交。}未必一次足够；可交替修正直到误差收敛，或在条件满足时用线性方程求联合解，代价更高。
-\item[\textbf{附录 I}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{线性记忆怎样减少干扰？}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 I}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{线性记忆怎样减少干扰？}}\par\nobreak
 \answerpiece{1}{形状}{先数 Key 行数，再检查 Value 行数。}$qK^\top:1\times3$，最终乘 $V$ 为 $\answerresult{1\times4}$。
 \par\answerpiece{2}{手算}{先将匹配分数逐项过 ReLU。}$\relu(1,-0.2)=(1,0)$，读出 $(1,0)V=\answerresult{(2,1)}$。
 \par\answerpiece{3}{比较}{用原始负权重再做一次加权求和。}不加 ReLU 得 $(1,-0.2)V=\answerresult{(2,0.4)}$；差异来自负匹配权重是否保留。
 \par\phantomsection\label{answerpiece:08-stacking-key-value:4}\answerpiece{4}{找错}{先核对权重列数与 Value 行数。}四条 Key 会得到 $1\times4$ 匹配权重，而三条 Value 只有三行，$1\times4$ 与 $3\times4$ 不能相乘。
-\item[\textbf{附录 J}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{用 MLP 的眼光重新理解记忆检索}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 J}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{用 MLP 的眼光重新理解记忆检索}}\par\nobreak
 \answerpiece{1}{预测}{先试一个零与一之间的数。}对 $0<s<1$ 的幂次越高，数值越小；$1$ 的任何正整数次幂仍是 $1$。
 \par\answerpiece{2}{手算}{分别保留负号计算二次方和三次方。}$0.5^2=\answerresult{0.25}$、$0.5^3=\answerresult{0.125}$；$(-0.5)^2=0.25$、$(-0.5)^3=-0.125$。
 \par\answerpiece{3}{找错}{先计算负分数经过平方后的符号。}负相似度平方后会变成正值，不一定等价于“排除负匹配”；选择激活前必须核对输入范围。
 \par\phantomsection\label{answerpiece:09-nonlinearity-and-memory:4}\answerpiece{4}{比较}{先把公式标成投影、选择与读出三步。}可将投影／非线性／读出理解为匹配与加权贡献；但参数分布和事实可靠性不满足逐神经元一一对应。
-\item[\textbf{附录 J}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{用 MLP 的眼光重新理解记忆检索}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 J}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{用 MLP 的眼光重新理解记忆检索}}\par\nobreak
 \answerpiece{1}{比较}{先比较三种方法保存或读取的对象。}外积记忆将 Key/Value 写入状态后读出；Softmax Attention 先匹配历史位置再归一化读取；FFN 逐行变换特征。
 \par\answerpiece{2}{手算}{将两个 Value 逐项乘权重再相加。}$0.25(1,0)+0.75(0,1)=\answerresult{(0.25,0.75)}$。
 \par\answerpiece{3}{找错}{先检查线性读出是否做过概率归一化。}外积线性读出未必有 Softmax 概率归一化；状态容量、写入与上下文匹配的实现不同。
 \par\phantomsection\label{answerpiece:14-summary:4}\answerpiece{4}{场景}{先问神经元激活之外还需要什么事实证据。}不能从单个神经元激活推出事实可靠；需独立核查来源、任务语境与实际输出。
-\item[\textbf{附录 K}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{进阶探索：高维空间与记忆容量}}\enspace
+\par\Needspace{8\baselineskip}
+\item[\textbf{附录 K}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{进阶探索：高维空间与记忆容量}}\par\nobreak
 \answerpiece{1}{预测}{先检查 Key 的归一化与独立性条件。}在归一化且近似独立条件下交叉点积通常更接近零，因此别条记忆贡献较弱。
 \par\answerpiece{2}{手算}{分别算两组 Key 的交叉点积。}正交点积 $\answerresult{0}$；另一组为 $\answerresult{0.6}$。
 \par\answerpiece{3}{找错}{先检查平方后噪声还有没有正负抵消。}平方后的分数非负，不会按原符号相互抵消；必须单独分析均值、方差与累积噪声，不能宣称无限容量。

@@ -18,6 +18,8 @@
 
 ## 自动保存的审计证据
 
+本地与 CI 统一通过 `bash scripts/build_book.sh` 构建。脚本优先使用 `BOOK_BUILD_SHA`，其次使用 `GITHUB_SHA`，最后读取当前仓库的 `git rev-parse HEAD`。TeX 容器在启动编译时显式传入 `${{ github.sha }}`，版权页与附录 G 印出其前 12 位。提交号变化时脚本强制刷新 PDF，避免 latexmk 沿用上一提交的产物。没有 Git 信息的源码包可直接编译；未获得合法提交号时，整句来源说明自动省略。
+
 `pdfua2-machine-audit` 工件除 veraPDF XML 和 MathML JSON 外，还保存：
 - `texlive-environment.txt`：LuaLaTeX、latexmk、Noto/Poppler 包版本及字体匹配；
 - `runner-environment.txt`：GitHub runner 镜像、Python/pypdf/Poppler 版本；

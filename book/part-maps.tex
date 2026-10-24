@@ -1,0 +1,86 @@
+% Chapter numbers and destinations follow the same labels as the main text.
+\newcommand{\mapchapter}[2]{\hyperref[intro:#1]{第~\ref*{intro:#1}~章 · #2}}
+\newcommand{\partmap}[3]{%
+\par\medskip\noindent{\sffamily\large\bfseries\color{blue}本部分地图}\par\smallskip
+\begingroup\small\renewcommand{\arraystretch}{1.65}
+\tagpdfsetup{table/header-rows={1}}
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{43mm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+章节入口 & 本章核心问题\\\midrule
+#1
+\bottomrule
+\end{tabularx}\endgroup\par\medskip
+\noindent{\sffamily\bfseries 全书路线中的位置}\par
+#2\par\medskip
+\begin{tcolorbox}[colback=blueback,colframe=linegray,boxrule=.5pt,arc=2mm,
+ left=4mm,right=4mm,top=3mm,bottom=3mm]
+{\sffamily\bfseries 读完试试看}\par #3
+\end{tcolorbox}}
+
+\newcommand{\partmaplearning}{\partmap{
+\mapchapter{00-functions}{函数} & 输入、输出和可学习参数各是什么？\\
+\mapchapter{16-loss-gradient}{损失} & 怎样给预测打分，何时能直接求最优值？\\
+\mapchapter{16a-gradient-descent}{梯度下降} & 沿哪个方向、走多大一步才能降低损失？\\
+\mapchapter{07-functions-relu}{非线性} & 为什么两层直线仍不够，ReLU 改变了什么？\\
+\mapchapter{17-backpropagation}{反向传播} & 怎样把输出误差传回每个共享参数？\\
+\mapchapter{18-generalization}{泛化} & 为什么训练成绩好，还要看验证集？\\
+}{\textbf{起点：}先把“学习”还原成一次可计算的参数更新。\textbf{接下来：}第二部分把同一套标量计算写成向量与矩阵；第三至五部分再将它用于文字预测。
+}{给 $\widehat y=wx+b$ 指出一个输入、两个参数和一个目标；解释损失如何影响下一次更新。能讲清这条闭环，就抓住了后面所有训练章节的主线。}}
+
+\newcommand{\partmapmatrices}{\partmap{
+\mapchapter{01-vectors}{向量} & 同一条记录中的各个数字怎样对应特征？\\
+\mapchapter{02-dot-product}{点积} & 两条线索的方向和大小怎样共同影响匹配分数？\\
+\mapchapter{03-matrix-multiplication}{矩阵乘法} & 一行乘一列，怎样组成一整张结果表？\\
+\mapchapter{10-mlp}{矩阵 MLP} & 怎样让一批输入共享两层权重和激活函数？\\
+}{\textbf{已有：}第一部分的函数、损失和更新。\textbf{本段：}把重复计算排成矩阵。\textbf{接下来：}第三部分让 Token 成为矩阵中的行，第四部分让这些行交换信息。
+}{不算元素值，先判断 $(3\times2)(2\times4)$ 的结果形状；再解释为什么三行使用同一个权重矩阵仍能得到不同输出。}}
+
+\newcommand{\partmaptokens}{\partmap{
+\mapchapter{20a-tokenizer}{Token 与 ID} & “春天 花 开了”怎样切分并编号？\\
+\mapchapter{20c-classification-loss}{分类损失} & 五个类别的分数怎样变成概率与损失？\\
+\mapchapter{20-embeddings}{Embedding} & 为什么用 ID 查向量，而不直接计算 ID 的距离？\\
+\mapchapter{20b-task-contract}{预测任务} & 三个输入位置分别要预测哪一个下一 Token？\\
+}{\textbf{已有：}可训练函数与矩阵计算。\textbf{本段：}定义文字输入、向量表示和预测目标。\textbf{接下来：}第四部分解决上下文读取，第五部分用这些目标训练完整 Transformer。
+}{写出输入“春天、花、开了”各位置的目标，并在词表中指出目标所在列。分清 Token 的身份、向量特征和输出概率这三种表示。}}
+
+\newcommand{\partmapcontext}{\partmap{
+\mapchapter{21a-context-gap}{上下文缺口} & 逐行 MLP 为什么看不到别的 Token？\\
+\mapchapter{21-rnn}{RNN} & 怎样把历史压进逐步传递的状态？\\
+\mapchapter{21c-naive-attention}{朴素注意力} & 直接用词向量匹配，能读回什么？\\
+\mapchapter{21b-why-attention}{Q/K/V} & 为什么要分开查询、匹配键与读取内容？\\
+\mapchapter{11-softmax-memory}{批量注意力} & 所有位置的分数、权重和输出怎样一起算？\\
+\mapchapter{22a-position-multihead}{位置与多头} & 怎样标明顺序，并行使用不同匹配方式？\\
+}{\textbf{已有：}每个 Token 一行的输入矩阵。\textbf{本段：}建立跨位置读取。\textbf{接下来：}第五部分把 Attention 与逐行 FFN、残差和输出头组装成完整网络。
+}{只看“春天、花、开了”的第二个位置，指出因果掩码允许读取哪些位置；再分别解释 Q、K、V 在这次读取中的作用。}}
+
+\newcommand{\partmaptransformer}{\partmap{
+\mapchapter{22-transformer-architecture}{完整结构} & Attention、Norm 与残差怎样连接？\\
+\mapchapter{10b-ffn-output-head}{FFN 与输出头} & 特征变换和词表打分为何要分开？\\
+\mapchapter{22b-token-to-output}{三维前向} & 三个 Token 怎样得到三行五类概率？\\
+\mapchapter{22c-language-training}{联合训练} & 三个位置怎样共同更新共享参数？\\
+\mapchapter{23-llm-systems}{逐词生成} & 下一 Token 如何成为下一轮的输入？\\
+\mapchapter{23a-from-toy-to-gpt}{真实尺度} & 教学网络与 GPT 的参数、词表和层数差在哪？\\
+}{\textbf{已有：}训练闭环、文字表示与上下文读取。\textbf{本段：}完成一次前向、更新和生成。\textbf{接下来：}第六部分换成图像输入，第七部分将模型接到证据与工具。
+}{沿“春天、花、开了”走完输入、上下文表示、logits、概率和损失；说明训练更新哪些共享参数，生成时又怎样延长序列。}}
+
+\newcommand{\partmapvision}{\partmap{
+\mapchapter{19-cnn}{CNN} & 小卷积核怎样扫描图像并共享参数？\\
+\mapchapter{19b-vit}{ViT 与视觉桥接} & 图像块怎样成为 Token，再接到语言模型？\\
+}{\textbf{已有：}第五部分的 Transformer 接受一串向量。\textbf{本段：}保留计算主干，改造输入入口：像素先成为局部特征或 Patch 向量。\textbf{接下来：}第七部分继续在模型外加入检索与工具；第八部分回到主干内部比较架构。
+}{把 $4\times4$ 图像切成四个 $2\times2$ Patch，逐步写出 $4\times4\to4\times3\to4\times4$ 的形状，再接上两行文字。最后区分：卷积共享的是哪组参数，Patch 投影共享的又是哪组参数？}}
+
+\newcommand{\partmapassistant}{\partmap{
+\mapchapter{23aa-pretraining-icl}{预训练与 ICL} & 更新权重和临时提供样例有何区别？\\
+\mapchapter{23c-post-training}{后训练} & 示范、偏好和可验证奖励怎样改变模型？\\
+\mapchapter{23d-agent-systems}{RAG} & 报告中的数字怎样找到可核查的来源？\\
+\mapchapter{23d-agent-tools}{工具与 Agent} & 谁提出调用，谁执行，怎样处理失败？\\
+\mapchapter{23d-agent-protocols}{协作边界} & 协议、Skill 和多个 Agent 怎样分工？\\
+\mapchapter{23b-deployment-and-ecosystem}{部署} & 权重、KV 缓存和并发各占什么资源？\\
+}{\textbf{已有：}能续写文字、也能接收视觉输入的模型。\textbf{本段：}用季度运营报告串起任务、证据和授权动作。\textbf{接下来：}第八部分将系统瓶颈落回架构与技术选择。
+}{解释报告中的“春天花开了”和“本季收入增长”各需要什么证据；再区分：补一份检索资料、调用计算器、做一次后训练，分别改变了系统的哪一部分？}}
+
+\newcommand{\partmaparchitecture}{\partmap{
+\mapchapter{22d-modern-transformers}{现代架构} & RoPE、RMSNorm、GQA 和 MoE 各改了哪一步？\\
+\mapchapter{23e-tech-judgement}{技术判断} & 怎样用同条件实验判断一项改动是否值得？\\
+}{\textbf{已有：}完整模型、视觉入口与助手系统。\textbf{本段：}回到模型内部，按位置、尺度、计算与缓存追查瓶颈。\textbf{之后：}附录提供公式、脚本、练习与参考答案；提高专题进一步复算线性状态和 Delta 更新。
+}{先画两个二维向量随位置旋转，再画四个 Q 头如何共享两组 K/V。若有人声称“新架构更快”，列出必须保持相同的任务、质量、硬件、长度和并发条件。}}

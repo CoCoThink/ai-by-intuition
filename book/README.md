@@ -42,14 +42,12 @@ python3 -m pip install pypinyin==0.55.0
 python3 scripts/generate_chinese_index.py
 python3 scripts/generate_chapter_navigation.py --check
 python3 scripts/validate_book.py
-cd book
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex
-cd ..
+bash scripts/build_book.sh
 python3 -m pip install pypdf==5.9.0
 python3 scripts/validate_book.py --pdf book/build/main.pdf
 ```
 
-生成文件为 `book/build/main.pdf`。已发布的正式 PDF 从 [v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 下载；未来新版本通过显式版本号和已通过的构建发布。CI 的成功运行只上传一份 `ai-by-intuition-book` PDF 工件及一份机器审计，具体从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 获取。
+生成文件为 `book/build/main.pdf`。构建脚本自动读取当前 Git 提交并写入版权页和附录 G；CI 显式传入构建提交号。脱离 Git 的源码包没有提交号时，整句来源说明自动省略。已发布的正式 PDF 从 [v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 下载；未来新版本通过显式版本号和已通过的构建发布。CI 的成功运行只上传一份 `ai-by-intuition-book` PDF 工件及一份机器审计，具体从 [GitHub Actions](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 获取。
 
 2026 年 10 月 22 日的 [v0.1.0 正式成功构建](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713)生成 99 页 PDF，已通过七部分章节检查、数值例子、目录与文字边界、全部公式 MathML-AF 和 veraPDF PDF/UA-2 零失败的机器验收。
 

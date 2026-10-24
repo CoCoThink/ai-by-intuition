@@ -50,7 +50,7 @@ g_{Q3}=(132-120)/120=10\%.
 \phantomsection\label{concept:context}\textbf{Context（上下文）}是本次请求可供模型读取的信息，
 其中可以包含对话历史、检索片段和工具结果。
 
-这里常说的\phantomsection\label{concept:app-memory}\textbf{应用记忆（Memory）}，通常是系统保存并再次提供的
+这里常说的\phantomsection\label{concept:app-memory}\textbf{应用记忆（Memory）}，指系统保存并再次提供的
 历史摘要、偏好或事实，由应用在请求时恢复到上下文。
 即使保存了历史，也受上下文长度、检索准确性及隐私策略约束。
 
@@ -82,7 +82,7 @@ RAG 可以检索外部材料，帮助模型获取新证据，
 法院于 2023 年 6 月 22 日在制裁裁定中明确描述了
 使用生成式 AI 制造虚假引文且未尽核查责任的问题。
 可查阅\href{https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/}{该案裁定原文（Docket 54）}。
-\textbf{失效点}并非文字不通顺，而是把生成的出处当成真实证据；
+\textbf{失效点}是把生成的出处当成真实证据；
 \textbf{正确动作}是打开可核验的原始文件，逐项核对案名、引用和结论。
 \end{example}
 
@@ -133,7 +133,7 @@ qD^\top
 固定 $k=2$ 也装不下任务明确需要的三个季度的证据}。
 真实系统应先检查每个必要季度是否有可靠来源；
 补齐三季度证据后再计算环比。
-这里分数没有经过余弦归一化，也不代表真实语义相似度。
+这里用独立教学向量演示原始点积，分数的尺度由所设向量决定。
 
 \begin{example}
 \noindent\emph{排序完成后，再核对季度与基期}\par

@@ -1,7 +1,7 @@
 \chapterrule
 \section{会接龙，还要怎样学会对话与解决任务？}
 \label{intro:23c-post-training}
-\chaptercompass{续写能力怎样进一步对齐任务要求？}{区分 SFT、偏好信号、可验证奖励与推理时计算。}{示范／奖励／候选 $\to$ 不同训练或验证路径}{SFT、奖励学习会更新参数；CoT 提示本身通常不会}
+\chaptercompass{续写能力怎样进一步对齐任务要求？}{区分 SFT、偏好信号、可验证奖励与推理时计算。}{示范／奖励／候选 $\to$ 不同训练或验证路径}{SFT、奖励学习会更新参数；CoT 提示只改变上下文}
 \modelpipelinefocus{0}{后训练目标与反馈}
 
 
@@ -142,7 +142,7 @@ N&1&2&4&8\\\hline
 \end{array}
 \]
 从一次采样到八次采样，理想成功率由 $25\%$ 升到约 $90\%$，
-也需要最多八次生成和验证；额外 Token 与延迟并非免费。
+也需要最多八次生成和验证；额外开销直接体现在生成 Token 数与延迟上。
 \end{example}
 RLVR 把验证奖励用于\textbf{更新参数}；Best-of-$N$ 把验证结果用于\textbf{筛选本次候选}。
 

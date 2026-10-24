@@ -1,0 +1,25 @@
+\par\Needspace{62mm}
+\tagstructbegin{tag=Figure,alttext={四乘四特征图按不重叠二乘二窗口做最大池化。左上窗口一七三二取七，右上二零五一取五，左下四零一三取四，右下六二二八取八。输出二乘二矩阵第一行为七五、第二行为四八，位置数量从十六缩为四。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=8mm,y=8mm]
+\foreach \x/\y/\c in {0/2/blueback,2/2/greenback,0/0/orangeback,2/0/lavender}{
+ \fill[\c] (\x,\y) rectangle ++(2,2);
+}
+\draw[step=1,draw=linegray] (0,0) grid (4,4);
+\foreach \r/\c/\v in {0/0/1,0/1/7,0/2/2,0/3/0,1/0/3,1/1/2,1/2/5,1/3/1,2/0/4,2/1/0,2/2/6,2/3/2,3/0/1,3/1/3,3/2/2,3/3/8}{
+ \node[font=\small] at (\c+.5,3.5-\r) {$\v$};
+}
+\draw[thick,ink] (0,2)--(4,2) (2,0)--(2,4);
+\draw[->,very thick,blue] (4.6,2)--(8.0,2) node[midway,above,font=\small] {每块取最大值};
+\foreach \x/\y/\v/\c in {9/2/7/blueback,10/2/5/greenback,9/1/4/orangeback,10/1/8/lavender}{
+ \filldraw[fill=\c,draw=linegray] (\x,\y) rectangle ++(1,1);
+ \node[font=\small\bfseries] at (\x+.5,\y+.5) {$\v$};
+}
+\node[font=\small] at (2,-.7) {$4\times4$ 特征图};
+\node[font=\small] at (10,-.7) {$2\times2$ 特征图};
+\node[font=\small,text=muted] at (6,-1.6) {窗口 $2\times2$，步幅 2：保留每块最大响应，舍去块内的精确位置};
+\end{tikzpicture}
+\captionof{figure}{最大池化：四个局部窗口各留下一个数，空间位置从 16 个缩为 4 个}
+\label{fig:cnn-max-pooling}
+\end{center}
+\tagstructend

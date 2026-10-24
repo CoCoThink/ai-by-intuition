@@ -14,7 +14,7 @@ Attention & $\softmax(\beta xK^\top)V$ & 每条查询归一化权重，Mask 限�
 \bottomrule
 \end{tabularx}
 \end{center}
-缩放系数 $\beta$ 在标准点积注意力里通常取
+缩放系数 $\beta$ 在标准缩放点积注意力里取
 $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 \[
 \text{输出}=\sum_i \text{匹配权重}_i\,v_i.
@@ -41,7 +41,7 @@ $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 \item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？
 \item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。
 }
-\chapterrecallanswer{“匹配—读取”帮助比较结构，不代表 Softmax 与线性记忆等价，更不代表模型事实已被外部验证。}
+\chapterrecallanswer{“匹配—读取”帮助比较结构；具体输出由各自的归一化和读取规则决定，事实正确性另由外部证据核验。}
 
 
 

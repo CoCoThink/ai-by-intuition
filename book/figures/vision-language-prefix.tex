@@ -1,0 +1,20 @@
+\par\Needspace{75mm}
+\tagstructbegin{tag=Figure,alttext={视觉到语言的两步桥接。四行三维视觉特征乘三乘四桥接矩阵，得到四行四维视觉前缀。再在行方向拼接两行四维文字向量，形成六行四维输入。每行宽度都为四，前四行来自图片，后两行来自文字。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ block/.style={draw=linegray,fill=paper,rounded corners=2pt,align=center,font=\small,minimum height=15mm,text width=35mm}]
+\node[block,fill=greenback] (image) at (0,0) {四行视觉特征\\$H_{\rm img}:4\times3$};
+\node[block] (bridge) at (53,0) {桥接矩阵\\$W_{\rm bridge}:3\times4$};
+\node[block,fill=greenback] (prefix) at (106,0) {四行视觉前缀\\$Z_{\rm img}:4\times4$};
+\draw[->,thick,teal] (image)--(bridge);
+\draw[->,thick,teal] (bridge)--(prefix);
+\node[block,fill=blueback] (text) at (0,-36) {两行文字向量\\$E_{\rm text}:2\times4$};
+\node[block,text width=48mm,minimum height=30mm] (input) at (87,-45) {图 1、图 2、图 3、图 4\\[2mm]\textcolor{blue}{文 1、文 2}\\[2mm]$X_{\rm LLM}:6\times4$};
+\draw[->,thick,teal] (prefix.south)--(input.north -| prefix.south);
+\draw[->,thick,blue] (text.east)--(input.west |- text.east);
+\node[font=\footnotesize,text=muted,align=center] at (16,-62) {先对齐列宽，再增加行数\\最后一个文字位置可读取六行};
+\end{tikzpicture}
+\captionof{figure}{视觉前缀接入语言模型：桥接改变特征宽度，拼接增加序列长度}
+\label{fig:vision-language-prefix}
+\end{center}
+\tagstructend

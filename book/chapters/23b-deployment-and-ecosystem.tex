@@ -2,7 +2,7 @@
 \chapterrule
 \section{系统已经会用工具了，怎样稳定部署并控制成本？}
 \label{intro:23b-deployment-and-ecosystem}
-\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{部署通常不更新权重；缓存和运行状态会变化}
+\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{部署推理使用固定权重；缓存和运行状态会变化}
 \modelpipelinefocus{8}{部署、缓存与系统}
 
 
@@ -41,10 +41,10 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 \]
 这是十进制粗略估计，还不包含 \conceptlink{kv-cache}{KV Cache}、中间激活、运行时缓冲、框架开销等。
 
-\textbf{GPU} 擅长对大量数字并行计算；\textbf{TPU} 是面向机器学习工作负载设计的专用加速器；\textbf{NPU} 通常泛指神经网络计算加速单元。这些硬件为模型提供执行矩阵运算和数据搬运的计算基础设施。
+\textbf{GPU} 擅长对大量数字并行计算；\textbf{TPU} 是面向机器学习工作负载设计的专用加速器；\textbf{NPU} 泛指神经网络计算加速单元。这些硬件为模型提供执行矩阵运算和数据搬运的计算基础设施。
 
 \begin{warningbox}
-训练时还常需保存 \conceptlink{gradient}{梯度}、优化器状态等额外数据，所需显存通常远高于只保存权重的粗略估计。即使模型权重能放入显存，运行长上下文或高并发时仍可能发生内存不足。
+训练时还常需保存 \conceptlink{gradient}{梯度}、优化器状态等额外数据，这些都要在权重存储之外另计显存。即使模型权重能放入显存，运行长上下文或高并发时仍可能发生内存不足。
 \end{warningbox}
 
 
@@ -158,14 +158,14 @@ $B:8\times1000$，则需要
 
 \subsection{从文本模型到多模态模型}
 
-\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。不同模态通常需要不同的输入编码器或表示方式；进入语言主干后，再用注意力、投影等机制融合信息。
+\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。不同模态通过各自的输入编码器或表示方式接入模型；进入语言主干后，再用注意力、投影等机制融合信息。
 
 常见缩写：
 \begin{itemize}
 \item \textbf{ASR}（Automatic Speech Recognition）：语音识别，把声音转成文字。
 \item \textbf{TTS}（Text to Speech）：将文字转换为合成语音。
 \item \textbf{AIGC}（AI-Generated Content）：由 AI 生成或辅助生成内容的广义说法。
-\item \textbf{AGI}（Artificial General Intelligence）：通用人工智能，是仍在讨论的目标与概念，并非某个已有统一测试的产品类别。
+\item \textbf{AGI}（Artificial General Intelligence）：通用人工智能，是仍在讨论的目标与概念，具体主张需要给出测试定义。
 \end{itemize}
 
 \subsection{为什么还有框架、镜像、推理引擎和协议？}

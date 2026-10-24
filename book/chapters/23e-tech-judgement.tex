@@ -20,7 +20,7 @@
 \item \textbf{训练与反馈层：}预训练、SFT、偏好优化、RLVR 是否修改权重？
 数据、奖励与评测目标一致吗？
 \item \textbf{推理策略层：}采样、验证、搜索、上下文示例是否使用额外计算，
-但通常保持同一权重？
+在固定权重下改变输出选择？
 \item \textbf{系统层：}RAG、工具、MCP、Workflow、Agent/A2A 是怎样连接
 资料与授权动作的？安全责任归谁？
 \end{enumerate}
@@ -86,7 +86,7 @@ Richard Sutton 在
 这种判断应由\textbf{同等算力、数据、延迟和质量约束下的实验}支持，
 需要核对公开的结构信息及同条件下的实验，而不是推断自宣传用语。
 
-另一种立场指出：序列建模并非只有标准全量 Self-Attention。
+另一种立场指出：序列建模还包括状态空间、线性状态与混合路线。
 例如\href{https://arxiv.org/abs/2312.00752}{Mamba}
 等状态空间路线、
 \href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}
@@ -157,7 +157,7 @@ Richard Sutton 在
 语言概率可看交叉熵和 PPL；有标准答案的任务可看准确率、
 通过率或 exact match；RAG 系统要检查\textbf{证据覆盖与引用准确率}；
 Agent 还需记录工具成功率、越权率、延迟、成本和失败恢复。
-不同 Tokenizer 的 PPL 数值通常不能直接跨词表比较。
+跨 Tokenizer 比较 PPL 时，须先统一切分与计分口径。
 
 \subsection{为什么 Benchmark 高分仍需要复核？}
 

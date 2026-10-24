@@ -72,7 +72,7 @@ $\vect y=(0,1,0)$ 表示，则单样本\textbf{交叉熵}为
 假如正确类概率只有 $1/4$，损失就会上升为
 $\log4\approx1.3863$。
 这里用自然对数，$p_j>0$ 由 Softmax 保证；
-真实实现通常直接用稳定的 logits 交叉熵运算，
+实现时直接使用稳定的 logits 交叉熵运算，
 以避免先求极小概率再取对数的数值误差。
 
 \subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}

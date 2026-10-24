@@ -105,7 +105,7 @@ GQA：$2\times120\times2\times4=1{,}920$ 个数；
 \textbf{解答：} 相对角为 $(5-2)\theta=3\theta$。
 \item {\footnotesize\textbf{第一步：}对分数排序即可确定 Top-1 与 Top-2。}\par\nobreak
 \textbf{解答：} Top-1 选专家 2；Top-2 选专家 2 和 3。
-只激活选中的专家，并不代表每次都运行全部专家。
+每次只激活路由选中的专家。
 \item {\footnotesize\textbf{第一步：}区分读取权限掩码和损失统计掩码。}\par\nobreak
 \textbf{解答：} 因果掩码限制当前位置能够读取的 Key；
 损失掩码决定哪些位置的预测误差参加训练目标的统计。
@@ -118,7 +118,7 @@ GQA：$2\times120\times2\times4=1{,}920$ 个数；
 最终均需核对来源、单位与输出内容。
 \item {\footnotesize\textbf{第一步：}看训练是否会更新权重，还是只改变当前第一步。}\par\nobreak
 \textbf{解答：} SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；
-CoT 第一步改变输入或生成形式，本身通常不更新参数。
+CoT 第一步改变输入或生成形式，本身保持参数固定。
 \item {\footnotesize\textbf{第一步：}先求 $u^\top g_h$，再沿残差路径反传。}\par\nobreak
 \textbf{解答：} 因 $h=u+\relu(u)W_{\rm down}$ 且 $u$ 两个分量均为正，
 $\partial L/\partial W_{\rm down}=u^\top g_h
@@ -140,7 +140,7 @@ $QK$ 的内侧维度为 $3$ 和 $4$，不能相乘。
 再乘 $V:4\times5$，输出为 $2\times5$。
 \item {\footnotesize\textbf{第一步：}分别区分随机激活屏蔽和检索数据的权限边界。}\par\nobreak
 \textbf{解答：} \textbf{系统纠错：} Dropout 训练时随机屏蔽或缩放部分\textbf{激活}，
-不是永久删除参数；推理时通常停用随机屏蔽并使用匹配的尺度约定。
+不是永久删除参数；标准推理时停用随机屏蔽并使用匹配的尺度约定。
 检索排名不等于来源可信或权限授权；
 网页内容是低信任数据，必须核验来源，
 并由应用层单独校验工具和外发权限。
@@ -203,7 +203,7 @@ $Y'=\boxed{\begin{bmatrix}
 \item {\footnotesize\textbf{第一步：}核对权重行乘 Value 矩阵的结果。}\par\nobreak
 \textbf{解答：} $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$aV=(1.6,1.4)$，输出为一行。
 \item {\footnotesize\textbf{第一步：}查询向量可以来自可学习投影。}\par\nobreak
-\textbf{解答：} 简化模型直接使用输入作为查询；真实 Transformer 通常通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
+\textbf{解答：} 简化模型直接使用输入作为查询；真实 Transformer 通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
 \item {\footnotesize\textbf{第一步：}先得分矩阵，再看它右乘 $V$ 后的形状。}\par\nobreak
 \textbf{解答：} $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
 

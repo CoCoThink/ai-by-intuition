@@ -1,0 +1,28 @@
+\par\Needspace{75mm}
+\tagstructbegin{tag=Figure,alttext={两个二维坐标图演示相对旋转。左图位置零的 Q 向右，位置一的 K 向上，相差九十度，点积零。右图两个位置同时加一，Q 向上、K 向左，仍相差九十度，点积仍为零。内容向量都取一零，角频率为二分之派。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1cm,y=1cm]
+\foreach \shift/\title in {0/{位置 $m=0,\ n=1$},7.4/{位置 $m=1,\ n=2$}}{
+ \begin{scope}[xshift=\shift cm]
+ \draw[->,linegray] (-1.65,0)--(1.9,0);
+ \draw[->,linegray] (0,-.45)--(0,2.0);
+ \draw[linegray,dashed] (0,0) circle (1.4);
+ \node[font=\small\sffamily\bfseries] at (0,2.65) {\title};
+ \end{scope}
+}
+\draw[->,very thick,blue] (0,0)--(1.4,0) node[right,font=\small] {Q $(1,0)$};
+\draw[->,very thick,teal] (0,0)--(0,1.4) node[above,font=\small] {K $(0,1)$};
+\draw[->,orange,thick] (.55,0) arc (0:90:.55);
+\node[font=\small] at (.9,.7) {$90^\circ$};
+\draw[->,very thick,blue] (7.4,0)--(7.4,1.4) node[above,font=\small] {Q $(0,1)$};
+\draw[->,very thick,teal] (7.4,0)--(6,0) node[left,font=\small] {K $(-1,0)$};
+\draw[->,orange,thick] (7.4,.55) arc (90:180:.55);
+\node[font=\small] at (6.55,.75) {$90^\circ$};
+\node[font=\small,align=center] at (0,-2) {$n-m=1$，点积 $0$};
+\node[font=\small,align=center] at (7.4,-2) {$n-m=1$，点积 $0$};
+\node[font=\small\sffamily,text=muted,align=center] at (3.7,-3) {两位置同时平移，Q/K 都转过相同角度；相对夹角保持不变};
+\end{tikzpicture}
+\captionof{figure}{RoPE 的二维直觉：本例内容均为 $(1,0)$、角频率 $\pi/2$；点积由相对位置决定}
+\label{fig:rope-relative-rotation}
+\end{center}
+\tagstructend

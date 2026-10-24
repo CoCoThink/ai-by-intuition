@@ -119,8 +119,7 @@ H=X_{\rm att}+F_{\rm mid}W_{\rm down}\in\R^{3\times3},
 \approx(0.2617,0.0507,0.3418).
 \label{eq:three-token-probabilities}
 \end{equation}
-下面青色柱表示\textbf{正确类别}，
-并不代表该类别总有最高概率。
+下面青色柱标出\textbf{目标类别}；柱高表示模型给它的概率。
 
 \par\medskip
 \input{figures/three-position-probabilities}
@@ -128,7 +127,7 @@ H=X_{\rm att}+F_{\rm mid}W_{\rm down}\in\R^{3\times3},
 第一位置最大概率对应 ID 2“春天”，目标却是 ID 4“花”；
 第二位置最大概率对应 ID 4“花”，目标却是 ID 5“开了”；
 第三位置预测 ID 3“。”，与目标相同。
-\textbf{训练前两题错、一题对}，并非预设三题全错。
+这组初值下，\textbf{训练前两题错、一题对}。
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}

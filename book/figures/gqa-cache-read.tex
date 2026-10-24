@@ -1,0 +1,20 @@
+\par\Needspace{75mm}
+\tagstructbegin{tag=Figure,alttext={四个 Query 头读取两组 KV 缓存。Q1和Q2分别算自己的注意力分数，但都读取第一组历史K和V；Q3和Q4读取第二组。每组缓存含春天和花两个历史位置。四个Q头保留四路独立输出，只存两组历史KV，而不是复制四组。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ q/.style={draw=blue,fill=blueback,rounded corners=2pt,minimum width=23mm,minimum height=8mm,font=\small},
+ cache/.style={draw=teal,fill=greenback,rounded corners=2pt,text width=53mm,minimum height=23mm,align=center,font=\small}]
+\foreach \n/\x in {1/0,2/32,3/77,4/109}{
+ \node[q] (q\n) at (\x,0) {Q\n};
+}
+\node[cache] (a) at (16,-25) {缓存组 A：$K_A,V_A$\\春天：$k_{A,1},v_{A,1}$\\花：$k_{A,2},v_{A,2}$};
+\node[cache] (b) at (93,-25) {缓存组 B：$K_B,V_B$\\春天：$k_{B,1},v_{B,1}$\\花：$k_{B,2},v_{B,2}$};
+\foreach \n/\group in {1/a,2/a,3/b,4/b}{\draw[->,thick,muted] (q\n.south)--(\group.north);}
+\node[font=\small,align=center] at (16,-48) {$o_1=\softmax(q_1K_A^\top)V_A$\\$o_2=\softmax(q_2K_A^\top)V_A$};
+\node[font=\small,align=center] at (93,-48) {$o_3=\softmax(q_3K_B^\top)V_B$\\$o_4=\softmax(q_4K_B^\top)V_B$};
+\node[font=\footnotesize,text=muted] at (54.5,-64) {为突出共享关系，图中省略缩放与掩码；各 Q 头分别计算权重和输出};
+\end{tikzpicture}
+\captionof{figure}{GQA 共享的是历史 K/V：四个查询头仍保留四路输出，历史缓存只存两组}
+\label{fig:gqa-cache-read}
+\end{center}
+\tagstructend

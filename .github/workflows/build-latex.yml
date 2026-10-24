@@ -7,11 +7,13 @@ on:
     paths:
       - 'book/**/*.tex'
       - 'scripts/**/*.py'
+      - 'scripts/build_book.sh'
       - '.github/workflows/build-latex.yml'
   pull_request:
     paths:
       - 'book/**/*.tex'
       - 'scripts/**/*.py'
+      - 'scripts/build_book.sh'
       - '.github/workflows/build-latex.yml'
   workflow_dispatch:
 
@@ -48,6 +50,7 @@ jobs:
           texlive_version: 2026
           os: debian
           run: |
+            export BOOK_BUILD_SHA='${{ github.sha }}'
             export DEBIAN_FRONTEND=noninteractive
             apt-get update -qq
             apt-get install -y -qq fonts-noto-cjk fonts-noto-core poppler-utils
@@ -69,8 +72,7 @@ jobs:
             latexmk -lualatex -interaction=nonstopmode -halt-on-error \
               -file-line-error -outdir=build/smoke smoke-tagging.tex
             pdfinfo build/smoke/smoke-tagging.pdf | grep -Eq '^Tagged:[[:space:]]+yes'
-            latexmk -lualatex -interaction=nonstopmode -halt-on-error \
-              -file-line-error -outdir=build main.tex
+            bash ../scripts/build_book.sh
             # Production must not regress to the earlier bad figure hierarchy or overflow.
             if grep -Eq 'Package tagpdf Warning: Parent-Child|Overfull \\hbox' build/main.log; then
               echo "::error::Invalid tagpdf parent-child relation or overfull box in book"

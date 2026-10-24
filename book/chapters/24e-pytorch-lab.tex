@@ -49,7 +49,7 @@ loss_after, z_after = forward()
 
 \begin{boundarybox}
 PyTorch 自动求导和 NumPy 手工反传是\textbf{两种独立实现途径}；
-输出符合数值容差并不代表每种硬件、Torch 版本都能得到逐位相同的浮点结果。
+跨硬件和 Torch 版本的浮点结果按数值容差比较。
 这里仅声明在规定的双精度运算与精度容差内核对单步基线。
 \end{boundarybox}
 
