@@ -392,7 +392,7 @@ def validate_source() -> None:
              "classic GPT-2 attention-plus-FFN parameter budget")
     assert 4 * 768**2 == 2359296 and 8 * 768**2 == 4718592
     assert 12 * 768**2 == 7077888
-    includes(sources["24e-pytorch-lab"], r"\verbatiminput{../scripts/pytorch_starter.py}", "standalone PyTorch lab")
+    includes(sources["24e-pytorch-lab"], r"\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/scripts/pytorch_starter.py}", "readable excerpt with runnable complete PyTorch source link")
     includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
     includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
     includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
