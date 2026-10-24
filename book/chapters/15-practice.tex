@@ -26,22 +26,3 @@ $S_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
 \end{enumerate}
 
 \noindent\emph{参考解答统一放在\hyperref[app:answers]{附录答案}，请先独立完成。}
-
-
-
-\subsubsection*{联想记忆的关键结论}
-\begin{conclusion}
-\noindent\emph{一张脑中的路线图}\par
-
-\textbf{点积}：度量 Query 与 Key 的匹配程度。\\
-\textbf{外积}：把 Key--Value 关联写入一个矩阵。\\
-\textbf{线性召回}：把匹配项和不匹配项一起混合。\\
-\textbf{MLP 非线性}：抑制弱匹配，从而缓解干扰。\\
-\textbf{Softmax Attention}：把检索权重集中在更相关的记忆上。\\[2mm]
-\textbf{最核心的一个等式：}
-\[
-\boxed{S=\sum_i k_i^\top v_i
-\quad\Longrightarrow\quad xS=\sum_i(xk_i^\top)v_i.}
-\]
-这说明：矩阵乘法也可以被理解为按相似度检索一组关联记忆。
-\end{conclusion}
