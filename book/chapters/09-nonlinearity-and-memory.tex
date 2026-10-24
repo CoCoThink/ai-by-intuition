@@ -37,8 +37,14 @@ MLP 的参数在训练中更新；Attention 的 Key/Value 往往由当前上下�
 但并非同一种记忆存储实现。
 \end{idea}
 
-\chaptercheck{09-nonlinearity-and-memory}{非线性匹配权重怎样抑制较弱的相似度？}{$0.5^2$ 和 $0.5^3$ 各是多少？}{正整数次幂增加时，
-相似度恰为 $1$ 的匹配权重会变化吗？}
+\chapterchecktasks{09-nonlinearity-and-memory}{预测／手算／找错／比较}{
+\item \textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？
+\item \textbf{手算：}分别算 $0.5^2$、$0.5^3$，再算 $(-0.5)^2$、$(-0.5)^3$。
+\item \textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。用上题反例指出问题。
+\item \textbf{比较：}把 MLP 解释成“Key 匹配、Value 读取”有什么直觉收益？为什么不能据此宣称神经元一对一存储真实事实？
+}
+\chapterrecallanswer{非线性改变匹配的选择性，但必须说明分数范围；MLP 的记忆类比是计算视角而非事实库存证明。}
+
 
 
 \begin{conclusion}
