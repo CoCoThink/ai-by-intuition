@@ -89,7 +89,7 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。
 两者都试图减少干扰，但不是完全相同的算法。
-后面现代架构部分会据此理解 Gated DeltaNet 为什么强调“纠正旧状态”。
+正文第~\ref*{intro:22d-modern-transformers}~章的 Gated DeltaNet 正是从“纠正旧状态”的角度引入这条规则。
 \end{idea}
 
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 C3-12}
