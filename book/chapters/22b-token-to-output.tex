@@ -6,8 +6,8 @@
 
 前面已学过 Embedding、因果 Mask、Q/K/V、Norm、残差、
 FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。
-正文只保留\textbf{形状、代表元素与三位置预测图}；
-完整的 $X,A,H,\widehat P$ 数值矩阵及中间投影统一放在
+正文保留\textbf{形状、代表元素、预测图以及 $X,A,H,\widehat P$ 四个最小复算矩阵}；
+较长的投影与中间量仍放在
 \hyperref[app:transformer-intermediates]{附录 B.1 的逐层数值核对表}，
 所有数值由 \texttt{scripts/teaching\_reference.py} 计算。
 \par\smallskip
@@ -69,7 +69,7 @@ Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 S=QK^\top/\sqrt3+C,\qquad A=\operatorname{softmax}(S).
 \label{eq:two-token-scores}
 \end{equation}
-先核对第二行权重，完整注意力矩阵见附录 B：
+先核对第二行权重，完整注意力矩阵见本章末：
 \begin{equation}
 A\in\R^{3\times3},\qquad
 A_{2,:}\approx(0.1244,\ 0.8756,\ 0).
@@ -145,6 +145,45 @@ Value + 输出投影 & $3\times3$ & $3\times3$ & 跨位置读取\\
 \end{tabularx}
 \end{center}
 
+\subsection*{四张最小矩阵：不用翻附录就能核对}
+下列矩阵均来自同一次前向计算；显示时保留四位小数，计算请使用未舍入参数。
+\noindent\textbf{输入 $X$。}\par
+\begin{equation}
+\boxed{X=\begin{bmatrix}
+1.30&0.05&-0.30\\
+-0.30&1.05&0.32\\
+0.03&-0.10&1.32
+\end{bmatrix}\in\R^{3\times3}.}
+\end{equation}
+
+\noindent\textbf{注意力 $A$。}\par
+\begin{equation}
+\boxed{A\approx\begin{bmatrix}
+1&0&0\\
+0.1244&0.8756&0\\
+0.1680&0.2418&0.5903
+\end{bmatrix}.}
+\end{equation}
+
+\noindent\textbf{隐藏输出 $H$。}\par
+\begin{equation}
+\boxed{H\approx\begin{bmatrix}
+2.5609&-0.0561&-0.9413\\
+-0.9865&1.8872&0.3537\\
+-0.1760&-0.3557&2.0005
+\end{bmatrix}\in\R^{3\times3}.}
+\end{equation}
+
+\noindent\textbf{词表概率 $\widehat P$。}\par
+\begin{equation}
+\boxed{\widehat P\approx\begin{bmatrix}
+0.1843&0.3341&0.1264&0.2617&0.0935\\
+0.0826&0.0954&0.0951&0.6761&0.0507\\
+0.1535&0.1130&0.3418&0.1181&0.2735
+\end{bmatrix}\in\R^{3\times5}.}
+\end{equation}
+
+
 \subsection{改变前文，最后一行还会相同吗？}
 
 保持最后两个 Token 不变，
@@ -171,6 +210,6 @@ $(0,-0.4279,0.9325,-0.6140,0.7915)$，
 
 \begin{conclusion}
 从 Token ID 到每位置五类概率的形状、权重与数值链已连通。
-完整矩阵集中在附录，不必在正文记下每个元素。
+四个最小矩阵已列在正文；更多投影与中间量在附录 B。
 下一章研究三个位置如何共同反传梯度更新同一套参数。
 \end{conclusion}
