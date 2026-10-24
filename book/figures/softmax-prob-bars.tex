@@ -4,10 +4,14 @@
 \begin{tikzpicture}[x=15mm,y=8mm,>=Latex]
 \draw[->,muted] (-.1,0)--(8.5,0);
 \draw[->,muted] (0,0)--(0,5.1) node[above,font=\footnotesize] {Softmax 概率};
-\foreach \x/\p/\name in {1.3/2.5/第一类,3.9/5.0/第二类,6.5/2.5/第三类}{
- \fill[purple!75] (\x,0) rectangle ++(1.2,\p*.75);
- \node[font=\small] at (\x+.6,\p*.75+.35) {$\pgfmathprintnumber[fixed,precision=2]{\p/10}$};
- \node[font=\footnotesize] at (\x+.6,-.55) {\name};
+\foreach \x/\p/\name/\prob in {
+  1.3/2.5/第一类/0.25,
+  3.9/5.0/第二类/0.50,
+  6.5/2.5/第三类/0.25
+}{
+ \fill[purple!75] (\x,0) rectangle ++(1.2,{\p*.75});
+ \node[font=\small] at ({\x+.6},{\p*.75+.35}) {$\prob$};
+ \node[font=\footnotesize] at ({\x+.6},-.55) {\name};
 }
 \node[font=\footnotesize,anchor=west] at (.2,5.0) {原始分数 $(0,\log2,0)$};
 \node[font=\footnotesize,anchor=west] at (.2,4.35) {指数 $(1,2,1)$；分母 $4$};
