@@ -203,9 +203,13 @@ Patch 是\textbf{像素块线性投影}，文字 Embedding 是
 
 \chapterchecktasks{19b-vit}{形状／手算／预测／场景}{
 \item \textbf{形状：}四个图像 Patch 各投影为三维向量，再加一个 CLS Token。ViT 的输入序列是几行？若使用全局自注意力，分数矩阵什么形状？
+\chapterinlinehint{19b-vit}{1}
 \item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？前述五条视觉向量经投影后是什么形状？
+\chapterinlinehint{19b-vit}{2}
 \item \textbf{预测：}固定图像尺寸而把 Patch 边长减半，忽略边界时 Patch 数量约变为多少倍？全局 Attention 的位置配对数又约变为多少倍？
+\chapterinlinehint{19b-vit}{3}
 \item \textbf{场景：}模型要回答“图中左上角有什么？”，为什么不能只把四个 Patch 特征无序求平均后交给语言模型？给出保留位置的一种方法。
+\chapterinlinehint{19b-vit}{4}
 }
 \chapterrecallanswer{ViT 把图像 Patch 变成带位置的 Token 序列，视觉到语言模型的接口还须对齐隐藏维度。}
 

@@ -83,9 +83,13 @@ CNN 的关键是局部连接与权重共享：同一组参数可以检测不同�
 
 \chapterchecktasks{19-cnn}{比较／手算／预测／方案}{
 \item \textbf{比较：}同一卷积核在多个空间位置共享参数，与把整张图片展平成向量后使用全连接层相比，通常节省了什么？
+\chapterinlinehint{19-cnn}{1}
 \item \textbf{手算：}$3\times3$ 卷积核、输入 $3$ 通道、输出 $8$ 通道，不计偏置共有多少权重？
+\chapterinlinehint{19-cnn}{2}
 \item \textbf{预测：}保持核宽、通道数和步长不变，输入图像宽高各增大一倍，卷积参数量与输出位置数通常分别怎样变化？
+\chapterinlinehint{19-cnn}{3}
 \item \textbf{方案：}图像分类时，何时可能使用池化减小空间分辨率？指出它可能丢失的一类细节信息。
+\chapterinlinehint{19-cnn}{4}
 }
 \chapterrecallanswer{CNN 通过局部卷积和跨位置权重共享处理图像；参数量与输出位置数不是同一概念。}
 
