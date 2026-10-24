@@ -140,7 +140,7 @@ $QK$ 的内侧维度为 $3$ 和 $4$，不能相乘。
 再乘 $V:4\times5$，输出为 $2\times5$。
 \item {\footnotesize\textbf{第一步：}分别区分随机激活屏蔽和检索数据的权限边界。}\par\nobreak
 \textbf{解答：} \textbf{系统纠错：} Dropout 训练时随机屏蔽或缩放部分\textbf{激活}，
-不是永久删除参数；标准推理时停用随机屏蔽并使用匹配的尺度约定。
+不是永久删除参数；评估模式下停用随机屏蔽并使用匹配的尺度约定。
 检索排名不等于来源可信或权限授权；
 网页内容是低信任数据，必须核验来源，
 并由应用层单独校验工具和外发权限。
@@ -203,7 +203,7 @@ $Y'=\boxed{\begin{bmatrix}
 \item {\footnotesize\textbf{第一步：}核对权重行乘 Value 矩阵的结果。}\par\nobreak
 \textbf{解答：} $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，$aV=(1.6,1.4)$，输出为一行。
 \item {\footnotesize\textbf{第一步：}查询向量可以来自可学习投影。}\par\nobreak
-\textbf{解答：} 简化模型直接使用输入作为查询；真实 Transformer 通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
+\textbf{解答：} 简化模型直接使用输入作为查询；标准 Transformer 通过可学习投影 $\vect q^\top=\vect x^\top W_Q$ 得到查询。
 \item {\footnotesize\textbf{第一步：}先得分矩阵，再看它右乘 $V$ 后的形状。}\par\nobreak
 \textbf{解答：} $QK^\top:2\times4$，输出 $2\times5$；Softmax 对每个 Query 的\textbf{一行} Key 分数分别归一化。
 

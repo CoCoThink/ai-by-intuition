@@ -34,7 +34,7 @@ ID 4 的 One-hot 行向量是 $(0,0,0,1,0)$。
 \phantomsection\label{concept:embedding-initialization}
 
 本书手设下面这张 $5\times3$ 表，便于逐项核算；
-从头训练真实模型时，先\textbf{随机初始化} Embedding 和投影权重，
+从头训练时，常见做法是对 Embedding 和投影权重进行\textbf{随机初始化}，
 再用大量训练样本、同一损失函数联合调整。
 随机初始化的尺度应与层宽和结构匹配；常见做法包括
 按输入/输出维度控制方差的 Xavier、He 等初始化，

@@ -2,7 +2,7 @@
 \chapterrule
 \section{系统已经会用工具了，怎样稳定部署并控制成本？}
 \label{intro:23b-deployment-and-ecosystem}
-\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{部署推理使用固定权重；缓存和运行状态会变化}
+\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{本节推理使用固定权重；缓存和运行状态会变化}
 \modelpipelinefocus{8}{部署、缓存与系统}
 
 
@@ -45,6 +45,8 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 
 \begin{warningbox}
 训练时还常需保存 \conceptlink{gradient}{梯度}、优化器状态等额外数据，这些都要在权重存储之外另计显存。即使模型权重能放入显存，运行长上下文或高并发时仍可能发生内存不足。
+
+硬件名称说明设备类别；算子与精度支持、带宽和延迟须按具体型号、运行时与负载核对。
 \end{warningbox}
 
 
@@ -158,7 +160,7 @@ $B:8\times1000$，则需要
 
 \subsection{从文本模型到多模态模型}
 
-\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。不同模态通过各自的输入编码器或表示方式接入模型；进入语言主干后，再用注意力、投影等机制融合信息。
+\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。具体模型可使用模态专用编码器或共享表示；进入语言主干后，再用注意力、投影等机制融合信息。
 
 常见缩写：
 \begin{itemize}
@@ -179,7 +181,7 @@ $B:8\times1000$，则需要
 \]
 \textbf{框架}用于定义和执行训练/推理计算；\textbf{镜像}打包运行环境；\textbf{推理引擎}专注批处理、缓存和计算性能；\textbf{接口}让其他程序以约定的格式请求模型服务；\textbf{协议}帮助多种工具和系统建立协作规则。
 
-\textbf{API、\conceptlink{agent}{Agent} 和 \conceptlink{mcp}{MCP} 等概念主要属于系统集成层。}工具调用通过上下文和外部动作扩展产品能力，基础模型在推理时使用固定参数。
+\textbf{API、\conceptlink{agent}{Agent} 和 \conceptlink{mcp}{MCP} 等概念主要属于系统集成层。}工具调用通过上下文和外部动作扩展产品能力，本书的推理流程使用固定模型参数。
 
 \subsection{技术生态地图：CUDA、PyTorch、Hugging Face、Ollama、vLLM}
 

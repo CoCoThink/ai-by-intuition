@@ -89,7 +89,7 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 \phantomsection\label{concept:kv-cache}
 
 如果每生成一个 Token 都重新计算全部历史位置的 Key 和 Value，
-许多运算会重复。因果 Self-Attention 中，
+许多运算会重复。在本章参数与位置规则固定的因果 Self-Attention 中，
 旧 Token 的 Key/Value 不需要随着新 Token 重新改变，
 所以可以把它们存入\textbf{KV Cache} 供后续读取。
 
