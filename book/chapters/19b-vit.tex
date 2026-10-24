@@ -126,19 +126,6 @@ Attention 分数由 $4\times4$ 变成 $5\times5$。
 分类头可使用 CLS 输出，也能使用池化。
 \textbf{CLS 并非所有 ViT 的必备结构。}
 
-\subsection{与 CNN 的区别，以及现实尺寸}
-
-CNN 直接引入\textbf{局部性与权重共享}；
-ViT 将图片拆为 Patch，学习跨位置组合特征。
-\textbf{ViT 并不因此保证在所有图像任务上优于 CNN。}
-
-例如 $224\times224$ 彩色图片切成 $16\times16$ Patch，
-共有 $(224/16)^2=196$ 块，每块展开为
-$16\times16\times3=768$ 维。投影宽度若也是 $768$，
-则输入为 $196\times768$，权重为 $768\times768$。
-这仅是\textbf{尺寸演示}，不代表性能承诺。
-详见\href{https://arxiv.org/abs/2010.11929}{ViT 原始论文}。
-
 \subsection{第五步：视觉编码器输出怎样进入语言模型？}
 
 \localfixture{四个图像 Patch 加两个文字 Token；独立的接口算例}
@@ -194,8 +181,18 @@ ViT 本身输出向量，不会直接生成自然语言。
 运行 \texttt{python3 scripts/vision\_bridge\_demo.py}
 核对两次矩阵乘法、首个视觉向量以及最终 $6\times4$ 的输入。
 
+\subsection{与 CNN 的区别，以及现实尺寸}
 
+CNN 直接引入\textbf{局部性与权重共享}；
+ViT 将图片拆为 Patch，学习跨位置组合特征。
+\textbf{ViT 并不因此保证在所有图像任务上优于 CNN。}
 
+例如 $224\times224$ 彩色图片切成 $16\times16$ Patch，
+共有 $(224/16)^2=196$ 块，每块展开为
+$16\times16\times3=768$ 维。投影宽度若也是 $768$，
+则输入为 $196\times768$，权重为 $768\times768$。
+这仅是\textbf{尺寸演示}，不代表性能承诺。
+详见\href{https://arxiv.org/abs/2010.11929}{ViT 原始论文}。
 
 \begin{conclusion}
 Patch 投影形成图像序列，位置编码保留空间身份，
