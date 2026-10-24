@@ -85,6 +85,11 @@
 
 
 \begin{conclusion}
-外积、串扰、Delta 修正与容量估算，连成一条\textbf{匹配与读取}主线。
+\textbf{第六部分收束：联想记忆的关键结论。}
+点积衡量 Query--Key 匹配，外积写入 Key--Value 关联；
+线性召回会混入非目标项，MLP 非线性可筛选匹配，
+Softmax Attention 则按行归一化。核心是
+$S=\sum_i k_i^\top v_i$，$xS=\sum_i(xk_i^\top)v_i$。
+这是一条\textbf{匹配与读取}的计算主线，不等于实际知识的真实性保证。
 \end{conclusion}
 
