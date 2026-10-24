@@ -111,8 +111,14 @@ Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 
 第 VI 部分将用联想记忆的外积与读取，从另一个角度理解这类矩阵运算。
 
-\chaptercheck{10-mlp}{MLP 为什么需要激活函数？}{$\relu(-1)$ 与 $\relu(2)$ 各是什么？}{若把两层之间的非线性删去，
-$xW_1W_2$ 能否写成一个矩阵乘法？}
+\chapterchecktasks{10-mlp}{形状／手算／找错／比较}{
+\item \textbf{形状：}输入行 $x:1\times2$，两层权重分别 $W_1:2\times3,W_2:3\times2$。写出隐藏层与输出层的形状。
+\item \textbf{手算：}计算 $\relu(-1)$ 和 $\relu(2)$，说明对负值隐藏单元发生了什么。
+\item \textbf{找错：}同学认为两个 Token 共用 FFN 权重，故第二行的输入会直接改变第一行 FFN 的输出。指出错误。
+\item \textbf{比较：}去掉两层中间的 ReLU 后，$xW_1W_2$ 能合并为怎样的一层运算？为何保留 ReLU 时一般不能照做？
+}
+\chapterrecallanswer{MLP 的逐行变换改变隐藏特征但不直接交换 Token；非线性让两层不等同于一层仿射。}
+
 
 
 \begin{conclusion}
