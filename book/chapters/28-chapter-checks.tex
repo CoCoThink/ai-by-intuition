@@ -1,7 +1,7 @@
 \subsection{全书随堂自测参考解答}
 \phantomsection\label{app:chapter-checks}
 
-正文自测答案\textbf{按当前正文章号与阅读顺序排列}；建议先独立完成各题，再依次阅读“提示—解答”；为避免泄题，正文不在自测下方直接显示答案。阅读指南不占章号，
+答案\textbf{先按正文章号、再按提高专题排列}；建议先独立完成各题，再依次阅读“提示—解答”；正文提供简短答案线索，详细推导仍保留在本附录。阅读指南不占章号，
 损失解析解与梯度下降分列两章，同章多题共用章号。
 若数值与这里不一致，请先核对矩阵的\textbf{维度、乘法方向和输入数据}。
 附录 A 汇总核心公式、数学速查和优化器提高选读，不再设置随堂自测。点击题目标题可返回正文。
@@ -167,51 +167,36 @@
 \par\answerpiece{2}{估算}Attention 约 $4\cdot768^2$，FFN 约 $8\cdot768^2$，后者约为前者两倍（按题设简化）。
 \par\answerpiece{3}{找错}训练损失仅反映对应数据目标，还需独立泛化评估与事实／鲁棒性等任务检查。
 \par\answerpiece{4}{诊断}不构成代码错误证明；初值并非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。
-\item[\textbf{第 27 章}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace
-\answerpiece{1}{形状}$S:2\times3$，$qS:1\times3$。
-\par\answerpiece{2}{手算}$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$，$(1,0)S=\answerresult{(0,1)}$。
-\par\answerpiece{3}{预测}写入与查询都缩为原 Key 的一半，幅度乘 $(0.5)^2=\answerresult{1/4}$，输出为原 Value 的四分之一。
-\par\answerpiece{4}{找错}$vk^\top$ 对题设 $v:1\times3,k:1\times2$ 根本无法相乘（内维不符）；即使另转置也会改变状态的轴方向，不能替代 $k^\top v$。
-\item[\textbf{第 27 章}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace
-\answerpiece{1}{解释}$k_A(k_B^\top v_B)=(k_Ak_B^\top)v_B$，非零交叉点积带来别条 Value。
-\par\answerpiece{2}{手算}$k_Ak_A^\top=1$、$k_Ak_B^\top=0.6$，读出 $\answerresult{(1,0.6)}$。
-\par\answerpiece{3}{预测}两 Key 正交后交叉点积为零，查询结果回到 $\answerresult{(1,0)}$。
-\par\answerpiece{4}{方案}正交化减少写入键的重叠；残差写入先校准已有读出误差；选择性非线性主要作用于读取分数。
-\item[\textbf{第 28 章}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace
-\answerpiece{1}{定位}先算已有预测 $kS$，残差 $v-kS$ 表示还没存好的部分，只写入误差而非原值全量。
-\par\answerpiece{2}{手算}读出 $\answerresult{(0.64,0.6)}$；相对目标误差为 $\answerresult{(-0.36,0.6)}$，若以目标减读出，则为 $(0.36,-0.6)$。
-\par\answerpiece{3}{找错}非正交 Key 之间存在交叉影响；修正 B 会沿共享状态改变 A 的读出。
-\par\answerpiece{4}{权衡}未必一次足够；可交替修正直到误差收敛，或在条件满足时用线性方程求联合解，代价更高。
-\item[\textbf{第 28 章}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace
-\answerpiece{1}{形状}$qK^\top:1\times3$，最终乘 $V$ 为 $\answerresult{1\times4}$。
-\par\answerpiece{2}{手算}$\relu(1,-0.2)=(1,0)$，读出 $(1,0)V=\answerresult{(2,1)}$。
-\par\answerpiece{3}{比较}不加 ReLU 得 $(1,-0.2)V=\answerresult{(2,0.4)}$；差异来自负匹配权重是否保留。
-\par\answerpiece{4}{找错}四条 Key 会得到 $1\times4$ 匹配权重，而三条 Value 只有三行，$1\times4$ 与 $3\times4$ 不能相乘。
-\item[\textbf{第 29 章}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace
-\answerpiece{1}{预测}对 $0<s<1$ 的幂次越高，数值越小；$1$ 的任何正整数次幂仍是 $1$。
-\par\answerpiece{2}{手算}$0.5^2=\answerresult{0.25}$、$0.5^3=\answerresult{0.125}$；$(-0.5)^2=0.25$、$(-0.5)^3=-0.125$。
-\par\answerpiece{3}{找错}负相似度平方后会变成正值，不一定等价于“排除负匹配”；选择激活前必须核对输入范围。
-\par\answerpiece{4}{比较}可将投影／非线性／读出理解为匹配与加权贡献；但参数分布和事实可靠性不满足逐神经元一一对应。
-\item[\textbf{第 29 章}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace
-\answerpiece{1}{比较}外积记忆将 Key/Value 写入状态后读出；Softmax Attention 先匹配历史位置再归一化读取；FFN 逐行变换特征。
-\par\answerpiece{2}{手算}$0.25(1,0)+0.75(0,1)=\answerresult{(0.25,0.75)}$。
-\par\answerpiece{3}{找错}外积线性读出未必有 Softmax 概率归一化；状态容量、写入与上下文匹配的实现不同。
-\par\answerpiece{4}{场景}不能从单个神经元激活推出事实可靠；需独立核查来源、任务语境与实际输出。
-\item[\textbf{第 30 章}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace
-\answerpiece{1}{预测}在归一化且近似独立条件下交叉点积通常更接近零，因此别条记忆贡献较弱。
-\par\answerpiece{2}{手算}正交点积 $\answerresult{0}$；另一组为 $\answerresult{0.6}$。
-\par\answerpiece{3}{找错}平方后的分数非负，不会按原符号相互抵消；必须单独分析均值、方差与累积噪声，不能宣称无限容量。
-\par\answerpiece{4}{判断}测真实 Key 的相关性、Value 分布、层内尺度及不同记忆数的读取错误率，不能直接将随机独立极限当作事实数。
-\item[\textbf{第 31 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace
+\item[\textbf{第 27 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace
+\answerpiece{1}{比较}卷积核在不同位置复用，可显著减少逐像素独立连接需要的参数，并保留局部邻域结构。
+\par\answerpiece{2}{手算}$3\cdot3\cdot3\cdot8=\answerresult{216}$ 个权重。
+\par\answerpiece{3}{预测}核参数量不变；边界与步长条件相近时，空间输出位置约变为原来的四倍，计算量通常上升。
+\par\answerpiece{4}{方案}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。
+\item[\textbf{第 28 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace
+\answerpiece{1}{形状}四个 Patch 加 CLS 得 $\answerresult{5}$ 行，注意力分数为 $\answerresult{5\times5}$。
+\par\answerpiece{2}{手算}$W_{\rm vis}:3\times6$，序列映射后为 $\answerresult{5\times6}$。
+\par\answerpiece{3}{预测}每维切分数翻倍，Patch 总数约四倍，平方配对数约十六倍（大量 Patch 时可忽略 CLS 常数项）。
+\par\answerpiece{4}{场景}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。
+\item[\textbf{第 29 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace
 \answerpiece{1}{比较}预训练与 SFT 通过训练更新参数；Few-shot ICL 通常仅将样例加进当前上下文。
 \par\answerpiece{2}{手算}两例加一待答共 $\answerresult{3}$ 条记录；另一会话没有带入时，原例不在新的上下文中。
 \par\answerpiece{3}{找错}Few-shot 不永久改写权重；新 Q3 数据须来自有权限、可核验的报告或工具读取。
 \par\answerpiece{4}{方案}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。
-\item[\textbf{第 32 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace
+\item[\textbf{第 30 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace
 \answerpiece{1}{比较}SFT 使用示范答案标签；偏好训练使用回答排序／比较；可验证奖励以程序、判题器等可复现结果评分。
 \par\answerpiece{2}{手算}$-\log0.25=\answerresult{\log4\approx1.3863}$；奖励均值 $0.5$、总体标准差 $0.5$，优势为 $\answerresult{(1,-1,1,-1)}$。
 \par\answerpiece{3}{找错}完整目标还涉及新旧策略概率比、裁剪和可能的正则化；奖励完全相同时标准差为零，需数值稳定处理。
 \par\answerpiece{4}{方案}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。
+\item[\textbf{第 31 章}] \phantomsection\label{answer:23d-agent-rag}\textbf{\hyperref[check:23d-agent-rag]{RAG 与证据}}\enspace
+\answerpiece{1}{证据}缺 Q2，应继续按季度检索或直接读取经授权的 Q2 原件。
+\par\answerpiece{2}{手算}$(132-120)/120=\answerresult{10\%}$。
+\par\answerpiece{3}{找错}不能；相似度是排序信号，不等于权威性，需核对来源与单位。
+\par\answerpiece{4}{行动}明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比。
+\item[\textbf{第 32 章}] \phantomsection\label{answer:23d-agent-tools}\textbf{\hyperref[check:23d-agent-tools]{工具与 Agent 循环}}\enspace
+\answerpiece{1}{分工}应用程序负责解析、校验、授权和真实执行。
+\par\answerpiece{2}{计算}Q2 环比 $20\%$，Q3 环比 $\answerresult{10\%}$。
+\par\answerpiece{3}{找错}把未经执行确认的数据伪装成成功的工具结果。
+\par\answerpiece{4}{选择}固定 Workflow 更易测试、审计与限制成本。
 \item[\textbf{第 33 章}] \phantomsection\label{answer:23d-agent-systems}\textbf{\hyperref[check:23d-agent-systems]{RAG、环比与权限}}\enspace
  \answerpiece{1}{覆盖}缺 Q2 报告。先对必需季度逐项检查、定向检索或申请合法数据访问；若缺失仍无法计算，明确报告缺口。
 \par\answerpiece{2}{手算}正确 Q3 环比 $(132-120)/120=\answerresult{10\%}$；误用 Q1 为基期则 $(132-100)/100=\answerresult{32\%}$。
@@ -233,15 +218,40 @@
 \par\answerpiece{2}{手算}$(100-50)/100=\answerresult{50\%}$；不能由这一局部存储比例推出质量或响应延迟。
 \par\answerpiece{3}{找错}输入长度和硬件同时改变，无法隔离架构效果；须统一测试条件。
 \par\answerpiece{4}{设计}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。
-\item[\textbf{第 37 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace
-\answerpiece{1}{比较}卷积核在不同位置复用，可显著减少逐像素独立连接需要的参数，并保留局部邻域结构。
-\par\answerpiece{2}{手算}$3\cdot3\cdot3\cdot8=\answerresult{216}$ 个权重。
-\par\answerpiece{3}{预测}核参数量不变；边界与步长条件相近时，空间输出位置约变为原来的四倍，计算量通常上升。
-\par\answerpiece{4}{方案}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。
-\item[\textbf{第 38 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace
-\answerpiece{1}{形状}四个 Patch 加 CLS 得 $\answerresult{5}$ 行，注意力分数为 $\answerresult{5\times5}$。
-\par\answerpiece{2}{手算}$W_{\rm vis}:3\times6$，序列映射后为 $\answerresult{5\times6}$。
-\par\answerpiece{3}{预测}每维切分数翻倍，Patch 总数约四倍，平方配对数约十六倍（大量 Patch 时可忽略 CLS 常数项）。
-\par\answerpiece{4}{场景}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。
+\item[\textbf{附录 H}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace
+\answerpiece{1}{形状}$S:2\times3$，$qS:1\times3$。
+\par\answerpiece{2}{手算}$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$，$(1,0)S=\answerresult{(0,1)}$。
+\par\answerpiece{3}{预测}写入与查询都缩为原 Key 的一半，幅度乘 $(0.5)^2=\answerresult{1/4}$，输出为原 Value 的四分之一。
+\par\answerpiece{4}{找错}$vk^\top$ 对题设 $v:1\times3,k:1\times2$ 根本无法相乘（内维不符）；即使另转置也会改变状态的轴方向，不能替代 $k^\top v$。
+\item[\textbf{附录 H}] \phantomsection\label{answer:05-memory-interference}\textbf{\hyperref[check:05-memory-interference]{关联记忆的串扰}}\enspace
+\answerpiece{1}{解释}$k_A(k_B^\top v_B)=(k_Ak_B^\top)v_B$，非零交叉点积带来别条 Value。
+\par\answerpiece{2}{手算}$k_Ak_A^\top=1$、$k_Ak_B^\top=0.6$，读出 $\answerresult{(1,0.6)}$。
+\par\answerpiece{3}{预测}两 Key 正交后交叉点积为零，查询结果回到 $\answerresult{(1,0)}$。
+\par\answerpiece{4}{方案}正交化减少写入键的重叠；残差写入先校准已有读出误差；选择性非线性主要作用于读取分数。
+\item[\textbf{附录 I}] \phantomsection\label{answer:06-better-linear-memory}\textbf{\hyperref[check:06-better-linear-memory]{减少记忆串扰}}\enspace
+\answerpiece{1}{定位}先算已有预测 $kS$，残差 $v-kS$ 表示还没存好的部分，只写入误差而非原值全量。
+\par\answerpiece{2}{手算}读出 $\answerresult{(0.64,0.6)}$；相对目标误差为 $\answerresult{(-0.36,0.6)}$，若以目标减读出，则为 $(0.36,-0.6)$。
+\par\answerpiece{3}{找错}非正交 Key 之间存在交叉影响；修正 B 会沿共享状态改变 A 的读出。
+\par\answerpiece{4}{权衡}未必一次足够；可交替修正直到误差收敛，或在条件满足时用线性方程求联合解，代价更高。
+\item[\textbf{附录 I}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace
+\answerpiece{1}{形状}$qK^\top:1\times3$，最终乘 $V$ 为 $\answerresult{1\times4}$。
+\par\answerpiece{2}{手算}$\relu(1,-0.2)=(1,0)$，读出 $(1,0)V=\answerresult{(2,1)}$。
+\par\answerpiece{3}{比较}不加 ReLU 得 $(1,-0.2)V=\answerresult{(2,0.4)}$；差异来自负匹配权重是否保留。
+\par\answerpiece{4}{找错}四条 Key 会得到 $1\times4$ 匹配权重，而三条 Value 只有三行，$1\times4$ 与 $3\times4$ 不能相乘。
+\item[\textbf{附录 J}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace
+\answerpiece{1}{预测}对 $0<s<1$ 的幂次越高，数值越小；$1$ 的任何正整数次幂仍是 $1$。
+\par\answerpiece{2}{手算}$0.5^2=\answerresult{0.25}$、$0.5^3=\answerresult{0.125}$；$(-0.5)^2=0.25$、$(-0.5)^3=-0.125$。
+\par\answerpiece{3}{找错}负相似度平方后会变成正值，不一定等价于“排除负匹配”；选择激活前必须核对输入范围。
+\par\answerpiece{4}{比较}可将投影／非线性／读出理解为匹配与加权贡献；但参数分布和事实可靠性不满足逐神经元一一对应。
+\item[\textbf{附录 J}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace
+\answerpiece{1}{比较}外积记忆将 Key/Value 写入状态后读出；Softmax Attention 先匹配历史位置再归一化读取；FFN 逐行变换特征。
+\par\answerpiece{2}{手算}$0.25(1,0)+0.75(0,1)=\answerresult{(0.25,0.75)}$。
+\par\answerpiece{3}{找错}外积线性读出未必有 Softmax 概率归一化；状态容量、写入与上下文匹配的实现不同。
+\par\answerpiece{4}{场景}不能从单个神经元激活推出事实可靠；需独立核查来源、任务语境与实际输出。
+\item[\textbf{附录 K}] \phantomsection\label{answer:13-capacity}\textbf{\hyperref[check:13-capacity]{高维容量的边界}}\enspace
+\answerpiece{1}{预测}在归一化且近似独立条件下交叉点积通常更接近零，因此别条记忆贡献较弱。
+\par\answerpiece{2}{手算}正交点积 $\answerresult{0}$；另一组为 $\answerresult{0.6}$。
+\par\answerpiece{3}{找错}平方后的分数非负，不会按原符号相互抵消；必须单独分析均值、方差与累积噪声，不能宣称无限容量。
+\par\answerpiece{4}{判断}测真实 Key 的相关性、Value 分布、层内尺度及不同记忆数的读取错误率，不能直接将随机独立极限当作事实数。
 \end{enumerate}
 \endgroup
