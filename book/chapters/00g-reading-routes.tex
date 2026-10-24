@@ -1,5 +1,6 @@
 \section*{怎么读：路线与数学预备}
 \phantomsection\label{front:reading-routes}
+\begingroup\small\setlength{\parskip}{1pt}\linespread{1.0}\selectfont
 
 本书围绕同一条主线：先学参数怎样被训练，
 再把数字扩展为向量和矩阵，之后让 Token 读取上下文、
@@ -7,7 +8,7 @@
 不必在第一次阅读时记住所有矩阵元素。
 
 \textbf{三条阅读路线：}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
 \item \textbf{速读：}依第一至第五部分掌握训练与 Transformer，再读第六部分视觉桥接、第七部分助手与第八部分架构判断。联想记忆移至文末提高专题。先看每部分的“从这里出发”、章首问题与章末小结，
   浏览形状流程图和三个位置的预测结果；公式只看输入、输出及含义。
 \item \textbf{标准：}依第一至第八部分的顺序阅读正文，亲手完成标量损失、
@@ -16,7 +17,7 @@
   使用 PyTorch 单步实验和交互 Notebook 的三个滑块观察参数或概率变化。
 \end{itemize}
 
-阅读时可用页眉快速定位当前部分与当前章；不同人的练习速度不同，按能否复算判断是否继续。
+可按页眉定位章节，按能否独立复算决定阅读速度。
 
 \subsection*{数学预备：开书前的四个小测试}
 试算 $2(3)+1=7$，$(-2)^2=4$，
@@ -33,7 +34,7 @@ $\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
 
 \subsection*{全书路径：先看输入与输出}
 \begin{center}
-\small\renewcommand{\arraystretch}{1.22}
+\small\renewcommand{\arraystretch}{1.05}
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}p{46mm}X@{}}
 \toprule
@@ -47,14 +48,12 @@ $\widehat y=wx+b$，取 $w=2,b=1$，分别得到 $3,5,7$。
 \end{center}
 \noindent{\footnotesize\color{muted}提高支线：附录 H--K 的联想记忆与容量；视觉桥接纳入第六部分。文末“技术底座回顾”附有详细对照表。}
 
-\subsection*{贯穿全书的表示约定}
-Token ID 从 $0$ 编码；文字位置从 $1$ 数起。数学推导中矩阵元素按
-$1$ 起的行、列号书写；Python 数组索引从 $0$ 起。
-例如数学记法 $(W_{\rm out})_{1,4}$ 与代码中的
-\texttt{W\_out[0,3]} 是同一元素，目标 Token ID 为 $3$ 时
-对应五类输出的第 $4$ 列。
+\par\smallskip\noindent\textbf{贯穿全书的表示约定}\par
+Token ID 从 $0$ 编码，位置从 $1$ 数；数学矩阵元素下标从 $1$ 起，
+Python 数组下标从 $0$ 起。因此数学
+$(W_{\rm out})_{1,4}$ 与 \texttt{W\_out[0,3]} 是同一元素。
 
-一个 Token、Key 或样本占矩阵的一行，投影按 $XW$ 计算。
-Q／Query 用蓝色，K／Key 用青绿，V／Value 用橙色，图中也保留文字标签。
-带“独立例”标记的局部算例不使用三维贯通模型参数；
-全书示意报表与教学奖励均为虚构数据。
+每个 Token 占一行，投影按 $XW$ 计算；Q 蓝色、K 青绿色、V 橙色，
+并保留文字标签。“独立例”不使用三维贯通参数；
+示意报表与教学奖励均为虚构数据。
+\endgroup
