@@ -101,17 +101,4 @@ ReLU 的导数在 $z>0$ 时为 $1$，在 $z<0$ 时为 $0$。因此某条计算�
 反向传播通常在一次前向传播后计算全部梯度，优化器再统一更新参数。不是“反向传到某一层就立刻修改那一层”，否则会在同一步中混用新旧权重。
 \end{warningbox}
 
-\chapterchecktasks{17-backpropagation}{计算／预测／找错／权衡}{
-\item \textbf{计算：}设 $h=w_1x,\widehat y=w_2h$。当 $x=3,w_2=2$ 时，按链式法则求 $\partial\widehat y/\partial w_1$。
-\item \textbf{预测：}在 $h=\relu(z)$ 且 $z=-2$ 时，从输出侧传来的梯度经过这条 ReLU 分支传向 $z$ 后还剩多少？
-\item \textbf{找错：}同学把 $\partial L/\partial h$ 直接当作 $\partial L/\partial w_1$。缺了哪一个局部导数？
-\item \textbf{权衡：}同一个中间量 $h$ 影响两个后续分支。反传应如何汇总分支梯度，为什么不必为每个参数反复计算完整前向？
-}
-\chapterrecallanswer{反传沿计算图用链式法则传递并汇总梯度；优化器才负责把这些梯度变成参数更新。}
 
-
-
-\begin{conclusion}
-反向传播沿计算图复用局部导数，高效得到各参数的梯度。
-接下来在\textbf{本章后半段}加上两个偏置，继续用同一组数字完成前向、求梯度与四参数同步更新。
-\end{conclusion}
