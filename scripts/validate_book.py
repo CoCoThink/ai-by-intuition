@@ -291,7 +291,7 @@ def validate_source() -> None:
     includes(sources["22a-position-multihead"], "0.9997", "scaled-dot-product example")
     includes(sources["22a-position-multihead"], "位置", "positional example")
     includes(sources["22a-position-multihead"], r"\label{eq:pos-swap-d3}", "nondegenerate 3D position comparison")
-    includes(sources["21a-context-gap"], r"\chaptercheck{21a-context-gap}", "context gap self-check")
+    includes(sources["21a-context-gap"], r"\chapterchecktasks{21a-context-gap}", "context gap self-check")
     includes(sources["19b-vit"], r"\label{eq:vit-patch-embedding}", "standalone patch embedding")
     includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "asymmetric Q/K example")
     includes(sources["21b-why-attention"], r"\label{eq:asymmetric-qk-example}",
@@ -621,8 +621,8 @@ def validate_source() -> None:
 
     three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity"]
     for lesson_name in three_tier_memory_and_appendix:
-        includes(sources[lesson_name], r"\chaptercheck{",
-                 f"memory/vision/math glossary three-tier check: {lesson_name}")
+        includes(sources[lesson_name], r"\chapterchecktasks{",
+                 f"memory/vision/math redesigned check: {lesson_name}")
     assert (1 * 0 + 0 * 1) == 0
     assert (3 * 3 * 3 * 8) == 216
 
@@ -674,7 +674,7 @@ def validate_source() -> None:
 
     # A chapter's conclusion should not precede its final boundary and check.
     capacity = sources["13-capacity"]
-    if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\chaptercheck{13-capacity}"):
+    if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\chapterchecktasks{13-capacity}"):
         fail("Capacity chapter places its conclusion before the final self-test")
 
     # Structural guard only: original-course license assessment requires a human.
@@ -983,29 +983,19 @@ def validate_source() -> None:
     varied = {key for key in check_ids
               if r"\chapterchecktasks{" + key + "}" in
               sources[labels["check:" + key]]}
-    mandatory_redesigns = {
-        "16-loss-gradient", "22b-token-to-output", "23-llm-systems",
-        "23d-agent-systems", "00-functions", "16-loss-analytic",
-        "18-generalization", "03-matrix-multiplication", "20a-tokenizer",
-        "20-embeddings", "21c-naive-attention", "21b-why-attention",
-        "22-transformer-architecture", "22c-language-training",
-        "23aa-pretraining-icl", "22d-modern-transformers",
-    }
-    if varied != mandatory_redesigns:
-        fail(f"Fully redesigned self-check coverage drift: "
-             f"missing={sorted(mandatory_redesigns-varied)}; "
-             f"unexpected={sorted(varied-mandatory_redesigns)}")
-    legacy = check_ids - varied
-    if len(legacy) != 27:
-        fail(f"Expected 27 still-legacy checks, got {len(legacy)}")
-    if main.count(r"\csname chapterchallenge@") != 28:
-        fail("Expected 27 legacy diagnostic tasks plus macro expansion")
-    if main.count(r"\csname chapterrecall@") != 28:
-        fail("Expected 27 direct chapter-end legacy recall answers")
-    if sources["28-chapter-checks"].count(r"\textbf{补充题（") != 27:
-        fail("Appendix D.2 must solve all 27 remaining legacy diagnostics")
-    if main.count(r"\item \csname chapterchallenge@#1\endcsname") != 1:
-        fail("Legacy chapter checks must render their fourth chapter-specific task")
+    if varied != check_ids:
+        fail(f"All 43 chapter checks must use the fully redesigned macro; "
+             f"missing={sorted(check_ids-varied)}")
+    if r"\newcommand{\chaptercheck}" in main:
+        fail("Obsolete legacy three-question macro must be removed")
+    for old_bank in ("chapterchallenge@", "chapterchallengetype@", "chapterrecall@"):
+        if old_bank in main:
+            fail(f"Obsolete legacy per-chapter question bank remains: {old_bank}")
+    if r"\textbf{补充题（" in sources["28-chapter-checks"]:
+        fail("Answer appendix still contains legacy supplemental-task labels")
+    print(f"Pedagogy QA: all {len(varied)} chapter checks fully redesigned, "
+          "chapter-end immediate answers and matching detailed keys")
+
     answers = sources["28-chapter-checks"]
     for lesson_id in varied:
         body = sources[labels["check:" + lesson_id]]
@@ -1033,17 +1023,13 @@ def validate_source() -> None:
 
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
-        variants = [r"\chaptercheck{" + lesson_id + "}",
-                    r"\chapterchecktasks{" + lesson_id + "}"]
-        if sum(src.count(variant) for variant in variants) != 1:
-            fail(f"Missing/repeated self-check invocation: {lesson_id}")
-        if variants[1] in src:
-            fragment = src.split(variants[1], 1)[1].split(
-                r"\chapterrecallanswer{", 1)[0]
-            if fragment.count(r"\item ") < 4:
-                fail(f"Varied self-check must include four or more tasks: {lesson_id}")
-            if r"\chapterrecallanswer{" not in src:
-                fail(f"Chapter-end recall answer missing: {lesson_id}")
+        task = r"\chapterchecktasks{" + lesson_id + "}"
+        if src.count(task) != 1 or r"\chaptercheck{" + lesson_id + "}" in src:
+            fail(f"Missing/repeated fully redesigned chapter check: {lesson_id}")
+        fragment = src.split(task, 1)[1].split(
+            r"\chapterrecallanswer{", 1)[0]
+        if fragment.count(r"\item ") < 4 or r"\chapterrecallanswer{" not in src:
+            fail(f"Missing substantive exercises or local recall answer: {lesson_id}")
 
     for name in REQUIRED:
         for destination in re.findall(r"\\hyperref\[((?:check|answer):[^]]+)\]", sources[name]):
