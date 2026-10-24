@@ -208,9 +208,15 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 
 \input{figures/original-transformer-map}
 
-\chaptercheck{22-transformer-architecture}{为什么 Block 的残差输入与输出必须形状兼容？}{若 $T=3,d=4$，两个头各输出 $3\times2$，
-拼接后是什么形状？}{原论文的 Decoder Cross-Attention 里，
-哪一路提供 Query，哪一路提供 Key/Value？}
+\chapterchecktasks{22-transformer-architecture}{形状／预测／找错／对照／流程}{
+\item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？
+\item \textbf{预测：}生成位置 $1$ 时若错误地允许读取位置 $2$ 的真实目标，这会使下一 Token 训练的什么规则失效？
+\item \textbf{找错：}某人把原始 Encoder--Decoder Transformer 的 Cross-Attention 当成 Decoder-only GPT 每层必有的模块。指出差异及真正的数据来源。
+\item \textbf{对照：}Pre-Norm Block 中先 Norm、再 Attention、再残差；随后 Norm、FFN、再残差。FFN 与 Attention 分别负责什么？
+\item \textbf{流程：}不展开数值，从 Token ID 开始依次说出“Embedding／位置 $\to$ Block $\to$ 输出头 $\to$ Softmax”各步的产物；训练时在哪一步追加损失与反传？
+}
+\chapterrecallanswer{一个 Block 需要形状兼容的残差；因果 Mask 禁止看未来；Decoder-only 自注意力没有默认的 Encoder Cross-Attention。}
+
 
 
 \begin{conclusion}
