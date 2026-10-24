@@ -65,3 +65,5 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 ```
 
 正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。本轮消除答案泄露、调整章末位置并增加现代架构图后的构建 [#40065774361](https://github.com/CoCoThink/ai-by-intuition/actions/runs/40065774361) 为 **181 页、2,501/2,501 条公式关联、214 个小节书签、30 张含替代文字的图、零 PDF/UA-2 失败项**；43 个自测链接分别到 43 个答案位置，全文没有未解析引用，机器分页审计通过。该版仍标记为 v0.2.0-draft（未发布）。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
+
+**中文检索：**附录 E 还提供 136 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对全部 136 项链接。

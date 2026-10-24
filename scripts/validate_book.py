@@ -81,6 +81,7 @@ REQUIRED = [
     "27-answer-key",
     "28-chapter-checks",
     "24e-bilingual-glossary",
+    "24f-chinese-index",
     "24c-concept-map",
     "26-sources",
     "29-revision-notes",
@@ -952,6 +953,10 @@ def validate_source() -> None:
         fail(f"Glossary alphabetical sections missing or out of order: {english_groups}")
     if len(re.findall(r"\\hyperref\[", sources["24e-bilingual-glossary"])) != 136:
         fail("Alphabetical glossary must retain 136 clickable entries")
+    if len(re.findall(r"\\hyperref\[", sources["24f-chinese-index"])) != 136:
+        fail("Chinese pinyin index must contain 136 clickable destinations")
+    if r"\label{app:chinese-index}" not in sources["24f-chinese-index"]:
+        fail("Chinese pinyin index must have a labelled heading")
     for unused in ("24-lexicon", "24b-modern-lexicon", "24d-english-index"):
         if rf"\input{{chapters/{unused}}}" in main:
             fail(f"Canonical glossary source must not be typeset: {unused}")
