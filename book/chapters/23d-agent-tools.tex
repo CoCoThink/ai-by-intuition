@@ -90,7 +90,15 @@
 
 
 前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
-\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm,
+  underlay={
+    \draw[draw=linegray!75,densely dotted,line width=.35pt]
+      ([xshift=17mm,yshift=-6mm]interior.north west) --
+      ([xshift=17mm,yshift=6mm]interior.south west);
+    \draw[draw=linegray!75,densely dotted,line width=.35pt]
+      ([xshift=25mm,yshift=-18mm]interior.north west) --
+      ([xshift=25mm,yshift=18mm]interior.south west);
+  }]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\small]
 messages = [system_message, user_message]
 for step in range(MAX_STEPS):
@@ -107,7 +115,7 @@ for step in range(MAX_STEPS):
 return {"error": "step_budget_exceeded"}
 \end{Verbatim}
 \end{tcolorbox}
-\textbf{循环次数和权限检查由应用控制，模型不会替应用执行工具。}
+\textbf{缩进线标出循环、条件与工具调用的层次}；循环次数和权限检查由应用控制，模型不会替应用执行工具。
 示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
 
 \begin{center}\small

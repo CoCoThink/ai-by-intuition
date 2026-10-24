@@ -1008,6 +1008,15 @@ def validate_source() -> None:
     for old_bank in ("chapterchallenge@", "chapterchallengetype@", "chapterrecall@"):
         if old_bank in main:
             fail(f"Obsolete legacy per-chapter question bank remains: {old_bank}")
+    # Selected chapter-local practice links must land on actual appendix C problems.
+    chapter_practice = re.findall(
+        r"\\csname chapterpractice@([^\\]+)\\endcsname\{\\hyperref\[([^]]+)\]",
+        main)
+    if len(chapter_practice) != 12 or len({key for key, _ in chapter_practice}) != 12:
+        fail(f"Expected 12 distinct chapter practice links, got {chapter_practice}")
+    for chapter_id, target in chapter_practice:
+        if target not in labels:
+            fail(f"Missing appendix C practice target for {chapter_id}: {target}")
     if r"\textbf{补充题（" in sources["28-chapter-checks"]:
         fail("Answer appendix still contains legacy supplemental-task labels")
     print(f"Pedagogy QA: all {len(varied)} chapter checks fully redesigned, "

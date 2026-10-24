@@ -163,6 +163,24 @@
 
 % The four-row compass supersedes the old duplicate locator.
 \newcommand{\modelpipelinefocus}[2]{}
+% Selected appendix C exercises are surfaced directly at their relevant chapter.
+% This does not duplicate questions or turn appendix C into a second answer bank.
+\newcommand{\chapterpracticejump}[1]{%
+ \ifcsname chapterpractice@#1\endcsname
+ \par\smallskip\noindent{\footnotesize\color{blue}\csname chapterpractice@#1\endcsname}\par
+ \fi}
+\expandafter\gdef\csname chapterpractice@00-functions\endcsname{\hyperref[exercise:linked-00-functions]{附录 C · 本章延伸：线性预测手算}}
+\expandafter\gdef\csname chapterpractice@17-backpropagation\endcsname{\hyperref[exercise:linked-17-backpropagation]{附录 C · 本章延伸：链式求导}}
+\expandafter\gdef\csname chapterpractice@19-cnn\endcsname{\hyperref[exercise:linked-19-cnn]{附录 C · 本章延伸：卷积输出形状}}
+\expandafter\gdef\csname chapterpractice@20-embeddings\endcsname{\hyperref[exercise:linked-20-embeddings]{附录 C · 本章延伸：嵌入形状}}
+\expandafter\gdef\csname chapterpractice@20b-task-contract\endcsname{\hyperref[exercise:linked-20b-task-contract]{附录 C · 本章延伸：错位目标与词表}}
+\expandafter\gdef\csname chapterpractice@10b-ffn-output-head\endcsname{\hyperref[exercise:linked-10b-ffn-output-head]{附录 C · 本章延伸：FFN 的形状}}
+\expandafter\gdef\csname chapterpractice@22-transformer-architecture\endcsname{\hyperref[exercise:linked-22-transformer-architecture]{附录 C · 本章延伸：因果可见性}}
+\expandafter\gdef\csname chapterpractice@20c-classification-loss\endcsname{\hyperref[exercise:linked-20c-classification-loss]{附录 C · 本章延伸：交叉熵复算}}
+\expandafter\gdef\csname chapterpractice@22d-modern-transformers\endcsname{\hyperref[exercise:linked-22d-modern-transformers]{附录 C · 本章延伸：KV 缓存估算}}
+\expandafter\gdef\csname chapterpractice@23d-agent-rag\endcsname{\hyperref[exercise:linked-23d-agent-rag]{附录 C · 本章延伸：证据与授权}}
+\expandafter\gdef\csname chapterpractice@23c-post-training\endcsname{\hyperref[exercise:linked-23c-post-training]{附录 C · 本章延伸：SFT 与 RLVR}}
+\expandafter\gdef\csname chapterpractice@22c-language-training\endcsname{\hyperref[exercise:linked-22c-language-training]{附录 C · 本章延伸：梯度贯通}}
 % Compact result-only clues are synchronized with the appendix answer anchors.
 \newcommand{\chapterquickhint}[1]{%
  \ifcsname quickhint@#1\endcsname
@@ -228,6 +246,7 @@
 #3
 \end{enumerate}
 \chapterquickhint{#1}
+\chapterpracticejump{#1}
 {\footnotesize\color{muted}完整解答与订正说明见
 \hyperref[answer:#1]{附录~\ref*{app:chapter-checks}（随堂自测解答），第~\pageref*{answer:#1}~页}。}
 \end{tcolorbox}\par\smallskip
