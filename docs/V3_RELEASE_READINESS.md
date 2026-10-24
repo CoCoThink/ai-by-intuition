@@ -1,5 +1,8 @@
 # V3 修订候选：发布前验收与人工签核
 
+> **历史证据说明（2026-10-24）：**本页下列 39 章／144 页指标绑定的是所列旧 SHA，不能代表当前主分支。现行编排为八部分、36 章、附录 A–K；实时目录见 [book/main.tex](../book/main.tex)，当前构建结果以 GitHub Actions 对应提交为准。
+
+
 > **状态：39 章修订的机器基线已通过；人工逐页审校、来源授权和发布签核未完成。**
 > 当前正式 Release 仍是 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)。
 > 本页仅用于 V3 候选；[V2 的历史验收](V2_RELEASE_READINESS.md)不应被当作当前版本的证据。
