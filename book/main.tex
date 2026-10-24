@@ -235,8 +235,6 @@
 \noindent{\sffamily\small\color{muted}原创内容 · CC BY 4.0（叙述借鉴与第三方许可见版权页）}\par
 \clearpage
 % Reader routes precede the TOC; front matter does not add numbered chapters.
-\input{chapters/00g-reading-routes}
-\clearpage
 \input{chapters/00h-colophon}
 \clearpage
 \setcounter{tocdepth}{1} % show parts and chapters; omit subsection clutter
@@ -246,6 +244,11 @@
 \tableofcontents
 \clearpage
 \endgroup
+
+% Reading conventions follow the TOC, before chapter one.
+\clearpage
+\input{chapters/00g-reading-routes}
+\clearpage
 
 
 \part{学习是什么：从规则到参数更新}\markboth{学习是什么：从规则到参数更新}{}
@@ -296,15 +299,10 @@
 \input{chapters/23a-from-toy-to-gpt}
 
 \clearpage
-\part{提高：把 Attention 与 FFN 看作记忆}\markboth{提高：把 Attention 与 FFN 看作记忆}{}
-\learningbridge{Attention 与 FFN 已能完成上下文读取和特征变换；这里再从“存入与取出”的角度观察它们。}{通过外积、串扰、Delta 更新与非线性检索理解记忆机制，为后面的长上下文架构提供数学直觉。}
-\input{chapters/04-key-value-outer-product}
-\input{chapters/05-memory-interference}
-\input{chapters/06-better-linear-memory}
-\input{chapters/08-stacking-key-value}
-\input{chapters/09-nonlinearity-and-memory}
-\input{chapters/14-summary}
-\input{chapters/13-capacity}
+\part{换一种数据看 Transformer：从 CNN 到 ViT}\markboth{换一种数据看 Transformer：从 CNN 到 ViT}{}
+\learningbridge{语言模型已经能处理 Token；图像也能切成可训练的局部表示并与语言序列桥接。}{从卷积小窗口与权重共享理解 CNN，再理解视觉 Transformer 如何处理图像块并对接语言模型。}
+\input{chapters/19-cnn}
+\input{chapters/19b-vit}
 
 \clearpage
 \part{从语言模型到助手}\markboth{从语言模型到助手}{}
@@ -312,6 +310,8 @@
 \input{chapters/23aa-pretraining-icl}
 \input{chapters/23c-post-training}
 \input{chapters/23d-agent-systems}
+\input{chapters/23d-agent-tools}
+\input{chapters/23d-agent-protocols}
 \input{chapters/23b-deployment-and-ecosystem}
 
 \clearpage
@@ -322,12 +322,6 @@
 % Keep the unnumbered end-of-core recap on one dedicated page.
 \clearpage
 \input{chapters/23f-foundation-recap}
-
-\clearpage
-\part{选读：从 CNN 到视觉 Transformer}\markboth{选读：从 CNN 到视觉 Transformer}{}
-\learningbridge{文字、记忆与系统主线已经完整；图像还有局部结构和 Patch 表示的问题。}{从卷积小窗口与权重共享理解 CNN，再理解视觉 Transformer 如何处理图像块并对接语言模型。}
-\input{chapters/19-cnn}
-\input{chapters/19b-vit}
 
 \clearpage
 \appendix
@@ -374,5 +368,18 @@
 
 \section{版本、勘误与复现说明}
 \input{chapters/29-revision-notes}
+
+\clearpage
+\section*{提高专题：联想记忆与线性状态}
+\addcontentsline{toc}{part}{提高专题：联想记忆与线性状态}\markboth{提高：把 Attention 与 FFN 看作记忆}{}
+\learningbridge{Attention 与 FFN 已能完成上下文读取和特征变换；这里再从“存入与取出”的角度观察它们。}{通过外积、串扰、Delta 更新与非线性检索理解记忆机制，作为前文线性 Attention 与 Delta 规则的延伸复算。}
+\input{chapters/04-key-value-outer-product}
+\input{chapters/05-memory-interference}
+\input{chapters/06-better-linear-memory}
+\input{chapters/08-stacking-key-value}
+\input{chapters/09-nonlinearity-and-memory}
+\input{chapters/14-summary}
+\input{chapters/13-capacity}
+
 
 \end{document}
