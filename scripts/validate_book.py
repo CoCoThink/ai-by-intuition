@@ -1016,6 +1016,8 @@ def validate_source() -> None:
         fail("Part-six conclusion missing from chapter 30")
     if r"\newcommand{\chapterrecallanswer}[1]{}" not in main:
         fail("Self-check core answer must not be printed immediately below questions")
+    includes(main, r"arc=1.5mm,breakable=false",
+             "each chapter self-check box must stay unbroken on one PDF page")
 
     answers = sources["28-chapter-checks"]
     for lesson_id in varied:
@@ -1574,6 +1576,7 @@ def validate_pdf(path: Path) -> None:
     # page or adjacent earlier boxes flow into the same continuation page.
     answer_links = []
     for page_index in sorted(inspect_pages):
+        on_page_links = []
         for ref in reader.pages[page_index].get("/Annots", []):
             annot = ref.get_object()
             action = annot.get("/A")
@@ -1590,6 +1593,12 @@ def validate_pdf(path: Path) -> None:
                 named_destinations[dest_name])
             if start_answer <= target_page < end_answer:
                 answer_links.append(dest_name)
+                on_page_links.append(dest_name)
+        expected_on_page = pages[page_index].count("读完自测")
+        if len(on_page_links) != expected_on_page:
+            fail(f"PDF page {page_index + 1}: {expected_on_page} self-check "
+                 f"headings but {len(on_page_links)} answer links on this page; "
+                 "self-check box has been split by pagination")
     if len(answer_links) != 43 or len(set(answer_links)) != 43:
         fail(f"Every self-check must link to its unique answer: "
              f"{len(answer_links)} links to {len(set(answer_links))} "
