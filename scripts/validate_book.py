@@ -1516,6 +1516,55 @@ def validate_pdf(path: Path) -> None:
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
+    # Verify *click destinations* rather than merely the existence of
+    # labels. A previous bug sent all 43 "full answer" links to the start
+    # of Appendix D.2 even while printing the correct per-answer folio.
+    includes((BOOK / "main.tex").read_text(encoding="utf-8"),
+             r"\hyperref[answer:#1]",
+             "self-check answer links must use the chapter-specific anchor")
+    answer_starts = [i for i, body in enumerate(pages)
+                     if "全书随堂自测参考解答" in body]
+    answer_ends = [i for i, body in enumerate(pages)
+                   if "全量中英对照" in body]
+    question_pages = [i for i, body in enumerate(pages)
+                      if "读完自测" in body]
+    if len(answer_starts) != 1 or len(answer_ends) != 1 or len(question_pages) != 43:
+        fail("Cannot locate exactly 43 checks and unique Appendix D.2 / E.1 bounds")
+    start_answer, end_answer = answer_starts[0], answer_ends[0]
+    if not 0 <= start_answer < end_answer < len(reader.pages):
+        fail("Invalid Appendix D.2 answer pages")
+    named_destinations = reader.named_destinations
+    distinct_targets = []
+    for check_page in question_pages:
+        # Two checks have their answer link on the next page, because the
+        # list box breaks naturally. Inspect at most one following page.
+        destinations = set()
+        for page_index in (check_page, min(check_page + 1, len(reader.pages) - 1)):
+            for ref in reader.pages[page_index].get("/Annots", []):
+                annot = ref.get_object()
+                action = annot.get("/A")
+                if action is None:
+                    continue
+                if hasattr(action, "get_object"):
+                    action = action.get_object()
+                if action.get("/S") != "/GoTo":
+                    continue
+                dest_name = str(action.get("/D", ""))
+                if dest_name not in named_destinations:
+                    continue
+                target_page = reader.get_destination_page_number(
+                    named_destinations[dest_name])
+                if start_answer <= target_page <= end_answer:
+                    destinations.add(dest_name)
+        if len(destinations) != 1:
+            fail(f"Chapter self-check on PDF page {check_page + 1} must have "
+                 f"exactly one clickable answer destination, got {sorted(destinations)}")
+        distinct_targets.extend(destinations)
+    if len(set(distinct_targets)) != 43:
+        fail(f"Chapter answers must have 43 distinct clickable destinations; "
+             f"found {len(set(distinct_targets))} (appendix-start-link regression)")
+    print("Chapter answer navigation QA: 43 check links resolve to "
+          "43 distinct destinations within Appendix D.2")
     # Page-bottom regression: the "shape-first route" introduction may not be
     # stranded on a separate page from the first row of its table.
     route_pages = [i for i, page_text in enumerate(pages, 1)
