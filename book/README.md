@@ -110,4 +110,4 @@ latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outd
 pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 ```
 
-正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。最新自测改版成功构建 [#40053500576](https://github.com/CoCoThink/ai-by-intuition/actions/runs/40053500576) 为 169 页、2,428/2,428 条公式关联、214 个小节书签、零 PDF/UA-2 失败项，且无未解析交叉引用。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
+正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。43 组自测全部整体改版后的最新成功构建 [#40056132320](https://github.com/CoCoThink/ai-by-intuition/actions/runs/40056132320) 为 **171 页、2,503/2,503 条公式关联、214 个小节书签、零 PDF/UA-2 失败项**；全文没有未解析交叉引用。第 30 章最后一页的自测、速答与小结已在同页，机器分页审计通过。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
