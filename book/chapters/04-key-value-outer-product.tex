@@ -47,7 +47,12 @@ $K:M\times d_k$、$V:M\times d_v$，
 形式直接对齐主线 Attention 的“权重乘 Value”。
 \end{idea}
 
-\chaptercheck{04-key-value-outer-product}{行向量 Key 和 Value 怎样写入外积状态？}{$k=(1,0)$、$v=(0,1)$，
-$S=k^\top v$ 是哪个 $2\times2$ 矩阵？}{如果把单位 Key 缩成 $k'=(0.5,0)$，
-写入后再用 $k'$ 读取，能完全恢复 $v$ 吗？}
+\chapterchecktasks{04-key-value-outer-product}{形状／手算／预测／找错}{
+\item \textbf{形状：}行向量 Key $k:1\times2$、Value $v:1\times3$。外积写入 $S=k^\top v$ 的形状是什么？查询 $q:1\times2$ 后 $qS$ 又是什么形状？
+\item \textbf{手算：}$k=(1,0),v=(0,1)$，写出矩阵 $S=k^\top v$，再用 $q=(1,0)$ 读取。
+\item \textbf{预测：}同一条记忆若把 Key 写入时改为 $k'=(0.5,0)$，再以 $q=k'$ 读取，恢复的 Value 是多少倍？
+\item \textbf{找错：}同学把 $S$ 写成 $vk^\top$，仍称它是按行向量约定可供 $qS$ 查询的状态。说明为何形状或方向不匹配。
+}
+\chapterrecallanswer{行向量 Key 的外积写入方向是 $k^\top v$；查询 $qS$ 得到 Value 空间的一行。}
+
 
