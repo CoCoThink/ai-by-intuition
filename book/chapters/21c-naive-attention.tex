@@ -43,15 +43,10 @@ $(0.212,0.212,0.576)$，继续把输入作为 Value，
 这便是接下来引入 Query、Key、Value 三种角色的动机。
 
 
-\chapterchecktasks{21c-naive-attention}{手算／预测／找错／比较}{
+\chapterchecktasks{21c-naive-attention}{正文基础三题}{
 \item \textbf{手算：}本章 $x_1=(1,0),x_2=(0,1),x_3=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$。
-\chapterinlinehint{21c-naive-attention}{1}
 \item \textbf{预测：}对每一行分开做 Softmax 后，$A_{13}$ 与 $A_{31}$ 还一定相等吗？请先比较两行的分母。
-\chapterinlinehint{21c-naive-attention}{2}
 \item \textbf{找错：}同学说“直接点积能自定义‘我如何问’和‘别人如何被问’这两套不同视角”。这一零参数方案缺少什么？
-\chapterinlinehint{21c-naive-attention}{3}
-\item \textbf{比较：}保持三个输入不变，改用独立可训练 $W_Q,W_K$，哪一种对称性约束可能被打破？为什么它更灵活？
-\chapterinlinehint{21c-naive-attention}{4}
 }
 \chapterrecallanswer{直接点积 $XX^	op$ 的原始分数对称，但逐行 Softmax 的归一化分母可不同；独立 Q/K 投影可以表达不对称匹配。}
 

@@ -137,15 +137,10 @@ O_{\rm cat}W_O=(0.990,2.010)\quad(1\times2).
 拼成更宽的特征，再使用 $W_O$ 投影回模型宽度。
 
 \Needspace{12\baselineskip}
-\chapterchecktasks{22a-position-multihead}{预测／形状／找错／比较}{
+\chapterchecktasks{22a-position-multihead}{正文基础三题}{
 \item \textbf{预测：}句子里同一个 Token 在不同位置出现，只有内容 Embedding 而没有任何位置机制时，网络失去什么信息？为什么需要位置表示？
-\chapterinlinehint{22a-position-multihead}{1}
 \item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？
-\chapterinlinehint{22a-position-multihead}{2}
 \item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？
-\chapterinlinehint{22a-position-multihead}{3}
-\item \textbf{比较：}为何两个可训练头不等于把同一个头输出复制两份？谈谈 Q/K/V 投影和读取内容的差异。
-\chapterinlinehint{22a-position-multihead}{4}
 }
 \chapterrecallanswer{位置表示携带序列顺序，多头允许独立匹配视角；缩放用于控制点积幅度，不是把分数截成概率。}
 

@@ -232,15 +232,10 @@ GPT-2 是\textbf{仅解码器式}的自回归语言模型，
 联想记忆与 Delta 更新则放在文末提高专题。
 \end{conclusion}
 
-\chapterchecktasks{23a-from-toy-to-gpt}{形状／估算／找错／诊断}{
+\chapterchecktasks{23a-from-toy-to-gpt}{正文基础三题}{
 \item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？
-\chapterinlinehint{23a-from-toy-to-gpt}{1}
 \item \textbf{估算：}忽略偏置，令每层 Attention 投影参数约 $4d^2$、FFN 参数约 $8d^2$。代入 $d=768$，哪个组件占更多层内参数？
-\chapterinlinehint{23a-from-toy-to-gpt}{2}
 \item \textbf{找错：}同学在三维玩具任务上降低了损失，便声称其真实性与大型模型等同。还缺哪两类独立证据？
-\chapterinlinehint{23a-from-toy-to-gpt}{3}
-\item \textbf{诊断：}五词表的均匀预测基线交叉熵为 $\ln5$；若手设初值的三维模型损失略高于此值，是否足以证明实现错误？先核对什么？
-\chapterinlinehint{23a-from-toy-to-gpt}{4}
 }
 \chapterrecallanswer{玩具与 GPT 可使用相同计算框架，但宽度、层数、数据、参数与外部评测共同决定模型能力。}
 

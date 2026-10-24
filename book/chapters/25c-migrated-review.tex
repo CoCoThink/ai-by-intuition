@@ -65,3 +65,58 @@
 \subsubsection*{\hyperref[check:20-embeddings]{20-embeddings：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
 \item \phantomsection\label{extension:20-embeddings:4}\textbf{原题 4：}\textbf{诊断：}训练一步之后某个输入 Token 的 Embedding 行变化了，但另一个从未出现在输入位置的 ID 的\textbf{输入查表行}没变化。能否据此断言后一 ID 在输出头中没有梯度？ \hyperref[answer:20-embeddings]{附录 D 本题解答}
 \end{enumerate}
+
+\subsubsection*{\hyperref[check:20b-task-contract]{20b-task-contract：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:20b-task-contract:4}\textbf{原题 4：}\textbf{方案：}同一份文本既做训练又做推理。训练为什么能在一次前向中计算多个位置，而推理时新 Token 的输入往往要逐个确认？ \hyperref[answer:20b-task-contract]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:21a-context-gap]{21a-context-gap：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:21a-context-gap:4}\textbf{原题 4：}\textbf{方案：}给出两种把前文送到当前位置的途径：一种沿时间传递状态，一种直接按需读取；写出各自潜在成本。 \hyperref[answer:21a-context-gap]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:21-rnn]{21-rnn：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:21-rnn:4}\textbf{原题 4：}\textbf{权衡：}长文本建模时，RNN 的顺序依赖和 Attention 的直接读取各有什么典型计算或记忆代价？ \hyperref[answer:21-rnn]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:21c-naive-attention]{21c-naive-attention：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:21c-naive-attention:4}\textbf{原题 4：}\textbf{比较：}保持三个输入不变，改用独立可训练 $W_Q,W_K$，哪一种对称性约束可能被打破？为什么它更灵活？ \hyperref[answer:21c-naive-attention]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:21b-why-attention]{21b-why-attention：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:21b-why-attention:4}\textbf{原题 4：}\textbf{设计：}若不同词都用相同的内容向量当作 Key 与 Value，模型表达灵活性有什么限制？独立投影怎样缓解？ \hyperref[answer:21b-why-attention]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:11-softmax-memory]{11-softmax-memory：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:11-softmax-memory:4}\textbf{原题 4：}\textbf{找错：}同学说 $QK^\top$ 就是把 Value 相加的结果，因而可以跳过权重乘 $V$。请指出遗漏的角色和计算。 \hyperref[answer:11-softmax-memory]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:22a-position-multihead]{22a-position-multihead：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:22a-position-multihead:4}\textbf{原题 4：}\textbf{比较：}为何两个可训练头不等于把同一个头输出复制两份？谈谈 Q/K/V 投影和读取内容的差异。 \hyperref[answer:22a-position-multihead]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:22-transformer-architecture]{22-transformer-architecture：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:22-transformer-architecture:4}\textbf{原题 4：}\textbf{对照：}Pre-Norm Block 中先 Norm、再 Attention、再残差；随后 Norm、FFN、再残差。FFN 与 Attention 分别负责什么？ \hyperref[answer:22-transformer-architecture]{附录 D 本题解答}
+\item \phantomsection\label{extension:22-transformer-architecture:5}\textbf{原题 5：}\textbf{流程：}不展开数值，从 Token ID 开始依次说出“Embedding／位置 $\to$ Block $\to$ 输出头 $\to$ Softmax”各步的产物；训练时在哪一步追加损失与反传？ \hyperref[answer:22-transformer-architecture]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:10b-ffn-output-head]{10b-ffn-output-head：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:10b-ffn-output-head:4}\textbf{原题 4：}\textbf{估算：}不计偏置，宽度 $d=6$、中间宽度 $18$ 的两层 FFN 总共有多少个矩阵权重？为什么这一数目不直接等于词表大小？ \hyperref[answer:10b-ffn-output-head]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:22b-token-to-output]{22b-token-to-output：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:22b-token-to-output:4}\textbf{原题 4：}\textbf{比较：}若去掉因果 Mask，第一个位置能够读取后面 Token 吗？在同一训练目标下，这会造成什么信息泄漏风险？ \hyperref[answer:22b-token-to-output]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:22c-language-training]{22c-language-training：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:22c-language-training:4}\textbf{原题 4：}\textbf{预测：}若训练一步后位置 $2$ 的贪心标签仍错，但正确类概率由 $0.05$ 升到 $0.07$，单位置交叉熵是升还是降？ \hyperref[answer:22c-language-training]{附录 D 本题解答}
+\item \phantomsection\label{extension:22c-language-training:5}\textbf{原题 5：}\textbf{诊断：}在一个固定小 Batch 上训练二十步损失下降，可作为怎样的训练程序 sanity check？它能证明新语料上的泛化吗？ \hyperref[answer:22c-language-training]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23-llm-systems]{23-llm-systems：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23-llm-systems:4}\textbf{原题 4：}\textbf{权衡：}已处理并缓存前 $1000$ 个 Token 的 K/V，现在刚选出第 $1001$ 个 Token，准备计算第 $1002$ 个 Token 的分布。（a）不用缓存需重新计算多少个位置的 K/V；复用旧缓存需新计算多少个？（b）省下什么、增加什么成本？这里不把第一次 Prefill 算作免费。 \hyperref[answer:23-llm-systems]{附录 D 本题解答}
+\item \phantomsection\label{extension:23-llm-systems:5}\textbf{原题 5：}\textbf{场景（选做）：}用户问“昨天另一段对话里告诉了名字，你今天怎么不知道？”用上下文窗口说明原因，并提出一项应用层改善方法；不得说“推理时直接把参数改成记住名字”。 \hyperref[answer:23-llm-systems]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23a-from-toy-to-gpt]{23a-from-toy-to-gpt：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23a-from-toy-to-gpt:4}\textbf{原题 4：}\textbf{诊断：}五词表的均匀预测基线交叉熵为 $\ln5$；若手设初值的三维模型损失略高于此值，是否足以证明实现错误？先核对什么？ \hyperref[answer:23a-from-toy-to-gpt]{附录 D 本题解答}
+\end{enumerate}

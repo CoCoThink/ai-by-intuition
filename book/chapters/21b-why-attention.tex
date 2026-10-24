@@ -213,15 +213,10 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 注意力的匹配与缓存也要支付相应成本。
 本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算。
 
-\chapterchecktasks{21b-why-attention}{定位／手算／找错／设计}{
+\chapterchecktasks{21b-why-attention}{正文基础三题}{
 \item \textbf{定位：}一句话说明 Query、Key、Value 三者在“计算匹配／提供内容”中的分工，并标出分数和读出的形状：$q:1\times2,K:3\times2,V:3\times2$。
-\chapterinlinehint{21b-why-attention}{1}
 \item \textbf{手算：}只有两个 Value 为 $(1,0),(0,1)$，权重为 $(0.2,0.8)$，求加权读出。
-\chapterinlinehint{21b-why-attention}{2}
 \item \textbf{找错：}同学说“保持 Q、K 不变，修改第三条 Value 后，每条原始匹配分数必定改变”。指出混淆了哪两个路径。
-\chapterinlinehint{21b-why-attention}{3}
-\item \textbf{设计：}若不同词都用相同的内容向量当作 Key 与 Value，模型表达灵活性有什么限制？独立投影怎样缓解？
-\chapterinlinehint{21b-why-attention}{4}
 }
 \chapterrecallanswer{Q/K 决定匹配，V 决定被读取的内容；改变 Value 不直接改动 Q/K 的原始分数。}
 
