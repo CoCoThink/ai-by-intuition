@@ -196,10 +196,10 @@
 \newcommand{\chapterrule}{\Needspace{17\baselineskip}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
 \begin{document}
 \thispagestyle{empty}
-\vspace*{22mm}
+\vspace*{12mm}
 \noindent{\sffamily\bfseries\footnotesize\color{blue}AI BY INTUITION · 直觉教材}\par
-\vspace{20mm}
-\noindent{\sffamily\bfseries\fontsize{29}{39}\selectfont
+\vspace{12mm}
+\noindent{\sffamily\bfseries\fontsize{34}{43}\selectfont
 从函数到 Transformer\\[5mm]再到助手与 Agent}\par
 \vspace{12mm}
 \noindent{\sffamily\fontsize{15}{23}\selectfont
@@ -210,11 +210,11 @@
 % Distinct visual motif: the same four-token example runs through the book.
 \tagstructbegin{tag=Figure,alttext={四个依次连接的教学 Token：春天、花、开了、句号。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,token/.style={rounded corners=4pt,draw=linegray,fill=blueback,minimum width=32mm,minimum height=16mm,font=\sffamily\large\bfseries},node distance=8mm]
-\node[token] (a) {春天};
-\node[token,right=of a,fill=greenback] (b) {花};
-\node[token,right=of b,fill=orangeback] (c) {开了};
-\node[token,right=of c] (d) {。};
+\begin{tikzpicture}[>=Latex,token/.style={rounded corners=4pt,draw=linegray,fill=blueback,minimum width=35mm,minimum height=21mm,font=\sffamily\large\bfseries},node distance=5mm]
+\node[token] (a) {\shortstack{春天\\{\footnotesize ID 1}}};
+\node[token,right=of a,fill=greenback] (b) {\shortstack{花\\{\footnotesize ID 3}}};
+\node[token,right=of b,fill=orangeback] (c) {\shortstack{开了\\{\footnotesize ID 4}}};
+\node[token,right=of c] (d) {\shortstack{。\\{\footnotesize ID 2}}};
 \draw[->,thick,blue] (a)--(b);
 \draw[->,thick,teal] (b)--(c);
 \draw[->,thick,orange] (c)--(d);
