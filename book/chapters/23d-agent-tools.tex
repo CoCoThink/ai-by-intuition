@@ -91,13 +91,13 @@
 
 前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm,
-  underlay={
-    \draw[draw=linegray!75,densely dotted,line width=.35pt]
-      ([xshift=17mm,yshift=-6mm]interior.north west) --
-      ([xshift=17mm,yshift=6mm]interior.south west);
-    \draw[draw=linegray!75,densely dotted,line width=.35pt]
-      ([xshift=25mm,yshift=-18mm]interior.north west) --
-      ([xshift=25mm,yshift=18mm]interior.south west);
+  overlay={
+    \draw[draw=muted!55,densely dotted,line width=.4pt]
+      ([xshift=7mm,yshift=-7mm]interior.north west) --
+      ([xshift=7mm,yshift=5mm]interior.south west);
+    \draw[draw=muted!55,densely dotted,line width=.4pt]
+      ([xshift=14mm,yshift=-27mm]interior.north west) --
+      ([xshift=14mm,yshift=10mm]interior.south west);
   }]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\small]
 messages = [system_message, user_message]
