@@ -1535,11 +1535,17 @@ def validate_pdf(path: Path) -> None:
         fail("Invalid Appendix D.2 answer pages")
     named_destinations = reader.named_destinations
     distinct_targets = []
+    question_page_set = set(question_pages)
     for check_page in question_pages:
-        # Two checks have their answer link on the next page, because the
-        # list box breaks naturally. Inspect at most one following page.
+        # Some longer lists put the link on the following page. However,
+        # adjacent *different* chapter checks (e.g. pages 52 and 53) must
+        # not be conflated, or the earlier check appears to have two links.
+        inspect_pages = [check_page]
+        if (check_page + 1 < len(reader.pages)
+                and check_page + 1 not in question_page_set):
+            inspect_pages.append(check_page + 1)
         destinations = set()
-        for page_index in (check_page, min(check_page + 1, len(reader.pages) - 1)):
+        for page_index in inspect_pages:
             for ref in reader.pages[page_index].get("/Annots", []):
                 annot = ref.get_object()
                 action = annot.get("/A")
