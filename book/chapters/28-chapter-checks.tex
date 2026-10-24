@@ -35,11 +35,11 @@
 \item[\textbf{第 5 章}] \phantomsection\label{answer:17-backpropagation}\textbf{\hyperref[check:17-backpropagation]{链式法则与反向传播}}\enspace 回忆：链式法则可共享相同中间节点的上游梯度；
 手算：$\partial\widehat y/\partial w_1=w_2x=\answerresult{6}$；
 辨析：不必重算整条后续路径，计算图中间结果可复用。
-\par\textbf{补充题（找错）：}还需要乘 $\partial h/\partial w_1$，沿计算图应用链式法则。
+\par\textbf{补充题（预测）：}在 $z=-2<0$ 的 ReLU 分支局部导数为零，沿这条支路反传给 $z$ 的梯度为 $\answerresult{0}$；这里没有讨论其他并行支路。
 \item[\textbf{第 5 章}] \phantomsection\label{answer:18b-end-to-end-learning}\textbf{\hyperref[check:18b-end-to-end-learning]{一次四参数更新}}\enspace 回忆：前向、损失、反传求梯度、统一更新；
 手算：$\widehat y=4,L=\answerresult{0.5}$；
 辨析：不能混用新旧权重，否则两项梯度不再对应同一组参数。
-\par\textbf{补充题（诊断）：}各项梯度必须在同一份旧参数状态下计算，然后统一更新。
+\par\textbf{补充题（预测）：}损失从 $0.5$ 变为 $\answerresult{0}$。这里只说明这一个训练样本目标吻合，不能推断独立样本的泛化。
 \item[\textbf{第 6 章}] \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{泛化与过拟合}}\enspace
 \textbf{题 1（预测）：}训练降、验证升通常提示过拟合，应先检查划分与泄漏，再考虑早停、正则化等。
 \par\textbf{题 2（手算）：}第 $\answerresult{2}$ 轮验证损失最低，为 $\answerresult{0.4}$。
@@ -48,7 +48,7 @@
 \item[\textbf{第 7 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量加法}}\enspace 回忆：有两个有序分量；
 手算：$(2,3)+(1,-1)=\answerresult{(3,2)}$；
 辨析：不能直接相加，需先明确形状兼容的映射或补维规则。
-\par\textbf{补充题（找错）：}两个行向量长度不同，需明确映射或补维，不能直接逐项相加。
+\par\textbf{补充题（找错）：}向量虽然同为二维，分量的语义与单位却对不上；必须先统一坐标含义、顺序及单位，形状相同不意味着可以盲加。
 \item[\textbf{第 8 章}] \phantomsection\label{answer:02-dot-product}\textbf{\hyperref[check:02-dot-product]{点积手算}}\enspace 回忆：对应分量相乘后求和；
 手算：$1\times3+2\times1=\answerresult{5}$；
 辨析：两个非零向量互相正交，夹角为直角。
@@ -115,7 +115,7 @@
 \item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 回忆：FFN 改写隐藏特征，输出头产生词表 logits；
 手算：上投影 $\answerresult{6\times18}$、下投影 $\answerresult{18\times6}$；
 辨析：Token 数不变，FFN 输出仍为 $4\times6$。
-\par\textbf{补充题（比较）：}隐藏特征还不是词表分布；需要输出头映射五个 logits，随后 Softmax。
+\par\textbf{补充题（估算）：}上投影 $6\cdot18=108$、下投影 $18\cdot6=108$，总计 $\answerresult{216}$；FFN 参数数并不由词表大小直接决定，输出头另行映射到词表维度。
 \item[\textbf{第 23 章}] \phantomsection\label{answer:22b-token-to-output}\textbf{\hyperref[check:22b-token-to-output]{三个位置的预测}}\enspace
  \textbf{题 1（定位）：}$X,A,H:3\times3$，$Z,\widehat P:3\times5$；输出头 $W_{\rm out}:3\times5$ 从隐藏特征生成词表分数。
 \par\textbf{题 2（预测）：}初始位置 $1,2$ 错，位置 $3$ 对。因果 Attention 允许第三位置读取第一位置，所以首 Token 改变可影响末位置 logits。
@@ -137,7 +137,7 @@
 手算：$768/12=\answerresult{64}$；
 辨析：还要用独立任务评价事实、泛化与错误率，
 头宽和训练单步结果都不足以证明可靠性。
-\par\textbf{补充题（权衡）：}需要独立任务集、事实正确性、泛化与鲁棒性测试，不能只比较玩具损失。
+\par\textbf{补充题（诊断）：}不证明出错。主例的初始参数是固定手设的，产生的正确类概率并不均匀，损失可以高于 $\ln5$；先核对 logits、Softmax、标签错位和损失平均方式。
 \item[\textbf{第 27 章}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{外积写入与召回}}\enspace 回忆：$S=k^\top v$，查询为 $kS=(kk^\top)v$；
 手算：$S=\begin{bmatrix}0&1\\0&0\end{bmatrix}$；
 辨析：不能，$k'k'^\top=0.25$，读出 $0.25v$，
@@ -156,11 +156,11 @@ $k_AS=\answerresult{(1,0.6)}$；
 \item[\textbf{第 28 章}] \phantomsection\label{answer:08-stacking-key-value}\textbf{\hyperref[check:08-stacking-key-value]{矩阵式 Key/Value 读出}}\enspace 回忆：$xK^\top$ 给出各 Key 的匹配分数；
 手算：$xK^\top:1\times3$，输出 $\answerresult{1\times4}$；
 辨析：不能，Key 与 Value 的记录行数不一致。
-\par\textbf{补充题（定位）：}匹配形状 $1\times4$，乘 $V$ 后得到 $1\times2$。
+\par\textbf{补充题（比较）：}线性读出 $(1,-0.2)V=\answerresult{(2,0.4)}$；先 ReLU 后得 $(1,0)V=\answerresult{(2,1)}$，差别来自负匹配被抑制，不是修改了 Value。
 \item[\textbf{第 29 章}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性选择弱相似度}}\enspace 回忆：大于一的幂可压低 $0$ 到 $1$ 之间的弱匹配；
 手算：$\answerresult{0.25}$ 和 $\answerresult{0.125}$；
 辨析：相似度为 $1$ 时 $1^n=1$，此项保持不变。
-\par\textbf{补充题（预测）：}$0.6$ 从 $0.36$ 降到 $0.216$，而 $1$ 不变；只在选定相似度范围成立。
+\par\textbf{补充题（找错）：}$(-0.5)^2=\answerresult{0.25}$ 会变成正数，立方则为 $\answerresult{-0.125}$；直接平方负匹配不一定代表“抑制”，需限定范围或另外设计非线性。
 \item[\textbf{第 29 章}] \phantomsection\label{answer:14-summary}\textbf{\hyperref[check:14-summary]{MLP 与 Attention 的检索视角}}\enspace 回忆：都以 Query/Key 匹配、用权重组合 Value；
 手算：$\answerresult{(0.25,0.75)}$；
 辨析：不能，归一化和非线性规则不同，读取结果一般不等价。
@@ -197,15 +197,15 @@ $k_AS=\answerresult{(1,0.6)}$；
 手算：$(100-50)/100=\answerresult{50\%}$；
 辨析：至少测任务质量（如正确率）与效率
 （如延迟、吞吐），并固定输入和硬件条件。
-\par\textbf{补充题（权衡）：}报告质量、首 Token 延迟、吞吐、显存及成本，并控制负载与硬件条件。
+\par\textbf{补充题（找错）：}输入长度与硬件条件不一致，不能把速度差直接归因于架构。固定设备、精度、Batch、输入／输出长度和质量目标，再比较延迟与吞吐。
 \item[\textbf{第 37 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{卷积核参数数量}}\enspace 回忆：同一卷积核在多个空间位置共享参数；
 手算：$3\times3\times3\times8=\answerresult{216}$；
 辨析：核参数数目不随输入宽高翻倍而变，
 但输出位置数与运算量通常增加。
-\par\textbf{补充题（估算）：}共有 $3\times3\times3\times8=216$ 个卷积权重；不计偏置。
+\par\textbf{补充题（比较）：}卷积核权重仍共享，参数量不随宽高变化；若边界与步长条件相近，输出位置数通常约为原来的四倍，实际运算量随之增长。
 \item[\textbf{第 38 章}] \phantomsection\label{answer:19b-vit}\textbf{\hyperref[check:19b-vit]{图像 Patch 与 ViT}}\enspace 回忆：将局部图像块变成一串向量供 Transformer 处理；
 手算：Patch 为 $4\times3$，加 CLS 后共有 5 行，
 分数形状 $\answerresult{5\times5}$；
 辨析：Patch 更小使 Token 数增多，全局 Attention 对数随之增加。
-\par\textbf{补充题（找错）：}CLS 多占一个位置，四个 Patch 加 CLS 为五个位置。
+\par\textbf{补充题（场景）：}用 $W_{\rm vis}:3\times6$ 映射每个视觉向量；五个位置投影后为 $\answerresult{5\times6}$。还需安排位置及与文字 Token 的接口。
 \end{enumerate}
