@@ -153,3 +153,39 @@
 \subsubsection*{\hyperref[check:23b-deployment-and-ecosystem]{23b-deployment-and-ecosystem：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
 \item \phantomsection\label{extension:23b-deployment-and-ecosystem:4}\textbf{原题 4：}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ \hyperref[answer:23b-deployment-and-ecosystem]{附录 D 本题解答}
 \end{enumerate}
+
+\subsubsection*{\hyperref[check:22d-modern-transformers]{22d-modern-transformers：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:22d-modern-transformers:4}\textbf{原题 4：}\textbf{设计：}面对 RoPE、GQA、MoE 或其他新模块，如何设计公平对照，避免只看到缓存或参数量的局部指标就宣布技术更好？ \hyperref[answer:22d-modern-transformers]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:23e-tech-judgement]{23e-tech-judgement：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:23e-tech-judgement:4}\textbf{原题 4：}\textbf{设计：}要判断一种架构是否值得迁移到生产系统，提出至少四项必须控制或并列报告的条件，并说明为什么不能只看榜单。 \hyperref[answer:23e-tech-judgement]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:04-key-value-outer-product]{04-key-value-outer-product：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:04-key-value-outer-product:4}\textbf{原题 4：}\textbf{找错：}同学把 $S$ 写成 $vk^\top$，仍称它是按行向量约定可供 $qS$ 查询的状态。说明为何形状或方向不匹配。 \hyperref[answer:04-key-value-outer-product]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:05-memory-interference]{05-memory-interference：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:05-memory-interference:4}\textbf{原题 4：}\textbf{方案：}比较让 Key 更接近正交、写入时按残差修正，以及读出时提高选择性的三条方向；它们分别在哪一步处理问题？ \hyperref[answer:05-memory-interference]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:06-better-linear-memory]{06-better-linear-memory：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:06-better-linear-memory:4}\textbf{原题 4：}\textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。 \hyperref[answer:06-better-linear-memory]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:08-stacking-key-value]{08-stacking-key-value：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:08-stacking-key-value:4}\textbf{原题 4：}\textbf{找错：}某人把 Key 改成四行、Value 仍留三行，声称只要特征宽度没变就能继续用匹配权重乘 Value。指出形状问题。 \hyperref[answer:08-stacking-key-value]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:09-nonlinearity-and-memory]{09-nonlinearity-and-memory：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:09-nonlinearity-and-memory:4}\textbf{原题 4：}\textbf{比较：}把 MLP 解释成“Key 匹配、Value 读取”有什么直觉收益？为什么不能据此宣称神经元一对一存储真实事实？ \hyperref[answer:09-nonlinearity-and-memory]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:14-summary]{14-summary：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:14-summary:4}\textbf{原题 4：}\textbf{场景：}若模型给出一句看似事实的答案，能否只根据某 FFN 神经元被激活就断言那是一条被验证的事实？应怎样补证？ \hyperref[answer:14-summary]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:13-capacity]{13-capacity：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:13-capacity:4}\textbf{原题 4：}\textbf{判断：}把理想随机容量结论用于真实模型前，需要实测哪两项条件？ \hyperref[answer:13-capacity]{附录 D 本题解答}
+\end{enumerate}

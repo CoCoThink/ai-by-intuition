@@ -459,15 +459,10 @@ $8\times(3+2)=\answerresult{40}$。
 可以检查缓存元素数与 $5\times5$ 掩码的 12 个可见位置。
 
 
-\chapterchecktasks{22d-modern-transformers}{比较／手算／找错／设计}{
+\chapterchecktasks{22d-modern-transformers}{正文基础三题}{
 \item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？
-\chapterinlinehint{22d-modern-transformers}{1}
 \item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？
-\chapterinlinehint{22d-modern-transformers}{2}
 \item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。
-\chapterinlinehint{22d-modern-transformers}{3}
-\item \textbf{设计：}面对 RoPE、GQA、MoE 或其他新模块，如何设计公平对照，避免只看到缓存或参数量的局部指标就宣布技术更好？
-\chapterinlinehint{22d-modern-transformers}{4}
 }
 \chapterrecallanswer{RoPE 编入位置信息，RMSNorm 不减均值；GQA 通过较少 K/V 头降低缓存，但整体性能仍需实测。}
 
