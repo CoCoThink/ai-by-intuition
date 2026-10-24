@@ -1,0 +1,18 @@
+% Discrete score bars become a normalized probability distribution.
+\tagstructbegin{tag=Figure,alttext={三个类别的 logits 为零、自然对数二、零；Softmax 后权重分别为零点二五、零点五零和零点二五，总和为一。}}
+\begin{center}
+\begin{tikzpicture}[x=15mm,y=8mm,>=Latex]
+\draw[->,muted] (-.1,0)--(8.5,0);
+\draw[->,muted] (0,0)--(0,5.1) node[above,font=\footnotesize] {Softmax 概率};
+\foreach \x/\p/\name in {1.3/2.5/第一类,3.9/5.0/第二类,6.5/2.5/第三类}{
+ \fill[purple!75] (\x,0) rectangle ++(1.2,\p*.75);
+ \node[font=\small] at (\x+.6,\p*.75+.35) {$\pgfmathprintnumber[fixed,precision=2]{\p/10}$};
+ \node[font=\footnotesize] at (\x+.6,-.55) {\name};
+}
+\node[font=\footnotesize,anchor=west] at (.2,5.0) {原始分数 $(0,\log2,0)$};
+\node[font=\footnotesize,anchor=west] at (.2,4.35) {指数 $(1,2,1)$；分母 $4$};
+\node[font=\footnotesize,anchor=west] at (.2,-1.45) {概率相加 $1/4+1/2+1/4=1$};
+\end{tikzpicture}
+\end{center}
+\begin{center}\captionof{figure}{三类 Softmax：相对分数变成和为一的柱状概率}\label{fig:softmax-prob-bars}\end{center}
+\tagstructend

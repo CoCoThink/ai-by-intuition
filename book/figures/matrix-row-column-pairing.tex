@@ -1,0 +1,29 @@
+% The caption belongs to a semantically tagged Figure.
+\tagstructbegin{tag=Figure,alttext={矩阵乘法的行与列配对：左矩阵第一行一二，右矩阵第一列五六，点积十七；左矩阵第二行三四与右第一列点积三十九。}}
+\begin{center}
+\begin{tikzpicture}[x=12mm,y=9mm,>=Latex]
+\node[font=\small\bfseries] at (0,2.0) {左矩阵 $A$};
+\node[font=\small\bfseries] at (4.5,2.0) {右矩阵 $B$};
+\node[font=\small\bfseries] at (9,2.0) {结果 $AB$};
+\draw[rounded corners=1pt,fill=lavender,draw=purple] (-1.5,.65) rectangle (1.6,1.4);
+\node at (-.55,1.02) {$1$}; \node at (.65,1.02) {$2$};
+\draw[rounded corners=1pt,fill=paper,draw=linegray] (-1.5,-.35) rectangle (1.6,.4);
+\node at (-.55,.02) {$3$}; \node at (.65,.02) {$4$};
+\draw[rounded corners=1pt,fill=lavender,draw=purple] (3.7,-.4) rectangle (4.7,1.45);
+\node at (4.2,1.02) {$5$}; \node at (4.2,.05) {$6$};
+\draw[rounded corners=1pt,fill=paper,draw=linegray] (5.0,-.4) rectangle (6.0,1.45);
+\node at (5.5,1.02) {$7$}; \node at (5.5,.05) {$8$};
+\draw[rounded corners=1pt,fill=lavender,draw=purple] (7.7,.65) rectangle (10.0,1.4);
+\node at (8.4,1.02) {$17$};\node at (9.4,1.02) {$23$};
+\draw[rounded corners=1pt,fill=paper,draw=linegray] (7.7,-.35) rectangle (10,.4);
+\node at (8.4,.02) {$39$}; \node at (9.4,.02) {$53$};
+\draw[->,thick,purple] (1.6,1.0) to[out=20,in=160] (7.7,1.02);
+\draw[->,thick,muted] (4.7,-.45)--(4.7,-.9)
+ node[below,font=\footnotesize] {列 $j=1$};
+\node[font=\footnotesize,align=center] at (5.5,-1.9)
+ {行 $(1,2)$ $\cdot$ 列 $(5,6)^\top$ $=17$\\
+  行 $(3,4)$ $\cdot$ 列 $(5,6)^\top$ $=39$};
+\end{tikzpicture}
+\end{center}
+\begin{center}\captionof{figure}{矩阵乘法逐项定位：输出 $(i,j)$ 是左矩阵第 $i$ 行与右矩阵第 $j$ 列的点积}\label{fig:matrix-row-column-pairing}\end{center}
+\tagstructend

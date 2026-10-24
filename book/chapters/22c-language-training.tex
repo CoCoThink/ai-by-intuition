@@ -141,13 +141,13 @@ $\partial a_i/\partial s_j=a_i(\delta_{ij}-a_j)$。
 =g_ya_j(v_j-y).}
 \label{eq:attention-softmax-backward}
 \end{equation}
-代入得 $g_s\approx(-0.2328,\ 0.0491,\ 0.1837)$；
+代入得 $g_s\approx(-0.2329,\ 0.0491,\ 0.1838)$；
 三项和为零，是平移所有分数不改变 Softmax 的检验。
 \textbf{再穿回 Query 和 Key。}
 由于 $s_j=q\cdot k_j/\sqrt2$，
 \[
 \boxed{\nabla_qL=\frac{g_sK}{\sqrt2}
-\approx(-0.1646,\ 0.0347)},\qquad
+\approx(-0.1647,\ 0.0347)},\qquad
 \boxed{\nabla_{k_j}L=\frac{g_{s_j}q}{\sqrt2}
 =(g_{s_j},0).}
 \]
