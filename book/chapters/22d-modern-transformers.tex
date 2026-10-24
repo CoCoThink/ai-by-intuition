@@ -400,9 +400,14 @@ MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
 \end{tabularx}
 \end{center}
 
-\chaptercheck{22d-modern-transformers}{GQA 为什么有助于减少 KV Cache？}{在其他形状相同的条件下，
-MHA 有 12 个 K/V 头，GQA 只保留 3 个，
-两者每 Token 的 K/V 元素比是多少？}{找错：有人看到 K/V 头数缩为四分之一，就推断端到端推理必定快四倍。这个推断漏了哪些条件？}
+\chapterchecktasks{22d-modern-transformers}{比较／手算／找错／设计}{
+\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？
+\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？
+\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。
+\item \textbf{设计：}面对 RoPE、GQA、MoE 或其他新模块，如何设计公平对照，避免只看到缓存或参数量的局部指标就宣布技术更好？
+}
+\chapterrecallanswer{RoPE 编入位置信息，RMSNorm 不减均值；GQA 通过较少 K/V 头降低缓存，但整体性能仍需实测。}
+
 
 
 \begin{conclusion}
