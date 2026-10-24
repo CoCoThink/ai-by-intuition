@@ -1,7 +1,7 @@
 \subsection{全书随堂自测参考解答}
 \phantomsection\label{app:chapter-checks}
 
-正文自测答案\textbf{按当前正文章号与阅读顺序排列}；四个示范章末已有核心判断，这里保留完整订正和数值过程。阅读指南不占章号，
+正文自测答案\textbf{按当前正文章号与阅读顺序排列}；逐章改版的自测提供题型对应的逐题解答，章末另有即时核心判断。阅读指南不占章号，
 损失解析解与梯度下降分列两章，同章多题共用章号。
 若数值与这里不一致，请先核对矩阵的\textbf{维度、乘法方向和输入数据}。
 附录 A 汇总核心公式、数学速查和优化器提高选读，不再设置随堂自测。点击题目标题可返回正文。
@@ -12,14 +12,16 @@
 手算：贪心选择概率最大的\textbf{第 1 个候选}；
 辨析：不能，预测形式不提供事实核验。
 \par\textbf{补充题（场景）：}先对照有时间戳的权威或原始来源，再独立核验事件及日期；概率预测不是事实证明。
-\item[\textbf{第 1 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace 回忆：$w,b$ 是参数，$x$ 是输入；
-手算：$2\times3+1=\answerresult{7}$；
-辨析：新输出 $2\times3-1=\answerresult{5}$，减少 $2$。
-\par\textbf{补充题（预测）：}结果从 $9$ 改为 $3\times4+1=13$。
-\item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace 回忆：任何实数的平方都非负；
-手算：$w=\answerresult{2}$ 时 $L_{\min}=\answerresult{0}$；
-辨析：$L(3,1)=\frac23(3-2)^2=\answerresult{2/3}$。
-\par\textbf{补充题（找错）：}要令总损失为零，除了 $w=2$ 还须 $b=1$。
+\item[\textbf{第 1 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{带参数的函数}}\enspace
+\textbf{题 1（预测）：}变化量 $(3-2)\cdot3=3$；原输出 $7$，新输出 $\answerresult{10}$。
+\par\textbf{题 2（手算）：}$w=2,b=1$ 通过三点，$x=4$ 预测 $\answerresult{9}$。
+\par\textbf{题 3（找错）：}推理是固定当前参数计算新输入；训练要用数据、损失和梯度更新参数，不能因更换推理输入便认为已再次训练。
+\par\textbf{题 4（场景）：}要学习变化后的目标，应收集相应训练或校准样本并更新参数／模型规则；仅更换测试输入不能解决同一 $x$ 对应新标签的问题。
+\item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{损失与解析解}}\enspace
+\textbf{题 1（解释）：}有正负号的误差直接相加可能互相抵消；平方误差非负，平均能衡量整体偏离。
+\par\textbf{题 2（手算）：}$L(2,1)=\answerresult{0}$；$L(3,1)=\frac23(1)^2=\answerresult{2/3}$。
+\par\textbf{题 3（找错）：}完整损失由两个非负项相加；要同时为零需 $w=2$ \textbf{且} $b=1$，不能任意取偏置。
+\par\textbf{题 4（预测）：}从 $3$ 朝 $2$ 移动，$(w-2)^2$ 下降，固定 $b=1$ 时损失下降；靠近极小值的方向才重要。
 \item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{梯度下降的方向}}\enspace
  \textbf{题 1（预测）：}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；没更新不代表已收敛。
 \par\textbf{题 2（手算）：}$\nabla L=(-4/3,-2)$；以 $\eta=0.3$ 同步更新到 $(1.4,0.6)$，损失为 $\frac23(1.4-2)^2+(0.6-1)^2=\answerresult{0.4}$。
@@ -38,11 +40,11 @@
 手算：$\widehat y=4,L=\answerresult{0.5}$；
 辨析：不能混用新旧权重，否则两项梯度不再对应同一组参数。
 \par\textbf{补充题（诊断）：}各项梯度必须在同一份旧参数状态下计算，然后统一更新。
-\item[\textbf{第 6 章}] \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{泛化与过拟合}}\enspace 回忆：可能过拟合，先检查数据切分与泄漏；
-手算：最低损失为 $0.4$，选择\textbf{第 2 轮}；
-辨析：测试集反复参与调参会产生间接泄漏，
-使最终评估不再独立。
-\par\textbf{补充题（权衡）：}测试集参与调参会产生评估泄漏，应保留独立的最终测试集。
+\item[\textbf{第 6 章}] \phantomsection\label{answer:18-generalization}\textbf{\hyperref[check:18-generalization]{泛化与过拟合}}\enspace
+\textbf{题 1（预测）：}训练降、验证升通常提示过拟合，应先检查划分与泄漏，再考虑早停、正则化等。
+\par\textbf{题 2（手算）：}第 $\answerresult{2}$ 轮验证损失最低，为 $\answerresult{0.4}$。
+\par\textbf{题 3（找错）：}Dropout 训练时随机屏蔽\textbf{激活}，不是永久删除参数；超参数在验证数据上选择，不可反复用最终测试集挑选。
+\par\textbf{题 4（权衡）：}在训练集内部采用交叉验证或重复验证切分做模型选择，最终测试集独立保留；代价是多次训练成本。
 \item[\textbf{第 7 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量加法}}\enspace 回忆：有两个有序分量；
 手算：$(2,3)+(1,-1)=\answerresult{(3,2)}$；
 辨析：不能直接相加，需先明确形状兼容的映射或补维规则。
@@ -51,27 +53,29 @@
 手算：$1\times3+2\times1=\answerresult{5}$；
 辨析：两个非零向量互相正交，夹角为直角。
 \par\textbf{补充题（预测）：}点积仍为零，正交方向反向后仍与另一个向量正交。
-\item[\textbf{第 9 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace 回忆：左矩阵列数等于右矩阵行数；
-手算：$AB:\answerresult{2\times4}$；
-辨析：不能，内侧维度为 $3$ 和 $4$，不匹配。
-\par\textbf{补充题（找错）：}内维为 $3$ 和 $4$，不相等，乘法不合法。
+\item[\textbf{第 9 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法的形状}}\enspace
+\textbf{题 1（形状）：}$2\times3$ 乘 $3\times4$ 内侧维度相同，输出 $\answerresult{2\times4}$；若右矩阵变为 $4\times3$，内侧 $3\ne4$，不合法。
+\par\textbf{题 2（手算）：}$(2,1)\begin{bmatrix}1&3\\2&-1\end{bmatrix}=(2+2,\ 6-1)=\answerresult{(4,5)}$，一行两列。
+\par\textbf{题 3（找错）：}矩阵乘法不满足一般交换律。前例 $AB$ 合法，但 $BA$ 连形状也不合法；即使均合法，元素值通常也不同。
+\par\textbf{题 4（比较）：}每行 $1\times2$ 乘 $2\times3$ 得 $1\times3$，五行堆叠是 $5\times3$；整批一次 $XW$ 也得 $5\times3$。
 \item[\textbf{第 10 章}] \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{矩阵 MLP 与激活}}\enspace 回忆：激活引入非线性变换；手算：$\answerresult{0}$ 与 $\answerresult{2}$；
 辨析：能，$xW_1W_2=x(W_1W_2)$，两层等价于一次线性映射。
 \par\textbf{补充题（找错）：}共享 FFN 权重表示各 Token 行使用同一个函数，不代表行与行交换信息。第一行的 FFN 输出只取决于第一行输入及共享参数；要读取其他 Token，需由 Attention 等跨位置机制完成。
-\item[\textbf{第 11 章}] \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace 回忆：ID 只是离散编号，不表明语义大小；
-手算：$5-2=\answerresult{3}$ 个 Token；
-辨析：未必相同，分词器词表与合并规则改变切分结果。
-\par\textbf{补充题（场景）：}不同分词器的 Token 数量口径不同，需同时说明词表和分词规则。
+\item[\textbf{第 11 章}] \phantomsection\label{answer:20a-tokenizer}\textbf{\hyperref[check:20a-tokenizer]{Token 与 ID}}\enspace
+\textbf{题 1（解释）：}ID 是查表用的离散编号，不是可比较大小的语义强度。
+\par\textbf{题 2（手算）：}按指定合并得到“今天／天气／好”，共 $\answerresult{3}$ 个 Token。
+\par\textbf{题 3（找错）：}BPE 合并规则与词表由训练确定，实际切分还取决于新文本；不同文本或词表不保证相同 Token 数。
+\par\textbf{题 4（权衡）：}分数矩阵由 $T^2$ 增到 $(2T)^2=\answerresult{4T^2}$，元素数四倍；端到端耗时还受实现、投影、硬件和序列生成方式等影响。
 \item[\textbf{第 12 章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类交叉熵与梯度}}\enspace 回忆：logits 未归一化，不要求非负或总和为一；
 手算：$-\log(1/2)=\answerresult{0.6931}$，
 正确类梯度 $1/2-1=\answerresult{-1/2}$；
 辨析：$-\log p$ 随 $p$ 升高而降低。
 \par\textbf{补充题（找错）：}logits 可为负；概率需先经过 Softmax，归一化后非负且和为一。
-\item[\textbf{第 13 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace 回忆：每行对应词表中一个 Token ID；
-手算：$E:5\times3$，三次查表得到 $\answerresult{3\times3}$；
-辨析：同一 ID 查到同一 Embedding 行；
-后续位置与上下文变换才可能产生差异。
-\par\textbf{补充题（预测）：}同一 ID 的查表向量相同；不同位置叠加的位置参数可能不同。
+\item[\textbf{第 13 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding 的形状}}\enspace
+\textbf{题 1（形状）：}Embedding 表为 $5\times3$，三个 ID 查表为 $\answerresult{3\times3}$，每行属于输入的一个位置。
+\par\textbf{题 2（比较）：}ID 只是任意编号；one-hot 行仅有对应 ID 列为 $1$，右乘 Embedding 表正好选出对应行，与查表同义。
+\par\textbf{题 3（预测）：}重复 ID 的原始查表向量相同；第 1、3 位置的可训练位置向量可能不同，因此二者叠加后不必相同。
+\par\textbf{题 4（诊断）：}不能。目标类的输出头仍有梯度；输入 Embedding 的查表梯度与输出头的词表梯度是不同路径，未作输入的 ID 仍可更新输出头列。
 \item[\textbf{第 14 章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{下一 Token 的标签错位}}\enspace 回忆：每个位置预测它之后的 Token；
 手算：目标为 $\answerresult{[3,4,2]}$；
 辨析：不能，生成只有可见前缀，未来目标必须屏蔽。
@@ -84,15 +88,16 @@
 手算：$h_1=2,h_2=\answerresult{1}$；
 辨析：$h_3=1+0.5\times1=\answerresult{1.5}$。
 \par\textbf{补充题（预测）：}可能变化，递推状态把初态的影响传给后续位置。
-\item[\textbf{第 17 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace 回忆：点积交换顺序不改变结果；
-手算：$S_{13}=S_{31}=\answerresult{1}$；
-辨析：未必，逐行 Softmax 的分母随 Query 所在行改变，
-本例 $A_{13}\approx0.422$，$A_{31}\approx0.212$。
-\par\textbf{补充题（找错）：}只有同一矩阵形成 $XX^\top$ 时必然对称；独立投影的 $QK^\top$ 未必对称。
-\item[\textbf{第 18 章}] \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace 回忆：Query/Key 产生匹配分数，Value 供加权读取；
-手算：$0.2(1,0)+0.8(0,1)=\answerresult{(0.2,0.8)}$；
-辨析：匹配分数不变，输出通常随 Value 改变。
-\par\textbf{补充题（比较）：}不保证有用；Key 决定匹配，Value 决定实际读取内容。
+\item[\textbf{第 17 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{朴素点积注意力的限制}}\enspace
+\textbf{题 1（手算）：}第一行 $(1,0,1)$，第三行 $(1,1,2)$，$S_{13}=S_{31}=\answerresult{1}$。
+\par\textbf{题 2（预测）：}不必相等。$A_{13}=e/(2e+1)$，$A_{31}=e/(2e+e^2)$；虽然对应原始分数同为 $1$，每行 Softmax 的分母不同。
+\par\textbf{题 3（找错）：}零参数 $XX^\top$ 让 Query/Key 使用同样的输入向量，不能单独学“如何问”和“如何匹配”。
+\par\textbf{题 4（比较）：}独立投影使 $QK^\top$ 一般不对称；各位置的发问与匹配表示可以分开学习。
+\item[\textbf{第 18 章}] \phantomsection\label{answer:21b-why-attention}\textbf{\hyperref[check:21b-why-attention]{注意力加权读出}}\enspace
+\textbf{题 1（定位）：}Query 发问、Key 用于匹配、Value 提供读取内容；$qK^\top:1\times3$，乘 $V$ 后输出 $1\times2$。
+\par\textbf{题 2（手算）：}$0.2(1,0)+0.8(0,1)=\answerresult{(0.2,0.8)}$。
+\par\textbf{题 3（找错）：}分数来自 Query 与 Key，Value 只进加权求和。改 Value 不直接改 Q/K 原始分数，但可能改变读出。
+\par\textbf{题 4（设计）：}把匹配和内容绑定限制灵活度；独立 $W_Q,W_K,W_V$ 能分别学习匹配视角和提供的内容。
 \item[\textbf{第 19 章}] \phantomsection\label{answer:11-softmax-memory}\textbf{\hyperref[check:11-softmax-memory]{Softmax 的归一化}}\enspace 回忆：用 $QK^\top$ 得到完整分数矩阵；
 手算：两条权重都是 $\answerresult{0.5}$；
 辨析：其他分数固定时，提高某条分数会增大其 Softmax 权重。
@@ -102,11 +107,11 @@
 辨析：再右乘 $4\times6$，得到 $\answerresult{3\times6}$。
 \par\textbf{补充题（找错）：}多头需要不同的可训练投影；重复同一头不能带来额外匹配视角。
 \item[\textbf{第 21 章}] \phantomsection\label{answer:22-transformer-architecture}\textbf{\hyperref[check:22-transformer-architecture]{Block 三层自测}}\enspace
-回忆：同形状向量才能逐位置直接残差相加，否则需要投影对齐；
-手算：两个 $3\times2$ 头按特征拼接为 $\answerresult{3\times4}$；
-辨析：Encoder--Decoder 原论文的 Cross-Attention 中
-Query 来自 Decoder、Key/Value 来自 Encoder 输出。
-\par\textbf{补充题（诊断）：}先投影对齐宽度，再逐元素相加；$3\times4$ 与 $3\times3$ 不能直接做残差和。
+\textbf{题 1（形状）：}拼接得 $\answerresult{3\times4}$；残差相加要求两侧形状兼容，否则需投影对齐。
+\par\textbf{题 2（预测）：}第 1 位置若读取第 2 位置真实目标，便泄漏未来信息，违反因果自回归预测。
+\par\textbf{题 3（找错）：}原始 Encoder--Decoder 的 Cross-Attention 由 Decoder 提供 Q、Encoder 输出提供 K/V；通常的 Decoder-only GPT 采用因果 Self-Attention，不默认有 Encoder。
+\par\textbf{题 4（对照）：}Attention 进行跨位置读取，FFN 每位置改写特征；残差帮助保留信息与梯度通路。
+\par\textbf{题 5（流程）：}Token ID 查表加位置得到隐藏矩阵，Block 输出上下文化隐藏状态，输出头变 logits，Softmax 变概率；训练把概率与目标比较得到损失，再反传更新参数。
 \item[\textbf{第 22 章}] \phantomsection\label{answer:10b-ffn-output-head}\textbf{\hyperref[check:10b-ffn-output-head]{FFN 升维与降维}}\enspace 回忆：FFN 改写隐藏特征，输出头产生词表 logits；
 手算：上投影 $\answerresult{6\times18}$、下投影 $\answerresult{18\times6}$；
 辨析：Token 数不变，FFN 输出仍为 $4\times6$。
@@ -116,11 +121,12 @@ Query 来自 Decoder、Key/Value 来自 Encoder 输出。
 \par\textbf{题 2（预测）：}初始位置 $1,2$ 错，位置 $3$ 对。因果 Attention 允许第三位置读取第一位置，所以首 Token 改变可影响末位置 logits。
 \par\textbf{题 3（找错）：}说反了：Attention 跨 Token 位置读取；FFN 使用共享权重逐行做非线性变换，不交换 Token 信息。
 \par\textbf{题 4（比较）：}无因果 Mask，前面位置可能读取后面的目标 Token 表示，造成未来信息泄漏；自回归训练必须限制可见性。
-\item[\textbf{第 24 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace 回忆：平均三项损失令每项梯度带 $1/3$；
-手算：$(0.3-1)/3=\answerresult{-0.2333}$；
-辨析：只统计两个参与位置时均值归一化为 $1/2$，
-需同时一致地更改损失掩码。
-\par\textbf{补充题（估算）：}归一化系数为 $1/2$，因为参与损失的只有两个位置。
+\item[\textbf{第 24 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三位置联合梯度}}\enspace
+\textbf{题 1（对齐）：}三位置目标为 $\answerresult{[3,4,2]}$；因果 Mask 限制 Attention 可见位置，损失 Mask 选择参与计分的位置。
+\par\textbf{题 2（手算）：}$(0.3-1)/3=\answerresult{-0.2333}$；若仅两位置参与，$(0.3-1)/2=\answerresult{-0.35}$。
+\par\textbf{题 3（找错）：}同一训练步必须在一套旧参数上算全部梯度，再一起更新；混用更新后的输出头计算前层梯度不属于标准同步 SGD。
+\par\textbf{题 4（预测）：}$-\log0.07<-\log0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。
+\par\textbf{题 5（诊断）：}固定小 Batch 上训练到损失下降是排查前向、梯度和更新的 sanity check（先过拟合一个 Batch）；不能据此证明未见数据的泛化。
 \item[\textbf{第 25 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{贪心生成与 Top-p 采样}}\enspace
  \textbf{题 1（预测）：}C 从 $\tau=1$ 时约 $0.090$ 降至 $\tau=0.5$ 时约 $\answerresult{0.016}$；$\tau$ 趋于无穷时三个概率均趋 $1/3$。
 \par\textbf{题 2（手算）：}Top-$p=0.8$ 累计 $0.5+0.3=0.8$，按大于等于阈值保留 A、B，归一化为 $\answerresult{(0.625,0.375)}$。Top-$k=3$ 保留前三，总和 $0.95$，归一化约 $\answerresult{(0.526,0.316,0.158)}$；保留集合不同。
@@ -163,10 +169,11 @@ $k_AS=\answerresult{(1,0.6)}$；
 手算：$\answerresult{0}$；
 辨析：噪声、Key 的相关性、读出误差和具体容量定义仍构成限制。
 \par\textbf{补充题（权衡）：}独立随机假设、Key 相关性与 Value 噪声在真实模型中不成立，不能把理论容量当作可靠事实数量。
-\item[\textbf{第 31 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace 回忆：ICL 只改变当前上下文；实际执行 SFT 才更新参数；
-手算：$2+1=\answerresult{3}$ 条任务记录；
-迁移（找错）：Few-shot 示例改变的是当前上下文，不会自动持久更新模型权重；最新季度数据需经授权读取并核对来源。
-\par\textbf{补充题（场景）：}Few-shot 更新上下文而非参数；SFT 训练会更新参数，均不自动提供私有新数据。
+\item[\textbf{第 31 章}] \phantomsection\label{answer:23aa-pretraining-icl}\textbf{\hyperref[check:23aa-pretraining-icl]{预训练与上下文学习}}\enspace
+\textbf{题 1（比较）：}预训练与 SFT 通过训练更新参数；Few-shot ICL 通常仅将样例加进当前上下文。
+\par\textbf{题 2（手算）：}两例加一待答共 $\answerresult{3}$ 条记录；另一会话没有带入时，原例不在新的上下文中。
+\par\textbf{题 3（找错）：}Few-shot 不永久改写权重；新 Q3 数据须来自有权限、可核验的报告或工具读取。
+\par\textbf{题 4（方案）：}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。
 \item[\textbf{第 32 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{SFT 与偏好反馈}}\enspace 回忆：SFT 用目标示范回答，偏好学习用回答间偏好或奖励；
 手算：$-\ln0.25=\ln4\approx\answerresult{1.386}$；
 辨析：偏好学习可以利用 A 优于 B 的比较信号。
@@ -181,10 +188,11 @@ $k_AS=\answerresult{(1,0.6)}$；
 手算：$10^9\times2=2\times10^9$ 字节，为 $\answerresult{2\ {\rm GB}}$；
 辨析：通常更多，还包括缓存、激活及运行时开销。
 \par\textbf{补充题（估算）：}$2\times2\times2\times8\times10\times2=640$ 字节；不计管理开销。
-\item[\textbf{第 35 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace 回忆：多个 Query 头共享较少的 K/V 头；
-手算：$3/12=\answerresult{1/4}$（只比较 K/V 元素）；
-迁移（找错）：K/V 缓存占用比不等于整体耗时比；投影计算、Kernel、硬件访存、序列长度、批量与质量都需实测。
-\par\textbf{补充题（预测）：}KV 元素数为原来的 $3/12=1/4$，总延迟不必同比减少。
+\item[\textbf{第 35 章}] \phantomsection\label{answer:22d-modern-transformers}\textbf{\hyperref[check:22d-modern-transformers]{GQA 与 KV Cache}}\enspace
+\textbf{题 1（比较）：}RoPE 修改位置相关的 Query/Key 表示；RMSNorm 根据均方根缩放，一般不做 LayerNorm 的减均值操作。
+\par\textbf{题 2（手算）：}原长度下为 $3/12=\answerresult{1/4}$，长度翻倍后相对原 MHA、原长度为 $2(3/12)=\answerresult{1/2}$（只比较 KV 元素）。
+\par\textbf{题 3（找错）：}还受投影计算、Kernel、访存、批量、序列长度、质量等影响，不能把 KV 元素比当成端到端时间比。
+\par\textbf{题 4（设计）：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。
 \item[\textbf{第 36 章}] \phantomsection\label{answer:23e-tech-judgement}\textbf{\hyperref[check:23e-tech-judgement]{新技术判断}}\enspace 回忆：单一资源指标不代表模型质量；
 手算：$(100-50)/100=\answerresult{50\%}$；
 辨析：至少测任务质量（如正确率）与效率
