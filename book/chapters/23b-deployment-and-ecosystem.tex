@@ -47,6 +47,38 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 训练时还常需保存 \conceptlink{gradient}{梯度}、优化器状态等额外数据，所需显存通常远高于只保存权重的粗略估计。即使模型权重能放入显存，运行长上下文或高并发时仍可能发生内存不足。
 \end{warningbox}
 
+
+\subsection{为什么大模型训练要拆到多张卡？}
+
+权重只是训练显存的一部分。还要保存梯度、优化器状态和
+反向传播需要的激活。以十亿参数为教学估算：
+仅 FP32 主权重、梯度与 Adam 的两份状态，
+理论上就需要大约 $4\times4=16$ GB，
+尚未计入激活、临时缓冲和可能额外保存的低精度权重。
+显存不足时需要\textbf{分布式训练}与分片。
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{31mm}X@{}}
+\toprule
+做法 & 分摊的对象及主要代价\\\midrule
+数据并行（Data Parallelism） & 不同设备处理不同样本批次，再同步或归约梯度；朴素方案每卡仍保留完整权重\\
+张量并行（Tensor Parallelism） & 把一层的大矩阵与计算拆到多设备；层内通信频繁\\
+流水线并行（Pipeline Parallelism） & 不同设备保存不同层；微批次填充流水线，需处理流水线空泡\\
+状态分片（如 ZeRO/FSDP） & 分摊优化器状态、梯度乃至权重；以设备间通信换显存\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{混合精度训练（Mixed Precision）}用如 BF16 的较短浮点表示
+执行适合的矩阵计算，并对某些归约、统计或状态保留较高精度。
+BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
+但尾数精度更低；采用哪种精度取决于硬件及数值稳定性。
+\textbf{FlashAttention} 则通过分块、在线 Softmax 和减少高带宽显存读写
+提高标准 Attention 的计算效率；它在适用条件下
+\textbf{保持相同的注意力数学目标}，不是一种新的注意力训练损失。
+工程选型要同时测量吞吐、显存、通信、数值误差与最终模型质量。
+
 \subsection{量化：为什么更少的位数可以降低成本？}
 \phantomsection\label{concept:quant}
 
