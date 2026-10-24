@@ -61,9 +61,14 @@ xS=(1,-0.2)V=\boxed{(2,0.4)},
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查两种读出结果、存储形状与串扰。
 
-\chaptercheck{08-stacking-key-value}{矩阵读出时 $xK^\top$ 代表什么？}{$x:1\times2,K:3\times2,V:3\times4$，
-匹配分数与 Value 加权输出分别是多大？}{如果 K 改成 $4\times2$ 而 V 仍是 $3\times4$，
-能直接相乘吗？}
+\chapterchecktasks{08-stacking-key-value}{形状／手算／比较／找错}{
+\item \textbf{形状：}$q:1\times2,K:3\times2,V:3\times4$。写出 $qK^\top$ 与最终加权读出的形状。
+\item \textbf{手算：}本章 $qK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？
+\item \textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？
+\item \textbf{找错：}某人把 Key 改成四行、Value 仍留三行，声称只要特征宽度没变就能继续用匹配权重乘 Value。指出形状问题。
+}
+\chapterrecallanswer{Key 决定匹配条数，Value 的行数必须与匹配权重一致；非线性可抑制负匹配。}
+
 
 
 \begin{conclusion}
