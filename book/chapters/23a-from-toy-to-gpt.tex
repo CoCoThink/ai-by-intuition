@@ -179,13 +179,6 @@ logits 的完整形状应为 $1\times T\times50{,}257$，
 脚本会自动检查这些不变量，同时打印 Top-5 候选概率。
 对五万余个概率求和时使用 float64，减少单精度舍入造成的验证误差。
 
-固定 Prompt、分词器和权重版本后即可记录实际的 $T$、
-候选 ID、概率总和及掩码上三角最大值。
-未加载公开权重时不把\textbf{教学公式的数值}冒充
-\textbf{真实 GPT-2 推理输出}；
-若权重已经缓存，使用 \texttt{--local-files-only} 可重复本地复算。
-
-
 \begin{example}
 \noindent\emph{一份真实 GPT-2 small 的复算记录}\par
 在公开权重修订 \texttt{607a30d7}、CPU PyTorch 2.5.1、
