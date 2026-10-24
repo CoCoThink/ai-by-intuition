@@ -1619,13 +1619,22 @@ def validate_pdf(path: Path) -> None:
     includes((BOOK / "main.tex").read_text(encoding="utf-8"),
              r"\hyperref[answer:#1]",
              "self-check answer links must use the chapter-specific anchor")
+
+    # Reject an old regression where literal \\s matched backslash+letter,
+    # so real D.2/E.1 headings appeared missing despite a healthy PDF.
+    test_headings = ("D.2 全书随堂自测参考解答\n"
+                     "E.1 全量中英对照：136 项术语速查\n")
+    if not re.search(r"(?m)^\\s*D\\.2\\s+全书随堂自测参考解答\\s*$", test_headings):
+        fail("D.2 heading matching self-test failed")
+    if not re.search(r"(?m)^\\s*E\\.1\\s+全量中英对照[^\\n]*$", test_headings):
+        fail("E.1 heading matching self-test failed")
     # Since the printed TOC includes H2, the TOC also contains both headings.
     # Match only the actual standalone D.2/E.1 section header lines: TOC
     # entries carry dotted page leaders and must never count as appendix pages.
     answer_starts = [i for i, body in enumerate(pages)
-                     if re.search(r"(?m)^\\s*D\\.2\\s+全书随堂自测参考解答\\s*$", body)]
+                     if re.search(r"(?m)^\s*D\.2\s+全书随堂自测参考解答\s*$", body)]
     answer_ends = [i for i, body in enumerate(pages)
-                   if re.search(r"(?m)^\\s*E\\.1\\s+全量中英对照[^\\n]*$", body)
+                   if re.search(r"(?m)^\s*E\.1\s+全量中英对照[^\n]*$", body)
                    and not any(" . . . " in line for line in body.splitlines()
                                if "E.1 全量中英对照" in line)]
     # Some chapters contain two distinct and intentionally adjacent exercise
