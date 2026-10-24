@@ -258,6 +258,11 @@ def validate_source() -> None:
     # extracted full PDF, not merely the presence of source-level labels.
     includes(production, "python3 scripts/check_latex_references.py --self-test",
              "reference-gate positive/negative fixture test")
+    includes(production, "python3 scripts/check_chapter_crossrefs.py --self-test",
+             "stale chapter-number regression tests")
+    includes(production, "python3 scripts/check_chapter_crossrefs.py\n",
+             "mandatory source-order chapter reference check")
+
     includes(production, "Reject unresolved cross-references in final LaTeX log and PDF",
              "mandatory final cross-reference gate")
     includes(production, "--log book/build/main.log",

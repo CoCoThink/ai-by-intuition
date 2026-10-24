@@ -131,5 +131,5 @@ Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 
 多个 Token 可以共用 FFN 的参数，但仍各自在自己的那一行计算。共享参数不等于共享输入：第二个 Token 的变化不会直接让第一个 Token 的逐行 FFN 输出变化，只有经过 Attention 等跨位置读取，其他位置的内容才可能进入这一行。这一判断既可用来发现形状错误，也能帮助你在后面的 Transformer Block 中明确区分“逐位置变换”和“交换上下文信息”。
 
-Mini-batch 与 SGD 见第 3 章；Adam、AdamW 和 Warmup 的手算见附录 A。
+Mini-batch 与 SGD 见第~\ref*{intro:16a-gradient-descent}~章；Adam、AdamW 和 Warmup 的手算见附录 A。
 \end{conclusion}
