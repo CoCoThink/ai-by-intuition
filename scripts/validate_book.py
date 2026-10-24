@@ -1613,6 +1613,17 @@ def validate_pdf(path: Path) -> None:
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
+    # Specific illustrated explainer that previously split after only its
+    # first sentence. The caption, body and Value comparison must stay together.
+    diagram_intro = [i for i, body in enumerate(pages)
+                     if "图解：为什么一会儿写" in body]
+    diagram_body = [i for i, body in enumerate(pages)
+                    if "Value 同理" in body]
+    if (len(diagram_intro) != 1 or len(diagram_body) != 1
+            or diagram_intro[0] != diagram_body[0]):
+        fail(f"Key-transpose diagram split across pages: "
+             f"intro={diagram_intro}, Value comparison={diagram_body}")
+
     # Verify *click destinations* rather than merely the existence of
     # labels. A previous bug sent all 43 "full answer" links to the start
     # of Appendix D.2 even while printing the correct per-answer folio.
