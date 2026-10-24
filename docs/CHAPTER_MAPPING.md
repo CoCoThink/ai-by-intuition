@@ -1,27 +1,30 @@
 # V3 文本修订映射与实施记录
 
-> 状态：**正在逐批修订 main；本文件是实施工作台，不代表教材已完成 V3 或已发布。**
+> 状态：**主分支修订持续进行；本文件记录结构与历史工作，不代表正式 Release。**
 > 原始设计：[REVIEW.md](REVIEW.md)。现有准确阅读顺序以 [book/main.tex](../book/main.tex) 为准。
 > 源文件层面的最新完整编辑复查及未闭合事项见 [全文编辑审校记录](FULL_TEXT_AUDIT.md)。
 > 历史基线：七个必读部分（32 个显示章节）+ 两组选读（2 个视觉章节、4 个记忆章节）= 38 章；附录 A–E。
-> 当前 main 结构：九部分、39 章、附录 A–G；新增朴素 Attention 独立章，记忆专题已移到助手之前。内容和 CI 验收仍在推进。
+> 当前 main 结构：八部分、36 章、附录 A–K。视觉专题在助手之前，联想记忆在正文收束后的提高附录；Agent 拆为三章，章号由 LaTeX 自动生成。
 > **不要以源文件编号推断印刷章号**：印刷章号由 LaTeX 的 \`\\section\` 顺序生成。
 
-## 目标阅读序列与现有源码
+## 当前正文与附录映射（以 `book/main.tex` 为准）
 
-| 目标章节 | 主题与目标状态 | 当前章节源码（保持稳定文件名） |
-| --- | --- | --- |
-| 1–7 | 学习是什么：规则、参数、损失、梯度、反传、泛化 | \`00d-rules-gap\`、\`00-functions\`、\`16-loss-gradient\`、\`07-functions-relu\`、\`17-backpropagation\`、\`18b-end-to-end-learning\`、\`18-generalization\` |
-| 8–11 | 向量、点积、矩阵、MLP 与训练工程 | \`01-vectors\`、\`02-dot-product\`、\`03-matrix-multiplication\`、\`10-mlp\`、\`18c-training-engineering\`（其中有合并在同一显示章的源文件） |
-| 12–15 | Tokenizer、分类损失、Embedding、任务契约 | \`20a-tokenizer\`、\`20c-classification-loss\`、\`20-embeddings\`、\`20b-task-contract\` |
-| 16–21 | 上下文、RNN、**新增朴素注意力**、Q/K/V、批量、位置与多头 | \`21a-context-gap\`、\`21-rnn\`、\`21c-naive-attention\`、\`21b-why-attention\`、\`11-softmax-memory\`、\`22a-position-multihead\` |
-| 22–27 | Transformer Block、FFN/输出头、贯通计算、联合训练、生成、真实 GPT-2 | \`22-transformer-architecture\`、\`10b-ffn-output-head\`、\`22b-token-to-output\`、\`22c-language-training\`、\`23-llm-systems\`、\`23a-from-toy-to-gpt\` |
-| 28–31 | **记忆视角升为核心**：外积、串扰与改善、矩阵读出、高维容量 | \`04-key-value-outer-product\`、\`05-memory-interference\`、\`06-better-linear-memory\`、\`08-stacking-key-value\`、\`09-nonlinearity-and-memory\`、\`14-summary\`、\`13-capacity\`（七份源码、四个显示章） |
-| 32–35 | ICL、后训练、Agent、部署 | \`23aa-pretraining-icl\`、\`23c-post-training\`、\`23d-agent-systems\`、\`23b-deployment-and-ecosystem\` |
-| 36–37 | 现代架构、技术判断 | \`22d-modern-transformers\`、\`23e-tech-judgement\` |
-| 38–39 | 选读视觉：CNN、ViT 到多模态 | \`19-cnn\`、\`19b-vit\` |
+| 正文章号 | 主线与稳定源码 |
+|---|---|
+| 1–6 | 学习：`00-functions`、`16-loss-gradient`、`18c-training-engineering`、`07-functions-relu`、`17-backpropagation`、`18b-end-to-end-learning`、`18-generalization` |
+| 7–10 | 向量／点积／矩阵／MLP：`01-vectors`、`02-dot-product`、`03-matrix-multiplication`、`10-mlp` |
+| 11–14 | Tokenizer、分类、Embedding、任务契约 |
+| 15–20 | 上下文、RNN、朴素 Attention、Q/K/V、Self-Attention、位置与多头 |
+| 21–26 | Transformer Block、FFN、三位置贯通、训练、生成、从玩具到 GPT |
+| 27–28 | **视觉正文**：`19-cnn`、`19b-vit`（视觉前缀与多模态桥接） |
+| 29–34 | ICL、后训练、`23d-agent-systems`（RAG）、`23d-agent-tools`（Agent 循环）、`23d-agent-protocols`（协议／多 Agent）、部署 |
+| 35–36 | 现代 Transformer（必读先行、选读集中）、评测与技术判断；其后以`23f-foundation-recap` 收束正文 |
+| 附录 A–G | 公式、实验、练习、答案、术语、文献、勘误 |
+| 附录 H–K | `04-key-value-outer-product` 到 `13-capacity`：联想记忆与线性状态提高专题 |
 
-目前 **I–VIII** 为核心主线、**IX** 为视觉选读；已在 `main.tex` 完成重排。尚未 Release；`07b368c` 的 R01 最新机器基线已通过，进一步修改应按新 SHA 再验收。
+新增核心解释包括多 GPU、混合精度、FlashAttention、从交叉熵到困惑度、Benchmark 污染、Best-of-N 测试时计算、提示注入、模型偏见及 Softmax 稳定计算。章末保留短结果提示和附录 D 的完整答案。
+
+**历史里程碑号和旧版构建统计仅对应各自旧提交，不作为当前发布结论。**
 
 ## 实施关卡
 
