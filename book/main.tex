@@ -204,29 +204,19 @@
 }
 % Additional non-binary diagnostic/scenario tasks vary by lesson.
 \expandafter\def\csname chapterchallenge@00-guide\endcsname{\textbf{场景：}有人根据一句流畅的预测认定它是真实新闻。请提出核实这条消息的两个步骤。}
-\expandafter\def\csname chapterchallenge@00-functions\endcsname{\textbf{预测：}当 $x=4$、$w=2,b=1$ 时输出为 $9$。只把 $w$ 改为 $3$，预测变成多少？}
-\expandafter\def\csname chapterchallenge@16-loss-analytic\endcsname{\textbf{找错：}同学说“只要 $w=2$，任意 $b$ 都使三点损失为零”。找出遗漏的条件。}
 \expandafter\def\csname chapterchallenge@07-functions-relu\endcsname{\textbf{预测：}令 $f(x)=\relu(2x-1)$；把 $x$ 从 $0$ 改为 $1$，输出怎样变化？}
 \expandafter\def\csname chapterchallenge@17-backpropagation\endcsname{\textbf{找错：}反传时某人把 $\partial L/\partial h$ 直接当作 $\partial L/\partial w_1$。漏掉哪项？}
 \expandafter\def\csname chapterchallenge@18b-end-to-end-learning\endcsname{\textbf{诊断：}某步梯度刚算完，就改动一层权重，再继续算其他层的梯度。应怎样处理？}
-\expandafter\def\csname chapterchallenge@18-generalization\endcsname{\textbf{权衡：}验证集分数一直提高后，团队又用测试集反复挑超参数。问题在哪里？}
 \expandafter\def\csname chapterchallenge@01-vectors\endcsname{\textbf{找错：}一个 $1\times2$ 行向量与一个 $1\times3$ 行向量被直接相加。先检查什么？}
 \expandafter\def\csname chapterchallenge@02-dot-product\endcsname{\textbf{预测：}两个非零单位向量正交时，若把一个向量反向，它们的点积会怎样？}
-\expandafter\def\csname chapterchallenge@03-matrix-multiplication\endcsname{\textbf{找错：}同学把 $(2\times3)(4\times2)$ 写成 $2\times2$。指出维度错误。}
 \expandafter\def\csname chapterchallenge@10-mlp\endcsname{\textbf{找错：}同学说“两个 Token 共用 FFN 权重，所以第一行输出必然随第二行输入改变”。指出混淆了什么计算机制。}
-\expandafter\def\csname chapterchallenge@20a-tokenizer\endcsname{\textbf{场景：}同一字符串换了一套 Tokenizer，Token 数变了，能否直接比较两个模型的 Token 成本？}
 \expandafter\def\csname chapterchallenge@20c-classification-loss\endcsname{\textbf{找错：}分类器输出 logits 为 $(2,-1,0)$，有人说概率中出现负数。请订正。}
-\expandafter\def\csname chapterchallenge@20-embeddings\endcsname{\textbf{预测：}同一个 ID 在序列中出现两次，初始 Embedding 查表结果是否必定相同？加位置后呢？}
 \expandafter\def\csname chapterchallenge@20b-task-contract\endcsname{\textbf{找错：}训练位置 $1$ 时直接把目标位置 $2$ 的 Token 当作可读上下文。哪里违反任务契约？}
 \expandafter\def\csname chapterchallenge@21a-context-gap\endcsname{\textbf{比较：}相同的末词出现在两句不同前文中，独立逐词函数与能读取上下文的模型有什么能力差别？}
 \expandafter\def\csname chapterchallenge@21-rnn\endcsname{\textbf{预测：}保持输入不变而改变 RNN 的初始隐藏状态，后续位置有可能变化吗？为什么？}
-\expandafter\def\csname chapterchallenge@21c-naive-attention\endcsname{\textbf{找错：}某人说所有注意力分数矩阵必须对称，因为点积交换律。何时才对称？}
-\expandafter\def\csname chapterchallenge@21b-why-attention\endcsname{\textbf{比较：}若 Key 匹配很高但对应 Value 携带的内容无关，输出就必然有用吗？}
 \expandafter\def\csname chapterchallenge@11-softmax-memory\endcsname{\textbf{预测：}某行两个匹配分数都加上同一常数，Softmax 权重会如何变化？}
 \expandafter\def\csname chapterchallenge@22a-position-multihead\endcsname{\textbf{找错：}同学把“多头”理解为对完全相同的单头输出复制三遍。缺少了什么？}
-\expandafter\def\csname chapterchallenge@22-transformer-architecture\endcsname{\textbf{诊断：}一个残差支路输出 $3\times4$，主支路为 $3\times3$。如何让加法合法？}
 \expandafter\def\csname chapterchallenge@10b-ffn-output-head\endcsname{\textbf{比较：}为何一个 $3\times6$ 的 FFN 输出不能直接当成五词表的概率？}
-\expandafter\def\csname chapterchallenge@22c-language-training\endcsname{\textbf{估算：}三个位置中只有两个位置计入平均损失，正确类梯度里的归一化因子应变成多少？}
 \expandafter\def\csname chapterchallenge@23a-from-toy-to-gpt\endcsname{\textbf{权衡：}一个更宽的 GPT 类模型在玩具例上损失更低，能否据此证明真实任务更可靠？应增加哪类测试？}
 \expandafter\def\csname chapterchallenge@04-key-value-outer-product\endcsname{\textbf{预测：}线性外积记忆固定 $S$，查询行向量 $q$ 加倍后输出怎样变化？}
 \expandafter\def\csname chapterchallenge@05-memory-interference\endcsname{\textbf{找错：}把两个非正交 Key 的外积记忆相加后，某人断言两项都能被精确取回。指出风险。}
@@ -235,37 +225,25 @@
 \expandafter\def\csname chapterchallenge@09-nonlinearity-and-memory\endcsname{\textbf{预测：}对于相似度 $0.6$ 和 $1$，从平方变成立方后哪一个权重相对下降？}
 \expandafter\def\csname chapterchallenge@14-summary\endcsname{\textbf{找错：}有人说“FFN 内每个神经元就是一条独立且永远正确的事实记录”。指出类比边界。}
 \expandafter\def\csname chapterchallenge@13-capacity\endcsname{\textbf{权衡：}随机 Key 容量随维度增长的理想估算，为什么不能直接作为真实模型知识量的结论？}
-\expandafter\def\csname chapterchallenge@23aa-pretraining-icl\endcsname{\textbf{场景：}要让模型输出新的季度报告格式，先试两条例子与直接 SFT 各改变了什么？}
 \expandafter\def\csname chapterchallenge@23c-post-training\endcsname{\textbf{找错：}同学把四个 GRPO 组内优势 $(1,-1,1,-1)$ 称为完整 GRPO 更新。还缺什么？}
 \expandafter\def\csname chapterchallenge@23b-deployment-and-ecosystem\endcsname{\textbf{估算：}某 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头宽 $8$、$10$ 个位置、每数 $2$ 字节。K 和 V 合计约多少字节？}
-\expandafter\def\csname chapterchallenge@22d-modern-transformers\endcsname{\textbf{预测：}保持头维和层数不变，$12$ 个 Q 头从 $12$ 个 KV 头改为 $3$ 个，理想 KV Cache 元素数变为原来的几分之几？}
 \expandafter\def\csname chapterchallenge@23e-tech-judgement\endcsname{\textbf{权衡：}某架构推理显存降低一半，但准确率下降且首 Token 延迟变大。应报告哪些对照量？}
 \expandafter\def\csname chapterchallenge@19-cnn\endcsname{\textbf{估算：}不计偏置，$3\times3$ 卷积核接收 $3$ 通道、输出 $8$ 通道，可训练卷积权重有多少？}
 \expandafter\def\csname chapterchallenge@19b-vit\endcsname{\textbf{找错：}把 $4$ 个图像 Patch 变为序列后，某同学说加了 CLS 仍只有 $4$ 个位置。指出错在哪里。}
 \expandafter\def\csname chapterchallengetype@00-guide\endcsname{场景}
-\expandafter\def\csname chapterchallengetype@00-functions\endcsname{预测}
-\expandafter\def\csname chapterchallengetype@16-loss-analytic\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@07-functions-relu\endcsname{预测}
 \expandafter\def\csname chapterchallengetype@17-backpropagation\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@18b-end-to-end-learning\endcsname{诊断}
-\expandafter\def\csname chapterchallengetype@18-generalization\endcsname{权衡}
 \expandafter\def\csname chapterchallengetype@01-vectors\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@02-dot-product\endcsname{预测}
-\expandafter\def\csname chapterchallengetype@03-matrix-multiplication\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@10-mlp\endcsname{比较}
-\expandafter\def\csname chapterchallengetype@20a-tokenizer\endcsname{场景}
 \expandafter\def\csname chapterchallengetype@20c-classification-loss\endcsname{找错}
-\expandafter\def\csname chapterchallengetype@20-embeddings\endcsname{预测}
 \expandafter\def\csname chapterchallengetype@20b-task-contract\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@21a-context-gap\endcsname{比较}
 \expandafter\def\csname chapterchallengetype@21-rnn\endcsname{预测}
-\expandafter\def\csname chapterchallengetype@21c-naive-attention\endcsname{找错}
-\expandafter\def\csname chapterchallengetype@21b-why-attention\endcsname{比较}
 \expandafter\def\csname chapterchallengetype@11-softmax-memory\endcsname{预测}
 \expandafter\def\csname chapterchallengetype@22a-position-multihead\endcsname{找错}
-\expandafter\def\csname chapterchallengetype@22-transformer-architecture\endcsname{诊断}
 \expandafter\def\csname chapterchallengetype@10b-ffn-output-head\endcsname{比较}
-\expandafter\def\csname chapterchallengetype@22c-language-training\endcsname{估算}
 \expandafter\def\csname chapterchallengetype@23a-from-toy-to-gpt\endcsname{权衡}
 \expandafter\def\csname chapterchallengetype@04-key-value-outer-product\endcsname{预测}
 \expandafter\def\csname chapterchallengetype@05-memory-interference\endcsname{找错}
@@ -274,38 +252,26 @@
 \expandafter\def\csname chapterchallengetype@09-nonlinearity-and-memory\endcsname{预测}
 \expandafter\def\csname chapterchallengetype@14-summary\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@13-capacity\endcsname{权衡}
-\expandafter\def\csname chapterchallengetype@23aa-pretraining-icl\endcsname{场景}
 \expandafter\def\csname chapterchallengetype@23c-post-training\endcsname{找错}
 \expandafter\def\csname chapterchallengetype@23b-deployment-and-ecosystem\endcsname{估算}
-\expandafter\def\csname chapterchallengetype@22d-modern-transformers\endcsname{预测}
 \expandafter\def\csname chapterchallengetype@23e-tech-judgement\endcsname{权衡}
 \expandafter\def\csname chapterchallengetype@19-cnn\endcsname{估算}
 \expandafter\def\csname chapterchallengetype@19b-vit\endcsname{找错}
 % Verified short answers extracted from Appendix D.2 for chapter-end feedback.
 \expandafter\def\csname chapterrecall@00-guide\endcsname{映射成下一 Token 的概率分布}
-\expandafter\def\csname chapterrecall@00-functions\endcsname{$w,b$ 是参数，$x$ 是输入}
-\expandafter\def\csname chapterrecall@16-loss-analytic\endcsname{任何实数的平方都非负}
 \expandafter\def\csname chapterrecall@07-functions-relu\endcsname{两次仿射复合仍可化为一次仿射变换}
 \expandafter\def\csname chapterrecall@17-backpropagation\endcsname{链式法则可共享相同中间节点的上游梯度}
 \expandafter\def\csname chapterrecall@18b-end-to-end-learning\endcsname{前向、损失、反传求梯度、统一更新}
-\expandafter\def\csname chapterrecall@18-generalization\endcsname{可能过拟合，先检查数据切分与泄漏}
 \expandafter\def\csname chapterrecall@01-vectors\endcsname{有两个有序分量}
 \expandafter\def\csname chapterrecall@02-dot-product\endcsname{对应分量相乘后求和}
-\expandafter\def\csname chapterrecall@03-matrix-multiplication\endcsname{左矩阵列数等于右矩阵行数}
 \expandafter\def\csname chapterrecall@10-mlp\endcsname{激活引入非线性变换}
-\expandafter\def\csname chapterrecall@20a-tokenizer\endcsname{ID 只是离散编号，不表明语义大小}
 \expandafter\def\csname chapterrecall@20c-classification-loss\endcsname{logits 未归一化，不要求非负或总和为一}
-\expandafter\def\csname chapterrecall@20-embeddings\endcsname{每行对应词表中一个 Token ID}
 \expandafter\def\csname chapterrecall@20b-task-contract\endcsname{每个位置预测它之后的 Token}
 \expandafter\def\csname chapterrecall@21a-context-gap\endcsname{缺少此前位置的信息}
 \expandafter\def\csname chapterrecall@21-rnn\endcsname{状态按序列位置向后递推}
-\expandafter\def\csname chapterrecall@21c-naive-attention\endcsname{点积交换顺序不改变结果}
-\expandafter\def\csname chapterrecall@21b-why-attention\endcsname{Query/Key 产生匹配分数，Value 供加权读取}
 \expandafter\def\csname chapterrecall@11-softmax-memory\endcsname{用 $QK^\top$ 得到完整分数矩阵}
 \expandafter\def\csname chapterrecall@22a-position-multihead\endcsname{不同投影可学习不同的匹配与读取表示}
-\expandafter\def\csname chapterrecall@22-transformer-architecture\endcsname{同形状向量才能逐位置直接残差相加，否则需要投影对齐}
 \expandafter\def\csname chapterrecall@10b-ffn-output-head\endcsname{FFN 改写隐藏特征，输出头产生词表 logits}
-\expandafter\def\csname chapterrecall@22c-language-training\endcsname{平均三项损失令每项梯度带 $1/3$}
 \expandafter\def\csname chapterrecall@23a-from-toy-to-gpt\endcsname{玩具损失下降只验证一次已给定数据上的更新}
 \expandafter\def\csname chapterrecall@04-key-value-outer-product\endcsname{$S=k^\top v$，查询为 $kS=(kk^\top)v$}
 \expandafter\def\csname chapterrecall@05-memory-interference\endcsname{查询与其他 Key 的非零点积会带入别的 Value}
@@ -314,10 +280,8 @@
 \expandafter\def\csname chapterrecall@09-nonlinearity-and-memory\endcsname{大于一的幂可压低 $0$ 到 $1$ 之间的弱匹配}
 \expandafter\def\csname chapterrecall@14-summary\endcsname{都以 Query/Key 匹配、用权重组合 Value}
 \expandafter\def\csname chapterrecall@13-capacity\endcsname{其他 Key 的点积通常较小，交叉项的影响可能降低}
-\expandafter\def\csname chapterrecall@23aa-pretraining-icl\endcsname{ICL 只改变当前上下文；实际执行 SFT 才更新参数}
 \expandafter\def\csname chapterrecall@23c-post-training\endcsname{SFT 用目标示范回答，偏好学习用回答间偏好或奖励}
 \expandafter\def\csname chapterrecall@23b-deployment-and-ecosystem\endcsname{权重与随上下文增长的 KV Cache 不同}
-\expandafter\def\csname chapterrecall@22d-modern-transformers\endcsname{多个 Query 头共享较少的 K/V 头}
 \expandafter\def\csname chapterrecall@23e-tech-judgement\endcsname{单一资源指标不代表模型质量}
 \expandafter\def\csname chapterrecall@19-cnn\endcsname{同一卷积核在多个空间位置共享参数}
 \expandafter\def\csname chapterrecall@19b-vit\endcsname{将局部图像块变成一串向量供 Transformer 处理}
