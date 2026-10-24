@@ -52,15 +52,10 @@ ReLU 在 $t=0$ 处不可导，训练实现通常约定一个次梯度。
 本章只研究正负输入时的前向计算；下一章解释其求导。
 \end{warningbox}
 
-\chapterchecktasks{07-functions-relu}{比较／手算／预测／找错}{
+\chapterchecktasks{07-functions-relu}{正文基础三题}{
 \item \textbf{比较：}为什么两次无激活的仿射变换可以合并成一次？给出一维形式 $(ax+b)c+d$。
-\chapterinlinehint{07-functions-relu}{1}
 \item \textbf{手算：}$f(x)=\relu(2x-1)$。分别算 $x=0$ 与 $x=1$ 的输出。
-\chapterinlinehint{07-functions-relu}{2}
 \item \textbf{预测：}当 $2x-1$ 从负值跨到正值时，函数局部斜率如何改变？这个折角为什么有助于拟合分段规律？
-\chapterinlinehint{07-functions-relu}{3}
-\item \textbf{找错：}同学说“ReLU 把网络的权重随机置零，所以同样输入每次都会给出不同输出”。指出混淆的操作。
-\chapterinlinehint{07-functions-relu}{4}
 }
 \chapterrecallanswer{纯仿射层可合并；ReLU 对负输入输出零，对正输入保持原值，带来分段表达能力。}
 

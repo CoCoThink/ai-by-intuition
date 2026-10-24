@@ -78,15 +78,10 @@ Dropout 只在当前计算中屏蔽部分激活，不会永久删除模型参数
 下一部分面对更现实的输入：如果特征不止一个，怎样一起计算？
 \end{conclusion}
 
-\chapterchecktasks{18-generalization}{预测／手算／找错／权衡}{
+\chapterchecktasks{18-generalization}{正文基础三题}{
 \item \textbf{预测：}训练损失持续下降，验证损失却开始上升，模型更可能在欠拟合、过拟合、还是健康泛化？先提出一种排查办法。
-\chapterinlinehint{18-generalization}{1}
 \item \textbf{手算：}三轮验证损失为 $(0.6,0.4,0.5)$。按最低验证损失早停，选哪一轮？最低是多少？
-\chapterinlinehint{18-generalization}{2}
 \item \textbf{找错：}同学说“Dropout 训练时随机删除一些权重参数，再由测试集挑最佳 Dropout 率”。指出两处错误。
-\chapterinlinehint{18-generalization}{3}
-\item \textbf{权衡：}数据很少时，单次切分的验证结果不稳定。如何在保持独立最终测试集的同时提高选参稳健性？
-\chapterinlinehint{18-generalization}{4}
 }
 \chapterrecallanswer{训练误差变小不保证验证误差变小；测试集必须留给最后的独立评估。}
 

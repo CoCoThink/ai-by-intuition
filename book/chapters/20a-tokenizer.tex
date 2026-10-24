@@ -82,15 +82,10 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 真实模型并不保证将“春天”或“开了”保留为单个 Token。
 \end{warningbox}
 
-\chapterchecktasks{20a-tokenizer}{解释／手算／找错／权衡}{
+\chapterchecktasks{20a-tokenizer}{正文基础三题}{
 \item \textbf{解释：}为什么整数 Token ID 只是词表索引，而不是“数字越大、词义越强”的语义分数？
-\chapterinlinehint{20a-tokenizer}{1}
 \item \textbf{手算：}从五个字符“今／天／天／气／好”出发，假设 BPE 按规则依次合并“今+天”“天+气”。合并后有多少个 Token？列出切分结果。
-\chapterinlinehint{20a-tokenizer}{2}
 \item \textbf{找错：}同学认为“BPE 一次合并就会自动在所有句子里产生相同的 Token 数”。用词表和输入文本的关系指出漏洞。
-\chapterinlinehint{20a-tokenizer}{3}
-\item \textbf{权衡：}一个更细的 Tokenizer 把同一段文本切成 $T$ 的两倍；若使用全序列 $T\times T$ 自注意力分数矩阵，元素数变成多少倍？这能否直接推出总推理时间也变为同样倍数？
-\chapterinlinehint{20a-tokenizer}{4}
 }
 \chapterrecallanswer{Tokenizer 先决定离散单位及 ID；切分策略会影响序列长度与后续计算规模。}
 

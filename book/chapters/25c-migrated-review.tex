@@ -1,0 +1,67 @@
+\subsection{来自各章的迁移与方案延伸题}
+\phantomsection\label{app:chapter-extensions}
+正文每章先做三道基础题；原自测中剩余的比较、方案、
+预测或诊断题在这里按章节集中排列。
+以下“原题 4／5”沿用附录 D 的答案编号，
+可先做题，再跳转到该章答案组查看详细过程。
+
+\subsubsection*{\hyperref[check:00-guide]{00-guide：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:00-guide:4}\textbf{原题 4：}\textbf{方案：}读者希望验证一条模型生成的最新消息。请给出至少两步独立核查动作，说明为什么光改写 Prompt 不足以完成证据核验。 \hyperref[answer:00-guide]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:00-functions]{00-functions：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:00-functions:4}\textbf{原题 4：}\textbf{场景：}如果同一输入 $x=3$ 的实际目标从 $7$ 改成 $10$，只改变测试输入能解决吗？应调整哪个环节？ \hyperref[answer:00-functions]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:16-loss-analytic]{16-loss-analytic：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:16-loss-analytic:4}\textbf{原题 4：}\textbf{预测：}从 $w=3$ 向 $w=2$ 移动一点而 $b=1$ 不变，损失初期会增大还是减小？根据平方项说明理由。 \hyperref[answer:16-loss-analytic]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:16-loss-gradient]{16-loss-gradient：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:16-loss-gradient:4}\textbf{原题 4：}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？ \hyperref[answer:16-loss-gradient]{附录 D 本题解答}
+\item \phantomsection\label{extension:16-loss-gradient:5}\textbf{原题 5：}\textbf{诊断：}梯度为 $(6,8)$，L2 范数阈值为 $5$。算出裁剪后的向量，并说明裁剪作用于更新前的梯度还是给预测概率做归一化。 \hyperref[answer:16-loss-gradient]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:07-functions-relu]{07-functions-relu：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:07-functions-relu:4}\textbf{原题 4：}\textbf{找错：}同学说“ReLU 把网络的权重随机置零，所以同样输入每次都会给出不同输出”。指出混淆的操作。 \hyperref[answer:07-functions-relu]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:17-backpropagation]{17-backpropagation：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:17-backpropagation:4}\textbf{原题 4：}\textbf{权衡：}同一个中间量 $h$ 影响两个后续分支。反传应如何汇总分支梯度，为什么不必为每个参数反复计算完整前向？ \hyperref[answer:17-backpropagation]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:18b-end-to-end-learning]{18b-end-to-end-learning：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:18b-end-to-end-learning:4}\textbf{原题 4：}\textbf{诊断：}将正确目标改成 $y=4$ 后，这份样本损失恰好变零。能否宣称已经学会泛化？下一步应怎样检验？ \hyperref[answer:18b-end-to-end-learning]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:18-generalization]{18-generalization：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:18-generalization:4}\textbf{原题 4：}\textbf{权衡：}数据很少时，单次切分的验证结果不稳定。如何在保持独立最终测试集的同时提高选参稳健性？ \hyperref[answer:18-generalization]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:01-vectors]{01-vectors：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:01-vectors:4}\textbf{原题 4：}\textbf{场景：}要把一个二维特征向量和三维特征向量合并给模型，先需约定哪些事情？至少给出一种合法的表示方案。 \hyperref[answer:01-vectors]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:02-dot-product]{02-dot-product：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:02-dot-product:4}\textbf{原题 4：}\textbf{设计：}当向量长度差别很大时，比较原始点积与归一化后的余弦相似度：哪一种更能隔离向量长度影响？ \hyperref[answer:02-dot-product]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:03-matrix-multiplication]{03-matrix-multiplication：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:03-matrix-multiplication:4}\textbf{原题 4：}\textbf{比较：}批量输入 $X:5\times2$ 都使用同一个 $W:2\times3$。从逐行点积与整体矩阵乘法两个角度解释结果为何都是 $5\times3$。 \hyperref[answer:03-matrix-multiplication]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:10-mlp]{10-mlp：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:10-mlp:4}\textbf{原题 4：}\textbf{比较：}去掉两层中间的 ReLU 后，$xW_1W_2$ 能合并为怎样的一层运算？为何保留 ReLU 时一般不能照做？ \hyperref[answer:10-mlp]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:20a-tokenizer]{20a-tokenizer：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:20a-tokenizer:4}\textbf{原题 4：}\textbf{权衡：}一个更细的 Tokenizer 把同一段文本切成 $T$ 的两倍；若使用全序列 $T\times T$ 自注意力分数矩阵，元素数变成多少倍？这能否直接推出总推理时间也变为同样倍数？ \hyperref[answer:20a-tokenizer]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:20c-classification-loss]{20c-classification-loss：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:20c-classification-loss:4}\textbf{原题 4：}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？ \hyperref[answer:20c-classification-loss]{附录 D 本题解答}
+\end{enumerate}
+
+\subsubsection*{\hyperref[check:20-embeddings]{20-embeddings：返回本章自测}}\begin{enumerate}[leftmargin=2.5em,itemsep=4pt]
+\item \phantomsection\label{extension:20-embeddings:4}\textbf{原题 4：}\textbf{诊断：}训练一步之后某个输入 Token 的 Embedding 行变化了，但另一个从未出现在输入位置的 ID 的\textbf{输入查表行}没变化。能否据此断言后一 ID 在输出头中没有梯度？ \hyperref[answer:20-embeddings]{附录 D 本题解答}
+\end{enumerate}
