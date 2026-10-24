@@ -82,10 +82,14 @@ L'&=\frac12(5.30-5)^2=0.045.
 但逐一写所有乘法和导数会非常繁琐。
 后面会用\textbf{向量和矩阵}表达同样的计算，而不改变学习机制本身。
 
-\chaptercheck{18b-end-to-end-learning}{一次完整训练更新依次有哪些环节？}{在 $x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$
-且 $h=\relu(w_1x+b_1)$ 时，$\widehat y$ 与
-$\tfrac12(\widehat y-y)^2$ 是多少？}{同一次 SGD 中，能否先更新 $w_2$
-再用新的 $w_2$ 算 $w_1$ 的梯度？}
+\chapterchecktasks{18b-end-to-end-learning}{流程／手算／找错／诊断}{
+\item \textbf{流程：}把一次 SGD 分成“前向／损失／反传／更新”四步；哪一步读取训练目标，哪一步改变参数？
+\item \textbf{手算：}$x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$，$h=\relu(w_1x+b_1)$。求 $\widehat y$ 与 $\tfrac12(\widehat y-y)^2$。
+\item \textbf{找错：}某同学先更新 $w_2$，再用新 $w_2$ 算本次 $w_1$ 的梯度，称它是“同一步同步 SGD”。指出问题。
+\item \textbf{诊断：}将正确目标改成 $y=4$ 后，这份样本损失恰好变零。能否宣称已经学会泛化？下一步应怎样检验？
+}
+\chapterrecallanswer{训练一步先用同一组旧参数求出完整梯度，再统一更新；单样本损失低不等于模型泛化好。}
+
 
 
 \begin{conclusion}
