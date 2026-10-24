@@ -1071,6 +1071,12 @@ def validate_source() -> None:
              "each chapter self-check box must stay unbroken on one PDF page")
     if r"\chapterinlinehint" in main or r"quickhint@" in main:
         fail("Inline numerical clues or old clue bank remain in reader PDF")
+    if sources["25c-migrated-review"].count(r"\begin{enumerate}[label=\arabic*.,start=4") != 45:
+        fail("Each of the 45 Appendix C chapter groups must begin numbering at 4")
+    if r"\textbf{原题 4：" in sources["25c-migrated-review"]:
+        fail("Appendix C must use real 4/5 list markers instead of duplicate '1. 原题 4' labels")
+    if "简明答案},fonttitle=\\sffamily\\bfseries,coltitle=ink" not in sources["27-answer-key"]:
+        fail("Appendix D memory-answer heading must have high-contrast dark title text")
     if len(re.findall(r"\\label\{extension:[^}]+\}",
                       sources["25c-migrated-review"])) != 50:
         fail("Appendix C must hold exactly 50 relocated self-check questions")
