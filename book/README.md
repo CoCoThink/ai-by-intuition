@@ -7,74 +7,28 @@
 
 **从这里开始：**[目录前的阅读路线](chapters/00g-reading-routes.tex)与[单独版权页、约定](chapters/00h-colophon.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
-## 当前修订目录：七个基础主线部分、记忆提高专题、视觉选读（38 章）
+## 当前目录：八部分、36 章、附录 A–K
 
-本目录以 [\`book/main.tex\`](main.tex) 的实际输入顺序为准。
-下列旧文件名用于稳定链接；印刷章节号由 LaTeX 生成。
+章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。此次修订把图像专题前移，联想记忆置于正文结束后的提高附录；技术底座回顾成为正文最后一页。
 
-### I–III：从函数到文字（第 1–14 章）
-I：[函数](chapters/00-functions.tex)、[损失与梯度](chapters/16-loss-gradient.tex)、[Mini-batch 与 SGD 训练工程](chapters/18c-training-engineering.tex)（AdamW/Warmup 数值题移至[附录 A 提高选读](chapters/30-optimizer-appendix.tex)）、
-[反传](chapters/17-backpropagation.tex)、[泛化](chapters/18-generalization.tex)。
+| 部分 | 章节和源码 |
+|---|---|
+| I · 学习与训练 | [函数](chapters/00-functions.tex)、[损失与梯度](chapters/16-loss-gradient.tex)、[训练组织](chapters/18c-training-engineering.tex)、[反传](chapters/17-backpropagation.tex)、[泛化](chapters/18-generalization.tex) |
+| II · 向量与矩阵 | [向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex) |
+| III · 文字与 Token | [Tokenizer](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、[Embedding](chapters/20-embeddings.tex)、[任务契约](chapters/20b-task-contract.tex) |
+| IV · 上下文 | [RNN](chapters/21-rnn.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[Self-Attention](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
+| V · Transformer | [Block](chapters/22-transformer-architecture.tex)、[FFN](chapters/10b-ffn-output-head.tex)、[贯通前向](chapters/22b-token-to-output.tex)、[联合训练](chapters/22c-language-training.tex)、[生成](chapters/23-llm-systems.tex)、[玩具到 GPT](chapters/23a-from-toy-to-gpt.tex) |
+| VI · 视觉桥接 | [CNN](chapters/19-cnn.tex) → [ViT 与多模态](chapters/19b-vit.tex) |
+| VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[部署](chapters/23b-deployment-and-ecosystem.tex) |
+| VIII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex)、[技术底座回顾](chapters/23f-foundation-recap.tex) |
 
-II：[向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、
-[矩阵](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex)。
+**附录 A–G**：公式、实验、练习、参考答案、术语、文献与勘误；**附录 H–K**：外积记忆、串扰、Delta 更新、非线性检索与高维容量（[专题起点](chapters/04-key-value-outer-product.tex)）。
 
-III：[BPE](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、
-[Embedding](chapters/20-embeddings.tex)、[任务契约](chapters/20b-task-contract.tex)。
-
-### IV：上下文与 Attention（第 15–20 章）
-[上下文缺口](chapters/21a-context-gap.tex) →
-[RNN](chapters/21-rnn.tex) →
-[朴素点积 Attention](chapters/21c-naive-attention.tex) →
-[Q/K/V](chapters/21b-why-attention.tex) →
-[矩阵式 Self-Attention](chapters/11-softmax-memory.tex) →
-[位置与多头](chapters/22a-position-multihead.tex)。
-
-### V：Transformer 训练（第 21–26 章）
-[Block](chapters/22-transformer-architecture.tex)、
-[FFN 与输出头](chapters/10b-ffn-output-head.tex)、
-[贯通前向](chapters/22b-token-to-output.tex)、
-[联合训练](chapters/22c-language-training.tex)、
-[生成](chapters/23-llm-systems.tex)、
-[从玩具到 GPT-2](chapters/23a-from-toy-to-gpt.tex)。
-
-### VI（提高）：Attention 与 FFN 的记忆视角（第 27–30 章，速读可跳过）
-[外积](chapters/04-key-value-outer-product.tex)、
-[串扰](chapters/05-memory-interference.tex)、
-[减少干扰](chapters/06-better-linear-memory.tex)、
-[矩阵读出](chapters/08-stacking-key-value.tex)、
-[非线性与 MLP](chapters/09-nonlinearity-and-memory.tex)、
-[高维容量](chapters/13-capacity.tex)。
-本部分统一使用行向量；[memory_demo.py](../scripts/memory_demo.py) 验证二维结果。
-
-### VII–VIII：助手与架构判断（第 31–36 章）
-VII：[ICL](chapters/23aa-pretraining-icl.tex)、
-[后训练](chapters/23c-post-training.tex)、
-[Agent/RAG](chapters/23d-agent-systems.tex)、
-[部署](chapters/23b-deployment-and-ecosystem.tex)。
-
-VIII：[现代 Transformer](chapters/22d-modern-transformers.tex)、
-[新技术判断](chapters/23e-tech-judgement.tex)、
-[技术底座回顾](chapters/23f-foundation-recap.tex)。
-
-### IX：视觉选读（第 37–38 章）
-[CNN](chapters/19-cnn.tex) → [ViT](chapters/19b-vit.tex)。
-
-## 附录 A–G
-
-A · [公式和数学](chapters/00e-core-formulas.tex)；
-B · [三维数值与实验](chapters/00f-transformer-intermediates.tex)；
-C · [综合练习](chapters/25-integrated-practice.tex)；
-D · [集中答案](chapters/27-answer-key.tex)；
-E · [136 项中英术语表](chapters/24e-bilingual-glossary.tex)；
-F · [参考文献](chapters/26-sources.tex)；
-G · [版本与复现](chapters/29-revision-notes.tex)。
-
-这份目录属于正在修订的 \`main\`，不是正式发布版本清单。
+章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
 
 ## 自测题与答案的两级阅读
 
-**43/43 组章末自测已全部改成 4–5 题的独立多题型练习**，每组提供预测、计算或形状推导、找错、比较、场景或方案等不同能力的检验，避免将同一数值的二次归一化冒充“迁移”。每一组保留原 `check:` 和 `answer:` 跳转标签；**为避免直接泄题，正文自测下不显示答案**，[附录 D.2](chapters/28-chapter-checks.tex)按 `题 1…题 N` 给出独立的“提示 → 解答”两段式详解，支持从正文直接跳至对应题组。旧版集中在 `book/main.tex` 的 27 组第四题库和速答库已清理，CI 逐章核对题型不重复、编号齐全和答案数量一致。**机器校验不等于完成真实教学试做**：难度梯度、读者理解效果、打印版逐页审校及实际屏读体验仍需人工签核。
+**45 组随堂／提高自测已全部改成 4–5 题的独立多题型练习**，每组提供预测、计算或形状推导、找错、比较、场景或方案等不同能力的检验，避免将同一数值的二次归一化冒充“迁移”。每一组保留原 `check:` 和 `answer:` 跳转标签；**正文只提供简要结果线索，完整推导留在附录**，[附录 D.2](chapters/28-chapter-checks.tex)按 `题 1…题 N` 给出独立的“提示 → 解答”两段式详解，支持从正文直接跳至对应题组。旧版集中在 `book/main.tex` 的 27 组第四题库和速答库已清理，CI 逐章核对题型不重复、编号齐全和答案数量一致。**机器校验不等于完成真实教学试做**：难度梯度、读者理解效果、打印版逐页审校及实际屏读体验仍需人工签核。
 
 ## 一次构建，一本 Tagged PDF
 
