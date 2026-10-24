@@ -1,7 +1,7 @@
 \chapterrule
 \section{为什么从函数开始学 AI？}
 \label{intro:00-functions}
-\chaptercompass{怎样让函数由样本确定参数？}{先选可调函数，再用样本检查预测。}{$x:1\times1\to\widehat y:1\times1$}{$w,b$ 可训练}
+\chaptercompass{怎样让函数由样本确定参数？}{先选可调函数，再用样本检查预测。}{$x:1\times1\to\widehat{y}:1\times1$}{$w,b$ 可训练}
 \modelpipelinefocus{0}{函数、参数与样本}
 
 手写规则适合条件明确的任务，例如 $c=\sqrt{a^2+b^2}$。
@@ -31,14 +31,14 @@ f(x)=2x+1,\qquad f(3)=2\times3+1=7.
 只是取了另一组三个输入；不是两套互相冲突的数据。
 我们先选一个最简单的函数族：
 \begin{equation}
-\widehat y=wx+b.
+\widehat{y}=wx+b.
 \label{eq:line-first}
 \end{equation}
-$\widehat y$ 表示模型的\textbf{预测值}，而 $y$ 是实际观察到的值。$w$ 决定斜率，$b$ 决定截距。
+$\widehat{y}$ 表示模型的\textbf{预测值}，而 $y$ 是实际观察到的值。$w$ 决定斜率，$b$ 决定截距。
 
-先令 $w=1,b=0$，模型成为 $\widehat y=x$：三个预测为 $-1,0,1$，只有第一个点碰巧预测正确。尝试 $w=2,b=1$：
+先令 $w=1,b=0$，模型成为 $\widehat{y}=x$：三个预测为 $-1,0,1$，只有第一个点碰巧预测正确。尝试 $w=2,b=1$：
 \[
-\widehat y(-1)=-1,\qquad \widehat y(0)=1,\qquad \widehat y(1)=3.
+\widehat{y}(-1)=-1,\qquad \widehat{y}(0)=1,\qquad \widehat{y}(1)=3.
 \]
 三个样本均被拟合。这种选择函数的形式，然后调整 $w,b$的过程是机器学习最直观的入口。
 
@@ -53,11 +53,11 @@ xlabel={$x$},ylabel={$y$},grid=both,
 grid style={linegray,thin},legend pos=north west,
 xtick={-1,0,1},ytick={-1,0,1,2,3},
 ]
-\addplot[blue,thick,domain=-1.4:1.35,samples=2]{x};
-\addlegendentry{初始猜测 $\hat y=x$}
-\addplot[teal,very thick,domain=-1.4:1.35,samples=2]{2*x+1};
-\addlegendentry{拟合后 $\hat y=2x+1$}
-\addplot[only marks,mark=*,orange,mark size=2.5pt] coordinates {(-1,-1) (0,1) (1,3)};
+\addplot[datacolor,thick,domain=-1.4:1.35,samples=2]{x};
+\addlegendentry{初始猜测 $\hat{y}=x$}
+\addplot[datacolor,very thick,domain=-1.4:1.35,samples=2]{2*x+1};
+\addlegendentry{拟合后 $\hat{y}=2x+1$}
+\addplot[only marks,mark=*,datacolor,mark size=2.5pt] coordinates {(-1,-1) (0,1) (1,3)};
 \addlegendentry{观察数据}
 \end{axis}
 \end{tikzpicture}
@@ -67,7 +67,7 @@ xtick={-1,0,1},ytick={-1,0,1,2,3},
 
 请先分清四个词：
 \begin{enumerate}
-\item \textbf{模型（model）}：我们选择的函数形式，例如 $\widehat y=wx+b$。
+\item \textbf{模型（model）}：我们选择的函数形式，例如 $\widehat{y}=wx+b$。
 \item \textbf{参数（parameters）}：模型内部可调的数，例如 $w,b$。
 \item \textbf{训练（training）}：根据样本调整参数，让预测更符合任务目标。
 \item \textbf{推理（inference）}：参数确定后，输入新数据，计算预测结果。

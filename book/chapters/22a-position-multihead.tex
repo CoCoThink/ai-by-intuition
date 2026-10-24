@@ -34,15 +34,15 @@ O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
 
 \subsection{加入位置绑定的向量，再观察交换后的区别}
 这次位置消融对照使用\textbf{同一组给定的位置数值}；
-在实际训练中，本书三维主例的位置向量表 $P$ 仍是\textbf{可训练参数}。
+在实际训练中，本书三维主例的位置向量表 $P_{\rm pos}$ 仍是\textbf{可训练参数}。
 也可采用正余弦位置编码。
 
 位置向量取自贯通主实验的\textbf{前两行}，不因交换 Token 而移动：
 \[
-P_{1:2}=\begin{bmatrix}
+{P_{\rm pos}}_{1:2}=\begin{bmatrix}
 0.10&0.05&-0.10\\0&-0.05&0.12
 \end{bmatrix},\quad
-X_+=X+P_{1:2},\quad X'_+=X'+P_{1:2}.
+X_+=X+{P_{\rm pos}}_{1:2},\quad X'_+=X'+{P_{\rm pos}}_{1:2}.
 \]
 仍用\textbf{相同的三组可训练投影}，只是输入加了位置信息：
 \begin{equation}

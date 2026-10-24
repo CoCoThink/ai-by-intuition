@@ -5,15 +5,10 @@
 \chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{把输入 ID 序列与右移一位的目标 ID 配对，再约定预测形状和评测。}{$[2,4,5]\to[4,5,3]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；后续模型中的 Embedding、投影等参数需训练}
 \modelpipelinefocus{0}{训练样本与目标}
 
-阅读指南已经解释了为什么选择下一 Token 预测来学习语言模式：
-原始文字自身能提供下一位置的训练答案，而把新 Token 接在后面，
-又可以一步步生成较长的文本。
-现在我们已有 Token ID 和 Embedding 向量，
-就把这个\textbf{教学任务具体化}：给模型什么数字？希望它输出什么？
-这份事先写清\textbf{输入序列、目标标签、输出形状与评价方式}的约定，
-叫做\textbf{任务契约（Task Contract）}。\phantomsection\label{concept:task-contract}它不需要额外训练一套网络，
-而是避免把“给什么输入”和“模型应预测什么”混成一件事。
-
+下一 Token 预测把已有文本变成训练答案，把新 Token 接回输入又能继续生成。
+现在把这个任务写成一份\textbf{任务契约（Task Contract）}：
+先确定输入、目标、输出形状和计分方式。\phantomsection\label{concept:task-contract}
+模型结构随后遵守这份约定。
 
 \subsection{贯穿全书的小例子}
 
@@ -33,26 +28,16 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 \quad\longrightarrow\quad
 \underbrace{[4,\ 5,\ 3]}_{\text{对应的下一 Token}}.
 \]
-这三个对应关系就是三道由原始文本自动构造的练习题。
-例如第一题的输入是“春天”，期望候选是“花”；
-第二题的输入已经多了“花”，希望预测“开了”。
-这和前一章那张 $5\times3$ 的 Embedding 表连接起来了：
-模型现在可以把输入 $[2,4,5]$ 查成三行三维向量，
-接下来要学的是怎样通过可训练的网络把每一行变成词表候选分数。
-此时比较的是\textbf{预测是否符合真实文本}，而不是机器是否理解了春天。
-为什么能在同一次前向计算中同时训练三个位置，
-分类交叉熵已在前面的三分类例子中推导；
-Attention 和因果掩码将在后面解释。
+第一行用“春天”预测“花”，第二行用“春天、花”预测“开了”，第三行预测句号。
+输入查表成为三行向量，目标 ID 指出每行应该提高哪一列的概率。
+分类交叉熵已给出计分公式；接下来还要建立上下文读取和因果可见性。
 
 \subsection{先看全图：Attention 是网络内部的上下文读取步骤}
 
-可以先把整套语言模型理解为\textbf{一个可训练的大神经网络}：
-ID 查表后，每个位置先有自己的向量；
-Attention 让向量读到此前可见的其他 Token，
-再经逐位置 FFN、输出头，得到词表候选分数。
-这里的“给输入加上下文”指\textbf{模型内部的计算模块}，
-不是额外联网插件；它不会自行读取外部私有资料。
-训练还要在右侧用正确 Token 算损失，反向更新前面所有可训练权重。
+先看整套\textbf{可训练网络}：ID 查表后，Attention 读取此前可见的 Token，
+逐位置 FFN 变换特征，输出头给词表候选打分。
+训练时用右侧的目标计算损失，反向更新前面各组共享参数。
+外部资料则由应用检索并提供给模型。
 
 \par\medskip
 \tagstructbegin{tag=Figure,alttext={语言模型形状流程：三枚 Token ID 查五乘三的词嵌入表，形成三乘三向量；上下文注意力和逐位置前馈层维持三乘三形状，输出头映射为三乘五 logits，再转换为三个位置各五类的概率。}}
@@ -60,12 +45,12 @@ Attention 让向量读到此前可见的其他 Token，
 \begin{tikzpicture}[>=Latex,node distance=3mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=white,align=center,
  font=\sffamily\footnotesize,minimum height=14mm,minimum width=25mm,inner sep=1mm}]
-\node[n,fill=blueback] (t) {Token ID\\ $3$ 个整数};
+\node[n,fill=paper] (t) {Token ID\\ $3$ 个整数};
 \node[n,right=of t] (e) {Embedding\\ $3\times3$};
-\node[n,right=of e,fill=greenback] (a) {Attention\\ $3\times3$};
+\node[n,right=of e,fill=linegray!15] (a) {Attention\\ $3\times3$};
 \node[n,right=of a] (f) {FFN\\ $3\times3$};
-\node[n,right=of f,fill=orangeback] (z) {输出头\\ $3\times5$};
-\foreach \a/\b in {t/e,e/a,a/f,f/z}{\draw[->,blue,thick] (\a.east)--(\b.west);}
+\node[n,right=of f,fill=linegray!25] (z) {输出头\\ $3\times5$};
+\foreach \a/\b in {t/e,e/a,a/f,f/z}{\draw[->,flowcolor,thick] (\a.east)--(\b.west);}
 \node[font=\scriptsize,text=muted,below=2mm of a] {由前文注入上下文};
 \end{tikzpicture}
 \captionof{figure}{语言预测任务的形状地图：词表概率与训练损失接在输出头之后}
@@ -75,22 +60,9 @@ Attention 让向量读到此前可见的其他 Token，
 
 \subsection{先约定输入，再约定预测的输出}
 
-\textbf{输入：}把已知文字表示成可计算的向量。
-根据统一主算例，每个 Token 用 $3$ 个数字表示，
-那么 Embedding 表的形状是
-\[
-\underbrace{5}_{\text{词表大小}}
-\times
-\underbrace{3}_{\text{每个向量的数字数}}.
-\]
-三个输入 Token 查表后可以组成 $3\times3$ 矩阵：
-三行表示三个位置，每行三个特征。
-
-\textbf{输出：}针对下一位置的候选给出预测分数。
-无论网络内部进行了多少运算，最终都需要
-为五个候选 Token 分别提供一个分数，
-然后才能比较候选或选择结果。
-此时不用知道输出头如何实现，只需知道\textbf{任务目标}。
+\textbf{输入：}词表的 $5$ 个 Token 各用 $3$ 维向量表示，Embedding 表为 $5\times3$。
+三个输入查表后组成 $3\times3$ 矩阵，每个位置一行。
+\textbf{输出：}每行给 $5$ 个候选打分，三位置的 logits 合为 $3\times5$，逐行转成概率。
 
 \begin{center}
 \small
@@ -109,15 +81,8 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 
 
 
-\Needspace{4\baselineskip}
-\subsection{一眼看懂这份任务的尺度}
-
-本书此刻只用\textbf{3 个输入位置、5 个候选 Token、每位置 3 维特征}
-定义训练任务。真实 GPT-2 small 的词表有 $50{,}257$ 项，
-但目标仍是预测后续 Token。
-这些数字先用来认识\textbf{输入、输出和目标的口径}；
-完整模型与实际运行环境的规模对照在
-\hyperref[intro:23a-from-toy-to-gpt]{第~\ref*{intro:23a-from-toy-to-gpt}~章}集中给出。
+真实 GPT-2 small 的词表有 $50{,}257$ 项，仍沿用下一 Token 目标；
+规模与配置见第~\ref*{intro:23a-from-toy-to-gpt}~章。
 
 \chapterchecktasks{20b-task-contract}{正文基础三题}{
 \item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列向左错开一位，对齐三个位置。}
@@ -129,8 +94,6 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 
 
 \begin{conclusion}
-我们已经把“学习语言”这个大问题缩成一个有输入、有答案、能量化错误的练习任务。
-下一部分研究：逐 Token 的网络怎样获得上下文？
-我们会比较 RNN 的逐步状态与 Attention 的直接读取，
-随后再回到完整 Transformer 的训练和生成。
+输入 $[2,4,5]$，目标 $[4,5,3]$；每位置输出五类分数，交叉熵读取目标列。
+下一部分比较 RNN 与 Attention 怎样把前文送给当前位置。
 \end{conclusion}

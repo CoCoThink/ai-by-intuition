@@ -46,12 +46,12 @@ $M$ 是记忆条数，$d_k$ 是每条 Key 的宽度，$d_v$ 是 Value 的宽度�
 \subsubsection{插入非线性究竟改变了什么？}
 如果不插入 ReLU，则
 \[
-S=K^\top V=\sum_i k_i^\top v_i,
-\qquad xS=(xK^\top)V.
+\mathcal{M}=K^\top V=\sum_i k_i^\top v_i,
+\qquad x\mathcal{M}=(xK^\top)V.
 \]
 这次例子的线性读出是
 \[
-xS=(1,-0.2)V=\boxed{(2,0.4)},
+x\mathcal{M}=(1,-0.2)V=\boxed{(2,0.4)},
 \]
 而非线性读出为 $\relu(xK^\top)V=(2,1)$。
 \textbf{外积和可先写成固定状态；插入 ReLU 后一般无法与两层线性矩阵合并。}
@@ -62,19 +62,16 @@ xS=(1,-0.2)V=\boxed{(2,0.4)},
 检查两种读出结果、存储形状与串扰。
 
 % Chapter 28 comprises the Delta subsection and the stacked K/V subsection.
-\chapterchecktasks{06-better-linear-memory}{正文基础三题}{
+\chapterchecktasks{06-better-linear-memory}{基础与贯通复习}{
 \item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先写目标读出与当前读出的差。}
-\item \textbf{手算：}写入 B 后 $S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
+\item \textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
 \item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{考察新增外积与另一条 Key 的点积。}
-}
-\chapterrecallanswer{Delta 规则用读取残差修正当前 Key，但对非正交 Key 的修正可能重新扰动先前记忆。}
 
-\chapterchecktasks{08-stacking-key-value}{正文基础三题}{
 \item \textbf{形状：}$q:1\times2,K:3\times2,V:3\times4$。写出 $qK^\top$ 与最终加权读出的形状。\chapterinlinehint{依次核对查询、转置 Key 与 Value 的内侧维度。}
 \item \textbf{手算：}本章 $qK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
 \item \textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留原负权重重算，再对照中间匹配向量。}
 }
-\chapterrecallanswer{Key 决定匹配条数，Value 的行数必须与匹配权重一致；非线性可抑制负匹配。}
+\chapterrecallanswer{先核对输入、计算图和状态来源，再用完整流程检验局部推导。}
 
 
 

@@ -3,7 +3,7 @@
 
 这张图把模型的\textbf{信息流}与\textbf{学习信号}放在一起：
 上方沿前向计算得到概率，中间由训练目标形成梯度，
-下方展示后训练、推理生成和外部工具各自的位置。点击章页索引可回读对应推导。
+下方展示后训练、推理生成和外部工具各自的位置。按章号与页码可回读对应推导。
 
 \begin{center}
 \tagstructbegin{tag=Figure,alttext={从 Token 到 Embedding、注意力、输出、损失、梯度、参数更新，再到推理和 Agent 工具链的概念关系图}}
@@ -11,31 +11,31 @@
   >=Latex,
   node distance=6mm,
   unit/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=25mm,minimum height=13mm,align=center,font=\sffamily\small},
-  signal/.style={draw=teal,fill=greenback,rounded corners=3pt,minimum width=31mm,minimum height=12mm,align=center,font=\sffamily\small},
-  app/.style={draw=orange,fill=orangeback,rounded corners=3pt,minimum width=31mm,minimum height=12mm,align=center,font=\sffamily\small},
+  signal/.style={draw=flowcolor,fill=linegray!15,rounded corners=3pt,minimum width=31mm,minimum height=12mm,align=center,font=\sffamily\small},
+  app/.style={draw=flowcolor,fill=linegray!25,rounded corners=3pt,minimum width=31mm,minimum height=12mm,align=center,font=\sffamily\small},
 ]
 \node[unit] (tok) at (0,0) {Token/ID};
 \node[unit] (emb) at (3.2,0) {Embedding};
 \node[unit] (att) at (6.4,0) {Attention};
 \node[unit] (ffn) at (9.6,0) {FFN/输出头};
-\foreach \a/\b in {tok/emb,emb/att,att/ffn}{\draw[->,thick,blue] (\a)--(\b);}
+\foreach \a/\b in {tok/emb,emb/att,att/ffn}{\draw[->,thick,flowcolor] (\a)--(\b);}
 \node[signal] (loss) at (9.6,-2.15) {概率与交叉熵\\[-1mm]$\displaystyle L=-\log p_y$};
 \node[signal] (grad) at (6.4,-2.15) {反向传播\\[-1mm]$p-\mathrm{onehot}$};
 \node[signal] (upd) at (3.2,-2.15) {更新参数\\[-1mm]$\theta\gets\theta-\eta\nabla L$};
-\draw[->,thick,teal] (ffn)--(loss);
-\draw[->,thick,teal] (loss)--(grad);
-\draw[->,thick,teal] (grad)--(upd);
+\draw[->,thick,flowcolor] (ffn)--(loss);
+\draw[->,thick,flowcolor] (loss)--(grad);
+\draw[->,thick,flowcolor] (grad)--(upd);
 % The arrowhead must finish at the model, not above or through the Embedding box.
-\draw[->,thick,teal] (upd.north) --
-  node[midway,right,font=\sffamily\tiny,text=teal] {参数回写} (emb.south);
+\draw[->,thick,flowcolor] (upd.north) --
+  node[midway,right,font=\sffamily\tiny,text=flowcolor] {参数回写} (emb.south);
 % Post-training is a separate optimization phase, not a step after inference.
 \node[signal] (post) at (1.65,-4.45) {后训练\\行为目标};
 \node[app] (gen) at (5.0,-4.45) {推理生成\\温度/缓存};
 \node[app] (tools) at (8.7,-4.45) {RAG/工具/Agent\\系统边界};
 % Post-training can update parameters; inference can enter an external application.
 % Neither route claims that tool calls automatically backpropagate.
-\draw[->,densely dashed,teal] (post.north) -- ++(0,5mm) -| (upd.south);
-\draw[->,thick,orange] (gen.east) -- (tools.west);
+\draw[->,densely dashed,flowcolor] (post.north) -- ++(0,5mm) -| (upd.south);
+\draw[->,thick,flowcolor] (gen.east) -- (tools.west);
 \end{tikzpicture}
 \captionof{figure}{模型内部的前向计算、损失反传与外部工具链是三个不同层次}
 \tagstructend

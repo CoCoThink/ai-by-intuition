@@ -13,7 +13,7 @@
 \toprule
 技术底座 & 本书能够亲手验证的事实 & 它解决或留下的缺口\\\midrule
 函数与数学 &
-$\widehat y=wx+b$、向量、矩阵乘法、求导 &
+$\widehat{y}=wx+b$、向量、矩阵乘法、求导 &
 用可调参数代替手写所有规则；单个标量表达能力有限\\
 损失与学习 &
 MSE、交叉熵、链式法则、反传与 SGD &
@@ -28,7 +28,7 @@ Transformer &
 Embedding $\to$ Attention $\to$ FFN $\to$ 输出概率 &
 在同一网络里连接表示、上下文、训练与生成\\
 联想记忆 &
-$S=\sum_i k_i^\top v_i$ 与 $y=xS$ &
+$\mathcal{M}=\sum_i k_i^\top v_i$ 与 $y=x\mathcal{M}$ &
 用外积、串扰与 Delta 更新解释线性状态\\
 模型之外 &
 后训练、检索、工具、权限与 Agent &
@@ -40,11 +40,11 @@ $S=\sum_i k_i^\top v_i$ 与 $y=xS$ &
 \textbf{把公式收成一条主线：}
 \[
 \begin{aligned}
-X&=E_{\rm ids}+P,\\
+X&=E_{\rm ids}+P_{\rm pos},\\
 A&=\operatorname{softmax}(QK^\top/\sqrt{d_k}+C),\\
 H&=\operatorname{TransformerBlock}(X),\qquad
 Z=HW_{\rm out},\\
-\widehat P&=\operatorname{softmax}(Z),\qquad
+\Pi&=\operatorname{softmax}(Z),\qquad
 L=-\log p_y,\\
 \theta'&=\theta-\eta\nabla_\theta L.
 \end{aligned}

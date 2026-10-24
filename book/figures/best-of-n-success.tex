@@ -11,11 +11,11 @@
  axis lines=left,axis line style={draw=muted},
  grid=major,grid style={draw=linegray},
  legend style={font=\footnotesize,draw=none,fill=white,at={(.97,.18)},anchor=south east}]
-\addplot[blue,very thick,domain=1:16,samples=100]{1-.75^x};
+\addplot[datacolor,very thick,domain=1:16,samples=100]{1-.75^x};
 \addlegendentry{独立采样＋完美核验}
-\addplot[only marks,mark=*,blue] coordinates {(1,.25) (2,.4375) (4,.68359375) (8,.89988708496) (16,.98997740424)};
+\addplot[only marks,mark=*,datacolor] coordinates {(1,.25) (2,.4375) (4,.68359375) (8,.89988708496) (16,.98997740424)};
 \addlegendentry{手算的五个点}
-\addplot[orange,thick,dashed,domain=1:16]{.25};
+\addplot[noisecolor,thick,dashed,domain=1:16]{.25};
 \addlegendentry{完全复制同一次答案}
 \end{axis}
 \end{tikzpicture}

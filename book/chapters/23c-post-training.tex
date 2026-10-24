@@ -34,6 +34,21 @@
 这样模型不仅学语言续写，还学习
 在给定指令和角色约束下如何回应。
 
+\subsubsection*{聊天模板是角色进入 Token 序列的接口}
+\phantomsection\label{concept:chat-template}
+应用保存的 \texttt{role=user/assistant/system} 消息列表，
+要先由模型配套的\textbf{聊天模板}序列化，再送进 Tokenizer／模型。
+例如一种示意格式是
+\begin{quote}\ttfamily\small
+<user> 2+3=? <end> <assistant> 5 <end>
+\end{quote}
+真实模板的角色标记、分隔符、回合结束符与专用 ID 由该模型定义；
+有的格式由多个普通 Token 拼成，有的标记对应单个特殊 Token。
+生成前补上助手前缀，模型才从正确角色的位置续写。
+训练和推理应使用匹配模板，避免重复添加 BOS/EOS；
+SFT 的损失掩码再决定哪些回答位置计分。
+这些标记说明消息结构，权限仍由应用和工具执行层控制。
+
 \input{figures/training-context-branches}
 
 \subsection{偏好学习：一个问题怎样选择更有用的回答}
@@ -77,8 +92,8 @@ P(A\succ B)=\sigma(r_A-r_B)
 \node[n] (q) {问题：$17+25$；模型采样一个候选答案};
 \node[n,below=of q] (v) {验证器执行规则：答案是否为 $42$？};
 \node[n,below=of v] (r) {奖励信号 $\to$ 学习算法更新模型策略};
-\draw[->,thick,blue] (q)--(v);
-\draw[->,thick,orange] (v)--(r);
+\draw[->,thick,flowcolor] (q)--(v);
+\draw[->,thick,flowcolor] (v)--(r);
 \end{tikzpicture}
 \end{center}
 
@@ -87,11 +102,11 @@ P(A\succ B)=\sigma(r_A-r_B)
 若模型对同一道题独立生成四个答案 $(42,41,42,50)$，验证器给予奖励 $(1,0,1,0)$。本组平均奖励为 $\bar r=0.5$。用四个样本的总体标准差（分母为 $4$）归一化：
 \[
 \sigma_r=\sqrt{\tfrac14\sum_{i=1}^4(r_i-0.5)^2}=0.5,
-\qquad A_i=\frac{r_i-\bar r}{\sigma_r},
+\qquad \mathcal A_i=\frac{r_i-\bar r}{\sigma_r},
 \]
 因此组内相对优势为
 \[
-(A_1,A_2,A_3,A_4)=\boxed{(+1,-1,+1,-1)}.
+(\mathcal A_1,\mathcal A_2,\mathcal A_3,\mathcal A_4)=\boxed{(+1,-1,+1,-1)}.
 \]
 奖励高低对应正负优势；若整组奖励相同，需加稳定项处理 $\sigma_r=0$。
 \textbf{注意：}此处只算组内优势；完整 GRPO 还涉及策略概率比、裁剪和正则化。
@@ -122,67 +137,6 @@ P(A\succ B)=\sigma(r_A-r_B)
 错误步骤会向后传播，额外生成也会增加 Token 与延迟成本。
 训练后的收益用独立任务测试和失败案例衡量。
 \end{boundarybox}
-
-\subsection{推理模型与测试时计算：多采样加验证能提升多少？}
-\phantomsection\label{concept:test-time-compute}
-
-\textbf{把计算预算分给更多尝试，再用验证器筛选。}
-面向多步求解的后训练可训练模型分解问题、检查或修正步骤，形成推理模型的能力；
-部署时还可以增加生成长度、采样条数或搜索步骤。
-前者改变参数，后者分配本次请求的计算预算；是否训练过推理行为与这次花多少计算，要分别看。
-
-沿用 RLVR 的 $17+25$ 算例，核验器直接执行加法，正确答案是 $42$。
-现在\textbf{冻结参数}，让模型生成 $N$ 份完整候选，再对每份运行核验器，
-选出通过核验的答案；全部未通过就报告本次未解出。
-这就是用完美二值核验器做 Best-of-$N$ 的最小版本。
-一般的 Best-of-$N$ 也可按奖励模型的分数选最高项，其准确性取决于评分器。
-
-\begin{example}[breakable=false]
-\noindent\emph{从一次尝试到八次：先算全部失败的概率}\par
-为教学假设每次\textbf{独立}采样答对的概率固定为 $p=0.25$。
-一次失败概率是 $0.75$；$N$ 次全失败概率是 $0.75^N$。
-因此至少有一份正确候选的概率为
-\[
-P_N=1-(1-p)^N.
-\]
-\[
-\begin{array}{c|ccccc}
-N&1&2&4&8&16\\\hline
-P_N&0.2500&0.4375&0.6836&0.8999&0.9900
-\end{array}
-\]
-完美核验器能选出存在的正确答案，所以这里的最终成功率也等于 $P_N$。
-从 $4$ 次增到 $8$ 次提高约 $21.63$ 个百分点，
-从 $8$ 次增到 $16$ 次只再提高约 $9.01$ 个百分点：预算继续翻倍，收益逐渐变小。
-\end{example}
-
-\input{figures/best-of-n-success}
-
-\textbf{现在动手：至少需要多少次，才能达到 $90\%$？}
-由 $1-0.75^N\geq0.9$，得到
-\[
-N\geq\frac{\log0.1}{\log0.75}\approx8.004,
-\qquad N_{\min}=9.
-\]
-八次的 $89.9887\%$ 虽可四舍五入成 $90\%$，仍低于题设门槛；
-九次为约 $92.49\%$。
-若每份候选固定生成 $128$ 个 Token，完整采样八份就是 $1024$ 个输出 Token，
-还要加上核验与输入处理开销；并行执行可缩短等待，但不会免去总运算与资源占用。
-
-\begin{boundarybox}
-$1-(1-p)^N$ 描述\textbf{固定单次成功率、独立候选}中至少一次答对的概率。
-若八份候选完全复制同一次随机答案，成功率仍只有 $25\%$。
-若核验器把 $41$ 也判成正确，筛选会把错答也纳入通过集合：
-“候选中存在正确解”与“最后交付正确解”要分开评测。
-在开放任务中，模型自评分、程序测试与资料出处分别有自己的覆盖范围，
-验证器需要独立检查。
-\end{boundarybox}
-
-RLVR 把验证奖励用于\textbf{更新参数}；这里的 Best-of-$N$ 用验证结果\textbf{筛选本次候选}。
-串行修正和搜索也能使用预算，实际策略要在相同任务和预算下比较；
-可参阅 \href{https://arxiv.org/abs/2408.03314}{Snell 等对测试时计算的研究}。
-\textbf{复算入口：}\texttt{python3 scripts/test\_time\_compute\_demo.py}，
-脚本枚举小样本空间，分别核对独立采样、完全相关采样与错误核验器的结果。
 
 \subsection{同一份季度报告任务：哪些改进需要训练？}
 

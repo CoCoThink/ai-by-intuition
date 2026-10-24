@@ -8,7 +8,7 @@
 \begin{tabularx}{\linewidth}{@{}p{23mm}p{57mm}X@{}}
 \toprule
 计算 & 一次读取的行向量写法 & 关键区别\\\midrule
-Linear & $x(K^\top V)=xS$ & 线性匹配，外积可相加\\
+Linear & $x(K^\top V)=x\mathcal{M}$ & 线性匹配，外积可相加\\
 MLP & $\sigma(xK^\top)V$ & 非线性筛选，权重不必归一化\\
 Attention & $\softmax(\beta xK^\top)V$ & 每条查询归一化权重，Mask 限制可见范围\\
 \bottomrule
@@ -25,23 +25,20 @@ $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 从 MLP 的“记忆”视角，Key 和 Value 可由训练得到的权重表示；
 从 Self-Attention 的视角，它们是当前序列经过投影产生的上下文状态。
 因此 MLP 的参数记忆与 Attention 的上下文读取\textbf{来源不同}。
-普通 Softmax Attention 不能直接用不带条件的固定 $S$ 精确替代。
+普通 Softmax Attention 不能直接用不带条件的固定 $\mathcal{M}$ 精确替代。
 正文第~\ref*{intro:22d-modern-transformers}~章已展示满足特定条件的\textbf{线性状态更新}，这里给出它的外积记忆视角。
 
 % Chapter 29 concludes only after the 29.3 unified retrieval section.
-\chapterchecktasks{09-nonlinearity-and-memory}{正文基础三题}{
+\chapterchecktasks{09-nonlinearity-and-memory}{基础与贯通复习}{
 \item \textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？\chapterinlinehint{分别观察单位区间内部与端点的幂。}
 \item \textbf{手算：}分别算 $0.5^2$、$0.5^3$，再算 $(-0.5)^2$、$(-0.5)^3$。\chapterinlinehint{先算绝对值的幂，再判断奇偶次的符号。}
 \item \textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。用上题反例指出问题。\chapterinlinehint{把负相似度代入，比较符号与绝对值。}
-}
-\chapterrecallanswer{非线性改变匹配的选择性，但必须说明分数范围；MLP 的记忆类比是计算视角而非事实库存证明。}
 
-\chapterchecktasks{14-summary}{正文基础三题}{
 \item \textbf{比较：}分别用一句话描述外积线性记忆、Softmax Attention 和逐 Token FFN 的匹配、读取或特征变换角色。\chapterinlinehint{先写各自的匹配量，再看读出或变换的对象。}
 \item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？\chapterinlinehint{把每条 Value 乘权重，再逐分量相加。}
 \item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。\chapterinlinehint{分别检查分母、写入规则与容量假设。}
 }
-\chapterrecallanswer{“匹配—读取”帮助比较结构；具体输出由各自的归一化和读取规则决定，事实正确性另由外部证据核验。}
+\chapterrecallanswer{先核对输入、计算图和状态来源，再用完整流程检验局部推导。}
 
 
 

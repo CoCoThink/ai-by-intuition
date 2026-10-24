@@ -5,7 +5,7 @@ left=3mm,right=3mm,top=3mm,bottom=2mm,title={图解：同一更新规则，三�
 fonttitle=\sffamily\bfseries,coltitle=ink]
 \centering
 \begin{tikzpicture}[>=Latex,
- cell/.style={draw=blue,fill=blueback,rounded corners=3pt,minimum width=31mm,
+ cell/.style={draw=flowcolor,fill=paper,rounded corners=3pt,minimum width=31mm,
  minimum height=16mm,align=center,font=\small},
  input/.style={draw=linegray,fill=white,rounded corners=2pt,
  minimum width=26mm,minimum height=9mm,align=center,font=\small}]
@@ -15,13 +15,13 @@ fonttitle=\sffamily\bfseries,coltitle=ink]
 \node[input] (x1) at (0,-1.65) {春天：$x_1=1$};
 \node[input] (x2) at (4.5,-1.65) {花：$x_2=2$};
 \node[input] (x3) at (9,-1.65) {开了：$x_3=0$};
-\draw[->,very thick,blue] (x1)--(a);
-\draw[->,very thick,blue] (x2)--(b);
-\draw[->,very thick,blue] (x3)--(c);
+\draw[->,very thick,flowcolor] (x1)--(a);
+\draw[->,very thick,flowcolor] (x2)--(b);
+\draw[->,very thick,flowcolor] (x3)--(c);
 \node[font=\scriptsize,anchor=south] at (-1.55,.58) {$h_0=0$};
-\draw[->,very thick,orange] (-2,0)--(a);
-\draw[->,very thick,orange] (a)--node[above,font=\scriptsize]{$\times0.5$}(b);
-\draw[->,very thick,orange] (b)--node[above,font=\scriptsize]{$\times0.5$}(c);
+\draw[->,very thick,flowcolor] (-2,0)--(a);
+\draw[->,very thick,flowcolor] (a)--node[above,font=\scriptsize]{$\times0.5$}(b);
+\draw[->,very thick,flowcolor] (b)--node[above,font=\scriptsize]{$\times0.5$}(c);
 \end{tikzpicture}
 \par\smallskip
 {\small\raggedright\textbf{读图：}第三次输入是零，但前两次输入留下的状态仍让 $h_3=1.25$。

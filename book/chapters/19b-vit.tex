@@ -26,18 +26,18 @@ I=\begin{bmatrix}
 \tagstructbegin{tag=Figure,alttext={一张四行四列的单通道图像划为四个不重叠的二乘二像素块，依次编号 Patch 1 到 Patch 4，按行展开后形成四行四列的 Patch 矩阵。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex]
-\foreach \x/\y/\name/\c in {0/1.4/P1/blueback,1.4/1.4/P2/greenback,0/0/P3/orangeback,1.4/0/P4/paper}{
+\foreach \x/\y/\name/\c in {0/1.4/P1/paper,1.4/1.4/P2/linegray!15,0/0/P3/linegray!25,1.4/0/P4/paper}{
  \fill[\c] (\x,\y) rectangle ++(1.4,1.4);
  \node[font=\sffamily\small\bfseries,text=ink] at (\x+.7,\y+.7) {\name};
 }
 \draw[step=.7cm,draw=linegray] (0,0) grid (2.8,2.8);
-\draw[draw=blue,dashed,line width=1.25pt] (1.4,0)--(1.4,2.8) (0,1.4)--(2.8,1.4);
+\draw[draw=flowcolor,dashed,line width=1.25pt] (1.4,0)--(1.4,2.8) (0,1.4)--(2.8,1.4);
 \node[font=\footnotesize,text=muted] at (1.4,3.22) {$4\times4$ 图像};
-\draw[->,thick,blue] (3.15,1.4)--(4.45,1.4);
-\foreach \i/\n/\c in {0/P1/blueback,1/P2/greenback,2/P3/orangeback,3/P4/paper}{
+\draw[->,thick,flowcolor] (3.15,1.4)--(4.45,1.4);
+\foreach \i/\n/\c in {0/P1/paper,1/P2/linegray!15,2/P3/linegray!25,3/P4/paper}{
   \node[draw=linegray,fill=\c,rounded corners=2pt,minimum width=30mm,minimum height=7mm,font=\small] at (6.2,2.52-.74*\i) {\n：4 个像素};
 }
-\draw[->,thick,teal] (7.95,1.4)--(9.3,1.4);
+\draw[->,thick,flowcolor] (7.95,1.4)--(9.3,1.4);
 \node[draw=linegray,fill=paper,rounded corners=3pt,minimum width=39mm,minimum height=20mm,align=center,font=\small] at (11.45,1.4) {$X_{\rm patch}$\\$4\times4$（一块一行）};
 \end{tikzpicture}
 \captionof{figure}{Patch 切分与展平：原图四个 $2\times2$ 区域成为四行长度为 4 的向量}
@@ -99,7 +99,7 @@ E_{\rm patch}=X_{\rm patch}W_{\rm patch}
 ViT 因此也要标明\textbf{空间位置}。
 给四行向量加入 $P_{\rm patch}\in\R^{4\times3}$：
 \[
-Z_0=E_{\rm patch}+P_{\rm patch}\in\R^{4\times3}.
+X_{\rm vis}=E_{\rm patch}+P_{\rm patch}\in\R^{4\times3}.
 \]
 这里 $P_{\rm patch}$ 既可以来自可训练位置参数，
 也可以使用其他位置机制，不强制等同于语言模型的逐词位置编码。
@@ -110,7 +110,7 @@ Z_0=E_{\rm patch}+P_{\rm patch}\in\R^{4\times3}.
 普通\textbf{图像编码器}的双向 Self-Attention
 可以让一块读取同一图片其他所有块：
 \[
-Q=Z_0W_Q,\qquad K=Z_0W_K,\qquad V=Z_0W_V.
+Q=X_{\rm vis}W_Q,\qquad K=X_{\rm vis}W_K,\qquad V=X_{\rm vis}W_V.
 \]
 若每头维度是 $3$，
 则 $QK^\top/\sqrt3$ 的形状为 $4\times4$，
@@ -147,7 +147,7 @@ W_{\rm bridge}=
 \]
 于是
 \[
-\underbrace{Z_{\rm img}}_{4\times4}
+\underbrace{H_{\rm img}}_{4\times4}
 =\underbrace{H_{\rm img}}_{4\times3}
 \underbrace{W_{\rm bridge}}_{3\times4}.
 \]
@@ -160,7 +160,7 @@ $E_{\rm text}:2\times4$，将视觉输出作为前缀放在文字前面：
 \begin{equation}
 \boxed{
 X_{\rm LLM}=
-\begin{bmatrix}Z_{\rm img}\\E_{\rm text}\end{bmatrix}
+\begin{bmatrix}H_{\rm img}\\E_{\rm text}\end{bmatrix}
 \in\R^{6\times4}.}
 \label{eq:vit-llm-bridge}
 \end{equation}
@@ -199,6 +199,18 @@ $16\times16\times3=768$ 维。投影宽度若也是 $768$，
 Patch 投影形成图像序列，位置编码保留空间身份，
 Attention 让各图像块交换信息；CNN 则先强调局部扫描。
 \end{conclusion}
+
+\subsection{从文本模型到多模态模型}
+
+\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。具体模型可使用模态专用编码器或共享表示；进入语言主干后，再用注意力、投影等机制融合信息。
+
+常见缩写：
+\begin{itemize}
+\item \textbf{ASR}（Automatic Speech Recognition）：语音识别，把声音转成文字。
+\item \textbf{TTS}（Text to Speech）：将文字转换为合成语音。
+\item \textbf{AIGC}（AI-Generated Content）：由 AI 生成或辅助生成内容的广义说法。
+\item \textbf{AGI}（Artificial General Intelligence）：通用人工智能，是仍在讨论的目标与概念，具体主张需要给出测试定义。
+\end{itemize}
 
 \chapterchecktasks{19b-vit}{正文基础三题}{
 \item \textbf{形状：}四个图像 Patch 各投影为三维向量，再加一个 CLS Token。ViT 的输入序列是几行？若使用全局自注意力，分数矩阵什么形状？\chapterinlinehint{先数序列行，再写所有行之间的配对形状。}

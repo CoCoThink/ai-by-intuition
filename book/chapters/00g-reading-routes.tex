@@ -1,43 +1,33 @@
 \section*{怎么读：路线与数学预备}
 \phantomsection\label{front:reading-routes}
-\begingroup
-\setlength{\parskip}{4pt}
+\begingroup\small
+\setlength{\parskip}{3pt}
+本书把学习、矩阵、上下文读取和生成接成一条路线，再扩展到视觉与助手。
+先看每步的输入、输出和用途，再追踪矩阵元素。
+\globalroute{0}
+\noindent\textbf{速读：}看部分地图、章首问题、形状图和小结，尝试向同学口述计算链。\par
+\noindent\textbf{标准：}按顺序复算正文，独立做章末自测；卡住时读附录 D 的“第一步”，再核对完整解答。\par
+\noindent\textbf{动手：}用章末题号选练附录 C，先做附录 B 的二维迷你版，再运行三维实验。每部分末的累积复习把前几章连起来。
 
-本书沿一条主线前进：训练参数，把数字扩展为矩阵，
-让 Token 读取上下文并预测下一 Token，最后接入助手与 Agent。
-首次阅读先抓住每一步的输入、输出和用途，再追踪矩阵元素。
+\subsection*{数学预备与表示约定}
+需要会一元一次方程、负数、平方、函数、对数与一元导数；
+不熟悉就先读\hyperref[app:math-tools]{附录 A.2（第~\pageref*{app:math-tools}~页）}。
+例如 $\log(e^2)=2$；$z=wx+b,L=z^2/2$ 时，$\partial L/\partial w=zx$。
 
-\subsection*{三条阅读路线}
-\begin{itemize}[itemsep=3pt,parsep=0pt]
-\item \textbf{速读：}看每部分地图、章首问题、形状图与章末小结，
-先解释训练、矩阵、Token、Attention、Transformer 和外部系统怎样相连。
-\item \textbf{标准：}按正文顺序阅读，亲手算损失、梯度更新、交叉熵与注意力；
-做完各章三题，用题后的一行答案提示核对，再读附录 D 的解题过程。
-\item \textbf{动手：}按章末题号做附录 C，运行附录 B 的 PyTorch 实验，
-用 Notebook 滑块观察参数与概率变化。联想记忆的提高专题见附录 H--K。
-\end{itemize}
-视觉部分用 CNN 与 ViT 连接图像和语言；助手部分区分模型计算、证据与工具；
-架构部分比较组件替换的收益与代价。按页眉定位章节，以能否独立复算决定阅读速度。
+\textbf{ID、位置和矩阵行列从 1 数，Python 索引减 1。}
+词表 $1=\text{其他},2=\text{春天},3=\text{。},4=\text{花},5=\text{开了}$。
+第一位置预测“花”的概率是 $\Pi_{1,4}$，代码是 \texttt{probs[0,3]}。
+每个 Token 占一行，投影写 $XW$。
+输出头 $W_{\rm out}$、位置 $P_{\rm pos}$、概率 $\Pi$ 的统一符号表见第~\pageref*{app:symbols}~页。
 
-\subsection*{数学预备：先核对四件事}
-需要会解一元一次方程、计算负数和平方，并理解函数、对数与一元导数；
-不熟悉就先读\hyperref[app:math-tools]{附录 A.2 数学速查}。
+\subsection*{图例：先判断这一块要你做什么}
+\textbf{{\symboliconfont ◆}直觉}给结论与类比；\textbf{{\symboliconfont ▸}动手算}按给定数据计算；
+\textbf{!易错／{\symboliconfont ▣}边界}分别纠正步骤、说明会改变使用方式的条件；
+\textbf{{\symboliconfont ■}小结}收束本章；\textbf{［复算］}给脚本或参数入口；
+\textbf{独立例}使用自己的输入／参数；\textbf{{\symboliconfont ★}选读}可在首读跳过。
+自测先独立作答，题下不印提示；页码把你带到分层帮助。
 
-\noindent 代入 $2(3)+1=7$；平方 $(-2)^2=4$；对数 $\log(e^2)=2$。\par
-\noindent 链式法则：$z=wx+b,\ L=z^2/2$ 时，$\partial L/\partial w=zx$。
-
-现在就试一次：样本 $(1,3),(2,5),(3,7)$ 满足 $\widehat y=2x+1$，
-代入 $x=4$ 得 $9$。接下来学怎样用损失自动找到参数。
-
-\subsection*{表示约定：数学从 1 起，代码索引减 1}
-\textbf{ID、位置和矩阵行列都从 1 数。}教学词表是
-$1=\text{其他}$、$2=\text{春天}$、$3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
-第一位置预测“花”的概率写作 $\widehat P_{1,4}$，代码是 \texttt{probs[0,3]}。
-
-\textbf{每个 Token 占一行，投影写成 $XW$。}
-Q 蓝色、K 青绿色、V 橙色，同时保留文字标签。
-Python 只在查表和标签索引时减 1；代码实验见\hyperref[app:pytorch-lab]{附录 B}。
-
-\textbf{识别例子范围。}“独立例”使用自己的参数；其余计算沿用各章明确给出的输入与参数。
-纸面目录列到章，PDF 书签还可展开到小节。
+Q 蓝、K 青、V 橙只表示三种角色；可见／遮蔽、数据流、数据点另用各自图色，
+同时保留标签、线型与标记。完整色彩表见第~\pageref*{app:color-semantics}~页。
+纸面目录列到章，PDF 书签可展开小节；正文引用均可按页码查找。
 \endgroup

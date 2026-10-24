@@ -10,8 +10,8 @@
 设
 \begin{equation}
 z=w_1x+b_1,\quad h=\relu(z),\quad
-\widehat y=w_2h+b_2,\quad
-L=\frac12(\widehat y-y)^2.
+\widehat{y}=w_2h+b_2,\quad
+L=\frac12(\widehat{y}-y)^2.
 \label{eq:small-network-full}
 \end{equation}
 从左到右分别是输入、第一层线性变换、激活函数、第二层线性变换、损失。虽然只有一个隐藏单元，但计算方式与更大 MLP 的局部结构相同。
@@ -26,7 +26,7 @@ w_1=1,\qquad b_1=0,\qquad w_2=2,\qquad b_2=0.
 \[\begin{aligned}
 z&=1\times2+0=2,\\
 h&=\relu(2)=2,\\
-\widehat y&=2\times2+0=4,\\
+\widehat{y}&=2\times2+0=4,\\
 L&=\frac12(4-5)^2=\frac12.
 \end{aligned}\]
 预测值 $4$ 比真实值 $5$ 小，损失是 $0.5$。但我们还不知道\textbf{究竟该调整哪一个参数}。
@@ -35,14 +35,14 @@ L&=\frac12(4-5)^2=\frac12.
 
 损失对预测值的导数是
 \[
-\frac{\partial L}{\partial\widehat y}=\widehat y-y=-1.
+\frac{\partial L}{\partial\widehat{y}}=\widehat{y}-y=-1.
 \]
 因为初始偏置都是零，且本次 $\relu'(2)=1$，
 所以本章前半段算过的两项权重梯度仍是
 $\partial L/\partial w_1=-4$ 与 $\partial L/\partial w_2=-2$。
 新加入的两项偏置梯度才是本章需要额外计算的：
 \[
-\frac{\partial L}{\partial b_2}=\widehat y-y=-1,\qquad
+\frac{\partial L}{\partial b_2}=\widehat{y}-y=-1,\qquad
 \frac{\partial L}{\partial b_1}=(-1)\times2\times1=-2.
 \]
 这四项梯度都来自\textbf{同一轮旧参数前向计算}，而不是边反传边修改权重。
@@ -51,8 +51,8 @@ $\partial L/\partial w_1=-4$ 与 $\partial L/\partial w_2=-2$。
 \begin{idea}
 \noindent\emph{为什么叫反向传播？}\par
 
-计算损失时是 $x\to z\to h\to\widehat y\to L$；
-计算梯度时则从 $\partial L/\partial\widehat y$ 开始，沿原来的计算链\textbf{倒着复用局部导数}。每条路径的变化率相乘，分叉路径的贡献相加。
+计算损失时是 $x\to z\to h\to\widehat{y}\to L$；
+计算梯度时则从 $\partial L/\partial\widehat{y}$ 开始，沿原来的计算链\textbf{倒着复用局部导数}。每条路径的变化率相乘，分叉路径的贡献相加。
 \end{idea}
 
 \subsubsection{第三步：四个参数一起更新，再做一次预测}
@@ -69,7 +69,7 @@ b_2'&=0-0.05(-1)=0.05.
 \[\begin{aligned}
 z'&=1.2\times2+0.1=2.5,\\
 h'&=\relu(2.5)=2.5,\\
-\widehat y'&=2.1\times2.5+0.05=5.30,\\
+\widehat{y}'&=2.1\times2.5+0.05=5.30,\\
 L'&=\frac12(5.30-5)^2=0.045.
 \end{aligned}\]
 损失从 $0.5$ 降到 $0.045$，这次更新改善了该样本的预测。
@@ -84,19 +84,16 @@ L'&=\frac12(5.30-5)^2=0.045.
 
 % The earlier backpropagation lesson belongs to this same numbered chapter.
 % Keep both complete exercise sets after section 5.5, not before it.
-\chapterchecktasks{17-backpropagation}{正文基础三题}{
-\item \textbf{计算：}设 $h=w_1x,\widehat y=w_2h$。当 $x=3,w_2=2$ 时，按链式法则求 $\partial\widehat y/\partial w_1$。\chapterinlinehint{沿输出到隐藏层、隐藏层到权重逐段求导。}
+\chapterchecktasks{17-backpropagation}{基础与贯通复习}{
+\item \textbf{计算：}设 $h=w_1x,\widehat{y}=w_2h$。当 $x=3,w_2=2$ 时，按链式法则求 $\partial\widehat{y}/\partial w_1$。\chapterinlinehint{沿输出到隐藏层、隐藏层到权重逐段求导。}
 \item \textbf{预测：}在 $h=\relu(z)$ 且 $z=-2$ 时，从输出侧传来的梯度经过这条 ReLU 分支传向 $z$ 后还剩多少？\chapterinlinehint{先看该输入处 ReLU 的局部导数。}
 \item \textbf{找错：}同学把 $\partial L/\partial h$ 直接当作 $\partial L/\partial w_1$。缺了哪一个局部导数？\chapterinlinehint{补上隐藏变量对权重的局部导数。}
-}
-\chapterrecallanswer{反传沿计算图用链式法则传递并汇总梯度；优化器才负责把这些梯度变成参数更新。}
 
-\chapterchecktasks{18b-end-to-end-learning}{正文基础三题}{
 \item \textbf{流程：}把一次 SGD 分成“前向／损失／反传／更新”四步；哪一步读取训练目标，哪一步改变参数？\chapterinlinehint{先标出损失与目标的连接，再找赋值更新的位置。}
-\item \textbf{手算：}$x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$，$h=\relu(w_1x+b_1)$。求 $\widehat y$ 与 $\tfrac12(\widehat y-y)^2$。\chapterinlinehint{先做隐藏层前向，再算预测与目标的平方差。}
+\item \textbf{手算：}$x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$，$h=\relu(w_1x+b_1)$。求 $\widehat{y}$ 与 $\tfrac12(\widehat{y}-y)^2$。\chapterinlinehint{先做隐藏层前向，再算预测与目标的平方差。}
 \item \textbf{找错：}某同学先更新 $w_2$，再用新 $w_2$ 算本次 $w_1$ 的梯度，称它是“同一步同步 SGD”。指出问题。\chapterinlinehint{给反传公式中的所有权重标上同一步数。}
 }
-\chapterrecallanswer{训练一步先用同一组旧参数求出完整梯度，再统一更新；单样本损失低不等于模型泛化好。}
+\chapterrecallanswer{先核对输入、计算图和状态来源，再用完整流程检验局部推导。}
 
 
 

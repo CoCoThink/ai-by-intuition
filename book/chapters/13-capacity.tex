@@ -40,7 +40,9 @@
 因此在这个\textbf{随机 Key/Value、简单外积求和}的模型里，容量的标度大约是维度 $d_k$。
 
 \subsection{平方激活为何带来平方量级？}
-对于不相关 Key，原始相似度的典型大小是 $1/\sqrt{d_k}$；平方后，它变成约 $1/d_k$。但\textbf{$\relu(s)^2$ 本身非负，不会因为平方而产生正负抵消}。下面的 $\sqrt M$ 合并只在最终干扰的 Value 分量符号足够随机、近似独立且均值抵消等条件成立时适用；若所有 Value 同号，噪声可能随 $M$ 而不是 $\sqrt M$ 累加。在这些理想条件下，随机干扰的总体量级可以粗略看成：
+不相关 Key 的相似度量级从 $1/\sqrt{d_k}$ 平方成 $1/d_k$。
+$\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
+若 Value 全同号，干扰可随 $M$ 累加。满足抵消假设时：
 \[
 \frac{\text{干扰}}{\text{信号}}\ \approx\ \frac{\sqrt M}{d_k}.
 \]
@@ -54,25 +56,19 @@
 
 \subsection{线性注意力的状态，就是累加的外积记忆}
 
-此前写入 $k_i^\top v_i$ 的方法可以按序列逐步进行。
-每条 Key 和 Value 都是一行，$k_t:1\times d_k$、$v_t:1\times d_v$：
+Key、Value 为行向量，前缀外积逐步写入：
 \[
-\underbrace{S_0}_{d_k\times d_v}=0,\quad
-\boxed{S_t=S_{t-1}+k_t^\top v_t
-=\sum_{i\le t}k_i^\top v_i,\qquad y_t=q_tS_t.}
+\underbrace{\mathcal{M}_0}_{d_k\times d_v}=0,\quad
+\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+k_t^\top v_t
+=\sum_{i\le t}k_i^\top v_i,\qquad y_t=q_t\mathcal{M}_t.}
 \]
-查询行向量 $q_t:1\times d_k$ 得到 $y_t:1\times d_v$。
-只有因果前缀参与累加，没有用到未来 Token 的信息；
-这一结构与前面的\hyperref[intro:04-key-value-outer-product]{外积写入}
-完全同形。
-
-这是\textbf{未归一化线性状态}的教学例；实际线性 Attention
-还需特征映射或归一化，Gated DeltaNet 另有误差修正和门控。
+$q_t:1\times d_k$ 读取 $y_t:1\times d_v$；只累加因果前缀。
+这是\textbf{未归一化线性状态}；实际线性 Attention 还需特征映射或归一化，
+Gated DeltaNet 另加误差修正和门控。
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。
 
-容量估算依赖随机性、独立性与非线性假设；可区分关联不等于可靠事实。
 
 \chapterchecktasks{13-capacity}{正文基础三题}{
 \item \textbf{预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？\chapterinlinehint{比较典型尺度中的维度项。}
@@ -86,7 +82,7 @@
 \begin{conclusion}
 \textbf{提高专题收束：联想记忆的关键结论。}
 点积匹配，外积写入；线性读取会串扰，非线性与 Softmax 提高选择性。
-行向量约定为 $S=\sum_i k_i^\top v_i$、$xS=\sum_i(xk_i^\top)v_i$。
+行向量约定为 $\mathcal{M}=\sum_i k_i^\top v_i$、$x\mathcal{M}=\sum_i(xk_i^\top)v_i$。
 沿着这条\textbf{匹配与读取}主线，回看 Attention 与 FFN 的分工。
 \end{conclusion}
 

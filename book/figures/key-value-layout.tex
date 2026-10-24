@@ -17,7 +17,7 @@
 \centering
 \textbf{列向量 Query 的写法}\\[2mm]
 \begin{tikzpicture}[x=10mm,y=9mm]
-\foreach \r/\shade in {1/blueback,2/orangeback,3/greenback}{
+\foreach \r/\shade in {1/paper,2/linegray!25,3/linegray!15}{
   \foreach \c in {1,2}{
     \filldraw[draw=linegray,fill=\shade,line width=.55pt]
       (\c-1,1-\r) rectangle (\c,-\r);
@@ -35,7 +35,7 @@ $K\in\R^{M\times d_k}$\\
 \centering
 \textbf{行向量 Query 的写法}\\[2mm]
 \begin{tikzpicture}[x=10mm,y=9mm]
-\foreach \c/\shade in {1/blueback,2/orangeback,3/greenback}{
+\foreach \c/\shade in {1/paper,2/linegray!25,3/linegray!15}{
   \foreach \r in {1,2}{
     \filldraw[draw=linegray,fill=\shade,line width=.55pt]
       (\c-1,1-\r) rectangle (\c,-\r);
@@ -56,7 +56,7 @@ K\vect q=\vect s,\qquad
 {\footnotesize\color{muted}形状：$K:M\times d_k$，$\vect q:d_k\times1$，
 $\vect s:M\times1$；转置后为 $1\times d_k$ 乘 $d_k\times M$。}\par
 \begin{center}
-{\color{blue}\bfseries $(K\vect q)^\top=\vect q^\top K^\top$}
+{\color{flowcolor}\bfseries $(K\vect q)^\top=\vect q^\top K^\top$}
 \end{center}
 
 \textbf{Value 同理：}约定 $V$ 的\textbf{每行是一条 Value}，

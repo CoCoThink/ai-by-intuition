@@ -20,6 +20,7 @@ EXPECTED_PARTS = (
     ("vision", "换一种数据看 Transformer：从 CNN 到 ViT"),
     ("assistant", "从语言模型到助手"),
     ("architecture", "架构为什么在变，往哪走"),
+    ("memory", "联想记忆与线性状态"),
 )
 PART_HEADING = re.compile(r"\\part\{([^}\n]+)\}\\label\{part:([^}\n]+)\}")
 INPUT = re.compile(r"\\input\{chapters/([^}]+)\}")
@@ -68,7 +69,7 @@ def lint(main: str, chapters: dict[str, str]) -> list[str]:
             line = body.count("\n", 0, match.start()) + 1
             errors.append(
                 f"{path}:{line}: forbidden literal {match.group(0)!r}; "
-                "use an actual part: anchor and topic name, or appendix H--K"
+                "use an actual part: anchor and topic name, or a semantic chapter/part link"
             )
         for match in PART_LINK.finditer(body):
             if match.group(1) not in allowed:
@@ -84,23 +85,12 @@ def lint(main: str, chapters: dict[str, str]) -> list[str]:
                 f"{path}: associative-memory link incorrectly targets CNN/ViT Part VI"
             )
 
-    # Memory is an APPENDIX; a future reorder must not move it back into VI.
+    # Memory is a teaching part before reference appendices, with a real part anchor.
     app = cleaned.find(r"\appendix")
     memory = cleaned.find(r"\input{chapters/04-key-value-outer-product}")
-    if memory >= 0 and (app < 0 or memory < app):
-        errors.append(
-            "book/main.tex: associative memory moved into main parts "
-            "(expected appendix H--K)"
-        )
-    elif memory >= 0:
-        earlier_appendices = len(re.findall(
-            r"\\section\{", cleaned[app:memory]
-        ))
-        if earlier_appendices != 7:
-            errors.append(
-                "book/main.tex: associative memory must begin in appendix H; "
-                f"found {earlier_appendices} earlier appendix sections"
-            )
+    memory_part = cleaned.find(r"\label{part:memory}")
+    if memory >= 0 and not (0 <= memory_part < memory < app):
+        errors.append("book/main.tex: associative memory must be inside Part IX before appendices")
     return errors
 
 
@@ -118,25 +108,22 @@ def self_test() -> None:
     ):
         issues = lint(base, {"example": "联想记忆推导见" + bad + "。"})
         assert any("forbidden literal" in e for e in issues), (bad, issues)
-    incorrect = parts.replace("part:vision", "part:memory")
+    incorrect = parts.replace("part:vision", "part:unknown")
     assert any("part names" in e for e in lint(
         incorrect + r"\appendix", {}
     ))
     assert any("invalid semantic part target" in e for e in lint(
-        base, {"example": r"\hyperref[part:memory]{记忆}"}
+        base, {"example": r"\hyperref[part:unknown]{记忆}"}
     ))
     misdirected = lint(base, {
         "example": r"\\hyperref[part:vision]{联想记忆}"
     })
     assert any("incorrectly targets" in issue for issue in misdirected)
-    with_memory = parts + r"\\appendix" + ("\\section{Topic}\n" * 7)
-    with_memory += r"\\input{chapters/04-key-value-outer-product}"
-    assert lint(with_memory, {"04-key-value-outer-product": r"\\section{Memory}"}) == []
-    misordered = with_memory.replace(
-        "\\section{Topic}\n", "", 1
-    )
-    assert any("must begin in appendix H" in issue
-               for issue in lint(misordered, {"04-key-value-outer-product": r"\\section{Memory}"}))
+    with_memory = parts + r"\input{chapters/04-key-value-outer-product}" + r"\appendix"
+    assert lint(with_memory, {"04-key-value-outer-product": r"\section{Memory}"}) == []
+    misordered = parts + r"\appendix\input{chapters/04-key-value-outer-product}"
+    assert any("must be inside Part IX" in issue for issue in lint(
+        misordered, {"04-key-value-outer-product": r"\section{Memory}"}))
     assert not HARDCODED.search(strip_comments("% 第 VI 部分\n普通文字"))
     print("Part reference regression QA passed: 6 invalid ordinals, "
           "wrong part order, wrong topic link and commented prose")
@@ -164,7 +151,7 @@ def main() -> int:
             print("::error::" + e, file=sys.stderr)
         print(f"PART QA FAILED: {len(issues)} issue(s)", file=sys.stderr)
         return 1
-    print("Part reference QA passed: 8 anchored main parts, no "
+    print("Part reference QA passed: 9 anchored main parts, no "
           "hard-coded Roman/Chinese/Arabic part references")
     return 0
 

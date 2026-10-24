@@ -17,7 +17,7 @@ $(1,0)$、$(0,1)$、$(1,1)$。
 \centering
 \textbf{按行排：三行、两列}\\[2mm]
 \begin{tikzpicture}[x=10mm,y=9mm]
-\foreach \r/\shade in {1/blueback,2/orangeback,3/greenback}{
+\foreach \r/\shade in {1/paper,2/linegray!25,3/linegray!15}{
   \foreach \c in {1,2}{
     \filldraw[draw=linegray,fill=\shade,line width=.55pt]
       (\c-1,1-\r) rectangle (\c,-\r);
@@ -35,7 +35,7 @@ $A:\ 3\times2$\\[-1mm]
 \centering
 \textbf{按列排：两行、三列}\\[2mm]
 \begin{tikzpicture}[x=10mm,y=9mm]
-\foreach \c/\shade in {1/blueback,2/orangeback,3/greenback}{
+\foreach \c/\shade in {1/paper,2/linegray!25,3/linegray!15}{
   \foreach \r in {1,2}{
     \filldraw[draw=linegray,fill=\shade,line width=.55pt]
       (\c-1,1-\r) rectangle (\c,-\r);

@@ -1,7 +1,7 @@
 \chapterrule
 \section{非线性：为什么多叠两层直线仍不够？}
 \label{intro:07-functions-relu}
-\chaptercompass{为什么两层直线还不够？}{纯线性层能合并，ReLU 才带来分段非线性。}{$x\to h=\relu(w_1x+b_1)\to\widehat y$}{$w_1,b_1,w_2,b_2$}
+\chaptercompass{为什么两层直线还不够？}{纯线性层能合并，ReLU 才带来分段非线性。}{$x\to h=\relu(w_1x+b_1)\to\widehat{y}$}{$w_1,b_1,w_2,b_2$}
 \modelpipelinefocus{0}{非线性激活}
 
 一个可调的线性函数只能画直线。目标关系如果带折角或弯曲，
@@ -9,9 +9,9 @@
 
 \subsection{先算两层纯线性}
 
-令第一层 $h=w_1x$，第二层 $\widehat y=w_2h$，那么
+令第一层 $h=w_1x$，第二层 $\widehat{y}=w_2h$，那么
 \[
-\widehat y=w_2(w_1x)=(w_1w_2)x.
+\widehat{y}=w_2(w_1x)=(w_1w_2)x.
 \]
 结果还是一条直线。即使每层有偏置，两次仿射变换合起来仍是仿射变换。
 \textbf{层数本身并不会自动创造非线性。}
@@ -30,7 +30,7 @@ $\relu(1)+\relu(-2)=1$，所以 ReLU 不是线性函数。
 把它插到中间：
 \[
 z=w_1x+b_1,\qquad h=\relu(z),\qquad
-\widehat y=w_2h+b_2.
+\widehat{y}=w_2h+b_2.
 \]
 如果 $w_1=w_2=1$，两个偏置为 $0$，
 输入 $-2$ 得到 $0$，输入 $1$ 得到 $1$。

@@ -10,15 +10,15 @@
 \begin{tikzpicture}[>=Latex,
  smallnode/.style={draw=linegray,fill=white,rounded corners=2pt,
   minimum width=19mm,minimum height=9mm,align=center,font=\scriptsize},
- target/.style={draw=blue,fill=blueback,rounded corners=2pt,
+ target/.style={draw=flowcolor,fill=paper,rounded corners=2pt,
   minimum width=25mm,minimum height=10mm,align=center,font=\scriptsize}]
 \node[font=\sffamily\bfseries\small,anchor=west] at (-.1,2.05)
   {RNN：依次交接状态};
 \node[smallnode] (r1) at (.8,.9) {春天 / $h_1$};
 \node[smallnode] (r2) at (3.15,.9) {花 / $h_2$};
 \node[target] (r3) at (5.75,.9) {开了 / $h_3$};
-\draw[->,very thick,orange] (r1)--(r2);
-\draw[->,very thick,orange] (r2)--(r3);
+\draw[->,very thick,flowcolor] (r1)--(r2);
+\draw[->,very thick,flowcolor] (r2)--(r3);
 \node[font=\footnotesize,align=center,anchor=west] at (7.35,.9)
   {较早信息需要\\经过中间状态};
 \draw[linegray] (0,-.15)--(12.8,-.15);
@@ -28,15 +28,15 @@
 \node[smallnode] (a2) at (4.35,-1.7) {花 / $k_2,v_2$};
 \node[smallnode] (a3) at (7.65,-1.7) {开了 / $k_3,v_3$};
 \node[target] (at) at (4.35,-3.35) {位置 3 的\\读取结果};
-\draw[->,blue,line width=2pt] (a1.south) to[out=-80,in=165] (at.west);
-\draw[->,teal,line width=.6pt] (a2.south)--(at.north);
-\draw[->,orange,line width=1.15pt] (a3.south) to[out=-100,in=15] (at.east);
+\draw[->,flowcolor,line width=2pt] (a1.south) to[out=-80,in=165] (at.west);
+\draw[->,flowcolor,line width=.6pt] (a2.south)--(at.north);
+\draw[->,flowcolor,line width=1.15pt] (a3.south) to[out=-100,in=15] (at.east);
 \node[font=\footnotesize,align=left,anchor=west] at (9.2,-2.3)
   {不同路径可分配\\不同的读取权重};
 \end{tikzpicture}
 \end{center}
 \small\noindent
-左图的橙色箭头是\textbf{必须依次计算的状态传递}。
+左图的蓝灰色箭头是\textbf{必须依次计算的状态传递}。
 右图的三条连线表示\textbf{对当前可见位置分别读取}，
 粗细仅提示权重可能不同；具体权重将在本章用点积和 Softmax 算出。
 \par % Flush the final box paragraph before the Figure caption tag.

@@ -1,5 +1,5 @@
 % Each group is an initial vocabulary probability row, IDs 1--5.
-\tagstructbegin{tag=Figure,alttext={三组初始词表概率柱形图，按 Token ID 1 至 5。位置 1 的最大概率 0.3341 对应 ID 2 而目标为 ID 4；位置 2 的最大概率 0.6761 对应 ID 4 而目标为 ID 5；位置 3 的最大概率 0.3418 对应 ID 3，目标也为 ID 3。青色柱标出正确目标。}}
+\tagstructbegin{tag=Figure,alttext={三组初始词表概率柱形图，按 Token ID 1 至 5。位置 1 的最大概率 0.3341 对应 ID 2 而目标为 ID 4；位置 2 的最大概率 0.6761 对应 ID 4 而目标为 ID 5；位置 3 的最大概率 0.3418 对应 ID 3，目标也为 ID 3。粗边柱标出正确目标。}}
 \begin{center}
 \begin{tikzpicture}[x=13mm,y=12mm]
 \foreach \r/\labeltext in {0/{位置 1},1/{位置 2},2/{位置 3}}{
@@ -7,26 +7,26 @@
  \draw[linegray] (-.1,{5.65-2.35*\r})--(5.3,{5.65-2.35*\r});
 }
 \foreach \c/\p in {0/.1843,1/.3341,2/.1264,3/.2617,4/.0935}{
- \fill[blue!55] ({.14+\c},{5.65}) rectangle ({.78+\c},{5.65+1.95*\p});
+ \fill[datacolor!55] ({.14+\c},{5.65}) rectangle ({.78+\c},{5.65+1.95*\p});
  \node[font=\scriptsize] at ({.46+\c},5.42) {\the\numexpr\c+1\relax};
 }
-\fill[teal!80] (3.14,5.65) rectangle (3.78,{5.65+1.95*.2617});
+\filldraw[fill=datacolor!80,draw=ink,line width=.8pt] (3.14,5.65) rectangle (3.78,{5.65+1.95*.2617});
 \foreach \c/\p in {0/.0826,1/.0954,2/.0951,3/.6761,4/.0507}{
- \fill[blue!55] ({.14+\c},3.30) rectangle ({.78+\c},{3.30+1.95*\p});
+ \fill[datacolor!55] ({.14+\c},3.30) rectangle ({.78+\c},{3.30+1.95*\p});
  \node[font=\scriptsize] at ({.46+\c},3.07) {\the\numexpr\c+1\relax};
 }
-\fill[teal!80] (4.14,3.30) rectangle (4.78,{3.30+1.95*.0507});
+\filldraw[fill=datacolor!80,draw=ink,line width=.8pt] (4.14,3.30) rectangle (4.78,{3.30+1.95*.0507});
 \foreach \c/\p in {0/.1535,1/.1130,2/.3418,3/.1181,4/.2735}{
- \fill[blue!55] ({.14+\c},.95) rectangle ({.78+\c},{.95+1.95*\p});
+ \fill[datacolor!55] ({.14+\c},.95) rectangle ({.78+\c},{.95+1.95*\p});
  \node[font=\scriptsize] at ({.46+\c},.72) {\the\numexpr\c+1\relax};
 }
-\fill[teal!80] (2.14,.95) rectangle (2.78,{.95+1.95*.3418});
+\filldraw[fill=datacolor!80,draw=ink,line width=.8pt] (2.14,.95) rectangle (2.78,{.95+1.95*.3418});
 \node[font=\footnotesize,anchor=west,text=muted] at (5.45,5.95) {目标 ID 4};
 \node[font=\footnotesize,anchor=west,text=muted] at (5.45,3.6) {目标 ID 5};
 \node[font=\footnotesize,anchor=west,text=muted] at (5.45,1.25) {目标 ID 3};
 \node[font=\scriptsize,text=muted] at (2.6,.25) {每一组横轴：词表 ID 1--5；柱高：初始预测概率};
 \end{tikzpicture}
-\captionof{figure}{共享输出头的三位置概率分布：青色柱为正确类，最高柱才是贪心预测}
+\captionof{figure}{共享输出头的三位置概率分布：粗边柱为正确类，最高柱才是贪心预测}
 \label{fig:three-position-prob-bars}
 \end{center}
 \tagstructend

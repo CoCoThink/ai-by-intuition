@@ -85,6 +85,21 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 这叫\textbf{自回归生成}。
 它不是重复训练，而是反复使用已经学好的参数做前向计算。
 
+\subsection{从哪里开始，到哪里停止：BOS、EOS 与长度预算}
+\phantomsection\label{concept:bos-eos}
+\phantomsection\label{concept:autoregressive}
+\textbf{BOS} 是开始标记，\textbf{EOS} 是结束标记；它们有词表中的专用 ID。
+是否插入 BOS、使用哪些结束 ID，遵循模型与分词器的配置。
+本书五项主词表为手算省略了特殊 Token，“。”只是标点，不能当成通用 EOS。
+若要让教学模型学习何时结束，可另建词表加入 EOS，
+把句末的下一 Token 标签设为 EOS，再参与训练。
+
+生成循环先处理给定前缀（空前缀按模型配置补 BOS），然后反复选 Token。
+采到配置的 EOS／回合结束 ID 就停止；此外还要设置最大新增 Token 数，
+检查上下文容量，并处理应用的停止序列或取消请求。
+\textbf{达到长度上限表示截断，不表示答案已经写完。}
+聊天模型的消息结束与整段对话结束也可以使用不同的标记。
+
 \subsection{KV Cache：每生成一个 Token 都从头再算吗？}
 \phantomsection\label{concept:kv-cache}
 
@@ -99,6 +114,21 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 每头维度和数值精度。
 因此，后面讲现代架构时再遇到 MQA、GQA，
 你就能理解它们为什么关注\textbf{减少 K/V 头数}。
+
+\subsection{同一次生成的两阶段：Prefill 与 Decode}
+\phantomsection\label{concept:prefill-decode}
+\textbf{Prefill} 一次处理已知 Prompt 的所有位置，带因果 Mask 计算各层 K/V 并填入缓存，
+最后一个位置的输出用于选择第一个新 Token。
+\textbf{Decode} 再逐步处理新选出的 Token：每层只新增当前 K/V，
+当前 Query 读取缓存中的可见历史，最后继续选取下一 Token。
+
+Prompt 的多个位置可组成较大的矩阵乘法；单请求逐 Token Decode 的矩阵更“瘦”，
+每一步又要读取模型权重和历史 K/V。
+在小批量、缓存较长等场景，搬运这些字节所需的时间会主导延迟，
+即\textbf{受显存带宽限制}：算力尚有余量，数据还没送到计算单元。
+增大批量会提高权重重用，瓶颈也会随模型、长度和内核改变。
+GQA 减少独立 K/V 头，既节省缓存容量，也减少解码时读取 K/V 的数据量。
+第~\ref*{intro:22d-modern-transformers}~章把这种动机换成真实配置的字节估算。
 
 \subsection{上下文窗口保存本次计算可见的信息}
 

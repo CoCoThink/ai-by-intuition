@@ -4,7 +4,7 @@
 \begin{tikzpicture}[>=Latex,x=11mm,y=7.5mm]
 \node[font=\small\bfseries,anchor=south] at (1.5,1.36) {Embedding 表 $E$（$5\times3$）};
 \foreach \rr/\aa/\bb/\cc in {0/0/0/0,1/1.2/0/-0.2,2/0.2/-0.4/0.7,3/-0.3/1.1/0.2,4/0.15/-0.2/1.25}{
-\ifnum\rr=3 \def\bg{orangeback}\else\def\bg{paper}\fi
+\ifnum\rr=3 \def\bg{linegray!25}\else\def\bg{paper}\fi
 \filldraw[fill=\bg,draw=linegray] (0,{-\rr}) rectangle (1,{1-\rr});
 \filldraw[fill=\bg,draw=linegray] (1,{-\rr}) rectangle (2,{1-\rr});
 \filldraw[fill=\bg,draw=linegray] (2,{-\rr}) rectangle (3,{1-\rr});
@@ -13,8 +13,8 @@
 \node[font=\scriptsize] at (2.5,{.5-\rr}) {$\cc$};
 \node[font=\footnotesize,anchor=east] at (-.25,{.5-\rr}) {ID \the\numexpr\rr+1\relax};
 }
-\draw[orange,very thick] (0,-3) rectangle (3,-2);
-\draw[->,orange,very thick] (3.16,-2.5)--(4.08,-2.5);
+\draw[flowcolor,very thick] (0,-3) rectangle (3,-2);
+\draw[->,flowcolor,very thick] (3.16,-2.5)--(4.08,-2.5);
 \node[font=\small,align=left,anchor=west] at (4.22,-2.5)
  {ID 4（“花”）\\行向量 $(-0.3,1.1,0.2)$};
 \node[font=\scriptsize,anchor=west] at (0,-4.65)

@@ -10,10 +10,10 @@
 \foreach \y/\z/\e/\width/\prob/\class in {0/0/1/15/0.25/1,-16/{\log2}/2/30/0.50/2,-32/0/1/15/0.25/3}{
  \node[font=\footnotesize,anchor=east] at (-13,\y) {类 \class};
  \node[n] (z\class) at (0,\y) {$\z$};
- \node[n,fill=blueback] (e\class) at (43,\y) {$\e$};
- \draw[->,thick,blue] (z\class)--(e\class) node[midway,above,font=\scriptsize] {取指数};
- \draw[->,thick,teal] (e\class.east)--(79,\y) node[midway,above,font=\scriptsize] {除以 $4$};
- \filldraw[fill=purple!65,draw=purple] (82,{\y-3.5}) rectangle ({82+\width},{\y+3.5});
+ \node[n,fill=paper] (e\class) at (43,\y) {$\e$};
+ \draw[->,thick,flowcolor] (z\class)--(e\class) node[midway,above,font=\scriptsize] {取指数};
+ \draw[->,thick,flowcolor] (e\class.east)--(79,\y) node[midway,above,font=\scriptsize] {除以 $4$};
+ \filldraw[fill=datacolor!65,draw=datacolor] (82,{\y-3.5}) rectangle ({82+\width},{\y+3.5});
  \node[font=\small,anchor=west] at ({84+\width},\y) {$\prob$};
 }
 \node[font=\footnotesize,text=muted] at (55,-44) {分母 $1+2+1=4$；最终 $0.25+0.50+0.25=1$};

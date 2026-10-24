@@ -5,13 +5,13 @@
 \foreach \rr in {0,1,2}{
  \foreach \cc in {0,1,2}{
   \ifnum\cc>\rr
-   \filldraw[fill=orangeback,draw=linegray]
+   \filldraw[fill=maskedcolor!12,draw=linegray]
     (\cc,{2-\rr}) rectangle ++(1,1);
-   \node[orange,font=\large] at ({\cc+.5},{2.5-\rr}) {$\times$};
+   \node[maskedcolor,font=\large] at ({\cc+.5},{2.5-\rr}) {$\times$};
   \else
-   \filldraw[fill=greenback,draw=linegray]
+   \filldraw[fill=visiblecolor!10,draw=linegray]
     (\cc,{2-\rr}) rectangle ++(1,1);
-   \node[teal,font=\large] at ({\cc+.5},{2.5-\rr}) {$\checkmark$};
+   \node[visiblecolor,font=\large] at ({\cc+.5},{2.5-\rr}) {$\checkmark$};
   \fi
  }
  \node[font=\footnotesize,anchor=east] at (-.15,{2.5-\rr}) {Query \number\numexpr\rr+1\relax};
@@ -21,7 +21,7 @@
  {Key \number\numexpr\cc+1\relax};
 }
 \node[font=\small,anchor=west] at (3.4,2.2) {绿色：允许读取};
-\node[font=\small,anchor=west] at (3.4,1.35) {橙色：未来位置被遮蔽};
+\node[font=\small,anchor=west] at (3.4,1.35) {灰色叉号：未来位置被遮蔽};
 \node[font=\small,anchor=west,align=left] at (3.4,.45)
  {行是当前位置的 Query；\\列是候选位置的 Key。};
 \end{tikzpicture}

@@ -7,9 +7,9 @@
 
 **从这里开始：**[目录后的阅读路线与表示约定](chapters/00g-reading-routes.tex)及[版权页](chapters/00h-colophon.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
-## 当前目录：八部分、36 章、附录 A–K
+## 当前目录：九部分、41 章、附录 A–G
 
-章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。此次修订把图像专题前移，联想记忆置于正文结束后的提高附录；技术底座回顾成为正文最后一页。
+章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。视觉桥接位于 Transformer 之后，联想记忆为第九部分；技术底座回顾收束架构部分。
 
 | 部分 | 章节和源码 |
 |---|---|
@@ -19,20 +19,25 @@
 | IV · 上下文 | [RNN](chapters/21-rnn.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[Self-Attention](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
 | V · Transformer | [Block](chapters/22-transformer-architecture.tex)、[FFN](chapters/10b-ffn-output-head.tex)、[贯通前向](chapters/22b-token-to-output.tex)、[联合训练](chapters/22c-language-training.tex)、[生成](chapters/23-llm-systems.tex)、[玩具到 GPT](chapters/23a-from-toy-to-gpt.tex) |
 | VI · 视觉桥接 | [CNN](chapters/19-cnn.tex) → [ViT 与多模态](chapters/19b-vit.tex) |
-| VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[部署](chapters/23b-deployment-and-ecosystem.tex) |
+| VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[部署](chapters/23b-deployment-and-ecosystem.tex) |
 | VIII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex)、[技术底座回顾](chapters/23f-foundation-recap.tex) |
+| IX · 联想记忆 | [外积与串扰](chapters/04-key-value-outer-product.tex)、[Delta 更新](chapters/06-better-linear-memory.tex)、[非线性读取](chapters/09-nonlinearity-and-memory.tex)、[容量](chapters/13-capacity.tex) |
 
-**附录 A–G**：公式、实验、练习、参考答案、术语、文献与勘误；**附录 H–K**：外积记忆、串扰、Delta 更新、非线性检索与高维容量（[专题起点](chapters/04-key-value-outer-product.tex)）。
+**附录 A–G**：公式、实验、按章题库、参考答案、术语、文献与勘误。
 
-章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。 CI 在编译前运行 `scripts/check_chapter_crossrefs.py`，拦截写死的“第 N 章”，另由 `scripts/check_part_references.py` 禁止包括“第 VI 部分／第六部分／第6部分”在内的硬编码部分编号，并检查八个 `part:` 标签与实际部分标题、顺序匹配，并依 `main.tex` 的实际 `\\section` 顺序逐项校验附录 D 的章号；编译后仍由 `check_latex_references.py` 拦截未解析引用与 PDF 的 `??`。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
+章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。 CI 在编译前运行 `scripts/check_chapter_crossrefs.py`，拦截写死的“第 N 章”，另由 `scripts/check_part_references.py` 禁止包括“第 VI 部分／第六部分／第6部分”在内的硬编码部分编号，并检查九个 `part:` 标签与实际部分标题、顺序匹配，并依 `main.tex` 的实际 `\\section` 顺序逐项校验附录 D 的章号；编译后仍由 `check_latex_references.py` 拦截未解析引用与 PDF 的 `??`。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
 
 ## 自测题与答案的分步阅读
 
-**45 组随堂／提高自测均有三道正文基础题，每题附方法提示**。提示指出公式或起步方向，数值答案与完整判断放在[附录 D.2](chapters/28-chapter-checks.tex)的“第一步＋解题过程”中。每组保留 `check:` 和 `answer:` 跳转标签；CI 核对题型、提示数量、答案标题与题号。附录 C 共 101 题，逐题标明难度、建议分钟数和对应章节；其中 50 道按章延伸题使用 C4-1 至 C4-50，正文不再另称“延伸题 4／5”。
+**每章一个自测块，共 42 组**。正文只印题目，提示统一放在[附录 D.2](chapters/28-chapter-checks.tex)的“第一步”中，再展开解题过程。四对重复自测已合并，保留全部问题；一般章有三题，四个合并章有六题。每组保留唯一 `check:` 和 `answer:` 锚点。
+
+附录 C 为一套按章排列的 **122 题**，全部用 C-001 至 C-122 标识，逐题印难度、预计耗时和章页。含原有 101 题、三个教学闭环新题和每部分两题累积复习；累积复习在部分末与题库共用同一题号。题目、解答、章末导航和累积复习都从 [exercises.json](exercises.json) 生成，避免多套题库漂移。编辑后依次运行 `scripts/generate_exercise_bank.py` 和 `scripts/generate_chapter_navigation.py`，CI 以 `--check` 验证。旧题号只作为隐藏锚点保留，纸面显示统一题号。
 
 纸面目录仅列到章，控制在两页内；PDF 书签仍提供全部小节导航。自测允许接排和跨页，避免整块自测、小结被挤成稀疏尾页。
 
-正文的教学词表 ID、位置与数学行列统一从 1 起，五项依次是“其他、春天、。、花、开了”。Python 只在查表和标签索引时减 1，矩阵参数与数值基线保持一致。附录 C 按 C1、C2、C3、C4 排列，共 101 道题，全部按章节归属生成章末题号链接；调整归属后运行 `python3 scripts/generate_chapter_navigation.py`，CI 用 `--check` 核对生成文件、45 组标题和 C4 解答题号。
+正文的教学词表 ID、位置与数学行列从 1 起，五项是“其他、春天、。、花、开了”；Python 索引减 1。数学符号统一为输出头 `W_out`、logits `Z`、词表概率 `Π`、位置 `P_pos` 与记忆状态 `𝓜`，脚本接口名在附录 A 对照。
+
+新增的 `scripts/check_book_contract.py` 检查**引用用途**（第十步必须依次指向训练与生成）、每章唯一自测、题答对应、符号与帽子作用域、逐条 UTC 来源日期及生成题库。`scripts/check_teaching_claims.py` 复算缓存字节、简化残差梯度、同 Token 上下文消融和二维完整反传；已有 PDF 标签、MathML、引用、版面和 PDF/UA-2 检查继续运行。
 
 测试时计算的概率、候选相关性和核验器反例可用 `python3 scripts/test_time_compute_demo.py` 复算，无须安装额外依赖。
 
@@ -44,6 +49,7 @@ CI 使用 **TeX Live 2026 + LuaLaTeX**，启动时要求 Noto 中文及西文字
 # 中文索引由双语术语表生成；先生成，避免直接编译占位页
 python3 -m pip install pypinyin==0.55.0
 python3 scripts/generate_chinese_index.py
+python3 scripts/generate_exercise_bank.py --check
 python3 scripts/generate_chapter_navigation.py --check
 python3 scripts/validate_book.py
 bash scripts/build_book.sh
@@ -74,4 +80,4 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 
 正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。当前正文与附录的页数、图数、题目链接数量随修订变化，均以最新的 GitHub Actions 构建报告和实际 PDF 检查为准，不把过去某次成功构建的统计数据当作永久指标。本书仍标为 v0.2.0-draft（未发布）。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
 
-**中文检索：**附录 E 还提供 136 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对全部 136 项链接。
+**中文检索：**附录 E 还提供 146 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对术语表实际条目数与全部链接；标题总数从规范术语表生成。

@@ -7,8 +7,8 @@
 
 \noindent\textbf{一、标量学习：先做预测，再衡量误差。}
 \[
-\widehat y=wx+b,\qquad
-L_{\rm MSE}=\frac1N\sum_{i=1}^{N}(\widehat y_i-y_i)^2,
+\widehat{y}=wx+b,\qquad
+L_{\rm MSE}=\frac1N\sum_{i=1}^{N}(\widehat{y}_i-y_i)^2,
 \qquad
 \theta_{\rm new}=\theta_{\rm old}-\eta\nabla_\theta L.
 \]
@@ -18,13 +18,13 @@ L_{\rm MSE}=\frac1N\sum_{i=1}^{N}(\widehat y_i-y_i)^2,
 \underbrace{X}_{T\times d}
 \underbrace{W}_{d\times h}
 =\underbrace{XW}_{T\times h},\qquad
-X=E[\mathrm{IDs}]+P.
+X=E[\mathrm{IDs}]+P_{\rm pos}.
 \]
 这里 $T$ 表示输入 Token 数，$d$ 是隐藏宽度，
 $h$ 是投影输出宽度。
-\hyperref[intro:04-key-value-outer-product]{附录 H--K 的联想记忆}同样使用行向量，
-写入为 $S=\sum_i k_i^\top v_i$，
-读取为 $xS$；无需另外切换方向。
+\hyperref[intro:04-key-value-outer-product]{联想记忆部分}同样使用行向量，
+写入为 $\mathcal{M}=\sum_i k_i^\top v_i$，
+读取为 $x\mathcal{M}$；无需另外切换方向。
 
 \noindent\textbf{三、上下文读取：因果掩码不能泄露未来。}
 \[

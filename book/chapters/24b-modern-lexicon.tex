@@ -4,7 +4,7 @@
 这 36 个词条仅补充基础 100 词未覆盖的架构与系统接口，
 按\textbf{解决的问题}分组，链接回正文。
 例如 RLHF 与 MCP 已在基础词条定义，\textbf{这里不重复列词条}；
-英文 A--Z 别名页可反向查找，完整解释请点击相应正文。
+英文 A--Z 别名页可反向查找，完整解释按章页编号查阅相应正文。
 
 \subsubsection*{模型输入、目标与训练}
 \begin{itemize}
@@ -58,8 +58,22 @@
 \item \textbf{Subagent 与 A2A}：前者为子任务分配独立执行单元；后者规范独立 Agent 间通信。 \termref{concept:subagent}
 \end{itemize}
 
+\subsubsection*{生成接口、评测与系统安全}
+\begin{itemize}
+\item \textbf{提示注入}：外部内容把数据伪装成操作指令，诱导模型或应用越过原有任务与权限。 \termref{concept:prompt-injection}
+\item \textbf{困惑度}：平均自然对数交叉熵的指数；比较时须保持分词与计分数据口径一致。 \termref{concept:perplexity}
+\item \textbf{自回归}：每次以前缀为条件预测下一 Token，并把选定 Token 接回上下文。 \termref{concept:autoregressive}
+\item \textbf{蒸馏}：把教师模型的输出或分布作为学生模型的训练信号。 \termref{concept:distillation}
+\item \textbf{剪枝}：移除或稀疏化部分权重、连接或结构，再评测质量与成本。 \termref{concept:pruning}
+\item \textbf{评测污染}：测试题、答案或近重复版本进入训练数据，导致评测高估泛化。 \termref{concept:evaluation-contamination}
+\item \textbf{混合精度}：不同计算或状态采用不同浮点精度，以平衡数值稳定性、存储与速度。 \termref{concept:mixed-precision}
+\item \textbf{开始与结束标记}：词表中的开始或结束标记，使用方式和结束 ID 由模型配置规定。 \termref{concept:bos-eos}
+\item \textbf{聊天模板}：把消息角色与内容序列化为模型配套的 Token 输入格式。 \termref{concept:chat-template}
+\item \textbf{预填充与解码}：先处理已知前缀建立缓存，再逐步处理新增 Token 并读取历史。 \termref{concept:prefill-decode}
+\end{itemize}
+
 \begin{conclusion}
 遇到新缩写，先问它改变了\textbf{数据、模型层、训练信号、
 计算复杂度、缓存，还是系统权限}。
-明确所属层级，再从这里点击回正文，远比背名称更有用。
+明确所属层级，再按章页编号查阅正文，远比背名称更有用。
 \end{conclusion}

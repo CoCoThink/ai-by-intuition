@@ -30,9 +30,9 @@ $h=\relu(x_1w_1+x_2w_2+b)$。
 \tagstructbegin{tag=Figure,alttext={全连接多层感知机示意图：左侧两个输入节点连接到中间三个隐藏神经元，再连接到右侧两个输出节点。边表示可训练权重，每一层可加偏置及非线性激活。}}
 \begin{center}
 \begin{tikzpicture}[x=15mm,y=12mm,>=Latex,
- n/.style={circle,draw=blue,very thick,fill=blueback,minimum size=7mm,inner sep=0pt},
- h/.style={circle,draw=teal,very thick,fill=greenback,minimum size=7mm,inner sep=0pt},
- o/.style={circle,draw=orange,very thick,fill=orangeback,minimum size=7mm,inner sep=0pt}]
+ n/.style={circle,draw=flowcolor,very thick,fill=paper,minimum size=7mm,inner sep=0pt},
+ h/.style={circle,draw=flowcolor,very thick,fill=linegray!15,minimum size=7mm,inner sep=0pt},
+ o/.style={circle,draw=flowcolor,very thick,fill=linegray!25,minimum size=7mm,inner sep=0pt}]
 \foreach \j in {1,2}{\node[n] (i\j) at (0,{2.5-\j}) {$x_{\j}$};}
 \foreach \j in {1,2,3}{\node[h] (h\j) at (3,{3-\j}) {$h_{\j}$};}
 \foreach \j in {1,2}{\node[o] (o\j) at (6,{2.5-\j}) {$y_{\j}$};}
@@ -77,23 +77,23 @@ $1\times3$ 和 $1\times2$。
 $W_2:d_{\rm ff}\times d_{\rm out}$，偏置在相应层的行上相加。
 多 Token 情况下，逐行使用\textbf{同一组参数}。
 
-\subsection{\texorpdfstring{从两层推广到任意 $L$ 层}{从两层推广到任意 L 层}}
+\subsection{\texorpdfstring{从两层推广到任意 $N_{\rm layer}$ 层}{从两层推广到任意层数}}
 
 沿全书“一个样本/Token 占一行”的约定，
-令 $A^{(0)}=X\in\R^{N\times d_0}$，对第 $\ell$ 层：
+令 $F^{(0)}=X\in\R^{N\times d_0}$，对第 $\ell$ 层：
 \begin{equation}
-\boxed{A^{(\ell)}
-=\sigma_\ell\!\left(A^{(\ell-1)}W_\ell+
-\mathbf1_N\vect b_\ell^\top\right),\quad \ell=1,\ldots,L.}
+\boxed{F^{(\ell)}
+=\sigma_\ell\!\left(F^{(\ell-1)}W_\ell+
+\mathbf1_N\vect b_\ell^\top\right),\quad \ell=1,\ldots,N_{\rm layer}.}
 \label{eq:mlp-l-layer-row}
 \end{equation}
 $W_\ell:d_{\ell-1}\times d_\ell$，
 $\vect b_\ell^\top:1\times d_\ell$，所以结果为
-$A^{(\ell)}:N\times d_\ell$；$\mathbf1_N$ 的作用
+$F^{(\ell)}:N\times d_\ell$；$\mathbf1_N$ 的作用
 只是给 $N$ 行广播同一个偏置。输出层可以按任务选择
 恒等激活（产生 logits）、Sigmoid 或其他映射。
 若改用列向量，等价式可写成
-$\vect a^{(\ell)}=\sigma_\ell(W_\ell^\top\vect a^{(\ell-1)}+\vect b_\ell)$；
+$\vect f^{(\ell)}=\sigma_\ell(W_\ell^\top\vect f^{(\ell-1)}+\vect b_\ell)$；
 这里权重转置不能省略。
 
 \Needspace{18\baselineskip}
@@ -111,7 +111,7 @@ Transformer 的 FFN 也对每个 Token 分别应用共享的非线性网络；
 三行分别对应三个 Token；FFN 虽改变每行的特征，
 却没有在不同 Token 之间交换信息。
 
-外积与读取的另一种理解路径，放在\hyperref[intro:04-key-value-outer-product]{附录 H--K 的联想记忆提高专题}。
+外积与读取的另一种理解路径，放在\hyperref[intro:04-key-value-outer-product]{联想记忆部分}。
 
 \chapterchecktasks{10-mlp}{正文基础三题}{
 \item \textbf{形状：}输入行 $x:1\times2$，两层权重分别 $W_1:2\times3,W_2:3\times2$。写出隐藏层与输出层的形状。\chapterinlinehint{逐次核对行向量右乘矩阵的内侧维度。}

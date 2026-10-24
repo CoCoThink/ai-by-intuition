@@ -4,14 +4,14 @@
  n/.style={draw=linegray,rounded corners=2pt,fill=paper,align=center,
  font=\small,text width=33mm,minimum height=14mm}]
 \node[n] (data) {报告格式示范\\季度、收入、出处};
-\node[n,above right=3mm and 9mm of data,fill=blueback] (prompt) {放入 Prompt\\本次上下文};
+\node[n,above right=3mm and 9mm of data,fill=paper] (prompt) {放入 Prompt\\本次上下文};
 \node[n,right=of prompt] (fixed) {模型前向\\$\theta$ 保持不变};
-\node[n,below right=3mm and 9mm of data,fill=orangeback] (sft) {构造 SFT 样本\\答案 Token 计损失};
+\node[n,below right=3mm and 9mm of data,fill=linegray!25] (sft) {构造 SFT 样本\\答案 Token 计损失};
 \node[n,right=of sft] (update) {反传＋优化器\\$\theta\to\theta'$};
-\draw[->,thick,blue] (data)--(prompt);
-\draw[->,thick,blue] (prompt)--(fixed);
-\draw[->,thick,orange] (data)--(sft);
-\draw[->,thick,orange] (sft)--(update);
+\draw[->,thick,flowcolor] (data)--(prompt);
+\draw[->,thick,flowcolor] (prompt)--(fixed);
+\draw[->,thick,flowcolor] (data)--(sft);
+\draw[->,thick,flowcolor] (sft)--(update);
 \end{tikzpicture}
 \captionof{figure}{同一示范放在哪里，决定它改变当前上下文还是训练参数}
 \label{fig:training-context-branches}

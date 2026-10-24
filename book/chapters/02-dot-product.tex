@@ -32,11 +32,11 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 \begin{tikzpicture}[scale=1.05,>=Latex]
 \draw[->,linegray,thick] (-.2,0)--(5.3,0);
 \draw[->,linegray,thick] (0,-.2)--(0,4.7);
-\draw[->,very thick,blue] (0,0)--(4,0) node[below right] {$\vect a=(4,0)$};
-\draw[->,very thick,orange] (0,0)--(3,4) node[above right] {$\vect b=(3,4)$};
+\draw[->,very thick,flowcolor] (0,0)--(4,0) node[below right] {$\vect a=(4,0)$};
+\draw[->,very thick,flowcolor] (0,0)--(3,4) node[above right] {$\vect b=(3,4)$};
 \draw[dashed,thick,muted] (3,4)--(3,0);
 \draw[linegray] (3,0) rectangle (3.18,.18);
-\draw[teal,thick] (.78,0) arc[start angle=0,end angle=53.13,radius=.78];
+\draw[flowcolor,thick] (.78,0) arc[start angle=0,end angle=53.13,radius=.78];
 \node[font=\small] at (1.12,.36) {$\theta$};
 \node[font=\small,below] at (1.5,0) {投影为 $3$};
 \end{tikzpicture}
@@ -87,8 +87,8 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 \begin{tikzpicture}[>=Latex,x=19mm,y=19mm]
 \foreach \x/\ang/\score/\lab in {0/17/{\approx 0.96}/同向附近,2.9/90/{0}/垂直,5.8/165/{\approx -0.97}/反方向附近} {
  \begin{scope}[shift={(\x,0)}]
- \draw[->,thick,blue] (0,0)--(1,0);
- \draw[->,thick,orange] (0,0)--({cos(\ang)},{sin(\ang)});
+ \draw[->,thick,flowcolor] (0,0)--(1,0);
+ \draw[->,thick,flowcolor] (0,0)--({cos(\ang)},{sin(\ang)});
  \fill (0,0) circle(1pt);
  \node[font=\footnotesize,align=center] at (.55,-.55) {\lab\\点积 $\score$};
  \end{scope}

@@ -3,17 +3,17 @@
 \begin{tikzpicture}[>=Latex,node distance=5mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=paper,align=center,
  font=\sffamily\small,minimum height=15mm,text width=35mm}]
-\node[n,fill=blueback] (train) {春天 花 开了 。\\训练文本 Token};
+\node[n,fill=paper] (train) {春天 花 开了 。\\训练文本 Token};
 \node[n,right=of train] (loss) {预测 $\to$ 交叉熵\\梯度更新 $\theta$};
-\node[n,right=of loss,fill=greenback] (model) {训练好的模型\\$p_\theta(\text{下一 Token}\mid\text{前文})$};
-\draw[->,thick,blue] (train)--(loss);
-\draw[->,thick,blue] (loss)--(model);
-\node[n,below=10mm of train,fill=orangeback] (report) {报告原文＋任务\\请求的上下文 Token};
+\node[n,right=of loss,fill=linegray!15] (model) {训练好的模型\\$p_\theta(\text{下一 Token}\mid\text{前文})$};
+\draw[->,thick,flowcolor] (train)--(loss);
+\draw[->,thick,flowcolor] (loss)--(model);
+\node[n,below=10mm of train,fill=linegray!25] (report) {报告原文＋任务\\请求的上下文 Token};
 \node[n,right=of report] (infer) {同一模型前向\\输出提取结果};
 \node[n,right=of infer] (check) {程序核对出处\\计算 $20\%$、$10\%$};
-\draw[->,thick,orange] (report)--(infer);
-\draw[->,thick,orange] (infer)--(check);
-\draw[->,thick,teal] (model.south)--++(0,-3mm)-|(infer.north);
+\draw[->,thick,flowcolor] (report)--(infer);
+\draw[->,thick,flowcolor] (infer)--(check);
+\draw[->,thick,flowcolor] (model.south)--++(0,-3mm)-|(infer.north);
 \end{tikzpicture}
 \captionof{figure}{从短句续写到报告助手：沿用 Token 预测，加入任务上下文与外部核验}
 \label{fig:model-to-assistant}

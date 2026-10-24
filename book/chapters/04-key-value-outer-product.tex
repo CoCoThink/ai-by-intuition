@@ -1,7 +1,7 @@
 \chapterrule
 \section{外积与矩阵：如何真正“写入”一条记忆？}
 \label{intro:04-key-value-outer-product}
-\chaptercompass{一个矩阵怎样保存 Key 和 Value 的关联？}{外积写入 $S=k^\top v$，行查询从左边读取 $xS$。}{$k:1\times d_k,\ v:1\times d_v\to S:d_k\times d_v\to xS$}{这里写入的是示例状态矩阵；是否训练取决于应用场景}
+\chaptercompass{一个矩阵怎样保存 Key 和 Value 的关联？}{外积写入 $\mathcal{M}=k^\top v$，行查询从左边读取 $x\mathcal{M}$。}{$k:1\times d_k,\ v:1\times d_v\to \mathcal{M}:d_k\times d_v\to x\mathcal{M}$}{这里写入的是示例状态矩阵；是否训练取决于应用场景}
 \modelpipelinefocus{3}{Attention 的记忆视角}
 \phantomsection\label{concept:outer-product}
 
@@ -25,16 +25,16 @@ Value 为 $v:1\times d_v$。我们希望读出一行 $1\times d_v$ 的结果。
 令 $k=(1,0)$，$v=(2,3)$，$x=k$。
 两条向量的外积矩阵是
 \[
-S=k^\top v
+\mathcal{M}=k^\top v
 =\begin{bmatrix}1\\0\end{bmatrix}
 \begin{bmatrix}2&3\end{bmatrix}
 =\boxed{\begin{bmatrix}2&3\\0&0\end{bmatrix}}.
 \]
 读取时从左边乘一条\textbf{行向量}：
 \begin{equation}
-\boxed{xS=(1,0)S=(2,3).}
+\boxed{x\mathcal{M}=(1,0)\mathcal{M}=(2,3).}
 \end{equation}
-因为 $kk^\top=1$，所以 $kS=(kk^\top)v=v$；
+因为 $kk^\top=1$，所以 $k\mathcal{M}=(kk^\top)v=v$；
 若 Key 并非单位向量，结果一般会乘上 $\|k\|^2$。
 外积得到一个矩阵，点积得到一个数；二者不要混淆。
 

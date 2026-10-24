@@ -1,7 +1,7 @@
 \chapterrule
 \section{前馈网络与输出头：两种不同的特征变换}
 \label{intro:10b-ffn-output-head}
-\chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{$X:T\times d_{\rm model}\to F:T\times d_{\rm model}\to L:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm vocab}$（及相应偏置）}
+\chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{$X:T\times d_{\rm model}\to F:T\times d_{\rm model}\to Z:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm out}$（及相应偏置）}
 \modelpipelinefocus{4}{FFN}
 
 \begin{idea}
@@ -82,12 +82,12 @@ FFN 的下投影将隐藏宽度还原为 $d_{\rm model}$，
 是为了继续堆叠后续 Block；
 而\textbf{词表输出头}要把隐藏状态映射到候选 Token 分数：
 \begin{equation}
-Z_{\rm vocab}=F_{\rm out}W_{\rm vocab}+\vect b_{\rm vocab},
+Z=F_{\rm out}W_{\rm out}+\vect b_{\rm out},
 \quad
-W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.
+W_{\rm out}\in\R^{d_{\rm model}\times|\mathcal V|}.
 \end{equation}
 假设 $d_{\rm model}=2$，词表有五个 Token，
-则 $W_{\rm vocab}$ 是 $2\times5$，
+则 $W_{\rm out}$ 是 $2\times5$，
 每个 Token 产生五个 \conceptlink{logits}{logits}，即还未经过 Softmax 的原始候选分数。
 这些数字是可正可负的 logits，经 Softmax 变成概率。
 
@@ -98,9 +98,9 @@ W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.
 \node[n,below=of x] (up) {FFN 上投影 $T\times d_{\rm ff}$，激活，再下投影};
 \node[n,below=of up] (y) {$T\times d_{\rm model}$：供下一个 Block 使用};
 \node[n,below=of y] (out) {词表输出头 $T\times|\mathcal V|$：预测候选分数};
-\draw[->,blue,thick] (x)--(up);
-\draw[->,blue,thick] (up)--(y);
-\draw[->,teal,thick] (y)--(out);
+\draw[->,flowcolor,thick] (x)--(up);
+\draw[->,flowcolor,thick] (up)--(y);
+\draw[->,flowcolor,thick] (y)--(out);
 \end{tikzpicture}
 \end{center}
 

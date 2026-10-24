@@ -2,7 +2,7 @@
 \section{反向传播究竟在传什么？}
 \phantomsection\label{concept:backprop}
 \label{intro:17-backpropagation}
-\chaptercompass{多层网络怎样高效求所有梯度？}{沿计算图反向复用局部导数，而不是为每个参数重算。}{$x\to h\to\widehat y\to L$，反向得到梯度}{$w_1,w_2$ 等层参数}
+\chaptercompass{多层网络怎样高效求所有梯度？}{沿计算图反向复用局部导数，而不是为每个参数重算。}{$x\to h\to\widehat{y}\to L$，反向得到梯度}{$w_1,w_2$ 等层参数}
 \modelpipelinefocus{0}{反向传播}
 
 多层网络的参数通过后续计算逐步影响最终损失。
@@ -15,17 +15,17 @@
 先看一台三级机器：
 \[
 x\xrightarrow{\times\,w_1}h
-\xrightarrow{\times\,w_2}\widehat y
+\xrightarrow{\times\,w_2}\widehat{y}
 \xrightarrow{\text{算误差}}L.
 \]
-令 $h=w_1x$、$\widehat y=w_2h$、$L=\tfrac12(\widehat y-y)^2$。
+令 $h=w_1x$、$\widehat{y}=w_2h$、$L=\tfrac12(\widehat{y}-y)^2$。
 现在要问：调整 $w_1$ 一点点，最后的损失 $L$ 会变多少？
 
 最直接的做法是把整个函数展开，但神经网络可以有数十乃至更多层。链式法则沿着计算路径，把各步的\textbf{局部变化率}相乘：
 \begin{equation}
 \boxed{\frac{\partial L}{\partial w_1}
-=\frac{\partial L}{\partial\widehat y}
-\frac{\partial\widehat y}{\partial h}
+=\frac{\partial L}{\partial\widehat{y}}
+\frac{\partial\widehat{y}}{\partial h}
 \frac{\partial h}{\partial w_1}.}
 \label{eq:chain-three}
 \end{equation}
@@ -37,15 +37,15 @@ x\xrightarrow{\times\,w_1}h
 前向过程：
 \[
 h=1\times2=2,\quad
-\widehat y=2\times2=4,\quad
+\widehat{y}=2\times2=4,\quad
 L=\tfrac12(4-5)^2=\tfrac12.
 \]
 
 从输出向输入反向算：
 \[
-\frac{\partial L}{\partial\widehat y}
-=\widehat y-y=-1,\qquad
-\frac{\partial\widehat y}{\partial h}=w_2=2,\qquad
+\frac{\partial L}{\partial\widehat{y}}
+=\widehat{y}-y=-1,\qquad
+\frac{\partial\widehat{y}}{\partial h}=w_2=2,\qquad
 \frac{\partial h}{\partial w_1}=x=2.
 \]
 所以
@@ -56,8 +56,8 @@ L=\tfrac12(4-5)^2=\tfrac12.
 而对于最后一层权重：
 \[
 \frac{\partial L}{\partial w_2}
-=\frac{\partial L}{\partial\widehat y}
-\frac{\partial\widehat y}{\partial w_2}
+=\frac{\partial L}{\partial\widehat{y}}
+\frac{\partial\widehat{y}}{\partial w_2}
 =(-1)\times h=-2.
 \]
 本章先只算出两条梯度：$\partial L/\partial w_1=-4$，
@@ -73,11 +73,11 @@ $\partial L/\partial w_2=-2$，\textbf{暂不更新参数}。
 
 \subsection{如果中间有 ReLU，怎样求导？}
 
-对 $z=w_1x+b_1$、$h=\relu(z)$、$\widehat y=w_2h+b_2$，有
+对 $z=w_1x+b_1$、$h=\relu(z)$、$\widehat{y}=w_2h+b_2$，有
 \[
 \frac{\partial L}{\partial w_1}
-=\frac{\partial L}{\partial\widehat y}
-\frac{\partial\widehat y}{\partial h}
+=\frac{\partial L}{\partial\widehat{y}}
+\frac{\partial\widehat{y}}{\partial h}
 \frac{\partial h}{\partial z}
 \frac{\partial z}{\partial w_1}.
 \]

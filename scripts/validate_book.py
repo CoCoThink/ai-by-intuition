@@ -17,84 +17,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
-PARTS = [
-    "学习是什么：从规则到参数更新",
-    "把许多数一起算",
-    "让文字进入计算",
-    "让词与词交换信息",
-    "组装并训练 Transformer",
-    "换一种数据看 Transformer：从 CNN 到 ViT",
-    "从语言模型到助手",
-    "架构为什么在变，往哪走",
-]
-
-REQUIRED = [
-    "00h-colophon",
-    "00g-reading-routes",
-    "00-guide",
-    "00-functions",
-    "16-loss-gradient",
-    "18c-training-engineering",
-    "07-functions-relu",
-    "17-backpropagation",
-    "18b-end-to-end-learning",
-    "18-generalization",
-    "01-vectors",
-    "02-dot-product",
-    "03-matrix-multiplication",
-    "10-mlp",
-    "20a-tokenizer",
-    "20c-classification-loss",
-    "20-embeddings",
-    "20b-task-contract",
-    "21a-context-gap",
-    "21-rnn",
-    "21c-naive-attention",
-    "21b-why-attention",
-    "11-softmax-memory",
-    "22a-position-multihead",
-    "22-transformer-architecture",
-    "10b-ffn-output-head",
-    "22b-token-to-output",
-    "22c-language-training",
-    "23-llm-systems",
-    "23a-from-toy-to-gpt",
-    "19-cnn",
-    "19b-vit",
-    "23aa-pretraining-icl",
-    "23c-post-training",
-    "23d-agent-systems",
-    "23d-agent-tools",
-    "23d-agent-protocols",
-    "23b-deployment-and-ecosystem",
-    "22d-modern-transformers",
-    "23e-tech-judgement",
-    "23f-foundation-recap",
-    "00e-core-formulas",
-    "00b-math-tools",
-    "00c-symbols",
-    "30-optimizer-appendix",
-    "00f-transformer-intermediates",
-    "24e-pytorch-lab",
-    "25-integrated-practice",
-    "25b-modern-practice",
-    "15-practice",
-    "25c-migrated-review",
-    "27-answer-key",
-    "28-chapter-checks",
-    "24e-bilingual-glossary",
-    "24c-concept-map",
-    "24f-chinese-index",
-    "26-sources",
-    "29-revision-notes",
-    "04-key-value-outer-product",
-    "05-memory-interference",
-    "06-better-linear-memory",
-    "08-stacking-key-value",
-    "09-nonlinearity-and-memory",
-    "14-summary",
-    "13-capacity",
-]
+from check_book_contract import PART_TITLES as PARTS, CHAPTER_COUNT, core_groups, validate_contract
+from generate_exercise_bank import load_exercises
+from generate_bilingual_glossary import entries as glossary_entries
+REQUIRED = re.findall(r"\\input\{chapters/([^}]+)\}", (BOOK / "main.tex").read_text())
+CHECK_COUNT = CHAPTER_COUNT + 1
+EXERCISE_COUNT = len(load_exercises()[0])
+GLOSSARY_COUNT = len(glossary_entries("24-lexicon.tex")) + len(glossary_entries("24b-modern-lexicon.tex"))
 
 
 def fail(msg: str) -> None:
@@ -236,1125 +165,16 @@ def test_numeric_examples() -> None:
 
 
 def validate_source() -> None:
-    main = (BOOK / "main.tex").read_text(encoding="utf-8")
-    parts = re.findall(r"\\part\{([^}]+)\}", main)
-    if parts != PARTS:
-        fail(f"Expected eight continuous curriculum parts; found {parts!r}")
-    inputs = re.findall(r"\\input\{chapters/([^}]+)\}", main)
-    if inputs != REQUIRED or len(inputs) != len(set(inputs)):
-        fail(f"Reading order/appendix differs from the current curriculum: {inputs!r}")
-    maps = re.findall(r"(?m)^\\(partmap[a-z]+)\s*$", main)
-    if len(maps) != len(PARTS) or len(set(maps)) != len(PARTS):
-        fail("Each of the eight parts needs its own chapter map")
-    sources = {name: chapter(name) for name in REQUIRED + [
-        "00d-rules-gap",  # archived merged lesson, not typeset
-        "24-lexicon", "24b-modern-lexicon", "24d-english-index",
-    ]}  # data-only canonical glossary sources; never typeset
-    if "local-build" in main:
-        fail("Build provenance must omit unknown revisions rather than print a placeholder")
-    for name in ("00h-colophon", "29-revision-notes"):
-        includes(sources[name], r"\bookbuildsource", "optional complete provenance sentence")
-    if sources["28-chapter-checks"].count(r"\par\Needspace{8\baselineskip}") != 45:
-        fail("Every answer chapter needs space for its heading and first answer")
-    for script in ("pretraining_data_demo", "pytorch_starter", "teaching_trace"):
-        includes(sources["29-revision-notes"], script.replace("_", r"\_")
-                 if script == "pretraining_data_demo" else script,
-                 "Appendix G reproduction entry")
-    includes(main, r"\appendix", "main")
-    # The manual release gate must consume exactly the PDF artifact built here.
-    production = (ROOT / ".github/workflows/build-latex.yml").read_text(encoding="utf8")
-    includes(production, "export BOOK_BUILD_SHA='${{ github.sha }}'", "container source SHA")
-    includes(production, "bash ../scripts/build_book.sh", "shared build entry point")
-    release = (ROOT / ".github/workflows/publish-release.yml").read_text(encoding="utf8")
-    for workflow in (production, release):
-        includes(workflow, "ai-by-intuition-book", "matching build/release artifact")
-        includes(workflow, "AI-by-Intuition-Book.pdf", "matching build/release PDF filename")
-    if 'summary["pages"] == 99' in release or "1,472/1,472" in release:
-        fail("Release gate still hard-codes historical v0.1.0 PDF statistics")
-    includes(release, 'summary["pages"] == actual_pages', "PDF page and audit reconciliation")
-    includes(release, "failedRules", "PDF/UA-2 release audit enforcement")
-    # Regression gate: each build must check the *last* latexmk log and
-    # extracted full PDF, not merely the presence of source-level labels.
-    includes(production, "python3 scripts/check_latex_references.py --self-test",
-             "reference-gate positive/negative fixture test")
-    includes(production, "python3 scripts/check_chapter_crossrefs.py --self-test",
-             "stale chapter-number regression tests")
-    includes(production, "python3 scripts/check_part_references.py --self-test",
-             "Roman/Chinese/Arabic part-reference regression canaries")
-    includes(production, "python3 scripts/check_part_references.py\n",
-             "mandatory semantic part reference gate")
-
-    includes(production, "python3 scripts/check_chapter_crossrefs.py\n",
-             "mandatory source-order chapter reference check")
-
-    includes(production, "Reject unresolved cross-references in final LaTeX log and PDF",
-             "mandatory final cross-reference gate")
-    includes(production, "--log book/build/main.log",
-             "reference-gate final LaTeX log")
-    includes(production, "--pdf book/build/AI-by-Intuition-Book.pdf",
-             "reference-gate rendered PDF")
-    gate_source = ROOT / "scripts" / "check_latex_references.py"
-    if not gate_source.is_file():
-        fail("Missing final-log/PDF unresolved-reference gate")
-    import ast
-    ast.parse(gate_source.read_text(encoding="utf-8"))
-
-
-    includes(sources["22c-language-training"], r"L_i=-\log\widehat P_{i,y_i}",
-             "one-based target IDs directly index training probabilities")
-    includes(sources["00b-math-tools"], "词表 ID／数学列号",
-             "shared one-based ID and mathematical column numbering")
-    includes(main, r"\part*{附录：公式、练习与答案}", "main")
-    includes(main, r"\ctexset{", "native CTeX heading styling")
-    includes(main, "bookmarksnumbered=true", "numbered PDF outline titles")
-    includes(main, "name={第,章}", "visible chapter number format")
-    if r"\usepackage{titlesec}" in main or r"\titleformat" in main:
-        fail("titlesec must not override tagged section headings")
-    if main.find(r"\appendix") <= main.find(r"\input{chapters/23f-foundation-recap}"):
-        fail("Appendices must follow optional part IX")
-    if main.count(r"\learningbridge{") != 9:
-        fail("Eight parts and one advanced appendix need nine introductions")
-
-    # Explicit vector and architecture consistency.
-    for name in ("21b-why-attention", "11-softmax-memory"):
-        includes(sources[name], r"\vect x_i^\top W_Q" if name.startswith("21b") else r"\vect x^\top W_Q", name)
-    includes(sources["11-softmax-memory"], r"W_Q^\top\vect x", "row/column explanation")
-    includes(sources["22-transformer-architecture"], r"\vect h_T^\top W_{\rm vocab}", "row vocabulary projection")
-    includes(sources["22-transformer-architecture"], r"\input{figures/pre-norm-block}", "true Pre-Norm figure")
-    includes(sources["22-transformer-architecture"], r"X_{\rm block}", "distinct Block output")
-    includes(sources["22a-position-multihead"], "0.990", "two-head worked example")
-    includes(sources["22a-position-multihead"], "0.9997", "scaled-dot-product example")
-    includes(sources["22a-position-multihead"], "位置", "positional example")
-    includes(sources["22a-position-multihead"], r"\label{eq:pos-swap-d3}", "nondegenerate 3D position comparison")
-    includes(sources["21a-context-gap"], r"\chapterchecktasks{21a-context-gap}", "context gap self-check")
-    includes(sources["19b-vit"], r"\label{eq:vit-patch-embedding}", "standalone patch embedding")
-    includes(sources["21b-why-attention"], r"\vect q^\top=(1,1)", "asymmetric Q/K example")
-    includes(sources["21b-why-attention"], r"\label{eq:asymmetric-qk-example}",
-             "independent Query and Key cause raw score asymmetry")
-    includes(sources["06-better-linear-memory"], r"\label{eq:delta-overwrites-key-a}",
-             "Delta write can disturb previously learned association")
-    from math import exp
-    scores = ((1, 1, 2), (0, 1, 1), (1, 2, 3))
-    assert scores[0][1] == 1 and scores[1][0] == 0
-    # Exercise all three projected Q/K/V rows, not only the final query.
-    values = ((1, 0), (0, 1), (1, 1))
-    weights = []
-    for row in scores:
-        shifted = [exp(v - max(row)) for v in row]
-        weights.append([v / sum(shifted) for v in shifted])
-    expected_weights = (
-        (0.212, 0.212, 0.576),
-        (0.155, 0.422, 0.422),
-        (0.090, 0.245, 0.665),
-    )
-    for actual, expected in zip(weights, expected_weights):
-        assert math.isclose(sum(actual), 1, abs_tol=1e-12)
-        assert all(abs(a - b) < 0.0005 for a, b in zip(actual, expected))
-    batch_out = [
-        [sum(weights[i][k] * values[k][j] for k in range(3))
-         for j in range(2)]
-        for i in range(3)
-    ]
-    expected_out = ((0.788, 0.788), (0.578, 0.845), (0.755, 0.910))
-    for actual, expected in zip(batch_out, expected_out):
-        assert all(abs(a - b) < 0.0005 for a, b in zip(actual, expected))
-    assert not math.isclose(scores[0][1], scores[1][0])
-    includes(sources["22c-language-training"], r"\label{sec:transformer-gradient-step}", "gradient step")
-    includes(sources["22b-token-to-output"], r"\label{eq:three-token-block-output}", "canonical Pre-Norm numeric forward")
-    includes(sources["22b-token-to-output"], "0.1244", "causal attention example")
-    includes(sources["22c-language-training"], "1.611377", "three-position joint loss")
-    includes(sources["23a-from-toy-to-gpt"], "768/12=64", "GPT-2 scale recovery")
-    includes(sources["23aa-pretraining-icl"], r"\label{concept:in-context-learning}", "pretraining and ICL")
-    includes(sources["20b-task-contract"], "任务契约（Task Contract）", "task contract explained in body")
-    includes(sources["22c-language-training"], "Teacher Forcing（教师强制）", "teacher forcing in body")
-    includes(sources["25-integrated-practice"], r"W_{\rm vocab}", "attention output to vocabulary logits exercise")
-    includes(sources["23c-post-training"], "只改 Prompt/Few-shot", "SFT versus prompting")
-    includes(sources["23d-agent-tools"], "g_{Q2}", "shared report arithmetic")
-    includes(sources["23d-agent-protocols"], "A2A", "protocol distinctions")
-    includes(sources["23d-agent-systems"], r"\chapterchecktasks{23d-agent-rag}", "RAG exercise")
-    includes(sources["23d-agent-tools"], r"\chapterchecktasks{23d-agent-tools}", "Agent loop exercise")
-    includes(sources["23d-agent-protocols"], "Prompt Injection", "prompt injection naming")
-    includes(sources["23e-tech-judgement"], "Scaling Laws", "innovation framework")
-    includes(sources["23e-tech-judgement"], "莫拉维克悖论", "Moravec paradox")
-    includes(sources["23e-tech-judgement"], "架构创新空间", "debated architecture innovation")
-    includes(sources["23b-deployment-and-ecosystem"], "vLLM", "ecosystem tool comparison")
-    includes(sources["22-transformer-architecture"], "Encoder--Decoder Attention", "original architecture comparison")
-    includes(sources["23f-foundation-recap"], "技术底座回顾", "end of core recap")
-    includes(sources["00g-reading-routes"], "速读", "pre-TOC reading paths")
-    includes(main, r"\newtcolorbox{boundarybox}", "separate scope box type")
-    includes(main, r"\input{chapters/00g-reading-routes}", "reading guide after contents")
-    includes(main, r"\input{chapters/23f-foundation-recap}", "recap closes the core before appendices")
-    check = subprocess.run([sys.executable, str(ROOT / "scripts" / "check_p2_notebook.py")],
-                           capture_output=True, text=True)
-    if check.returncode:
-        fail("P2 interactive notebook QA failed: " + check.stdout + check.stderr)
-    print(check.stdout.strip())
-    includes(sources["22c-language-training"], "0.25764", "shared embedding gradient")
-    includes(sources["10-mlp"], r"\label{eq:mlp-l-layer-row}", "L-layer network")
-    includes(sources["20b-task-contract"], r"\label{fig:token-ffn-output-pipeline}", "token-to-vocabulary diagram")
-    includes(sources["22b-token-to-output"], r"\input{figures/attention-weight-heatmap}", "attention weight heatmap")
-    includes(sources["22b-token-to-output"], r"\input{figures/three-position-probabilities}", "vocabulary probability bars")
-    includes(sources["22b-token-to-output"], r"\hyperref[app:transformer-intermediates]", "appendix numerical link")
-    includes(sources["00f-transformer-intermediates"], r"\label{app:transformer-intermediates}", "appendix numerical target")
-    includes(sources["20-embeddings"], r"\input{figures/embedding-training-projection}", "embedding delta chart")
-    includes((BOOK / "figures" / "embedding-training-projection.tex").read_text(encoding="utf-8"),
-             r"E_{20,j}-E_{0,j}", "embedding coordinate difference")
-    # Four compact forward matrices belong in chapter 23; Appendix B keeps intermediate tensors.
-    full_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["22b-token-to-output"]))
-    if full_matrices != 4:
-        fail(f"Expected X/A/H/P forward matrices in chapter 23, found {full_matrices}")
-    appendix_matrices = len(re.findall(r"\\begin\{bmatrix\}", sources["00f-transformer-intermediates"]))
-    if appendix_matrices < 15:
-        fail(f"Appendix B lost numerical teaching matrices: {appendix_matrices}")
-    includes(sources["00f-transformer-intermediates"], "0.1211",
-             "full output-head gradient belongs to Appendix B")
-    includes(sources["22c-language-training"], r"\input{figures/training-20-step-loss}", "20-step loss curve")
-    includes(sources["23a-from-toy-to-gpt"], r"\label{eq:toy-99-parameters}", "99 parameter count")
-    includes(sources["23a-from-toy-to-gpt"], "7{,}077{,}888",
-             "classic GPT-2 attention-plus-FFN parameter budget")
-    assert 4 * 768**2 == 2359296 and 8 * 768**2 == 4718592
-    assert 12 * 768**2 == 7077888
-    includes(sources["24e-pytorch-lab"], r"\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/scripts/pytorch_starter.py}", "readable excerpt with runnable complete PyTorch source link")
-    includes(sources["23b-deployment-and-ecosystem"], "16{,}000", "LoRA computation")
-    includes(sources["23b-deployment-and-ecosystem"], "软标签", "distillation computation")
-    includes(sources["23b-deployment-and-ecosystem"], "-127", "quantization computation")
-    includes(sources["20a-tokenizer"], "BPE", "subword example")
-    includes(sources["02-dot-product"], "归约", "GPU parallel reduction bridge")
-    includes(sources["23b-deployment-and-ecosystem"], "公司／模型／产品",
-             "distinct provider model and product layers")
-    includes(main, "忒修斯之船", "Part VIII architecture evolution opening")
-    # The optional Torch companion is syntax-checked without requiring Torch at source-QA time.
-    import ast
-    for script in ("pytorch_starter.py", "teaching_trace.py"):
-        script_path = ROOT / "scripts" / script
-        if not script_path.is_file():
-            fail(f"Missing P1 reproducibility script: {script}")
-        ast.parse(script_path.read_text(encoding="utf-8"))
-    includes(sources["24e-pytorch-lab"], "1.798430", "initial loss in lab")
-    # Runnable, dependency-free examples must agree with the book after edits.
-    for script in ("memory_demo.py", "bpe_demo.py", "rag_demo.py", "agent_loop.py"):
-        script_path = ROOT / "scripts" / script
-        if not script_path.is_file():
-            fail(f"Missing reproducibility example: {script}")
-        try:
-            ast.parse(script_path.read_text(encoding="utf-8"))
-        except SyntaxError as exc:
-            fail(f"Invalid Python syntax in {script}: {exc}")
-        result = subprocess.run([sys.executable, str(script_path)],
-                                cwd=ROOT, capture_output=True, text=True)
-        if result.returncode:
-            fail(f"Reproducible {script} failed:\n{result.stdout}{result.stderr}")
-    print("Independent teaching QA passed: memory, BPE, RAG and Agent loop")
-
-    # Independent answer-key numerics for newly added user-review exercises.
-    exercises_script = ROOT / "scripts" / "review_exercises_demo.py"
-    if not exercises_script.is_file():
-        fail("Missing review-exercises numerical reproducer")
-    ast.parse(exercises_script.read_text(encoding="utf-8"))
-    exercises_result = subprocess.run([sys.executable, str(exercises_script)],
-                                      cwd=ROOT, capture_output=True, text=True)
-    if (exercises_result.returncode
-            or "Review exercises QA passed" not in exercises_result.stdout):
-        fail("Review exercises numeric QA failed:\n"
-             + exercises_result.stdout + exercises_result.stderr)
-
-
-    # GPT-2 smoke is standard-library-only; real weights are explicitly opt-in.
-    gpt2_source = ROOT / "scripts" / "gpt2_demo.py"
-    if not gpt2_source.is_file():
-        fail("Missing pinned GPT-2 experiment")
-    ast.parse(gpt2_source.read_text(encoding="utf-8"))
-    includes(gpt2_source.read_text(encoding="utf-8"),
-             "607a30d783dfa663caf39e06633721c8d4cfcd7e",
-             "pinned public GPT-2 revision")
-    gpt2_result = subprocess.run([sys.executable, str(gpt2_source)],
-                                 cwd=ROOT, capture_output=True, text=True)
-    if gpt2_result.returncode or "Offline smoke passed:" not in gpt2_result.stdout:
-        fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
-    includes(sources["29-revision-notes"], "39897932969",
-             "successful source-pinned real GPT-2 inference reference")
-    includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
-             "reproducible optional real GPT-2 example (verbatim command)")
-    includes(gpt2_source.read_text(encoding="utf-8"), "masked_future",
-             "real-model causal-mask numeric assertion")
-    includes(gpt2_source.read_text(encoding="utf-8"), "probability sum",
-             "real-model normalized vocabulary probabilities")
-
-    # Modern architecture figures use pinned, inspectable offline source excerpts.
-    for reproducible in ("config_table.py", "architecture_demo.py"):
-        path = ROOT / "scripts" / reproducible
-        if not path.is_file():
-            fail(f"Missing modern architecture reproducer: {reproducible}")
-        ast.parse(path.read_text(encoding="utf-8"))
-        result = subprocess.run([sys.executable, str(path)], cwd=ROOT,
-                                text=True, capture_output=True)
-        if result.returncode:
-            fail(f"Architecture example {reproducible} failed:\n"
-                 + result.stdout + result.stderr)
-    includes(sources["22d-modern-transformers"], "architecture\\_demo.py",
-             "sliding-window and illustrative MLA arithmetic")
-
-    # Visual-to-language adapter arithmetic is a deliberately untrained toy fixture.
-    bridge_script = ROOT / "scripts" / "vision_bridge_demo.py"
-    if not bridge_script.is_file():
-        fail("Missing ViT-to-LLM shape reproducer")
-    ast.parse(bridge_script.read_text(encoding="utf-8"))
-    bridge_result = subprocess.run([sys.executable, str(bridge_script)],
-                                   cwd=ROOT, capture_output=True, text=True)
-    if bridge_result.returncode or "Vision bridge QA passed" not in bridge_result.stdout:
-        fail("Vision bridge regression failed:\n"
-             + bridge_result.stdout + bridge_result.stderr)
-    includes(sources["19b-vit"], r"\label{eq:vit-llm-bridge}",
-             "multimodal adapter teaching example")
-
-    # Print-proof selector QA: must not require a PDF, Poppler or online access.
-    import runpy
-    proof_source = ROOT / "scripts" / "print_proof.py"
-    if not proof_source.is_file():
-        fail("Missing grayscale human print-proof tool")
-    ast.parse(proof_source.read_text(encoding="utf-8"))
-    select = runpy.run_path(str(proof_source), run_name="book_print_proof")["parse_pages"]
-    if select("1,3-4,last", 8) != [1, 3, 4, 8]:
-        fail("Grayscale proof page selections are incorrect")
-    for bad_selection in ("0", "9", "5-2", ",", "not-a-page"):
-        try:
-            select(bad_selection, 8)
-        except ValueError:
-            continue
-        fail(f"Grayscale proof accepted invalid page selection: {bad_selection}")
-    # Human review provenance is not a substitute for a human approval.
-    import hashlib
-    import tempfile
-    proof_helpers = runpy.run_path(str(proof_source), run_name="book_print_proof")
-    with tempfile.TemporaryDirectory(prefix="proof-sha-qa-") as tmp:
-        fixture = Path(tmp) / "fixture.pdf"
-        fixture.write_bytes(b"%PDF-1.7\nsha-test-data\n")
-        manifest = proof_helpers["build_manifest"](fixture, [1, 3], 1100,
-                                                    "a" * 40)
-        if (manifest["pdf_sha256"] != hashlib.sha256(fixture.read_bytes()).hexdigest()
-                or manifest["source_commit_sha"] != "a" * 40
-                or manifest["manual_review_completed"] is not False):
-            fail("Proof provenance data did not match input bytes")
-        # Reconcile the actual PDF digest and CI source/run provenance.
-        reconcile = proof_helpers["bind_machine_audit"]
-        audit_fixture = {
-            "pdf_sha256": manifest["pdf_sha256"],
-            "source_commit_sha": "a" * 40,
-            "github_actions_run_id": 123456,
-        }
-        bound = reconcile(manifest, audit_fixture)
-        if (bound["source_commit_sha"] != "a" * 40
-                or bound["machine_audit_run_id"] != 123456
-                or bound["machine_audit_pdf_hash_verified"] is not True
-                or bound["manual_review_completed"] is not False):
-            fail("Bound PDF audit provenance is incomplete or marked reviewed")
-        for corrupted in (
-            {**audit_fixture, "pdf_sha256": "b" * 64},
-            {**audit_fixture, "source_commit_sha": "b" * 40},
-            {**audit_fixture, "source_commit_sha": "invalid"},
-            {**audit_fixture, "github_actions_run_id": 0},
-        ):
-            try:
-                reconcile(manifest, corrupted)
-            except ValueError:
-                pass
-            else:
-                fail("Proof accepted audit with mismatched PDF/source/run provenance")
-        try:
-            proof_helpers["build_manifest"](fixture, [1], 1100, "abc")
-        except ValueError:
-            pass
-        else:
-            fail("Proof accepted a truncated commit SHA")
-
-    print("Grayscale print-proof selector QA passed")
-
-    # Machine grayscale preflight is distinct from the human proof checklist.
-    audit_source = ROOT / "scripts" / "audit_grayscale_pdf.py"
-    if not audit_source.is_file():
-        fail("Missing grayscale full-PDF audit tool")
-    ast.parse(audit_source.read_text(encoding="utf-8"))
-    audit_test = subprocess.run(
-        [sys.executable, str(audit_source), "--self-test"], cwd=ROOT,
-        capture_output=True, text=True,
-    )
-    if audit_test.returncode or "Grayscale PDF audit self-test passed" not in audit_test.stdout:
-        fail("Grayscale PDF audit self-test failed:\n"
-             + audit_test.stdout + audit_test.stderr)
-
-
-    # Batch attention must use the preceding asymmetric Q/K fixture.
-    includes(sources["11-softmax-memory"], "eq:three-query-attention-weights",
-             "projected three-query Softmax example")
-    includes(sources["11-softmax-memory"], "eq:three-query-attention-output",
-             "projected three-query AV example")
-    includes(sources["11-softmax-memory"], "0.578&0.845",
-             "projected second-row attention output")
-
-    # Catch a numerical transition that became stale after changing chapter 19.
-    includes(sources["11-softmax-memory"], r"\hyperref[intro:21c-naive-attention]",
-             "chapter 20 explicitly reprises the earlier naive example")
-    if "上一章算出了" in sources["11-softmax-memory"]:
-        fail("Chapter 20 attributes a naive-attention score to the asymmetric chapter 19")
-
-    # The end-of-chapter summary owns the forward bridge. Avoid redundant
-    # "last chapter" recaps at the start of these independently framed sections.
-    streamlined_intros = (
-        "07-functions-relu", "17-backpropagation", "20a-tokenizer",
-        "20c-classification-loss", "21a-context-gap", "21c-naive-attention",
-        "22-transformer-architecture", "23c-post-training",
-        "22d-modern-transformers",
-    )
-    for name in streamlined_intros:
-        if "上一章" in "\n".join(sources[name].splitlines()[:15]):
-            fail(f"Redundant prior-chapter recap reintroduced in {name}")
-
-    # A ten-step oral mapping must remain complete and linked to its figure.
-    block_ch22 = sources["22-transformer-architecture"]
-    ten_steps = block_ch22.split(r"\label{sec:transformer-ten-steps}")[1]
-    ten_steps = ten_steps.split(r"\end{enumerate}")[0]
-    if len(re.findall(r"(?m)^\\item ", ten_steps)) != 10:
-        fail("Transformer oral recap must have exactly ten steps")
-    includes(block_ch22, r"\input{figures/original-transformer-map}",
-             "source vs decoder-only architecture component mapping")
-    original_map = (BOOK / "figures" / "original-transformer-map.tex").read_text(
-        encoding="utf-8"
-    )
-    if not all(term in original_map.split(r"\tagstructbegin", 1)[1].split(
-            r"\begin{center}", 1)[0]
-            for term in ("Encoder", "Decoder", "Cross-Attention",
-                         "FFN", "归一化", "因果")):
-        fail("Original Transformer figure alt text lacks source/target or FFN detail")
-
-    three_tier_first_ten = ["00-functions","16-loss-gradient","07-functions-relu","17-backpropagation","18b-end-to-end-learning","18-generalization","01-vectors","02-dot-product","03-matrix-multiplication"]
-    for lesson_name in three_tier_first_ten:
-        check_owner = ("18c-training-engineering" if lesson_name == "16-loss-gradient"
-                       else "18b-end-to-end-learning" if lesson_name == "17-backpropagation"
-                       else lesson_name)
-        if not any(token in sources[check_owner] for token in
-                   (r"\chaptercheck{", r"\chapterchecktasks{")):
-            fail(f"Missing self-check in {lesson_name}")
-    from math import isclose
-    assert isclose(2*3 + 1, 7)
-    assert isclose(2*3 - 1, 5)
-    assert (2+1, 3-1) == (3, 2)
-    assert (1*3 + 2*1) == 5
-
-    three_tier_attention = ["10-mlp","20a-tokenizer","20c-classification-loss","20-embeddings","20b-task-contract","21a-context-gap","21-rnn","21c-naive-attention","21b-why-attention","11-softmax-memory","22a-position-multihead"]
-    for lesson_name in three_tier_attention:
-        if not any(token in sources[lesson_name] for token in
-                   (r"\chaptercheck{", r"\chapterchecktasks{")):
-            fail(f"Missing attention/text self-check: {lesson_name}")
-    assert (1 * 0 + 0 * 1) == 0
-    assert (1 * 1 + 0 * 1) == 1
-
-    three_tier_transformer = ["00-guide","16-loss-analytic","10b-ffn-output-head","22b-token-to-output","22c-language-training","23-llm-systems","23a-from-toy-to-gpt","23aa-pretraining-icl","23c-post-training","23b-deployment-and-ecosystem","22d-modern-transformers","23e-tech-judgement"]
-    for lesson_name in three_tier_transformer:
-        owner = ("16-loss-gradient" if lesson_name == "16-loss-analytic"
-                 else lesson_name)
-        if not any(token in sources[owner] for token in
-                   (r"\chaptercheck{", r"\chapterchecktasks{")):
-            fail(f"Missing transformer/application self-check in {lesson_name}")
-    assert math.isclose((0.3 - 1.0)/3, -0.2333333333333333)
-    assert math.isclose(math.log(4), 1.3862943611198906)
-
-    three_tier_memory_and_appendix = ["19-cnn","19b-vit","04-key-value-outer-product","05-memory-interference","06-better-linear-memory","08-stacking-key-value","09-nonlinearity-and-memory","14-summary","13-capacity"]
-    for lesson_name in three_tier_memory_and_appendix:
-        owner = ("05-memory-interference" if lesson_name == "04-key-value-outer-product"
-                 else "08-stacking-key-value" if lesson_name == "06-better-linear-memory"
-                 else "14-summary" if lesson_name == "09-nonlinearity-and-memory"
-                 else lesson_name)
-        includes(sources[owner], r"\chapterchecktasks{" + lesson_name + "}",
-                 f"memory/vision/math check at chapter end: {lesson_name}")
-    assert (1 * 0 + 0 * 1) == 0
-    assert (3 * 3 * 3 * 8) == 216
-
-    # Keep chapter heading and its first
-    # explanatory lines together at previously observed page-bottom starts.
-    for name, heading in (
-        ("16-loss-gradient", "怎样量“猜得多差”？损失与一次直接求解"),
-        ("18-generalization", "训练得很好，为什么新题反而做错？"),
-        ("10-mlp", "MLP：把矩阵与激活函数组成两层网络"),
-        ("13-capacity", "进阶探索：高维空间与记忆容量"),
-        ("23d-agent-systems", "检索与证据：RAG 怎样回答有来源的问题？"),
-    ):
-        includes(sources[name], "\\Needspace{", f"R01 page-break guard for {name}")
-        if not re.search(r"\\Needspace\{\d+\\baselineskip\}\s*\\chapterrule\s*\\section\{"
-                         + re.escape(heading) + r"\}", sources[name]):
-            fail(f"R01 title and full locator can split at a page boundary: {name}")
-
-    # Each of the 38 typeset chapters retains one source metadata locator for review.
-    numbered_sources = re.findall(r"\\input\{chapters/([^}]+)\}", main)
-    numbered_sources = numbered_sources[:numbered_sources.index("23e-tech-judgement") + 1]
-    numbered_count = 0
-    stages_seen: set[int] = set()
-    for name in numbered_sources:
-        blocks = re.split(r"(?m)^\\section\{[^\n]*\}", sources[name])
-        for chapter_body in blocks[1:]:
-            if chapter_body.count(r"\chaptercompass{") != 1:
-                fail(f"Chapter compass missing or repeated in {name}")
-            stages = re.findall(r"\\modelpipelinefocus\{(\d+)\}\{([^}]+)\}",
-                                chapter_body)
-            if len(stages) != 1:
-                fail(f"R01 locator missing or repeated in numbered chapter from {name}: {stages}")
-            stage = int(stages[0][0])
-            if stage < 0 or stage > 8 or not stages[0][1].strip():
-                fail(f"R01 chapter has unsupported or unlabeled model stage: {name}")
-            stages_seen.add(stage)
-            numbered_count += 1
-    if numbered_count != 36 or stages_seen != set(range(9)):
-        fail(f"R01 requires 36 numbered chapter card anchors and all 0..8 stages; "
-             f"found {numbered_count} and {sorted(stages_seen)}")
-
-    # Grayscale-safe topic locator in the six most important entry points.
-    for name, stage in (
-        ("20a-tokenizer", 1), ("20-embeddings", 2),
-        ("21b-why-attention", 3), ("10b-ffn-output-head", 4),
-        ("22b-token-to-output", 5), ("23-llm-systems", 7),
-    ):
-        includes(sources[name], rf"\modelpipelinefocus{{{stage}}}",
-                 f"{name} consistent module locator")
-
-    # A chapter's conclusion should not precede its final boundary and check.
-    capacity = sources["13-capacity"]
-    if capacity.rfind(r"\begin{conclusion}") < capacity.rfind(r"\chapterchecktasks{13-capacity}"):
-        fail("Capacity chapter places its conclusion before the final self-test")
-
-    # Structural guard only: original-course license assessment requires a human.
-    agent_source = sources["23d-agent-systems"]
-    for old_analogy in ("员工小 L", "给员工加能力", "老板逐步", "原讲稿的复用授权"):
-        if old_analogy in agent_source:
-            fail(f"Legacy person/authorization editorial prose returned to Agent chapter: {old_analogy}")
-    includes(agent_source, r"\subsection{先分解任务：七个可核对的关口}",
-             "merged seven-point report delivery table")
-    if r"\subsection{七个核对关口" in agent_source:
-        fail("Agent chapter duplicates the same seven checkpoints")
-
-    # Every new practice computation and link must have its independent answer.
-    for name, anchor in (
-        ("25-integrated-practice", "exercise:warmup-schedule"),
-        ("25-integrated-practice", "exercise:adamw-decay"),
-        ("25b-modern-practice", "exercise:batch-attention-new"),
-        ("15-practice", "exercise:delta-reverse"),
-    ):
-        includes(sources[name], r"\label{" + anchor + "}", "matched exercise anchor")
-    for name in ("20a-tokenizer", "20c-classification-loss",
-                 "20b-task-contract", "21a-context-gap", "21-rnn"):
-        includes(sources[name], r"\chaptercompass{", "shape-first missing chapter card")
-    for title in ("范围与权限", "证据覆盖", "计算校验", "跨轮状态", "失败处理", "接口复用", "交付复核"):
-        includes(agent_source, title, "seven gate delivery table")
-    includes(agent_source, r"\label{sec:agent-seven-gates}", "Agent gate anchor")
-    includes(sources["23d-agent-protocols"], r"\label{sec:agent-acceptance}", "Agent acceptance anchor")
-    includes(sources["23d-agent-tools"], '"id":"call_q3_01"', "Agent request has a stable call ID")
-    includes(sources["23d-agent-tools"], "tool_message(call.id, result)", "Agent result resolves request ID")
-    includes(sources["22d-modern-transformers"], r"R(m\theta)^\top",
-             "RoPE preserves the row-vector rotation convention")
-    includes(sources["24e-bilingual-glossary"],
-             r"\subsubsection*{不要混淆的五对概念}", "restored five concept contrasts")
-    for concept in ("In-context learning (ICL)", "Few-shot prompting",
-                    "Prompt", "Context", "Application memory", "Reward model"):
-        includes(sources["24e-bilingual-glossary"], concept, "modern core glossary terms")
-    key_source = sources["28-chapter-checks"]
-    answered_chapters = [int(x) for x in
-        re.findall(r"\\item\[\\textbf\{第 (\d+) 章\}\]", key_source)]
-    if answered_chapters != sorted(answered_chapters) or answered_chapters[-1] != 36:
-        fail("Chapter answer key must follow numbered chapter order through 36")
-    if key_source.count(r"\item[\textbf{附录 A}]") != 0:
-        fail("Math and symbol appendix should be pure reference sections")
-
-    # Editorial regression after moving memory into Part VI.
-    # These are obsolete book-facing phrases; production policy belongs in docs/.
-    stale_reader_phrases = (
-        "第九部分的联想记忆选读专题",
-        "附录 A 的逐层数值核对表",
-        "第 22、23 章的原始算例",
-        "上一部分我们用三维模型完成了",
-        "联想记忆现已成为第 VI 部分",
-        "不再引入另一套列向量主线",
-        "不会参与常规 PDF CI",
-        "给“员工小 L”补能力",
-        "具体相似内容的来源与许可仍需在正式发布前",
-        "ATTRIBUTION\\_REVIEW.md",
-    )
-    for source, body in sources.items():
-        for phrase in stale_reader_phrases:
-            if phrase in body:
-                fail(f"Obsolete editorial prose in {source}: {phrase}")
-
-    # Revised reading path: 36 core numbered chapters, 2 elective visual chapters.
-    input_list = re.findall(r"\\input\{chapters/([^}]+)\}", main)
-    first_elective = input_list.index("23f-foundation-recap")
-    core_sources = input_list[:first_elective]
-    visible_chapters = sum(len(re.findall(r"(?m)^\\section\{", sources[n]))
-                           for n in core_sources)
-    if visible_chapters != 36:
-        fail(f"Core curriculum requires 36 numbered chapters, found {visible_chapters}")
-    includes(sources["16-loss-gradient"], r"\label{intro:16a-gradient-descent}",
-             "loss and gradient are two progressive lessons")
-    includes(sources["28-chapter-checks"], r"\label{answer:16-loss-analytic}",
-             "separate analytical-loss self-check")
-
-    includes(sources["20c-classification-loss"], r"\label{concept:cross-entropy}", "first classification loss definition")
-    includes(sources["20c-classification-loss"], r"\label{concept:logits}", "first logits definition")
-    includes(sources["20c-classification-loss"], r"\label{concept:softmax}", "first Softmax definition")
-    includes(sources["20c-classification-loss"], r"\label{concept:logit-gradient}", "p-y derivation")
-    includes(sources["16-loss-gradient"], r"L(1,0)=\frac53", "unified starting loss")
-    includes(sources["16-loss-gradient"], r"L(1.4,0.6)", "joint w-b update")
-    includes(sources["16-loss-gradient"], r"\input{figures/loss-two-parameter-contours}", "joint loss contour")
-    includes(sources["20-embeddings"], r"\R^{5\times3}", "authoritative E shape")
-    includes(sources["20b-task-contract"], r"50{,}257", "chapter 15 concise GPT-2 scale pointer")
-    includes(sources["00b-math-tools"], r"\log", "math prerequisites")
-    # Exercise groups can appear as bare B1/B2/B3 in explanatory prose:
-    # previously only B1-17 style IDs were detected, missing two stale labels.
-    legacy_code = r"\bB[123](?:-\d+)?\b"
-    stale_ids = {name: sorted(set(re.findall(legacy_code, body)))
-                 for name, body in sources.items()
-                 if re.search(legacy_code, body)}
-    if stale_ids:
-        fail(f"Stale appendix exercise numbering B1/B2/B3: {stale_ids!r}")
-    answers = sources["27-answer-key"]
-    if re.search(r"\\item\s+\\textbf\{C[123]-\d+\s+提示[:：]", answers):
-        fail("Answer enumeration already renders an exercise code; do not repeat it in a hint")
-    includes(sources["13-capacity"], r"|\vect{k}_i\vect{k}_j^\top|",
-             "row-vector random-key inner product")
-    if r"|\vect{k}_i^\top\vect{k}_j|" in sources["13-capacity"]:
-        fail("Random-key inner product contradicts the row-vector convention")
-    diagram = (BOOK / "figures" / "key-value-layout.tex").read_text(encoding="utf-8")
-    if "第 20.1 节" in diagram:
-        fail("Outdated chapter-specific reference in key layout figure")
-    for practice, prefix in (("25-integrated-practice", "C1"), ("25b-modern-practice", "C2"), ("15-practice", "C3")):
-        includes(sources[practice], rf"label=\textbf{{{prefix}-\arabic*.}}", "unique exercise number")
-        includes(sources["27-answer-key"], rf"label=\textbf{{{prefix}-\arabic*.}}", "matching answer number")
-    includes(sources["24d-english-index"], r"\termref{concept:cross-entropy}", "first classification definition in index")
-    includes(sources["24d-english-index"], r"\termref{concept:pretraining}", "pretraining index destination")
-    includes(sources["27-answer-key"], r"\|\vect a\|=6", "corrected cosine exercise")
-    includes(sources["27-answer-key"], r"(5/13)", "cosine calculation")
-    includes(sources["23d-agent-tools"], "read\\_observations",
-             "Agent tool loop must reconnect to the Spring Token teaching example")
-    includes(sources["10b-ffn-output-head"], r"\begin{bmatrix}4&2\\1&1\end{bmatrix}", "nonidentity FFN")
-    includes(sources["25b-modern-practice"], "输入行向量 $(2,1)$", "independent FFN exercise")
-    for category in (r"title={{\symboliconfont ◆} 直觉}", r"title={{\symboliconfont ▸} 动手算}", "title={! 易错}", r"title={{\symboliconfont ■} 小结}"):
-        includes(main, category, "four consistent note classes")
-    for figure_name, chapter_name in (
-        ("loss-descent", "16-loss-gradient"),
-        ("backprop-computation", "17-backpropagation"),
-        ("generalization-three-fits", "18-generalization"),
-        ("validation-early-stop", "18-generalization"),
-        ("cnn-window", "19-cnn"),
-        ("embedding-lookup", "20-embeddings"),
-        ("embedding-training-projection", "20-embeddings"),
-        ("causal-mask-heatmap", "22-transformer-architecture"),
-        ("attention-weight-heatmap", "22b-token-to-output"),
-        ("three-position-probabilities", "22b-token-to-output"),
-        ("training-20-step-loss", "22c-language-training"),
-    ):
-        includes(sources[chapter_name], f"\\input{{figures/{figure_name}}}", chapter_name)
-        figure = BOOK / "figures" / f"{figure_name}.tex"
-        if not figure.is_file() or r"\begin{tikzpicture}" not in figure.read_text(encoding="utf-8"):
-            fail(f"Missing instructional figure {figure_name}")
-    for video in ("BV1NCgVzoEG9", "BV15z4C6SEHT"):
-        includes(sources["26-sources"], video, "source bibliography")
-
-    # No answers next to exercises; the appendix must collect all three.
-    for name in ("25-integrated-practice", "25b-modern-practice", "15-practice"):
-        body = sources[name]
-        includes(body, r"\hyperref[app:answers]", name)
-        if "参考答案" in body and "参考答案统一" not in body and "参考答案" not in body.split("\\hyperref")[0]:
-            fail(f"Exercise chapter may contain an embedded solution list: {name}")
-        if r"\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,title={\sffamily\bfseries 简明答案}" in body:
-            fail(f"Inline answer box is still present: {name}")
-    # M5: exercise / answer-key parity must not drift after adding transfer tasks.
-    math_body = sources["25-integrated-practice"]
-    modern_body = sources["25b-modern-practice"]
-    answer_sections = sources["27-answer-key"].split(r"\subsubsection*{")
-    if len(answer_sections) != 4:
-        fail("Expected three distinctly labelled answer sets")
-    expected_counts = (18, 21, 12)  # practice order: mathematics, modern systems, core memory
-    actual_counts = (len(re.findall(r"\\item\b", answer_sections[i+1]))
-                     for i in range(3))
-    if tuple(actual_counts) != expected_counts:
-        fail("Central answer counts do not match 18/21/12 lesson exercises")
-    if math_body.count(r"\item") != 18 or modern_body.count(r"\item") != 21 or sources["15-practice"].count(r"\item") != 12:
-        fail("Exercise collections must contain 18 math, 21 modern and 12 memory tasks")
-    for name in ("25-integrated-practice", "25b-modern-practice"):
-        for label in ("【回忆】", "【手算】", "【迁移】"):
-            includes(sources[name], label, f"{name} exercise tier")
-    answer_key = sources["27-answer-key"]
-    includes(answer_key, r"\label{app:answers}", "answer key")
-    if answer_key.count(r"\subsubsection*{") != 3:
-        fail("Answer appendix should separate the three exercise sets")
-    # Reader-facing answer titles must not expose source filenames/IDs.
-    key = sources["28-chapter-checks"]
-    check_titles = re.findall(
-        r"\\label\{answer:([^}]+)\}\\textbf\{\\hyperref\[check:[^\]]+\]\{([^}]+)\}\}",
-        key)
-    if len(check_titles) < 40:
-        fail(f"Unexpectedly few linked chapter-check answers: {len(check_titles)}")
-    ids = [identifier for identifier, title in check_titles if identifier == title]
-    if ids:
-        fail(f"Internal source identifiers leaked into answer headings: {ids}")
-    includes(sources["24-lexicon"], r"\textbf{Top-p}", "100-word index")
-    ninth = sources["24-lexicon"].split(r"\subsubsection{第九组")[1].split(r"\subsubsection{第十组")[0]
-    includes(ninth, r"\textbf{Top-p}", "sampling group")
-
-    for practice in ("25-integrated-practice", "25b-modern-practice", "15-practice"):
-        for level in ("基础", "标准", "挑战"):
-            includes(sources[practice], r"\exercisemeta{" + level + "}",
-                     f"{practice}: three explicit difficulty tiers")
-    includes(sources["25b-modern-practice"], "形状错误",
-             "modern shape-error exercise")
-    includes(sources["25b-modern-practice"], "Dropout",
-             "modern conceptual correction exercise")
-    includes(sources["30-optimizer-appendix"], r"\label{eq:adamw-decoupled}",
-             "decoupled AdamW mathematical update")
-    includes(sources["30-optimizer-appendix"], r"\label{concept:lr-warmup}",
-             "five-step learning-rate scheduling example")
-    includes(sources["30-optimizer-appendix"], r"\boxed{0.58}",
-             "warmup optional worked result")
-    from math import isclose
-    eta_schedule = (0.02, 0.04, 0.06, 0.06, 0.03)
-    w = 1.0
-    for eta in eta_schedule:
-        w -= eta * 2.0
-    assert isclose(w, 0.58, abs_tol=1e-12)
-    assert isclose((1-0.1*0.05)*2-0.1*(0.5/(0.25**0.5)),
-                   1.89, abs_tol=1e-12)
-
-    includes(sources["25-integrated-practice"], r"XX^\top",
-             "independent symmetric raw-dot-product exercise")
-    includes(sources["25-integrated-practice"], "a a b",
-             "new BPE corpus exercise")
-    includes(sources["25b-modern-practice"], "q=(0.2,1)",
-             "RAG retrieval coverage regression")
-    includes(sources["25b-modern-practice"], "w=2",
-             "sliding-window edge count regression")
-    includes(sources["25b-modern-practice"], "review\\_exercises\\_demo.py",
-             "first programming exercise uses locally runnable standard-library script")
-    includes(sources["28-chapter-checks"], r"\answerresult{10\%}",
-             "Agent numeric arithmetic self-check")
-
-    includes(sources["25b-modern-practice"], "1000",
-             "uniform vocabulary loss regression")
-    assert sum(min(2, i + 1) for i in range(5)) == 9
-    assert math.isclose(math.log(1000), 6.907755278982137)
-
-
-    # Glossary is one maintained definition set with search-only alternate views.
-    base_terms = re.findall(r"(?m)^\\item\s+\\textbf\{([^}]+)\}",
-                            sources["24-lexicon"].split(r"\subsubsection*{不要混淆")[0])
-    modern_terms = re.findall(r"(?m)^\\item\s+\\textbf\{([^}]+)\}",
-                              sources["24b-modern-lexicon"])
-    english_aliases = re.findall(
-        r"(?m)^\\item\s+\{\\sffamily\\bfseries\s+([^}]+)\}",
-        sources["24d-english-index"])
-    assert english_aliases == sorted(english_aliases, key=str.casefold)
-    core_duplicates = sorted(set(base_terms) & set(modern_terms))
-    if core_duplicates:
-        fail(f"Modern glossary repeats defined base terms: {core_duplicates}")
-    for label, terms, expected in (
-        ("base glossary", base_terms, 100),
-        ("modern glossary", modern_terms, 36),
-        ("English aliases", english_aliases, 108),
-    ):
-        if len(terms) != expected or len(set(terms)) != expected:
-            fail(f"{label}: expected {expected} distinct entries, found "
-                 f"{len(terms)} entries and {len(set(terms))} unique names")
-    # Generated table is an exact derivative of the 100+36 canonical glossary.
-    table_check = subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / "generate_bilingual_glossary.py"), "--check"],
-        cwd=ROOT, capture_output=True, text=True)
-    if table_check.returncode or "136-row bilingual glossary QA passed" not in table_check.stdout:
-        fail("Generated bilingual table is stale:\\n"
-             + table_check.stdout + table_check.stderr)
-    includes(sources["24e-bilingual-glossary"], r"\label{app:bilingual-glossary}",
-             "unified bilingual table anchor")
-    includes(sources["24e-bilingual-glossary"], r"\pageref*{",
-             "page-linked single typeset glossary")
-    english_groups = re.findall(
-        r"English ([A-Z]--[A-Z]) / 英文首字母索引",
-        sources["24e-bilingual-glossary"])
-    if english_groups != ["A--D", "E--H", "I--L", "M--P", "Q--T", "U--Z"]:
-        fail(f"Glossary alphabetical sections missing or out of order: {english_groups}")
-    if len(re.findall(r"\\hyperref\[", sources["24e-bilingual-glossary"])) != 136:
-        fail("Alphabetical glossary must retain 136 clickable entries")
-    if len(re.findall(r"\\hyperref\[", sources["24f-chinese-index"])) != 136:
-        fail("Chinese pinyin index must contain 136 clickable destinations")
-    if r"\label{app:chinese-index}" not in sources["24f-chinese-index"]:
-        fail("Chinese pinyin index must have a labelled heading")
-    for unused in ("24-lexicon", "24b-modern-lexicon", "24d-english-index"):
-        if rf"\input{{chapters/{unused}}}" in main:
-            fail(f"Canonical glossary source must not be typeset: {unused}")
-    for core in ("22-transformer-architecture", "23a-from-toy-to-gpt",
-                 "04-key-value-outer-product", "23d-agent-systems",
-                 "22d-modern-transformers", "19b-vit",
-                 "22a-position-multihead", "22b-token-to-output",
-                 "22c-language-training", "23-llm-systems",
-                 "06-better-linear-memory", "09-nonlinearity-and-memory",
-                 "13-capacity", "23aa-pretraining-icl", "23c-post-training",
-                 "23b-deployment-and-ecosystem", "23e-tech-judgement"):
-        includes(sources[core], r"\chaptercompass{",
-                 f"{core} one-sentence and shape-first introduction")
-
-    # Glossary anchors remain valid and are backed by content in the book.
-    labels: dict[str, str] = {}
-    for name in REQUIRED:
-        for label in re.findall(r"\\label\{([^}]+)\}", sources[name]):
-            if label in labels:
-                fail(f"Duplicate cross-reference label {label}: {labels[label]} and {name}")
-            labels[label] = name
-
-    # Guard against dangling LaTeX references in the complete active manuscript.
-    # Figure labels and generated chapter-check destinations are included.
-    active_tex = [main, *sources.values()]
-    active_tex.extend(path.read_text(encoding="utf-8")
-                      for path in (BOOK / "figures").glob("*.tex"))
-    combined_source = "\n".join(active_tex)
-    # A build can compile even when the reader edition contains orphaned
-    # references to nonexistent front matter or stale editorial revisions.
-    visible_source = re.sub(r"(?<!\\)%[^\n]*", "", combined_source)
-    for stale in ("沿用前言", "前言所述", "本轮校订",
-                  "旧 PDF 页码", "这才兑现", "移至附录 A.4"):
-        if stale in visible_source:
-            fail(f"Reader-facing editing residue or orphaned premise: {stale}")
-    known_targets = set(re.findall(r"\\label\{([^}]+)\}", combined_source))
-    known_targets.update("check:" + check_id
-                         for body in sources.values()
-                         for check_id in re.findall(r"\\chaptercheck(?:tasks)?\{([^}]+)\}", body))
-    ref_targets = set(re.findall(
-        r"\\(?:ref\*?|pageref\*?)\{([^}]+)\}", combined_source))
-    ref_targets.update(re.findall(r"\\hyperref\[([^]]+)\]", combined_source))
-    missing_targets = sorted(target for target in ref_targets
-                             if "#" not in target and target not in known_targets)
-    if missing_targets:
-        fail(f"Unresolved cross-references (would print ??): {missing_targets!r}")
-
-    # The new \chaptercheck macro emits \label{check:...} during TeX expansion.
-    # Register those semantic targets in the static source audit as well.
-    for name in REQUIRED:
-        for lesson_id in re.findall(r"\\chaptercheck(?:tasks)?\{([^}]+)\}", sources[name]):
-            virtual_label = "check:" + lesson_id
-            if virtual_label in labels:
-                fail(f"Duplicate chapter check {lesson_id}")
-            labels[virtual_label] = name
-    check_ids = {key.removeprefix("check:") for key in labels if key.startswith("check:")}
-    answer_ids = {key.removeprefix("answer:") for key in labels if key.startswith("answer:")}
-    if check_ids != answer_ids:
-        fail(f"Self-check answer mismatch: missing={sorted(check_ids-answer_ids)}, "
-             f"unexpected={sorted(answer_ids-check_ids)}")
-    # 47 old checks minus the merged opening lesson, two appendix checks and duplicate optimizer check.
-    if len(check_ids) != 45:
-        fail(f"Expected 45 linked chapter checks, got {len(check_ids)}")
-    varied = {key for key in check_ids
-              if r"\chapterchecktasks{" + key + "}" in
-              sources[labels["check:" + key]]}
-    if varied != check_ids:
-        fail(f"All 45 chapter checks must use the fully redesigned macro; "
-             f"missing={sorted(check_ids-varied)}")
-    if r"\newcommand{\chaptercheck}" in main:
-        fail("Obsolete legacy three-question macro must be removed")
-    for old_bank in ("chapterchallenge@", "chapterchallengetype@", "chapterrecall@"):
-        if old_bank in main:
-            fail(f"Obsolete legacy per-chapter question bank remains: {old_bank}")
-    from pretraining_data_demo import run_checks as check_corpus_dedup
-    check_corpus_dedup()
-    from generate_chapter_navigation import validate_navigation
-    for problem in validate_navigation():
-        fail(problem)
-    if r"\input{chapter-practice}" not in main:
-        fail("Missing generated chapter practice navigation")
-    if r"\textbf{补充题（" in sources["28-chapter-checks"]:
-        fail("Answer appendix still contains legacy supplemental-task labels")
-    print(f"Pedagogy QA: all {len(varied)} chapter checks have short clues "
-          "and detailed solutions in D.2")
-
-    # These numbered chapters span two or more .tex files. Source checks and
-    # recaps belong after their final subsection, not inside chapter 5/28/29.
-    for early, late, check_id in (
-        ("17-backpropagation", "18b-end-to-end-learning", "17-backpropagation"),
-        ("06-better-linear-memory", "08-stacking-key-value", "06-better-linear-memory"),
-        ("09-nonlinearity-and-memory", "14-summary", "09-nonlinearity-and-memory"),
-    ):
-        marker = r"\chapterchecktasks{" + check_id + "}"
-        if marker in sources[early] or marker not in sources[late]:
-            fail(f"Chapter self-check not relocated to final subsection: {check_id}")
-    if r"\subsubsection*{联想记忆的关键结论}" in sources["15-practice"]:
-        fail("Memory-part conclusion must not drift into Appendix C")
-    if "提高专题收束：联想记忆的关键结论" not in sources["13-capacity"]:
-        fail("Advanced appendix conclusion missing")
-    if r"\newcommand{\chapterrecallanswer}[1]{}" not in main:
-        fail("Self-check core answer must not be printed immediately below questions")
-    includes(main, r"\begin{tcolorbox}[enhanced,breakable,colback=white",
-             "self-checks must flow with surrounding text")
-    for name, fragment in (
-        ("00g-reading-routes", "联想记忆移至附录"),
-        ("25c-migrated-review", "原自测中剩余"),
-        ("28-chapter-checks", "原题 4／5 移至"),
-    ):
-        if fragment in sources[name]:
-            fail(f"Editorial revision residue remains in reader-facing text: {name}")
-    includes(main, r"\newcommand{\chapterinlinehint}[1]", "per-question short answer clue")
-    if "到附录 C 做本章延伸题 4" in main or "延伸题 4／5" in sources["28-chapter-checks"]:
-        fail("Obsolete 4/5 numbering must not compete with Appendix C exercise IDs")
-    if sources["25c-migrated-review"].count(r"\begin{enumerate}[label={}") != 45:
-        fail("Appendix C must retain 45 chapter groups with explicit C4 exercise IDs")
-    if r"\\hyperref[check:00-guide]{：生成流程" in sources["25c-migrated-review"]:
-        fail("Extension appendix reading-guide heading has no readable title")
-    if r"\textbf{原题 4：" in sources["25c-migrated-review"]:
-        fail("Appendix C must use real 4/5 list markers instead of duplicate '1. 原题 4' labels")
-    if "简明答案},fonttitle=\\sffamily\\bfseries,coltitle=ink" not in sources["27-answer-key"]:
-        fail("Appendix D memory-answer heading must have high-contrast dark title text")
-    if len(re.findall(r"\\label\{extension:[^}]+\}",
-                      sources["25c-migrated-review"])) != 50:
-        fail("Appendix C must hold exactly 50 relocated self-check questions")
-    # Each moved question must reach its own numbered solution, rather than
-    # only the opening paragraph of the chapter's answer group.
-    extension_source = sources["25c-migrated-review"]
-    appendix_answers = sources["28-chapter-checks"]
-    direct_links = set(re.findall(
-        r"\\hyperref\[answerpiece:([^]]+)\]", extension_source))
-    direct_destinations = set(re.findall(
-        r"\\label\{answerpiece:([^}]+)\}", appendix_answers))
-    if len(direct_links) != 50 or direct_links != direct_destinations:
-        fail(f"Broken per-question extension solution links: "
-             f"links={len(direct_links)}, answers={len(direct_destinations)}, "
-             f"missing={sorted(direct_links - direct_destinations)}")
-    if re.search(r"\\subsubsection\*\{\\hyperref\[check:[^]]+\]\{"
-                 r"[a-z0-9]+-[a-z0-9-]+：", extension_source):
-        fail("Reader-facing appendix C must use lesson titles rather than file slugs")
-    for file_name in ("00h-colophon", "23d-agent-systems", "26-sources",
-                      "29-revision-notes", "16-loss-gradient"):
-        for stale in ("沿用前言", "前言所述", "本轮校订", "旧 PDF 页码",
-                      "这才兑现"):
-            if stale in sources[file_name]:
-                fail(f"Reader edition still contains an editorial artifact: "
-                     f"{file_name}: {stale}")
-
-    answers = sources["28-chapter-checks"]
-    for lesson_id in varied:
-        body = sources[labels["check:" + lesson_id]]
-        task_start = r"\chapterchecktasks{" + lesson_id + "}"
-        exercises = body.split(task_start, 1)[1].split(
-            r"\chapterrecallanswer{", 1)[0]
-        question_types = re.findall(
-            r"\\item\s+\\textbf\{([^：:}]+)[：:]", exercises)
-        question_count = exercises.count(r"\item ")
-        if question_count != 3 or len(question_types) != 3:
-            fail(f"Each chapter must have exactly three visible foundation questions: "
-                 f"{lesson_id}: {question_types}")
-        if exercises.count(r"\chapterinlinehint{") != 3:
-            fail(f"Each question needs one short local clue: {lesson_id}")
-        from generate_chapter_navigation import argument
-        for hint_match in re.finditer(r"\\chapterinlinehint\{", exercises):
-            hint, _ = argument(exercises, hint_match.end()-1)
-            if re.search(r"\d|\\answerresult|\\boxed", hint):
-                fail(f"Self-check hint gives a worked result instead of a method: {lesson_id}")
-        extensions = sorted(int(n) for n in re.findall(
-            r"\\label\{extension:" + re.escape(lesson_id) + r":(\d+)\}",
-            sources["25c-migrated-review"]))
-        if extensions not in ([4], [4, 5]):
-            fail(f"Expected one or two migrated appendix C questions: "
-                 f"{lesson_id}: {extensions}")
-        normalized_types = [re.sub(r"（[^）]+）", "", label)
-                            for label in question_types]
-        if len(set(normalized_types)) != question_count:
-            fail(f"Duplicate question types inside a redesigned chapter: "
-                 f"{lesson_id}: {normalized_types}")
-        marker = r"\label{answer:" + lesson_id + "}"
-        section = answers.split(marker, 1)[1].split(r"\item[", 1)[0]
-        answer_ids = re.findall(r"\\answerpiece\{([^}]+)\}\{[^}]+\}", section)
-        extension_ids = re.findall(
-            r"\\label\{exercise:(C4-\d+)\}\\label\{extension:"
-            + re.escape(lesson_id) + r":\d+\}", extension_source)
-        expected_answer_ids = ["1", "2", "3"] + extension_ids
-        if answer_ids != expected_answer_ids:
-            fail(f"Self-check/appendix extension answer mismatch: "
-                 f"{lesson_id}: expected={expected_answer_ids}, found={answer_ids}")
-
-    for lesson_id in sorted(check_ids):
-        src = sources[labels["check:" + lesson_id]]
-        task = r"\chapterchecktasks{" + lesson_id + "}"
-        if src.count(task) != 1 or r"\chaptercheck{" + lesson_id + "}" in src:
-            fail(f"Missing/repeated fully redesigned chapter check: {lesson_id}")
-        fragment = src.split(task, 1)[1].split(
-            r"\chapterrecallanswer{", 1)[0]
-        if fragment.count(r"\item ") != 3 or r"\chapterrecallanswer{" not in src:
-            fail(f"Missing substantive exercises or local recall answer: {lesson_id}")
-
-    for name in REQUIRED:
-        for destination in re.findall(r"\\hyperref\[((?:check|answer):[^]]+)\]", sources[name]):
-            if destination not in labels:
-                fail(f"Broken self-check link in {name}: {destination}")
-    for lex in ("24-lexicon", "24b-modern-lexicon"):
-        refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if len(refs) != (110 if lex == "24-lexicon" else 36):
-            fail(f"Unexpected glossary link count in {lex}: {len(refs)}")
-        for ref in refs:
-            if ref not in labels:
-                fail(f"Broken glossary destination: {ref}")
-        if lex == "24-lexicon":
-            key_terms = {
-                "交叉熵": "concept:cross-entropy",
-                "梯度下降": "intro:16a-gradient-descent",
-                "残差连接": "concept:residual",
-                "Token": "intro:20a-tokenizer",
-                "Query": "concept:qkv",
-                "Key": "concept:qkv",
-                "Value": "concept:qkv",
-                "Self-Attention": "concept:self-attention",
-                "Cross-Attention": "concept:cross-attention",
-                "缩放点积": "concept:scaled-dot-product",
-                "Softmax": "concept:softmax",
-                "因果掩码": "concept:causal-mask",
-                "多头注意力": "concept:multihead",
-                "预训练": "concept:pretraining",
-                "监督微调": "concept:sft",
-                "RLHF": "concept:rlhf",
-                "LoRA": "concept:lora",
-                "Logits": "concept:logits",
-                "温度": "concept:sampling",
-                "Top-k": "concept:sampling",
-                "Top-p": "concept:sampling",
-                "RAG": "concept:rag",
-                "MCP": "concept:mcp",
-                "智能体": "concept:agent",
-                "工作流": "concept:workflow",
-                "量化": "concept:quant"
-            }
-            items = dict(re.findall(
-                r"(?m)^\\item \\textbf\{([^}]+)\}.*?\\termref\{([^}]+)\}",
-                sources[lex]))
-            for term, destination in key_terms.items():
-                if items.get(term) != destination:
-                    fail(f"Foundation term {term} must link to {destination}, got {items.get(term)}")
-
-        if lex == "24b-modern-lexicon" and any(not ref.startswith("concept:") for ref in refs):
-            fail("Modern glossary must link to precise concept definitions, not chapter introductions")
-    # Also verify in-text concept explanations precede their hyperlinks.
-    seen: set[str] = set()
-    total = 0
-    for name in REQUIRED:
-        body = sources[name]
-        for ref in re.findall(r"\\conceptlink\{([a-z0-9-]+)\}", body):
-            if "concept:" + ref not in seen:
-                fail(f"Concept back-link has no earlier lesson: {ref} in {name}")
-            total += 1
-        seen.update(re.findall(r"\\label\{(concept:[a-z0-9-]+)\}", body))
-    if total < 30:
-        fail("Suspiciously few concept links after restructuring")
-
-    # All textbook tabular/tabularx data tables must declare their first row as TH.
-    table_envs = sum(len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", body))
-                     for body in sources.values())
-    marked_headers = sum(body.count(r"\tagpdfsetup{table/header-rows={1}}")
-                         for body in sources.values())
-    if table_envs < 23 or marked_headers != table_envs:
-        fail(f"Table header coverage incomplete: {marked_headers}/{table_envs} (minimum 23)")
-
-    # The prominent diagram and teaching resources are all editable TikZ.
-    for figure in ("row-column-intuition", "key-value-layout", "pre-norm-block",
-                   "attention-why-qkv"):
-        file = BOOK / "figures" / f"{figure}.tex"
-        if not file.is_file() or r"\begin{tikzpicture}" not in file.read_text(encoding="utf-8"):
-            fail(f"Missing editable figure {figure}")
-    # Figure 9: both weighted scores and values must flow INTO the result.
-    # Source-level endpoint assertions complement page-render review; curved
-    # Bezier connectors previously overshot the result boundary and appeared
-    # to point out of the diagram.
-    qkv = (BOOK / "figures" / "attention-why-qkv.tex").read_text(
-        encoding="utf-8")
-    for edge in (
-        "(goal.south) -- (qkv-split);",
-        "(qkv-split) -| (find.north);",
-        "(qkv-split) -| (read.north);",
-        "(weight.south) -- ([xshift=-31.5mm]out.north);",
-        "(value.south) -- ([xshift=31.5mm]out.north);",
-    ):
-        includes(qkv, edge, "figure 9 directed connector")
-    for obsolete in (
-        "to[out=-115,in=90]",
-        "to[out=-65,in=90]",
-        "to[out=-90,in=150]",
-        "to[out=-90,in=30]",
-        "(out.north west)",
-        "(out.north east)",
-    ):
-        if obsolete in qkv:
-            fail(f"Figure 9 retains a misleading arrow route: {obsolete}")
-
-    # Figure 16 must not reverse the training feedback arrow or visually suggest
-    # that inference -> post-training -> external tools is one execution chain.
-    concept = sources["24c-concept-map"]
-    for arrow in (
-        "(upd.north) --",
-        "(emb.south);",
-        "(post.north) -- ++(0,5mm) -| (upd.south);",
-        "(gen.east) --",
-        "(tools.west);",
-    ):
-        includes(concept, arrow, "figure 16 arrow direction")
-    for obsolete in (
-        "([yshift=4mm]emb.north)",
-        "(gen)--(post)",
-        "(post)--(tools)",
-        "(ffn.east) -- ++(.5,0) |- (tools.east)",
-    ):
-        if obsolete in concept:
-            fail(f"Figure 16 contains a misleading or reversed arrow: {obsolete}")
-
-    # A light title bar must not use tcolorbox's default white title text.
-    weight_figure = (BOOK / "figures" / "attention-three-step-weights.tex").read_text(
-        encoding="utf-8")
-    includes(weight_figure, "coltitle=ink", "figure 10 dark title on light background")
-    includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
-    # A-G appendix sections must be explicit in the main file.
-    appendix = main.split(r"\appendix", 1)[1]
-    group_titles = re.findall(r"(?m)^\\section\{([^}]+)\}", appendix)
-    if group_titles != ["核心公式、数学与形状速查", "三维贯通实验、复算与脚本",
-                        "综合练习与迁移实践", "集中参考答案与随堂解答",
-                        "术语地图、概念关系与索引", "来源与延伸阅读",
-                        "版本、勘误与复现说明"]:
-        fail(f"Expected exactly seven A-G appendix groups, found {group_titles}")
-    includes(sources["00e-core-formulas"], r"Z=HW_{\rm out}",
-             "compact core formula card")
-
-    includes(sources["23-llm-systems"], r"\beta=1/\tau", "sampling temperature")
-    includes(sources["30-optimizer-appendix"], "0.943", "two-step Adam optional example")
-    includes(sources["10-mlp"], r"\vect x^\top W_1", "row-vector MLP")
-    includes(sources["11-softmax-memory"], r"\label{concept:self-attention}", "merged chapter")
-    for name, body in sources.items():
-        if re.search(r"(?<![a-zA-Z\\])extbf\{", body) or "\textbf{" in body:
-            fail(f"Broken bold escape in {name}")
-    for editorial in ("这正是文章把", "这些只是文章讨论", "没有沿用字幕中",
-                      "章节号会随全书编排自动更新", "根据初中学过的",
-                      "两单位向量的点积", "是本文为了学习",
-                      "在本卷，输入 Query", "全书用\\textbf{本书}统一指代"):
-        for name, body in sources.items():
-            if editorial in body:
-                fail(f"Editorial residue {editorial!r} in {name}")
-    # Memory part: seven source files and four visible chapters, without removing exercises.
-    x2 = ("04-key-value-outer-product", "05-memory-interference",
-          "06-better-linear-memory", "08-stacking-key-value",
-          "09-nonlinearity-and-memory", "14-summary", "13-capacity")
-    heading_count = sum(bool(re.search(r"(?m)^\\section\{", sources[n]))
-                        for n in x2)
-    if heading_count != 4:
-        fail(f"Memory part must display four sections, got {heading_count}")
-    for n in ("05-memory-interference", "08-stacking-key-value", "14-summary"):
-        includes(sources[n], r"\subsection{", f"nested X2 topic {n}")
-    includes(sources["04-key-value-outer-product"], r"\vect a^\top V",
-             "row-vector memory read")
-    includes(sources["05-memory-interference"], r"S_{\rm simple}", "row memory interference")
-    includes(sources["06-better-linear-memory"], r"S_{\rm better}", "row least-squares solution")
-    includes(sources["08-stacking-key-value"], r"\relu(xK^\top)V", "row nonlinear readout")
-    includes(sources["13-capacity"], r"S_t=S_{t-1}+k_t^\top v_t",
-             "linear attention outer-product state")
-    includes(sources["22d-modern-transformers"], r"q_tS_t",
-             "row-state connection in architecture chapter")
-    if r"\sim" in sources["13-capacity"]:
-        fail("Do not use strict asymptotic equivalence as loose statistical magnitude")
-    print(f"Source QA passed: {len(PARTS)} parts, {len(REQUIRED)} files, three separated solutions, linked glossary")
     test_numeric_examples()
-
+    from check_book_regressions import validate_existing_regressions
+    main = (BOOK / 'main.tex').read_text()
+    sources = {name: chapter(name) for name in REQUIRED + ['24-lexicon', '24b-modern-lexicon']}
+    validate_existing_regressions(main, sources)
+    issues = validate_contract()
+    if issues:
+        fail("\n".join(issues))
+    print(f"Source QA passed: {CHAPTER_COUNT} chapters, {CHECK_COUNT} self-checks, "
+          f"{EXERCISE_COUNT} exercises and {GLOSSARY_COUNT} glossary rows")
 
 
 def expected_subsection_bookmarks() -> dict[str, list[str]]:
@@ -1411,8 +231,8 @@ def expected_subsection_bookmarks() -> dict[str, list[str]]:
                         f"{current}.{len(expected[current]) + 1}"
                     )
 
-    if list(expected) != [str(i) for i in range(1, 37)] + list("ABCDEFGHIJK"):
-        fail("Bookmark source reference must contain chapters 1..36 and appendices A..K")
+    if list(expected) != [str(i) for i in range(1, CHAPTER_COUNT + 1)] + list("ABCDEFG"):
+        fail("Bookmark source reference must contain chapters 1..41 and appendices A..G")
     if len([item for group in expected.values() for item in group]) < 150:
         fail("Suspiciously few numbered subsection headings in source")
     return expected
@@ -1437,17 +257,17 @@ def validate_subsection_bookmarks(reader) -> None:
         return result
 
     roots = nested(reader.outline)
-    if len(roots) != 9:
-        fail("PDF bookmark tree must have 8 part roots and 1 appendix root")
+    if len(roots) != len(PARTS) + 1:
+        fail("PDF bookmark tree must have 9 part roots and 1 appendix root")
     chapter_re = re.compile(r"^(?:第)?(\d+)(?:章)?\s+\S")
-    appendix_re = re.compile(r"^(?:附录\s*)?([A-K])\s+\S")
-    subsection_re = re.compile(r"^(\d+|[A-K])\.(\d+)\s+\S")
+    appendix_re = re.compile(r"^(?:附录\s*)?([A-G])\s+\S")
+    subsection_re = re.compile(r"^(\d+|[A-G])\.(\d+)\s+\S")
     by_parent = {}
     for root_number, root in enumerate(roots):
         for node in root["children"]:
             if subsection_re.match(node["title"]):
                 fail(f"PDF subsection is at part level: {node['title']!r}")
-            match = (appendix_re if root_number == 8 else chapter_re).match(
+            match = (appendix_re if root_number == len(PARTS) else chapter_re).match(
                 node["title"])
             if match is None:
                 continue  # The unnumbered reading guide/recap.
@@ -1608,7 +428,7 @@ def validate_pdf(path: Path) -> None:
     print(f"Heading QA: {heading_counts['/H1']} H1 headings; {heading_counts['/H2']} H2 headings")
     # hyperref's PDF bookmarks are a separate, user-facing navigation system:
     # visible CTeX numbering is insufficient unless the outline contains it.
-    # Eight numbered parts, 36 core chapters and A--K appendices must
+    # Nine numbered parts, 41 chapters and A--G appendices must
     # retain their numbering and nesting. hyperref in TeX Live 2026 uses plain
     # `1 Title` and `A Title`; older CTeX may write `第1章` and `附录 A`. Two standalone core interludes stay
     # intentionally unnumbered (the reading guide and end-of-core recap).
@@ -1623,7 +443,7 @@ def validate_pdf(path: Path) -> None:
         elif hasattr(entry, "title"):
             outline_groups.append([str(entry.title).strip(), []])
     if len(outline_groups) != len(PARTS) + 1:
-        fail(f"PDF bookmark root should have 8 numbered parts plus one "
+        fail(f"PDF bookmark root should have 9 numbered parts plus one "
              f"unnumbered appendix: {len(outline_groups)} roots")
     han_numbers = "一二三四五六七八九"
     for index, expected in enumerate(PARTS):
@@ -1636,9 +456,9 @@ def validate_pdf(path: Path) -> None:
     appendix_title, appendix_children = outline_groups[-1]
     if not appendix_title.startswith("附录："):
         fail(f"Unnumbered appendix PDF bookmark missing: {appendix_title!r}")
-    if len(appendix_children) != 11:
-        fail(f"Expected eleven A--K PDF appendix bookmarks, found {appendix_children!r}")
-    for letter, title in zip("ABCDEFGHIJK", appendix_children):
+    if len(appendix_children) != 7:
+        fail(f"Expected seven A--G PDF appendix bookmarks, found {appendix_children!r}")
+    for letter, title in zip("ABCDEFG", appendix_children):
         if not re.match(rf"^(?:附录\s*)?{letter}\s+\S", title):
             fail(f"Appendix {letter} PDF bookmark missing letter prefix: {title!r}")
     chapter_numbers = []
@@ -1650,11 +470,11 @@ def validate_pdf(path: Path) -> None:
             elif not (title.startswith("序章：") or
                       title.startswith("技术底座回顾：")):
                 fail(f"Unnumbered PDF chapter bookmark: {title!r}")
-    if chapter_numbers != list(range(1, 37)):
-        fail(f"PDF chapter bookmark numbers must be 1--36 in order; "
+    if chapter_numbers != list(range(1, CHAPTER_COUNT + 1)):
+        fail(f"PDF chapter bookmark numbers must be 1--41 in order; "
              f"found {chapter_numbers!r}")
     print(f"PDF bookmark QA: {len(PARTS)} numbered parts, "
-          f"{len(chapter_numbers)} numbered chapters, 11 lettered appendices")
+          f"{len(chapter_numbers)} numbered chapters, 7 lettered appendices")
     validate_subsection_bookmarks(reader)
 
 
@@ -1694,12 +514,12 @@ def validate_pdf(path: Path) -> None:
     # Reject an old regression where literal \s matched backslash+letter,
     # so real D.2/E.1 headings appeared missing despite a healthy PDF.
     test_headings = ("D.2 全书随堂自测参考解答\n"
-                     "E.1 全量中英对照：136 项术语速查\n")
+                     "E.1 全量中英对照：146 项术语速查\n")
     if not re.search(r"(?m)^\s*D\.2\s+全书随堂自测参考解答\s*$", test_headings):
         fail("D.2 heading matching self-test failed")
     if not re.search(r"(?m)^\s*E\.1\s+全量中英对照[^\n]*$", test_headings):
         fail("E.1 heading matching self-test failed")
-    # Since the printed TOC includes H2, the TOC also contains both headings.
+    # Match the actual standalone answer/glossary headings, independent of TOC depth.
     # Match only the actual standalone D.2/E.1 section header lines: TOC
     # entries carry dotted page leaders and must never count as appendix pages.
     answer_starts = [i for i, body in enumerate(pages)
@@ -1708,28 +528,37 @@ def validate_pdf(path: Path) -> None:
                    if re.search(r"(?m)^\s*E\.1\s+全量中英对照[^\n]*$", body)
                    and not any(" . . . " in line for line in body.splitlines()
                                if "E.1 全量中英对照" in line)]
-    # Some chapters contain two distinct and intentionally adjacent exercise
-    # groups, both on the same PDF page. Count headings, not pages.
+    # A flowing self-check can share a page with another chapter. Count
+    # headings rather than pages.
     question_pages = [i for i, body in enumerate(pages)
                       if "读完自测" in body]
     question_count = sum(body.count("读完自测：") for body in pages)
     if (len(answer_starts) != 1 or len(answer_ends) != 1
-            or question_count != 45):
-        fail(f"Expected 45 rendered self-check boxes and unique D.2 / E.1; "
+            or question_count != CHECK_COUNT):
+        fail(f"Expected one self-check per chapter and prelude: rendered self-check boxes and unique D.2 / E.1; "
              f"found {question_count} checks")
-    if normalized(text).count("思路提示：") != 135:
-        fail("All 135 self-check clues must survive PDF rendering")
+    if "思路提示：" in normalized(text):
+        fail("Hints must stay in Appendix D, not under self-check questions")
     rendered_metadata = re.findall(
         r"〔[^〕]+·(?:基础|标准|挑战)·约\d+分钟〕", normalized(text))
-    if len(rendered_metadata) != 101:
-        fail(f"All 101 exercise metadata labels must render: found {len(rendered_metadata)}")
-    print("Exercise metadata QA: 101 visible chapter/difficulty/time labels")
+    if len(rendered_metadata) != EXERCISE_COUNT:
+        fail(f"All exercise metadata labels must render: found {len(rendered_metadata)}")
+    print(f"Exercise metadata QA: {EXERCISE_COUNT} visible chapter/difficulty/time labels")
     if "章末先核对：" in text:
         fail("Answer leaked immediately under self-check in reader PDF")
     start_answer, end_answer = answer_starts[0], answer_ends[0]
     if not 0 <= start_answer < end_answer < len(reader.pages):
         fail("Invalid Appendix D.2 answer pages")
     named_destinations = reader.named_destinations
+    # D.1 can end above D.2 on the same physical page. Compare destination
+    # coordinates as well as folios so valid bank links cannot masquerade as
+    # chapter self-check links simply because they share that boundary page.
+    answer_start_top = float(named_destinations['subsection.D.2'].top)
+    def is_selfcheck_answer(destination):
+        page = reader.get_destination_page_number(destination)
+        if not start_answer <= page < end_answer:
+            return False
+        return page != start_answer or float(destination.top) <= answer_start_top
     question_page_set = set(question_pages)
     # Include the immediately following page only if it has no new exercise
     # heading: a breakable tcolorbox may place its answer link there.
@@ -1757,17 +586,17 @@ def validate_pdf(path: Path) -> None:
                 continue
             target_page = reader.get_destination_page_number(
                 named_destinations[dest_name])
-            if start_answer <= target_page < end_answer:
+            if is_selfcheck_answer(named_destinations[dest_name]):
                 answer_links.append(dest_name)
                 on_page_links.append(dest_name)
         # Questions may flow to the next page. The global check below still
         # requires exactly one correct answer destination per exercise group.
-    if len(answer_links) != 45 or len(set(answer_links)) != 45:
+    if len(answer_links) != CHECK_COUNT or len(set(answer_links)) != CHECK_COUNT:
         fail(f"Every self-check must link to its unique answer: "
              f"{len(answer_links)} links to {len(set(answer_links))} "
-             "distinct D.2 targets (expected 45 each)")
-    print("Chapter answer navigation QA: 45 self-check links resolve to "
-          "45 distinct destinations within Appendix D.2")
+             "distinct D.2 targets (expected one per self-check)")
+    print("Chapter answer navigation QA: all self-check links resolve to "
+          "distinct destinations within Appendix D.2")
     # Each answer-group title links back to its source self-check. Reject a
     # title sitting in the bottom 30 mm, where its first answer cannot follow.
     answer_heading_targets = set()
@@ -1786,9 +615,9 @@ def validate_pdf(path: Path) -> None:
                 answer_heading_targets.add(dest_name)
                 if float(annot["/Rect"][1]) < 85:
                     fail(f"Answer chapter heading stranded at bottom of PDF page {page_index + 1}")
-    if len(answer_heading_targets) != 45:
-        fail("Expected 45 rendered answer chapter headings with links back to questions")
-    print("Answer heading pagination QA: all 45 titles leave room for their first answer")
+    if len(answer_heading_targets) != CHECK_COUNT:
+        fail("Expected one self-check per chapter and prelude: rendered answer chapter headings with links back to questions")
+    print("Answer heading pagination QA: all answer titles leave room for their first answer")
     # Page-bottom regression: the "shape-first route" introduction may not be
     # stranded on a separate page from the first row of its table.
     route_pages = [i for i, page_text in enumerate(pages, 1)
@@ -1850,7 +679,7 @@ def validate_pdf(path: Path) -> None:
     if guide_index > 4:
         fail("Printed chapter TOC must occupy no more than two pages before the reading guide")
     guide = normalized(pages[guide_index])
-    for heading in ("三条阅读路线", "数学预备：先核对四件事", "表示约定：数学从1起"):
+    for heading in ("速读：", "标准：", "动手：", "数学预备与表示约定", "ID、位置和矩阵行列从1数", "图例：先判断这一块要你做什么"):
         if heading not in guide:
             fail(f"Reading routes, prerequisites and conventions must fit one page: {heading}")
     toc = normalized("".join(pages[1:guide_index]))
@@ -1877,12 +706,12 @@ def validate_pdf(path: Path) -> None:
         if re.match(r"^第[一二三四五六七八九十]+部分", str(item.title)):
             index = reader.get_destination_page_number(item)
             if not all(label in pages[index] for label in ("从这里出发", "本部分你会学会",
-                                                          "本部分地图", "全书路线中的位置",
+                                                          "本部分地图", "全书路线", "你在这里",
                                                           "读完试试看")):
                 fail(f"Part introduction incomplete on page {index + 1}")
             part_openers.add(index + 1)
-    if len(part_openers) != 8:
-        fail(f"Expected eight dedicated part introductions, got {sorted(part_openers)}")
+    if len(part_openers) != len(PARTS):
+        fail(f"Expected {len(PARTS)} dedicated part introductions, got {sorted(part_openers)}")
     for i, page in enumerate(pages, 1):
         if i < 4 or not page.strip():
             continue
@@ -1939,7 +768,7 @@ def validate_pdf(path: Path) -> None:
             body_text = "".join(word[2] for word in body_words)
             occupied = (max(word[1] for word in body_words) - 55) / (height - 120)
             self_check_tail = re.match(
-                r"^(?:读完自测|[■]?\s*小结|完整解答与订正说明|附录C[·：]|"
+                r"^(?:读完自测|[■]?\s*小结|提示与解答|提示与完整解答|完整解答与订正说明|本部分累积复习|附录C[·：]|"
                 r"[123]\.(?:形状|手算|预测|找错|计算|区分|估算|比较|解释|定位|分工|证据|分类))",
                 normalized(body_text))
             if self_check_tail and occupied < .5:
@@ -1956,12 +785,12 @@ def validate_pdf(path: Path) -> None:
     # Chapter dividers are structural source commands, not repeated page locators.
     # Validate every numbered destination and require substantive page content;
     # the page-wide bounding-box and orphan-page checks above remain in effect.
-    if sorted(numbered_pages) != list(range(1, 37)):
-        fail("Opening guard requires chapter bookmarks 1..36")
+    if sorted(numbered_pages) != list(range(1, CHAPTER_COUNT + 1)):
+        fail("Opening guard requires chapter bookmarks 1..41")
     for chapter_number, opening_index in sorted(numbered_pages.items()):
         if not pages_with_boxes[opening_index][1].strip():
             fail(f"Empty chapter opening page for chapter {chapter_number}")
-    print("Chapter opening destinations QA passed: 36/36 bookmarks with visible content")
+    print("Chapter opening destinations QA passed: 41/41 bookmarks with visible content")
     # Source-level hyperlinks may have existing labels but resolve incorrectly
     # once TeX has built bookmarks and named destinations. Audit the actual PDF.
     named_destinations = reader.named_destinations

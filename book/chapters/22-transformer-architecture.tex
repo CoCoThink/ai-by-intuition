@@ -56,12 +56,12 @@ y=x+f(x)\quad\Longrightarrow\quad
 \]
 其中 $1$ 是不依赖子层导数的\textbf{恒等梯度通路}，
 所以残差能改善深层网络的信息与梯度传播；
-它不保证总梯度在所有情况下都不消失。
+实际反传还要汇总各路径的梯度，并检查数值尺度。
 Block 有 Attention 与 FFN 两个子层，因此分别为这两次变换设置捷径。
 多头 Attention 的单头输出记为 $O_j$，
 FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 
-\textbf{观察橙色捷径：}它们跳过模块直接到加号，
+\textbf{观察紫色残差捷径：}它们跳过模块直接到加号，
 而不是在模块里偷偷执行“残差”。
 \input{figures/pre-norm-block}
 
@@ -116,7 +116,47 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 扩散模型的去噪网络本身可以选用 Transformer。
 
 
-\subsection{对照原论文：Encoder、Decoder、Cross-Attention 分别在哪里？}
+\subsection{最后如何得到下一个 Token 的概率？}
+
+对最后位置的隐藏状态 $\vect h_T$ 做输出线性投影，得到与词表大小一样多的\textbf{logits（未归一化的候选分数）}。它们是可正可负的实数分数：
+\[
+\vect z^\top=\vect h_T^\top W_{\rm out}+\vect b_{\rm out}^\top,
+\quad W_{\rm out}\in\R^{d_{\rm model}\times|\mathcal V|}.
+\]
+再通过 Softmax：
+\[
+p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
+\]
+得到下一 Token 的概率分布。生成时按一定策略选择 Token，再把它加入上下文，重复计算。
+
+\subsection{十步口述：从文本到概率，再到学习或生成}
+\phantomsection\label{sec:transformer-ten-steps}
+
+先不逐项背公式，只说每一步\textbf{接收什么、产出什么}。
+这份口述沿本书的 Decoder-only 主线，
+原论文的 Encoder--Decoder 对照留到章末选读：
+
+\begin{enumerate}[leftmargin=2.3em,itemsep=2pt]
+\item \textbf{切分文字}：Tokenizer 把文本变成 Token ID（第~\ref*{intro:20a-tokenizer}~章）。
+\item \textbf{查表并加位置}：Embedding 与位置表示得到 $X:T\times d$（第~\ref*{intro:20-embeddings}~章及第~\ref*{intro:22a-position-multihead}~章）。
+\item \textbf{归一化输入}：每行做 Pre-Norm，为注意力子层准备特征（第~\ref*{intro:22-transformer-architecture}~章）。
+\item \textbf{投影三种角色}：从每行得到 Query、Key、Value（第~\ref*{intro:21b-why-attention}~章）。
+\item \textbf{匹配并遮挡未来}：计算 $QK^\top/\sqrt{d_k}$，对未来位置使用因果 Mask（第~\ref*{intro:22-transformer-architecture}~章）。
+\item \textbf{分配并读取}：逐行 Softmax 后乘 $V$；多头则拼接并做输出投影（第~\ref*{intro:11-softmax-memory}~章及第~\ref*{intro:22a-position-multihead}~章）。
+\item \textbf{做第一次残差}：把注意力结果加回输入，形状仍为 $T\times d$（第~\ref*{intro:22-transformer-architecture}~章）。
+\item \textbf{经过 FFN 和第二次残差}：再次归一化、逐行非线性变换，再与旁路相加（第~\ref*{intro:10b-ffn-output-head}~章）。
+\item \textbf{产生词表概率}：输出头给每个位置 $|\mathcal V|$ 个 logits，再做 Softmax（第~\ref*{intro:22b-token-to-output}~章及第~\ref*{intro:22c-language-training}~章）。
+\item \textbf{选择训练或生成}：训练用错位目标计算交叉熵并反传；生成只为下一位置选 Token、追加上下文（训练见第~\ref*{intro:22c-language-training}~章；生成见第~\ref*{intro:23-llm-systems}~章）。
+\end{enumerate}
+
+\textbf{第 1--9 步描述前向计算，第 10 步才分叉。}
+生成时不执行反传；训练时可以并行监督多个位置。
+原论文还需要处理\textbf{源语句的 Encoder 和交叉注意力}：
+下面的图把这些额外部件与本书的 Decoder-only 路线对照起来。
+
+
+
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：对照原论文：Encoder、Decoder、Cross-Attention 分别在哪里？}
 
 \href{https://arxiv.org/abs/1706.03762}{Vaswani 等（2017）《Attention Is All You Need》}
 展示的是用于序列到序列任务的\textbf{编码器--解码器架构}。
@@ -180,50 +220,12 @@ Decoder 的四个位置可以并行计算，
 原论文与现代模型在 Norm 放置、位置编码、层数等细节上各有设计；
 对照时先认清数据流，而不是把架构图所有框都当成同一配置。
 
-\subsection{最后如何得到下一个 Token 的概率？}
-
-对最后位置的隐藏状态 $\vect h_T$ 做输出线性投影，得到与词表大小一样多的\textbf{logits（未归一化的候选分数）}。它们是可正可负的实数分数：
-\[
-\vect z^\top=\vect h_T^\top W_{\rm vocab}+\vect b_{\rm vocab}^\top,
-\quad W_{\rm vocab}\in\R^{d_{\rm model}\times|\mathcal V|}.
-\]
-再通过 Softmax：
-\[
-p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
-\]
-得到下一 Token 的概率分布。生成时按一定策略选择 Token，再把它加入上下文，重复计算。
-
-\subsection{十步口述：从文本到概率，再到学习或生成}
-\phantomsection\label{sec:transformer-ten-steps}
-
-先不逐项背公式，只说每一步\textbf{接收什么、产出什么}。
-这份口述沿本书的 Decoder-only 主线，
-与下面原论文的 Encoder--Decoder 对照图应分开阅读：
-
-\begin{enumerate}[leftmargin=2.3em,itemsep=2pt]
-\item \textbf{切分文字}：Tokenizer 把文本变成 Token ID（第~\ref*{intro:20a-tokenizer}~章）。
-\item \textbf{查表并加位置}：Embedding 与位置表示得到 $X:T\times d$（第~\ref*{intro:20-embeddings}~章及第~\ref*{intro:22a-position-multihead}~章）。
-\item \textbf{归一化输入}：每行做 Pre-Norm，为注意力子层准备特征（第~\ref*{intro:22-transformer-architecture}~章）。
-\item \textbf{投影三种角色}：从每行得到 Query、Key、Value（第~\ref*{intro:21b-why-attention}~章）。
-\item \textbf{匹配并遮挡未来}：计算 $QK^\top/\sqrt{d_k}$，对未来位置使用因果 Mask（第~\ref*{intro:22-transformer-architecture}~章）。
-\item \textbf{分配并读取}：逐行 Softmax 后乘 $V$；多头则拼接并做输出投影（第~\ref*{intro:11-softmax-memory}~章及第~\ref*{intro:22a-position-multihead}~章）。
-\item \textbf{做第一次残差}：把注意力结果加回输入，形状仍为 $T\times d$（第~\ref*{intro:22-transformer-architecture}~章）。
-\item \textbf{经过 FFN 和第二次残差}：再次归一化、逐行非线性变换，再与旁路相加（第~\ref*{intro:10b-ffn-output-head}~章）。
-\item \textbf{产生词表概率}：输出头给每个位置 $|\mathcal V|$ 个 logits，再做 Softmax（第~\ref*{intro:22b-token-to-output}~章及第~\ref*{intro:22c-language-training}~章）。
-\item \textbf{选择训练或生成}：训练用错位目标计算交叉熵并反传；生成只为下一位置选 Token、追加上下文（第~\ref*{intro:23-llm-systems}~章与第~\ref*{intro:23a-from-toy-to-gpt}~章）。
-\end{enumerate}
-
-\textbf{第 1--9 步描述前向计算，第 10 步才分叉。}
-生成时不执行反传；训练时可以并行监督多个位置。
-原论文还需要处理\textbf{源语句的 Encoder 和交叉注意力}：
-下面的图把这些额外部件与本书的 Decoder-only 路线对照起来。
-
 \input{figures/original-transformer-map}
 
 \chapterchecktasks{22-transformer-architecture}{正文基础三题}{
 \item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？\chapterinlinehint{先沿特征轴拼接，再核对残差两项的形状。}
 \item \textbf{预测：}生成位置 $1$ 时若错误地允许读取位置 $2$ 的真实目标，这会使下一 Token 训练的什么规则失效？\chapterinlinehint{检查目标是否已经进入本来不可见的前缀。}
-\item \textbf{找错：}某人把原始 Encoder--Decoder Transformer 的 Cross-Attention 当成 Decoder-only GPT 每层必有的模块。指出差异及真正的数据来源。\chapterinlinehint{分别追踪交叉注意力中 Q 与 K/V 的来源。}
+\item \textbf{找错：}同学把 Norm 放在子层与残差相加之后，却称它为本书的 Pre-Norm。写出本书每条残差路径中 Norm、子层、加法的顺序。\chapterinlinehint{按输入旁路与子层主路分别追踪。}
 }
 \chapterrecallanswer{一个 Block 需要形状兼容的残差；因果 Mask 禁止看未来；Decoder-only 自注意力没有默认的 Encoder Cross-Attention。}
 

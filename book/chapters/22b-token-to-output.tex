@@ -1,12 +1,13 @@
 \chapterrule
 \section{三维贯通实验：从 Token ID 到三个位置的输出概率}
 \label{intro:22b-token-to-output}
-\chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to P:3\times5$}{本章只做前向；参数取自统一三维例子}
+\chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to \Pi:3\times5$}{本章只做前向；参数取自统一三维例子}
+手算入口：先做\hyperref[app:rational-mini]{附录 B 的二维分数迷你版（第~\pageref*{app:rational-mini}~页）}，再用本章四位小数核对脚本。
 \modelpipelinefocus{5}{输出头}
 
 前面已学过 Embedding、因果 Mask、Q/K/V、Norm、残差、
 FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。
-正文保留\textbf{形状、代表元素、预测图以及 $X,A,H,\widehat P$ 四个最小复算矩阵}；
+正文保留\textbf{形状、代表元素、预测图以及 $X,A,H,\Pi$ 四个最小复算矩阵}；
 较长的投影与中间量仍放在
 \hyperref[app:transformer-intermediates]{附录 B.1 的逐层数值核对表}，
 所有数值由 \texttt{scripts/teaching\_reference.py} 计算。
@@ -23,7 +24,7 @@ FFN 与输出头。现在\textbf{只用同一组三维参数}串起它们。
 Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
 因果 Attention & $QK^\top\to A:3\times3$ & $A_{2,1}\approx0.1244$\\
 残差与 FFN & $A V\to H:3\times3$ & 每步保留三个位置\\
-输出头与 Softmax & $H\to Z,P:3\times5$ & 每行五个候选概率\\
+输出头与 Softmax & $H\to Z,\Pi:3\times5$ & 每行五个候选概率\\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -35,9 +36,9 @@ Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
 完整句子 $[2,4,5,3]$，此处输入 $[2,4,5]$，
 三位置的下一 Token 目标 $[4,5,3]$。
 查 $5\times3$ 的 Embedding，逐行加 $3\times3$ 的位置向量后，
-Block 输入 $X=E_{[2,4,5]}+P$ 有三行：
+Block 输入 $X=E_{[2,4,5]}+P_{\rm pos}$ 有三行：
 \begin{equation}
-X=E_{[2,4,5]}+P\in\R^{3\times3},
+X=E_{[2,4,5]}+P_{\rm pos}\in\R^{3\times3},
 \qquad X_{1,:}=(1.30,\ 0.05,\ -0.30).
 \label{eq:running-three-token-x}
 \end{equation}
@@ -114,12 +115,12 @@ H=X_{\rm att}+F_{\rm mid}W_{\rm down}\in\R^{3\times3},
 则 $Z=HW_{\rm out}\in\R^{3\times5}$；
 对每行 logits 执行 Softmax，正文保留正确类概率：
 \begin{equation}
-\widehat P=\operatorname{softmax}_{\rm row}(Z)\in\R^{3\times5},
-\quad(\widehat P_{1,4},\widehat P_{2,5},\widehat P_{3,3})
+\Pi=\operatorname{softmax}_{\rm row}(Z)\in\R^{3\times5},
+\quad(\Pi_{1,4},\Pi_{2,5},\Pi_{3,3})
 \approx(0.2617,0.0507,0.3418).
 \label{eq:three-token-probabilities}
 \end{equation}
-下面青色柱标出\textbf{目标类别}；柱高表示模型给它的概率。
+下面粗边柱标出\textbf{目标类别}；柱高表示模型给它的概率。
 
 \par\medskip
 \input{figures/three-position-probabilities}
@@ -173,9 +174,9 @@ Value + 输出投影 & $3\times3$ & $3\times3$ & 跨位置读取\\
 \end{bmatrix}\in\R^{3\times3}.}
 \end{equation}
 
-\noindent\textbf{词表概率 $\widehat P$。}\par
+\noindent\textbf{词表概率 $\Pi$。}\par
 \begin{equation}
-\boxed{\widehat P\approx\begin{bmatrix}
+\boxed{\Pi\approx\begin{bmatrix}
 0.1843&0.3341&0.1264&0.2617&0.0935\\
 0.0826&0.0954&0.0951&0.6761&0.0507\\
 0.1535&0.1130&0.3418&0.1181&0.2735
@@ -198,7 +199,7 @@ $(0,-0.4279,0.9325,-0.6140,0.7915)$，
 \noindent{\footnotesize\color{muted}完整数值只使用附录 B 的三维主例参数。}\par
 
 \chapterchecktasks{22b-token-to-output}{正文基础三题}{
-\item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\widehat P$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。\chapterinlinehint{沿计算路线表逐项核对序列轴、隐藏轴和词表轴。}
+\item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\Pi$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。\chapterinlinehint{沿计算路线表逐项核对序列轴、隐藏轴和词表轴。}
 \item \textbf{预测：}沿用初始正确类概率和贪心预测结果。三个位置中哪两个最初答错？只改第一个 Token 的 ID 后，为什么第三行的分数可能改变？\chapterinlinehint{先比较预测 ID 与目标，再追踪因果依赖。}
 \item \textbf{找错：}某人说“FFN 对每一行使用同样的权重，所以 FFN 会在不同 Token 之间交换信息，而 Attention 只在每一行内部运算”。改正两处角色混淆。\chapterinlinehint{分别检查逐行 FFN 与跨位置读取的公式。}
 }

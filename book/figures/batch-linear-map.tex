@@ -2,13 +2,13 @@
 \begin{center}
 \begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=paper,align=center,font=\small,text width=30mm,minimum height=10mm}]
-\node[n,fill=blueback] (x1) at (0,0) {$(1,0)$};
-\node[n,fill=greenback] (x2) at (0,-15) {$(0,1)$};
-\node[n,fill=orangeback] (x3) at (0,-30) {$(1,1)$};
+\node[n,fill=paper] (x1) at (0,0) {$(1,0)$};
+\node[n,fill=linegray!15] (x2) at (0,-15) {$(0,1)$};
+\node[n,fill=linegray!25] (x3) at (0,-30) {$(1,1)$};
 \node[n,text width=40mm,minimum height=32mm] (w) at (53,-15) {共享 $W:2\times3$\\[2mm]$\begin{bmatrix}1&3&0\\2&-1&1\end{bmatrix}$};
-\node[n,fill=blueback] (y1) at (107,0) {$(1,3,0)$};
-\node[n,fill=greenback] (y2) at (107,-15) {$(2,-1,1)$};
-\node[n,fill=orangeback] (y3) at (107,-30) {$(3,2,1)$};
+\node[n,fill=paper] (y1) at (107,0) {$(1,3,0)$};
+\node[n,fill=linegray!15] (y2) at (107,-15) {$(2,-1,1)$};
+\node[n,fill=linegray!25] (y3) at (107,-30) {$(3,2,1)$};
 \foreach \i in {1,2,3}{\draw[->,thick] (x\i.east)--(w.west |- x\i.east);\draw[->,thick] (w.east |- y\i.west)--(y\i.west);}
 \node[font=\small] at (0,12) {$X:3\times2$};
 \node[font=\small] at (107,12) {$XW:3\times3$};

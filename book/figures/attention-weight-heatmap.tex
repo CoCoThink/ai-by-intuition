@@ -8,23 +8,23 @@
 \foreach \c in {0,1,2}{
  \node[font=\footnotesize,anchor=south] at ({\c+.5},3.06) {Key \number\numexpr\c+1\relax};
 }
-\filldraw[fill=blue!85,draw=linegray] (0,2) rectangle (1,3);
+\filldraw[fill=datacolor!85,draw=linegray] (0,2) rectangle (1,3);
 \node[white,font=\small\bfseries] at (.5,2.5) {$1.000$};
 \filldraw[fill=paper,draw=linegray] (1,2) rectangle (2,3);
-\node[orange,font=\small] at (1.5,2.5) {$\times$};
+\node[maskedcolor,font=\small] at (1.5,2.5) {$\times$};
 \filldraw[fill=paper,draw=linegray] (2,2) rectangle (3,3);
-\node[orange,font=\small] at (2.5,2.5) {$\times$};
-\filldraw[fill=blue!15,draw=linegray] (0,1) rectangle (1,2);
+\node[maskedcolor,font=\small] at (2.5,2.5) {$\times$};
+\filldraw[fill=datacolor!15,draw=linegray] (0,1) rectangle (1,2);
 \node[ink,font=\small] at (.5,1.5) {$0.124$};
-\filldraw[fill=blue!75,draw=linegray] (1,1) rectangle (2,2);
+\filldraw[fill=datacolor!75,draw=linegray] (1,1) rectangle (2,2);
 \node[white,font=\small\bfseries] at (1.5,1.5) {$0.876$};
 \filldraw[fill=paper,draw=linegray] (2,1) rectangle (3,2);
-\node[orange,font=\small] at (2.5,1.5) {$\times$};
-\filldraw[fill=blue!20,draw=linegray] (0,0) rectangle (1,1);
+\node[maskedcolor,font=\small] at (2.5,1.5) {$\times$};
+\filldraw[fill=datacolor!20,draw=linegray] (0,0) rectangle (1,1);
 \node[ink,font=\small] at (.5,.5) {$0.168$};
-\filldraw[fill=blue!26,draw=linegray] (1,0) rectangle (2,1);
+\filldraw[fill=datacolor!26,draw=linegray] (1,0) rectangle (2,1);
 \node[ink,font=\small] at (1.5,.5) {$0.242$};
-\filldraw[fill=blue!56,draw=linegray] (2,0) rectangle (3,1);
+\filldraw[fill=datacolor!56,draw=linegray] (2,0) rectangle (3,1);
 \node[ink,font=\small] at (2.5,.5) {$0.590$};
 \node[anchor=west,align=left,font=\footnotesize] at (3.35,2.3)
  {颜色越深\\读取权重越大};

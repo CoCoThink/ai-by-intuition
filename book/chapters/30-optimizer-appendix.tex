@@ -41,16 +41,16 @@ v_1=2,\quad v_2=1.5.
 \]
 由于两组平均都从零开始，Adam 还用时间步 $t$ 修正初值偏差：
 \[
-\widehat m_t=\frac{m_t}{1-0.5^t},\qquad
-\widehat v_t=\frac{v_t}{1-0.5^t}.
+\widehat{m}_t=\frac{m_t}{1-0.5^t},\qquad
+\widehat{v}_t=\frac{v_t}{1-0.5^t}.
 \]
 因此
 \[
-(\widehat m_1,\widehat v_1)=(2,4),\qquad
-(\widehat m_2,\widehat v_2)=\left(\frac43,2\right).
+(\widehat{m}_1,\widehat{v}_1)=(2,4),\qquad
+(\widehat{m}_2,\widehat{v}_2)=\left(\frac43,2\right).
 \]
 暂不考虑很小的数值稳定项 $\varepsilon$，
-以 $-\eta\widehat m_t/\sqrt{\widehat v_t}$ 调参，
+以 $-\eta\widehat{m}_t/\sqrt{\widehat{v}_t}$ 调参，
 第一步是 $-\eta$，第二步约为 $-0.943\eta$。
 这不是生产环境的推荐系数，只是可以手算的说明：
 \textbf{Adam 使用了梯度的历史平均与历史平方平均，更新幅度不只由当前梯度决定}。
@@ -92,17 +92,17 @@ AdamW 继承 Adam 根据梯度历史估计\textbf{自适应更新方向}的部�
 同时把权重衰减作为单独的参数缩小步骤：
 \begin{equation}
 w_t=(1-\eta_t\lambda)w_{t-1}
--\eta_t\frac{\widehat m_t}{\sqrt{\widehat v_t}+\varepsilon}.
+-\eta_t\frac{\widehat{m}_t}{\sqrt{\widehat{v}_t}+\varepsilon}.
 \label{eq:adamw-decoupled}
 \end{equation}
 $\lambda$ 是\textbf{解耦权重衰减系数}；式子中不含
-偏置校正的推导，$\widehat m_t,\widehat v_t$ 已表示校正后的估计。
+偏置校正的推导，$\widehat{m}_t,\widehat{v}_t$ 已表示校正后的估计。
 
 \begin{example}
 \noindent\emph{一个参数的第一步 AdamW}\par
 取 $w_0=2$、$\eta=0.1$、$\lambda=0.05$，
 梯度 $g_1=0.5$。第一步偏置校正后，
-$\widehat m_1=0.5,\widehat v_1=0.25$；
+$\widehat{m}_1=0.5,\widehat{v}_1=0.25$；
 忽略足够小的 $\varepsilon$，自适应方向是 $1$。
 于是
 \[

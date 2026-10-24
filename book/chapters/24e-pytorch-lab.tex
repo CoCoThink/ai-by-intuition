@@ -61,7 +61,7 @@ PyTorch 自动求导与 NumPy 手工反传是\textbf{两种独立实现途径}�
 
 \subsection{参数计数小练习}
 
-沿用上述脚本的模型：$E:5\times3$、$P:3\times3$，
+沿用上述脚本的模型：$E:5\times3$、$P_{\rm pos}:3\times3$，
 四组 $3\times3$ Attention 投影、两组 $3\times4$ 和 $4\times3$ FFN 矩阵、
 一个 $3\times5$ 输出头。忽略固定 LayerNorm 与中间激活，
 手算可训练元素个数，再对照\hyperref[eq:toy-99-parameters]{正文参数总数公式}。

@@ -4,7 +4,7 @@
 单条输入写作 $\vect x^\top$，整段输入为 $X$；
 投影写作 $\vect x^\top W$ 或 $XW$。
 仅在点积、求梯度或显式说明转置时，用 $\vect x$ 表示同一向量的列形式。
-\hyperref[intro:04-key-value-outer-product]{联想记忆专题}也使用行向量：写入 $S=\sum_i k_i^\top v_i$，读出 $xS$。
+\hyperref[intro:04-key-value-outer-product]{联想记忆专题}也使用行向量：写入 $\mathcal{M}=\sum_i k_i^\top v_i$，读出 $x\mathcal{M}$。
 
 \begin{center}\small
 \renewcommand{\arraystretch}{1.25}
@@ -19,13 +19,47 @@ $d_{\rm model}$ & 每个 Token 的隐藏宽度 & $W_Q:d_{\rm model}\times d_k$\\
 $d_k$ & Query 与 Key 的匹配宽度 & $QK^\top:N\times M$\\
 $d_v$ & Value 的特征数 & $AV:N\times d_v$\\
 $d_{\rm ff}$ & FFN 内部宽度 & $W_{\rm up}:d_{\rm model}\times d_{\rm ff}$\\
-$|\mathcal V|$ & 词表大小 & $W_{\rm vocab}:d_{\rm model}\times|\mathcal V|$\\
+$|\mathcal V|$ & 词表大小 & $W_{\rm out}:d_{\rm model}\times|\mathcal V|$\\
 \bottomrule
 \end{tabularx}
 \end{center}
 Self-Attention 中 $N=M=T$；跨序列读取时 $N$ 与 $M$ 可以不同。
 $\softmax$ 对矩阵默认逐行归一化。
 温度 $\tau>0$ 与逆温度 $\beta=1/\tau$ 会在采样章继续出现。
+
+\subsubsection*{同一个符号，只承担一个主角色}
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{32mm}X@{}}\toprule
+符号 & 全书约定\\\midrule
+$W_{\rm out},b_{\rm out}$ & 词表输出头；$W_O$ 专指多头 Attention 的输出投影\\
+$Z,\vect z$ & logits；$L$ 专指损失，层数写 $N_{\rm layer}$\\
+$P_{\rm pos}$ & 位置向量表；第 $i$ 行写 ${P_{\rm pos}}_{i,:}$\\
+$\Pi,p_j$ & 整张词表概率矩阵、单行中的第 $j$ 类概率\\
+$S,A$ & 注意力匹配分数、逐行 Softmax 后的读取权重\\
+$\mathcal{M}$ & 外积记忆／线性注意力的状态，与分数 $S$ 区分\\
+$F^{(\ell)},F_{\rm mid}$ & MLP 的第 $\ell$ 层激活、FFN 中间表示\\
+$\mathcal A_i$ & 奖励归一化后的相对优势，与注意力权重 $A$ 区分\\
+\bottomrule\end{tabularx}
+\end{center}
+脚本为保持接口简短，使用 \texttt{P} 对应 $P_{\rm pos}$、
+\texttt{probs} 对应 $\Pi$、\texttt{Wout} 对应 $W_{\rm out}$；
+大小写相近的 \texttt{Wo} 对应 $W_O$。代码名与数学名在此一一对照。
+
+\subsubsection*{全书色彩表：用标签和线型共同识别}
+\phantomsection\label{app:color-semantics}
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{26mm}X@{}}\toprule
+类别 & 图色与冗余标记\\\midrule
+角色 & \textcolor{blue}{Q 蓝}、\textcolor{teal}{K 青}、\textcolor{orange}{V 橙}，始终印角色字母\\
+可见性 & \textcolor{visiblecolor}{可见绿／勾号}；\textcolor{maskedcolor}{遮蔽灰／叉号}\\
+数据流 & \textcolor{flowcolor}{主流蓝灰／实箭头}；\textcolor{residualcolor}{残差紫／旁路}\\
+数据与窗口 & \textcolor{datacolor}{数据玫红／点或柱}，目标柱另加粗边；噪声用黑色点；窗口用橄榄色实框／虚框\\
+\bottomrule\end{tabularx}
+\end{center}
+背景的浅灰只分组，不承载角色语义。灰度阅读时按字母、叉／勾、边框与线型判断。
 
 \begin{warningbox}
 $QK^\top$ 是匹配分数，$\softmax(QK^\top)V$ 才是读取结果。

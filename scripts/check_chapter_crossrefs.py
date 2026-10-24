@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prevent stale chapter numbers even when LaTeX cross-references still compile.
+r"""Prevent stale chapter numbers even when LaTeX cross-references still compile.
 
 The ordinary LaTeX and PDF checks catch missing destinations and '??'. This
 additional gate checks the SEMANTICS of manual chapter numbers against the
@@ -59,8 +59,8 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
             elif slug in core_checks:
                 errors.append(f"chapters/{name}.tex: duplicate self-check ID {slug}")
 
-    if chapter_no != 36:
-        errors.append(f"core numbered chapters: expected 36, found {chapter_no}")
+    if chapter_no != 41:
+        errors.append(f"core numbered chapters: expected 41, found {chapter_no}")
 
     # Unlinked literal numbers survive LaTeX compilation and can silently go
     # stale after a section is inserted, moved, or removed. The answer bank is
@@ -122,7 +122,7 @@ def self_test() -> None:
     inputs = {"a": a, "b": b, "28-chapter-checks": answers}
     # In this two-chapter fixture only the fixed-book cardinality warning is expected.
     assert check_crossrefs(main, inputs) == [
-        "core numbered chapters: expected 36, found 2"
+        "core numbered chapters: expected 41, found 2"
     ]
     wrong = dict(inputs, **{"28-chapter-checks": answers.replace(
         "第 2 章", "第 1 章"
@@ -164,7 +164,7 @@ def main() -> int:
         for issue in issues:
             print("::error::" + issue, file=sys.stderr)
         return 1
-    print("Chapter reference QA passed: 36 numbered chapters; "
+    print("Chapter reference QA passed: 41 numbered chapters; "
           "all appendix D answer chapter numbers match source order; "
           "no hard-coded numbered chapter mentions")
     return 0

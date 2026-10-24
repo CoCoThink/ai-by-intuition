@@ -1,9 +1,7 @@
 \subsection{版本、勘误与复算入口}
 \phantomsection\label{app:revision-notes}
 
-本书将可手算的\textbf{教学小模型}和可以运行的\textbf{真实公开模型}
-分开标注。复算时首先核对输入、矩阵形状、计算规则，
-再根据所使用的模型确认版本和依赖。
+复算时核对输入、形状、计算规则，再确认模型版本和依赖。
 
 \subsubsection*{从可复算的例子开始}
 
@@ -39,9 +37,12 @@ python3 scripts/architecture_demo.py
 python3 scripts/vision_bridge_demo.py
 \end{verbatim}
 架构缓存与视觉桥接数据是独立教学设定。
-\item \textbf{新增自测题的数值：}
+\item \textbf{综合练习数值：}
 运行 \texttt{python3 scripts/review\_exercises\_demo.py}，
-核对 C1-15、C1-16、C2-17 至 C2-20 的中间计算。
+核对 C-021、C-028、C-084、C-095、C-031、C-096 的中间计算。
+\item \texttt{python3 scripts/context\_contrast\_demo.py}：相同 Token、相同位置、不同前文的消融训练，比较逐位置损失下界与上下文读取。
+\item \texttt{python3 scripts/mini\_transformer\_demo.py}：二维分数参数的完整前向与反向，有限差分核对全部 $24$ 个导数。
+\item \texttt{python3 scripts/cache\_budget\_demo.py}：从固定配置计算每 Token 与 32K 的 KV 字节数，同时核对缓存练习答案。
 \end{itemize}
 
 \subsubsection*{真实 GPT-2：运行方式与实测来源}
@@ -84,7 +85,7 @@ ID & 解码文本 & 概率\\\midrule
 工作流编号 \#39897932969 仅作补充溯源，避免依赖可能过期的工件下载。
 
 \subsubsection*{版本与勘误}
-\textbf{时效性提示（检索基准：2026-10-23（UTC））：}\hyperref[part:architecture]{架构与技术判断正文}及附录 F 的模型名称、开源配置与技术报告代表本版编辑时已收录的信息；具体模型是否仍可用、配置是否修订，应以所链接的官方页面与最新提交为准。第三方站点与报告若无明确发布修订记录，不能视为实时状态。\par
+\textbf{来源版本：}模型配置和报告的 UTC 核验日期见附录 F；复算采用所列固定提交，后续版本另作对照。\par
 当前教材编辑稿为 \textbf{v0.2.0-draft（未发布）}。\textbf{v0.1.0} 是此前已发布的独立版本。\bookbuildsource
 
 教学初始矩阵为本书的独立设定，应配合相应版本的公式与脚本复算。
@@ -96,5 +97,5 @@ ID & 解码文本 & 概率\\\midrule
 \noindent 发布版本：\url{https://github.com/CoCoThink/ai-by-intuition/releases}\par
 \noindent 反馈：\url{https://github.com/CoCoThink/ai-by-intuition/issues}\par
 \noindent 勘误：\texttt{docs/ERRATA.md}；构建与复现：\texttt{docs/BUILD-REPRODUCIBILITY.md}。\par
-\noindent 以上路径均从本页明文印出的仓库根网址打开。
+\noindent 脚本入口：从仓库进入 \texttt{scripts/}；复现 PDF 时切换到版权页提交。
 \endgroup

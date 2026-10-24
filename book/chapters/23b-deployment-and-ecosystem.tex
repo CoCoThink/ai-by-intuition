@@ -1,8 +1,8 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{系统已经会用工具了，怎样稳定部署并控制成本？}
+\section{训练系统与推理部署：资源花在哪里？}
 \label{intro:23b-deployment-and-ecosystem}
-\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{本节推理使用固定权重；缓存和运行状态会变化}
+\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{训练更新参数；推理固定权重，缓存与运行状态变化}
 \modelpipelinefocus{8}{部署、缓存与系统}
 
 
@@ -10,7 +10,41 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 但模型仍要在现实硬件上运行，且必须考虑缓存、延迟、成本与隐私。
 这一章转向基础设施，不把性能优化误写成模型在对话中重新学习。
 
-\subsection{训练代码、模型权重、推理程序是三件事}
+\subsection{训练系统：参数、梯度、状态与通信}
+\subsubsection*{为什么大模型训练要拆到多张卡？}
+
+权重只是训练显存的一部分。还要保存梯度、优化器状态和
+反向传播需要的激活。以十亿参数为教学估算：
+仅 FP32 主权重、梯度与 Adam 的两份状态，
+理论上就需要大约 $4\times4=16$ GB，
+激活、临时缓冲和额外权重副本需另计。
+显存不足时需要\textbf{分布式训练}与分片。
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{35mm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+做法 & 分摊的对象及主要代价\\\midrule
+数据并行（Data Parallelism） & 不同设备处理不同样本批次，再同步或归约梯度；朴素方案每卡仍保留完整权重\\
+张量并行（Tensor Parallelism） & 把一层的大矩阵与计算拆到多设备；层内通信频繁\\
+流水线并行（Pipeline Parallelism） & 不同设备保存不同层；微批次填充流水线，需处理流水线空泡\\
+状态分片（如 ZeRO/FSDP） & 分摊优化器状态、梯度乃至权重；以设备间通信换显存\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\phantomsection\label{concept:mixed-precision}
+\textbf{混合精度训练（Mixed Precision）}用如 BF16 的较短浮点表示
+执行适合的矩阵计算，并对某些归约、统计或状态保留较高精度。
+BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
+但尾数精度更低；采用哪种精度取决于硬件及数值稳定性。
+\textbf{FlashAttention} 则通过分块、在线 Softmax 和减少高带宽显存读写
+提高标准 Attention 的计算效率；它在适用条件下
+\textbf{保持相同的注意力数学目标}，不是一种新的注意力训练损失。
+工程选型要同时测量吞吐、显存、通信、数值误差与最终模型质量。
+
+\subsection{推理部署：权重、缓存、精度与服务}
+\subsubsection*{训练代码、模型权重、推理程序是三件事}
 
 让一个大语言模型工作，至少需要区分：
 \begin{enumerate}
@@ -33,7 +67,7 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 
 \textbf{私有化部署}一般是指在自有设备或受控制的基础设施上运行模型。它有助于控制数据流向，但并不自动带来安全保障：仍需考虑访问权限、日志、模型许可和升级流程。
 
-\subsection{模型为什么需要显存？}
+\subsubsection*{模型为什么需要显存？}
 
 权重由许多数字组成。假设模型有 $10^9$（十亿）个参数，如果每个参数用 2 字节存储，仅权重就占约
 \[
@@ -50,38 +84,7 @@ Agent 的报告流程已经包含检索、计算与人工复核，
 \end{warningbox}
 
 
-\subsection{为什么大模型训练要拆到多张卡？}
-
-权重只是训练显存的一部分。还要保存梯度、优化器状态和
-反向传播需要的激活。以十亿参数为教学估算：
-仅 FP32 主权重、梯度与 Adam 的两份状态，
-理论上就需要大约 $4\times4=16$ GB，
-激活、临时缓冲和额外权重副本需另计。
-显存不足时需要\textbf{分布式训练}与分片。
-
-\begin{center}\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{35mm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-做法 & 分摊的对象及主要代价\\\midrule
-数据并行（Data Parallelism） & 不同设备处理不同样本批次，再同步或归约梯度；朴素方案每卡仍保留完整权重\\
-张量并行（Tensor Parallelism） & 把一层的大矩阵与计算拆到多设备；层内通信频繁\\
-流水线并行（Pipeline Parallelism） & 不同设备保存不同层；微批次填充流水线，需处理流水线空泡\\
-状态分片（如 ZeRO/FSDP） & 分摊优化器状态、梯度乃至权重；以设备间通信换显存\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-\textbf{混合精度训练（Mixed Precision）}用如 BF16 的较短浮点表示
-执行适合的矩阵计算，并对某些归约、统计或状态保留较高精度。
-BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
-但尾数精度更低；采用哪种精度取决于硬件及数值稳定性。
-\textbf{FlashAttention} 则通过分块、在线 Softmax 和减少高带宽显存读写
-提高标准 Attention 的计算效率；它在适用条件下
-\textbf{保持相同的注意力数学目标}，不是一种新的注意力训练损失。
-工程选型要同时测量吞吐、显存、通信、数值误差与最终模型质量。
-
-\subsection{量化：为什么更少的位数可以降低成本？}
+\subsubsection*{量化：为什么更少的位数可以降低成本？}
 \phantomsection\label{concept:quant}
 
 原来每个权重使用较高数值精度保存；\textbf{量化}用更少位数表示近似的权重或激活。例如从每个参数 16 bit 变为 8 bit，权重存储理论上可下降到原来的一半左右。
@@ -105,7 +108,8 @@ $(-1,-0.197,0.197,1)$。
 
 代价是近似误差：相近权重会落入同一个量化格。模型效果是否受影响，取决于量化方案、模型分布和任务，并不是位数越少越好。
 
-\subsection{蒸馏、剪枝、LoRA 不是同一种事}
+\phantomsection\label{concept:distillation}\label{concept:pruning}
+\subsubsection*{蒸馏、剪枝、LoRA 不是同一种事}
 \phantomsection\label{concept:lora}
 
 \begin{center}
@@ -145,8 +149,8 @@ $-\log0.6\approx0.511$，
 对一个 $1000\times1000$ 的方阵，完整训练它需要
 $1000^2=1{,}000{,}000$ 个可学习权重。
 LoRA 若冻结原矩阵，用秩 $r=8$ 的增量
-$\Delta W=AB$，$A:1000\times8$，
-$B:8\times1000$，则需要
+$\Delta W=U_{\rm lr}V_{\rm lr}$，$U_{\rm lr}:1000\times8$，
+$V_{\rm lr}:8\times1000$，则需要
 \[
 1000\times8+8\times1000
 =\boxed{16{,}000}
@@ -158,19 +162,7 @@ $B:8\times1000$，则需要
 
 这些技术解决的成本不同：量化和剪枝常用于减小部署开销，LoRA 主要减少微调时需要更新的参数。
 
-\subsection{从文本模型到多模态模型}
-
-\textbf{多模态}是模型能处理文字、图片、音频、视频等多种类型输入或输出。具体模型可使用模态专用编码器或共享表示；进入语言主干后，再用注意力、投影等机制融合信息。
-
-常见缩写：
-\begin{itemize}
-\item \textbf{ASR}（Automatic Speech Recognition）：语音识别，把声音转成文字。
-\item \textbf{TTS}（Text to Speech）：将文字转换为合成语音。
-\item \textbf{AIGC}（AI-Generated Content）：由 AI 生成或辅助生成内容的广义说法。
-\item \textbf{AGI}（Artificial General Intelligence）：通用人工智能，是仍在讨论的目标与概念，具体主张需要给出测试定义。
-\end{itemize}
-
-\subsection{为什么还有框架、镜像、推理引擎和协议？}
+\subsubsection*{为什么还有框架、镜像、推理引擎和协议？}
 
 模型权重之外仍需要很多工程工具。一个典型流程是：
 \[
@@ -183,7 +175,7 @@ $B:8\times1000$，则需要
 
 \textbf{API、\conceptlink{agent}{Agent} 和 \conceptlink{mcp}{MCP} 等概念主要属于系统集成层。}工具调用通过上下文和外部动作扩展产品能力，本书的推理流程使用固定模型参数。
 
-\subsection{技术生态地图：CUDA、PyTorch、Hugging Face、Ollama、vLLM}
+\subsubsection*{技术生态地图：CUDA、PyTorch、Hugging Face、Ollama、vLLM}
 
 同一个模型可以通过不同软件组合训练、下载和部署。
 不要把\textbf{硬件计算平台、训练框架、模型仓库、运行工具和推理服务}

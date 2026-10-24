@@ -10,13 +10,13 @@
  \filldraw[fill=paper,draw=linegray] (\cc,{3-\rr}) rectangle ++(1,1);
  \node[font=\small] at ({\cc+.5},{3.5-\rr}) {$\val$};
 }
-\draw[very thick,orange,rounded corners=1pt] (0,2) rectangle (2,4);
-\draw[very thick,teal,dashed,rounded corners=1pt] (1,2) rectangle (3,4);
-\node[font=\footnotesize,anchor=west] at (0,-.52) {橙框：首个窗口；青色虚框：右移一格};
-\draw[->,blue,very thick] (4.25,2.1)--(5.22,2.1);
+\draw[very thick,windowcolor,rounded corners=1pt] (0,2) rectangle (2,4);
+\draw[very thick,windowcolor,dashed,rounded corners=1pt] (1,2) rectangle (3,4);
+\node[font=\footnotesize,anchor=west] at (0,-.52) {实框：首个窗口；虚框：右移一格};
+\draw[->,flowcolor,very thick] (4.25,2.1)--(5.22,2.1);
 \node[align=center,font=\small] at (6.9,2.1)
  {$F=\begin{bmatrix}1&0\\0&-1\end{bmatrix}$\\逐格乘加};
-\draw[->,blue,very thick] (8.3,2.1)--(9.1,2.1);
+\draw[->,flowcolor,very thick] (8.3,2.1)--(9.1,2.1);
 \node[align=center,font=\small] at (11,2.15)
  {$\begin{bmatrix}0&1&0\\1&0&-1\\0&-1&0\end{bmatrix}$\\$3\times3$ 特征图};
 \end{tikzpicture}

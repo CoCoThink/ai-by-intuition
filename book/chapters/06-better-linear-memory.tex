@@ -1,29 +1,29 @@
 \chapterrule
 \section{线性记忆怎样减少干扰？}
 \phantomsection\label{intro:06-better-linear-memory}
-\chaptercompass{写入 B 时能同时保护旧记忆 A 吗？}{比较最小二乘与逐条残差 Delta 更新，并看旧记忆受损。}{$S:2\times2,\ k:1\times2,\ r:1\times2$}{这里修正外部状态 $S$，不是训练神经网络参数}
+\chaptercompass{写入 B 时能同时保护旧记忆 A 吗？}{比较最小二乘与逐条残差 Delta 更新，并看旧记忆受损。}{$\mathcal{M}:2\times2,\ k:1\times2,\ r:1\times2$}{这里修正外部状态 $\mathcal{M}$，不是训练神经网络参数}
 \modelpipelinefocus{3}{Delta 规则与残差记忆}
 
 直接累加外积时，每条新记忆可能改变旧 Key 的输出。
 可以让矩阵同时拟合全部输入与目标：
 \[
-\boxed{\min_S\sum_{i=1}^{M}\|k_iS-v_i\|^2}.
+\boxed{\min_{\mathcal{M}}\sum_{i=1}^{M}\|k_i\mathcal{M}-v_i\|^2}.
 \]
 这叫最小二乘，注意\textbf{行向量 Key 从左边乘状态矩阵}。
 
 \subsection{两条二维记忆：一个精确解}
 刚才的外积相加得到
 \[
-S_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
+\mathcal{M}_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
 \]
 改用
 \[
-\boxed{S_{\rm better}=\begin{bmatrix}1&0\\-0.75&1.25\end{bmatrix}},
+\boxed{\mathcal{M}_{\rm better}=\begin{bmatrix}1&0\\-0.75&1.25\end{bmatrix}},
 \]
 就能逐项验算：
 \[
-(1,0)S_{\rm better}=(1,0),\qquad
-(0.6,0.8)S_{\rm better}=(0,1).
+(1,0)\mathcal{M}_{\rm better}=(1,0),\qquad
+(0.6,0.8)\mathcal{M}_{\rm better}=(0,1).
 \]
 负权重在这里用于\textbf{抵消交叉干扰}。
 但如果约束不相容，线性层并不能任意精确存取无限多条关联。
@@ -31,10 +31,10 @@ S_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
 \subsection{从误差修正到 Delta 写入}
 \phantomsection\label{concept:delta-rule}
 比无条件相加外积更进一步：写入新配对之前，先看旧状态
-$S_{t-1}$ 已经读出什么，只写入尚未记住的残差：
+$\mathcal{M}_{t-1}$ 已经读出什么，只写入尚未记住的残差：
 \[
-r_t=v_t-k_tS_{t-1},\qquad
-\boxed{S_t=S_{t-1}+\eta k_t^\top r_t}.
+r_t=v_t-k_t\mathcal{M}_{t-1},\qquad
+\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta k_t^\top r_t}.
 \]
 这里 $k_t:1\times d_k$、$r_t:1\times d_v$；
 若 $k_t$ 归一化且 $\eta=1$，可以在该 Key 方向消除\textbf{当次}读出误差。
@@ -47,31 +47,31 @@ r_t=v_t-k_tS_{t-1},\qquad
 k_A=(1,0),\ v_A=(1,0),\qquad
 k_B=(0.6,0.8),\ v_B=(0,1).
 \]
-从 $S_0=0$、$\eta=1$ 开始，先写 A：
+从 $\mathcal{M}_0=0$、$\eta=1$ 开始，先写 A：
 \[
-S_1=k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix}.
+\mathcal{M}_1=k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix}.
 \]
-写 B 前，旧状态的读取为 $k_BS_1=(0.6,0)$，
+写 B 前，旧状态的读取为 $k_B\mathcal{M}_1=(0.6,0)$，
 所以不是直接追加 $k_B^\top v_B$，而是计算残差：
 \[
-r_B=v_B-k_BS_1=(-0.6,1).
+r_B=v_B-k_B\mathcal{M}_1=(-0.6,1).
 \]
 下一步得到
 \begin{equation}
 \begin{aligned}
-S_2&=S_1+k_B^\top r_B\\
+\mathcal{M}_2&=\mathcal{M}_1+k_B^\top r_B\\
 &=\begin{bmatrix}1&0\\0&0\end{bmatrix}
 +\begin{bmatrix}0.6\\0.8\end{bmatrix}(-0.6,1)
 =\boxed{\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}}.
 \end{aligned}
 \label{eq:delta-overwrites-key-a}
 \end{equation}
-立即查询 B 得到\textbf{正确的} $k_BS_2=(0,1)$；
+立即查询 B 得到\textbf{正确的} $k_B\mathcal{M}_2=(0,1)$；
 反过来，旧的 A 查询却变成
-$k_AS_2=(0.64,0.6)$，不再等于 $(1,0)$。
+$k_A\mathcal{M}_2=(0.64,0.6)$，不再等于 $(1,0)$。
 A 的误差范数为
 \[
-\|k_AS_2-v_A\|_2=\sqrt{(-0.36)^2+0.6^2}
+\|k_A\mathcal{M}_2-v_A\|_2=\sqrt{(-0.36)^2+0.6^2}
 \approx\boxed{0.700}.
 \]
 若直接相加外积，A 的误差为 $0.600$。
@@ -81,7 +81,7 @@ A 的误差范数为
 Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 每写一条后所有旧记忆都更准确。
 交替重访 A、B，在这两条线性无关的单位 Key 与 $\eta=1$
-的条件下可收敛到本章的精确解 $S_{\rm better}$。
+的条件下可收敛到本章的精确解 $\mathcal{M}_{\rm better}$。
 它是一次次更新得到的结果，而不是两次写入后的立即结果。
 \end{boundarybox}
 

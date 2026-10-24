@@ -12,8 +12,8 @@
 \subsection{必读 1：RoPE 怎样利用相对位置？}
 \phantomsection\label{concept:rope}
 
-经典 Transformer 可以把位置向量 $P$ 加在 Token 嵌入上：
-$X_0=X_{\rm token}+P$。另一些模型使用\textbf{旋转位置表示（RoPE）}：
+经典 Transformer 可以把位置向量 $P_{\rm pos}$ 加在 Token 嵌入上：
+$X_0=X_{\rm token}+P_{\rm pos}$。另一些模型使用\textbf{旋转位置表示（RoPE）}：
 它对 Query 和 Key 的部分二维分量施加\textbf{与位置相关的旋转}。
 
 先用\textbf{两个整数位置}和二维旋转矩阵算一遍：
@@ -145,6 +145,27 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 \textbf{MLA} 等低秩潜在表示技术通过压缩缓存状态走另一条路线；
 GQA 则直接减少独立 K/V 头数。选型时要比较质量和实际缓存字节数。
 
+\begin{example}[breakable]
+\noindent\emph{真实配置：Qwen2.5-0.5B 的 32K 缓存是多少？}\par
+固定提交 \texttt{060db64} 的配置为 $24$ 层、$14$ 个 Query 头、$2$ 个 KV 头，
+隐藏宽度 $896$，所以每头宽度 $896/14=64$。
+对单请求、每个 K/V 元素 $2$ 字节、完整保存所有位置的缓存，
+\[
+B_{\rm token}=2\text{(K/V)}\times24\times2\times64\times2
+=12{,}288\text{ 字节}=12\text{ KiB}.
+\]
+把 32K 明确定义成 $32{,}768$ 个位置，缓存本体为
+\[
+B_{32K}=12{,}288\times32{,}768=402{,}653{,}184\text{ 字节},
+\]
+即 $384$ MiB，约 $0.403$ 十进制 GB。
+保持其他条件不变，改成 $14$ 个 KV 头的 MHA，缓存为原来 $7$ 倍：
+$2{,}818{,}572{,}288$ 字节，约 $2.819$ GB。
+这是满长度 K/V 数据的估算，未计权重、分页碎片和运行时缓冲；
+批量中的多条请求分别计入其有效缓存位置。
+配置来源见附录 F；\texttt{scripts/cache\_budget\_demo.py} 从锁定配置复算。
+\end{example}
+
 \subsection{只替换一次 Norm：落回前面的三维数字}
 
 三维贯通模型在 Attention 前的第一行是
@@ -250,9 +271,9 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$。
 \tagstructbegin{tag=Figure,alttext={MoE 的单 Token 路由流程。蓝色 Token 进入路由器，三个专家的分数分别为二、一、零；Top-1 只将 Token 送给专家一，其他两个专家此次不计算，专家一的输出送往汇合位置。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,
- block/.style={draw=linegray,fill=blueback,rounded corners=2pt,
+ block/.style={draw=linegray,fill=paper,rounded corners=2pt,
    minimum width=20mm,minimum height=9mm,align=center,font=\sffamily\small},
- expert/.style={draw=teal,fill=greenback,rounded corners=2pt,
+ expert/.style={draw=flowcolor,fill=linegray!15,rounded corners=2pt,
    minimum width=24mm,minimum height=9mm,align=center,font=\sffamily\small}]
 \node[block] (token) at (0,0) {Token};
 \node[block] (router) at (3.0,0) {Router\\$(2,1,0)$};
@@ -260,9 +281,9 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$。
 \node[block,fill=paper] (two) at (6.8,0) {专家 2\\未选中};
 \node[block,fill=paper] (three) at (6.8,-1.15) {专家 3\\未选中};
 \node[block] (output) at (10.3,1.15) {输出};
-\draw[->,thick,blue] (token)--(router);
-\draw[->,thick,teal] (router.east)--(one.west);
-\draw[->,thick,teal] (one)--(output);
+\draw[->,thick,flowcolor] (token)--(router);
+\draw[->,thick,flowcolor] (router.east)--(one.west);
+\draw[->,thick,flowcolor] (one)--(output);
 \draw[densely dashed,muted] (router.east)--(two.west);
 \draw[densely dashed,muted] (router.east)--(three.west);
 \end{tikzpicture}
@@ -341,18 +362,18 @@ Dense（稠密）与 MoE 应在同一质量、硬件和预算约束下比较。
 \textbf{将历史压入固定形状的状态，就能逐步写入与读取。}
 \hyperref[intro:04-key-value-outer-product]{联想记忆专题}提供一条可手算的行向量路线：
 \[
-\underbrace{S_t}_{d_k\times d_v}
+\underbrace{\mathcal{M}_t}_{d_k\times d_v}
 =\sum_{i\le t}k_i^\top v_i,\qquad
-\underbrace{y_t}_{1\times d_v}=q_tS_t.
+\underbrace{y_t}_{1\times d_v}=q_t\mathcal{M}_t.
 \]
-每来一对 Key--Value，就把外积加到 $S_t$；查询时只读这个状态。
+每来一对 Key--Value，就把外积加到 $\mathcal{M}_t$；查询时只读这个状态。
 
 \textbf{与 Delta 规则的连接：}
 线性记忆的\hyperref[check:06-better-linear-memory]{减少干扰}
 已经尝试先读旧状态再修正：
 \[
-r_t=v_t-k_tS_{t-1},\qquad
-S_t=S_{t-1}+\eta k_t^\top r_t.
+r_t=v_t-k_t\mathcal{M}_{t-1},\qquad
+\mathcal{M}_t=\mathcal{M}_{t-1}+\eta k_t^\top r_t.
 \]
 Delta 更新先测量当前读出与目标的残差，再把修正写回状态。
 Gated DeltaNet 将这种残差更新与门控结合，用于高效序列建模。
@@ -361,8 +382,8 @@ Gated DeltaNet 将这种残差更新与门控结合，用于高效序列建模�
 \noindent\emph{两条关联如何汇成一个状态}\par
 若 $k_1=(1,0)$、$v_1=(2,0)$，
 $k_2=(0,1)$、$v_2=(0,3)$，
-则外积相加得到 $S_2=\begin{bmatrix}2&0\\0&3\end{bmatrix}$。
-用 $q_2=(1,1)$ 查询，$q_2S_2=(2,3)$；
+则外积相加得到 $\mathcal{M}_2=\begin{bmatrix}2&0\\0&3\end{bmatrix}$。
+用 $q_2=(1,1)$ 查询，$q_2\mathcal{M}_2=(2,3)$；
 两条 Value 的贡献直接相加，保留了累计幅度。
 \end{example}
 

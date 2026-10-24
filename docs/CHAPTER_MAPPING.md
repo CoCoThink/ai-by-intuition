@@ -4,7 +4,7 @@
 > 原始设计：[REVIEW.md](REVIEW.md)。现有准确阅读顺序以 [book/main.tex](../book/main.tex) 为准。
 > 源文件层面的最新完整编辑复查及未闭合事项见 [全文编辑审校记录](FULL_TEXT_AUDIT.md)。
 > 历史基线：七个必读部分（32 个显示章节）+ 两组选读（2 个视觉章节、4 个记忆章节）= 38 章；附录 A–E。
-> 当前 main 结构：八部分、36 章、附录 A–K。视觉专题在助手之前，联想记忆在正文收束后的提高附录；Agent 拆为三章，章号由 LaTeX 自动生成。
+> 当前 main 结构：九部分、41 章、附录 A–G。视觉专题在助手之前，联想记忆为第九部分；Agent 拆为三章，章号由 LaTeX 自动生成。
 > **不要以源文件编号推断印刷章号**：印刷章号由 LaTeX 的 \`\\section\` 顺序生成。
 
 ## 当前正文与附录映射（以 `book/main.tex` 为准）
@@ -17,12 +17,12 @@
 | 15–20 | 上下文、RNN、朴素 Attention、Q/K/V、Self-Attention、位置与多头 |
 | 21–26 | Transformer Block、FFN、三位置贯通、训练、生成、从玩具到 GPT |
 | 27–28 | **视觉正文**：`19-cnn`、`19b-vit`（视觉前缀与多模态桥接） |
-| 29–34 | ICL、后训练、`23d-agent-systems`（RAG）、`23d-agent-tools`（Agent 循环）、`23d-agent-protocols`（协议／多 Agent）、部署 |
-| 35–36 | 现代 Transformer（必读先行、选读集中）、评测与技术判断；其后以`23f-foundation-recap` 收束正文 |
+| 29–35 | ICL、后训练、测试时计算、`23d-agent-systems`（RAG）、`23d-agent-tools`（Agent 循环）、`23d-agent-protocols`（协议／多 Agent）、训练系统与部署 |
+| 36–37 | 现代 Transformer（必读先行、选读集中）、评测与技术判断；其后以 `23f-foundation-recap` 收束主线 |
 | 附录 A–G | 公式、实验、练习、答案、术语、文献、勘误 |
-| 附录 H–K | `04-key-value-outer-product` 到 `13-capacity`：联想记忆与线性状态提高专题 |
+| 38–41 | 第九部分：`04-key-value-outer-product` 到 `13-capacity`，联想记忆与线性状态专题 |
 
-新增核心解释包括多 GPU、混合精度、FlashAttention、从交叉熵到困惑度、Benchmark 污染、Best-of-N 测试时计算、提示注入、模型偏见及 Softmax 稳定计算。章末保留短结果提示和附录 D 的完整答案。
+新增核心解释包括多 GPU、混合精度、FlashAttention、从交叉熵到困惑度、Benchmark 污染、Best-of-N 测试时计算、提示注入、模型偏见及 Softmax 稳定计算。正文自测不印提示；附录 D 分“第一步”和完整解答。122 道题按章统一编号，146 项术语由生成器计数。最新修订与数值证据见[上下文闭环与结构记录](REVIEW-CONTEXT-AND-STRUCTURE.md)。
 
 **历史里程碑号和旧版构建统计仅对应各自旧提交，不作为当前发布结论。**
 

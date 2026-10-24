@@ -1,0 +1,212 @@
+[
+  {
+    "url": "https://www.bilibili.com/video/BV1NCgVzoEG9/",
+    "status": 200,
+    "final_url": "https://www.bilibili.com/video/BV1NCgVzoEG9/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://www.bilibili.com/video/BV15z4C6SEHT/",
+    "status": 200,
+    "final_url": "https://www.bilibili.com/video/BV15z4C6SEHT/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://d2l.ai/chapter_recurrent-neural-networks/",
+    "status": 200,
+    "final_url": "https://d2l.ai/chapter_recurrent-neural-networks/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://zh.d2l.ai/",
+    "status": 200,
+    "final_url": "https://zh.d2l.ai/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://distill.pub/2016/augmented-rnns/",
+    "status": 200,
+    "final_url": "https://distill.pub/2016/augmented-rnns/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://alexwang.ai/posts/associative-memory",
+    "status": 200,
+    "final_url": "https://alexwang.ai/posts/associative-memory/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/1706.03762",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1706.03762",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://www.deeplearningbook.org/",
+    "status": 200,
+    "final_url": "https://www.deeplearningbook.org/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2005.14165",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2005.14165",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2001.08361",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2001.08361",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2203.15556",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2203.15556",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html",
+    "status": 200,
+    "final_url": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/",
+    "status": 403,
+    "final_url": "https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://modelcontextprotocol.io/specification",
+    "status": 200,
+    "final_url": "https://modelcontextprotocol.io/specification/2026-07-28",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://a2a-protocol.org/latest/",
+    "status": 200,
+    "final_url": "https://a2a-protocol.org/latest/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://huggingface.co/openai-community/gpt2",
+    "status": 200,
+    "final_url": "https://huggingface.co/openai-community/gpt2",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json",
+    "status": 200,
+    "final_url": "https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json",
+    "status": 200,
+    "final_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2010.11929",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2010.11929",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2505.09388",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2505.09388",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/",
+    "status": 200,
+    "final_url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2609.19969",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2609.19969",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://api-docs.deepseek.com/updates/",
+    "status": 200,
+    "final_url": "https://api-docs.deepseek.com/updates/",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2104.09864",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2104.09864",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2305.13245",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2305.13245",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2002.05202",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2002.05202",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2101.03961",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2101.03961",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2501.12948",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2501.12948",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://huggingface.co/docs/transformers/main/en/chat_templating",
+    "status": 200,
+    "final_url": "https://huggingface.co/docs/transformers/main/en/chat_templating",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://huggingface.co/docs/transformers/main/en/cache_explanation",
+    "status": 200,
+    "final_url": "https://huggingface.co/docs/transformers/main/en/cache_explanation",
+    "checked_utc": "2026-10-24",
+    "method": "HTTP GET; link accessibility only, not full content verification"
+  }
+]

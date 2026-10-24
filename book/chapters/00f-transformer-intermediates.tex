@@ -1,8 +1,46 @@
+\subsection{20 分钟迷你版：二维、分数参数，走完前向与反向}
+\phantomsection\label{app:rational-mini}
+先用本例练计算链，再查下面的三维 Pre-Norm 主例。
+本例固定 $X=I_2$，只监督第二位置、目标为第二类；
+一个因果头的匹配宽度为 $1$、Value 宽度为 $2$，关闭 Norm 与偏置。
+这是结构简化；主例的 LayerNorm 梯度仍要按第~\ref*{intro:22c-language-training}~章计算。
+取
+\[
+W_Q=\begin{bmatrix}0\\1\end{bmatrix},\quad W_K=\begin{bmatrix}0\\0\end{bmatrix},\quad
+W_V=W_O=W_{\rm up}=W_{\rm down}=I_2,\quad
+W_{\rm out}=\begin{bmatrix}1&-1\\-1/3&1/3\end{bmatrix}.
+\]
+\textbf{前 8 分钟：}第二行的分数均为零，因果权重 $(1/2,1/2)$；
+$o=(1/2,1/2)$，第一次残差 $r=(1/2,3/2)$，
+$f=\relu(rW_{\rm up})=r$，第二次残差 $h=r+fW_{\rm down}=(1,3)$。
+于是 $z=hW_{\rm out}=(0,0)$、$p=(1/2,1/2)$、$L=\log2$。
+
+\textbf{后 12 分钟：}从 $g_z=(1/2,-1/2)$ 开始。
+输出头向前传回 $g_h=g_zW_{\rm out}^{\top}=(1,-1/3)$，
+两条残差路径相加得到 $g_r=2g_h=(2,-2/3)$。
+依次核对全部参数梯度：
+\[
+\begin{aligned}
+\nabla_{W_{\rm out}}L&=h^\top g_z=\begin{bmatrix}1/2&-1/2\\3/2&-3/2\end{bmatrix},\\
+\nabla_{W_{\rm down}}L&=\nabla_{W_{\rm up}}L
+=\begin{bmatrix}1/2&-1/6\\3/2&-1/2\end{bmatrix},\\
+\nabla_{W_O}L&=\nabla_{W_V}L
+=\begin{bmatrix}1&-1/3\\1&-1/3\end{bmatrix}.
+\end{aligned}
+\]
+读取权重的梯度是 $(2,-2/3)$；经 Softmax 得到分数梯度 $(2/3,-2/3)$。
+由 $q=1,k_1=k_2=0$，得到
+$\nabla_{W_K}L=(2/3,-2/3)^\top$、$\nabla_{W_Q}L=(0,0)^\top$。
+Query 梯度为零来自本次 $K=0$ 的参数点，不表示 Query 永远学不到。
+用 $W\leftarrow W-\eta\nabla_WL$ 同步更新即可完成一步。
+\texttt{python3 scripts/mini\_transformer\_demo.py} 逐一用有限差分核对全部 $24$ 个参数导数，并验证小步更新后损失下降。
+\medskip
+
 \subsection{三维贯通实验：完整参数表与逐层中间值}
 \phantomsection\label{app:transformer-intermediates}
 
 正文\hyperref[intro:22b-token-to-output]{贯通实验}列出了
-$X,A,H,\widehat P$ 四张最小矩阵。本附录给出
+$X,A,H,\Pi$ 四张最小矩阵。本附录给出
 对应的参数与中间量，供逐项验算。
 
 数值由 \nolinkurl{scripts/teaching_reference.py} 中的
@@ -15,11 +53,11 @@ $X,A,H,\widehat P$ 四张最小矩阵。本附录给出
 E=\begin{bmatrix}
 0&0&0\\1.2&0&-.2\\.2&-.4&.7\\-.3&1.1&.2\\.15&-.2&1.25
 \end{bmatrix}\;(5\times3),\qquad
-P=\begin{bmatrix}
+P_{\rm pos}=\begin{bmatrix}
 .10&.05&-.10\\0&-.05&.12\\-.12&.10&.07
 \end{bmatrix}\;(3\times3).
 \]
-第一步为 $X=E_{[2,4,5]}+P$，逐行 LayerNorm
+第一步为 $X=E_{[2,4,5]}+P_{\rm pos}$，逐行 LayerNorm
 采用 $\gamma=1$、$\beta=0$、$\varepsilon=10^{-5}$：
 \[
 U=\operatorname{LN}(X)\approx
@@ -144,7 +182,7 @@ Z=HW_{\rm out}\approx
 0&-.3064&.8002&-.2620&.5776
 \end{bmatrix}.
 \]
-正文的 $\widehat P=\operatorname{softmax}(Z)$ 为 $3\times5$，
+正文的 $\Pi=\operatorname{softmax}(Z)$ 为 $3\times5$，
 目标 $[4,5,3]$ 的三行概率平均交叉熵约 $1.798430$。
 
 
@@ -164,6 +202,6 @@ Z=HW_{\rm out}\approx
 矩阵形状检查顺序：
 $E_{\mathrm{ids}}(3\times3)\to X(3\times3)\to
 Q,K,V(3\times3)\to A(3\times3)\to H(3\times3)
-\to Z(3\times5)\to\widehat P(3\times5)$。
+\to Z(3\times5)\to\Pi(3\times5)$。
 正文负责解释\textbf{为什么这样算}，本附录负责回答\textbf{数字从哪里来}。
 \end{idea}

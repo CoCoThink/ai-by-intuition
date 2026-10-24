@@ -90,6 +90,25 @@ L=(m-z_{\rm correct})+\log\sum_k e^{z_k-m}
 Attention 遇到因果 Mask 时，对\textbf{每行可见的 Key}减去最大分数；
 每行至少保留一个可见位置，整行全遮住需要另外处理。
 
+\subsection{为什么取对数：把一串概率变成可以相加的惊讶度}
+正确答案的概率越小，看到它时越“意外”。用 $-\log p$ 表示这份惊讶：
+必然事件 $p=1$ 的代价为零；概率每缩小一半，代价都增加同一个 $\log2$。
+例如 $p=1/2,1/4,1/8$ 对应 $\log2,2\log2,3\log2$。
+
+对自回归序列，整段真实答案的条件概率是各位置概率的乘积：
+\[
+p_\theta(y_1,\ldots,y_T)=\prod_{t=1}^T p_\theta(y_t\mid y_{<t}).
+\]
+最大化这份\textbf{似然}，等价于最小化负对数：
+\[
+-\log p_\theta(y_1,\ldots,y_T)
+=\sum_{t=1}^T-\log p_\theta(y_t\mid y_{<t}).
+\]
+对数把乘积化为和，便于分位置计分和反传，也避免直接连乘许多小数。
+平均惊讶度为 $L$ 时，$\exp(L)$ 就是\textbf{困惑度}：
+模型像是在每步从这么多个等概率候选中选择。
+第~\ref*{intro:23e-tech-judgement}~章会用它评价同一分词口径下的预测。
+
 \subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}
 \phantomsection\label{concept:logit-gradient}
 
