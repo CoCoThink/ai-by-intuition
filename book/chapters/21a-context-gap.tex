@@ -1,4 +1,4 @@
-\Needspace{24\baselineskip}
+\Needspace{13\baselineskip}
 \chapterrule
 \section{逐个处理 Token，为什么仍看不到前文？}
 \label{intro:21a-context-gap}
@@ -49,9 +49,9 @@ f\bigl(E[\text{开了}]\bigr)
 
 
 \chapterchecktasks{21a-context-gap}{正文基础三题}{
-\item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？\chapterinlinehint{只给当前 Token 时，两句无法区分。}
-\item \textbf{手算：}两个序列末尾输入均为 $x=3$，同一个逐位置函数 $f(x)=2x+1$ 分别输出什么？\chapterinlinehint{两句都得到 $7$。}
-\item \textbf{找错：}同学把过去三个 Token 拼起来当特征，就宣布“任意长历史都能无代价地读到”。还缺少哪两个工程条件？\chapterinlinehint{固定宽度拼接需限制长度或截断。}
+\item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？\chapterinlinehint{检查函数实际收到的输入是否含有前文。}
+\item \textbf{手算：}两个序列末尾输入均为 $x=3$，同一个逐位置函数 $f(x)=2x+1$ 分别输出什么？\chapterinlinehint{把相同输入代入同一个函数两次。}
+\item \textbf{找错：}同学把过去三个 Token 拼起来当特征，就宣布“任意长历史都能无代价地读到”。还缺少哪两个工程条件？\chapterinlinehint{检查窗口长度和输入维度随历史怎样增长。}
 }
 \chapterrecallanswer{单位置函数不能从相同当前输入推断不同前文；上下文需要递推状态或跨位置读取机制。}
 

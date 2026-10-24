@@ -201,9 +201,9 @@ Attention 让各图像块交换信息；CNN 则先强调局部扫描。
 \end{conclusion}
 
 \chapterchecktasks{19b-vit}{正文基础三题}{
-\item \textbf{形状：}四个图像 Patch 各投影为三维向量，再加一个 CLS Token。ViT 的输入序列是几行？若使用全局自注意力，分数矩阵什么形状？\chapterinlinehint{共 $5$ 行，分数为 $5\times5$。}
-\item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？前述五条视觉向量经投影后是什么形状？\chapterinlinehint{桥接矩阵 $3\times6$，输出 $5\times6$。}
-\item \textbf{预测：}固定图像尺寸而把 Patch 边长减半，忽略边界时 Patch 数量约变为多少倍？全局 Attention 的位置配对数又约变为多少倍？\chapterinlinehint{Patch 约四倍，配对数约十六倍。}
+\item \textbf{形状：}四个图像 Patch 各投影为三维向量，再加一个 CLS Token。ViT 的输入序列是几行？若使用全局自注意力，分数矩阵什么形状？\chapterinlinehint{先数序列行，再写所有行之间的配对形状。}
+\item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？前述五条视觉向量经投影后是什么形状？\chapterinlinehint{让视觉特征宽度与语言隐藏宽度对齐。}
+\item \textbf{预测：}固定图像尺寸而把 Patch 边长减半，忽略边界时 Patch 数量约变为多少倍？全局 Attention 的位置配对数又约变为多少倍？\chapterinlinehint{先按面积比算 Patch 数，再算两两配对数。}
 }
 \chapterrecallanswer{ViT 把图像 Patch 变成带位置的 Token 序列，视觉到语言模型的接口还须对齐隐藏维度。}
 

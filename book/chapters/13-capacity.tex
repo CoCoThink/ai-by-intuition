@@ -75,9 +75,9 @@
 容量估算依赖随机性、独立性与非线性假设；可区分关联不等于可靠事实。
 
 \chapterchecktasks{13-capacity}{正文基础三题}{
-\item \textbf{预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？\chapterinlinehint{近似独立且归一化时，交叉点积更接近零。}
-\item \textbf{手算：}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。\chapterinlinehint{分别为 $0$ 和 $0.6$。}
-\item \textbf{找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？\chapterinlinehint{平方后非负，不能靠原符号抵消噪声。}
+\item \textbf{预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？\chapterinlinehint{比较典型尺度中的维度项。}
+\item \textbf{手算：}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。\chapterinlinehint{逐项相乘后求和。}
+\item \textbf{找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？\chapterinlinehint{先检查平方项的符号，再回看容量假设。}
 }
 \chapterrecallanswer{随机 Key 近似正交可减串扰；容量结论依赖随机性、噪声与读出误差。}
 
@@ -85,10 +85,8 @@
 
 \begin{conclusion}
 \textbf{提高专题收束：联想记忆的关键结论。}
-点积衡量 Query--Key 匹配，外积写入 Key--Value 关联；
-线性召回会混入非目标项，MLP 非线性可筛选匹配，
-Softmax Attention 则按行归一化。核心是
-$S=\sum_i k_i^\top v_i$，$xS=\sum_i(xk_i^\top)v_i$。
-这是一条\textbf{匹配与读取}的计算主线，不等于实际知识的真实性保证。
+点积匹配，外积写入；线性读取会串扰，非线性与 Softmax 提高选择性。
+行向量约定为 $S=\sum_i k_i^\top v_i$、$xS=\sum_i(xk_i^\top)v_i$。
+沿着这条\textbf{匹配与读取}主线，回看 Attention 与 FFN 的分工。
 \end{conclusion}
 

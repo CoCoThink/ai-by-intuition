@@ -1,4 +1,4 @@
-\Needspace{24\baselineskip}
+\Needspace{13\baselineskip}
 \chapterrule
 \section{把语言练习变成一道可计算的预测题}
 \label{intro:20b-task-contract}
@@ -109,7 +109,7 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 
 
 
-\Needspace{22\baselineskip}
+\Needspace{4\baselineskip}
 \subsection{一眼看懂这份任务的尺度}
 
 本书此刻只用\textbf{3 个输入位置、5 个候选 Token、每位置 3 维特征}
@@ -120,9 +120,9 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 \hyperref[intro:23a-from-toy-to-gpt]{第~\ref*{intro:23a-from-toy-to-gpt}~章}集中给出。
 
 \chapterchecktasks{20b-task-contract}{正文基础三题}{
-\item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{目标为 $[4,5,3]$。}
-\item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{logits 为 $3\times5$。}
-\item \textbf{找错：}同学让第一个位置通过 Attention 直接看见第二个位置的正确答案，再计算第一个位置的预测损失。哪里发生信息泄漏？\chapterinlinehint{当前位置读到了未来目标。}
+\item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列向左错开一位，对齐三个位置。}
+\item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
+\item \textbf{找错：}同学让第一个位置通过 Attention 直接看见第二个位置的正确答案，再计算第一个位置的预测损失。哪里发生信息泄漏？\chapterinlinehint{画出目标 Token 流向第一个位置的路径。}
 }
 \chapterrecallanswer{下一 Token 的目标来自原序列向右错一位；因果掩码禁止当前位置读取未来输入。}
 

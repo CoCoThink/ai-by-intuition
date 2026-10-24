@@ -6,186 +6,186 @@
 可先做题，再跳转到该章答案组查看详细过程。
 
 \subsubsection*{\hyperref[check:00-guide]{序章：为什么 AI 能接住我们说的话？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-1.}] \phantomsection\label{exercise:C4-1}\label{extension:00-guide:4}\textbf{方案：}读者希望验证一条模型生成的最新消息。请给出至少两步独立核查动作，说明为什么光改写 Prompt 不足以完成证据核验。 \hyperref[answerpiece:00-guide:4]{查看本题解答}
+\item[\textbf{C4-1.}] \phantomsection\label{exercise:C4-1}\label{extension:00-guide:4}\exercisemeta{标准}{8}{\hyperref[check:00-guide]{序章}}\textbf{方案：}读者希望验证一条模型生成的最新消息。请给出至少两步独立核查动作，说明为什么光改写 Prompt 不足以完成证据核验。 \hyperref[answerpiece:00-guide:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:00-functions]{为什么从函数开始学 AI？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-2.}] \phantomsection\label{exercise:C4-2}\label{extension:00-functions:4}\textbf{场景：}如果同一输入 $x=3$ 的实际目标从 $7$ 改成 $10$，只改变测试输入能解决吗？应调整哪个环节？ \hyperref[answerpiece:00-functions:4]{查看本题解答}
+\item[\textbf{C4-2.}] \phantomsection\label{exercise:C4-2}\label{extension:00-functions:4}\exercisemeta{标准}{5}{第~\ref*{intro:00-functions}~章}\textbf{场景：}如果同一输入 $x=3$ 的实际目标从 $7$ 改成 $10$，只改变测试输入能解决吗？应调整哪个环节？ \hyperref[answerpiece:00-functions:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:16-loss-analytic]{怎样量“猜得多差”？损失与一次直接求解（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-3.}] \phantomsection\label{exercise:C4-3}\label{extension:16-loss-analytic:4}\textbf{预测：}从 $w=3$ 向 $w=2$ 移动一点而 $b=1$ 不变，损失初期会增大还是减小？根据平方项说明理由。 \hyperref[answerpiece:16-loss-analytic:4]{查看本题解答}
+\item[\textbf{C4-3.}] \phantomsection\label{exercise:C4-3}\label{extension:16-loss-analytic:4}\exercisemeta{标准}{5}{第~\ref*{intro:16-loss-gradient}~章}\textbf{预测：}从 $w=3$ 向 $w=2$ 移动一点而 $b=1$ 不变，损失初期会增大还是减小？根据平方项说明理由。 \hyperref[answerpiece:16-loss-analytic:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:16-loss-gradient]{当解析解不现实时：梯度下降怎样调参数？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-4.}] \phantomsection\label{exercise:C4-4}\label{extension:16-loss-gradient:4}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？ \hyperref[answerpiece:16-loss-gradient:4]{查看本题解答}
-\item[\textbf{C4-5.}] \phantomsection\label{exercise:C4-5}\label{extension:16-loss-gradient:5}\textbf{诊断：}梯度为 $(6,8)$，L2 范数阈值为 $5$。算出裁剪后的向量，并说明裁剪作用于更新前的梯度还是给预测概率做归一化。 \hyperref[answerpiece:16-loss-gradient:5]{查看本题解答}
+\item[\textbf{C4-4.}] \phantomsection\label{exercise:C4-4}\label{extension:16-loss-gradient:4}\exercisemeta{标准}{8}{第~\ref*{intro:16a-gradient-descent}~章}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？ \hyperref[answerpiece:16-loss-gradient:4]{查看本题解答}
+\item[\textbf{C4-5.}] \phantomsection\label{exercise:C4-5}\label{extension:16-loss-gradient:5}\exercisemeta{标准}{5}{第~\ref*{intro:16a-gradient-descent}~章}\textbf{诊断：}梯度为 $(6,8)$，L2 范数阈值为 $5$。算出裁剪后的向量，并说明裁剪作用于更新前的梯度还是给预测概率做归一化。 \hyperref[answerpiece:16-loss-gradient:5]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:07-functions-relu]{非线性：为什么多叠两层直线仍不够？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-6.}] \phantomsection\label{exercise:C4-6}\label{extension:07-functions-relu:4}\textbf{找错：}同学说“ReLU 把网络的权重随机置零，所以同样输入每次都会给出不同输出”。指出混淆的操作。 \hyperref[answerpiece:07-functions-relu:4]{查看本题解答}
+\item[\textbf{C4-6.}] \phantomsection\label{exercise:C4-6}\label{extension:07-functions-relu:4}\exercisemeta{标准}{8}{第~\ref*{intro:07-functions-relu}~章}\textbf{找错：}同学说“ReLU 把网络的权重随机置零，所以同样输入每次都会给出不同输出”。指出混淆的操作。 \hyperref[answerpiece:07-functions-relu:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:17-backpropagation]{反向传播究竟在传什么？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-7.}] \phantomsection\label{exercise:C4-7}\label{extension:17-backpropagation:4}\textbf{权衡：}同一个中间量 $h$ 影响两个后续分支。反传应如何汇总分支梯度，为什么不必为每个参数反复计算完整前向？ \hyperref[answerpiece:17-backpropagation:4]{查看本题解答}
+\item[\textbf{C4-7.}] \phantomsection\label{exercise:C4-7}\label{extension:17-backpropagation:4}\exercisemeta{标准}{5}{第~\ref*{intro:17-backpropagation}~章}\textbf{权衡：}同一个中间量 $h$ 影响两个后续分支。反传应如何汇总分支梯度，为什么不必为每个参数反复计算完整前向？ \hyperref[answerpiece:17-backpropagation:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:18b-end-to-end-learning]{反向传播究竟在传什么？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-8.}] \phantomsection\label{exercise:C4-8}\label{extension:18b-end-to-end-learning:4}\textbf{诊断：}将正确目标改成 $y=4$ 后，这份样本损失恰好变零。能否宣称已经学会泛化？下一步应怎样检验？ \hyperref[answerpiece:18b-end-to-end-learning:4]{查看本题解答}
+\item[\textbf{C4-8.}] \phantomsection\label{exercise:C4-8}\label{extension:18b-end-to-end-learning:4}\exercisemeta{标准}{8}{第~\ref*{intro:17-backpropagation}~章}\textbf{诊断：}将正确目标改成 $y=4$ 后，这份样本损失恰好变零。能否宣称已经学会泛化？下一步应怎样检验？ \hyperref[answerpiece:18b-end-to-end-learning:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:18-generalization]{训练得很好，为什么新题反而做错？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-9.}] \phantomsection\label{exercise:C4-9}\label{extension:18-generalization:4}\textbf{权衡：}数据很少时，单次切分的验证结果不稳定。如何在保持独立最终测试集的同时提高选参稳健性？ \hyperref[answerpiece:18-generalization:4]{查看本题解答}
+\item[\textbf{C4-9.}] \phantomsection\label{exercise:C4-9}\label{extension:18-generalization:4}\exercisemeta{标准}{8}{第~\ref*{intro:18-generalization}~章}\textbf{权衡：}数据很少时，单次切分的验证结果不稳定。如何在保持独立最终测试集的同时提高选参稳健性？ \hyperref[answerpiece:18-generalization:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:01-vectors]{向量：如何用数字表示一个东西？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-10.}] \phantomsection\label{exercise:C4-10}\label{extension:01-vectors:4}\textbf{场景：}要把一个二维特征向量和三维特征向量合并给模型，先需约定哪些事情？至少给出一种合法的表示方案。 \hyperref[answerpiece:01-vectors:4]{查看本题解答}
+\item[\textbf{C4-10.}] \phantomsection\label{exercise:C4-10}\label{extension:01-vectors:4}\exercisemeta{标准}{8}{第~\ref*{intro:01-vectors}~章}\textbf{场景：}要把一个二维特征向量和三维特征向量合并给模型，先需约定哪些事情？至少给出一种合法的表示方案。 \hyperref[answerpiece:01-vectors:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:02-dot-product]{点积：如何判断两条线索相不相似？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-11.}] \phantomsection\label{exercise:C4-11}\label{extension:02-dot-product:4}\textbf{设计：}当向量长度差别很大时，比较原始点积与归一化后的余弦相似度：哪一种更能隔离向量长度影响？ \hyperref[answerpiece:02-dot-product:4]{查看本题解答}
+\item[\textbf{C4-11.}] \phantomsection\label{exercise:C4-11}\label{extension:02-dot-product:4}\exercisemeta{标准}{5}{第~\ref*{intro:02-dot-product}~章}\textbf{设计：}当向量长度差别很大时，比较原始点积与归一化后的余弦相似度：哪一种更能隔离向量长度影响？ \hyperref[answerpiece:02-dot-product:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:03-matrix-multiplication]{矩阵乘法到底在算什么？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-12.}] \phantomsection\label{exercise:C4-12}\label{extension:03-matrix-multiplication:4}\textbf{比较：}批量输入 $X:5\times2$ 都使用同一个 $W:2\times3$。从逐行点积与整体矩阵乘法两个角度解释结果为何都是 $5\times3$。 \hyperref[answerpiece:03-matrix-multiplication:4]{查看本题解答}
+\item[\textbf{C4-12.}] \phantomsection\label{exercise:C4-12}\label{extension:03-matrix-multiplication:4}\exercisemeta{标准}{8}{第~\ref*{intro:03-matrix-multiplication}~章}\textbf{比较：}批量输入 $X:5\times2$ 都使用同一个 $W:2\times3$。从逐行点积与整体矩阵乘法两个角度解释结果为何都是 $5\times3$。 \hyperref[answerpiece:03-matrix-multiplication:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:10-mlp]{MLP：把矩阵与激活函数组成两层网络（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-13.}] \phantomsection\label{exercise:C4-13}\label{extension:10-mlp:4}\textbf{比较：}去掉两层中间的 ReLU 后，$xW_1W_2$ 能合并为怎样的一层运算？为何保留 ReLU 时一般不能照做？ \hyperref[answerpiece:10-mlp:4]{查看本题解答}
+\item[\textbf{C4-13.}] \phantomsection\label{exercise:C4-13}\label{extension:10-mlp:4}\exercisemeta{标准}{8}{第~\ref*{intro:10-mlp}~章}\textbf{比较：}去掉两层中间的 ReLU 后，$xW_1W_2$ 能合并为怎样的一层运算？为何保留 ReLU 时一般不能照做？ \hyperref[answerpiece:10-mlp:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:20a-tokenizer]{Token 与 ID：文字怎样进入数字世界？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-14.}] \phantomsection\label{exercise:C4-14}\label{extension:20a-tokenizer:4}\textbf{权衡：}一个更细的 Tokenizer 把同一段文本切成 $T$ 的两倍；若使用全序列 $T\times T$ 自注意力分数矩阵，元素数变成多少倍？这能否直接推出总推理时间也变为同样倍数？ \hyperref[answerpiece:20a-tokenizer:4]{查看本题解答}
+\item[\textbf{C4-14.}] \phantomsection\label{exercise:C4-14}\label{extension:20a-tokenizer:4}\exercisemeta{标准}{5}{第~\ref*{intro:20a-tokenizer}~章}\textbf{权衡：}一个更细的 Tokenizer 把同一段文本切成 $T$ 的两倍；若使用全序列 $T\times T$ 自注意力分数矩阵，元素数变成多少倍？这能否直接推出总推理时间也变为同样倍数？ \hyperref[answerpiece:20a-tokenizer:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:20c-classification-loss]{分类损失：预测错了哪一类，怎样调整分数？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-15.}] \phantomsection\label{exercise:C4-15}\label{extension:20c-classification-loss:4}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？ \hyperref[answerpiece:20c-classification-loss:4]{查看本题解答}
+\item[\textbf{C4-15.}] \phantomsection\label{exercise:C4-15}\label{extension:20c-classification-loss:4}\exercisemeta{标准}{8}{第~\ref*{intro:20c-classification-loss}~章}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？ \hyperref[answerpiece:20c-classification-loss:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:20-embeddings]{Embedding：让 Token ID 变成可训练的向量（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-16.}] \phantomsection\label{exercise:C4-16}\label{extension:20-embeddings:4}\textbf{诊断：}训练一步之后某个输入 Token 的 Embedding 行变化了，但另一个从未出现在输入位置的 ID 的\textbf{输入查表行}没变化。能否据此断言后一 ID 在输出头中没有梯度？ \hyperref[answerpiece:20-embeddings:4]{查看本题解答}
+\item[\textbf{C4-16.}] \phantomsection\label{exercise:C4-16}\label{extension:20-embeddings:4}\exercisemeta{标准}{8}{第~\ref*{intro:20-embeddings}~章}\textbf{诊断：}训练一步之后某个输入 Token 的 Embedding 行变化了，但另一个从未出现在输入位置的 ID 的\textbf{输入查表行}没变化。能否据此断言后一 ID 在输出头中没有梯度？ \hyperref[answerpiece:20-embeddings:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:20b-task-contract]{把语言练习变成一道可计算的预测题（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-17.}] \phantomsection\label{exercise:C4-17}\label{extension:20b-task-contract:4}\textbf{方案：}同一份文本既做训练又做推理。训练为什么能在一次前向中计算多个位置，而推理时新 Token 的输入往往要逐个确认？ \hyperref[answerpiece:20b-task-contract:4]{查看本题解答}
+\item[\textbf{C4-17.}] \phantomsection\label{exercise:C4-17}\label{extension:20b-task-contract:4}\exercisemeta{标准}{5}{第~\ref*{intro:20b-task-contract}~章}\textbf{方案：}同一份文本既做训练又做推理。训练为什么能在一次前向中计算多个位置，而推理时新 Token 的输入往往要逐个确认？ \hyperref[answerpiece:20b-task-contract:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:21a-context-gap]{逐个处理 Token，为什么仍看不到前文？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-18.}] \phantomsection\label{exercise:C4-18}\label{extension:21a-context-gap:4}\textbf{方案：}给出两种把前文送到当前位置的途径：一种沿时间传递状态，一种直接按需读取；写出各自潜在成本。 \hyperref[answerpiece:21a-context-gap:4]{查看本题解答}
+\item[\textbf{C4-18.}] \phantomsection\label{exercise:C4-18}\label{extension:21a-context-gap:4}\exercisemeta{标准}{8}{第~\ref*{intro:21a-context-gap}~章}\textbf{方案：}给出两种把前文送到当前位置的途径：一种沿时间传递状态，一种直接按需读取；写出各自潜在成本。 \hyperref[answerpiece:21a-context-gap:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:21-rnn]{RNN 是什么？让网络一个词一个词地读（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-19.}] \phantomsection\label{exercise:C4-19}\label{extension:21-rnn:4}\textbf{权衡：}长文本建模时，RNN 的顺序依赖和 Attention 的直接读取各有什么典型计算或记忆代价？ \hyperref[answerpiece:21-rnn:4]{查看本题解答}
+\item[\textbf{C4-19.}] \phantomsection\label{exercise:C4-19}\label{extension:21-rnn:4}\exercisemeta{标准}{8}{第~\ref*{intro:21-rnn}~章}\textbf{权衡：}长文本建模时，RNN 的顺序依赖和 Attention 的直接读取各有什么典型计算或记忆代价？ \hyperref[answerpiece:21-rnn:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:21c-naive-attention]{最朴素的注意力：直接用词向量做点积（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-20.}] \phantomsection\label{exercise:C4-20}\label{extension:21c-naive-attention:4}\textbf{比较：}保持三个输入不变，改用独立可训练 $W_Q,W_K$，哪一种对称性约束可能被打破？为什么它更灵活？ \hyperref[answerpiece:21c-naive-attention:4]{查看本题解答}
+\item[\textbf{C4-20.}] \phantomsection\label{exercise:C4-20}\label{extension:21c-naive-attention:4}\exercisemeta{标准}{5}{第~\ref*{intro:21c-naive-attention}~章}\textbf{比较：}保持三个输入不变，改用独立可训练 $W_Q,W_K$，哪一种对称性约束可能被打破？为什么它更灵活？ \hyperref[answerpiece:21c-naive-attention:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:21b-why-attention]{Attention 是什么？让一个词直接读取其他位置（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-21.}] \phantomsection\label{exercise:C4-21}\label{extension:21b-why-attention:4}\textbf{设计：}若不同词都用相同的内容向量当作 Key 与 Value，模型表达灵活性有什么限制？独立投影怎样缓解？ \hyperref[answerpiece:21b-why-attention:4]{查看本题解答}
+\item[\textbf{C4-21.}] \phantomsection\label{exercise:C4-21}\label{extension:21b-why-attention:4}\exercisemeta{标准}{8}{第~\ref*{intro:21b-why-attention}~章}\textbf{设计：}若不同词都用相同的内容向量当作 Key 与 Value，模型表达灵活性有什么限制？独立投影怎样缓解？ \hyperref[answerpiece:21b-why-attention:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:11-softmax-memory]{从单 Query 到批量 Self-Attention（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-22.}] \phantomsection\label{exercise:C4-22}\label{extension:11-softmax-memory:4}\textbf{找错：}同学说 $QK^\top$ 就是把 Value 相加的结果，因而可以跳过权重乘 $V$。请指出遗漏的角色和计算。 \hyperref[answerpiece:11-softmax-memory:4]{查看本题解答}
+\item[\textbf{C4-22.}] \phantomsection\label{exercise:C4-22}\label{extension:11-softmax-memory:4}\exercisemeta{标准}{8}{第~\ref*{intro:11-softmax-memory}~章}\textbf{找错：}同学说 $QK^\top$ 就是把 Value 相加的结果，因而可以跳过权重乘 $V$。请指出遗漏的角色和计算。 \hyperref[answerpiece:11-softmax-memory:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:22a-position-multihead]{位置编码、缩放与多头注意力的手算（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-23.}] \phantomsection\label{exercise:C4-23}\label{extension:22a-position-multihead:4}\textbf{比较：}为何两个可训练头不等于把同一个头输出复制两份？谈谈 Q/K/V 投影和读取内容的差异。 \hyperref[answerpiece:22a-position-multihead:4]{查看本题解答}
+\item[\textbf{C4-23.}] \phantomsection\label{exercise:C4-23}\label{extension:22a-position-multihead:4}\exercisemeta{标准}{8}{第~\ref*{intro:22a-position-multihead}~章}\textbf{比较：}为何两个可训练头不等于把同一个头输出复制两份？谈谈 Q/K/V 投影和读取内容的差异。 \hyperref[answerpiece:22a-position-multihead:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:22-transformer-architecture]{把 Attention 组装起来：Transformer 不只是一个公式（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-24.}] \phantomsection\label{exercise:C4-24}\label{extension:22-transformer-architecture:4}\textbf{对照：}Pre-Norm Block 中先 Norm、再 Attention、再残差；随后 Norm、FFN、再残差。FFN 与 Attention 分别负责什么？ \hyperref[answerpiece:22-transformer-architecture:4]{查看本题解答}
-\item[\textbf{C4-25.}] \phantomsection\label{exercise:C4-25}\label{extension:22-transformer-architecture:5}\textbf{流程：}不展开数值，从 Token ID 开始依次说出“Embedding／位置 $\to$ Block $\to$ 输出头 $\to$ Softmax”各步的产物；训练时在哪一步追加损失与反传？ \hyperref[answerpiece:22-transformer-architecture:5]{查看本题解答}
+\item[\textbf{C4-24.}] \phantomsection\label{exercise:C4-24}\label{extension:22-transformer-architecture:4}\exercisemeta{标准}{5}{第~\ref*{intro:22-transformer-architecture}~章}\textbf{对照：}Pre-Norm Block 中先 Norm、再 Attention、再残差；随后 Norm、FFN、再残差。FFN 与 Attention 分别负责什么？ \hyperref[answerpiece:22-transformer-architecture:4]{查看本题解答}
+\item[\textbf{C4-25.}] \phantomsection\label{exercise:C4-25}\label{extension:22-transformer-architecture:5}\exercisemeta{标准}{8}{第~\ref*{intro:22-transformer-architecture}~章}\textbf{流程：}不展开数值，从 Token ID 开始依次说出“Embedding／位置 $\to$ Block $\to$ 输出头 $\to$ Softmax”各步的产物；训练时在哪一步追加损失与反传？ \hyperref[answerpiece:22-transformer-architecture:5]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:10b-ffn-output-head]{前馈网络与输出头：两种不同的特征变换（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-26.}] \phantomsection\label{exercise:C4-26}\label{extension:10b-ffn-output-head:4}\textbf{估算：}不计偏置，宽度 $d=6$、中间宽度 $18$ 的两层 FFN 总共有多少个矩阵权重？为什么这一数目不直接等于词表大小？ \hyperref[answerpiece:10b-ffn-output-head:4]{查看本题解答}
+\item[\textbf{C4-26.}] \phantomsection\label{exercise:C4-26}\label{extension:10b-ffn-output-head:4}\exercisemeta{标准}{8}{第~\ref*{intro:10b-ffn-output-head}~章}\textbf{估算：}不计偏置，宽度 $d=6$、中间宽度 $18$ 的两层 FFN 总共有多少个矩阵权重？为什么这一数目不直接等于词表大小？ \hyperref[answerpiece:10b-ffn-output-head:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:22b-token-to-output]{三维贯通实验：从 Token ID 到三个位置的输出概率（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-27.}] \phantomsection\label{exercise:C4-27}\label{extension:22b-token-to-output:4}\textbf{比较：}若去掉因果 Mask，第一个位置能够读取后面 Token 吗？在同一训练目标下，这会造成什么信息泄漏风险？ \hyperref[answerpiece:22b-token-to-output:4]{查看本题解答}
+\item[\textbf{C4-27.}] \phantomsection\label{exercise:C4-27}\label{extension:22b-token-to-output:4}\exercisemeta{标准}{8}{第~\ref*{intro:22b-token-to-output}~章}\textbf{比较：}若去掉因果 Mask，第一个位置能够读取后面 Token 吗？在同一训练目标下，这会造成什么信息泄漏风险？ \hyperref[answerpiece:22b-token-to-output:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:22c-language-training]{三个位置一起训练：从交叉熵到共享参数更新（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-28.}] \phantomsection\label{exercise:C4-28}\label{extension:22c-language-training:4}\textbf{预测：}若训练一步后位置 $2$ 的贪心标签仍错，但正确类概率由 $0.05$ 升到 $0.07$，单位置交叉熵是升还是降？ \hyperref[answerpiece:22c-language-training:4]{查看本题解答}
-\item[\textbf{C4-29.}] \phantomsection\label{exercise:C4-29}\label{extension:22c-language-training:5}\textbf{诊断：}在一个固定小 Batch 上训练二十步损失下降，可作为怎样的训练程序 sanity check？它能证明新语料上的泛化吗？ \hyperref[answerpiece:22c-language-training:5]{查看本题解答}
+\item[\textbf{C4-28.}] \phantomsection\label{exercise:C4-28}\label{extension:22c-language-training:4}\exercisemeta{标准}{5}{第~\ref*{intro:22c-language-training}~章}\textbf{预测：}若训练一步后位置 $2$ 的贪心标签仍错，但正确类概率由 $0.05$ 升到 $0.07$，单位置交叉熵是升还是降？ \hyperref[answerpiece:22c-language-training:4]{查看本题解答}
+\item[\textbf{C4-29.}] \phantomsection\label{exercise:C4-29}\label{extension:22c-language-training:5}\exercisemeta{标准}{8}{第~\ref*{intro:22c-language-training}~章}\textbf{诊断：}在一个固定小 Batch 上训练二十步损失下降，可作为怎样的训练程序 sanity check？它能证明新语料上的泛化吗？ \hyperref[answerpiece:22c-language-training:5]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23-llm-systems]{训练好了，模型怎样逐词生成文字？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-30.}] \phantomsection\label{exercise:C4-30}\label{extension:23-llm-systems:4}\textbf{权衡：}已处理并缓存前 $1000$ 个 Token 的 K/V，现在刚选出第 $1001$ 个 Token，准备计算第 $1002$ 个 Token 的分布。（a）不用缓存需重新计算多少个位置的 K/V；复用旧缓存需新计算多少个？（b）省下什么、增加什么成本？这里不把第一次 Prefill 算作免费。 \hyperref[answerpiece:23-llm-systems:4]{查看本题解答}
-\item[\textbf{C4-31.}] \phantomsection\label{exercise:C4-31}\label{extension:23-llm-systems:5}\textbf{场景（选做）：}用户问“昨天另一段对话里告诉了名字，你今天怎么不知道？”用上下文窗口说明原因，并提出一项应用层改善方法；不得说“推理时直接把参数改成记住名字”。 \hyperref[answerpiece:23-llm-systems:5]{查看本题解答}
+\item[\textbf{C4-30.}] \phantomsection\label{exercise:C4-30}\label{extension:23-llm-systems:4}\exercisemeta{标准}{5}{第~\ref*{intro:23-llm-systems}~章}\textbf{权衡：}已处理并缓存前 $1000$ 个 Token 的 K/V，现在刚选出第 $1001$ 个 Token，准备计算第 $1002$ 个 Token 的分布。（a）不用缓存需重新计算多少个位置的 K/V；复用旧缓存需新计算多少个？（b）省下什么、增加什么成本？这里不把第一次 Prefill 算作免费。 \hyperref[answerpiece:23-llm-systems:4]{查看本题解答}
+\item[\textbf{C4-31.}] \phantomsection\label{exercise:C4-31}\label{extension:23-llm-systems:5}\exercisemeta{标准}{5}{第~\ref*{intro:23-llm-systems}~章}\textbf{场景（选做）：}用户问“昨天另一段对话里告诉了名字，你今天怎么不知道？”用上下文窗口说明原因，并提出一项应用层改善方法；不得说“推理时直接把参数改成记住名字”。 \hyperref[answerpiece:23-llm-systems:5]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23a-from-toy-to-gpt]{从一层三维算例，到真正的 GPT 差了什么？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-32.}] \phantomsection\label{exercise:C4-32}\label{extension:23a-from-toy-to-gpt:4}\textbf{诊断：}五词表的均匀预测基线交叉熵为 $\ln5$；若手设初值的三维模型损失略高于此值，是否足以证明实现错误？先核对什么？ \hyperref[answerpiece:23a-from-toy-to-gpt:4]{查看本题解答}
+\item[\textbf{C4-32.}] \phantomsection\label{exercise:C4-32}\label{extension:23a-from-toy-to-gpt:4}\exercisemeta{挑战}{10}{第~\ref*{intro:23a-from-toy-to-gpt}~章}\textbf{诊断：}五词表的均匀预测基线交叉熵为 $\ln5$；若手设初值的三维模型损失略高于此值，是否足以证明实现错误？先核对什么？ \hyperref[answerpiece:23a-from-toy-to-gpt:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:19-cnn]{为什么图片不能只靠大矩阵？从局部特征到 CNN（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-33.}] \phantomsection\label{exercise:C4-33}\label{extension:19-cnn:4}\textbf{方案：}图像分类时，何时可能使用池化减小空间分辨率？指出它可能丢失的一类细节信息。 \hyperref[answerpiece:19-cnn:4]{查看本题解答}
+\item[\textbf{C4-33.}] \phantomsection\label{exercise:C4-33}\label{extension:19-cnn:4}\exercisemeta{挑战}{10}{第~\ref*{intro:19-cnn}~章}\textbf{方案：}图像分类时，何时可能使用池化减小空间分辨率？指出它可能丢失的一类细节信息。 \hyperref[answerpiece:19-cnn:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:19b-vit]{从 CNN 到 ViT：如何把图片变成一串 Token？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-34.}] \phantomsection\label{exercise:C4-34}\label{extension:19b-vit:4}\textbf{场景：}模型要回答“图中左上角有什么？”，为什么不能只把四个 Patch 特征无序求平均后交给语言模型？给出保留位置的一种方法。 \hyperref[answerpiece:19b-vit:4]{查看本题解答}
+\item[\textbf{C4-34.}] \phantomsection\label{exercise:C4-34}\label{extension:19b-vit:4}\exercisemeta{标准}{5}{第~\ref*{intro:19b-vit}~章}\textbf{场景：}模型要回答“图中左上角有什么？”，为什么不能只把四个 Patch 特征无序求平均后交给语言模型？给出保留位置的一种方法。 \hyperref[answerpiece:19b-vit:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23aa-pretraining-icl]{预训练已经学会续写，为什么还能临时学会新任务？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-35.}] \phantomsection\label{exercise:C4-35}\label{extension:23aa-pretraining-icl:4}\textbf{方案：}一份用户授权的季度报告需要按固定字段输出。只改格式、不读新资料与必须读取最新报告这两种目标，分别考虑 Prompt、SFT 与检索工具的作用。 \hyperref[answerpiece:23aa-pretraining-icl:4]{查看本题解答}
+\item[\textbf{C4-35.}] \phantomsection\label{exercise:C4-35}\label{extension:23aa-pretraining-icl:4}\exercisemeta{标准}{8}{第~\ref*{intro:23aa-pretraining-icl}~章}\textbf{方案：}一份用户授权的季度报告需要按固定字段输出。只改格式、不读新资料与必须读取最新报告这两种目标，分别考虑 Prompt、SFT 与检索工具的作用。 \hyperref[answerpiece:23aa-pretraining-icl:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23c-post-training]{会接龙，还要怎样学会对话与解决任务？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-36.}] \phantomsection\label{exercise:C4-36}\label{extension:23c-post-training:4}\textbf{方案：}要使模型写出可核验的数学推导，比较“在 Prompt 中要求分步”“用示范数据 SFT”“根据最终答案正确与否作可验证奖励”改变了什么。 \hyperref[answerpiece:23c-post-training:4]{查看本题解答}
+\item[\textbf{C4-36.}] \phantomsection\label{exercise:C4-36}\label{extension:23c-post-training:4}\exercisemeta{挑战}{10}{第~\ref*{intro:23c-post-training}~章}\textbf{方案：}要使模型写出可核验的数学推导，比较“在 Prompt 中要求分步”“用示范数据 SFT”“根据最终答案正确与否作可验证奖励”改变了什么。 \hyperref[answerpiece:23c-post-training:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23d-agent-rag]{检索与证据：RAG 怎样回答有来源的问题？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-37.}] \phantomsection\label{exercise:C4-37}\label{extension:23d-agent-rag:4}\textbf{行动：}未找到 Q2 的原始表格时，应用应该怎样在结果中表示缺口？ \hyperref[answerpiece:23d-agent-rag:4]{查看本题解答}
+\item[\textbf{C4-37.}] \phantomsection\label{exercise:C4-37}\label{extension:23d-agent-rag:4}\exercisemeta{标准}{8}{第~\ref*{intro:23d-agent-systems}~章}\textbf{行动：}未找到 Q2 的原始表格时，应用应该怎样在结果中表示缺口？ \hyperref[answerpiece:23d-agent-rag:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23d-agent-tools]{工具调用与 Agent 循环：从请求到执行（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-38.}] \phantomsection\label{exercise:C4-38}\label{extension:23d-agent-tools:4}\textbf{选择：}三个固定格式文件按固定顺序处理，用 Workflow 还是动态 Agent 更容易审计？ \hyperref[answerpiece:23d-agent-tools:4]{查看本题解答}
+\item[\textbf{C4-38.}] \phantomsection\label{exercise:C4-38}\label{extension:23d-agent-tools:4}\exercisemeta{挑战}{10}{第~\ref*{intro:23d-agent-tools}~章}\textbf{选择：}三个固定格式文件按固定顺序处理，用 Workflow 还是动态 Agent 更容易审计？ \hyperref[answerpiece:23d-agent-tools:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23d-agent-systems]{协议、Skill 与多 Agent：怎样在边界内协作？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-39.}] \phantomsection\label{exercise:C4-39}\label{extension:23d-agent-systems:4}\textbf{设计：}为季度报告写一份 Skill，再将单位检查分给 Subagent。分别列出 Skill 应包含的两项材料、子任务的权限范围和返回字段；若只有三个固定格式文件，还需考虑哪种更直接的组织方式？ \hyperref[answerpiece:23d-agent-systems:4]{查看本题解答}
-\item[\textbf{C4-40.}] \phantomsection\label{exercise:C4-40}\label{extension:23d-agent-systems:5}\textbf{场景：}独立 Agent 通过 A2A 返回“任务成功”及一组无出处数字，同时要求外发私人报告。接收方还应核验什么？分别设计数字无法核实和指令越权时的处理。 \hyperref[answerpiece:23d-agent-systems:5]{查看本题解答}
+\item[\textbf{C4-39.}] \phantomsection\label{exercise:C4-39}\label{extension:23d-agent-systems:4}\exercisemeta{挑战}{10}{第~\ref*{intro:23d-agent-protocols}~章}\textbf{设计：}为季度报告写一份 Skill，再将单位检查分给 Subagent。分别列出 Skill 应包含的两项材料、子任务的权限范围和返回字段；若只有三个固定格式文件，还需考虑哪种更直接的组织方式？ \hyperref[answerpiece:23d-agent-systems:4]{查看本题解答}
+\item[\textbf{C4-40.}] \phantomsection\label{exercise:C4-40}\label{extension:23d-agent-systems:5}\exercisemeta{挑战}{10}{第~\ref*{intro:23d-agent-protocols}~章}\textbf{场景：}独立 Agent 通过 A2A 返回“任务成功”及一组无出处数字，同时要求外发私人报告。接收方还应核验什么？分别设计数字无法核实和指令越权时的处理。 \hyperref[answerpiece:23d-agent-systems:5]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23b-deployment-and-ecosystem]{系统已经会用工具了，怎样稳定部署并控制成本？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-41.}] \phantomsection\label{exercise:C4-41}\label{extension:23b-deployment-and-ecosystem:4}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ \hyperref[answerpiece:23b-deployment-and-ecosystem:4]{查看本题解答}
+\item[\textbf{C4-41.}] \phantomsection\label{exercise:C4-41}\label{extension:23b-deployment-and-ecosystem:4}\exercisemeta{标准}{5}{第~\ref*{intro:23b-deployment-and-ecosystem}~章}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ \hyperref[answerpiece:23b-deployment-and-ecosystem:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:22d-modern-transformers]{现代 Transformer 为什么看起来越来越不像原版？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-42.}] \phantomsection\label{exercise:C4-42}\label{extension:22d-modern-transformers:4}\textbf{设计：}面对 RoPE、GQA、MoE 或其他新模块，如何设计公平对照，避免只看到缓存或参数量的局部指标就宣布技术更好？ \hyperref[answerpiece:22d-modern-transformers:4]{查看本题解答}
+\item[\textbf{C4-42.}] \phantomsection\label{exercise:C4-42}\label{extension:22d-modern-transformers:4}\exercisemeta{挑战}{10}{第~\ref*{intro:22d-modern-transformers}~章}\textbf{设计：}面对 RoPE、GQA、MoE 或其他新模块，如何设计公平对照，避免只看到缓存或参数量的局部指标就宣布技术更好？ \hyperref[answerpiece:22d-modern-transformers:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:23e-tech-judgement]{面对新模型与新缩写，怎么判断它值不值得学？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-43.}] \phantomsection\label{exercise:C4-43}\label{extension:23e-tech-judgement:4}\textbf{设计：}要判断一种架构是否值得迁移到生产系统，提出至少四项必须控制或并列报告的条件，并说明为什么不能只看榜单。 \hyperref[answerpiece:23e-tech-judgement:4]{查看本题解答}
+\item[\textbf{C4-43.}] \phantomsection\label{exercise:C4-43}\label{extension:23e-tech-judgement:4}\exercisemeta{挑战}{10}{第~\ref*{intro:23e-tech-judgement}~章}\textbf{设计：}要判断一种架构是否值得迁移到生产系统，提出至少四项必须控制或并列报告的条件，并说明为什么不能只看榜单。 \hyperref[answerpiece:23e-tech-judgement:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:04-key-value-outer-product]{外积与矩阵：如何真正“写入”一条记忆？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-44.}] \phantomsection\label{exercise:C4-44}\label{extension:04-key-value-outer-product:4}\textbf{找错：}同学把 $S$ 写成 $vk^\top$，仍称它是按行向量约定可供 $qS$ 查询的状态。说明为何形状或方向不匹配。 \hyperref[answerpiece:04-key-value-outer-product:4]{查看本题解答}
+\item[\textbf{C4-44.}] \phantomsection\label{exercise:C4-44}\label{extension:04-key-value-outer-product:4}\exercisemeta{标准}{5}{附录~\ref*{intro:04-key-value-outer-product}}\textbf{找错：}同学把 $S$ 写成 $vk^\top$，仍称它是按行向量约定可供 $qS$ 查询的状态。说明为何形状或方向不匹配。 \hyperref[answerpiece:04-key-value-outer-product:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:05-memory-interference]{外积与矩阵：如何真正“写入”一条记忆？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-45.}] \phantomsection\label{exercise:C4-45}\label{extension:05-memory-interference:4}\textbf{方案：}比较让 Key 更接近正交、写入时按残差修正，以及读出时提高选择性的三条方向；它们分别在哪一步处理问题？ \hyperref[answerpiece:05-memory-interference:4]{查看本题解答}
+\item[\textbf{C4-45.}] \phantomsection\label{exercise:C4-45}\label{extension:05-memory-interference:4}\exercisemeta{标准}{8}{附录~\ref*{intro:05-memory-interference}}\textbf{方案：}比较让 Key 更接近正交、写入时按残差修正，以及读出时提高选择性的三条方向；它们分别在哪一步处理问题？ \hyperref[answerpiece:05-memory-interference:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:06-better-linear-memory]{线性记忆怎样减少干扰？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-46.}] \phantomsection\label{exercise:C4-46}\label{extension:06-better-linear-memory:4}\textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。 \hyperref[answerpiece:06-better-linear-memory:4]{查看本题解答}
+\item[\textbf{C4-46.}] \phantomsection\label{exercise:C4-46}\label{extension:06-better-linear-memory:4}\exercisemeta{标准}{5}{附录~\ref*{intro:06-better-linear-memory}}\textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。 \hyperref[answerpiece:06-better-linear-memory:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:08-stacking-key-value]{线性记忆怎样减少干扰？（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-47.}] \phantomsection\label{exercise:C4-47}\label{extension:08-stacking-key-value:4}\textbf{找错：}某人把 Key 改成四行、Value 仍留三行，声称只要特征宽度没变就能继续用匹配权重乘 Value。指出形状问题。 \hyperref[answerpiece:08-stacking-key-value:4]{查看本题解答}
+\item[\textbf{C4-47.}] \phantomsection\label{exercise:C4-47}\label{extension:08-stacking-key-value:4}\exercisemeta{标准}{5}{附录~\ref*{intro:08-stacking-key-value}}\textbf{找错：}某人把 Key 改成四行、Value 仍留三行，声称只要特征宽度没变就能继续用匹配权重乘 Value。指出形状问题。 \hyperref[answerpiece:08-stacking-key-value:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:09-nonlinearity-and-memory]{用 MLP 的眼光重新理解记忆检索（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-48.}] \phantomsection\label{exercise:C4-48}\label{extension:09-nonlinearity-and-memory:4}\textbf{比较：}把 MLP 解释成“Key 匹配、Value 读取”有什么直觉收益？为什么不能据此宣称神经元一对一存储真实事实？ \hyperref[answerpiece:09-nonlinearity-and-memory:4]{查看本题解答}
+\item[\textbf{C4-48.}] \phantomsection\label{exercise:C4-48}\label{extension:09-nonlinearity-and-memory:4}\exercisemeta{标准}{8}{附录~\ref*{intro:09-nonlinearity-and-memory}}\textbf{比较：}把 MLP 解释成“Key 匹配、Value 读取”有什么直觉收益？为什么不能据此宣称神经元一对一存储真实事实？ \hyperref[answerpiece:09-nonlinearity-and-memory:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:14-summary]{用 MLP 的眼光重新理解记忆检索（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-49.}] \phantomsection\label{exercise:C4-49}\label{extension:14-summary:4}\textbf{场景：}若模型给出一句看似事实的答案，能否只根据某 FFN 神经元被激活就断言那是一条被验证的事实？应怎样补证？ \hyperref[answerpiece:14-summary:4]{查看本题解答}
+\item[\textbf{C4-49.}] \phantomsection\label{exercise:C4-49}\label{extension:14-summary:4}\exercisemeta{标准}{5}{附录~\ref*{intro:14-summary}}\textbf{场景：}若模型给出一句看似事实的答案，能否只根据某 FFN 神经元被激活就断言那是一条被验证的事实？应怎样补证？ \hyperref[answerpiece:14-summary:4]{查看本题解答}
 \end{enumerate}
 
 \subsubsection*{\hyperref[check:13-capacity]{进阶探索：高维空间与记忆容量（返回正文）}}\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C4-50.}] \phantomsection\label{exercise:C4-50}\label{extension:13-capacity:4}\textbf{判断：}把理想随机容量结论用于真实模型前，需要实测哪两项条件？ \hyperref[answerpiece:13-capacity:4]{查看本题解答}
+\item[\textbf{C4-50.}] \phantomsection\label{exercise:C4-50}\label{extension:13-capacity:4}\exercisemeta{标准}{5}{附录~\ref*{intro:13-capacity}}\textbf{判断：}把理想随机容量结论用于真实模型前，需要实测哪两项条件？ \hyperref[answerpiece:13-capacity:4]{查看本题解答}
 \end{enumerate}

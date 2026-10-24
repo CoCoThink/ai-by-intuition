@@ -3,7 +3,6 @@
 
 读过三维算例后，可以在电脑上用教学脚本核对
 \textbf{同一套初值、同一组 Token、一次全参数更新}。
-这里不是另外随机生成一个网络再声称损失恰好相同：
 \texttt{scripts/pytorch\_starter.py} 从本书的唯一参数表
 \texttt{teaching\_reference.parameters()} 读取数值，
 再用 PyTorch 的自动求导实现与 NumPy 手工反传相同的运算。
@@ -38,14 +37,13 @@ loss_after, z_after = forward()
 两次 LayerNorm、FFN 和断言保留在
 \href{https://github.com/CoCoThink/ai-by-intuition/blob/main/scripts/pytorch_starter.py}{仓库完整可运行脚本}，避免纸质版印出数十行维护性代码。
 
-脚本采用双精度以便与 NumPy 手算基线对齐；
-不是 GPU 优化程序。观察代码时请检查：
+脚本采用双精度以便与 NumPy 手算基线按容差对齐。观察代码时请检查：
 \texttt{E[ids - 1]} 是三行查表，
 \texttt{triu} 保证因果掩码，
 \texttt{cross\_entropy} 使用 \texttt{targets - 1} 并对三行取平均，
 \texttt{backward} 将梯度送回所有可训练矩阵，
 最后一次性更新全部九组参数。
-每次重新运行都从同一份初值开始，不改变已发布的标准数值。
+每次重新运行都从同一份初值开始。
 
 \textbf{把 ID 与数组下标逐项对齐。}
 五项词表依次是“其他、春天、。、花、开了”，输入 ID 是 $[2,4,5]$，
@@ -61,6 +59,17 @@ python3 scripts/teaching_reference.py --json
 PyTorch 自动求导与 NumPy 手工反传是\textbf{两种独立实现途径}；跨硬件和 Torch 版本时，浮点结果按数值容差比较。
 
 
+\subsection{参数计数小练习}
+
+沿用上述脚本的模型：$E:5\times3$、$P:3\times3$，
+四组 $3\times3$ Attention 投影、两组 $3\times4$ 和 $4\times3$ FFN 矩阵、
+一个 $3\times5$ 输出头。忽略固定 LayerNorm 与中间激活，
+手算可训练元素个数，再对照\hyperref[eq:toy-99-parameters]{正文参数总数公式}。
+作为延伸：若输出头与 $E$ 共享权重，
+需要明确转置的形状，以及哪些原有参数不再独立存储；
+不能在不改结构的情况下简单从总数扣除 15。
+
+
 \subsection{完整 20 步轨迹：三个位置何时预测正确？}
 
 如果不安装 PyTorch，也可以只安装 NumPy，在仓库根目录执行：
@@ -69,7 +78,7 @@ python3 scripts/teaching_trace.py
 \end{verbatim}
 它直接调用参考实现的完整反向传播，输出
 $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
-\begin{center}\small
+\begin{center}\small\renewcommand{\arraystretch}{1.0}
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}rcrX@{}}
 \toprule
@@ -101,13 +110,3 @@ $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 正确标签一直是 $[4,5,3]$。损失曲线由三位置\textbf{连续概率}决定；
 即使某步的最高概率类别发生切换，损失仍可以平滑下降。
 这是同一个样本上的训练行为，不是对未见文本的性能评测。
-
-\subsection{参数计数小练习}
-
-沿用上述脚本的模型：$E:5\times3$、$P:3\times3$，
-四组 $3\times3$ Attention 投影、两组 $3\times4$ 和 $4\times3$ FFN 矩阵、
-一个 $3\times5$ 输出头。忽略固定 LayerNorm 与中间激活，
-手算可训练元素个数，再对照\hyperref[eq:toy-99-parameters]{正文参数总数公式}。
-作为延伸：若输出头与 $E$ 共享权重，
-需要明确转置的形状，以及哪些原有参数不再独立存储；
-不能在不改结构的情况下简单从总数扣除 15。

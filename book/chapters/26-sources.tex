@@ -1,23 +1,23 @@
 \subsection{参考与延伸阅读}
 \subsubsection*{公开视频与课程参考}
 
-\textbf{飞天闪客：《一小时从函数到 Transformer》}\\
-\url{https://www.bilibili.com/video/BV1NCgVzoEG9/}
+\textbf{飞天闪客：《一小时从函数到 Transformer》}
+\sourceurl{https://www.bilibili.com/video/BV1NCgVzoEG9/}
 
-\textbf{飞天闪客：《一小时从 Transformer 到大模型》}\\
-\url{https://www.bilibili.com/video/BV15z4C6SEHT/}
+\textbf{飞天闪客：《一小时从 Transformer 到大模型》}
+\sourceurl{https://www.bilibili.com/video/BV15z4C6SEHT/}
 
 本书沿用了上述课程由浅入深、逐步推导的教学思路。课程中的思考方法已在版权页致谢；本书的可复算数值和练习请以正文为准。
 
 \subsubsection*{RNN 与 Attention 的图示参考}
 \begin{itemize}
-\item \emph{Dive into Deep Learning}，循环神经网络时间展开图：\\
-\url{https://d2l.ai/chapter_recurrent-neural-networks/}
-\item \emph{动手学深度学习}，注意力评分函数与加权汇聚：\\
-\url{https://zh.d2l.ai/}
+\item \emph{Dive into Deep Learning}，循环神经网络时间展开图：
+\sourceurl{https://d2l.ai/chapter_recurrent-neural-networks/}
+\item \emph{动手学深度学习}，注意力评分函数与加权汇聚：
+\sourceurl{https://zh.d2l.ai/}
 \item Olah \& Carter, \emph{Attention and Augmented Recurrent Neural Networks}，
-Distill (2016)：\\
-\url{https://distill.pub/2016/augmented-rnns/}
+Distill (2016)：
+\sourceurl{https://distill.pub/2016/augmented-rnns/}
 \end{itemize}
 
 这些资料帮助我们从时间展开、信息通路和读取权重理解 RNN 与 Attention。正文的相应插图由 TikZ 绘制，并与章节中的数值例子配合使用。
@@ -25,58 +25,57 @@ Distill (2016)：\\
 \subsubsection*{进一步理解神经网络与 Attention}
 
 \begin{itemize}
-\item Alex Wang, \emph{You could have invented transformers from memory}：\\
-\url{https://alexwang.ai/posts/associative-memory}
-\item Vaswani et al., \emph{Attention Is All You Need}（2017）：\\
-\url{https://arxiv.org/abs/1706.03762}
-\item Goodfellow, Bengio and Courville, \emph{Deep Learning}：\\
-\url{https://www.deeplearningbook.org/}
+\item Alex Wang, \emph{You could have invented transformers from memory}：
+\sourceurl{https://alexwang.ai/posts/associative-memory}
+\item Vaswani et al., \emph{Attention Is All You Need}（2017）：
+\sourceurl{https://arxiv.org/abs/1706.03762}
+\item Goodfellow, Bengio and Courville, \emph{Deep Learning}：
+\sourceurl{https://www.deeplearningbook.org/}
 \end{itemize}
 
 联想记忆提供了理解 Key--Value 与注意力权重的另一条数学路径，相关推导见\hyperref[intro:04-key-value-outer-product]{附录 H--K 的记忆提高专题}。
 
 \subsubsection*{预训练、上下文学习与规模规律}
 \begin{itemize}
-\item Brown et al., \emph{Language Models are Few-Shot Learners} (2020)：\\
-\url{https://arxiv.org/abs/2005.14165}
-\item Kaplan et al., \emph{Scaling Laws for Neural Language Models} (2020)：\\
-\url{https://arxiv.org/abs/2001.08361}
-\item Hoffmann et al., \emph{Training Compute-Optimal Large Language Models} (2022)：\\
-\url{https://arxiv.org/abs/2203.15556}
-\item Sutton, \emph{The Bitter Lesson} (2019)：\\
-\url{http://www.incompleteideas.net/IncIdeas/BitterLesson.html}
+\item Brown et al., \emph{Language Models are Few-Shot Learners} (2020)：
+\sourceurl{https://arxiv.org/abs/2005.14165}
+\item Kaplan et al., \emph{Scaling Laws for Neural Language Models} (2020)：
+\sourceurl{https://arxiv.org/abs/2001.08361}
+\item Hoffmann et al., \emph{Training Compute-Optimal Large Language Models} (2022)：
+\sourceurl{https://arxiv.org/abs/2203.15556}
+\item Sutton, \emph{The Bitter Lesson} (2019)：
+\sourceurl{http://www.incompleteideas.net/IncIdeas/BitterLesson.html}
 \end{itemize}
 
 \subsubsection*{生成式 AI 幻觉与事实核验}
 \begin{itemize}
 \item \emph{Mata v. Avianca, Inc.}, S.D.N.Y. (2023), Docket 54
-（不存在的判例引用与制裁裁定）：\\
-\url{https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/}
+（不存在的判例引用与制裁裁定）：
+\sourceurl{https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/}
 \end{itemize}
 
 \subsubsection*{Agent 的协议边界}
 \begin{itemize}
-\item Model Context Protocol：\\
-\url{https://modelcontextprotocol.io/specification}
-\item Agent2Agent (A2A) Protocol：\\
-\url{https://a2a-protocol.org/latest/}
+\item Model Context Protocol：
+\sourceurl{https://modelcontextprotocol.io/specification}
+\item Agent2Agent (A2A) Protocol：
+\sourceurl{https://a2a-protocol.org/latest/}
 \end{itemize}
 
 \subsubsection*{可复算模型配置与视觉桥接的来源}
 \begin{itemize}
-\item GPT-2 small 公共模型卡与固定权重 revision：\\
-\url{https://huggingface.co/openai-community/gpt2}
+\item GPT-2 small 公共模型卡：
+\sourceurl{https://huggingface.co/openai-community/gpt2}
 \item GPT-2 配置文件（固定提交）：\\
-GPT-2 small（revision: \texttt{607a30d}）：\url{https://huggingface.co/openai-community/gpt2}
+GPT-2 small（revision: \texttt{607a30d}）：\sourceurl{https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json}
 \item Qwen2.5-0.5B 配置文件（固定提交）：\\
-Qwen2.5-0.5B（revision: \texttt{060db64}）：\url{https://huggingface.co/Qwen/Qwen2.5-0.5B}
+Qwen2.5-0.5B（revision: \texttt{060db64}）：\sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json}
 \item Dosovitskiy et al., \emph{An Image Is Worth 16x16 Words}
-（ViT, 2020）：\\
-\url{https://arxiv.org/abs/2010.11929}
+（ViT, 2020）：
+\sourceurl{https://arxiv.org/abs/2010.11929}
 \end{itemize}
 模型配置是结构字段，不能替代性能评测；
-ViT 与语言模型的 $3\times4$ 投影是书中自设算例，
-不是这些论文公开的特定权重。
+视觉桥接的 $3\times4$ 投影数值见本书对应算例。
 
 \subsubsection*{新旧参考模型的定位（2026-10-23（UTC）检索）}
 GPT-2 与 Qwen2.5-0.5B 在本书承担的是\textbf{公开、可锁定配置的结构对照}，
@@ -84,26 +83,28 @@ GPT-2 与 Qwen2.5-0.5B 在本书承担的是\textbf{公开、可锁定配置的�
 Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
 的官方架构说明（2026）；它们只供选读，不直接替换正文的固定复算基线：
 \begin{itemize}
-\item Qwen3 Technical Report（2025-05-14；本版检索：2026-10-23（UTC））：\\
-\url{https://arxiv.org/abs/2505.09388}
-\item DeepSeek-V4.1-Flash 官方发布说明（发布：2026-09-10；本版检索：2026-10-23（UTC））：\\
-\url{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}
-\item DeepSeek API 官方更新日志（2026-10-17 记录 V4.1-Flash-1017 更新；本版检索：2026-10-23（UTC））：\\
-\url{https://api-docs.deepseek.com/updates/}
+\item Qwen3 Technical Report（2025-05-14；本版检索：2026-10-23（UTC））：
+\sourceurl{https://arxiv.org/abs/2505.09388}
+\item DeepSeek-V4.1-Flash 官方发布说明（发布：2026-09-10；本版检索：2026-10-23（UTC））：
+\sourceurl{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}
+\item DeepSeek-V4.1-Flash 技术报告（2026-09-17；本轮核验：2026-10-25（台北））：
+\sourceurl{https://arxiv.org/abs/2609.19969}
+\item DeepSeek API 官方更新日志（2026-10-17 记录 V4.1-Flash-1017 更新；本版检索：2026-10-23（UTC））：
+\sourceurl{https://api-docs.deepseek.com/updates/}
 \end{itemize}
 
 \noindent{\footnotesize\color{muted}以上日期是资料发布或检索日期，不是永久有效的模型服务版本承诺。官方更新日志已记录同一 API 名称所指的模型发生变更；实际复现需同时记录模型标识、权重修订及调用日期。}\par\medskip
 
 \subsubsection*{现代架构与后训练的扩展阅读}
 \begin{itemize}
-\item Su et al., \emph{RoFormer: Rotary Position Embedding}:\\
-\url{https://arxiv.org/abs/2104.09864}
-\item Ainslie et al., \emph{GQA: Training Generalized Multi-Query Transformer Models}:\\
-\url{https://arxiv.org/abs/2305.13245}
-\item Shazeer, \emph{GLU Variants Improve Transformer}:\\
-\url{https://arxiv.org/abs/2002.05202}
-\item Fedus et al., \emph{Switch Transformers}:\\
-\url{https://arxiv.org/abs/2101.03961}
-\item DeepSeek-AI et al., \emph{DeepSeek-R1}:\\
-\url{https://arxiv.org/abs/2501.12948}
+\item Su et al., \emph{RoFormer: Rotary Position Embedding}:
+\sourceurl{https://arxiv.org/abs/2104.09864}
+\item Ainslie et al., \emph{GQA: Training Generalized Multi-Query Transformer Models}:
+\sourceurl{https://arxiv.org/abs/2305.13245}
+\item Shazeer, \emph{GLU Variants Improve Transformer}:
+\sourceurl{https://arxiv.org/abs/2002.05202}
+\item Fedus et al., \emph{Switch Transformers}:
+\sourceurl{https://arxiv.org/abs/2101.03961}
+\item DeepSeek-AI et al., \emph{DeepSeek-R1}:
+\sourceurl{https://arxiv.org/abs/2501.12948}
 \end{itemize}

@@ -4,7 +4,13 @@
 \chaptercompass{交换 Token 时，模型怎么知道位置？}{对照位置向量、缩放点积和两个注意力头的独立读取。}{$X:T\times d\to QK^\top:T\times T\to Y:T\times d$}{位置表可学习；Q/K/V 与输出投影由训练确定}
 \modelpipelinefocus{3}{位置与多头注意力}
 
-
+% Keep this matrix-heavy calculation continuous without a separate exercise tail.
+\begingroup
+\setlength{\parskip}{2pt}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
 \subsection{交换两个 Token：统一三维参数为什么需要位置？}
 
 前面已经确定唯一三维 Embedding。为了比较顺序，
@@ -23,20 +29,13 @@ O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
 0.6693&0.4934&0.0066\\0.2019&0.6886&0.1683
 \end{bmatrix}.
 \]
-因为没有任何位置相关信号，输入交换两行后，
-输出也只是对应交换两行：
-\[
-O(X')\approx\begin{bmatrix}
-0.2019&0.6886&0.1683\\0.6693&0.4934&0.0066
-\end{bmatrix}.
-\]
-这说明不带位置的 Self-Attention 对行置换具有\textbf{等变性}：
-换了输入行的次序，计算相应换行，并没有额外标记“原来在哪个位置”。
+交换输入两行后，$O(X')$ 的第一行就是上式第二行，第二行就是上式第一行。
+这叫行置换的\textbf{等变性}：输出随输入换行，却没有额外标记“原来在哪个位置”。
 
 \subsection{加入位置绑定的向量，再观察交换后的区别}
 这次位置消融对照使用\textbf{同一组给定的位置数值}；
 在实际训练中，本书三维主例的位置向量表 $P$ 仍是\textbf{可训练参数}。
-另一种常见设计是使用正余弦位置编码。
+也可采用正余弦位置编码。
 
 位置向量取自贯通主实验的\textbf{前两行}，不因交换 Token 而移动：
 \[
@@ -47,14 +46,12 @@ X_+=X+P_{1:2},\quad X'_+=X'+P_{1:2}.
 \]
 仍用\textbf{相同的三组可训练投影}，只是输入加了位置信息：
 \begin{equation}
-\begin{aligned}
-O(X_+)&\approx\begin{bmatrix}
+O(X_+)\approx\begin{bmatrix}
 0.7680&0.5138&-0.0265\\0.2324&0.6726&0.2092
-\end{bmatrix},\\
-O(X'_+)&\approx\begin{bmatrix}
+\end{bmatrix},\qquad
+O(X'_+)\approx\begin{bmatrix}
 0.2812&0.7145&0.1440\\0.6956&0.4854&0.0441
 \end{bmatrix}.
-\end{aligned}
 \label{eq:pos-swap-d3}
 \end{equation}
 注意交换后的第一行\textbf{并不}等于交换前的第二行：
@@ -62,17 +59,14 @@ O(X'_+)&\approx\begin{bmatrix}
 位置向量提供了独立于内容的位置信号。
 两种顺序下的输出也没有退化成两行完全相同。
 
-\begin{warningbox}
-为明确考察位置信号，这里\textbf{暂不加因果掩码}，
-也暂不做完整 Pre-Norm Block 的 LayerNorm 和残差。
-它是取自统一参数的\textbf{位置消融实验}，不是后面完整自回归模型的前向输出。
-完整 Block 会使用每行 Norm 和因果 Mask，两者不可混为一谈。
-\end{warningbox}
+\textbf{位置消融条件：}这里暂不加因果 Mask、LayerNorm 和残差；
+完整自回归 Block 则包含这些步骤。
 
 \subsection{\texorpdfstring{为什么点积要除以 $\sqrt{d_k}$？算一次波动尺度}{为什么点积要除以 Key 维度平方根？}}
 \phantomsection\label{concept:scaled-dot-product}
 
-\noindent\emph{数学随手查：}这里的方差与标准差衡量随机数围绕平均值波动的大小。互相独立的零均值随机量相加时，方差相加而标准差取平方根；如需先复习求和与平方根，可返回\hyperref[app:math-tools]{数学速查}。
+\noindent\emph{数学随手查：}独立零均值随机量相加时，方差相加，标准差取方差的平方根。
+求和与平方根可回看\hyperref[app:math-tools]{数学速查}。
 
 
 假设两个 Key/Query 向量的每一维都是\textbf{独立、等概率取 $\pm1$}
@@ -94,60 +88,49 @@ $\frac e{e+1}\approx0.731$。
 \phantomsection\label{concept:multihead}
 
 \localfixture{四维双头}
-下面采用 $d_{\rm model}=4$ 的双头形状例，每个头宽度为 2。
-这个例子不是将三维主实验强行分成两个 1.5 维的头。
-考虑最后一个 Token 可以查看两个位置，
-每个头的 $Q,K,V$ 都有二维特征。
-为简化计算，直接给定两个注意力头\textbf{各自投影得到的数值}；
+取 $d_{\rm model}=4$，每头宽度为 $2$，观察最后位置读取两个 Key。
+给定两头的最后位置 Query 为
+$q^{(1)}=(0,1)$、$q^{(2)}=(1,0)$，两头的 Key 都为 $I_2$，
+Value 分别为
+\[
+V^{(1)}=\begin{bmatrix}2&0\\0&2\end{bmatrix},
+\qquad
+V^{(2)}=\begin{bmatrix}0&1\\1&0\end{bmatrix}.
+\]
+按“点积 $\to$ 除以 $\sqrt2$ $\to$ Softmax $\to$ 加权 Value”逐行计算：
+\[
+\begin{aligned}
+s^{(1)}&=(0,1)/\sqrt2,&
+a^{(1)}&\approx(0.330,0.670),\\
+o^{(1)}&=a^{(1)}V^{(1)}=(0.660,1.340),\\
+s^{(2)}&=(1,0)/\sqrt2,&
+a^{(2)}&\approx(0.670,0.330),\\
+o^{(2)}&=a^{(2)}V^{(2)}=(0.330,0.670).
+\end{aligned}
+\]
+若省略缩放，第一头权重会变成 $(0.269,0.731)$；
+本例统一使用上面的缩放结果。
+沿\textbf{特征列}拼接，得到
+$O_{\rm cat}=(0.660,1.340,0.330,0.670):1\times4$。
+再取演示投影
+\[
+W_O=\begin{bmatrix}1&0&1&0\\0&1&0&1\end{bmatrix}^{\top},
+\qquad O_{\rm cat}W_O=(0.990,2.010):1\times2.
+\]
+\textbf{多头拼接各头读出的特征，再投影到目标宽度。}
+这里用 $4\times2$ 演示投影；完整四维残差 Block 的输出投影则应为 $4\times4$。
 
-
-两个头使用不同的最后位置 Query 是有意设计的：头 1 为 $(0,1)$，头 2 为 $(1,0)$，让它们偏向不同位置。第一头让 $Q^{(1)}=K^{(1)}=I_2$，
-$V^{(1)}=\begin{bmatrix}2&0\\0&2\end{bmatrix}$。
-本例使用\textbf{［缩放］}注意力：头 1 最后位置对两条 Key 的原始分数为 $(0,1)$，除以 $\sqrt{d_k}=\sqrt2$ 得到 $(0,1/\sqrt2)\approx(0,0.7071)$，再经 Softmax 得到 $(0.330,0.670)$。若\textbf{［未缩放］}，同一分数会得到 $(0.269,0.731)$，后面的读数统一使用缩放后的权重。
-因此头 1 的输出为
-\[
-\vect o^{(1)\top}
-=(0.330,0.670)V^{(1)}
-=\boxed{(0.660,1.340)}.
-\]
-第二头选最后位置的 Query 为 $(1,0)$、
-两条 Key 为 $(1,0)$ 与 $(0,1)$，
-并给出
-$V^{(2)}=\begin{bmatrix}0&1\\1&0\end{bmatrix}$。
-其原始分数为 $(1,0)$，经同样的 $\sqrt2$ 缩放及 Softmax，最后位置的注意力权重变为 $(0.670,0.330)$，
-于是
-\[
-\vect o^{(2)\top}
-=(0.670,0.330)V^{(2)}
-=\boxed{(0.330,0.670)}.
-\]
-沿特征列拼接而非沿 Token 行拼接：
-\[
-O_{\rm cat}=(0.660,1.340,0.330,0.670)
-\quad(1\times4).
-\]
-取一个演示用输出投影
-$W_O=\begin{bmatrix}1&0\\0&1\\1&0\\0&1\end{bmatrix}$，
-得到
-\[
-O_{\rm cat}W_O=(0.990,2.010)\quad(1\times2).
-\]
-所以\textbf{多头不是把概率相加}：
-每个头先读出自己的 Value 向量，
-拼成更宽的特征，再使用 $W_O$ 投影回模型宽度。
-
-\Needspace{12\baselineskip}
 \chapterchecktasks{22a-position-multihead}{正文基础三题}{
-\item \textbf{预测：}句子里同一个 Token 在不同位置出现，只有内容 Embedding 而没有任何位置机制时，网络失去什么信息？为什么需要位置表示？\chapterinlinehint{需为模型提供可区分顺序的位置线索。}
-\item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{拼接 $3\times4$，投影后 $3\times6$。}
-\item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{缩放不等于把分数压进概率范围。}
+\item \textbf{预测：}句子里同一个 Token 在不同位置出现，只有内容 Embedding 而没有任何位置机制时，网络失去什么信息？为什么需要位置表示？\chapterinlinehint{交换两个相同 Token 的位置，检查输入有无变化。}
+\item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{先累加拼接宽度，再与输出投影核对内侧维度。}
+\item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{比较尺度变换与区间裁剪的定义。}
 }
 \chapterrecallanswer{位置表示携带序列顺序，多头允许独立匹配视角；缩放用于控制点积幅度，不是把分数截成概率。}
 
 
 
 \begin{conclusion}
-两种问题需要不同设计：\textbf{位置信息}区分内容位于何处；
-\textbf{多头}让模型在不同表示子空间执行多次可学习读取。
-掌握上面的形状与数字后，接下来才把这些输出接进完整 Block。
+\textbf{位置表示}标记顺序，\textbf{多头}在不同子空间读取。
+下一章用 Norm、残差与 FFN 把它们接进完整 Block。
 \end{conclusion}
+\endgroup

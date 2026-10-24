@@ -20,9 +20,9 @@
 本章先掌握 Mini-batch、Epoch 与同步 SGD 的参数更新。\par\medskip
 
 \chapterchecktasks{16-loss-gradient}{正文基础三题}{
-\item \textbf{预测：}沿用三点损失 $L(w,b)=\frac23(w-2)^2+(b-1)^2$，从 $(1,0)$ 出发。若学习率由 $0.3$ 改为 $0$，参数与损失会怎样变化？这为什么不等于“模型已收敛”？\chapterinlinehint{仍为 $(1,0)$，损失 $5/3$。}
-\item \textbf{手算：}写出 $(w,b)=(1,0)$ 的两个偏导数；以 $\eta=0.3$ 同步更新 $w,b$，再代回损失函数。\chapterinlinehint{梯度 $(-4/3,-2)$；新参数 $(1.4,0.6)$，损失 $0.4$。}
-\item \textbf{找错：}有人先更新 $w$，再用新 $w$ 与旧 $b$ 算同一次迭代的另一个梯度，并说这是标准同步 SGD。指出哪里违背了本章的梯度与参数约定。\chapterinlinehint{全部梯度都应使用同一份旧参数。}
+\item \textbf{预测：}沿用三点损失 $L(w,b)=\frac23(w-2)^2+(b-1)^2$，从 $(1,0)$ 出发。若学习率由 $0.3$ 改为 $0$，参数与损失会怎样变化？这为什么不等于“模型已收敛”？\chapterinlinehint{把零学习率代入更新式，再检查梯度。}
+\item \textbf{手算：}写出 $(w,b)=(1,0)$ 的两个偏导数；以 $\eta=0.3$ 同步更新 $w,b$，再代回损失函数。\chapterinlinehint{先在旧参数处求梯度，再同步更新并复算损失。}
+\item \textbf{找错：}有人先更新 $w$，再用新 $w$ 与旧 $b$ 算同一次迭代的另一个梯度，并说这是标准同步 SGD。指出哪里违背了本章的梯度与参数约定。\chapterinlinehint{给本次迭代的所有参数标上同一个步数。}
 }
 \chapterrecallanswer{梯度下降沿负梯度方向；一次同步更新的各项梯度都应来自同一组旧参数。}
 

@@ -7,6 +7,7 @@ examples, navigation, appendix separation and final PDF page/TOC content.
 from __future__ import annotations
 
 import argparse
+from html import unescape
 import math
 import os
 from pathlib import Path
@@ -82,8 +83,8 @@ REQUIRED = [
     "27-answer-key",
     "28-chapter-checks",
     "24e-bilingual-glossary",
-    "24f-chinese-index",
     "24c-concept-map",
+    "24f-chinese-index",
     "26-sources",
     "29-revision-notes",
     "04-key-value-outer-product",
@@ -897,8 +898,9 @@ def validate_source() -> None:
     includes(ninth, r"\textbf{Top-p}", "sampling group")
 
     for practice in ("25-integrated-practice", "25b-modern-practice", "15-practice"):
-        for level in ("【基础】", "【标准】", "【挑战】"):
-            includes(sources[practice], level, f"{practice}: three difficulty tiers")
+        for level in ("基础", "标准", "挑战"):
+            includes(sources[practice], r"\exercisemeta{" + level + "}",
+                     f"{practice}: three explicit difficulty tiers")
     includes(sources["25b-modern-practice"], "形状错误",
              "modern shape-error exercise")
     includes(sources["25b-modern-practice"], "Dropout",
@@ -1081,8 +1083,8 @@ def validate_source() -> None:
         fail("Advanced appendix conclusion missing")
     if r"\newcommand{\chapterrecallanswer}[1]{}" not in main:
         fail("Self-check core answer must not be printed immediately below questions")
-    includes(main, r"arc=1.5mm,breakable=false",
-             "each chapter self-check box must stay unbroken on one PDF page")
+    includes(main, r"\begin{tcolorbox}[enhanced,breakable,colback=white",
+             "self-checks must flow with surrounding text")
     for name, fragment in (
         ("00g-reading-routes", "联想记忆移至附录"),
         ("25c-migrated-review", "原自测中剩余"),
@@ -1141,6 +1143,11 @@ def validate_source() -> None:
                  f"{lesson_id}: {question_types}")
         if exercises.count(r"\chapterinlinehint{") != 3:
             fail(f"Each question needs one short local clue: {lesson_id}")
+        from generate_chapter_navigation import argument
+        for hint_match in re.finditer(r"\\chapterinlinehint\{", exercises):
+            hint, _ = argument(exercises, hint_match.end()-1)
+            if re.search(r"\d|\\answerresult|\\boxed", hint):
+                fail(f"Self-check hint gives a worked result instead of a method: {lesson_id}")
         extensions = sorted(int(n) for n in re.findall(
             r"\\label\{extension:" + re.escape(lesson_id) + r":(\d+)\}",
             sources["25c-migrated-review"]))
@@ -1351,15 +1358,15 @@ def validate_source() -> None:
 
 
 def expected_subsection_bookmarks() -> dict[str, list[str]]:
-    """Expected x.y bookmarks in typesetting order, not just PDF outline totals.
+    r"""Expected x.y bookmarks in typesetting order, not just PDF outline totals.
 
-    The printed TOC and bookmarks both include numbered subsections.
+    The compact printed TOC stops at chapters; PDF bookmarks include subsections.
     Count numbered \section and \subsection commands across the actual
     main.tex input order; never derive expectations from the PDF being tested.
     """
     main = (BOOK / "main.tex").read_text(encoding="utf-8")
     includes(main, "bookmarksdepth=2", "PDF subsection bookmark depth")
-    includes(main, r"\setcounter{tocdepth}{2}", "chapter and subsection printed TOC")
+    includes(main, r"\setcounter{tocdepth}{1}", "compact chapter-level printed TOC")
 
     def no_comments(body: str) -> str:
         return re.sub(r"(?<!\\)%[^\n]*", "", body)
@@ -1705,13 +1712,18 @@ def validate_pdf(path: Path) -> None:
     # groups, both on the same PDF page. Count headings, not pages.
     question_pages = [i for i, body in enumerate(pages)
                       if "读完自测" in body]
-    question_count = sum(body.count("读完自测") for body in pages)
+    question_count = sum(body.count("读完自测：") for body in pages)
     if (len(answer_starts) != 1 or len(answer_ends) != 1
             or question_count != 45):
         fail(f"Expected 45 rendered self-check boxes and unique D.2 / E.1; "
              f"found {question_count} checks")
-    if normalized(text).count("答案提示：") != 135:
+    if normalized(text).count("思路提示：") != 135:
         fail("All 135 self-check clues must survive PDF rendering")
+    rendered_metadata = re.findall(
+        r"〔[^〕]+·(?:基础|标准|挑战)·约\d+分钟〕", normalized(text))
+    if len(rendered_metadata) != 101:
+        fail(f"All 101 exercise metadata labels must render: found {len(rendered_metadata)}")
+    print("Exercise metadata QA: 101 visible chapter/difficulty/time labels")
     if "章末先核对：" in text:
         fail("Answer leaked immediately under self-check in reader PDF")
     start_answer, end_answer = answer_starts[0], answer_ends[0]
@@ -1748,11 +1760,8 @@ def validate_pdf(path: Path) -> None:
             if start_answer <= target_page < end_answer:
                 answer_links.append(dest_name)
                 on_page_links.append(dest_name)
-        expected_on_page = pages[page_index].count("读完自测")
-        if len(on_page_links) != expected_on_page:
-            fail(f"PDF page {page_index + 1}: {expected_on_page} self-check "
-                 f"headings but {len(on_page_links)} answer links on this page; "
-                 "self-check box has been split by pagination")
+        # Questions may flow to the next page. The global check below still
+        # requires exactly one correct answer destination per exercise group.
     if len(answer_links) != 45 or len(set(answer_links)) != 45:
         fail(f"Every self-check must link to its unique answer: "
              f"{len(answer_links)} links to {len(set(answer_links))} "
@@ -1838,6 +1847,8 @@ def validate_pdf(path: Path) -> None:
         None)
     if guide_index is None:
         fail("Front-matter reading guide missing after table of contents")
+    if guide_index > 4:
+        fail("Printed chapter TOC must occupy no more than two pages before the reading guide")
     guide = normalized(pages[guide_index])
     for heading in ("三条阅读路线", "数学预备：先核对四件事", "表示约定：数学从1起"):
         if heading not in guide:
@@ -1908,7 +1919,9 @@ def validate_pdf(path: Path) -> None:
         if not size:
             fail(f"PDF page {pageno} has no width/height")
         width, height = map(float, size.groups())
-        for word_attrs in re.findall(r"<word\s+([^>]*)>", body):
+        body_words = []
+        for word in re.finditer(r"<word\s+([^>]*)>(.*?)</word>", body, re.S):
+            word_attrs = word[1]
             vals = []
             for key in ("xMin", "yMin", "xMax", "yMax"):
                 m = re.search(key + r'="([\d.+-]+)"', word_attrs)
@@ -1916,11 +1929,29 @@ def validate_pdf(path: Path) -> None:
                     fail(f"Malformed word bounding box on page {pageno}")
                 vals.append(float(m.group(1)))
             xmin, ymin, xmax, ymax = vals
+            if 55 < ymin and ymax < height - 65:
+                body_words.append((ymin, ymax, unescape(word[2])))
             words_checked += 1
             if not (-2 <= xmin <= xmax <= width + 2 and -2 <= ymin <= ymax <= height + 2):
                 fail(f"Text outside PDF page bounds on page {pageno}: {vals}")
+        if (body_words and pageno > guide_index + 1
+                and pageno not in part_openers):
+            body_text = "".join(word[2] for word in body_words)
+            occupied = (max(word[1] for word in body_words) - 55) / (height - 120)
+            self_check_tail = re.match(
+                r"^(?:读完自测|[■]?\s*小结|完整解答与订正说明|附录C[·：]|"
+                r"[123]\.(?:形状|手算|预测|找错|计算|区分|估算|比较|解释|定位|分工|证据|分类))",
+                normalized(body_text))
+            if self_check_tail and occupied < .5:
+                fail(f"Sparse self-check/conclusion tail on page {pageno}: "
+                     f"only {occupied:.0%} of the body height used")
+            line_count = len({round(word[0] / 6) for word in body_words})
+            if occupied < .35 and line_count <= 8:
+                fail(f"Stranded short section on page {pageno}: "
+                     f"{line_count} lines, {occupied:.0%} body height")
     if words_checked < 1000:
         fail(f"Suspiciously few PDF words checked: {words_checked}")
+    print("Chapter ending density QA: no sparse self-check/conclusion tails or stranded short sections")
 
     # Chapter dividers are structural source commands, not repeated page locators.
     # Validate every numbered destination and require substantive page content;

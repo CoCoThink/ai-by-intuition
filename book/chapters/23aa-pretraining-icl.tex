@@ -14,7 +14,7 @@ Transformer 和输出头，输出也仍是下一 Token 概率。
 
 \input{figures/model-to-assistant}
 
-本部分沿用一份虚构的公园运营报告：春季记录写着“春天花开了”，
+本部分沿用公园运营报告算例：春季记录写着“春天花开了”，
 Q1--Q3 收入为 $100,120,132$ 百万元。
 任务是提取季度、收入与出处，再计算环比。
 短句例子解释模型如何计算，完整报告让我们看清怎样把它用于一个可验收的任务。
@@ -139,9 +139,9 @@ Few-shot 能让某些任务在不更新参数的情况下改善表现，
 其中的实验结论有其模型、数据和评测范围。
 
 \chapterchecktasks{23aa-pretraining-icl}{正文基础三题}{
-\item \textbf{比较：}预训练、SFT、Few-shot ICL 中哪些需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{预训练／SFT 更新参数，本章 ICL 改上下文。}
-\item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？\chapterinlinehint{共 $3$ 条；未带入另一会话就不可见。}
-\item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。\chapterinlinehint{Few-shot 不改写权重，新数据仍需来源。}
+\item \textbf{比较：}预训练、SFT、Few-shot ICL 中哪些需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{分别检查是否有反传、更新与仅改变输入。}
+\item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？\chapterinlinehint{先数本次任务记录，再列出新会话实际携带的消息。}
+\item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。\chapterinlinehint{比较提示输入与优化器更新，并追踪资料来源。}
 }
 \chapterrecallanswer{ICL 改变一次请求的上下文，SFT 才通过训练更新参数；真实的新资料还需要合法的检索或输入。}
 

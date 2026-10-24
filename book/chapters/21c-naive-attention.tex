@@ -1,4 +1,4 @@
-\Needspace{16\baselineskip}
+\Needspace{13\baselineskip}
 \chapterrule
 \section{最朴素的注意力：直接用词向量做点积}
 \label{intro:21c-naive-attention}
@@ -44,9 +44,9 @@ $(0.212,0.212,0.576)$，继续把输入作为 Value，
 
 
 \chapterchecktasks{21c-naive-attention}{正文基础三题}{
-\item \textbf{手算：}本章 $x_1=(1,0),x_2=(0,1),x_3=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$。\chapterinlinehint{首行 $(1,0,1)$，末行 $(1,1,2)$。}
-\item \textbf{预测：}对每一行分开做 Softmax 后，$A_{13}$ 与 $A_{31}$ 还一定相等吗？请先比较两行的分母。\chapterinlinehint{不必相等：两行归一化分母不同。}
-\item \textbf{找错：}同学说“直接点积能自定义‘我如何问’和‘别人如何被问’这两套不同视角”。这一零参数方案缺少什么？\chapterinlinehint{Query 与 Key 尚无独立投影。}
+\item \textbf{手算：}本章 $x_1=(1,0),x_2=(0,1),x_3=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$。\chapterinlinehint{让对应输入行分别与所有输入行做点积。}
+\item \textbf{预测：}对每一行分开做 Softmax 后，$A_{13}$ 与 $A_{31}$ 还一定相等吗？请先比较两行的分母。\chapterinlinehint{将两个相同分子与各自行的分母对照。}
+\item \textbf{找错：}同学说“直接点积能自定义‘我如何问’和‘别人如何被问’这两套不同视角”。这一零参数方案缺少什么？\chapterinlinehint{检查提问与匹配是否使用两套可训练矩阵。}
 }
 \chapterrecallanswer{直接点积 $XX^	op$ 的原始分数对称，但逐行 Softmax 的归一化分母可不同；独立 Q/K 投影可以表达不对称匹配。}
 

@@ -69,6 +69,18 @@ def rendered_navigation() -> str:
             identifier = f'{prefix}-{number}'
             if r'\label{exercise:' + identifier + '}' not in body:
                 raise ValueError(f'{name}: missing stable exercise label {identifier}')
+            metadata = re.search(r'\\exercisemeta\{', body)
+            if not metadata or body.count(r'\exercisemeta{') != 1:
+                raise ValueError(f'{identifier}: needs difficulty, time and chapter metadata')
+            difficulty, end = argument(body, metadata.end()-1)
+            minutes, end = argument(body, end)
+            chapter, _ = argument(body, end)
+            if difficulty not in ('基础', '标准', '挑战'):
+                raise ValueError(f'{identifier}: unknown difficulty {difficulty}')
+            if not minutes.isdigit() or not 1 <= int(minutes) <= 60:
+                raise ValueError(f'{identifier}: invalid suggested time {minutes}')
+            if r'\ref*{' not in chapter and r'\hyperref[' not in chapter:
+                raise ValueError(f'{identifier}: chapter metadata must link to its source')
             label = re.search(r'\\ref\*\{(intro:[^}]+)\}', body)
             extension = re.search(r'\\label\{extension:([^:}]+):(\d+)\}', body)
             if extension:

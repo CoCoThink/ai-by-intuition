@@ -233,8 +233,7 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 \label{eq:swiglu-illustration}
 \end{equation}
 其中 $\odot$ 是\textbf{对应位置逐元素相乘}，
-$\operatorname{SiLU}(z)=z/(1+e^{-z})$；
-
+$\operatorname{SiLU}(z)=z/(1+e^{-z})$。
 两个分支分别计算“门”和“内容”，然后逐元素组合。
 
 还有一种\textbf{混合专家（MoE）}思路：
@@ -455,9 +454,9 @@ $8\times(3+2)=\answerresult{40}$。
 
 
 \chapterchecktasks{22d-modern-transformers}{正文基础三题}{
-\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{RoPE 处理位置，RMSNorm 按均方根缩放。}
-\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{同长度为 $1/4$；长度翻倍后为原来的 $1/2$。}
-\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{KV 元素比不能直接当作延迟比。}
+\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}
+\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
+\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
 }
 \chapterrecallanswer{RoPE 编入位置信息，RMSNorm 不减均值；GQA 通过较少 K/V 头降低缓存，但整体性能仍需实测。}
 

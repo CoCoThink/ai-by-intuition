@@ -6,18 +6,18 @@
 题目沿用全书的\textbf{行向量约定}。
 
 \begin{enumerate}[label=\textbf{C3-\arabic*.}]
-\item \phantomsection\label{exercise:C3-1} {\footnotesize\color{muted}〔第~\ref*{intro:02-dot-product}~章〕} \textbf{【基础】} $\vect{a}=(1,0)$，$\vect{b}=(0.8,0.6)$，两者点积是多少？相似度高还是低？
-\item \phantomsection\label{exercise:C3-2} {\footnotesize\color{muted}〔第~\ref*{intro:04-key-value-outer-product}~章〕} \textbf{【基础】} 如果只存一条行向量记忆 $S=k^\top v$ 且 $k$ 为单位行向量，查询 $kS$ 得到什么？
-\item \phantomsection\label{exercise:C3-3} {\footnotesize\color{muted}〔第~\ref*{intro:04-key-value-outer-product}~章〕} \textbf{【标准】} 为什么行向量记忆 $S=\sum_i k_i^\top v_i$ 在查询某条 Key 时仍可能产生串扰？
-\item \phantomsection\label{exercise:C3-4} {\footnotesize\color{muted}〔第~\ref*{intro:09-nonlinearity-and-memory}~章〕} \textbf{【基础】} 比较 $0.5$、$0.5^2$、$0.5^3$：越来越高次的激活为什么有助于压低弱匹配？
-\item \phantomsection\label{exercise:C3-5} {\footnotesize\color{muted}〔第~\ref*{intro:09-nonlinearity-and-memory}~章〕} \textbf{【标准】} Softmax 对两个分数 $[1,0.6]$ 做指数归一化。增大逆温度 $\beta=1/\tau$（$\tau$ 为温度）后，哪条记忆的权重上升？
-\item \phantomsection\label{exercise:C3-6} {\footnotesize\color{muted}〔第~\ref*{intro:09-nonlinearity-and-memory}~章〕} \textbf{【标准】} 若 $K=\begin{bmatrix}1&2\\3&4\end{bmatrix}$、$x=(1,-1)$，计算 $\relu(xK^\top)$。
-\item \phantomsection\label{exercise:C3-7} {\footnotesize\color{muted}〔第~\ref*{intro:06-better-linear-memory}~章〕} \textbf{【标准】} 若 $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$、$a=(0,2)$，计算 $aV$，并用「按行加权求和」解释结果。
-\item \phantomsection\label{exercise:C3-8} {\footnotesize\color{muted}〔第~\ref*{intro:02-dot-product}~章〕} \textbf{【挑战】} 已知 $\vect a=(6,0)$、$\vect b=(5,12)$，求点积、两个长度与 $\cos\theta$，并验证 $\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta$。
-\item \phantomsection\label{exercise:C3-9} {\footnotesize\color{muted}〔第~\ref*{intro:06-better-linear-memory}~章〕} \textbf{【标准】} 若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。
-\item \phantomsection\label{exercise:C3-10} {\footnotesize\color{muted}〔第~\ref*{intro:21b-why-attention}~章〕} \textbf{【基础】} 用一句话说明为什么简化模型可以取 $\vect q=\vect x$，而真实 Transformer 中两者往往不同。
-\item \phantomsection\label{exercise:C3-11} {\footnotesize\color{muted}〔第~\ref*{intro:11-softmax-memory}~章〕} \textbf{【标准】} 若 $Q:2\times3$、$K:4\times3$、$V:4\times5$，求 $QK^\top$ 与 $\softmax(QK^\top)V$ 的尺寸；Softmax 沿哪一个方向归一化？
-\item \phantomsection\label{exercise:C3-12} {\footnotesize\color{muted}〔第~\ref*{intro:06-better-linear-memory}~章〕} \phantomsection\label{exercise:delta-reverse}\textbf{【挑战】}
+\item \phantomsection\label{exercise:C3-1} \exercisemeta{基础}{3}{第~\ref*{intro:02-dot-product}~章}  $\vect{a}=(1,0)$，$\vect{b}=(0.8,0.6)$，两者点积是多少？相似度高还是低？
+\item \phantomsection\label{exercise:C3-2} \exercisemeta{基础}{3}{附录~\ref*{intro:04-key-value-outer-product}}  如果只存一条行向量记忆 $S=k^\top v$ 且 $k$ 为单位行向量，查询 $kS$ 得到什么？
+\item \phantomsection\label{exercise:C3-3} \exercisemeta{标准}{5}{附录~\ref*{intro:04-key-value-outer-product}}  为什么行向量记忆 $S=\sum_i k_i^\top v_i$ 在查询某条 Key 时仍可能产生串扰？
+\item \phantomsection\label{exercise:C3-4} \exercisemeta{基础}{3}{附录~\ref*{intro:09-nonlinearity-and-memory}}  比较 $0.5$、$0.5^2$、$0.5^3$：越来越高次的激活为什么有助于压低弱匹配？
+\item \phantomsection\label{exercise:C3-5} \exercisemeta{标准}{5}{附录~\ref*{intro:09-nonlinearity-and-memory}}  Softmax 对两个分数 $[1,0.6]$ 做指数归一化。增大逆温度 $\beta=1/\tau$（$\tau$ 为温度）后，哪条记忆的权重上升？
+\item \phantomsection\label{exercise:C3-6} \exercisemeta{标准}{5}{附录~\ref*{intro:09-nonlinearity-and-memory}}  若 $K=\begin{bmatrix}1&2\\3&4\end{bmatrix}$、$x=(1,-1)$，计算 $\relu(xK^\top)$。
+\item \phantomsection\label{exercise:C3-7} \exercisemeta{标准}{5}{附录~\ref*{intro:06-better-linear-memory}}  若 $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$、$a=(0,2)$，计算 $aV$，并用「按行加权求和」解释结果。
+\item \phantomsection\label{exercise:C3-8} \exercisemeta{挑战}{8}{第~\ref*{intro:02-dot-product}~章}  已知 $\vect a=(6,0)$、$\vect b=(5,12)$，求点积、两个长度与 $\cos\theta$，并验证 $\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta$。
+\item \phantomsection\label{exercise:C3-9} \exercisemeta{标准}{5}{附录~\ref*{intro:06-better-linear-memory}}  若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。
+\item \phantomsection\label{exercise:C3-10} \exercisemeta{基础}{3}{第~\ref*{intro:21b-why-attention}~章}  用一句话说明为什么简化模型可以取 $\vect q=\vect x$，而真实 Transformer 中两者往往不同。
+\item \phantomsection\label{exercise:C3-11} \exercisemeta{标准}{5}{第~\ref*{intro:11-softmax-memory}~章}  若 $Q:2\times3$、$K:4\times3$、$V:4\times5$，求 $QK^\top$ 与 $\softmax(QK^\top)V$ 的尺寸；Softmax 沿哪一个方向归一化？
+\item \phantomsection\label{exercise:C3-12} \exercisemeta{挑战}{10}{附录~\ref*{intro:06-better-linear-memory}} \phantomsection\label{exercise:delta-reverse}
 \textbf{【手算／迁移】} 沿用第~\ref*{intro:06-better-linear-memory}~章 Delta 规则：
 $k_A=(1,0),v_A=(1,0)$，$k_B=(0.6,0.8),v_B=(0,1)$，
 $S_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。

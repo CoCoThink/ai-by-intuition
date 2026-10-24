@@ -1,4 +1,4 @@
-\Needspace{24\baselineskip}
+\Needspace{13\baselineskip}
 \chapterrule
 \section{分类损失：预测错了哪一类，怎样调整分数？}
 \label{intro:20c-classification-loss}
@@ -119,9 +119,9 @@ L=-z_{\rm correct}+\log\!\left(\sum_k e^{z_k}\right).
 \end{warningbox}
 
 \chapterchecktasks{20c-classification-loss}{正文基础三题}{
-\item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。为什么它们不是合法概率，Softmax 要满足哪些条件？\chapterinlinehint{logits 是分数，Softmax 输出和为一的概率。}
-\item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{损失 $\log2\approx0.6931$，正确类梯度 $-0.5$。}
-\item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{正确类概率上升，交叉熵下降。}
+\item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。为什么它们不是合法概率，Softmax 要满足哪些条件？\chapterinlinehint{核对非负性与归一化，再对照原始分数。}
+\item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}
+\item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{比较负对数函数在这两个概率处的大小。}
 }
 \chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\log p_y$，梯度采用 one-hot 标签。}
 

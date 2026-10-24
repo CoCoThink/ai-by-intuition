@@ -104,6 +104,10 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 经典 Encoder--Decoder Transformer 包含：编码器自注意力、解码器被掩码的自注意力，以及解码器对编码器输出的交叉注意力。交叉注意力的 Query 来自解码器，Key 和 Value 来自编码器。
 
 很多生成式 LLM 使用\textbf{Decoder-only} 架构：以因果自注意力和 MLP 堆叠为主，逐步预测下一个 Token。
+新架构也会重新组合编码与解码：例如
+\href{https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash}{DeepSeek-V4.1-Flash 官方模型卡}
+介绍的\textbf{因果编码器--解码器（CED）}把 40 层分为 20 层因果编码器和 20 层解码器，
+仍按自回归方式生成文本。这里的因果编码器与原始翻译模型的双向源语句编码器有不同的可见范围。
 还有\textbf{Encoder-only} 家族，例如 BERT，双向读取输入，
 学习上下文表示，常用于分类、匹配或编码任务；
 它与 Decoder-only 的因果下一 Token 预测目标不同。
@@ -217,9 +221,9 @@ p_i=\frac{e^{z_i}}{\sum_j e^{z_j}},
 \input{figures/original-transformer-map}
 
 \chapterchecktasks{22-transformer-architecture}{正文基础三题}{
-\item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？\chapterinlinehint{拼接 $3\times4$；残差两端形状需兼容。}
-\item \textbf{预测：}生成位置 $1$ 时若错误地允许读取位置 $2$ 的真实目标，这会使下一 Token 训练的什么规则失效？\chapterinlinehint{读到未来目标，造成信息泄漏。}
-\item \textbf{找错：}某人把原始 Encoder--Decoder Transformer 的 Cross-Attention 当成 Decoder-only GPT 每层必有的模块。指出差异及真正的数据来源。\chapterinlinehint{原始模型的交叉注意力：Q 来自 Decoder，K/V 来自 Encoder。}
+\item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？\chapterinlinehint{先沿特征轴拼接，再核对残差两项的形状。}
+\item \textbf{预测：}生成位置 $1$ 时若错误地允许读取位置 $2$ 的真实目标，这会使下一 Token 训练的什么规则失效？\chapterinlinehint{检查目标是否已经进入本来不可见的前缀。}
+\item \textbf{找错：}某人把原始 Encoder--Decoder Transformer 的 Cross-Attention 当成 Decoder-only GPT 每层必有的模块。指出差异及真正的数据来源。\chapterinlinehint{分别追踪交叉注意力中 Q 与 K/V 的来源。}
 }
 \chapterrecallanswer{一个 Block 需要形状兼容的残差；因果 Mask 禁止看未来；Decoder-only 自注意力没有默认的 Encoder Cross-Attention。}
 
