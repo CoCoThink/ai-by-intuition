@@ -95,8 +95,12 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 C3-12}
 交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
 
-\chaptercheck{06-better-linear-memory}{Delta 写入先计算哪一种残差？}{本章先写 A 再写 B 后，
-$S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$，
-用 $k_A=(1,0)$ 读出的 Value 是什么？}{这一次写入 B 后能否据此宣称 A 的记忆改善？
-怎样才能进一步减小误差？}
+\chapterchecktasks{06-better-linear-memory}{定位／手算／找错／权衡}{
+\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？
+\item \textbf{手算：}写入 B 后 $S_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？
+\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。
+\item \textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。
+}
+\chapterrecallanswer{Delta 规则用读取残差修正当前 Key，但对非正交 Key 的修正可能重新扰动先前记忆。}
+
 
