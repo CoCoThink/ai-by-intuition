@@ -1008,10 +1008,28 @@ def validate_source() -> None:
         fail("Legacy chapter checks must render their fourth chapter-specific task")
     answers = sources["28-chapter-checks"]
     for lesson_id in varied:
+        body = sources[labels["check:" + lesson_id]]
+        task_start = r"\chapterchecktasks{" + lesson_id + "}"
+        exercises = body.split(task_start, 1)[1].split(
+            r"\chapterrecallanswer{", 1)[0]
+        question_types = re.findall(
+            r"\\item\s+\\textbf\{([^：:}]+)[：:]", exercises)
+        question_count = exercises.count(r"\item ")
+        if question_count not in (4, 5) or len(question_types) != question_count:
+            fail(f"Redesigned chapter must have 4–5 explicitly typed questions: "
+                 f"{lesson_id}: {question_types}")
+        normalized_types = [re.sub(r"（[^）]+）", "", label)
+                            for label in question_types]
+        if len(set(normalized_types)) != question_count:
+            fail(f"Duplicate question types inside a redesigned chapter: "
+                 f"{lesson_id}: {normalized_types}")
         marker = r"\label{answer:" + lesson_id + "}"
         section = answers.split(marker, 1)[1].split(r"\item[", 1)[0]
-        if section.count(r"\textbf{题 ") < 4:
-            fail(f"Redesigned chapter needs four or more complete answer entries: {lesson_id}")
+        answer_ids = [int(n) for n in re.findall(
+            r"\\textbf\{题 (\d+)（", section)]
+        if answer_ids != list(range(1, question_count + 1)):
+            fail(f"Redesigned self-check answer numbering mismatch: "
+                 f"{lesson_id}: questions={question_count}, answers={answer_ids}")
 
     for lesson_id in sorted(check_ids):
         src = sources[labels["check:" + lesson_id]]
