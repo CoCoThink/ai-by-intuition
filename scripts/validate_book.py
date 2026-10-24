@@ -1080,6 +1080,8 @@ def validate_source() -> None:
         fail("Inline numerical clues or old clue bank remain in reader PDF")
     if sources["25c-migrated-review"].count(r"\begin{enumerate}[label=\arabic*.,start=4") != 45:
         fail("Each of the 45 Appendix C chapter groups must begin numbering at 4")
+    if r"\\hyperref[check:00-guide]{：生成流程" in sources["25c-migrated-review"]:
+        fail("Extension appendix reading-guide heading has no readable title")
     if r"\textbf{原题 4：" in sources["25c-migrated-review"]:
         fail("Appendix C must use real 4/5 list markers instead of duplicate '1. 原题 4' labels")
     if "简明答案},fonttitle=\\sffamily\\bfseries,coltitle=ink" not in sources["27-answer-key"]:
