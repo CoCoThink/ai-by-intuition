@@ -17,14 +17,14 @@
 | [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-10-24 | 链接可访问 |
 | [www.incompleteideas.net/IncIdeas/BitterLesson.html](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) | 2026-10-24 | 链接可访问 |
 | [law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/](https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/) | 2026-10-24 | 访问受限 |
-| [modelcontextprotocol.io/specification](https://modelcontextprotocol.io/specification) | 2026-10-24 | 链接可访问 |
+| [modelcontextprotocol.io/specification](https://modelcontextprotocol.io/specification) | 2026-10-25 | 已核对当前入口指向 2026-07-28 版 |
 | [a2a-protocol.org/latest/](https://a2a-protocol.org/latest/) | 2026-10-24 | 链接可访问 |
 | [huggingface.co/openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 2026-10-24 | 链接可访问 |
-| [huggingface.co/openai-community/gpt2/blob/607a30d/config.json](https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json) | 2026-10-24 | 链接可访问 |
-| [huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json](https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json) | 2026-10-24 | 链接可访问 |
+| [huggingface.co/openai-community/gpt2/blob/607a30d/config.json](https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json) | 2026-10-25 | 已重新读取层数、头数与隐藏宽度 |
+| [huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json](https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json) | 2026-10-25 | 已重新读取层数、Q/KV 头数与隐藏宽度 |
 | [arxiv.org/abs/2010.11929](https://arxiv.org/abs/2010.11929) | 2026-10-24 | 链接可访问 |
-| [arxiv.org/abs/2505.09388](https://arxiv.org/abs/2505.09388) | 2026-10-24 | 链接可访问 |
-| [www.deepseek.com/en/news/deepseek-v4-1-flash/](https://www.deepseek.com/en/news/deepseek-v4-1-flash/) | 2026-10-24 | 链接可访问 |
+| [arxiv.org/abs/2505.09388](https://arxiv.org/abs/2505.09388) | 2026-10-25 | 已核对 Dense/MoE 家族的公开描述 |
+| [www.deepseek.com/en/news/deepseek-v4-1-flash/](https://www.deepseek.com/en/news/deepseek-v4-1-flash/) | 2026-10-25 | 已核对官方公告的因果编码器—解码器描述 |
 | [arxiv.org/abs/2609.19969](https://arxiv.org/abs/2609.19969) | 2026-10-24 | 链接可访问 |
 | [api-docs.deepseek.com/updates/](https://api-docs.deepseek.com/updates/) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2104.09864](https://arxiv.org/abs/2104.09864) | 2026-10-24 | 链接可访问 |
@@ -36,10 +36,14 @@
 | [huggingface.co/docs/transformers/main/en/cache_explanation](https://huggingface.co/docs/transformers/main/en/cache_explanation) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2209.11895](https://arxiv.org/abs/2209.11895) | 2026-10-25 | 已核对归纳头的两阶段匹配与复制机制 |
 | [huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json](https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json) | 2026-10-25 | 已实际运行分词器并核对四个 Token ID |
-| [modelcontextprotocol.io/specification/2025-06-18/server/tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools) | 2026-10-25 | 链接可访问 |
-| [a2a-protocol.org/v1.0.0/specification/](https://a2a-protocol.org/v1.0.0/specification/) | 2026-10-25 | 链接可访问 |
-| [platform.claude.com/docs/en/api/messages/create](https://platform.claude.com/docs/en/api/messages/create) | 2026-10-25 | 链接可访问 |
+| [a2a-protocol.org/v1.0.0/specification/](https://a2a-protocol.org/v1.0.0/specification/) | 2026-10-25 | 已核对固定版本的消息、任务与产物概念 |
+| [platform.claude.com/docs/en/api/messages/create](https://platform.claude.com/docs/en/api/messages/create) | 2026-10-25 | 已核对消息字段与停止原因 |
 | [proceedings.mlr.press/v70/guo17a.html](https://proceedings.mlr.press/v70/guo17a.html) | 2026-10-25 | 链接可访问 |
-| [arxiv.org/abs/2306.05685](https://arxiv.org/abs/2306.05685) | 2026-10-25 | 链接可访问 |
+| [arxiv.org/abs/2306.05685](https://arxiv.org/abs/2306.05685) | 2026-10-25 | 已核对位置、冗长与自我偏好等评审偏差 |
 | [arxiv.org/abs/2103.00020](https://arxiv.org/abs/2103.00020) | 2026-10-25 | 链接可访问 |
 | [arxiv.org/abs/2304.08485](https://arxiv.org/abs/2304.08485) | 2026-10-25 | 链接可访问 |
+| [modelcontextprotocol.io/specification/2026-07-28/basic/index](https://modelcontextprotocol.io/specification/2026-07-28/basic/index) | 2026-10-25 | 已核对每次请求的版本与能力元数据 |
+| [modelcontextprotocol.io/specification/2026-07-28/changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog) | 2026-10-25 | 已核对移除初始化与协议级会话的变更 |
+| [modelcontextprotocol.io/specification/2026-07-28/server/tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools) | 2026-10-25 | 已核对 tools/call 字段 |
+| [platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools) | 2026-10-25 | 已核对名称、描述与输入模式的作用 |
+| [platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls](https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls) | 2026-10-25 | 已核对多轮调用与工具结果对应规则 |

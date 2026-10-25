@@ -80,7 +80,7 @@ Distill (2016)：
 \begin{itemize}
 \item Model Context Protocol：
 \sourceurl{https://modelcontextprotocol.io/specification}
-\sourcecheck{2026-10-24}{链接可访问}
+\sourcecheck{2026-10-25}{已核对当前入口指向 2026-07-28 版}
 \item Agent2Agent (A2A) Protocol：
 \sourceurl{https://a2a-protocol.org/latest/}
 \sourcecheck{2026-10-24}{链接可访问}
@@ -93,10 +93,10 @@ Distill (2016)：
 \sourcecheck{2026-10-24}{链接可访问}
 \item GPT-2 配置文件（固定提交）：\\
 GPT-2 small（revision: \texttt{607a30d}）：\sourceurl{https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json}
-\sourcecheck{2026-10-24}{链接可访问}
+\sourcecheck{2026-10-25}{已重新读取层数、头数与隐藏宽度}
 \item Qwen2.5-0.5B 配置文件（固定提交）：\\
 Qwen2.5-0.5B（revision: \texttt{060db64}）：\sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json}
-\sourcecheck{2026-10-24}{链接可访问}
+\sourcecheck{2026-10-25}{已重新读取层数、Q/KV 头数与隐藏宽度}
 \item 同一 Qwen 修订的 Tokenizer（中文切分复算，不加载权重）：
 \sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json}
 \sourcecheck{2026-10-25}{已实际运行分词器并核对四个 Token ID}
@@ -114,12 +114,12 @@ GPT-2 与 Qwen2.5-0.5B 在本书承担的是\textbf{公开、可锁定配置的�
 Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
 的官方架构说明（2026）；它们只供选读，不直接替换正文的固定复算基线：
 \begin{itemize}
-\item Qwen3 Technical Report（2025-05-14；本版检索：2026-10-23（UTC））：
+\item Qwen3 Technical Report（2025-05-14）：
 \sourceurl{https://arxiv.org/abs/2505.09388}
-\sourcecheck{2026-10-24}{链接可访问}
+\sourcecheck{2026-10-25}{已核对 Dense/MoE 家族的公开描述}
 \item DeepSeek-V4.1-Flash 官方发布说明（发布：2026-09-10；本版检索：2026-10-23（UTC））：
 \sourceurl{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}
-\sourcecheck{2026-10-24}{链接可访问}
+\sourcecheck{2026-10-25}{已核对官方公告的因果编码器—解码器描述}
 \item DeepSeek-V4.1-Flash 技术报告（2026-09-17；本轮核验：2026-10-24（UTC））：
 \sourceurl{https://arxiv.org/abs/2609.19969}
 \sourcecheck{2026-10-24}{链接可访问}
@@ -161,21 +161,29 @@ Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
 
 \subsubsection*{校准、图文学习与真实工具接口}
 \begin{itemize}
-\item MCP 2025-06-18 工具规范：
-\sourceurl{https://modelcontextprotocol.io/specification/2025-06-18/server/tools}
-\sourcecheck{2026-10-25}{链接可访问}
+\item MCP 2026-07-28：核心消息、版本变更与工具规范：
+\sourceurl{https://modelcontextprotocol.io/specification/2026-07-28/basic/index}
+\sourcecheck{2026-10-25}{已核对每次请求的版本与能力元数据}
+\sourceurl{https://modelcontextprotocol.io/specification/2026-07-28/changelog}
+\sourcecheck{2026-10-25}{已核对移除初始化与协议级会话的变更}
+\sourceurl{https://modelcontextprotocol.io/specification/2026-07-28/server/tools}
+\sourcecheck{2026-10-25}{已核对 tools/call 字段}
 \item A2A v1.0.0 固定版本规范：
 \sourceurl{https://a2a-protocol.org/v1.0.0/specification/}
-\sourcecheck{2026-10-25}{链接可访问}
+\sourcecheck{2026-10-25}{已核对固定版本的消息、任务与产物概念}
 \item Claude Messages API：客户端工具字段：
 \sourceurl{https://platform.claude.com/docs/en/api/messages/create}
-\sourcecheck{2026-10-25}{链接可访问}
+\sourcecheck{2026-10-25}{已核对消息字段与停止原因}
+\sourceurl{https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools}
+\sourcecheck{2026-10-25}{已核对名称、描述与输入模式的作用}
+\sourceurl{https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls}
+\sourcecheck{2026-10-25}{已核对多轮调用与工具结果对应规则}
 \item Guo 等：On Calibration of Modern Neural Networks：
 \sourceurl{https://proceedings.mlr.press/v70/guo17a.html}
 \sourcecheck{2026-10-25}{链接可访问}
 \item Zheng 等：Judging LLM-as-a-Judge：
 \sourceurl{https://arxiv.org/abs/2306.05685}
-\sourcecheck{2026-10-25}{链接可访问}
+\sourcecheck{2026-10-25}{已核对位置、冗长与自我偏好等评审偏差}
 \item Radford 等：CLIP 图文对比训练：
 \sourceurl{https://arxiv.org/abs/2103.00020}
 \sourcecheck{2026-10-25}{链接可访问}

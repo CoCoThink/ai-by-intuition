@@ -1,15 +1,16 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{训练系统与推理部署：资源花在哪里？}
+\section{数据、训练系统与部署：资源怎样分配？}
 \label{intro:23b-deployment-and-ecosystem}
-\chaptercompass{模型能使用工具之后，部署还受什么制约？}{分清权重存储、KV 缓存、量化与实际服务的成本。}{$N$ 个参数 $\to$ 权重字节；$T$ 个 Token $\to$ KV 缓存}{训练更新参数；推理固定权重，缓存与运行状态变化}
+\chaptercompass{从训练资料到在线服务，资源怎样分配？}{沿数据整理、训练执行、推理服务三段，核对质量与资源预算。}{原始资料 $\to$ 训练 Token $\to$ 模型权重 $\to$ 服务输出}{训练更新参数；推理固定权重，缓存与运行状态变化}
 \modelpipelinefocus{8}{部署、缓存与系统}
 \asof{2026-10-25}{数据隔离、存储预算与计算通信代价}
 
 
-Agent 的报告流程已经包含检索、计算与人工复核，
-但模型仍要在现实硬件上运行，且必须考虑缓存、延迟、成本与隐私。
-这一章转向基础设施，不把性能优化误写成模型在对话中重新学习。
+本章把生产链分成三段：先把资料整理成训练样本，再分配训练计算与通信，
+最后安排推理时的权重、缓存、延迟与成本。
+第~\ref*{intro:23a-from-toy-to-gpt}~章讨论了模型规模，这里先接上它的数据来源；
+第~\ref*{intro:23d-agent-tools}--\ref*{intro:23d-agent-protocols}~章搭好的助手，则在最后一段落实服务预算。
 
 \subsection{训练数据工程：来源、清洗、去重与配比}
 \label{sec:data-engineering}
@@ -199,24 +200,14 @@ $V_{\rm lr}:8\times1000$，则需要
 
 这些技术解决的成本不同：量化和剪枝常用于减小部署开销，LoRA 主要减少微调时需要更新的参数。
 
-\subsubsection*{为什么还有框架、镜像、推理引擎和协议？}
+\subsubsection*{从权重到服务：工具链各管哪一段？}
 
-模型权重之外仍需要很多工程工具。一个典型流程是：
-\[
-\boxed{\text{模型权重}\longrightarrow
-\text{推理引擎}\longrightarrow
-\text{接口服务}\longrightarrow
-\text{应用与工具}}
-\]
-\textbf{框架}用于定义和执行训练/推理计算；\textbf{镜像}打包运行环境；\textbf{推理引擎}专注批处理、缓存和计算性能；\textbf{接口}让其他程序以约定的格式请求模型服务；\textbf{协议}帮助多种工具和系统建立协作规则。
+常见工作链是：模型权重 $\to$ 推理引擎 $\to$ 接口服务 $\to$ 应用与工具。
+\textbf{框架}执行训练与推理，\textbf{镜像}打包环境，\textbf{推理引擎}安排批处理与缓存；
+\textbf{接口和协议}约定 \conceptlink{agent}{Agent} 怎样请求模型、通过 \conceptlink{mcp}{MCP} 接入工具。
+本书的推理过程固定模型参数。
 
-\textbf{API、\conceptlink{agent}{Agent} 和 \conceptlink{mcp}{MCP} 等概念主要属于系统集成层。}工具调用通过上下文和外部动作扩展产品能力，本书的推理流程使用固定模型参数。
-
-\subsubsection*{技术生态地图：CUDA、PyTorch、Hugging Face、Ollama、vLLM}
-
-同一个模型可以通过不同软件组合训练、下载和部署。
-不要把\textbf{硬件计算平台、训练框架、模型仓库、运行工具和推理服务}
-当作可以相互替代的五种模型架构。
+下表把硬件平台、训练框架、权重仓库和运行工具放回同一条工作链：
 
 \begin{center}
 \small
@@ -239,12 +230,9 @@ vLLM & 面向服务的模型推理引擎 &
 \end{tabularx}
 \end{center}
 
-例如，开发者从 Hugging Face Hub 取得一份\textbf{允许使用}的权重，
-用 PyTorch 完成研究实验，再选合适的推理运行时对外提供服务。
-若选用 NVIDIA GPU，底层可使用 CUDA；也可以按照设备和模型支持情况
-选择其他计算后端。Ollama 偏向便捷的本地运行，
-vLLM 偏向服务型推理；是否更快，要在相同的权重、硬件、
-输入长度、并发数和量化条件下实际测试。
+例如，从 Hugging Face Hub 取得获许可的权重，用 PyTorch 做研究或微调，再选推理引擎上线。
+NVIDIA GPU 可配合 CUDA，其他设备按支持情况选择后端。
+Ollama 侧重本地运行，vLLM 侧重服务型推理；比较性能时固定权重、硬件、输入长度、并发数与量化方案。
 
 \textbf{查询入口：}
 \href{https://docs.nvidia.com/cuda/cuda-programming-guide/index.html}{CUDA}、
@@ -252,8 +240,7 @@ vLLM 偏向服务型推理；是否更快，要在相同的权重、硬件、
 \href{https://huggingface.co/docs/hub/index}{Hugging Face Hub}、
 \href{https://docs.ollama.com/}{Ollama}、
 \href{https://docs.vllm.ai/}{vLLM}。
-这些工具的\textbf{接口、兼容硬件、部署模式和许可证可能更新}。
-本表只定位各层责任，不固定特定版本、吞吐数字或产品优劣排名。
+本表说明各层职责；软件版本、设备兼容与许可证以项目文档为准。
 
 \chapterchecktasks{23b-deployment-and-ecosystem}{正文基础三题}{
 \item \textbf{区分：}训练代码、模型权重、推理引擎和对外 API 在一个产品里承担什么不同职责？\chapterinlinehint{按训练、存储、执行和服务四个环节追踪职责。}
@@ -265,8 +252,7 @@ vLLM 偏向服务型推理；是否更快，要在相同的权重、硬件、
 
 
 \begin{conclusion}
-部署一个 AI 产品需要模型结构、训练权重、推理引擎、接口与安全措施共同工作。
-模型的计算能力与系统的运行能力相互配合，才能构成可用的服务。
-接下来再回头审视经典 Transformer 自身的表示、计算与缓存瓶颈，
-分析现代架构为什么会变化。
+数据整理决定训练材料，训练系统产出权重，推理引擎把权重交付为服务。
+三段分别核对质量、计算、权重与缓存预算；安全措施贯穿资料与工具的使用。
+下一部分回到模型本身，看现代架构怎样改进计算与存储。
 \end{conclusion}

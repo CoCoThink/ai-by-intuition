@@ -12,12 +12,9 @@
 
 若梯度特别大，\textbf{梯度裁剪}可以在更新前限制其幅度。例如梯度向量的长度超过设定阈值时，可以将其整体按比例缩小。学习率选择与数据检查仍分别进行。
 
-\noindent\textbf{先记主线：}SGD 用当前批次的梯度和学习率直接更新参数；出现不稳定时，先检查数据、梯度大小与学习率，而不是一次背完所有优化器。动量、Adam、AdamW 与 Warmup 的独立手算已集中到\hyperref[app:optimizer-details]{附录 A 的提高选读}。\par\medskip
-
-\noindent\textbf{第二遍再读：}梯度消失／爆炸、更新震荡、
-梯度裁剪与优化器超参数的完整诊断及例题，见
-\hyperref[app:optimizer-details]{附录 A.4 的提高选读}。
-本章先掌握 Mini-batch、Epoch 与同步 SGD 的参数更新。\par\medskip
+\noindent\textbf{先记主线：}掌握 Mini-batch、Epoch 与同步 SGD；出现不稳定时，先检查数据、梯度大小与学习率。
+第二遍再到\hyperref[app:optimizer-details]{附录 A.4（第~\pageref*{app:optimizer-details}~页）}
+做动量、Adam、AdamW、Warmup 与稳定性诊断的独立手算。\par\medskip
 
 \chapterchecktasks{16-loss-gradient}{正文基础三题}{
 \item \textbf{预测：}沿用三点损失 $L(w,b)=\frac23(w-2)^2+(b-1)^2$，从 $(1,0)$ 出发。若学习率由 $0.3$ 改为 $0$，参数与损失会怎样变化？这为什么不等于“模型已收敛”？\chapterinlinehint{把零学习率代入更新式，再检查梯度。}

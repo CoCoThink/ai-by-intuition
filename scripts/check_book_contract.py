@@ -349,6 +349,8 @@ def validate_contract():
     from check_section_navigation import section_targets,source_errors
     heading_targets=section_targets(combined)
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in source_errors(body,heading_targets))
+    from check_dated_claims import validate as validate_dated_claims
+    errors.extend(validate_dated_claims())
     return errors
 
 

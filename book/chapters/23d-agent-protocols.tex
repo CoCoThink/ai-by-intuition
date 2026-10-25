@@ -21,17 +21,27 @@
 模型提取报告中的事实，应用独立决定读取与外发权限。
 
 
-\noindent\textbf{最小 MCP 消息：}以下是用于说明协议形状的 JSON-RPC 请求片段，按 MCP 2025-06-18 版列示；省略了初始化、能力协商和服务端返回。
+\noindent\textbf{最小 MCP 消息：}以下按 MCP 2026-07-28 版展示一次工具调用的 JSON-RPC 消息体。
+新版把版本与能力放进每个请求，移除了 \texttt{initialize} 握手和协议级会话。
+客户端可先用 \texttt{server/discover} 查询支持的版本，再用 \texttt{tools/list} 发现工具；
+这两步的请求也各自携带元数据。下面假定已发现获授权的报表工具：
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
-{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
 {"jsonrpc":"2.0","id":2,"method":"tools/call",
  "params":{"name":"read_reports",
-           "arguments":{"quarter":"2026Q3"}}}
+   "arguments":{"quarter":"2026Q3"},
+   "_meta":{
+     "io.modelcontextprotocol/protocolVersion":"2026-07-28",
+     "io.modelcontextprotocol/clientInfo":
+       {"name":"book-demo","version":"1.0"},
+     "io.modelcontextprotocol/clientCapabilities":{}}}}
 \end{Verbatim}
 \end{tcolorbox}
-\texttt{tools/list} 发现可用工具；\texttt{tools/call} 请求调用工具。
-工具是否可调用以及请求参数能否被授权，仍取决于具体服务端与宿主系统。
+\texttt{tools/call} 请求执行工具，宿主与服务端分别核验调用权限。
+这里展示消息体；HTTP 传输还要按规范携带版本、方法等请求头。
+跨调用的应用状态通过显式参数或句柄传递，见\href{https://modelcontextprotocol.io/specification/2026-07-28/basic/index}{新版基础规范}。
+\textbf{旧版对照：}2025-11-25 及以前使用初始化握手；旧版 Streamable HTTP 的会话 ID 是可选机制。
+本书的无状态示例采用新版规则，具体核验范围见附录 G。
 
 \subsection{Agent 安全：把提示注入变成可测试的权限边界}
 \phantomsection\label{sec:agent-safety}
@@ -74,6 +84,7 @@
 它们可以有独立上下文与权限边界，但仍要由主任务汇总核查；
 三个格式相同的文件适合固定程序；分派 Agent 的通信与调度成本要单独计入。
 
+\phantomsection\label{concept:a2a}
 \textbf{A2A（Agent2Agent）}与上述本地子任务也不同：
 它是一类让\textbf{独立 Agent 系统}发现能力、交换任务与结果的协议。
 例如一个独立的财报检索 Agent 与另一个受控的审计 Agent 协作，
@@ -155,5 +166,5 @@ g_{Q3}=(132-120)/120=10\%.
 \begin{conclusion}
 Agent 将语言模型与状态管理、工具、权限、校验和任务编排结合起来。
 理解这些边界，才能清楚区分\textbf{模型能力}与\textbf{产品系统能力}。
-接下来的部署章节继续问：系统设计好了，它怎样在现实硬件和服务环境中可靠运行？
+下一章沿数据、训练系统和推理部署三段，追踪这个系统的资源从哪里来、花到哪里去。
 \end{conclusion}

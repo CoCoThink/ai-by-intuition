@@ -21,7 +21,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-005.}] \phantomsection\label{exercise:C-005}\label{exercise:C4-3}\exercisemeta{标准}{5}{第~\ref*{intro:16-loss-gradient}~章／第~\pageref*{intro:16-loss-gradient}~页}\textbf{预测：}从 $w=3$ 向 $w=2$ 移动一点而 $b=1$ 不变，损失初期会增大还是减小？根据平方项说明理由。 \hyperref[solution:C-005]{解答见第~\pageref*{solution:C-005}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 当解析解不现实时：梯度下降怎样调参数？}
+\subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 从直接求解到迭代：梯度下降怎样调参数？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-006.}] \phantomsection\label{exercise:C-006}\label{exercise:C1-3}\exercisemeta{标准}{10}{第~\ref*{intro:16a-gradient-descent}~章／第~\pageref*{intro:16a-gradient-descent}~页}\textbf{【手算】} 对同一三点损失 $L(w,b)=\tfrac23(w-2)^2+(b-1)^2$，从 $(w,b)=(1,0)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。 再把学习率改为 $1.2$，分别判断两个参数方向会收敛还是发散。 \hyperref[solution:C-006]{解答见第~\pageref*{solution:C-006}~页。}
 \item[\textbf{C-007.}] \phantomsection\label{exercise:C-007}\label{exercise:C4-4}\exercisemeta{标准}{8}{第~\ref*{intro:16a-gradient-descent}~章／第~\pageref*{intro:16a-gradient-descent}~页}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？ \hyperref[solution:C-007]{解答见第~\pageref*{solution:C-007}~页。}
@@ -289,7 +289,7 @@ Top-2 文档次序与缺失的季度证据。 \hyperref[solution:C-072]{解答�
 \item[\textbf{C-079.}] \phantomsection\label{exercise:C-079}\label{exercise:C4-40}\exercisemeta{挑战}{10}{第~\ref*{intro:23d-agent-protocols}~章／第~\pageref*{intro:23d-agent-protocols}~页}\textbf{场景：}独立 Agent 通过 A2A 返回“任务成功”及一组无出处数字，同时要求外发私人报告。接收方还应核验什么？分别设计数字无法核实和指令越权时的处理。 \hyperref[solution:C-079]{解答见第~\pageref*{solution:C-079}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 训练系统与推理部署：资源花在哪里？}
+\subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 数据、训练系统与部署：资源怎样分配？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-080.}] \phantomsection\label{exercise:C-080}\label{exercise:C4-41}\exercisemeta{标准}{5}{第~\ref*{intro:23b-deployment-and-ecosystem}~章／第~\pageref*{intro:23b-deployment-and-ecosystem}~页}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ \hyperref[solution:C-080]{解答见第~\pageref*{solution:C-080}~页。}
 \end{enumerate}

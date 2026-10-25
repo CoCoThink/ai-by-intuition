@@ -1,47 +1,33 @@
-% The Figure structure intentionally includes the non-floating caption.
+% Side-by-side panels keep labels readable while fitting below the opening text.
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={RNN 顺次传递状态，而 Attention 能直接访问较早位置}}
-
+\tagstructbegin{tag=Figure,alttext={左图 RNN 依次从春天到花再到开了传递状态；右图 Attention 从三个可见位置直接读取到位置三。右图线宽示意不同读取权重。}}
 \begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,
-  boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=2mm,
-  ]
-\noindent{\sffamily\bfseries\color{ink}图解：顺序传递与直接读取，是两种不同的信息路径}\par\smallskip
-\begin{center}
-\begin{tikzpicture}[>=Latex,
- smallnode/.style={draw=linegray,fill=white,rounded corners=2pt,
-  minimum width=19mm,minimum height=9mm,align=center,font=\scriptsize},
- target/.style={draw=flowcolor,fill=paper,rounded corners=2pt,
-  minimum width=25mm,minimum height=10mm,align=center,font=\scriptsize}]
-\node[font=\sffamily\bfseries\small,anchor=west] at (-.1,2.05)
-  {RNN：依次交接状态};
-\node[smallnode] (r1) at (.8,.9) {春天 / $h_1$};
-\node[smallnode] (r2) at (3.15,.9) {花 / $h_2$};
-\node[target] (r3) at (5.75,.9) {开了 / $h_3$};
+ boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=2mm,bottom=2mm]
+\centering
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ word/.style={draw=linegray,fill=white,rounded corners=2pt,
+  minimum width=17mm,minimum height=9mm,align=center,font=\footnotesize},
+ output/.style={draw=flowcolor,fill=paper,rounded corners=2pt,
+  minimum width=22mm,minimum height=10mm,align=center,font=\footnotesize}]
+\node[font=\sffamily\bfseries\small,anchor=west] at (0,25) {RNN：依次传递};
+\node[word] (r1) at (9,12) {春天\\$h_1$};
+\node[word] (r2) at (30,12) {花\\$h_2$};
+\node[word] (r3) at (51,12) {开了\\$h_3$};
 \draw[->,very thick,flowcolor] (r1)--(r2);
 \draw[->,very thick,flowcolor] (r2)--(r3);
-\node[font=\footnotesize,align=center,anchor=west] at (7.35,.9)
-  {较早信息需要\\经过中间状态};
-\draw[linegray] (0,-.15)--(12.8,-.15);
-\node[font=\sffamily\bfseries\small,anchor=west] at (-.1,-.62)
-  {Attention：为当前 Query 直接选择信息};
-\node[smallnode] (a1) at (1.05,-1.7) {春天 / $k_1,v_1$};
-\node[smallnode] (a2) at (4.35,-1.7) {花 / $k_2,v_2$};
-\node[smallnode] (a3) at (7.65,-1.7) {开了 / $k_3,v_3$};
-\node[target] (at) at (4.35,-3.35) {位置 3 的\\读取结果};
+\node[font=\footnotesize,align=center] at (30,-2) {较早信息经过中间状态};
+\draw[linegray] (68,28)--(68,-9);
+\node[font=\sffamily\bfseries\small,anchor=west] at (75,25) {Attention：直接读取};
+\node[word] (a1) at (84,13) {春天\\$k_1,v_1$};
+\node[word] (a2) at (108,13) {花\\$k_2,v_2$};
+\node[word] (a3) at (132,13) {开了\\$k_3,v_3$};
+\node[output] (at) at (108,-4) {位置 3 的\\读取结果};
 \draw[->,flowcolor,line width=2pt] (a1.south) to[out=-80,in=165] (at.west);
 \draw[->,flowcolor,line width=.6pt] (a2.south)--(at.north);
 \draw[->,flowcolor,line width=1.15pt] (a3.south) to[out=-100,in=15] (at.east);
-\node[font=\footnotesize,align=left,anchor=west] at (9.2,-2.3)
-  {不同路径可分配\\不同的读取权重};
 \end{tikzpicture}
-\end{center}
-\small\noindent
-上图的蓝灰色箭头是\textbf{必须依次计算的状态传递}。
-下图的三条连线表示\textbf{对当前可见位置分别读取}，
-粗细仅提示权重可能不同；具体权重将在本章用点积和 Softmax 算出。
-\par % Flush the final box paragraph before the Figure caption tag.
+\par
 \end{tcolorbox}
-
-\begin{center}\captionof{figure}{RNN 逐步传递与 Attention 直接读取的对照}\label{fig:attention-rnn}\end{center}
+\begin{center}\captionof{figure}{RNN 逐步传递与 Attention 直接读取的对照；线宽示意读取权重}\label{fig:attention-rnn}\end{center}
 \tagstructend
 \end{minipage}\par

@@ -682,8 +682,15 @@ def validate_pdf(path: Path) -> None:
           "self-check and substantive conclusion pages")
 
     compact = normalized(text)
-    # The extended subsection TOC may occupy more than six front-matter pages.
-    # Search until the printed reading-guide heading rather than truncating it.
+    # A spilled cover can masquerade as an extra TOC page. Check both locations
+    # before diagnosing the compact TOC, so the error identifies the cause.
+    if any(item not in normalized(pages[0]) for item in (
+            'CoCoThinkandcontributors', 'https://github.com/CoCoThink/ai-by-intuition',
+            '原创内容·CCBY4.0')):
+        fail('Cover must fit one page, including author, URL and licence')
+    if '版权、致谢与版本' not in normalized(pages[1]):
+        fail('Copyright page must immediately follow the single-page cover')
+    # Search until the printed guide rather than guessing from TOC line counts.
     guide_index = next(
         (i for i, body in enumerate(pages) if i > 1 and
          "怎么读：路线与数学预备" in body),

@@ -3,6 +3,30 @@
 
 复算时核对输入、形状、计算规则，再确认模型版本和依赖。
 
+% BEGIN GENERATED DATED CLAIMS
+\subsubsection*{带日期断言清单}
+\phantomsection\label{app:dated-claims}
+下表记录所用版本、内容核验日期与范围；编译日期和 Git 提交只标识产物。
+链接可访问与内容复核分别记录，重编译不会刷新这里的日期。表中来源均列于附录 F。
+\begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.25}
+\tagpdfsetup{table/header-rows={1}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{50mm}>{\raggedright\arraybackslash}p{28mm}>{\raggedright\arraybackslash}p{73mm}@{}}
+\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围\\\midrule
+\endfirsthead
+\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围\\\midrule
+\endhead
+\bottomrule\endfoot
+MCP 移除初始化与协议级会话；每次请求携带版本和客户端能力（\hyperref[concept:mcp]{第~\pageref*{concept:mcp}~页}） & 2026-07-28\newline 2026-10-25 & \href{https://modelcontextprotocol.io/specification/2026-07-28/basic/index}{核心消息}、\href{https://modelcontextprotocol.io/specification/2026-07-28/changelog}{变更记录}、\href{https://modelcontextprotocol.io/specification/2026-07-28/server/tools}{工具调用}。已阅读规范并核对正文请求体；HTTP 传输头另见规范。CI 比较当前入口的版本，升级后须重新审阅。\\
+Claude 工具定义含名称、描述、输入模式；按停止原因继续工具循环（\hyperref[elective:real-function-call]{第~\pageref*{elective:real-function-call}~页}） & Messages API\newline 2026-10-25 & \href{https://platform.claude.com/docs/en/api/messages/create}{Messages}、\href{https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools}{定义工具}、\href{https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls}{处理调用}。已核对官方字段及离线多轮消息闭环；未调用付费模型，不表示已在线实测。\\
+A2A 的消息、任务与产物交换机制（\hyperref[concept:a2a]{第~\pageref*{concept:a2a}~页}） & v1.0.0\newline 2026-10-25 & \href{https://a2a-protocol.org/v1.0.0/specification/}{固定版本规范}。已核对本书采用的固定版本；未声称它是最新版本，也未作跨实现互操作测试。\\
+GPT-2 small：12 层、12 头、隐藏宽度 768（\hyperref[intro:23a-from-toy-to-gpt]{第~\pageref*{intro:23a-from-toy-to-gpt}~页}） & 607a30d\newline 2026-10-25 & \href{https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json}{固定配置}。本日重新读取配置字段；权重推理仍采用下文 2026-10-23 的存档实测。\\
+Qwen2.5-0.5B：24 层、14 个 Query 头、2 个 KV 头、头宽 64（\hyperref[intro:22d-modern-transformers]{第~\pageref*{intro:22d-modern-transformers}~页}） & 060db64\newline 2026-10-25 & \href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json}{固定配置}。已读取配置并复算缓存；这不是服务吞吐量或延迟实测。\\
+真实 Qwen 分词器对“春天花开了。”的切分与 ID（\hyperref[experiment:real-chinese-tokenizer]{第~\pageref*{experiment:real-chinese-tokenizer}~页}） & 060db64\newline 2026-10-25 & \href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json}{固定分词器}。已运行固定分词器；只复算分词，不加载该模型权重。\\
+Qwen3 的 Dense/MoE 家族与 DeepSeek 的因果编码器—解码器案例（\hyperref[intro:22d-modern-transformers]{第~\pageref*{intro:22d-modern-transformers}~页}） & 2025／2026 报告\newline 2026-10-25 & \href{https://arxiv.org/abs/2505.09388}{Qwen3 报告}、\href{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}{DeepSeek 公告}。已核对公开结构描述；不将厂商公布的速度或基准成绩当成本书独立复测。\\
+LLM 评审存在位置、冗长与自我偏好等偏差（\hyperref[intro:23e-tech-judgement]{第~\pageref*{intro:23e-tech-judgement}~页}） & 2023 论文\newline 2026-10-25 & \href{https://arxiv.org/abs/2306.05685}{原论文}。已核对论文所列偏差；正文要求交换答案顺序并以人工样本校验。\\
+\end{longtable}\endgroup
+% END GENERATED DATED CLAIMS
+
 \subsubsection*{从可复算的例子开始}
 
 在仓库根目录运行 \texttt{python3 scripts/脚本名}；表内省略共同的目录前缀。
@@ -15,7 +39,7 @@
 \toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
 \endhead
 \bottomrule\endfoot
-2--3 & \path{beginner_training_demo.py} & 标准库 & 双参数求解、迭代与步长 & 第 5 步 0.004136\\
+2--4 & \path{beginner_training_demo.py} & 标准库 & 双参数迭代、步长、ReLU 拟合 & 直线下界 2/9\\
 14、23--24 & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
 24 & \path{teaching_trace.py} & NumPy & 0--20 步；--attention 看权重 & 末步 0.483173\\
 24 & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
@@ -27,7 +51,7 @@
 29--30 & \path{icl_policy_demo.py} & NumPy & 前缀读取、优势梯度 & 0.982014／0.367456\\
 31 & \path{test_time_compute_demo.py} & 标准库 & 多采样与错误验证器 & 成功率断言通过\\
 32 & \path{rag_demo.py} & 标准库 & 点积排序与环比 & Q3、Q1；10\%\\
-33 & \path{claude_function_call_demo.py} & 标准库 & 真实接口的离线消息闭环 & 10\% 与拒绝检查\\
+33 & \path{claude_function_call_demo.py} & 标准库 & 离线多轮、并行调用与停止原因 & 10\% 与预算检查\\
 33--34 & \path{agent_loop.py} & 标准库 & 工具循环与失败处理 & 受控任务轨迹\\
 28、36 & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
 36 & \path{config_table.py} & 标准库 & 固定公开配置 & 24 层、2 KV 头\\
@@ -72,14 +96,15 @@ ID & 解码文本 & 概率\\\midrule
 这些是下一 Token 候选概率，单个 Prompt 的排序不作为能力基准。
 
 \subsubsection*{版本与勘误}
-\textbf{来源版本：}模型配置和报告的 UTC 核验日期见附录 F；复算采用所列固定提交，后续版本另作对照。\par
+\textbf{来源版本：}具体断言的内容核验范围见本附录清单；附录 F 另记链接与来源。复算采用所列固定提交，后续版本另作对照。\par
 \bookbuildsource
 
 教学初始矩阵为本书的独立设定，应配合相应版本的公式与脚本复算。
 反馈问题时请记录章节、输入与期待结果。
 \textbf{持续更新章节：}第~\ref*{intro:23d-agent-protocols}--\ref*{intro:23e-tech-judgement}~章
-把稳定原理与截至日期分开：协议、SDK 和公开配置更新时核对接口、来源及固定修订，
-再运行相关脚本；修改结论须保留新旧条件、核验日期和勘误记录。
+把稳定原理与版本记录分开：协议、SDK 和公开配置更新时核对接口、来源及固定修订，
+再运行相关脚本。内容复核后才更新清单日期；仅重新编译或链接可访问都不刷新内容核验日期。
+MCP 当前入口若指向新修订，CI 会要求重新审阅规范、请求字段与断言清单。
 
 \noindent\textbf{仓库与纸质版入口：}\par\nobreak
 \begingroup\small\setlength{\parskip}{2pt}

@@ -41,15 +41,79 @@ z=w_1x+b_1,\qquad h=\relu(z),\qquad
 第二层把它们组合成预测。先理解标量版本，再学向量和矩阵版。
 \end{idea}
 
+\subsection{换一组数据：直线怎样都拟合不了的三个点}
+\phantomsection\label{experiment:relu-fit}
+
+现在拟合 $y=|x|$ 的三个点：$(-1,1),(0,0),(1,1)$。
+若直线 $wx+b$ 精确通过它们，原点要求 $b=0$，右端要求 $w=1$，
+左端却要求 $w=-1$。因此任何一条直线都至少错一个点。
+
+沿用均方误差，把三个平方展开并配方：
+\[
+L_{\rm line}(w,b)
+=\frac{(b-w-1)^2+b^2+(w+b-1)^2}{3}
+=\frac23w^2+\left(b-\frac23\right)^2+\frac29.
+\]
+最佳直线为 $w=0,b=2/3$，最低损失仍有 $2/9$。
+增加无激活的线性层，仍只能得到一条直线，也跨不过这个下界。
+
+\subsection{两个 ReLU 单元拼出折角，再训练它们的输出权重}
+
+并排设置两个隐藏单元：
+\[
+h_+(x)=\relu(x),\qquad h_-(x)=\relu(-x),\qquad
+\widehat{y}=a h_+(x)+c h_-(x).
+\]
+正半轴由 $h_+$ 接手，负半轴由 $h_-$ 接手。
+取 $a=c=1$，就得到 $\widehat{y}=|x|$：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{rrrrrr}
+\toprule
+$x$ & 真实 $y$ & 最佳直线 & $h_+$ & $h_-$ & 两单元预测\\\midrule
+$-1$ & 1 & $2/3$ & 0 & 1 & 1\\
+0 & 0 & $2/3$ & 0 & 0 & 0\\
+1 & 1 & $2/3$ & 1 & 0 & 1\\
+\bottomrule\end{tabular}
+\end{center}
+两个单元在同一层并排计算，输出层再相加；精确拟合时损失为零。
+\input{figures/relu-three-point-fit}
+
+这组输出权重也能通过迭代学到。
+先固定两个隐藏单元及零偏置，只训练 $a,c$：
+\[
+L_{\rm ReLU}(a,c)=\frac{(a-1)^2+(c-1)^2}{3},\qquad
+\frac{\partial L}{\partial a}=\frac23(a-1),\quad
+\frac{\partial L}{\partial c}=\frac23(c-1).
+\]
+从 $a=c=0$ 开始，取 $\eta=3/4$，两个参数都按
+$a_{t+1}=(a_t+1)/2$、$c_{t+1}=(c_t+1)/2$ 更新：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{rrrr}
+\toprule
+步数 $t$ & $a_t=c_t$ & 端点预测 & 均方误差\\\midrule
+0 & 0 & 0 & $2/3$\\
+1 & $1/2$ & $1/2$ & $1/6$\\
+2 & $3/4$ & $3/4$ & $1/24$\\
+3 & $7/8$ & $7/8$ & $1/96$\\
+4 & $15/16$ & $15/16$ & $1/384$\\
+\bottomrule\end{tabular}
+\end{center}
+第 1 步的 $1/6$ 已低于最佳直线的 $2/9$，继续训练则趋向零。
+
+运行 \texttt{python3} \path{scripts/beginner_training_demo.py} 可复算两张表。
+
 \subsection{新缺口：前层参数如何影响最后的损失？}
 
-现在修改 $w_1$，会依次改变 $z$、$h$、最终预测和损失。
+刚才固定了隐藏单元。如果也学习它们的斜率和偏置，就要把最终误差传回隐藏层。
+修改 $w_1$，会依次改变 $z$、$h$、最终预测和损失。
 如果每个参数都从头展开所有公式会很繁琐；
 下一章将沿这条计算链复用局部变化率。
 
 \begin{warningbox}
 ReLU 在 $t=0$ 处不可导，训练实现为这个点约定一个次梯度，例如取 $0$。
-本章只研究正负输入时的前向计算；下一章解释其求导。
+上面的训练固定了隐藏层；下一章沿局部导数学习隐藏层参数。
 \end{warningbox}
 
 \chapterchecktasks{07-functions-relu}{正文基础三题}{
@@ -62,6 +126,6 @@ ReLU 在 $t=0$ 处不可导，训练实现为这个点约定一个次梯度，�
 
 
 \begin{conclusion}
-ReLU 让复合函数拥有分段变化的斜率；纯线性复合仍是线性。
+两个 ReLU 单元能拟合绝对值的三个点，打破任何直线的 $2/9$ 损失下界。
 下一章要解决如何让最终误差高效传回最前面的参数。
 \end{conclusion}

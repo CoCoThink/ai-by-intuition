@@ -20,7 +20,10 @@ Attention（注意力）是一种按相关性读取信息的方法：
 
 \subsection{从逐步传递到直接读取}
 
-前面介绍的 \conceptlink{rnn}{RNN} 让模型按顺序读：
+前面介绍的 \conceptlink{rnn}{RNN} 让模型按顺序读，Attention 则能为当前查询直接读取可见位置。
+先比较两条信息路径：
+\input{figures/attention-rnn-bridge}
+RNN 按次序处理三个词：
 \[
 \text{春天}\ \longrightarrow\
 \text{花}\ \longrightarrow\
@@ -34,7 +37,6 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
 不必只能通过 $h_2$ 间接获得过去的信息；
 让第三个位置直接查看前三个位置，各自决定读多少。
 
-\input{figures/attention-rnn-bridge}
 图中，位置 3 可以直接读取位置 1、2、3 的信息，
 不同位置的读取比例可以不同。接下来要解决的，就是怎样算出这些比例。
 

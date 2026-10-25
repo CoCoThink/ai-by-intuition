@@ -155,7 +155,7 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\eyebrow}[1]{{\sffamily\bfseries\footnotesize\color{blue}#1}}
 \newcommand{\sectionentry}[1]{\hyperref[#1]{第~\ref*{#1}~节（第~\pageref*{#1}~页）}}
-\newcommand{\asof}[2]{\par\noindent{\small\color{muted}\textbf{截至 #1（UTC）}：稳定原理为 #2；接口、配置与实现记录按本日期核验，更新入口见附录 G。}\par\smallskip}
+\newcommand{\asof}[2]{\par\noindent{\small\color{muted}\textbf{版本记录：#1（UTC）}。稳定原理：#2。具体版本、内容核验日期与范围见附录 G 的带日期断言清单。}\par\smallskip}
 \newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{§\ref*{#1} · 第 \pageref*{#1} 页}}}
 \newcommand{\localfixture}[1]{\par\smallskip\noindent{\sffamily\footnotesize\color{muted}\colorbox{paper}{\strut\textbf{独立例}}\enspace #1}\par\smallskip}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
@@ -244,10 +244,10 @@
 \vspace{12mm}
 \noindent{\sffamily\bfseries\fontsize{34}{43}\selectfont
 从函数到 Transformer\\[5mm]再到助手与 Agent}\par
-\vspace{12mm}
+\vspace{10mm}
 \noindent{\sffamily\fontsize{15}{23}\selectfont
 从一个问题出发：计算机怎样学会生成有用的语言回答？}\par
-\vspace{13mm}
+\vspace{10mm}
 \noindent{\color{muted}\rule{\linewidth}{.8pt}}\par
 \vspace{9mm}
 % Distinct visual motif: the same four-token example runs through the book.
@@ -271,7 +271,7 @@
 \tagstructend
 \vspace{8mm}
 {\large\color{ink}从一个可手算的函数开始，逐层理解数据怎样训练模型、上下文怎样参与预测，以及工具怎样进入系统。}\par
-\vspace{6mm}
+\vspace{4mm}
 \noindent{\sffamily\bfseries\color{blue}九部分全书路线}\par\smallskip
 \tagpdfsetup{table/header-rows={1}}
 \noindent\begin{tabularx}{\linewidth}{@{}XXX@{}}
@@ -281,7 +281,7 @@
 二 · 把许多数一起算 & 五 · 组装并训练 Transformer & 八 · 架构为什么变化\\
 三 · 文字进入计算 & 六 · 从 CNN 到 ViT & 九 · 联想记忆与线性状态\\
 \bottomrule
-\end{tabularx}\par\smallskip
+\end{tabularx}\par\vspace{5mm}
 \vfill
 \noindent{\sffamily\normalsize\bfseries\color{ink}CoCoThink and contributors \quad · \quad 2026 年 10 月}\par
 

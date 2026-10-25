@@ -19,7 +19,7 @@
 | IV · 上下文 | [RNN](chapters/21-rnn.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[Self-Attention](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
 | V · Transformer | [Block](chapters/22-transformer-architecture.tex)、[FFN](chapters/10b-ffn-output-head.tex)、[贯通前向](chapters/22b-token-to-output.tex)、[联合训练](chapters/22c-language-training.tex)、[生成](chapters/23-llm-systems.tex)、[玩具到 GPT](chapters/23a-from-toy-to-gpt.tex) |
 | VI · 视觉桥接 | [CNN](chapters/19-cnn.tex) → [ViT 与多模态](chapters/19b-vit.tex) |
-| VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[部署](chapters/23b-deployment-and-ecosystem.tex) |
+| VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[数据、训练与部署](chapters/23b-deployment-and-ecosystem.tex) |
 | VIII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex) |
 | IX · 联想记忆 | [外积与串扰](chapters/04-key-value-outer-product.tex)、[Delta 更新](chapters/06-better-linear-memory.tex)、[非线性读取](chapters/09-nonlinearity-and-memory.tex)、[容量](chapters/13-capacity.tex) |
 
@@ -90,4 +90,6 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 
 ## 本轮开篇与导航修订
 
-第 1–3 章补充双参数直接求解、迭代表及步长稳定区间；第 26 章专注规模和真实分词，数据工程移入训练系统章。参见 [完整修订记录](../docs/REVIEW-OPENING-AND-NAVIGATION.md)。目录标题、页码和章末答案均可点击；CI 检查实际目的页、双向答案链接与图/图题同页。术语的主要位置在附录 E，全部出现章节另见 [自动索引](../docs/TERM_OCCURRENCES.md)。
+第 1–3 章补充双参数直接求解、迭代表及步长稳定区间；第 26 章专注规模和真实分词，数据工程移入训练系统章。参见 [开篇与导航修订记录](../docs/REVIEW-OPENING-AND-NAVIGATION.md)。目录标题、页码和章末答案均可点击；CI 检查实际目的页、双向答案链接与图/图题同页。术语的主要位置在附录 E，全部出现章节另见 [自动索引](../docs/TERM_OCCURRENCES.md)。
+
+MCP 示例采用 2026-07-28，附录 G 的 [带日期断言来源](dated-claims.json) 区分版本、内容核验范围和构建日期；CI 比较官方当前入口并核对请求字段。第 4 章增加三点 ReLU 拟合与输出权重迭代，第 35 章按数据、训练、部署衔接。参见 [协议与 ReLU 修订记录](../docs/REVIEW-PROTOCOL-AND-RELU.md)。

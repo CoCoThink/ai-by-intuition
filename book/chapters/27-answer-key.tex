@@ -22,7 +22,7 @@
 \item[\textbf{C-005.}] \phantomsection\label{solution:C-005}\phantomsection\label{answerpiece:16-loss-analytic:4}\hyperref[exercise:C-005]{题目见第~\pageref*{exercise:C-005}~页。}\par\nobreak \textbf{第一步：}固定偏置，只观察 $(w-2)^2$。\par\nobreak\textbf{解题过程：}从 $3$ 朝 $2$ 移动，$(w-2)^2$ 下降，固定 $b=1$ 时损失下降；靠近极小值的方向才重要。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 当解析解不现实时：梯度下降怎样调参数？}
+\subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 从直接求解到迭代：梯度下降怎样调参数？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-006.}] \phantomsection\label{solution:C-006}\hyperref[exercise:C-006]{题目见第~\pageref*{exercise:C-006}~页。}\par\nobreak {\small\textbf{第一步：}先分别求 $\partial L/\partial w$ 与 $\partial L/\partial b$。}\par\nobreak
 \textbf{解答：} $\nabla L(1,0)=(-4/3,-2)$；以 $\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。 $\eta=1.2$ 时，误差因子为 $r_w=-0.6,r_b=-1.4$；从题设初值出发，$w$ 震荡收敛，$b$ 震荡发散。
@@ -314,7 +314,7 @@ Q1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核�
 \item[\textbf{C-079.}] \phantomsection\label{solution:C-079}\phantomsection\label{answerpiece:23d-agent-systems:5}\hyperref[exercise:C-079]{题目见第~\pageref*{exercise:C-079}~页。}\par\nobreak \textbf{第一步：}先列出协议传输之外尚未解决的信任问题。\par\nobreak\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 训练系统与推理部署：资源花在哪里？}
+\subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 数据、训练系统与部署：资源怎样分配？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-080.}] \phantomsection\label{solution:C-080}\phantomsection\label{answerpiece:23b-deployment-and-ecosystem:4}\hyperref[exercise:C-080]{题目见第~\pageref*{exercise:C-080}~页。}\par\nobreak \textbf{第一步：}先按 K/V、层、头、维、位置、字节展开。\par\nobreak\textbf{解题过程：}$2\text{(K/V)}\cdot2\text{层}\cdot2\text{头}\cdot8\text{维}\cdot10\text{位置}\cdot2\text{字节}=\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。
 \end{enumerate}

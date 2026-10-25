@@ -121,6 +121,10 @@ for step in range(MAX_STEPS):
 return {"error": "step_budget_exceeded"}
 \end{Verbatim}
 \end{tcolorbox}
+\textbf{真实接口对照：}这里的 \texttt{answer.tool\_calls} 是伪代码中的统一表示。
+Claude 客户端工具循环以 \texttt{stop\_reason == "tool\_use"} 为继续条件，
+从 \texttt{content} 提取全部 \texttt{tool\_use} 块；校验并执行后，按 ID 追加结果再请求。
+长度截断、拒绝与正常结束分别处理，实际字段见本章选读。
 \textbf{缩进线标出循环、条件与工具调用的层次}；循环次数和权限检查由应用控制，模型不会替应用执行工具。
 示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
 
@@ -210,12 +214,15 @@ g_{Q3}=(132-120)/120=10\%.
 本例工具定义的核心字段为：
 \begin{Verbatim}[fontsize=\small]
 {"name":"quarter_growth",
+ "description":"Compute growth from verified revenues in the same unit.",
  "input_schema":{"type":"object",
    "properties":{"previous":{"type":"number"},
                  "current":{"type":"number"}},
    "required":["previous","current"],
    "additionalProperties":false}}
 \end{Verbatim}
+名称标识工具，描述说明何时使用和业务含义，\texttt{input\_schema} 约束参数形状；
+三者共同帮助模型选择工具与填写参数，执行权限由宿主另外检查。
 模型返回 \texttt{tool\_use} 内容块，其 \texttt{id}、\texttt{name} 和 \texttt{input}
 分别表示本次请求、工具名和参数。宿主检查工具白名单、数值及任务授权，
 按已核验的 $120,132$ 计算出 $0.1$，再在下一条 \texttt{user} 消息中回传：
@@ -223,12 +230,14 @@ g_{Q3}=(132-120)/120=10\%.
 {"type":"tool_result","tool_use_id":"实际调用ID",
  "content":"{\"growth\":0.1,\"unit\":\"ratio\"}"}
 \end{Verbatim}
-第二次请求保留完整的 \texttt{assistant} 内容块和上述结果，模型据此组织回答。
+下一次请求保留完整的 \texttt{assistant} 内容块和上述结果，模型据此继续。
+只要 \texttt{stop\_reason} 仍为 \texttt{"tool\_use"}，就在预算内重复这一步；
+取到 \texttt{"end\_turn"} 才按正常完成交付。
 这是真实接口的字段约定，示例数值仍来自本书季度报表。
 完整最小客户端见 \path{scripts/claude_function_call_demo.py}；
 直接运行只验证离线合成消息、ID 关联、计算与越权拒绝，\textbf{不调用在线模型}。
 显式使用 \texttt{--real --model 模型ID} 并设置 \texttt{ANTHROPIC\_API\_KEY}，
-才会提交最多两次在线请求；运行记录应保存模型标识和日期。
+才会进入有轮数上限的在线工具循环；运行记录应保存模型标识和日期。
 字段依据\href{https://platform.claude.com/docs/en/api/messages/create}{官方 Messages API 文档}，
 本书未将离线检查写成在线推理实测。
 

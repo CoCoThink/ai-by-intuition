@@ -1,0 +1,85 @@
+[
+  {
+    "id": "mcp",
+    "target": "concept:mcp",
+    "claim": "MCP 移除初始化与协议级会话；每次请求携带版本和客户端能力",
+    "version": "2026-07-28",
+    "checked_utc": "2026-10-25",
+    "sources": [
+      {"name": "核心消息", "url": "https://modelcontextprotocol.io/specification/2026-07-28/basic/index"},
+      {"name": "变更记录", "url": "https://modelcontextprotocol.io/specification/2026-07-28/changelog"},
+      {"name": "工具调用", "url": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools"}
+    ],
+    "scope": "已阅读规范并核对正文请求体；HTTP 传输头另见规范。CI 比较当前入口的版本，升级后须重新审阅。"
+  },
+  {
+    "id": "claude-tools",
+    "target": "elective:real-function-call",
+    "claim": "Claude 工具定义含名称、描述、输入模式；按停止原因继续工具循环",
+    "version": "Messages API",
+    "checked_utc": "2026-10-25",
+    "sources": [
+      {"name": "Messages", "url": "https://platform.claude.com/docs/en/api/messages/create"},
+      {"name": "定义工具", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"},
+      {"name": "处理调用", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls"}
+    ],
+    "scope": "已核对官方字段及离线多轮消息闭环；未调用付费模型，不表示已在线实测。"
+  },
+  {
+    "id": "a2a",
+    "target": "concept:a2a",
+    "claim": "A2A 的消息、任务与产物交换机制",
+    "version": "v1.0.0",
+    "checked_utc": "2026-10-25",
+    "sources": [{"name": "固定版本规范", "url": "https://a2a-protocol.org/v1.0.0/specification/"}],
+    "scope": "已核对本书采用的固定版本；未声称它是最新版本，也未作跨实现互操作测试。"
+  },
+  {
+    "id": "gpt2-config",
+    "target": "intro:23a-from-toy-to-gpt",
+    "claim": "GPT-2 small：12 层、12 头、隐藏宽度 768",
+    "version": "607a30d",
+    "checked_utc": "2026-10-25",
+    "sources": [{"name": "固定配置", "url": "https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json"}],
+    "scope": "本日重新读取配置字段；权重推理仍采用下文 2026-10-23 的存档实测。"
+  },
+  {
+    "id": "qwen-config",
+    "target": "intro:22d-modern-transformers",
+    "claim": "Qwen2.5-0.5B：24 层、14 个 Query 头、2 个 KV 头、头宽 64",
+    "version": "060db64",
+    "checked_utc": "2026-10-25",
+    "sources": [{"name": "固定配置", "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json"}],
+    "scope": "已读取配置并复算缓存；这不是服务吞吐量或延迟实测。"
+  },
+  {
+    "id": "qwen-tokenizer",
+    "target": "experiment:real-chinese-tokenizer",
+    "claim": "真实 Qwen 分词器对“春天花开了。”的切分与 ID",
+    "version": "060db64",
+    "checked_utc": "2026-10-25",
+    "sources": [{"name": "固定分词器", "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json"}],
+    "scope": "已运行固定分词器；只复算分词，不加载该模型权重。"
+  },
+  {
+    "id": "architecture-cases",
+    "target": "intro:22d-modern-transformers",
+    "claim": "Qwen3 的 Dense/MoE 家族与 DeepSeek 的因果编码器—解码器案例",
+    "version": "2025／2026 报告",
+    "checked_utc": "2026-10-25",
+    "sources": [
+      {"name": "Qwen3 报告", "url": "https://arxiv.org/abs/2505.09388"},
+      {"name": "DeepSeek 公告", "url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/"}
+    ],
+    "scope": "已核对公开结构描述；不将厂商公布的速度或基准成绩当成本书独立复测。"
+  },
+  {
+    "id": "llm-judge",
+    "target": "intro:23e-tech-judgement",
+    "claim": "LLM 评审存在位置、冗长与自我偏好等偏差",
+    "version": "2023 论文",
+    "checked_utc": "2026-10-25",
+    "sources": [{"name": "原论文", "url": "https://arxiv.org/abs/2306.05685"}],
+    "scope": "已核对论文所列偏差；正文要求交换答案顺序并以人工样本校验。"
+  }
+]

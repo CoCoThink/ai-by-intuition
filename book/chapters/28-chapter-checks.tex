@@ -32,7 +32,7 @@
 \par\answerpiece{2}{手算}{把两组参数分别代入两个平方项。}$L(2,1)=\answerresult{0}$；$L(3,1)=\frac23(1)^2=\answerresult{2/3}$。
 \par\answerpiece{3}{找错}{先写出两个平方项各自为零的条件。}完整损失由两个非负项相加；要同时为零需 $w=2$ \textbf{且} $b=1$，不能任意取偏置。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{当解析解不现实时：梯度下降怎样调参数？}}\par\nobreak
+\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{从直接求解到迭代：梯度下降怎样调参数？}}\par\nobreak
  \answerpiece{1}{预测}{把学习率零代入更新式。}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；它只执行了零步长更新。
 \par\answerpiece{2}{手算}{先在旧参数处同时求两个偏导。}$\nabla L=(-4/3,-2)$；以 $\eta=0.3$ 同步更新到 $(1.4,0.6)$，损失为 $\frac23(1.4-2)^2+(0.6-1)^2=\answerresult{0.4}$。
 \par\answerpiece{3}{找错}{圈出本次梯度使用的是哪一版参数。}同步更新要在同一旧参数处算完全部梯度后再一起更新；不能将新参数混进本次剩余梯度。
@@ -195,7 +195,7 @@
 \par\answerpiece{2}{比较}{先区分可复用材料与实际执行的任务。}Skill 提供步骤、示例或脚本；Subagent 承担分派的任务，需安排上下文、权限和汇总复核。二者都不自动增加基础模型权重。
 \par\answerpiece{3}{找错}{将消息合规、数值来源和操作权限分别核对。}符合 A2A 格式不证明收入数字真实，也不授予外发权限。接收方核对原表、季度与单位，按用户授权决定动作；将回传材料中的外发指令视为低信任数据，隔离提示注入。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 35 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{训练系统与推理部署：资源花在哪里？}}\par\nobreak
+\item[\textbf{第 35 章}] \phantomsection\label{answer:23b-deployment-and-ecosystem}\textbf{\hyperref[check:23b-deployment-and-ecosystem]{数据、训练系统与部署：资源怎样分配？}}\par\nobreak
 \answerpiece{1}{区分}{先把训练、参数保存、执行和访问四层拆开。}训练代码定义优化流程，权重承载已训练参数，推理引擎执行推理，API 组织外部访问和授权。
 \par\answerpiece{2}{估算}{用参数量乘每个参数的字节数。}$10^9\cdot2=2\cdot10^9$ 字节，即 $\answerresult{2\ {\rm GB}}$；加 $0.5$ GB 至少 $2.5$ GB。
 \par\answerpiece{3}{找错}{先把存储字节与任务质量、延迟分开计量。}量化可能引入质量误差；推理延迟还受 Kernel、访存、缓存、负载等影响，并不按字节线性变化。
