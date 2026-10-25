@@ -10,7 +10,7 @@
 - `book/chapters/`：正文与附录；`book/figures/`：TikZ 矢量教学图。
 - [scripts/teaching_reference.py](scripts/teaching_reference.py)：三维主线实验的数值基线。其他 `scripts/*_demo.py` 提供局部实验与复算。
 - `.github/workflows/`：实际 CI 配置与依赖版本的维护入口。
-- [book/README.md](book/README.md)：章节与源码文件对照、生成文件一览；[docs/MAINTENANCE.md](docs/MAINTENANCE.md)：CI、依赖固定、无障碍验收与来源复核；[docs/PUBLISHING.md](docs/PUBLISHING.md)：发布签核；[docs/ERRATA.md](docs/ERRATA.md)：勘误；[docs/NEXT_EDITION.md](docs/NEXT_EDITION.md)：尚未实施的下一版计划。
+- [book/README.md](book/README.md)：章节与源码文件对照、生成文件一览；[docs/MAINTENANCE.md](docs/MAINTENANCE.md)：CI、依赖固定、无障碍验收与来源复核；[docs/PART_BOOKENDS.md](docs/PART_BOOKENDS.md)：部分开篇与收尾；[docs/PUBLISHING.md](docs/PUBLISHING.md)：发布签核；[docs/ERRATA.md](docs/ERRATA.md)：勘误；[docs/NEXT_EDITION.md](docs/NEXT_EDITION.md)：尚未实施的下一版计划。
 
 历史评审、Release 和审计报告只证明各自提交的状态。文档统计与实际源码冲突时，先检查源码、生成器及最新对应提交的 CI，不照搬旧章数、页数或公式数。
 

@@ -54,6 +54,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 | [CHANGELOG.md](CHANGELOG.md) | 版本变化 |
 | [docs/ERRATA.md](docs/ERRATA.md) | 勘误与反馈方式 |
 | [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | CI 门禁、依赖固定、无障碍机器验收、来源复核 |
+| [docs/PART_BOOKENDS.md](docs/PART_BOOKENDS.md) | 部分开篇与收尾的设计规则和维护入口 |
 | [docs/PUBLISHING.md](docs/PUBLISHING.md) | 正式发布流程与发布前签核 |
 | [docs/NEXT_EDITION.md](docs/NEXT_EDITION.md) | 尚未实施的下一版计划 |
 | [docs/GPT2_REAL_RUN.md](docs/GPT2_REAL_RUN.md) | GPT-2 真实权重实验的固定版本与结果 |

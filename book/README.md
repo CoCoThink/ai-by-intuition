@@ -12,7 +12,8 @@
 | 版权页 | [00h-colophon.tex](chapters/00h-colophon.tex) |
 | 阅读路线与表示约定 | [00g-reading-routes.tex](chapters/00g-reading-routes.tex) |
 | 开读前：五题入门自检 | [00j-entry-check.tex](chapters/00j-entry-check.tex) |
-| 部分开篇（为什么从这里开始、先想一想、地图）与收尾（回到开篇、累积复习、下一步） | [part-maps.tex](part-maps.tex)；累积复习 R 题由 [part-reviews.tex](part-reviews.tex) 生成；“先想一想”答案处标 `partq:<部分>` |
+| 序章（在第一部分之前） | [00-guide.tex](chapters/00-guide.tex) |
+| 部分开篇（为什么从这里开始、先想一想、地图）与收尾（回到开篇、累积复习、下一步） | [part-maps.tex](part-maps.tex)；累积复习 R 题由 [part-reviews.tex](part-reviews.tex) 生成；设计与维护见 [PART_BOOKENDS.md](../docs/PART_BOOKENDS.md) |
 
 ## 正文
 
@@ -20,7 +21,7 @@
 
 | 部分 | 章节源码（按印刷顺序） |
 |---|---|
-| 一 · 学习 | [序章](chapters/00-guide.tex)、[函数](chapters/00-functions.tex)、[损失与梯度下降](chapters/16-loss-gradient.tex)（含[训练组织](chapters/18c-training-engineering.tex)）、[非线性](chapters/07-functions-relu.tex)、[反向传播](chapters/17-backpropagation.tex)（含[完整一步](chapters/18b-end-to-end-learning.tex)）、[泛化](chapters/18-generalization.tex) |
+| 一 · 学习 | [函数](chapters/00-functions.tex)、[损失与梯度下降](chapters/16-loss-gradient.tex)（含[训练组织](chapters/18c-training-engineering.tex)）、[非线性](chapters/07-functions-relu.tex)、[反向传播](chapters/17-backpropagation.tex)（含[完整一步](chapters/18b-end-to-end-learning.tex)）、[泛化](chapters/18-generalization.tex) |
 | 二 · 矩阵 | [向量与点积](chapters/01-vectors.tex)（续 [02](chapters/02-dot-product.tex)）、[矩阵乘法](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex) |
 | 三 · 文字 | [Tokenizer](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、[Embedding](chapters/20-embeddings.tex)、[预测任务](chapters/20b-task-contract.tex) |
 | 四 · 上下文 | [上下文缺口与 RNN](chapters/21a-context-gap.tex)（续 [21](chapters/21-rnn.tex)）、[Attention 的直觉](chapters/21c-naive-attention.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[批量与因果注意力](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
