@@ -3,6 +3,7 @@
 \label{intro:22d-modern-transformers}
 \chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_k,\quad KV:T\times H_{KV}\times d_k$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
 \modelpipelinefocus{3}{现代注意力与架构}
+\asof{2026-10-25}{相对位置、归一化与缓存预算}
 
 
 先按顺序完成 RoPE、RMSNorm、GQA 和三维数值复核，再根据瓶颈选择后面的扩展专题。\par\smallskip

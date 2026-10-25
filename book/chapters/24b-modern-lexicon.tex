@@ -70,6 +70,9 @@
 \item \textbf{开始与结束标记}：词表中的开始或结束标记，使用方式和结束 ID 由模型配置规定。 \termref{concept:bos-eos}
 \item \textbf{聊天模板}：把消息角色与内容序列化为模型配套的 Token 输入格式。 \termref{concept:chat-template}
 \item \textbf{预填充与解码}：先处理已知前缀建立缓存，再逐步处理新增 Token 并读取历史。 \termref{concept:prefill-decode}
+\item \textbf{幻觉与校准}：区分无依据的主张与置信分数的正确频率；在保留集逐项核验。 \termref{concept:hallucination-calibration}
+\item \textbf{模型评审}：用 LLM 按评分规则评价回答，并用换序与人工抽查复核裁判。 \termref{concept:llm-judge}
+\item \textbf{图文对齐}：通过配对或回答训练，让视觉和文字表示对应同一内容。 \termref{concept:vision-language-alignment}
 \end{itemize}
 
 \begin{conclusion}

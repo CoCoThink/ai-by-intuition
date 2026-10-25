@@ -64,9 +64,7 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 反向缩放 Dropout 将保留值除以保留概率。
 推理用 \texttt{model.eval()} 关闭 Dropout；仅关闭梯度记录不会切换模式。
 
-\begin{conclusion}
-验证集用于选模，测试集用于独立报告。下一部分把多个输入特征放进同一次计算。
-\end{conclusion}
+
 
 \chapterchecktasks{18-generalization}{正文基础三题}{
 \item \textbf{预测：}训练损失持续下降，验证损失却开始上升，模型更可能在欠拟合、过拟合、还是健康泛化？先提出一种排查办法。\chapterinlinehint{先比较训练曲线与验证曲线的方向。}
@@ -75,6 +73,6 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 }
 \chapterrecallanswer{训练误差变小不保证验证误差变小；测试集必须留给最后的独立评估。}
 
-
-
-
+\begin{conclusion}
+验证集用于选模，测试集用于独立报告。下一部分把多个输入特征放进同一次计算。
+\end{conclusion}

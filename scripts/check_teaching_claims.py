@@ -13,6 +13,8 @@ import numpy as np
 from cache_budget_demo import kv_bytes,run_checks as check_cache
 from context_contrast_demo import run_checks as check_context
 from attention_selection_demo import run_checks as check_selection
+from beginner_training_demo import run_checks as check_beginner
+from claude_function_call_demo import run_checks as check_function_call
 from icl_policy_demo import run_checks as check_icl_policy
 from chinese_tokenizer_demo import run_checks as check_tokenizer
 from mini_transformer_demo import run_checks as check_mini
@@ -20,6 +22,19 @@ from pretraining_data_demo import run_checks as check_data
 from teaching_reference import parameters,forward,backward,LR
 
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def check_new_supplements():
+    pair_probability=np.exp(2)/(np.exp(2)+1)
+    pair_loss=-np.log(pair_probability)
+    swapped_loss=-np.log(1-pair_probability)
+    vision=(ROOT/'book/chapters/19b-vit.tex').read_text()
+    for number in (pair_probability,pair_loss,swapped_loss):
+        assert f'{number:.3f}' in vision, number
+    assert abs(swapped_loss-pair_loss-2)<1e-12
+    calibration=(ROOT/'book/chapters/23d-agent-systems.tex').read_text()
+    assert '6/10=0.6' in calibration and abs(.8-6/10-.2)<1e-12
+    print('Supplement QA: paired/incorrect CLIP toy losses and confidence-bin calibration arithmetic match prose')
 
 
 def check_simplified_gradient(item):
@@ -67,7 +82,7 @@ def main():
     modern=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text().replace('{,}', '')
     assert all(str(value) in modern for value in cache), 'Printed real KV budget differs from pinned configuration'
     c,gradients=check_mini();check_printed_mini(c,gradients)
-    check_data();check_simplified_gradient(by_legacy['C2-13'])
+    check_new_supplements();check_beginner();check_function_call();check_data();check_simplified_gradient(by_legacy['C2-13'])
     local,context=check_context()
     training=(ROOT/'book/chapters/22c-language-training.tex').read_text()
     assert f'{local:.6f}' in training and f'{context:.6f}' in training

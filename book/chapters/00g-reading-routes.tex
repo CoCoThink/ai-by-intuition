@@ -3,20 +3,22 @@
 \begingroup\small
 \setlength{\parskip}{3pt}
 本书把学习、矩阵、上下文读取和生成接成一条路线，再扩展到视觉与助手。
-先看每步的输入、输出和用途，再追踪矩阵元素。
-\noindent\textbf{速读：}第 1--2、7--9、11--15、17--19、21--25、29、32--34 章；约 70 页。
-先看问题、输入输出和小结，跳过标有\textbf{{\symboliconfont ★}选读}的小节及全部复算推导。\par
-\noindent\textbf{标准：}按第 1--37 章顺序读；约 125 页。首次可跳过第~\ref*{intro:22-transformer-architecture}~章原论文对照、
-第~\ref*{intro:23a-from-toy-to-gpt}~章脚本追踪及第~\ref*{intro:22d-modern-transformers}~章{\symboliconfont ★}选读专题；用章末自测核对理解。\par
-\noindent\textbf{动手：}重点复算第 2--5、8--10、12--13、18--24、29--31 章及附录 B；约 90 页。
-按 C 题选练，按 R 题跨章复习；先完成二维迷你版，再跑三维训练。
+先看每步的输入、输出和用途，再追踪矩阵元素。\par
+\tagpdfsetup{table/header-rows={1}}
+\noindent\begin{tabularx}{\linewidth}{@{}p{12mm}p{65mm}X@{}}
+\toprule
+路线 & 章节与阅读预算 & 怎样读\\\midrule
+速读 & 1--2、7--9、11--15、17--19、21--25、29、32--34；约 75 页 & 读问题、输入输出、小结；跳过{\symboliconfont ★}选读与复算推导\\
+标准 & 1--37；约 140 页 & 顺序读并做自测；首读可跳过原论文对照、GPT-2 追踪及现代架构{\symboliconfont ★}专题\\
+动手 & 2--5、8--10、12--13、18--24、29--31，附录 B；约 95 页 & 先算二维迷你版，再跑三维训练；选练 C 题，按 R 题跨章复习\\
+\bottomrule
+\end{tabularx}\par
 \textbf{\hyperref[part:memory]{联想记忆部分（第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章）}是理解 Attention 的第二条路径}，三条路线均可在主线后转入。
 页数是含所选章图表的阅读预算，不含扩展练习。
 
 \subsection*{数学预备与表示约定}
-需要会一元一次方程、负数、平方、函数、对数与一元导数；
-不熟悉就先读\hyperref[app:math-tools]{附录 A.2（第~\pageref*{app:math-tools}~页）}。
-例如 $\log(e^2)=2$；$z=wx+b,L=z^2/2$ 时，$\partial L/\partial w=zx$。
+先做\hyperref[app:math-entry]{五题入门自检（第~\pageref*{app:math-entry}~页）}，核对方程、平方、函数、自然对数与导数；薄弱项先读\hyperref[app:math-tools]{附录 A.2（第~\pageref*{app:math-tools}~页）}。
+
 
 \textbf{ID、位置和矩阵行列从 1 数，Python 索引减 1。}
 词表 $1=\text{其他},2=\text{春天},3=\text{。},4=\text{花},5=\text{开了}$。
@@ -31,15 +33,15 @@
 标记 & 阅读动作\\\midrule
 直觉／小结 & 先抓结论，再回看计算链\\
 动手算／复算 & 纸笔算给定数据／运行脚本核对\\
-易错／边界 & 纠正计算步骤／检查影响结论的适用条件\\
+! 注意 & 核对易错步骤和影响结论的适用条件\\
 独立例／案例 & 切换到另一套参数／分析现实事件\\
 {\symboliconfont ★}选读 & 首读可跳过；小节目录在 PDF 书签中展开\\
 \bottomrule
 \end{tabularx}\par
-自测只留题目；提示和答案按页码到附录 D 查找。
+章末统一为“自测 $\to$ 题号与解答入口 $\to$ 小结”；电子版可点击双向跳转。
 
-Q 蓝、K 青、V 橙只表示三种角色；可见／遮蔽、数据流、数据点另用各自图色，
+Q 蓝、K 深青、V 橙只表示三种角色；可见／遮蔽、数据流、数据点另用各自图色，
 同时保留标签、线型与标记。完整色彩表见第~\pageref*{app:color-semantics}~页。
-纸面目录列到章，PDF 书签可展开小节；正文引用均可按页码查找。
+术语可按\hyperref[app:chinese-index]{中文拼音索引}或\hyperref[app:bilingual-glossary]{英文对照表}查询。纸面目录列到章，电子目录与书签均可点击。
 \globalroute{0}
 \endgroup

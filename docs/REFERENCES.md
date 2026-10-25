@@ -36,3 +36,10 @@
 | [huggingface.co/docs/transformers/main/en/cache_explanation](https://huggingface.co/docs/transformers/main/en/cache_explanation) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2209.11895](https://arxiv.org/abs/2209.11895) | 2026-10-25 | 已核对归纳头的两阶段匹配与复制机制 |
 | [huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json](https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json) | 2026-10-25 | 已实际运行分词器并核对四个 Token ID |
+| [modelcontextprotocol.io/specification/2025-06-18/server/tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools) | 2026-10-25 | 链接可访问 |
+| [a2a-protocol.org/v1.0.0/specification/](https://a2a-protocol.org/v1.0.0/specification/) | 2026-10-25 | 链接可访问 |
+| [platform.claude.com/docs/en/api/messages/create](https://platform.claude.com/docs/en/api/messages/create) | 2026-10-25 | 链接可访问 |
+| [proceedings.mlr.press/v70/guo17a.html](https://proceedings.mlr.press/v70/guo17a.html) | 2026-10-25 | 链接可访问 |
+| [arxiv.org/abs/2306.05685](https://arxiv.org/abs/2306.05685) | 2026-10-25 | 链接可访问 |
+| [arxiv.org/abs/2103.00020](https://arxiv.org/abs/2103.00020) | 2026-10-25 | 链接可访问 |
+| [arxiv.org/abs/2304.08485](https://arxiv.org/abs/2304.08485) | 2026-10-25 | 链接可访问 |

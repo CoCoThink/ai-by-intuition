@@ -202,6 +202,36 @@ g_{Q3}=(132-120)/120=10\%.
 \]
 如果 \texttt{read\_report(Q2)} 返回权限错误，程序记录 Q2 缺失，并停止依赖 Q2 的环比计算。
 \end{example}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：一个真实函数调用接口的最小闭环}
+\phantomsection\label{elective:real-function-call}
+
+截至 2026-10-25（UTC），Claude Messages API 的客户端工具使用以下字段。
+向 \texttt{POST /v1/messages} 提交模型标识、消息和工具定义；
+本例工具定义的核心字段为：
+\begin{Verbatim}[fontsize=\small]
+{"name":"quarter_growth",
+ "input_schema":{"type":"object",
+   "properties":{"previous":{"type":"number"},
+                 "current":{"type":"number"}},
+   "required":["previous","current"],
+   "additionalProperties":false}}
+\end{Verbatim}
+模型返回 \texttt{tool\_use} 内容块，其 \texttt{id}、\texttt{name} 和 \texttt{input}
+分别表示本次请求、工具名和参数。宿主检查工具白名单、数值及任务授权，
+按已核验的 $120,132$ 计算出 $0.1$，再在下一条 \texttt{user} 消息中回传：
+\begin{Verbatim}[fontsize=\small]
+{"type":"tool_result","tool_use_id":"实际调用ID",
+ "content":"{\"growth\":0.1,\"unit\":\"ratio\"}"}
+\end{Verbatim}
+第二次请求保留完整的 \texttt{assistant} 内容块和上述结果，模型据此组织回答。
+这是真实接口的字段约定，示例数值仍来自本书季度报表。
+完整最小客户端见 \path{scripts/claude_function_call_demo.py}；
+直接运行只验证离线合成消息、ID 关联、计算与越权拒绝，\textbf{不调用在线模型}。
+显式使用 \texttt{--real --model 模型ID} 并设置 \texttt{ANTHROPIC\_API\_KEY}，
+才会提交最多两次在线请求；运行记录应保存模型标识和日期。
+字段依据\href{https://platform.claude.com/docs/en/api/messages/create}{官方 Messages API 文档}，
+本书未将离线检查写成在线推理实测。
+
 \chapterchecktasks{23d-agent-tools}{正文基础三题}{
 \item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？\chapterinlinehint{追踪请求从模型交到执行器之前的检查环节。}
 \item \textbf{计算：}Q1、Q2、Q3 的收入是 $100$、$120$、$132$ 百万元，求两次环比增长率。若误把 Q1 作为 Q3 的基期，会得到多少？\chapterinlinehint{分别写出三种比较的基期和分母。}

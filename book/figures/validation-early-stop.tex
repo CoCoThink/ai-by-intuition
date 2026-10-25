@@ -1,9 +1,10 @@
 % The Figure structure intentionally includes the non-floating caption.
+\noindent\begin{minipage}{\linewidth}
 \tagstructbegin{tag=Figure,alttext={训练与验证损失曲线不同步，提前停止选择验证误差较低时的参数}}
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
- width=112mm,height=46mm,
+ width=112mm,height=42mm,
  xmin=.8,xmax=8.3,ymin=.2,ymax=1.28,
  axis lines=left,xlabel={训练轮次（Epoch）},ylabel={损失},
  xtick={1,2,3,4,5,6,7,8},
@@ -23,8 +24,8 @@
 \end{axis}
 \end{tikzpicture}
 
-{\footnotesize 人工示意数据：训练损失持续下降，
-验证损失在第 4 轮后反而上升；选检查点应看验证集。}
+{\footnotesize 人工示意数据：第 4 轮验证损失最低，选择该轮的检查点。}
+\captionof{figure}{训练损失与验证损失走势及最优验证轮次}\label{fig:early-stopping}
 \end{center}
-\begin{center}\captionof{figure}{训练损失与验证损失走势及最优验证轮次}\label{fig:early-stopping}\end{center}
 \tagstructend
+\end{minipage}\par

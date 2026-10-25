@@ -26,7 +26,7 @@ Q1--Q3 收入为 $100,120,132$ 百万元。
 这就是自回归\textbf{预训练}的一种基本训练目标：
 \[
 L_{\rm pretrain}(\theta)=
--\frac1N\sum_{(x,y)}\log p_\theta(y\mid x).
+-\frac1N\sum_{(x,y)}\ln p_\theta(y\mid x).
 \]
 $x$ 表示位置之前的可见文本，$y$ 表示下一 Token；
 $N$ 按参与计分的训练位置计数。
@@ -77,12 +77,12 @@ $D$ 所在行记住前驱 $C$。第二阶段用当前 $A$ 查询这些\textbf{�
 \[
 K=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
 V=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
-q_A=(\sqrt2\log9,0).
+q_A=(\sqrt2\ln9,0).
 \]
 $K$ 两行分别表示前驱 $A,C$；$V$ 两行在 $B,D$ 坐标上编码后继。
 沿第~\ref*{intro:21b-why-attention}~章的机器计算：
 \[
-s=\frac{q_AK^\top}{\sqrt2}=(\log9,0),\qquad
+s=\frac{q_AK^\top}{\sqrt2}=(\ln9,0),\qquad
 \alpha=\softmax(s)=(0.9,0.1),\qquad c=\alpha V=(0.9,0.1).
 \]
 再取固定输出头 $W_{\rm out}=5I_2$，得到 $Z=(4.5,0.5)$，

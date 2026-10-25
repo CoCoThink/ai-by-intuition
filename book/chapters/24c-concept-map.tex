@@ -19,7 +19,7 @@
 \node[unit] (att) at (6.4,0) {Attention};
 \node[unit] (ffn) at (9.6,0) {FFN/输出头};
 \foreach \a/\b in {tok/emb,emb/att,att/ffn}{\draw[->,thick,flowcolor] (\a)--(\b);}
-\node[signal] (loss) at (9.6,-2.15) {概率与交叉熵\\[-1mm]$\displaystyle L=-\log p_y$};
+\node[signal] (loss) at (9.6,-2.15) {概率与交叉熵\\[-1mm]$\displaystyle L=-\ln p_y$};
 \node[signal] (grad) at (6.4,-2.15) {反向传播\\[-1mm]$p-\mathrm{onehot}$};
 \node[signal] (upd) at (3.2,-2.15) {更新参数\\[-1mm]$\theta\gets\theta-\eta\nabla L$};
 \draw[->,thick,flowcolor] (ffn)--(loss);

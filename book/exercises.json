@@ -59,9 +59,9 @@
     "owner": "intro:16a-gradient-descent",
     "slug": "16-loss-gradient",
     "difficulty": "标准",
-    "minutes": 8,
-    "question": "\\textbf{【手算】} 对同一三点损失 $L(w,b)=\\tfrac23(w-2)^2+(b-1)^2$，从 $(w,b)=(1,0)$ 出发、学习率 $\\eta=0.3$。求两项梯度、更新后参数与损失。",
-    "solution": "{\\small\\textbf{第一步：}先分别求 $\\partial L/\\partial w$ 与 $\\partial L/\\partial b$。}\\par\\nobreak\n\\textbf{解答：} $\\nabla L(1,0)=(-4/3,-2)$；以 $\\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。",
+    "minutes": 10,
+    "question": "\\textbf{【手算】} 对同一三点损失 $L(w,b)=\\tfrac23(w-2)^2+(b-1)^2$，从 $(w,b)=(1,0)$ 出发、学习率 $\\eta=0.3$。求两项梯度、更新后参数与损失。 再把学习率改为 $1.2$，分别判断两个参数方向会收敛还是发散。",
+    "solution": "{\\small\\textbf{第一步：}先分别求 $\\partial L/\\partial w$ 与 $\\partial L/\\partial b$。}\\par\\nobreak\n\\textbf{解答：} $\\nabla L(1,0)=(-4/3,-2)$；以 $\\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。 $\\eta=1.2$ 时，误差因子为 $r_w=-0.6,r_b=-1.4$；从题设初值出发，$w$ 震荡收敛，$b$ 震荡发散。",
     "legacy_answer_anchor": "",
     "id": "C-006"
   },
@@ -332,8 +332,8 @@
     "slug": "20c-classification-loss",
     "difficulty": "基础",
     "minutes": 3,
-    "question": "\\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\\log p$ 约为多少？",
-    "solution": "{\\small\\textbf{第一步：}把真实类别概率代入 $-\\log p$。}\\par\\nobreak\n\\textbf{解答：} $-\\log(0.25)=\\log4\\approx1.386$。",
+    "question": "\\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\\ln p$ 约为多少？",
+    "solution": "{\\small\\textbf{第一步：}把真实类别概率代入 $-\\ln p$。}\\par\\nobreak\n\\textbf{解答：} $-\\ln(0.25)=\\ln4\\approx1.386$。",
     "legacy_answer_anchor": "",
     "id": "C-026"
   },
@@ -354,8 +354,8 @@
     "slug": "20c-classification-loss",
     "difficulty": "基础",
     "minutes": 3,
-    "question": "\\phantomsection\\label{exercise:linked-20c-classification-loss}  \\textbf{【手算】} 模型为正确 Token 分配的概率为 $0.2$。\n该位置的交叉熵 $L=-\\log p_{\\rm true}$ 约为多少？",
-    "solution": "{\\small\\textbf{第一步：}正确类别的负对数就是单位置交叉熵。}\\par\\nobreak\n\\textbf{解答：} $-\\log(0.2)=\\log5\\approx1.609$。",
+    "question": "\\phantomsection\\label{exercise:linked-20c-classification-loss}  \\textbf{【手算】} 模型为正确 Token 分配的概率为 $0.2$。\n该位置的交叉熵 $L=-\\ln p_{\\rm true}$ 约为多少？",
+    "solution": "{\\small\\textbf{第一步：}正确类别的负对数就是单位置交叉熵。}\\par\\nobreak\n\\textbf{解答：} $-\\ln(0.2)=\\ln5\\approx1.609$。",
     "legacy_answer_anchor": "",
     "id": "C-028"
   },
@@ -456,11 +456,11 @@
     "slug": "review:tokens",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【累积复习】}正确类概率从 $1/4$ 升为 $1/2$，惊讶度减少多少？把两个位置各自的概率相乘，再验证负对数等于逐位置损失之和。",
-    "solution": "\\textbf{第一步：}使用 $\\log(ab)=\\log a+\\log b$。\\par\\nobreak\\textbf{解题过程：}惊讶度减少 $\\log2$。两位置若为 $1/4,1/2$，联合概率 $1/8$，负对数 $\\log8=\\log4+\\log2$。",
+    "question": "\\textbf{【累积复习】}正确类概率从 $1/4$ 升为 $1/2$，惊讶度减少多少？把两个位置各自的概率相乘，再验证负对数等于逐位置损失之和。\n\\textbf{开放设计／小代码：}写一个十行以内的程序，把逐位置负自然对数相加，与联合概率的负自然对数比较。",
+    "solution": "\\textbf{第一步：}使用 $\\ln(ab)=\\ln a+\\ln b$。\\par\\nobreak\\textbf{解题过程：}惊讶度减少 $\\ln2$。两位置若为 $1/4,1/2$，联合概率 $1/8$，负对数 $\\ln8=\\ln4+\\ln2$。\n\\textbf{一种可行方案：}例如用标准库 \\texttt{math.log} 分别计算 \\texttt{-math.log(p*q)} 与 \\texttt{-math.log(p)-math.log(q)}，断言差的绝对值小于 1e-12；概率必须为正。",
     "legacy_answer_anchor": "",
     "part_review": "tokens",
-    "review_prompt": "正确类概率从 $1/4$ 到 $1/2$，惊讶度减少多少？验证乘积的负对数变成和。"
+    "review_prompt": "编程：用两位置概率核对“乘积变加和”，再换一组概率复测。"
   },
   {
     "legacy_id": "C4-18",
@@ -534,8 +534,8 @@
     "slug": "11-softmax-memory",
     "difficulty": "挑战",
     "minutes": 20,
-    "question": "\\textbf{【迁移】} 综合数值题（Attention + Softmax + 损失）：\n设单 Query 行向量 $q=(1,1)$，\n$K=V=\\begin{bmatrix}1&0\\\\0&1\\\\1&1\\end{bmatrix}$。\n不使用缩放与掩码。求三个点积分数、Softmax 权重、读取向量；\n再让读取行向量 $r$ 右乘一个\\textbf{已给定的输出头}：\n\\[\nW_{\\rm out}=\\begin{bmatrix}\n2&0&1\\\\0&1&-1\n\\end{bmatrix}\\in\\R^{2\\times3}.\n\\]\n求三个 logits $z=rW_{\\rm out}$、逐行 Softmax 后第二类的概率；\n真实标签是第 2 类（从 1 开始计数），求交叉熵\n$L=-\\log p_2$。解释为什么\\textbf{没有输出头矩阵}时，\nAttention 权重自身不足以唯一决定候选词概率。",
-    "solution": "{\\small\\textbf{第一步：}按点积、Softmax、读出、输出头、交叉熵的顺序算。}\\par\\nobreak\n\\textbf{解答：} $qK^\\top=(1,1,2)$；Softmax 为\n$(e,e,e^2)/(2e+e^2)\\approx(0.212,0.212,0.576)$，\n读取 $r\\approx(0.788058,0.788058)$。\n按照题设矩阵右乘，logits 约为\n$z=(1.576117,0.788058,0)$，再做 Softmax，\n第二类概率约 $p_2=0.273684$，所以\n$\\answerresult{L=-\\log p_2\\approx1.295781}$。\n\\textbf{这次预测真正沿着读取向量和输出头得出}；\n若不给出输出头，Attention 权重本身不足以唯一决定词表概率。",
+    "question": "\\textbf{【迁移】} 综合数值题（Attention + Softmax + 损失）：\n设单 Query 行向量 $q=(1,1)$，\n$K=V=\\begin{bmatrix}1&0\\\\0&1\\\\1&1\\end{bmatrix}$。\n不使用缩放与掩码。求三个点积分数、Softmax 权重、读取向量；\n再让读取行向量 $r$ 右乘一个\\textbf{已给定的输出头}：\n\\[\nW_{\\rm out}=\\begin{bmatrix}\n2&0&1\\\\0&1&-1\n\\end{bmatrix}\\in\\R^{2\\times3}.\n\\]\n求三个 logits $z=rW_{\\rm out}$、逐行 Softmax 后第二类的概率；\n真实标签是第 2 类（从 1 开始计数），求交叉熵\n$L=-\\ln p_2$。解释为什么\\textbf{没有输出头矩阵}时，\nAttention 权重自身不足以唯一决定候选词概率。",
+    "solution": "{\\small\\textbf{第一步：}按点积、Softmax、读出、输出头、交叉熵的顺序算。}\\par\\nobreak\n\\textbf{解答：} $qK^\\top=(1,1,2)$；Softmax 为\n$(e,e,e^2)/(2e+e^2)\\approx(0.212,0.212,0.576)$，\n读取 $r\\approx(0.788058,0.788058)$。\n按照题设矩阵右乘，logits 约为\n$z=(1.576117,0.788058,0)$，再做 Softmax，\n第二类概率约 $p_2=0.273684$，所以\n$\\answerresult{L=-\\ln p_2\\approx1.295781}$。\n\\textbf{这次预测真正沿着读取向量和输出头得出}；\n若不给出输出头，Attention 权重本身不足以唯一决定词表概率。",
     "legacy_answer_anchor": "",
     "id": "C-042"
   },
@@ -625,11 +625,11 @@
     "slug": "review:context",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【累积复习】}序列三位置、两头、每头匹配宽度 $2$、Value 宽度 $3$。画出因果可见性，再写每头分数、读出和拼接形状。",
-    "solution": "\\textbf{第一步：}匹配轴是位置，拼接轴是特征。\\par\\nobreak\\textbf{解题过程：}每头分数 $3\\times3$，可见位置数为 $1,2,3$；Value 为 $3\\times3$，读出 $3\\times3$，两头拼接 $3\\times6$，输出投影再决定残差宽度。",
+    "question": "\\textbf{【累积复习】}序列三位置、两头、每头匹配宽度 $2$、Value 宽度 $3$。画出因果可见性，再写每头分数、读出和拼接形状。\n\\textbf{开放设计／小代码：}再设计一个固定窗口丢失远处线索、按需读取仍可获取线索的输入对，说明窗口大小和允许读取的位置。",
+    "solution": "\\textbf{第一步：}匹配轴是位置，拼接轴是特征。\\par\\nobreak\\textbf{解题过程：}每头分数 $3\\times3$，可见位置数为 $1,2,3$；Value 为 $3\\times3$，读出 $3\\times3$，两头拼接 $3\\times6$，输出投影再决定残差宽度。\n\\textbf{一种可行方案：}示例在窗口外放“春天／冬天”，窗口内均为相同填充词与“花”；目标分别“开／谢”。固定窗口看到相同输入，能读取早先线索的方法可区分；RNN 也可传递线索。",
     "legacy_answer_anchor": "",
     "part_review": "context",
-    "review_prompt": "三位置、两头、匹配宽度 $2$、Value 宽度 $3$：画因果掩码，写读出与拼接形状。"
+    "review_prompt": "设计两条当前词相同而远处线索不同的输入，比较固定窗口与按需读取。"
   },
   {
     "legacy_id": "C2-4",
@@ -703,8 +703,8 @@
     "slug": "22c-language-training",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【编程／解释】}运行 \\nolinkurl{scripts/context_contrast_demo.py}。把第二条样本的前文也改成“春天”，保持两个目标不同；训练后上下文版还能低于 $\\log2$ 吗？先预测，再改代码核对。",
-    "solution": "\\textbf{第一步：}比较两条样本送入输出头的特征是否仍不同。\\par\\nobreak\\textbf{解题过程：}两条前文相同后，当前词、位置和读取结果全部相同，两个版本都只能给出同一分布；等权相反二类标签的最优平均损失为 $\\log2$。容量不能补回输入中没有的区分信息。",
+    "question": "\\textbf{【编程／解释】}运行 \\nolinkurl{scripts/context_contrast_demo.py}。把第二条样本的前文也改成“春天”，保持两个目标不同；训练后上下文版还能低于 $\\ln2$ 吗？先预测，再改代码核对。",
+    "solution": "\\textbf{第一步：}比较两条样本送入输出头的特征是否仍不同。\\par\\nobreak\\textbf{解题过程：}两条前文相同后，当前词、位置和读取结果全部相同，两个版本都只能给出同一分布；等权相反二类标签的最优平均损失为 $\\ln2$。容量不能补回输入中没有的区分信息。",
     "legacy_answer_anchor": "",
     "id": "C-055"
   },
@@ -737,7 +737,7 @@
     "difficulty": "标准",
     "minutes": 5,
     "question": "\\textbf{预测：}若训练一步后位置 $2$ 的贪心标签仍错，但正确类概率由 $0.05$ 升到 $0.07$，单位置交叉熵是升还是降？",
-    "solution": "\\textbf{第一步：}比较同一正确类两次的 $-\\log p$。\\par\\nobreak\\textbf{解题过程：}$-\\log0.07<-\\log0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。",
+    "solution": "\\textbf{第一步：}比较同一正确类两次的 $-\\ln p$。\\par\\nobreak\\textbf{解题过程：}$-\\ln0.07<-\\ln0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。",
     "legacy_answer_anchor": "answerpiece:22c-language-training:4",
     "id": "C-058"
   },
@@ -805,11 +805,11 @@
     "slug": "review:transformer",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【累积复习】}解释 Prefill、Decode 与 KV Cache 的关系。若输出头保持不变但输入前文改变，能否沿用原前文的全部缓存？",
-    "solution": "\\textbf{第一步：}检查缓存对应的输入、位置与参数是否匹配。\\par\\nobreak\\textbf{解题过程：}Prefill 处理已知前缀并写 K/V；Decode 只为新 Token 写入并读取历史。改变前文会改变其后各层状态，不能无条件复用原缓存；只可按实现复用完全匹配的前缀。",
+    "question": "\\textbf{【累积复习】}解释 Prefill、Decode 与 KV Cache 的关系。若输出头保持不变但输入前文改变，能否沿用原前文的全部缓存？\n\\textbf{开放设计／小代码：}写不超过十行的外层循环，记录每步更新前的损失和第三位置 Attention 权重；让输出头不动重跑，预测哪里会变化。",
+    "solution": "\\textbf{第一步：}检查缓存对应的输入、位置与参数是否匹配。\\par\\nobreak\\textbf{解题过程：}Prefill 处理已知前缀并写 K/V；Decode 只为新 Token 写入并读取历史。改变前文会改变其后各层状态，不能无条件复用原缓存；只可按实现复用完全匹配的前缀。\n\\textbf{一种可行方案：}按 \\path{teaching_reference.py} 的 \\texttt{parameters/forward/backward} 顺序计算，保存 forward 返回的 loss 与 A 的第三行，统一更新；冻结 Wout 时只跳过它的更新，其他梯度仍反传，按相同初值和步数比较。",
     "legacy_answer_anchor": "",
     "part_review": "transformer",
-    "review_prompt": "连接 Prefill、Decode 与 KV Cache；前文改变时能否沿用全部旧缓存？"
+    "review_prompt": "小代码：同时记录主线训练的损失和注意力权重，再冻结输出头做对照。"
   },
   {
     "legacy_id": "C1-6",
@@ -864,11 +864,11 @@
     "slug": "review:vision",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【累积复习】}向同学解释 CNN 的卷积权重共享与 ViT 的 Patch 投影共享；哪一步让不同位置交换信息？",
-    "solution": "\\textbf{第一步：}先区分局部特征提取与跨位置读取。\\par\\nobreak\\textbf{解题过程：}卷积核在不同窗口复用；Patch 投影对各 Patch 用同一矩阵。ViT 的 Attention 跨 Patch 读取；卷积通过局部窗口与多层感受野传播。",
+    "question": "\\textbf{【累积复习】}向同学解释 CNN 的卷积权重共享与 ViT 的 Patch 投影共享；哪一步让不同位置交换信息？\n\\textbf{开放设计／小代码：}设计两张只改变一个局部区域的图片，说明你会比较哪些 CNN/Patch 特征和分类结果；先写出可检验的预测。",
+    "solution": "\\textbf{第一步：}先区分局部特征提取与跨位置读取。\\par\\nobreak\\textbf{解题过程：}卷积核在不同窗口复用；Patch 投影对各 Patch 用同一矩阵。ViT 的 Attention 跨 Patch 读取；卷积通过局部窗口与多层感受野传播。\n\\textbf{一种可行方案：}可用同一四乘四图片仅改变左上二乘二块。Patch 线性投影首先改变对应行；卷积首先改变感受野覆盖该像素的输出；全局 Attention 后影响可传播到其他位置。",
     "legacy_answer_anchor": "",
     "part_review": "vision",
-    "review_prompt": "比较 CNN 与 Patch 投影各共享什么参数；哪一步让位置交换信息？"
+    "review_prompt": "设计只改一个局部区域的图像对，分别检查 CNN 与 Patch 表示的共享参数和输出。"
   },
   {
     "legacy_id": "C4-35",
@@ -910,7 +910,7 @@
     "difficulty": "标准",
     "minutes": 8,
     "question": "\\textbf{【估算／解释】}独立候选的单次成功率 $p=1/2$，完美核验器筛选。至少要几份才能让成功率达到 $95\\%$？若所有候选复制同一次结果，增加份数能达到吗？",
-    "solution": "\\textbf{第一步：}先要求全部失败概率不超过 $0.05$。\\par\\nobreak\\textbf{解题过程：}$2^{-n}\\leq0.05$，$n\\geq\\log(20)/\\log2\\approx4.322$，所以最少 $5$ 份；四份仅 $93.75\\%$。完全相关时仍只有 $50\\%$，份数增加没有独立试错收益。",
+    "solution": "\\textbf{第一步：}先要求全部失败概率不超过 $0.05$。\\par\\nobreak\\textbf{解题过程：}$2^{-n}\\leq0.05$，$n\\geq\\ln(20)/\\ln2\\approx4.322$，所以最少 $5$ 份；四份仅 $93.75\\%$。完全相关时仍只有 $50\\%$，份数增加没有独立试错收益。",
     "legacy_answer_anchor": "",
     "id": "C-069"
   },
@@ -1055,11 +1055,11 @@
     "slug": "review:assistant",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【累积复习】}设计相同质量要求下的一次部署对照：记录 Prefill 与 Decode、权重与 KV、采样次数与核验成本，说明为什么只看参数量不足。",
-    "solution": "\\textbf{第一步：}先分开计算阶段与内存项。\\par\\nobreak\\textbf{解题过程：}固定硬件、精度、输入/输出长度及并发，报告首 Token 延迟、后续速度、峰值显存、质量与总成本；模型权重之外还有缓存、运行时缓冲，多采样增加生成和验证开销。",
+    "question": "\\textbf{【累积复习】}设计相同质量要求下的一次部署对照：记录 Prefill 与 Decode、权重与 KV、采样次数与核验成本，说明为什么只看参数量不足。\n\\textbf{开放设计／小代码：}设计一张最小测量表，固定模型、质量目标和负载，记录首 Token、逐 Token 延迟、峰值显存与证据核验成本。",
+    "solution": "\\textbf{第一步：}先分开计算阶段与内存项。\\par\\nobreak\\textbf{解题过程：}固定硬件、精度、输入/输出长度及并发，报告首 Token 延迟、后续速度、峰值显存、质量与总成本；模型权重之外还有缓存、运行时缓冲，多采样增加生成和验证开销。\n\\textbf{一种可行方案：}至少列模型版本、量化、硬件、输入/输出长度、批量与并发；同时测首 Token 延迟、每 Token 延迟、吞吐、峰值显存与质量，证据核验另计成本。",
     "legacy_answer_anchor": "",
     "part_review": "assistant",
-    "review_prompt": "同质量部署对照应记录哪些阶段、字节与核验成本？参数量为什么不足以判断？"
+    "review_prompt": "设计同质量部署对照：明确控制变量、Prefill/Decode 指标和核验成本。"
   },
   {
     "legacy_id": "C2-18",

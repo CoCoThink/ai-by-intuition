@@ -1,7 +1,7 @@
 \chapterrule
-\section{走向真实预训练：规模、配置与数据}
+\section{从三维到真实模型：规模、配置与分词}
 \label{intro:23a-from-toy-to-gpt}
-\chaptercompass{三维模型与 GPT-2 的差别是什么？}{训练任务相似，真实模型还需要规模、数据、Tokenizer 与参数细节。}{$\mathrm{IDs}:1\times T\to Z:T\times|\mathcal V|$}{GPT-2 的 Embedding、投影、Norm 等参数；本书三维主例只有 99 个训练元素}
+\chaptercompass{三维模型与 GPT-2 的差别是什么？}{训练任务相似，对照真实模型的规模、Tokenizer 与参数细节；数据工程见训练系统章。}{$\mathrm{IDs}:1\times T\to Z:T\times|\mathcal V|$}{GPT-2 的 Embedding、投影、Norm 等参数；本书三维主例只有 99 个训练元素}
 \modelpipelinefocus{7}{真实模型续写推理}
 
 
@@ -149,7 +149,7 @@ GPT-2 small 的词表规模为 $50{,}257$，
 由 \texttt{scripts/gpt2\_demo.py} 固定并在运行时输出。
 GPT-2 small 主要在英文语料上预训练，
 适合观察真实 Token、词表分数及 Attention，
-本节不把它当作现代中文指令助手来评测。
+本节用它观察英文续写的计算过程，下一小节再对照中文分词。
 
 先在仓库根目录运行无需联网或额外依赖的数学自检：
 \begin{verbatim}
@@ -197,42 +197,39 @@ Transformers 4.46.3 下，
 \end{example}
 
 GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
-第~\ref*{intro:22-transformer-architecture}~章的选读（第~\pageref*{fig:original-transformer-map}~页）。
+\sectionentry{elective:original-paper}。
 
-\subsection{训练资料从哪里来：来源、清洗、去重与配比}
-\phantomsection\label{concept:pretraining-data}
-\phantomsection\label{concept:evaluation-contamination}
-预训练先把网页、书籍、代码与问答整理成\textbf{来源可追溯的 Token 样本}。
+\subsection{［复算］同一句中文，真实分词器怎样编号？}
+\phantomsection\label{experiment:real-chinese-tokenizer}
 
-\begin{enumerate}[itemsep=0pt,parsep=0pt,topsep=2pt]
-\item \textbf{来源与授权：}记录许可和使用范围，剔除敏感信息与禁止使用的数据；
-\item \textbf{清洗：}去掉破损编码、导航和广告模板，保留正文与必要上下文；
-\item \textbf{去重：}哈希识别完全重复，分片相似度发现近重复候选；
-\item \textbf{质量与配比：}平衡语言和领域，测量各来源贡献，避免模板挤占信号；
-\item \textbf{切分与污染：}按组划分训练／验证／测试，核对测试题和答案是否泄漏。
-\end{enumerate}
+回到“春天花开了。”。沿用第~\ref*{intro:20a-tokenizer}~章锁定的
+Qwen2.5-0.5B 分词器，\texttt{add\_special\_tokens=False} 时实测为：
+\begin{center}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{lrr}
+\toprule
+解码片段 & 真实 Token ID & 教学词表 ID\\\midrule
+春天 & 105303 & 2\\
+花 & 99232 & 4\\
+开了 & 101467 & 5\\
+。 & 1773 & 3\\
+\bottomrule
+\end{tabular}
+\end{center}
+带句号共四个 Token，去掉句号的“春天花开了”共三个。
+\textbf{这句话的切分恰好与教学切分一致，编号却来自不同词表}。
+真实 ID 直接用作分词器所属模型的数组索引；本书教学 ID 从 1 起，写 Python 时才减 1。
+输入别的句子应重新运行分词器，不能把这四个片段推成通用中文分词规则。
 
-\localfixture{从“春天花开了”做一次真实可复算的去重}
-图中四条文本先做全半角规范化，并去掉空格和标点。A、B 的正文与完整 SHA-256 相同，保留一份；图中显示哈希前八位。
-
-\input{figures/corpus-dedup}
-
-C 与 A 的哈希不同，再把正文切成相邻二字片段的集合：
-\[
-\begin{aligned}
-S_A&=\{\text{春天、天花、花开、开了}\},\\
-S_C&=\{\text{春天、天的、的花、花开、开了}\}.
-\end{aligned}
-\]
-两者交集有三个片段、并集有六个，Jaccard 相似度为
-$J(A,C)=|S_A\cap S_C|/|S_A\cup S_C|=3/6=0.5$。
-本例复核 $J\ge0.5$ 的候选，确认同源后合并；D 的分数为 $2/6$，且“谢”与“开”表达相反事实，应保留。
-
-运行 \texttt{python3 scripts/pretraining\_data\_demo.py} 可复算全部哈希与相似度。
-同源文本先分组，再按组切分训练／验证／测试集，避免同一内容跨集合泄漏。
-
-\textbf{应用条件：}本例删除标点、采用二字片段和 $0.5$ 阈值。
-真实语料需保留有意义的符号，按领域选择分片与阈值；金额、日期或否定词的变化须内容复核。
+运行：
+\begin{verbatim}
+python3 scripts/chinese_tokenizer_demo.py --real
+\end{verbatim}
+完整权重修订\par\nobreak
+\noindent\texttt{060db6499f32faf8b98477b0a26969ef7d8b9987}、
+分词器文件哈希和实测记录见仓库 \path{scripts/fixtures/qwen25_tokenizer_trace.json}。
+训练资料的来源、去重与配比则转到第~\ref*{intro:23b-deployment-and-ecosystem}~章的
+\sectionentry{sec:data-engineering}，分别检查模型与数据两条链。
 
 \chapterchecktasks{23a-from-toy-to-gpt}{正文基础三题}{
 \item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？\chapterinlinehint{用隐藏宽度除以头数，再单独检查层数配置。}

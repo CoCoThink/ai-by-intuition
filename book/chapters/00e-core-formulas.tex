@@ -44,7 +44,7 @@ H=X_{\rm att}+\operatorname{FFN}(\operatorname{LN}(X_{\rm att})).
 \[
 Z=HW_{\rm out}\in\R^{T\times|\mathcal V|},
 \qquad
-L=-\frac1T\sum_{i=1}^{T}\log p_\theta(y_i\mid x_{\le i}).
+L=-\frac1T\sum_{i=1}^{T}\ln p_\theta(y_i\mid x_{\le i}).
 \]
 这条损失假设所有 $T$ 个位置参与平均；
 若使用损失掩码，应按\textbf{实际计分位置数}归一化。

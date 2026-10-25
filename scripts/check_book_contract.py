@@ -56,6 +56,7 @@ def ten_step_errors(body):
 
 def notation_errors(body):
     errors=[]
+    if re.search(r'\\log(?![A-Za-z])',body):errors.append('Natural logarithms must use ln consistently')
     if re.search(r'W_\{\\rm vocab\}|\\(?:widehat|hat)\s*(?:\{P\}|P\b)',body):
         errors.append('Use W_out and Pi, not W_vocab/hat P')
     if re.search(r'\\(?:widehat|hat)(?![A-Za-z])\s*(?!\s*\{)',body):
@@ -138,6 +139,16 @@ def route_caption_errors(body):
         r'\captionof{figure}' in body or r'tag=Caption' not in body) else []
 
 
+def ending_order_errors(body):
+    errors=[]
+    for chunk in re.split(r'\\section\*?\{',body):
+        check=chunk.find(r'\chapterchecktasks{')
+        recap=chunk.find(r'\begin{conclusion}')
+        if check>=0 and 0<=recap<check:
+            errors.append('Chapter ending must place self-check before recap')
+    return errors
+
+
 def chapter_opening_errors(destination_top, page_height, text, parameter_han_count=0):
     errors=[]
     # PDF coordinates grow upwards: reserve one-third of the printable body.
@@ -168,7 +179,7 @@ def validate_contract():
     require('阅读指南' not in main and '阅读指南' not in sources['20b-task-contract'],'Prelude must be called 序章')
     errors.extend(ten_step_errors(sources['22-transformer-architecture']))
     for filename,label,heading in (
-        ('23a-from-toy-to-gpt','concept:evaluation-contamination','训练资料从哪里来：来源、清洗、去重与配比'),
+        ('23b-deployment-and-ecosystem','concept:evaluation-contamination','训练数据工程：来源、清洗、去重与配比'),
         ('23e-tech-judgement','concept:evaluation-contamination-benchmark','为什么 Benchmark 高分仍需要复核？'),
         ('23-llm-systems','concept:autoregressive','为什么训练能一次算多个位置，自回归生成却要逐个产生？'),
     ):
@@ -176,7 +187,9 @@ def validate_contract():
     combined={'main':main,**sources,'part-maps':(BOOK/'part-maps.tex').read_text(),
               'part-reviews':(BOOK/'part-reviews.tex').read_text()}
     for p in (BOOK/'figures').glob('*.tex'):combined['figures/'+p.name]=uncomment(p.read_text())
-    for name,body in combined.items():errors.extend(f'{name}: {e}' for e in notation_errors(body))
+    for name,body in combined.items():
+        errors.extend(f'{name}: {e}' for e in notation_errors(body))
+        errors.extend(f'{name}: {e}' for e in ending_order_errors(body))
     for name in ('00c-symbols','11-softmax-memory','04-key-value-outer-product',
                  '05-memory-interference','06-better-linear-memory','08-stacking-key-value',
                  '09-nonlinearity-and-memory','13-capacity'):
@@ -214,7 +227,8 @@ def validate_contract():
     require(r'\sourcecheck' in main,'Source date macro missing')
     require('选读：对照原论文' in sources['22-transformer-architecture'],'Paper comparison must be elective')
     require('训练资料从哪里来' not in sources['23aa-pretraining-icl'] and
-            '训练资料从哪里来' in sources['23a-from-toy-to-gpt'],'Data cleaning must be outside ICL chapter')
+            '训练数据工程' in sources['23b-deployment-and-ecosystem'] and
+            'concept:pretraining-data' not in sources['23a-from-toy-to-gpt'],'Data cleaning must be outside ICL chapter')
     require('推理模型与测试时计算' not in sources['23c-post-training'] and
             'intro:23cc-test-time-compute' in sources['23cc-test-time-compute'],'Test-time compute needs an independent chapter')
     for marker in ('concept:bos-eos','concept:prefill-decode','concept:autoregressive'):
@@ -284,11 +298,11 @@ def validate_contract():
     require(sources['24e-bilingual-glossary'].strip()==uncomment(generate()).strip(),'Stale generated glossary')
     total=len(entries('24-lexicon.tex'))+len(entries('24b-modern-lexicon.tex'))
     require(f'全量中英对照：{total} 项' in sources['24e-bilingual-glossary'],'Glossary count must be generated')
-    expected_links=total+sum(len(extra) for extra in EXTRA_REFERENCES.values())
+    expected_links=sum(line.count(r'\hyperref[') for line in generate().splitlines() if ' & ' in line and r'\hyperref[' in line)
     for name in ('24e-bilingual-glossary','24f-chinese-index'):
         require(sum(' & ' in line and r'\hyperref[' in line for line in sources[name].splitlines())==total,
                 f'{name}: glossary row count mismatch')
-        require(sources[name].count(r'\hyperref[')==expected_links,f'{name}: glossary reference count mismatch')
+        require(sum(line.count(r'\hyperref[') for line in sources[name].splitlines() if ' & ' in line and r'\hyperref[' in line)==expected_links,f'{name}: glossary reference count mismatch')
         for target in ('concept:evaluation-contamination','concept:evaluation-contamination-benchmark','concept:autoregressive'):
             require(r'\hyperref['+target+']' in sources[name],f'{name}: missing lookup destination {target}')
     index_rows=[]
@@ -324,9 +338,17 @@ def validate_contract():
     # No screen-only navigation wording in the printable active edition.
     for name,body in combined.items():
         if re.search(r'点击题目标题|（返回正文）',body):errors.append(f'{name}: replace screen-only navigation with page references')
-    for name in ('context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace','chinese_tokenizer_demo','icl_policy_demo'):
+    for name in ('beginner_training_demo','claude_function_call_demo','context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace','chinese_tokenizer_demo','icl_policy_demo'):
         spelling=name.replace('_',r'\_')
         require(spelling in sources['29-revision-notes'] or name in sources['29-revision-notes'],f'Missing reproduction entry: {name}')
+    for name in ('23d-agent-protocols','23b-deployment-and-ecosystem','22d-modern-transformers','23e-tech-judgement'):
+        stamp=re.search(r'\\asof\{(\d{4}-\d{2}-\d{2})\}\{([^}]+)\}',sources[name])
+        require(bool(stamp),f'{name}: date and stable-principle stamp required')
+        if stamp:date.fromisoformat(stamp[1])
+    require('易错／边界' not in sources['00g-reading-routes'],'Use one caution category in the legend')
+    from check_section_navigation import section_targets,source_errors
+    heading_targets=section_targets(combined)
+    for name,body in combined.items():errors.extend(f'{name}: {e}' for e in source_errors(body,heading_targets))
     return errors
 
 
@@ -337,10 +359,13 @@ def self_test():
     assert ten_step_errors(good.replace('intro:22c-language-training','intro:23a-from-toy-to-gpt'))
     assert ten_step_errors(good.replace('intro:23-llm-systems','intro:22c-language-training'))
     assert not notation_errors(r'\widehat{y}_i+\Pi_{1,4}')
+    assert notation_errors(r'L=-\log p') and not notation_errors(r'L=-\ln p')
     for bad in (r'\widehat y',r'\widehat{P}',r'\widehat{y\approx0}',r'W_{\rm vocab}',r'A^{(\ell)}',r'\to L:T\times|\mathcal V|'):
         assert notation_errors(bad),bad
     assert not notation_errors('Best-of-$n$') and notation_errors('Best-of-$N$')
     assert notation_errors(r'\nolinkurl{python3 scripts/example.py}')
+    assert not ending_order_errors(r'\chapterchecktasks{x}{}{}\begin{conclusion}')
+    assert ending_order_errors(r'\begin{conclusion}x\end{conclusion}\chapterchecktasks{x}{}{}')
     good_anchor=r'\subsection{Definition}\phantomsection\label{concept:test}'
     assert not concept_anchor_errors(good_anchor,'concept:test','Definition')
     assert concept_anchor_errors(good_anchor.replace(r'\phantomsection',r'\begin{enumerate}\item '),'concept:test','Definition')

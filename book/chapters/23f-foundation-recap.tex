@@ -31,7 +31,7 @@ ID 变成行向量 & 查 Embedding 行，加入位置向量，核对 $X$ 的形�
 X&=E_{\rm ids}+P_{\rm pos},\qquad
 A=\softmax(QK^\top/\sqrt{d_k}+C),\\
 H&=\operatorname{TransformerBlock}(X),\qquad Z=HW_{\rm out},\\
-\Pi&=\softmax(Z),\qquad L=-\log p_y,\qquad
+\Pi&=\softmax(Z),\qquad L=-\ln p_y,\qquad
 \theta'=\theta-\eta\nabla_\theta L.
 \end{aligned}
 \]

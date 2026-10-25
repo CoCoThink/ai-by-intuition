@@ -382,6 +382,8 @@ def validate_pdf(path: Path) -> None:
         len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", chapter(name)))
         for name in REQUIRED
     )
+    # Count source tables on the cover separately from included chapter files.
+    expected_tables += len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", (BOOK/'main.tex').read_text()))
     # The reusable part-map table is expanded once on each part opener.
     expected_tables += len(re.findall(r"(?m)^\\partmap[a-z]+\s*$",
                                      (BOOK / "main.tex").read_text()))
@@ -691,7 +693,7 @@ def validate_pdf(path: Path) -> None:
     if guide_index > 4:
         fail("Printed chapter TOC must occupy no more than two pages before the reading guide")
     guide = normalized(pages[guide_index])
-    for heading in ("速读：", "标准：", "动手：", "数学预备与表示约定", "ID、位置和矩阵行列从1数", "图例：先判断这一块要你做什么"):
+    for heading in ("速读", "标准", "动手", "数学预备与表示约定", "ID、位置和矩阵行列从1数", "图例：先判断这一块要你做什么"):
         if heading not in guide:
             fail(f"Reading routes, prerequisites and conventions must fit one page: {heading}")
     toc = normalized("".join(pages[1:guide_index]))

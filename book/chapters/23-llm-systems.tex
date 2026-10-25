@@ -88,17 +88,28 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 
 \subsection{从哪里开始，到哪里停止：BOS、EOS 与长度预算}
 \phantomsection\label{concept:bos-eos}
-\textbf{BOS} 是开始标记，\textbf{EOS} 是结束标记；它们有词表中的专用 ID。
-是否插入 BOS、使用哪些结束 ID，遵循模型与分词器的配置。
-本书五项主词表为手算省略了特殊 Token，“。”只是标点，不能当成通用 EOS。
-若要让教学模型学习何时结束，可另建词表加入 EOS，
-把句末的下一 Token 标签设为 EOS，再参与训练。
+生成从给定前缀开始：按模型配置准备输入，预测并选出下一 Token，
+检查结束条件，再追加到上下文。\textbf{BOS} 标明开始，\textbf{EOS} 标明结束；
+模型配置规定是否插入 BOS 以及哪些 ID 表示结束。
 
-生成循环先处理给定前缀（空前缀按模型配置补 BOS），然后反复选 Token。
-采到配置的 EOS／回合结束 ID 就停止；此外还要设置最大新增 Token 数，
-检查上下文容量，并处理应用的停止序列或取消请求。
-\textbf{达到长度上限表示截断，不表示答案已经写完。}
-聊天模型的消息结束与整段对话结束也可以使用不同的标记。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{32mm}XX@{}}
+\toprule
+关口 & 应用做什么 & 如何解释结果\\\midrule
+准备输入 & 使用分词器及聊天模板规定的起始标记 & 开始一次模型输入\\
+选出结束 ID & 检查 EOS 或回合结束标记 & 结束本次生成或助手回合\\
+用完新增预算 & 检查最大新增 Token 数 & 返回长度截断状态\\
+达到上下文容量 & 停止追加，或按策略重新组织前缀 & 另行摘要、截断或检索\\
+收到停止序列／取消 & 按应用约定停止输出 & 记录触发原因\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\begin{boundarybox}
+本书五项教学词表省略了特殊 Token，“。”只表示标点。
+要训练结束行为，应扩展词表加入 EOS，并把句末目标设为 EOS。
+长度耗尽表示截断；消息结束标记和整段对话结束标记按所用模板分别处理。
+\end{boundarybox}
 
 \subsection{KV Cache：每生成一个 Token 都从头再算吗？}
 \phantomsection\label{concept:kv-cache}

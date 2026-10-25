@@ -23,7 +23,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 当解析解不现实时：梯度下降怎样调参数？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-006.}] \phantomsection\label{exercise:C-006}\label{exercise:C1-3}\exercisemeta{标准}{8}{第~\ref*{intro:16a-gradient-descent}~章／第~\pageref*{intro:16a-gradient-descent}~页}\textbf{【手算】} 对同一三点损失 $L(w,b)=\tfrac23(w-2)^2+(b-1)^2$，从 $(w,b)=(1,0)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。 \hyperref[solution:C-006]{解答见第~\pageref*{solution:C-006}~页。}
+\item[\textbf{C-006.}] \phantomsection\label{exercise:C-006}\label{exercise:C1-3}\exercisemeta{标准}{10}{第~\ref*{intro:16a-gradient-descent}~章／第~\pageref*{intro:16a-gradient-descent}~页}\textbf{【手算】} 对同一三点损失 $L(w,b)=\tfrac23(w-2)^2+(b-1)^2$，从 $(w,b)=(1,0)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。 再把学习率改为 $1.2$，分别判断两个参数方向会收敛还是发散。 \hyperref[solution:C-006]{解答见第~\pageref*{solution:C-006}~页。}
 \item[\textbf{C-007.}] \phantomsection\label{exercise:C-007}\label{exercise:C4-4}\exercisemeta{标准}{8}{第~\ref*{intro:16a-gradient-descent}~章／第~\pageref*{intro:16a-gradient-descent}~页}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？ \hyperref[solution:C-007]{解答见第~\pageref*{solution:C-007}~页。}
 \item[\textbf{C-008.}] \phantomsection\label{exercise:C-008}\label{exercise:C4-5}\exercisemeta{标准}{5}{第~\ref*{intro:16a-gradient-descent}~章／第~\pageref*{intro:16a-gradient-descent}~页}\textbf{诊断：}梯度为 $(6,8)$，L2 范数阈值为 $5$。算出裁剪后的向量，并说明裁剪作用于更新前的梯度还是给预测概率做归一化。 \hyperref[solution:C-008]{解答见第~\pageref*{solution:C-008}~页。}
 \end{enumerate}
@@ -91,12 +91,12 @@ $\begin{bmatrix}1&0&1\\0&1&-1\end{bmatrix}$，
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20c-classification-loss}~章 · 分类损失：预测错了哪一类，怎样调整分数？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-026.}] \phantomsection\label{exercise:C-026}\label{exercise:C1-11}\exercisemeta{基础}{3}{第~\ref*{intro:20c-classification-loss}~章／第~\pageref*{intro:20c-classification-loss}~页}\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\log p$ 约为多少？ \hyperref[solution:C-026]{解答见第~\pageref*{solution:C-026}~页。}
+\item[\textbf{C-026.}] \phantomsection\label{exercise:C-026}\label{exercise:C1-11}\exercisemeta{基础}{3}{第~\ref*{intro:20c-classification-loss}~章／第~\pageref*{intro:20c-classification-loss}~页}\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\ln p$ 约为多少？ \hyperref[solution:C-026]{解答见第~\pageref*{solution:C-026}~页。}
 \item[\textbf{C-027.}] \phantomsection\label{exercise:C-027}\label{exercise:C2-19}\exercisemeta{基础}{8}{第~\ref*{intro:20c-classification-loss}~章／第~\pageref*{intro:20c-classification-loss}~页}\textbf{【手算】} 假设词表大小为
 $|\mathcal V|=1000$ 且预测恰好均匀，
 求正确 Token 的单位置交叉熵 $-\ln p$，保留三位小数。 \hyperref[solution:C-027]{解答见第~\pageref*{solution:C-027}~页。}
 \item[\textbf{C-028.}] \phantomsection\label{exercise:C-028}\label{exercise:C2-5}\exercisemeta{基础}{3}{第~\ref*{intro:20c-classification-loss}~章／第~\pageref*{intro:20c-classification-loss}~页}\phantomsection\label{exercise:linked-20c-classification-loss}  \textbf{【手算】} 模型为正确 Token 分配的概率为 $0.2$。
-该位置的交叉熵 $L=-\log p_{\rm true}$ 约为多少？ \hyperref[solution:C-028]{解答见第~\pageref*{solution:C-028}~页。}
+该位置的交叉熵 $L=-\ln p_{\rm true}$ 约为多少？ \hyperref[solution:C-028]{解答见第~\pageref*{solution:C-028}~页。}
 \item[\textbf{C-029.}] \phantomsection\label{exercise:C-029}\label{exercise:C4-15}\exercisemeta{标准}{8}{第~\ref*{intro:20c-classification-loss}~章／第~\pageref*{intro:20c-classification-loss}~页}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？ \hyperref[solution:C-029]{解答见第~\pageref*{solution:C-029}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -159,7 +159,7 @@ W_{\rm out}=\begin{bmatrix}
 \]
 求三个 logits $z=rW_{\rm out}$、逐行 Softmax 后第二类的概率；
 真实标签是第 2 类（从 1 开始计数），求交叉熵
-$L=-\log p_2$。解释为什么\textbf{没有输出头矩阵}时，
+$L=-\ln p_2$。解释为什么\textbf{没有输出头矩阵}时，
 Attention 权重自身不足以唯一决定候选词概率。 \hyperref[solution:C-042]{解答见第~\pageref*{solution:C-042}~页。}
 \item[\textbf{C-043.}] \phantomsection\label{exercise:C-043}\label{exercise:C1-9}\exercisemeta{基础}{5}{第~\ref*{intro:11-softmax-memory}~章／第~\pageref*{intro:11-softmax-memory}~页}\textbf{【手算】} \conceptlink{attention}{Attention} 中 $Q:3\times4$、$K:5\times4$、$V:5\times6$。写出 $QK^\top$、\conceptlink{softmax}{Softmax} 权重及最终输出的形状。 \hyperref[solution:C-043]{解答见第~\pageref*{solution:C-043}~页。}
 \item[\textbf{C-044.}] \phantomsection\label{exercise:C-044}\label{exercise:C2-21}\exercisemeta{标准}{15}{第~\ref*{intro:11-softmax-memory}~章／第~\pageref*{intro:11-softmax-memory}~页}\phantomsection\label{exercise:batch-attention-new} \textbf{【手算】}
@@ -202,7 +202,7 @@ $d_{\rm ff}=18$，词表大小 $|\mathcal V|=100$。
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:22c-language-training}~章 · 三个位置一起训练：从交叉熵到共享参数更新}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-055.}] \phantomsection\label{exercise:C-055}\exercisemeta{标准}{10}{第~\ref*{intro:22c-language-training}~章／第~\pageref*{intro:22c-language-training}~页}\textbf{【编程／解释】}运行 \nolinkurl{scripts/context_contrast_demo.py}。把第二条样本的前文也改成“春天”，保持两个目标不同；训练后上下文版还能低于 $\log2$ 吗？先预测，再改代码核对。 \hyperref[solution:C-055]{解答见第~\pageref*{solution:C-055}~页。}
+\item[\textbf{C-055.}] \phantomsection\label{exercise:C-055}\exercisemeta{标准}{10}{第~\ref*{intro:22c-language-training}~章／第~\pageref*{intro:22c-language-training}~页}\textbf{【编程／解释】}运行 \nolinkurl{scripts/context_contrast_demo.py}。把第二条样本的前文也改成“春天”，保持两个目标不同；训练后上下文版还能低于 $\ln2$ 吗？先预测，再改代码核对。 \hyperref[solution:C-055]{解答见第~\pageref*{solution:C-055}~页。}
 \item[\textbf{C-056.}] \phantomsection\label{exercise:C-056}\exercisemeta{标准}{20}{第~\ref*{intro:22c-language-training}~章／第~\pageref*{intro:22c-language-training}~页}\textbf{【手算／复现】}完成附录 B 的二维分数迷你版：先遮住梯度表，求 $g_h$、两条残差汇合的 $g_r$ 和 $\nabla_{W_K}L$，再用 \nolinkurl{scripts/mini_transformer_demo.py} 核对。 \hyperref[solution:C-056]{解答见第~\pageref*{solution:C-056}~页。}
 \item[\textbf{C-057.}] \phantomsection\label{exercise:C-057}\label{exercise:C2-13}\exercisemeta{挑战}{20}{第~\ref*{intro:22c-language-training}~章／第~\pageref*{intro:22c-language-training}~页}\phantomsection\label{exercise:linked-22c-language-training}  \textbf{【手算】} \textbf{简化残差梯度（独立例）：}本题固定注意力权重、关闭两次 Norm，令 $W_{\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\relu(rW_{\rm up})$、$h=r+fW_{\rm down}$，其中 $x=(0,1)$。设注意力读取权重为
 $a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，
@@ -221,7 +221,7 @@ $\partial L/\partial W_V$ 的 $2\times2$ 数值矩阵。 \hyperref[solution:C-05
 \item[\textbf{C-061.}] \phantomsection\label{exercise:C-061}\label{exercise:C4-31}\exercisemeta{标准}{5}{第~\ref*{intro:23-llm-systems}~章／第~\pageref*{intro:23-llm-systems}~页}\textbf{场景（选做）：}用户问“昨天另一段对话里告诉了名字，你今天怎么不知道？”用上下文窗口说明原因，并提出一项应用层改善方法；不得说“推理时直接把参数改成记住名字”。 \hyperref[solution:C-061]{解答见第~\pageref*{solution:C-061}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23a-from-toy-to-gpt}~章 · 走向真实预训练：规模、配置与数据}
+\subsubsection*{第~\ref*{intro:23a-from-toy-to-gpt}~章 · 从三维到真实模型：规模、配置与分词}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-062.}] \phantomsection\label{exercise:C-062}\label{exercise:C4-32}\exercisemeta{挑战}{10}{第~\ref*{intro:23a-from-toy-to-gpt}~章／第~\pageref*{intro:23a-from-toy-to-gpt}~页}\textbf{诊断：}五词表的均匀预测基线交叉熵为 $\ln5$；若手设初值的三维模型损失略高于此值，是否足以证明实现错误？先核对什么？ \hyperref[solution:C-062]{解答见第~\pageref*{solution:C-062}~页。}
 \end{enumerate}
@@ -388,31 +388,36 @@ $\lambda=0.05$，偏置校正后的自适应方向为 $0.5$，
 \subsubsection*{累积复习 · 文字}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-05.}] \phantomsection\label{exercise:R-05}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:tokens}~页起}\textbf{【累积复习】}按主词表把“春天 花 开了 。”写成 ID，列输入、目标、Embedding 与输出概率的形状，标出“花”目标的 Python 下标。 \hyperref[solution:R-05]{解答见第~\pageref*{solution:R-05}~页。}
-\item[\textbf{R-06.}] \phantomsection\label{exercise:R-06}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:tokens}~页起}\textbf{【累积复习】}正确类概率从 $1/4$ 升为 $1/2$，惊讶度减少多少？把两个位置各自的概率相乘，再验证负对数等于逐位置损失之和。 \hyperref[solution:R-06]{解答见第~\pageref*{solution:R-06}~页。}
+\item[\textbf{R-06.}] \phantomsection\label{exercise:R-06}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:tokens}~页起}\textbf{【累积复习】}正确类概率从 $1/4$ 升为 $1/2$，惊讶度减少多少？把两个位置各自的概率相乘，再验证负对数等于逐位置损失之和。
+\textbf{开放设计／小代码：}写一个十行以内的程序，把逐位置负自然对数相加，与联合概率的负自然对数比较。 \hyperref[solution:R-06]{解答见第~\pageref*{solution:R-06}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 上下文}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-07.}] \phantomsection\label{exercise:R-07}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:context}~页起}\textbf{【累积复习】}用“春天 花／冬天 花”解释为何只看本行无法拟合不同目标；指出位置、RNN 和 Attention 分别提供什么信息。 \hyperref[solution:R-07]{解答见第~\pageref*{solution:R-07}~页。}
-\item[\textbf{R-08.}] \phantomsection\label{exercise:R-08}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:context}~页起}\textbf{【累积复习】}序列三位置、两头、每头匹配宽度 $2$、Value 宽度 $3$。画出因果可见性，再写每头分数、读出和拼接形状。 \hyperref[solution:R-08]{解答见第~\pageref*{solution:R-08}~页。}
+\item[\textbf{R-08.}] \phantomsection\label{exercise:R-08}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:context}~页起}\textbf{【累积复习】}序列三位置、两头、每头匹配宽度 $2$、Value 宽度 $3$。画出因果可见性，再写每头分数、读出和拼接形状。
+\textbf{开放设计／小代码：}再设计一个固定窗口丢失远处线索、按需读取仍可获取线索的输入对，说明窗口大小和允许读取的位置。 \hyperref[solution:R-08]{解答见第~\pageref*{solution:R-08}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · Transformer}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-09.}] \phantomsection\label{exercise:R-09}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:transformer}~页起}\textbf{【累积复习】}把同一段文本用于训练和生成：各列出已知输入、监督目标、参数是否变化、是否需要停止条件。 \hyperref[solution:R-09]{解答见第~\pageref*{solution:R-09}~页。}
-\item[\textbf{R-10.}] \phantomsection\label{exercise:R-10}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:transformer}~页起}\textbf{【累积复习】}解释 Prefill、Decode 与 KV Cache 的关系。若输出头保持不变但输入前文改变，能否沿用原前文的全部缓存？ \hyperref[solution:R-10]{解答见第~\pageref*{solution:R-10}~页。}
+\item[\textbf{R-10.}] \phantomsection\label{exercise:R-10}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:transformer}~页起}\textbf{【累积复习】}解释 Prefill、Decode 与 KV Cache 的关系。若输出头保持不变但输入前文改变，能否沿用原前文的全部缓存？
+\textbf{开放设计／小代码：}写不超过十行的外层循环，记录每步更新前的损失和第三位置 Attention 权重；让输出头不动重跑，预测哪里会变化。 \hyperref[solution:R-10]{解答见第~\pageref*{solution:R-10}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 视觉}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-11.}] \phantomsection\label{exercise:R-11}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:vision}~页起}\textbf{【累积复习】}把 $4\times4$ 灰度图切成四个 $2\times2$ Patch，投影为三维后再桥接成四维；与两行文字拼接，逐步写形状。 \hyperref[solution:R-11]{解答见第~\pageref*{solution:R-11}~页。}
-\item[\textbf{R-12.}] \phantomsection\label{exercise:R-12}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:vision}~页起}\textbf{【累积复习】}向同学解释 CNN 的卷积权重共享与 ViT 的 Patch 投影共享；哪一步让不同位置交换信息？ \hyperref[solution:R-12]{解答见第~\pageref*{solution:R-12}~页。}
+\item[\textbf{R-12.}] \phantomsection\label{exercise:R-12}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:vision}~页起}\textbf{【累积复习】}向同学解释 CNN 的卷积权重共享与 ViT 的 Patch 投影共享；哪一步让不同位置交换信息？
+\textbf{开放设计／小代码：}设计两张只改变一个局部区域的图片，说明你会比较哪些 CNN/Patch 特征和分类结果；先写出可检验的预测。 \hyperref[solution:R-12]{解答见第~\pageref*{solution:R-12}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 助手}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-13.}] \phantomsection\label{exercise:R-13}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:assistant}~页起}\textbf{【累积复习】}报告助手漏检 Q2，网页又要求外发私人文件。依次指出检索、计算、权限三个环节的修复动作；哪些动作会更新权重？ \hyperref[solution:R-13]{解答见第~\pageref*{solution:R-13}~页。}
-\item[\textbf{R-14.}] \phantomsection\label{exercise:R-14}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:assistant}~页起}\textbf{【累积复习】}设计相同质量要求下的一次部署对照：记录 Prefill 与 Decode、权重与 KV、采样次数与核验成本，说明为什么只看参数量不足。 \hyperref[solution:R-14]{解答见第~\pageref*{solution:R-14}~页。}
+\item[\textbf{R-14.}] \phantomsection\label{exercise:R-14}\exercisemeta{标准}{10}{本部分：第~\pageref*{part:assistant}~页起}\textbf{【累积复习】}设计相同质量要求下的一次部署对照：记录 Prefill 与 Decode、权重与 KV、采样次数与核验成本，说明为什么只看参数量不足。
+\textbf{开放设计／小代码：}设计一张最小测量表，固定模型、质量目标和负载，记录首 Token、逐 Token 延迟、峰值显存与证据核验成本。 \hyperref[solution:R-14]{解答见第~\pageref*{solution:R-14}~页。}
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 架构}

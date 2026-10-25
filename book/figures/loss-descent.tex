@@ -1,9 +1,10 @@
 % Fixed-b=1 slice of the same three-point MSE used for the joint w/b update.
+\par\noindent\begin{minipage}{\linewidth}
 \tagstructbegin{tag=Figure,alttext={固定偏置 b 等于一时，一维损失曲线从 w 等于一的损失三分之二，下降到 w 等于一点四的零点二四，再到一点六四的零点零八六四，最优斜率为二}}
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
- width=118mm,height=62mm,
+ width=118mm,height=56mm,
  xmin=.78,xmax=2.30,ymin=-.05,ymax=.86,
  axis lines=left,xlabel={$w$},ylabel={$L(w,1)$},
  xtick={1,1.4,1.64,2},ytick={0,.24,.6667},
@@ -25,6 +26,6 @@
 
 {\footnotesize 同一三点数据固定 $b=1$：$L(w,1)=\frac23(w-2)^2$；
 三次参数位置的损失为 $2/3\to0.24\to0.0864$。}
-\end{center}
-\begin{center}\captionof{figure}{固定偏置时的一维梯度下降截面}\label{fig:loss-descent}\end{center}
+\par\captionof{figure}{固定偏置时的一维梯度下降截面}\label{fig:loss-descent}\end{center}
 \tagstructend
+\end{minipage}\par

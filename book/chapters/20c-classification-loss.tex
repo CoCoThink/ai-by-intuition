@@ -15,7 +15,7 @@
 
 假设只有三类，模型输出
 \[
-\vect z=(0,\log 2,0)\quad(1\times3).
+\vect z=(0,\ln 2,0)\quad(1\times3).
 \]
 这三个数称为 \textbf{logits（未归一化分数）}，
 是实数分数；经过 Softmax 才得到概率。
@@ -72,28 +72,28 @@ p_j=\frac{e^{z_j-m}}{\sum_k e^{z_k-m}},\qquad m=\max_k z_k.
 若真实标签为第二类，用 One-hot 向量
 $\vect y=(0,1,0)$ 表示，则单样本\textbf{交叉熵}为
 \begin{equation}
-\boxed{L=-\sum_{j=1}^{C}y_j\log p_j=-\log p_{\rm correct}.}
+\boxed{L=-\sum_{j=1}^{C}y_j\ln p_j=-\ln p_{\rm correct}.}
 \label{eq:early-class-cross-entropy}
 \end{equation}
-本例 $L=-\log(1/2)=\log2\approx0.6931$。
+本例 $L=-\ln(1/2)=\ln2\approx0.6931$。
 假如正确类概率只有 $1/4$，损失就会上升为
-$\log4\approx1.3863$。
+$\ln4\approx1.3863$。
 这里用自然对数，$p_j>0$ 由 Softmax 保证；
 实现时直接使用稳定的 logits 交叉熵运算，
 以避免先求极小概率再取对数的数值误差。
 例如正确类是 $(1000,1001)$ 中的第一类，直接从 logits 算：
 \[
-L=(m-z_{\rm correct})+\log\sum_k e^{z_k-m}
-=1+\log(1+e^{-1})\approx1.3133.
+L=(m-z_{\rm correct})+\ln\sum_k e^{z_k-m}
+=1+\ln(1+e^{-1})\approx1.3133.
 \]
 这个 LogSumExp 写法连极小概率下溢成零的问题也一并避开。
 Attention 遇到因果 Mask 时，对\textbf{每行可见的 Key}减去最大分数；
 每行至少保留一个可见位置，整行全遮住需要另外处理。
 
 \subsection{为什么取对数：把一串概率变成可以相加的惊讶度}
-正确答案的概率越小，看到它时越“意外”。用 $-\log p$ 表示这份惊讶：
-必然事件 $p=1$ 的代价为零；概率每缩小一半，代价都增加同一个 $\log2$。
-例如 $p=1/2,1/4,1/8$ 对应 $\log2,2\log2,3\log2$。
+正确答案的概率越小，看到它时越“意外”。用 $-\ln p$ 表示这份惊讶：
+必然事件 $p=1$ 的代价为零；概率每缩小一半，代价都增加同一个 $\ln2$。
+例如 $p=1/2,1/4,1/8$ 对应 $\ln2,2\ln2,3\ln2$。
 
 对自回归序列，整段真实答案的条件概率是各位置概率的乘积：
 \[
@@ -101,8 +101,8 @@ p_\theta(y_1,\ldots,y_T)=\prod_{t=1}^T p_\theta(y_t\mid y_{<t}).
 \]
 最大化这份\textbf{似然}，等价于最小化负对数：
 \[
--\log p_\theta(y_1,\ldots,y_T)
-=\sum_{t=1}^T-\log p_\theta(y_t\mid y_{<t}).
+-\ln p_\theta(y_1,\ldots,y_T)
+=\sum_{t=1}^T-\ln p_\theta(y_t\mid y_{<t}).
 \]
 对数把乘积化为和，便于分位置计分和反传，也避免直接连乘许多小数。
 平均惊讶度为 $L$ 时，$\exp(L)$ 就是\textbf{困惑度}：
@@ -114,7 +114,7 @@ p_\theta(y_1,\ldots,y_T)=\prod_{t=1}^T p_\theta(y_t\mid y_{<t}).
 
 把 Softmax 代入交叉熵，可改写为
 \[
-L=-z_{\rm correct}+\log\!\left(\sum_k e^{z_k}\right).
+L=-z_{\rm correct}+\ln\!\left(\sum_k e^{z_k}\right).
 \]
 对任意第 $j$ 项 logit 求偏导：
 \[
@@ -142,7 +142,7 @@ L=-z_{\rm correct}+\log\!\left(\sum_k e^{z_k}\right).
 \item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}
 \item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{比较负对数函数在这两个概率处的大小。}
 }
-\chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\log p_y$，梯度采用 one-hot 标签。}
+\chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\ln p_y$，梯度采用 one-hot 标签。}
 
 
 

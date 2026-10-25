@@ -24,7 +24,7 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 1 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{为什么从函数开始学 AI？}}\par\nobreak
 \answerpiece{1}{预测}{先只计算 $w$ 增加的那一份输出。}变化量 $(3-2)\cdot3=3$；原输出 $7$，新输出 $\answerresult{10}$。
-\par\answerpiece{2}{手算}{用任意两点求斜率，再求偏置。}$w=2,b=1$ 通过三点，$x=4$ 预测 $\answerresult{9}$。
+\par\answerpiece{2}{手算}{用任意两点求斜率，再求偏置。}$w=2,b=1$ 通过三点，$x=2$ 预测 $\answerresult{5}$。
 \par\answerpiece{3}{找错}{先问参数有没有被更新。}推理是固定当前参数计算新输入；训练要用数据、损失和梯度更新参数，不能因更换推理输入便认为已再次训练。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{怎样量“猜得多差”？损失与一次直接求解}}\par\nobreak
@@ -82,8 +82,8 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 12 章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类损失：预测错了哪一类，怎样调整分数？}}\par\nobreak
 \answerpiece{1}{辨析}{先核对概率的取值范围与总和。}logits 可为负且不要求和为一；Softmax 后各项非负、总和为一。
-\par\answerpiece{2}{手算}{先找到正确类别的那一项概率。}$-\log(1/2)=\answerresult{\log2\approx0.6931}$，该类梯度 $1/2-1=\answerresult{-0.5}$。
-\par\answerpiece{3}{预测}{比较 $-\log p$ 随 $p$ 增大的方向。}$-\log0.4<-\log0.2$，交叉熵下降。
+\par\answerpiece{2}{手算}{先找到正确类别的那一项概率。}$-\ln(1/2)=\answerresult{\ln2\approx0.6931}$，该类梯度 $1/2-1=\answerresult{-0.5}$。
+\par\answerpiece{3}{预测}{比较 $-\ln p$ 随 $p$ 增大的方向。}$-\ln0.4<-\ln0.2$，交叉熵下降。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 13 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding：让 Token ID 变成可训练的向量}}\par\nobreak
 \answerpiece{1}{形状}{先数查出的行数与每行宽度。}Embedding 表为 $5\times3$，三个 ID 查表为 $\answerresult{3\times3}$，每行属于输入的一个位置。
@@ -150,7 +150,7 @@
 \par\answerpiece{2}{手算}{按概率降序累加到阈值，再重新归一化。}Top-$p=0.8$ 累计 $0.5+0.3=0.8$，按大于等于阈值保留 A、B，归一化为 $\answerresult{(0.625,0.375)}$。Top-$k=3$ 保留前三，总和 $0.95$，归一化约 $\answerresult{(0.526,0.316,0.158)}$；保留集合不同。
 \par\answerpiece{3}{找错}{先区分已知训练前缀与尚未生成的新 Token。}训练时真实前缀全部已知，因果 Mask 允许不同位置同一轮前向预测；生成时新输入由上一步选出的未知 Token 决定，必须顺序生成。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{走向真实预训练：规模、配置与数据}}\par\nobreak
+\item[\textbf{第 26 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{从三维到真实模型：规模、配置与分词}}\par\nobreak
 \answerpiece{1}{形状}{用模型宽度除以头数。}$768/12=\answerresult{64}$；每头宽度不直接给出层数。
 \par\answerpiece{2}{估算}{分别写出四张 Attention 投影和两张 FFN 的元素数。}Attention 约 $4\cdot768^2$，FFN 约 $8\cdot768^2$，后者约为前者两倍（按题设简化）。
 \par\answerpiece{3}{找错}{先问损失来自哪份数据和哪种目标。}训练损失仅反映对应数据目标，还需独立泛化评估与事实／鲁棒性等任务检查。
@@ -172,7 +172,7 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 30 章}] \phantomsection\label{answer:23c-post-training}\textbf{\hyperref[check:23c-post-training]{会接龙，还要怎样学会对话与解决任务？}}\par\nobreak
 \answerpiece{1}{比较}{先分别写出示范、比较和程序核验的标签来源。}SFT 使用示范答案标签；偏好训练使用回答排序／比较；可验证奖励以程序、判题器等可复现结果评分。
-\par\answerpiece{2}{手算}{先算交叉熵，再求奖励均值与标准差。}$-\log0.25=\answerresult{\log4\approx1.3863}$；奖励均值 $0.5$、总体标准差 $0.5$，优势为 $\answerresult{(1,-1,1,-1)}$。
+\par\answerpiece{2}{手算}{先算交叉熵，再求奖励均值与标准差。}$-\ln0.25=\answerresult{\ln4\approx1.3863}$；奖励均值 $0.5$、总体标准差 $0.5$，优势为 $\answerresult{(1,-1,1,-1)}$。
 \par\answerpiece{3}{找错}{先查相对优势之外还有哪些策略目标项。}完整目标还涉及新旧策略概率比、裁剪和可能的正则化；奖励完全相同时标准差为零，需数值稳定处理。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 31 章}] \phantomsection\label{answer:23cc-test-time-compute}\textbf{\hyperref[check:23cc-test-time-compute]{推理时多算几次，怎样提高解题成功率？}}\par\nobreak
@@ -240,3 +240,13 @@
 \par\answerpiece{3}{找错}{先检查平方后噪声还有没有正负抵消。}平方后的分数非负，不会按原符号相互抵消；必须单独分析均值、方差与累积噪声，不能宣称无限容量。
 \end{enumerate}
 \endgroup
+
+\Needspace{8\baselineskip}
+\subsubsection*{数学入门自检}
+\phantomsection\label{answer:math-entry}
+\hyperref[app:math-entry]{题目见附录 A.2，第~\pageref*{app:math-entry}~页。}
+\textbf{第一步：}先代入或整理等式，再判断运算顺序。
+\textbf{结果：}1. $w=2$；2. $5$ 与 $-3$，先算幂再应用前面的负号；
+3. $(-1,1,3)$；4. $2$ 与 $u=0$；
+5. $g'(w)=2(w-2),g'(1)=-2$，先增大 $w$。
+前三题卡住先复习附录 A.2 的符号表，第 4 题复习指数与自然对数，第 5 题复习导数与链式法则。

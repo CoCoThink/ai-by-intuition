@@ -51,7 +51,7 @@
 
 \definecolor{ink}{HTML}{172A40}
 \definecolor{blue}{HTML}{147CA3}
-\definecolor{teal}{HTML}{078D82}
+\definecolor{teal}{HTML}{00645B}
 \definecolor{orange}{HTML}{C27A31}
 \definecolor{paper}{HTML}{F3F7FA}
 \definecolor{linegray}{HTML}{D8E3EB}
@@ -69,7 +69,7 @@
 \definecolor{datacolor}{HTML}{A22E65}
 \definecolor{noisecolor}{HTML}{393939}
 \definecolor{windowcolor}{HTML}{786A21}
-% Q、K、V 统一为蓝／青／橙；文字标签始终与颜色同时出现。
+% Q、K、V 统一为蓝／深青／橙；文字标签始终与颜色同时出现。
 \newcommand{\Qrole}{\textcolor{blue}{Q}}
 \newcommand{\Krole}{\textcolor{teal}{K}}
 \newcommand{\Vrole}{\textcolor{orange}{V}}
@@ -80,7 +80,7 @@
 \color{ink}
 % Printed CTeX heading numbers do not automatically enter PDF outline titles.
 % Preserve the same numbered part/chapter/appendix hierarchy in reader bookmarks.
-\hypersetup{unicode=true,bookmarksnumbered=true,bookmarksdepth=2,pdfdisplaydoctitle=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition：从函数到 Transformer，再到助手与 Agent},pdfauthor={AI by Intuition},pdfsubject={用可手算的例子理解表示、学习、上下文和模型生成}}
+\hypersetup{unicode=true,bookmarksnumbered=true,bookmarksdepth=2,linktoc=all,pdfdisplaydoctitle=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition：从函数到 Transformer，再到助手与 Agent},pdfauthor={AI by Intuition},pdfsubject={用可手算的例子理解表示、学习、上下文和模型生成}}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{3.5pt}
 \linespread{1.18}
@@ -145,14 +145,17 @@
 \newtcolorbox{idea}[1][]{enhanced,breakable,colback=lavender,colframe=lavender,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ◆} 直觉},#1}
 \newtcolorbox{example}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▸} 动手算},#1}
 \newtcolorbox{casebox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.5pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={案例},#1}
-\newtcolorbox{conclusion}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,before skip=6pt,after skip=4pt,fontupper=\small,borderline west={2.5pt}{0pt}{muted},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ■} 小结},#1}
-\newtcolorbox{warningbox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={! 易错},borderline west={2pt}{0pt}{muted},#1}
-\newtcolorbox{boundarybox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▣} 边界},borderline west={1.6pt}{0pt}{muted},#1}
+\newtcolorbox{conclusion}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,before skip=6pt,after skip=4pt,fontupper=\small,borderline west={2.5pt}{0pt}{muted},fonttitle=\sffamily\bfseries,coltitle=ink,title={小结},#1}
+% One caution style covers arithmetic pitfalls and applicability conditions.
+\newtcolorbox{boundarybox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={! 注意},borderline west={1.6pt}{0pt}{muted},#1}
+\newenvironment{warningbox}[1][]{\begin{boundarybox}[#1]}{\end{boundarybox}}
 \newcommand{\vect}[1]{\boldsymbol{#1}}
 \newcommand{\relu}{\operatorname{ReLU}}
 \newcommand{\softmax}{\operatorname{softmax}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\eyebrow}[1]{{\sffamily\bfseries\footnotesize\color{blue}#1}}
+\newcommand{\sectionentry}[1]{\hyperref[#1]{第~\ref*{#1}~节（第~\pageref*{#1}~页）}}
+\newcommand{\asof}[2]{\par\noindent{\small\color{muted}\textbf{截至 #1（UTC）}：稳定原理为 #2；接口、配置与实现记录按本日期核验，更新入口见附录 G。}\par\smallskip}
 \newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{§\ref*{#1} · 第 \pageref*{#1} 页}}}
 \newcommand{\localfixture}[1]{\par\smallskip\noindent{\sffamily\footnotesize\color{muted}\colorbox{paper}{\strut\textbf{独立例}}\enspace #1}\par\smallskip}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
@@ -250,7 +253,7 @@
 % Distinct visual motif: the same four-token example runs through the book.
 \tagstructbegin{tag=Figure,alttext={四个依次连接的教学 Token：春天、花、开了、句号。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,token/.style={rounded corners=4pt,draw=linegray,fill=blueback,minimum width=35mm,minimum height=34mm,font=\sffamily\large\bfseries},node distance=5mm]
+\begin{tikzpicture}[>=Latex,token/.style={rounded corners=4pt,draw=linegray,fill=blueback,minimum width=37mm,minimum height=43mm,font=\sffamily\large\bfseries},node distance=5mm]
 \node[token] (a) {\shortstack{春天\\{\footnotesize ID 2}}};
 \node[token,right=of a,fill=greenback] (b) {\shortstack{花\\{\footnotesize ID 4}}};
 \node[token,right=of b,fill=orangeback] (c) {\shortstack{开了\\{\footnotesize ID 5}}};
@@ -268,8 +271,19 @@
 \tagstructend
 \vspace{8mm}
 {\large\color{ink}从一个可手算的函数开始，逐层理解数据怎样训练模型、上下文怎样参与预测，以及工具怎样进入系统。}\par
+\vspace{6mm}
+\noindent{\sffamily\bfseries\color{blue}九部分全书路线}\par\smallskip
+\tagpdfsetup{table/header-rows={1}}
+\noindent\begin{tabularx}{\linewidth}{@{}XXX@{}}
+\toprule
+学习与表示 & 上下文与模型 & 系统与另一条路径\\\midrule
+一 · 函数怎样学习 & 四 · 词怎样交换信息 & 七 · 从模型到助手\\
+二 · 把许多数一起算 & 五 · 组装并训练 Transformer & 八 · 架构为什么变化\\
+三 · 文字进入计算 & 六 · 从 CNN 到 ViT & 九 · 联想记忆与线性状态\\
+\bottomrule
+\end{tabularx}\par\smallskip
 \vfill
-\noindent{\sffamily\small\color{muted}CoCoThink and contributors \quad · \quad 2026 年 10 月}\par
+\noindent{\sffamily\normalsize\bfseries\color{ink}CoCoThink and contributors \quad · \quad 2026 年 10 月}\par
 
 \noindent{\sffamily\small\color{muted}https://github.com/CoCoThink/ai-by-intuition}\par
 \noindent{\sffamily\small\color{muted}原创内容 · CC BY 4.0}\par
@@ -293,8 +307,8 @@
 \patchcmd{\l@part}{2.25em}{1.4em}{}{\PackageError{book}{TOC part spacing patch failed}{Check the tagged article TOC implementation.}}
 \makeatother
 \tableofcontents
-\par\smallskip\noindent{\footnotesize {\symboliconfont ★}选读入口：原论文对照（\ref*{elective:original-paper} 节，第~\pageref*{elective:original-paper}~页）；
-现代架构扩展（\ref*{elective:architecture-extras} 节起，第~\pageref*{elective:architecture-extras}~页）。}
+\par\smallskip\noindent{\footnotesize {\symboliconfont ★}选读入口：原论文对照（\sectionentry{elective:original-paper}）；
+现代架构扩展（\sectionentry{elective:architecture-extras} 起）。}
 \clearpage
 \endgroup
 

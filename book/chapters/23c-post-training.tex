@@ -73,7 +73,7 @@ P(A\succ B)=\sigma(r_A-r_B)
 \]
 若偏好标签是“A 优于 B”，负对数损失为
 \[
--\log P(A\succ B)\approx\boxed{0.313}.
+-\ln P(A\succ B)\approx\boxed{0.313}.
 \]
 这是成对偏好建模的一种损失。进入策略优化时，还要按所选算法组织采样、优势估计与约束。
 
@@ -117,7 +117,7 @@ P(A\succ B)=\sigma(r_A-r_B)
 \subsubsection*{再走一步：优势怎样推高或压低一个 logit？}
 把已采样答案与优势固定，先忽略裁剪和正则化，单个样本的策略损失写成
 \[
-\ell_i=-\mathcal A_i\log p_\theta(y_i),\qquad
+\ell_i=-\mathcal A_i\ln p_\theta(y_i),\qquad
 \frac{\partial\ell_i}{\partial Z_j}
 =\mathcal A_i\bigl(p_j-\mathbf1_{j=y_i}\bigr).
 \]

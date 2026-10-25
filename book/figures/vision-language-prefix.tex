@@ -5,7 +5,7 @@
  block/.style={draw=linegray,fill=paper,rounded corners=2pt,align=center,font=\small,minimum height=15mm,text width=35mm}]
 \node[block,fill=linegray!15] (image) at (0,0) {四行视觉特征\\$H_{\rm img}:4\times3$};
 \node[block] (bridge) at (53,0) {桥接矩阵\\$W_{\rm bridge}:3\times4$};
-\node[block,fill=linegray!15] (prefix) at (106,0) {四行视觉前缀\\$Z_{\rm img}:4\times4$};
+\node[block,fill=linegray!15] (prefix) at (106,0) {四行视觉前缀\\$H_{\rm prefix}:4\times4$};
 \draw[->,thick,flowcolor] (image)--(bridge);
 \draw[->,thick,flowcolor] (bridge)--(prefix);
 \node[block,fill=paper] (text) at (0,-36) {两行文字向量\\$E_{\rm text}:2\times4$};

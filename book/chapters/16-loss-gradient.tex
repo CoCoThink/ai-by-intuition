@@ -1,4 +1,3 @@
-\Needspace{13\baselineskip}
 \chapterrule
 \section{怎样量“猜得多差”？损失与一次直接求解}
 \label{intro:16-loss-gradient}
@@ -30,20 +29,58 @@ L(1,0)=\frac{0^2+(-1)^2+(-2)^2}{3}=\boxed{\frac53}.
 \end{equation}
 可见理论最优参数是 $(w,b)=(2,1)$，此时训练损失为 $0$。
 
-\Needspace{24\baselineskip}
-\subsection{先固定一个参数：解析解能做什么？}
+\subsection{把三个平方拆开：为什么会出现两个独立的误差？}
 
-先固定 $b=1$，只调整 $w$；这不是另一套训练样本，
-而是沿同一个二维损失曲面的 $b=1$ 截面：
+令 $a=w-2$、$c=b-1$，它们是斜率和截距离正确值的距离。
+三个残差依次为 $-a+c,c,a+c$，因此
+\[
+\begin{aligned}
+3L&=(-a+c)^2+c^2+(a+c)^2\\
+&=(a^2-2ac+c^2)+c^2+(a^2+2ac+c^2)\\
+&=2a^2+3c^2.
+\end{aligned}
+\]
+交叉项 $-2ac$ 与 $2ac$ 抵消，原因是本例的输入围绕零对称。
+除以三，便得到式~\eqref{eq:three-point-loss-surface}。
+这一步也给出一个直接判断：每个平方项都非负，让两项同时归零即可使总损失最小。
+
+\subsection{两个参数一起直接求解}
+
+先从数据解：$x=0$ 的样本给出 $b=1$；
+再代入 $x=1,y=3$，得到 $w+1=3$，所以 $w=2$。
+$x=-1$ 的剩余样本用来检查：$2(-1)+1=-1$，吻合。
+
+也可以从损失解。对 $w$ 求导时把 $b$ 固定，对 $b$ 求导时把 $w$ 固定，
+这就叫\textbf{偏导数}：
+\[
+\frac{\partial L}{\partial w}=\frac43(w-2),\qquad
+\frac{\partial L}{\partial b}=2(b-1).
+\]
+两式同时为零，便得
+\[
+\frac43(w-2)=0,\quad 2(b-1)=0
+\quad\Longrightarrow\quad\boxed{(w,b)=(2,1)}.
+\]
+\textbf{这个解确实是全局最小值}：它使两个非负平方项同时为零，任何其他参数的损失都更大。
+这里的理由是损失的具体形状，后面遇到更复杂的函数时，也要分别检查形状。
+
+\subsection{固定偏置，看清一条截面}
+
+把已求出的 $b=1$ 固定，损失就只随 $w$ 变化：
 \[
 L(w,1)=\frac23(w-2)^2,\qquad
 \frac{\mathrm dL(w,1)}{\mathrm dw}=\frac43(w-2).
 \]
-令导数为零，可直接解出 $w=2$，因此找到全局最小值。
-为什么复杂神经网络不总这么做？
-对于多层非线性网络，我们转而用迭代优化求参数，
-而且导数为零并不总是全局最小值。
-我们需要能从当前位置逐步改善损失的方法。
+这是同一个损失曲面的截面。$w=1,2,3$ 的损失分别为 $2/3,0,2/3$，
+最小值左右对称。在 $w<2$ 一侧导数为负，向右移动会先靠近最低点；
+在 $w>2$ 一侧导数为正，应向左移动。
+下一章就用这种局部方向信息，从初值反复更新。
+
+\begin{boundarybox}
+本例的三个点恰好共线，两个平方项也能分别归零。
+有噪声的数据应求整体损失最小的折中；多层非线性网络则采用迭代优化，
+并检查验证集上的表现。
+\end{boundarybox}
 
 \chapterchecktasks{16-loss-analytic}{正文基础三题}{
 \item \textbf{解释：}三点线性拟合的 MSE 为什么是三个平方误差的平均，而不是把带符号误差相加？\chapterinlinehint{比较带符号误差能否互相抵消。}
@@ -65,7 +102,7 @@ L(w,1)=\frac23(w-2)^2,\qquad
 \chaptercompass{不知道解析解时怎样移动参数？}{沿负梯度方向，以学习率控制每一步的更新。}{$(w,b),\nabla L,\eta\to(w',b')$}{$w,b$ 同步更新}
 \modelpipelinefocus{0}{梯度下降与参数更新}
 
-上节已通过固定 $b=1$ 直接求出最优斜率。
+上章已同时求出最优参数 $(2,1)$。
 现在先练习一个参数的迭代更新，再回到真正需要同时更新的 $(w,b)$。
 
 \subsection{导数告诉我们局部变化方向}
@@ -80,7 +117,7 @@ L(w,1)=\frac23(w-2)^2,\qquad
 =\lim_{\varepsilon\to0}
 \frac{L(w+\varepsilon)-L(w)}{\varepsilon}.
 \]
-这里表示保持 $b$ 不变，只比较斜率的微小变化。
+这里表示保持 $b$ 不变，只比较 $w$ 的微小变化引起的损失变化。
 
 \subsection{梯度下降：向梯度反方向更新}
 \phantomsection\label{concept:gradient-descent}
@@ -113,8 +150,7 @@ w_1=1-0.3(-4/3)=1.4,
 \left(\frac{\partial L}{\partial w},\frac{\partial L}{\partial b}\right)
 =\left(\frac43(w-2),2(b-1)\right).
 \]
-仍从本书最初选择的 $(w,b)=(1,0)$ 出发，
-而不是上面固定 $b=1$ 的一维练习：
+回到完整的双参数模型，从初值 $(w,b)=(1,0)$ 出发：
 \[
 L(1,0)=\frac53,\qquad
 \nabla L(1,0)=\boxed{\left(-\frac43,-2\right)}.
@@ -137,9 +173,74 @@ L(1.4,0.6)
 \input{figures/loss-two-parameter-contours}
 
 
+\subsection{连走五步：每一步都用新的参数重新求梯度}
+\phantomsection\label{experiment:beginner-iteration}
+
+继续使用学习率 $\eta=0.3$。每行先算该行参数的梯度，再得到下一行；
+两个坐标都从同一行的旧值出发。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{rrrr}
+\toprule
+已更新步数 $t$ & $w_t$ & $b_t$ & $L(w_t,b_t)$\\\midrule
+0 & 1.000000 & 0.000000 & 1.666667\\
+1 & 1.400000 & 0.600000 & 0.400000\\
+2 & 1.640000 & 0.840000 & 0.112000\\
+3 & 1.784000 & 0.936000 & 0.035200\\
+4 & 1.870400 & 0.974400 & 0.011853\\
+5 & 1.922240 & 0.989760 & 0.004136\\
+10 & 1.993953 & 0.999895 & 0.000024\\
+\bottomrule
+\end{tabular}
+\end{center}
+例如第 1 行的梯度为 $(-0.8,-0.8)$，所以第 2 行是
+$(1.4,0.6)-0.3(-0.8,-0.8)=(1.64,0.84)$。
+第 5 步已经接近 $(2,1)$；继续更新，两个误差都趋于零。
+运行下列命令可核对整张表：
+\begin{verbatim}
+python3 scripts/beginner_training_demo.py
+\end{verbatim}
+
+\subsection{学习率多大才稳？把“会发散”算出来}
+\phantomsection\label{experiment:learning-rate-stability}
+
+将更新式移项，直接追踪离最优点的误差：
+\[
+\begin{aligned}
+w_{t+1}-2&=\left(1-\frac43\eta\right)(w_t-2),\\
+b_{t+1}-1&=(1-2\eta)(b_t-1).
+\end{aligned}
+\]
+因此每走一步，$w$ 的误差乘 $r_w=1-4\eta/3$，
+$b$ 的误差乘 $r_b=1-2\eta$。
+取 $\eta=0.3$ 时，$r_w=0.6,r_b=0.4$：
+初始误差 $(-1,-1)$ 变成 $(-0.6,-0.4)$，正好得到 $(1.4,0.6)$。
+第 $t$ 步还能直接写成 $w_t=2-0.6^t,b_t=1-0.4^t$。
+
+\textbf{因子绝对值小于 1，误差就逐步缩小。}
+解 $|r_w|<1$ 得 $0<\eta<1.5$，
+解 $|r_b|<1$ 得 $0<\eta<1$；两者同时收敛的区间是 $\boxed{0<\eta<1}$。
+负因子意味着在最低点两侧交替移动；绝对值仍小于 1 时，震荡会逐步缩小。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}rrrX@{}}
+\toprule
+$\eta$ & $r_w$ & $r_b$ & 从本例初值出发的结果\\\midrule
+0.3 & 0.6 & 0.4 & 两个方向单调靠近最优点\\
+0.75 & 0 & $-0.5$ & $w$ 一步到 2，$b$ 震荡收敛\\
+1 & $-1/3$ & $-1$ & $b$ 在 0 与 2 之间等幅摆动\\
+1.2 & $-0.6$ & $-1.4$ & $w$ 收敛，$b$ 发散\\
+1.5 & $-1$ & $-2$ & $w$ 等幅摆动，$b$ 发散\\
+1.6 & $-17/15$ & $-2.2$ & 两个方向都发散\\
+\bottomrule
+\end{tabularx}
+\end{center}
+例如 $\eta=1.2$ 时，$b$ 依次为 $0,2.4,-0.96,3.744$，离 1 越来越远。
+这给“学习率过大”的提醒提供了可复算的证据。
 \begin{boundarybox}
-梯度指出局部下降方向，不保证任意学习率都使损失下降，
-也不能保证复杂非凸网络找到全局最优；学习率太大可能震荡或发散。
+这些阈值由本例损失的二次项系数决定，适用于恒定学习率和全量梯度。
+换数据、损失尺度或优化器后，要重新判断步长；
+某方向若从最优值开始，其误差始终为零。
 \end{boundarybox}
 
 \subsection{一次训练要做哪四件事？}

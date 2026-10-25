@@ -25,7 +25,7 @@
 \subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 当解析解不现实时：梯度下降怎样调参数？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-006.}] \phantomsection\label{solution:C-006}\hyperref[exercise:C-006]{题目见第~\pageref*{exercise:C-006}~页。}\par\nobreak {\small\textbf{第一步：}先分别求 $\partial L/\partial w$ 与 $\partial L/\partial b$。}\par\nobreak
-\textbf{解答：} $\nabla L(1,0)=(-4/3,-2)$；以 $\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。
+\textbf{解答：} $\nabla L(1,0)=(-4/3,-2)$；以 $\eta=0.3$ 同步更新至 $(1.4,0.6)$，损失为 $0.4$。 $\eta=1.2$ 时，误差因子为 $r_w=-0.6,r_b=-1.4$；从题设初值出发，$w$ 震荡收敛，$b$ 震荡发散。
 \item[\textbf{C-007.}] \phantomsection\label{solution:C-007}\phantomsection\label{answerpiece:16-loss-gradient:4}\hyperref[exercise:C-007]{题目见第~\pageref*{exercise:C-007}~页。}\par\nobreak \textbf{第一步：}分别比较每步读取的样本量和梯度波动。\par\nobreak\textbf{解题过程：}单样本更新计算较少但梯度更受当前样本影响；全批次更稳但单次计算较重。Mini-batch 折中内存、吞吐量与梯度方差。
 \item[\textbf{C-008.}] \phantomsection\label{solution:C-008}\phantomsection\label{answerpiece:16-loss-gradient:5}\hyperref[exercise:C-008]{题目见第~\pageref*{exercise:C-008}~页。}\par\nobreak \textbf{第一步：}先求 $(6,8)$ 的长度，再与阈值比较。\par\nobreak\textbf{解题过程：}$\|(6,8)\|_2=10$，乘 $5/10$ 得 $\answerresult{(3,4)}$；梯度裁剪不是对预测概率归一化。高级优化器手算见附录 A。
 \end{enumerate}
@@ -99,13 +99,13 @@ $(a,a):1$，$(a,b):2$；第一轮合并 $a+b\to ab$，
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20c-classification-loss}~章 · 分类损失：预测错了哪一类，怎样调整分数？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-026.}] \phantomsection\label{solution:C-026}\hyperref[exercise:C-026]{题目见第~\pageref*{exercise:C-026}~页。}\par\nobreak {\small\textbf{第一步：}把真实类别概率代入 $-\log p$。}\par\nobreak
-\textbf{解答：} $-\log(0.25)=\log4\approx1.386$。
+\item[\textbf{C-026.}] \phantomsection\label{solution:C-026}\hyperref[exercise:C-026]{题目见第~\pageref*{exercise:C-026}~页。}\par\nobreak {\small\textbf{第一步：}把真实类别概率代入 $-\ln p$。}\par\nobreak
+\textbf{解答：} $-\ln(0.25)=\ln4\approx1.386$。
 \item[\textbf{C-027.}] \phantomsection\label{solution:C-027}\hyperref[exercise:C-027]{题目见第~\pageref*{exercise:C-027}~页。}\par\nobreak {\small\textbf{第一步：}均匀预测的正确类概率为 $1/1000$。}\par\nobreak
 \textbf{解答：} 均匀预测 $p=1/1000$，
 所以 $-\ln p=\ln1000\approx\answerresult{6.908}$。
 \item[\textbf{C-028.}] \phantomsection\label{solution:C-028}\hyperref[exercise:C-028]{题目见第~\pageref*{exercise:C-028}~页。}\par\nobreak {\small\textbf{第一步：}正确类别的负对数就是单位置交叉熵。}\par\nobreak
-\textbf{解答：} $-\log(0.2)=\log5\approx1.609$。
+\textbf{解答：} $-\ln(0.2)=\ln5\approx1.609$。
 \item[\textbf{C-029.}] \phantomsection\label{solution:C-029}\phantomsection\label{answerpiece:20c-classification-loss:4}\hyperref[exercise:C-029]{题目见第~\pageref*{exercise:C-029}~页。}\par\nobreak \textbf{第一步：}先把类别标签写成与 $p$ 同形的向量。\par\nobreak\textbf{解题过程：}$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$；整数 ID 只用于索引。
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -164,7 +164,7 @@ $(e,e,e^2)/(2e+e^2)\approx(0.212,0.212,0.576)$，
 按照题设矩阵右乘，logits 约为
 $z=(1.576117,0.788058,0)$，再做 Softmax，
 第二类概率约 $p_2=0.273684$，所以
-$\answerresult{L=-\log p_2\approx1.295781}$。
+$\answerresult{L=-\ln p_2\approx1.295781}$。
 \textbf{这次预测真正沿着读取向量和输出头得出}；
 若不给出输出头，Attention 权重本身不足以唯一决定词表概率。
 \item[\textbf{C-043.}] \phantomsection\label{solution:C-043}\hyperref[exercise:C-043]{题目见第~\pageref*{exercise:C-043}~页。}\par\nobreak {\small\textbf{第一步：}依次核对 $QK^\top$、权重以及权重乘 $V$ 的形状。}\par\nobreak
@@ -218,7 +218,7 @@ FFN 输出为 $4\times6$，词表 logits 为 $4\times100$。
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:22c-language-training}~章 · 三个位置一起训练：从交叉熵到共享参数更新}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-055.}] \phantomsection\label{solution:C-055}\hyperref[exercise:C-055]{题目见第~\pageref*{exercise:C-055}~页。}\par\nobreak \textbf{第一步：}比较两条样本送入输出头的特征是否仍不同。\par\nobreak\textbf{解题过程：}两条前文相同后，当前词、位置和读取结果全部相同，两个版本都只能给出同一分布；等权相反二类标签的最优平均损失为 $\log2$。容量不能补回输入中没有的区分信息。
+\item[\textbf{C-055.}] \phantomsection\label{solution:C-055}\hyperref[exercise:C-055]{题目见第~\pageref*{exercise:C-055}~页。}\par\nobreak \textbf{第一步：}比较两条样本送入输出头的特征是否仍不同。\par\nobreak\textbf{解题过程：}两条前文相同后，当前词、位置和读取结果全部相同，两个版本都只能给出同一分布；等权相反二类标签的最优平均损失为 $\ln2$。容量不能补回输入中没有的区分信息。
 \item[\textbf{C-056.}] \phantomsection\label{solution:C-056}\hyperref[exercise:C-056]{题目见第~\pageref*{exercise:C-056}~页。}\par\nobreak \textbf{第一步：}从二类交叉熵的 $g_z=(1/2,-1/2)$ 出发。\par\nobreak\textbf{解题过程：}$g_h=(1,-1/3)$；FFN 两个单位投影与正区间 ReLU 传回同一梯度，因此 $g_r=2g_h=(2,-2/3)$；Softmax 分数梯度 $(2/3,-2/3)$ 乘 Query $q=1$，得到 $\nabla_{W_K}L=(2/3,-2/3)^\top$。完整参数导数见第~\pageref*{app:rational-mini}~页。
 \item[\textbf{C-057.}] \phantomsection\label{solution:C-057}\hyperref[exercise:C-057]{题目见第~\pageref*{exercise:C-057}~页。}\par\nobreak {\small\textbf{第一步：}先求 $f^\top g_h$，再沿残差路径反传。}\par\nobreak
 \textbf{解答：} 本题已关闭 Norm、固定 $W_{\rm up}=I_2$；$r=(0.330,1.670)$ 两项为正，故 $f=\relu(r)=r$，$h=r+fW_{\rm down}$，
@@ -227,7 +227,7 @@ $\partial L/\partial W_{\rm down}=f^\top g_h
 上游梯度 $g_r=g_h(I_2+0.5I_2)=1.5g_h$，
 故 $\partial L/\partial W_V=a^\top g_r
 \approx\begin{bmatrix}0.04809&0.35895\\0.09765&0.72879\end{bmatrix}$。
-\item[\textbf{C-058.}] \phantomsection\label{solution:C-058}\phantomsection\label{answerpiece:22c-language-training:4}\hyperref[exercise:C-058]{题目见第~\pageref*{exercise:C-058}~页。}\par\nobreak \textbf{第一步：}比较同一正确类两次的 $-\log p$。\par\nobreak\textbf{解题过程：}$-\log0.07<-\log0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。
+\item[\textbf{C-058.}] \phantomsection\label{solution:C-058}\phantomsection\label{answerpiece:22c-language-training:4}\hyperref[exercise:C-058]{题目见第~\pageref*{exercise:C-058}~页。}\par\nobreak \textbf{第一步：}比较同一正确类两次的 $-\ln p$。\par\nobreak\textbf{解题过程：}$-\ln0.07<-\ln0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。
 \item[\textbf{C-059.}] \phantomsection\label{solution:C-059}\phantomsection\label{answerpiece:22c-language-training:5}\hyperref[exercise:C-059]{题目见第~\pageref*{exercise:C-059}~页。}\par\nobreak \textbf{第一步：}先问这个检查覆盖了训练闭环还是未见数据。\par\nobreak\textbf{解题过程：}固定小 Batch 上训练到损失下降是排查前向、梯度和更新的 sanity check（先过拟合一个 Batch）；不能据此证明未见数据的泛化。
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -237,7 +237,7 @@ $\partial L/\partial W_{\rm down}=f^\top g_h
 \item[\textbf{C-061.}] \phantomsection\label{solution:C-061}\phantomsection\label{answerpiece:23-llm-systems:5}\hyperref[exercise:C-061]{题目见第~\pageref*{exercise:C-061}~页。}\par\nobreak \textbf{第一步：}先检查旧会话文本有没有进入本次上下文。\par\nobreak\textbf{解题过程：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23a-from-toy-to-gpt}~章 · 走向真实预训练：规模、配置与数据}
+\subsubsection*{第~\ref*{intro:23a-from-toy-to-gpt}~章 · 从三维到真实模型：规模、配置与分词}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-062.}] \phantomsection\label{solution:C-062}\phantomsection\label{answerpiece:23a-from-toy-to-gpt:4}\hyperref[exercise:C-062]{题目见第~\pageref*{exercise:C-062}~页。}\par\nobreak \textbf{第一步：}先检查初始 logits 是否均匀。\par\nobreak\textbf{解题过程：}不构成代码错误证明；初值给出非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。
 \end{enumerate}
@@ -269,7 +269,7 @@ CoT 提示改变输入或生成形式，本身保持参数固定。
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:23cc-test-time-compute}~章 · 推理时多算几次，怎样提高解题成功率？}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-069.}] \phantomsection\label{solution:C-069}\hyperref[exercise:C-069]{题目见第~\pageref*{exercise:C-069}~页。}\par\nobreak \textbf{第一步：}先要求全部失败概率不超过 $0.05$。\par\nobreak\textbf{解题过程：}$2^{-n}\leq0.05$，$n\geq\log(20)/\log2\approx4.322$，所以最少 $5$ 份；四份仅 $93.75\%$。完全相关时仍只有 $50\%$，份数增加没有独立试错收益。
+\item[\textbf{C-069.}] \phantomsection\label{solution:C-069}\hyperref[exercise:C-069]{题目见第~\pageref*{exercise:C-069}~页。}\par\nobreak \textbf{第一步：}先要求全部失败概率不超过 $0.05$。\par\nobreak\textbf{解题过程：}$2^{-n}\leq0.05$，$n\geq\ln(20)/\ln2\approx4.322$，所以最少 $5$ 份；四份仅 $93.75\%$。完全相关时仍只有 $50\%$，份数增加没有独立试错收益。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:23d-agent-systems}~章 · 检索与证据：RAG 怎样回答有来源的问题？}
@@ -425,31 +425,36 @@ Warmup 改变更新步长 $\eta_t$，并不更换损失函数。
 \subsubsection*{累积复习 · 文字}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-05.}] \phantomsection\label{solution:R-05}\hyperref[exercise:R-05]{题目见第~\pageref*{exercise:R-05}~页。}\par\nobreak \textbf{第一步：}先错开一位构造目标，再区分词表轴与特征轴。\par\nobreak\textbf{解题过程：}完整 ID $[2,4,5,3]$；输入 $[2,4,5]$、目标 $[4,5,3]$。三维 Embedding 后 $3\times3$，概率 $3\times5$，第一位置目标用 \texttt{probs[0,3]}。
-\item[\textbf{R-06.}] \phantomsection\label{solution:R-06}\hyperref[exercise:R-06]{题目见第~\pageref*{exercise:R-06}~页。}\par\nobreak \textbf{第一步：}使用 $\log(ab)=\log a+\log b$。\par\nobreak\textbf{解题过程：}惊讶度减少 $\log2$。两位置若为 $1/4,1/2$，联合概率 $1/8$，负对数 $\log8=\log4+\log2$。
+\item[\textbf{R-06.}] \phantomsection\label{solution:R-06}\hyperref[exercise:R-06]{题目见第~\pageref*{exercise:R-06}~页。}\par\nobreak \textbf{第一步：}使用 $\ln(ab)=\ln a+\ln b$。\par\nobreak\textbf{解题过程：}惊讶度减少 $\ln2$。两位置若为 $1/4,1/2$，联合概率 $1/8$，负对数 $\ln8=\ln4+\ln2$。
+\textbf{一种可行方案：}例如用标准库 \texttt{math.log} 分别计算 \texttt{-math.log(p*q)} 与 \texttt{-math.log(p)-math.log(q)}，断言差的绝对值小于 1e-12；概率必须为正。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 上下文}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-07.}] \phantomsection\label{solution:R-07}\hyperref[exercise:R-07]{题目见第~\pageref*{exercise:R-07}~页。}\par\nobreak \textbf{第一步：}检查两条样本的当前位置是否相同。\par\nobreak\textbf{解题过程：}两例当前词与位置均相同，位置标签也无法区分。RNN 可把前词编码进状态，Attention 可直接读取前词；关键是输出收到不同前文。
 \item[\textbf{R-08.}] \phantomsection\label{solution:R-08}\hyperref[exercise:R-08]{题目见第~\pageref*{exercise:R-08}~页。}\par\nobreak \textbf{第一步：}匹配轴是位置，拼接轴是特征。\par\nobreak\textbf{解题过程：}每头分数 $3\times3$，可见位置数为 $1,2,3$；Value 为 $3\times3$，读出 $3\times3$，两头拼接 $3\times6$，输出投影再决定残差宽度。
+\textbf{一种可行方案：}示例在窗口外放“春天／冬天”，窗口内均为相同填充词与“花”；目标分别“开／谢”。固定窗口看到相同输入，能读取早先线索的方法可区分；RNN 也可传递线索。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · Transformer}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-09.}] \phantomsection\label{solution:R-09}\hyperref[exercise:R-09]{题目见第~\pageref*{exercise:R-09}~页。}\par\nobreak \textbf{第一步：}先找训练标签，再画生成反馈箭头。\par\nobreak\textbf{解题过程：}训练有错位目标，因果 Mask 防止偷看，反传更新参数。生成只有前缀，选出的 Token 成为下一输入，参数固定；遇结束 ID 或长度等条件停止。
 \item[\textbf{R-10.}] \phantomsection\label{solution:R-10}\hyperref[exercise:R-10]{题目见第~\pageref*{exercise:R-10}~页。}\par\nobreak \textbf{第一步：}检查缓存对应的输入、位置与参数是否匹配。\par\nobreak\textbf{解题过程：}Prefill 处理已知前缀并写 K/V；Decode 只为新 Token 写入并读取历史。改变前文会改变其后各层状态，不能无条件复用原缓存；只可按实现复用完全匹配的前缀。
+\textbf{一种可行方案：}按 \path{teaching_reference.py} 的 \texttt{parameters/forward/backward} 顺序计算，保存 forward 返回的 loss 与 A 的第三行，统一更新；冻结 Wout 时只跳过它的更新，其他梯度仍反传，按相同初值和步数比较。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 视觉}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-11.}] \phantomsection\label{solution:R-11}\hyperref[exercise:R-11]{题目见第~\pageref*{exercise:R-11}~页。}\par\nobreak \textbf{第一步：}Patch 个数决定行数，投影决定列数。\par\nobreak\textbf{解题过程：}$4\times4$ 的 Patch 行矩阵，乘 $4\times3$ 投影得 $4\times3$；乘 $3\times4$ 桥接得 $4\times4$，与 $2\times4$ 文字拼成 $6\times4$。
 \item[\textbf{R-12.}] \phantomsection\label{solution:R-12}\hyperref[exercise:R-12]{题目见第~\pageref*{exercise:R-12}~页。}\par\nobreak \textbf{第一步：}先区分局部特征提取与跨位置读取。\par\nobreak\textbf{解题过程：}卷积核在不同窗口复用；Patch 投影对各 Patch 用同一矩阵。ViT 的 Attention 跨 Patch 读取；卷积通过局部窗口与多层感受野传播。
+\textbf{一种可行方案：}可用同一四乘四图片仅改变左上二乘二块。Patch 线性投影首先改变对应行；卷积首先改变感受野覆盖该像素的输出；全局 Attention 后影响可传播到其他位置。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 助手}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{R-13.}] \phantomsection\label{solution:R-13}\hyperref[exercise:R-13]{题目见第~\pageref*{exercise:R-13}~页。}\par\nobreak \textbf{第一步：}把证据缺失与指令权限分开处理。\par\nobreak\textbf{解题过程：}补检并核验 Q2，按同一单位和口径重算环比；网页指令不构成用户授权，拒绝越权外发。检索、工具和 Prompt 改动本身不更新权重，训练才更新。
 \item[\textbf{R-14.}] \phantomsection\label{solution:R-14}\hyperref[exercise:R-14]{题目见第~\pageref*{exercise:R-14}~页。}\par\nobreak \textbf{第一步：}先分开计算阶段与内存项。\par\nobreak\textbf{解题过程：}固定硬件、精度、输入/输出长度及并发，报告首 Token 延迟、后续速度、峰值显存、质量与总成本；模型权重之外还有缓存、运行时缓冲，多采样增加生成和验证开销。
+\textbf{一种可行方案：}至少列模型版本、量化、硬件、输入/输出长度、批量与并发；同时测首 Token 延迟、每 Token 延迟、吞吐、峰值显存与质量，证据核验另计成本。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 架构}

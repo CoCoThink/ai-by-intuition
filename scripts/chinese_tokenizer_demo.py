@@ -20,8 +20,12 @@ def run_checks(real=False,tokenizer_file=None):
         t=Tokenizer.from_str(raw.decode());e=t.encode(r['text'],add_special_tokens=False)
         assert e.ids==r['ids'] and [t.decode([i]) for i in e.ids]==r['pieces']
         assert t.decode(e.ids)==r['text']
+        short=t.encode(r['text'].removesuffix('。'),add_special_tokens=False)
+        assert short.ids==r['ids'][:-1] and t.decode(short.ids)=='春天花开了'
     text=(ROOT/'book/chapters/20a-tokenizer.tex').read_text()
     for piece,identifier in zip(r['pieces'],r['ids']):assert f'{piece} & {identifier}' in text
+    scale=(ROOT/'book/chapters/23a-from-toy-to-gpt.tex').read_text()
+    for piece,identifier in zip(r['pieces'],r['ids']):assert f'{piece} & {identifier}' in scale
     print(('Pinned tokenizer execution' if real else 'Archived tokenization/prose')+' QA passed: '+str(r['ids']))
     return r
 if __name__=='__main__':

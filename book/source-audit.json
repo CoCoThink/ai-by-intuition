@@ -224,5 +224,54 @@
     "method": "Read primary source; execute pinned tokenizer for tokenization record",
     "status": 200,
     "final_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json"
+  },
+  {
+    "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+    "status": 200,
+    "final_url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
+  },
+  {
+    "url": "https://a2a-protocol.org/v1.0.0/specification/",
+    "status": 200,
+    "final_url": "https://a2a-protocol.org/v1.0.0/specification/",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
+  },
+  {
+    "url": "https://platform.claude.com/docs/en/api/messages/create",
+    "status": 200,
+    "final_url": "https://platform.claude.com/docs/en/api/messages/create",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
+  },
+  {
+    "url": "https://proceedings.mlr.press/v70/guo17a.html",
+    "status": 200,
+    "final_url": "https://proceedings.mlr.press/v70/guo17a.html",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
+  },
+  {
+    "url": "https://arxiv.org/abs/2306.05685",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2306.05685",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
+  },
+  {
+    "url": "https://arxiv.org/abs/2103.00020",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2103.00020",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
+  },
+  {
+    "url": "https://arxiv.org/abs/2304.08485",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2304.08485",
+    "checked_utc": "2026-10-25",
+    "method": "Official documentation or primary paper checked via web; API schema only, no paid inference"
   }
 ]

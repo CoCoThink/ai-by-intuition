@@ -39,6 +39,7 @@ jobs:
         run: |
           python3 scripts/generate_exercise_bank.py --check
           python3 scripts/generate_chapter_navigation.py --check
+          python3 scripts/generate_bilingual_glossary.py --check
       - name: Check chapter structure before compilation
         run: |
           python3 scripts/check_book_contract.py --self-test
@@ -46,6 +47,7 @@ jobs:
           python3 scripts/check_attention_backward_demo.py
           python3 scripts/test_time_compute_demo.py
           python3 scripts/check_latex_references.py --self-test
+          python3 scripts/check_section_navigation.py --self-test
       - name: Guard chapter references and answer numbering against TOC reordering
         run: |
           python3 scripts/check_chapter_crossrefs.py --self-test
@@ -98,7 +100,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install PDF inspector and numeric teaching dependencies
-        run: python -m pip install --disable-pip-version-check pypdf==5.9.0 numpy==2.3.5 tokenizers==0.22.1 qrcode==8.2
+        run: python -m pip install --disable-pip-version-check pypdf==5.9.0 numpy==2.3.5 tokenizers==0.22.1 qrcode==8.2 Pillow==11.3.0 colorspacious==1.1.2
       - name: Check printed numeric claims, learned QK selection and reference (M1)
         run: |
           python3 scripts/teaching_reference.py
@@ -117,8 +119,9 @@ jobs:
       - name: Verify rendered PDF tags, structure and layout
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq poppler-utils
+          sudo apt-get install -y -qq poppler-utils fonts-dejavu-core
           python3 scripts/validate_book.py --pdf book/build/AI-by-Intuition-Book.pdf
+          python3 scripts/check_section_navigation.py --pdf book/build/AI-by-Intuition-Book.pdf --aux book/build/main.aux
       # LaTeX reports missing \ref targets as warnings, so -halt-on-error
       # alone does not stop a bad PDF. Fail on final-log diagnostics AND
       # literal ?? placeholders in the rendered output (including Appendix C).
@@ -135,6 +138,11 @@ jobs:
             book/build/AI-by-Intuition-Book.pdf \
             --scale 500 --json pdfua-audit/grayscale-audit.json \
             --source-sha "$GITHUB_SHA" --run-id "$GITHUB_RUN_ID"
+      - name: Simulate three color vision deficiencies on QKV figures
+        run: |
+          python3 scripts/audit_color_roles.py \
+            --pdf book/build/AI-by-Intuition-Book.pdf --aux book/build/main.aux \
+            --output pdfua-audit/color-proofs
       - name: Verify associated MathML for every displayed and inline Formula
         run: |
           mkdir -p pdfua-audit
@@ -171,6 +179,8 @@ jobs:
             pdfua-audit/mathml-af-summary.json
             pdfua-audit/grayscale-audit.json
             pdfua-audit/*.txt
+            pdfua-audit/color-proofs/*.json
+            pdfua-audit/color-proofs/*.png
           if-no-files-found: warn
       - name: Publish single PDF artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

@@ -5,11 +5,11 @@
 
 **教材授权：** 本书原创文字、LaTeX/TikZ 图形与正式 PDF（包括 v0.1.0）采用 [CC BY 4.0](../LICENSE)；Python 工具和 GitHub Actions 工作流采用 [MIT](../scripts/LICENSE)。转载、翻译或商业使用应署名及标明改动；第三方引用仍遵循其原有许可。详情见 [仓库许可说明](../README.md#开放许可证与转载)。
 
-**从这里开始：**[目录后的阅读路线与表示约定](chapters/00g-reading-routes.tex)及[版权页](chapters/00h-colophon.tex)；必读主线结束后有[技术底座回顾](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
+**从这里开始：**[目录后的阅读路线与表示约定](chapters/00g-reading-routes.tex)及[版权页](chapters/00h-colophon.tex)；必读主线结束后有[终章：回到那四个 Token](chapters/23f-foundation-recap.tex)。[勘误与版本记录](../docs/ERRATA.md)持续更新。
 
 ## 当前目录：九部分、41 章、附录 A–G
 
-章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。视觉桥接位于 Transformer 之后，联想记忆为第九部分；技术底座回顾收束架构部分。
+章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。视觉桥接位于 Transformer 之后，联想记忆为第九部分；终章位于联想记忆部分之后，回顾全书。
 
 | 部分 | 章节和源码 |
 |---|---|
@@ -20,7 +20,7 @@
 | V · Transformer | [Block](chapters/22-transformer-architecture.tex)、[FFN](chapters/10b-ffn-output-head.tex)、[贯通前向](chapters/22b-token-to-output.tex)、[联合训练](chapters/22c-language-training.tex)、[生成](chapters/23-llm-systems.tex)、[玩具到 GPT](chapters/23a-from-toy-to-gpt.tex) |
 | VI · 视觉桥接 | [CNN](chapters/19-cnn.tex) → [ViT 与多模态](chapters/19b-vit.tex) |
 | VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[部署](chapters/23b-deployment-and-ecosystem.tex) |
-| VIII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex)、[技术底座回顾](chapters/23f-foundation-recap.tex) |
+| VIII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex) |
 | IX · 联想记忆 | [外积与串扰](chapters/04-key-value-outer-product.tex)、[Delta 更新](chapters/06-better-linear-memory.tex)、[非线性读取](chapters/09-nonlinearity-and-memory.tex)、[容量](chapters/13-capacity.tex) |
 
 **附录 A–G**：公式、实验、按章题库、参考答案、术语、文献与勘误。
@@ -82,8 +82,12 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 
 正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。当前正文与附录的页数、图数、题目链接数量随修订变化，均以最新的 GitHub Actions 构建报告和实际 PDF 检查为准，不把过去某次成功构建的统计数据当作永久指标。本书仍标为 v0.2.0-draft（未发布）。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
 
-**中文检索：**附录 E 还提供 146 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对术语表实际条目数与全部链接；标题总数从规范术语表生成。
+**中文检索：**附录 E 还提供 149 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对术语表实际条目数与全部链接；标题总数从规范术语表生成。
 
 中文分词实测：`python3 scripts/chinese_tokenizer_demo.py --real` 下载固定修订的 Qwen2.5-0.5B 分词器并校验 SHA-256，不加载模型权重。需要 `tokenizers==0.22.1`。归纳读取与优势到 logits 的更新由 `python3 scripts/icl_policy_demo.py` 复算，需 NumPy。
 
 附录 F 的二维码与网页参考索引由 `python3 scripts/generate_reference_assets.py` 从核验清单生成，需要 `qrcode==8.2`；CI 用 `--check` 比对两项产物。二维码是 TikZ 矢量路径，不依赖位图或 LaTeX 二维码宏的嵌套段落标签。
+
+## 本轮开篇与导航修订
+
+第 1–3 章补充双参数直接求解、迭代表及步长稳定区间；第 26 章专注规模和真实分词，数据工程移入训练系统章。参见 [完整修订记录](../docs/REVIEW-OPENING-AND-NAVIGATION.md)。目录标题、页码和章末答案均可点击；CI 检查实际目的页、双向答案链接与图/图题同页。术语的主要位置在附录 E，全部出现章节另见 [自动索引](../docs/TERM_OCCURRENCES.md)。

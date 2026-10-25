@@ -15,17 +15,19 @@
 \toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
 \endhead
 \bottomrule\endfoot
+2--3 & \path{beginner_training_demo.py} & 标准库 & 双参数求解、迭代与步长 & 第 5 步 0.004136\\
 14、23--24 & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
 24 & \path{teaching_trace.py} & NumPy & 0--20 步；--attention 看权重 & 末步 0.483173\\
 24 & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
-26 & \path{pretraining_data_demo.py} & 标准库 & 规范化、哈希、近重复 & 去重断言通过\\
+35 & \path{pretraining_data_demo.py} & 标准库 & 规范化、哈希、近重复 & 去重断言通过\\
 11 & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
 11 & \path{chinese_tokenizer_demo.py} \texttt{--real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\
-24.10 & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 log 2\\
+24.10 & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 ln 2\\
 24.10 & \path{attention_selection_demo.py} & NumPy & Q/K 选择与均匀退化 & 损失 0.000502\\
 29--30 & \path{icl_policy_demo.py} & NumPy & 前缀读取、优势梯度 & 0.982014／0.367456\\
 31 & \path{test_time_compute_demo.py} & 标准库 & 多采样与错误验证器 & 成功率断言通过\\
 32 & \path{rag_demo.py} & 标准库 & 点积排序与环比 & Q3、Q1；10\%\\
+33 & \path{claude_function_call_demo.py} & 标准库 & 真实接口的离线消息闭环 & 10\% 与拒绝检查\\
 33--34 & \path{agent_loop.py} & 标准库 & 工具循环与失败处理 & 受控任务轨迹\\
 28、36 & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
 36 & \path{config_table.py} & 标准库 & 固定公开配置 & 24 层、2 KV 头\\
@@ -75,6 +77,9 @@ ID & 解码文本 & 概率\\\midrule
 
 教学初始矩阵为本书的独立设定，应配合相应版本的公式与脚本复算。
 反馈问题时请记录章节、输入与期待结果。
+\textbf{持续更新章节：}第~\ref*{intro:23d-agent-protocols}--\ref*{intro:23e-tech-judgement}~章
+把稳定原理与截至日期分开：协议、SDK 和公开配置更新时核对接口、来源及固定修订，
+再运行相关脚本；修改结论须保留新旧条件、核验日期和勘误记录。
 
 \noindent\textbf{仓库与纸质版入口：}\par\nobreak
 \begingroup\small\setlength{\parskip}{2pt}

@@ -52,3 +52,11 @@
 - `scripts/teaching_trace.py --attention` 打印第 0、20 步的注意力矩阵；`check_teaching_claims.py` 将真实训练结果与正文权重表比较。
 
 沿用现有 Python 环境，缺包用 pip 安装；本轮没有另装 Python 或更换 TeX 引擎。完整 PDF 仍需通过 MathML 关联、PDF/UA-2、最终引用、章节导航及分页密度检查。
+
+### 开篇、页码与色觉模拟门禁
+
+- `scripts/beginner_training_demo.py` 使用同一数据集复算解析解、0–10 步、有限差分梯度与学习率收敛边界。
+- `scripts/check_section_navigation.py --self-test` 拦截有效图目标误作小节目标、写死页码、图题跨页及无目录页码链接；`--pdf book/build/main.pdf --aux book/build/main.aux` 检查实际 PDF 目的页、`.toc` 右列页码链接及所有 Figure 的 MCR 页面归属。
+- `scripts/audit_color_roles.py --pdf book/build/main.pdf --aux book/build/main.aux --output book/build/color-audit` 保存色板及三页 QKV 实际页的四种模拟对照。使用 `Pillow==11.3.0` 和 `colorspacious==1.1.2`；项目距离回归阈值不作为无障碍认证。CI 审计工件保留 PNG、JSON 和 PDF 哈希。
+- `scripts/claude_function_call_demo.py` 默认验证离线消息关联与宿主拒绝案例，无网络或 API 调用。在线模式不会在 CI 自动运行。
+- 中英术语生成器同时维护 `docs/TERM_OCCURRENCES.md`；CI 检查生成结果，避免正文移动后索引漂移。

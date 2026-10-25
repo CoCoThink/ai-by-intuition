@@ -7,7 +7,7 @@
 \node[font=\small\bfseries] at (0,13) {分数 $z$};
 \node[font=\small\bfseries] at (43,13) {指数 $e^z$};
 \node[font=\small\bfseries] at (104,13) {概率 $p$};
-\foreach \y/\z/\e/\width/\prob/\class in {0/0/1/15/0.25/1,-16/{\log2}/2/30/0.50/2,-32/0/1/15/0.25/3}{
+\foreach \y/\z/\e/\width/\prob/\class in {0/0/1/15/0.25/1,-16/{\ln2}/2/30/0.50/2,-32/0/1/15/0.25/3}{
  \node[font=\footnotesize,anchor=east] at (-13,\y) {类 \class};
  \node[n] (z\class) at (0,\y) {$\z$};
  \node[n,fill=paper] (e\class) at (43,\y) {$\e$};
