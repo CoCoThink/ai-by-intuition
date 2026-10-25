@@ -180,10 +180,10 @@ def validate_contract():
     require('叙述借鉴与第三方许可见版权页' not in main,'Remove cover credit pointer')
     memory_part=main.split(r'\part{联想记忆与线性状态}',1)[1].split(r'\clearpage',1)[0]
     require('Alex Wang' in memory_part and 'source:alex-wang' in memory_part,'Memory part opener must credit its teaching framework')
-    for name in ('04-key-value-outer-product','06-better-linear-memory','09-nonlinearity-and-memory','13-capacity'):
-        lead=sources[name].split(r'\subsection',1)[0]
-        require('Alex Wang' in lead and 'source:alex-wang' in lead,f'{name}: missing chapter-level framework credit')
-    require('Alex Wang' in sources['00h-colophon'],'Copyright acknowledgments must credit memory framework')
+    # One framework acknowledgment at the part entrance; F keeps the citation.
+    require(main.count('Alex Wang')==1 and
+            all('Alex Wang' not in body for name,body in sources.items() if name!='26-sources'),
+            'Keep the framework acknowledgment once at the part opener, with its bibliographic entry in F')
     # One canonical JSON bank; every published ID and answer uses the same value.
     from generate_exercise_bank import load_exercises,render
     data,_,_=load_exercises()

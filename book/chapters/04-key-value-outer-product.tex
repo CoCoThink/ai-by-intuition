@@ -2,7 +2,7 @@
 \section{外积与矩阵：如何真正“写入”一条记忆？}
 \label{intro:04-key-value-outer-product}
 \chaptercompass{一个矩阵怎样保存 Key 和 Value 的关联？}{外积写入 $\mathcal{M}=k^\top v$，行查询从左边读取 $x\mathcal{M}$。}{$k:1\times d_k,\ v:1\times d_v\to \mathcal{M}:d_k\times d_v\to x\mathcal{M}$}{这里写入的是示例状态矩阵；是否训练取决于应用场景}
-\modelpipelinefocus{3}{Attention 的记忆视角}\par\smallskip\noindent{\small 本章借鉴 Alex Wang 的联想记忆框架；来源见第~\pageref{source:alex-wang}~页。}\par
+\modelpipelinefocus{3}{Attention 的记忆视角}
 \phantomsection\label{concept:outer-product}
 
 Transformer 主线里每个 Token 占一行。现在换一种视角理解线性层：
