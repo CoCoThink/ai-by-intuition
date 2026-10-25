@@ -1,0 +1,33 @@
+name: Review dated assertions
+
+on:
+  schedule:
+    - cron: '17 3 * * 1' # Monday 03:17 UTC; also checks without new commits.
+  push:
+    branches:
+      - main
+    paths:
+      - 'book/dated-claims.json'
+      - 'book/source-audit.json'
+      - 'book/chapters/**/*.tex'
+      - 'scripts/check_dated_claims.py'
+      - '.github/workflows/check-dated-claims.yml'
+  pull_request:
+    paths:
+      - 'book/dated-claims.json'
+      - 'book/source-audit.json'
+      - 'book/chapters/**/*.tex'
+      - 'scripts/check_dated_claims.py'
+      - '.github/workflows/check-dated-claims.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review-dates:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check review deadlines and current official MCP revision
+        run: python3 scripts/check_dated_claims.py --self-test --online --check-due

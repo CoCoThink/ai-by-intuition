@@ -491,6 +491,9 @@ def validate_pdf(path: Path) -> None:
     text = subprocess.run(["pdftotext", str(path), "-"], capture_output=True,
                           text=True, check=True).stdout
     pages = text.split("\f")
+    from check_dated_claims import mcp_page_errors
+    for error in mcp_page_errors(pages):
+        fail(error)
     if "local-build" in text:
         fail("Rendered PDF still contains the unknown-revision placeholder")
     expected_sha = os.environ.get("BOOK_BUILD_SHA") or os.environ.get("GITHUB_SHA")

@@ -24,8 +24,9 @@
 \noindent\textbf{最小 MCP 消息：}以下按 MCP 2026-07-28 版展示一次工具调用的 JSON-RPC 消息体。
 新版把版本与能力放进每个请求，移除了 \texttt{initialize} 握手和协议级会话。
 客户端可先用 \texttt{server/discover} 查询支持的版本，再用 \texttt{tools/list} 发现工具；
-这两步的请求也各自携带元数据。下面假定已发现获授权的报表工具：
+这两步的请求也各自携带元数据。
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
+\noindent 下面假定已发现获授权的报表工具：\par\smallskip
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
 {"jsonrpc":"2.0","id":2,"method":"tools/call",
  "params":{"name":"read_reports",

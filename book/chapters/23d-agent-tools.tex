@@ -210,8 +210,10 @@ g_{Q3}=(132-120)/120=10\%.
 \phantomsection\label{elective:real-function-call}
 
 截至 2026-10-25（UTC），Claude Messages API 的客户端工具使用以下字段。
-向 \texttt{POST /v1/messages} 提交模型标识、消息和工具定义；
-本例工具定义的核心字段为：
+向 \texttt{POST /v1/messages} 提交的 JSON 必填 \texttt{model}、\texttt{messages}、\texttt{max\_tokens}，本例另带 \texttt{tools}。
+配套脚本用 \texttt{Authorization: Bearer <API key>} 认证，发送 \texttt{content-type: application/json}
+及 \texttt{anthropic-version: 2026-10-21} 请求头；跨工作区密钥还需 \texttt{anthropic-workspace-id}。
+密钥类型与字段细节以附录 F 的官方文档为准。工具定义的核心字段为：
 \begin{Verbatim}[fontsize=\small]
 {"name":"quarter_growth",
  "description":"Compute growth from verified revenues in the same unit.",

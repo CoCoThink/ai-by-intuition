@@ -13,6 +13,8 @@ import math
 import os
 from urllib.request import Request, urlopen
 
+API_VERSION = '2026-10-21'
+
 TOOL = {
     'name': 'quarter_growth',
     'description': 'Compute growth from verified revenues in the same unit.',
@@ -64,11 +66,18 @@ def request_body(model):
             'tool_choice':{'type':'tool','name':TOOL['name']},'messages':copy.deepcopy(MESSAGES)}
 
 
+def make_request(body, key, workspace_id=None):
+    headers = {'content-type':'application/json', 'Authorization':f'Bearer {key}',
+               'anthropic-version':API_VERSION}
+    if workspace_id:
+        headers['anthropic-workspace-id'] = workspace_id
+    return Request('https://api.anthropic.com/v1/messages',
+                   data=json.dumps(body).encode(), method='POST', headers=headers)
+
+
 def api_call(body):
-    key = os.environ['ANTHROPIC_API_KEY']
-    request = Request('https://api.anthropic.com/v1/messages',
-        data=json.dumps(body).encode(), method='POST', headers={
-            'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'})
+    request = make_request(body, os.environ['ANTHROPIC_API_KEY'],
+                           os.environ.get('ANTHROPIC_WORKSPACE_ID'))
     with urlopen(request,timeout=60) as result:
         return json.load(result)
 
@@ -92,6 +101,18 @@ def run_client(model, max_requests=4, request=None):
 
 
 def run_checks():
+    # Inspect the actual HTTP request, without opening a connection or using a key.
+    request = make_request(request_body('offline-fixture'), 'offline-fixture-key')
+    assert request.get_method() == 'POST'
+    assert request.full_url == 'https://api.anthropic.com/v1/messages'
+    wire = json.loads(request.data)
+    assert wire['model'] == 'offline-fixture' and wire['messages'] == MESSAGES
+    assert wire['max_tokens'] == 256 and wire['tools'] == [TOOL]
+    headers = {k.lower():v for k,v in request.header_items()}
+    assert headers == {'content-type':'application/json',
+                       'authorization':'Bearer offline-fixture-key', 'anthropic-version':API_VERSION}
+    scoped = make_request(wire, 'offline-fixture-key', 'offline-workspace')
+    assert scoped.get_header('Anthropic-workspace-id') == 'offline-workspace'
     # Synthetic fixture in the documented wire format; NOT a live model response.
     sample={'stop_reason':'tool_use','content':[
         {'type':'text','text':'I will calculate the verified growth.'},
@@ -141,7 +162,13 @@ def run_checks():
     definitions=[json.loads(block) for block in re.findall(r'\\begin\{Verbatim\}[^\n]*\n(.*?)\\end\{Verbatim\}',source,re.S)
                  if '"input_schema"' in block]
     assert len(definitions)==1 and definitions[0]==TOOL, 'Printed tool definition differs from executable one'
-    print('Offline Claude QA: description/schema, repeated and parallel tool calls, IDs, history, stop reasons, request budget and host rejection passed; no API request')
+    for field in ('model', 'messages', r'max\_tokens', 'Authorization: Bearer <API key>',
+                  'content-type: application/json', 'anthropic-version: '+API_VERSION,
+                  'anthropic-workspace-id'):
+        assert field in source, f'Request field missing from printed instructions: {field}'
+    register=json.loads((Path(__file__).resolve().parents[1]/'book/dated-claims.json').read_text())
+    assert next(r for r in register if r['id']=='claude-tools')['version']==API_VERSION
+    print('Offline Claude QA: HTTP body/headers, description/schema, repeated and parallel tool calls, IDs, history, stop reasons, request budget and host rejection passed; no API request')
 
 
 def main():

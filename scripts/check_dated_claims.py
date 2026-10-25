@@ -3,11 +3,12 @@
 
 Content review dates are entered by a reviewer, never copied from the build clock.
 --online additionally compares the official current MCP redirect with our version.
+--check-due rejects overdue reviews without preventing offline historical builds.
 """
 from __future__ import annotations
 import argparse
 import copy
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 import json
 from pathlib import Path
 import re
@@ -56,6 +57,11 @@ def manifest_errors(rows, audit, labels):
         except ValueError:
             errors.append(f'Invalid UTC date: {ident}');continue
         if reviewed>datetime.now(timezone.utc).date():errors.append(f'Future content review date: {ident}')
+        interval=row.get('review_interval_days')
+        if type(interval) is not int or not 1<=interval<=90:
+            errors.append(f'Review interval must be an integer from 1 to 90 days: {ident}')
+        if row.get('review_on_new_revision') is not True:
+            errors.append(f'New revisions must trigger a review: {ident}')
         if row['target'] not in labels:errors.append(f'Unknown assertion destination: {ident}')
         if not row['claim'] or not row['scope'] or not row['sources']:
             errors.append(f'Assertion needs a claim, review scope and primary sources: {ident}')
@@ -74,22 +80,47 @@ def manifest_errors(rows, audit, labels):
     return errors
 
 
+def review_due_errors(rows, today=None):
+    today=datetime.now(timezone.utc).date() if today is None else today
+    errors=[]
+    for row in rows:
+        due=date.fromisoformat(row['checked_utc'])+timedelta(days=row['review_interval_days'])
+        if today>=due:
+            errors.append(f'Content review due for {row["id"]}: last reviewed {row["checked_utc"]}, '
+                          f'due {due.isoformat()} (UTC); review the sources and claim before updating the date')
+    return errors
+
+
+def mcp_page_errors(pages):
+    """The lead-in belongs to the same unbreakable box as its complete request."""
+    compact=[re.sub(r'\s+','',p) for p in pages]
+    intro=[i+1 for i,p in enumerate(compact) if '下面假定已发现获授权的报表工具：' in p]
+    markers=('"jsonrpc":"2.0"', '"io.modelcontextprotocol/protocolVersion"',
+             '"io.modelcontextprotocol/clientCapabilities":{}}}}')
+    request=[[i+1 for i,p in enumerate(compact) if marker in p] for marker in markers]
+    if len(intro)!=1 or any(found!=intro for found in request):
+        return [f'MCP lead-in and complete JSON request must share one page: intro={intro}, request={request}']
+    return []
+
+
 def rendered(rows):
     lines=[BEGIN,r'\subsubsection*{带日期断言清单}',r'\phantomsection\label{app:dated-claims}',
         '下表记录所用版本、内容核验日期与范围；编译日期和 Git 提交只标识产物。',
         '链接可访问与内容复核分别记录，重编译不会刷新这里的日期。表中来源均列于附录 F。',
+        '建议每 90 天或新修订发布时复查，以先到者为准；下表简称“90 天／新修订”。',
         r'\begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.25}',
         r'\tagpdfsetup{table/header-rows={1}}',
-        r'\begin{longtable}{@{}>{\raggedright\arraybackslash}p{50mm}>{\raggedright\arraybackslash}p{28mm}>{\raggedright\arraybackslash}p{73mm}@{}}',
-        r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围\\\midrule',
+        r'\begin{longtable}{@{}>{\raggedright\arraybackslash}p{43mm}>{\raggedright\arraybackslash}p{26mm}>{\raggedright\arraybackslash}p{62mm}>{\raggedright\arraybackslash}p{25mm}@{}}',
+        r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围 & 建议复查周期\\\midrule',
         r'\endfirsthead',
-        r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围\\\midrule',
+        r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围 & 建议复查周期\\\midrule',
         r'\endhead',r'\bottomrule\endfoot']
     for row in rows:
         target=row['target']
         entry=row['claim']+r'（\hyperref['+target+r']{第~\pageref*{'+target+r'}~页}）'
         sources='、'.join(r'\href{'+s['url']+'}{'+s['name']+'}' for s in row['sources'])
-        lines.append(entry+' & '+row['version']+r'\newline '+row['checked_utc']+' & '+sources+'。'+row['scope']+r'\\')
+        lines.append(entry+' & '+row['version']+r'\newline '+row['checked_utc']+' & '+sources+'。'+row['scope']+
+                     ' & '+str(row['review_interval_days'])+r' 天／新修订\\')
     lines += [r'\end{longtable}\endgroup',END]
     return '\n'.join(lines)
 
@@ -148,7 +179,21 @@ def self_test():
     assert manifest_errors(rows,{},labels)
     broken=copy.deepcopy(rows);broken[0]['version']='2025-06-18'
     assert manifest_errors(broken,audit,labels)
-    print('Dated assertion regression tests passed: old version, missing metadata, wrong metadata nesting and link-only evidence rejected')
+    for key,value in (('review_interval_days',0),('review_interval_days',91),
+                      ('review_interval_days',True),('review_on_new_revision',False)):
+        broken=copy.deepcopy(rows);broken[0][key]=value
+        assert manifest_errors(broken,audit,labels)
+    fixture=[{'id':'dated-fixture','checked_utc':'2026-10-25','review_interval_days':90}]
+    assert not review_due_errors(fixture,date(2027,1,22))
+    assert review_due_errors(fixture,date(2027,1,23))
+    assert review_due_errors(fixture,date(2027,2,1))
+    intro='下面假定已发现获授权的报表工具：'
+    request='"jsonrpc":"2.0", "io.modelcontextprotocol/protocolVersion": "'+version+'", "io.modelcontextprotocol/clientCapabilities":{}}}}'
+    assert not mcp_page_errors([intro+'\n'+request])
+    assert mcp_page_errors([intro,request])
+    assert mcp_page_errors([request])
+    assert mcp_page_errors([intro+'\n'+request.split('clientCapabilities')[0], 'clientCapabilities'+request.split('clientCapabilities')[1]])
+    print('Dated assertion regression tests passed: version/metadata, link-only evidence, invalid or overdue reviews and split MCP lead-in rejected')
 
 
 def main():
@@ -156,6 +201,7 @@ def main():
     parser.add_argument('--write',action='store_true')
     parser.add_argument('--self-test',action='store_true')
     parser.add_argument('--online',action='store_true')
+    parser.add_argument('--check-due',action='store_true')
     args=parser.parse_args()
     if args.write:
         text=OUTPUT.read_text();table=rendered(load_claims())
@@ -164,6 +210,8 @@ def main():
         OUTPUT.write_text(text)
     if args.self_test:self_test()
     errors=validate()
+    if args.check_due and not errors:
+        errors.extend(review_due_errors(load_claims()))
     if args.online:
         version=next(r for r in load_claims() if r['id']=='mcp')['version']
         req=Request(PREFIX.rstrip('/'),headers={'User-Agent':'ai-by-intuition-source-audit/1.0'})

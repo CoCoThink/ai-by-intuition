@@ -49,7 +49,7 @@ jobs:
           python3 scripts/check_latex_references.py --self-test
           python3 scripts/check_section_navigation.py --self-test
       - name: Check dated assertions and current official MCP version
-        run: python3 scripts/check_dated_claims.py --self-test --online
+        run: python3 scripts/check_dated_claims.py --self-test --online --check-due
       - name: Guard chapter references and answer numbering against TOC reordering
         run: |
           python3 scripts/check_chapter_crossrefs.py --self-test

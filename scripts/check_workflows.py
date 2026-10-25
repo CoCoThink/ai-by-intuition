@@ -36,7 +36,7 @@ def main() -> None:
                           bool(SHA_ACTION.fullmatch(step["uses"])))
         data[path.name] = loaded
     check("required workflows", {"build-latex.yml", "check-docs.yml",
-          "check-compatibility.yml", "publish-release.yml"} <= data.keys())
+          "check-compatibility.yml", "publish-release.yml", "check-dated-claims.yml"} <= data.keys())
     for workflow_name in ("build-latex.yml", "check-docs.yml"):
         check(f"{workflow_name}: push only main",
               data[workflow_name]["on"]["push"].get("branches") == ["main"])
@@ -61,6 +61,13 @@ def main() -> None:
                      "Verify rendered PDF tags"):
         check(f"required gate: {required}", any(required in s.get("name", "") for s in steps))
     compat = data["check-compatibility.yml"]
+    review = data["check-dated-claims.yml"]
+    check("weekly UTC review schedule", review["on"].get("schedule") == [{"cron":"17 3 * * 1"}])
+    check("scheduled review remains read-only", review.get("permissions") == {"contents":"read"})
+    review_runs = [s.get("run", "") for job in review["jobs"].values() for s in job["steps"]]
+    for label,runs in (("scheduled review",review_runs),("book build",[s.get("run", "") for s in steps])):
+        check(f"{label}: check revision and UTC deadline",
+              any("check_dated_claims.py" in run and "--online" in run and "--check-due" in run for run in runs))
     check("diagnostic workflow only manually triggered", list(compat["on"]) == ["workflow_dispatch"])
     release = data["publish-release.yml"]
     check("release workflow only manually triggered", list(release["on"]) == ["workflow_dispatch"])

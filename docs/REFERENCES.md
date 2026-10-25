@@ -47,3 +47,4 @@
 | [modelcontextprotocol.io/specification/2026-07-28/server/tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools) | 2026-10-25 | 已核对 tools/call 字段 |
 | [platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools) | 2026-10-25 | 已核对名称、描述与输入模式的作用 |
 | [platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls](https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls) | 2026-10-25 | 已核对多轮调用与工具结果对应规则 |
+| [platform.claude.com/docs/en/api/overview](https://platform.claude.com/docs/en/api/overview) | 2026-10-25 | 已核对认证、工作区与请求头要求 |

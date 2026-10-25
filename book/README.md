@@ -93,3 +93,5 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 第 1–3 章补充双参数直接求解、迭代表及步长稳定区间；第 26 章专注规模和真实分词，数据工程移入训练系统章。参见 [开篇与导航修订记录](../docs/REVIEW-OPENING-AND-NAVIGATION.md)。目录标题、页码和章末答案均可点击；CI 检查实际目的页、双向答案链接与图/图题同页。术语的主要位置在附录 E，全部出现章节另见 [自动索引](../docs/TERM_OCCURRENCES.md)。
 
 MCP 示例采用 2026-07-28，附录 G 的 [带日期断言来源](dated-claims.json) 区分版本、内容核验范围和构建日期；CI 比较官方当前入口并核对请求字段。第 4 章增加三点 ReLU 拟合与输出权重迭代，第 35 章按数据、训练、部署衔接。参见 [协议与 ReLU 修订记录](../docs/REVIEW-PROTOCOL-AND-RELU.md)。
+
+清单现按 90 天或新修订复查，并由每周定时 CI 检查；MCP 代码引导句保持同页，Claude 示例补齐必填请求体和请求头。参见 [本轮记录](../docs/REVIEW-REQUESTS-AND-RECHECK.md) 与 [下一版教学计划](../docs/NEXT_EDITION.md)。

@@ -314,5 +314,13 @@
     "checked_utc": "2026-10-25",
     "method": "Primary source content review: claude-tools; see book/dated-claims.json for the reviewed scope",
     "result": "已核对多轮调用与工具结果对应规则"
+  },
+  {
+    "url": "https://platform.claude.com/docs/en/api/overview",
+    "status": 200,
+    "final_url": "https://platform.claude.com/docs/en/api/overview",
+    "checked_utc": "2026-10-25",
+    "method": "Primary source content review: claude-tools; authentication, workspace selection, content-type and API version headers",
+    "result": "已核对认证、工作区与请求头要求"
   }
 ]
