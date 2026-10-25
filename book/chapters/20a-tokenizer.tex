@@ -30,20 +30,58 @@
 \subsection{子词与 BPE：为什么不一定按汉字切？}
 \phantomsection\label{concept:bpe}
 
-示意短语“今天天气好”如果逐字分割，会成为
-\[
-[\text{今},\text{天},\text{天},\text{气},\text{好}].
-\]
-在一个简化的\textbf{子词/BPE 合并演示}里，
-若“今+天”和“天+气”经常相邻，例如学到这两次合并：
+\textbf{BPE（Byte Pair Encoding，字节对编码）是一种自动造词表的方法}：
+从最小的片段出发，在大量语料里反复找出\textbf{最常紧挨在一起的两个片段}，
+把它们粘成一个新 Token 加入词表，直到词表达到预定大小。
+于是常见的字串变成整块 Token，少见的词仍能拆回小片段来表示。
+
+为什么要这样折中？先比较三种切分单位：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{24mm}p{30mm}p{18mm}X@{}}
+\toprule
+切分单位 & 词表大小 & 序列长度 & 遇到没见过的词\\\midrule
+逐字或逐字节 & 小 & 长 & 总能拆成已知片段\\
+整词 & 极大 & 短 & 未收录就无法表示\\
+子词（BPE） & 由合并次数决定 & 居中 & 退回更小的片段\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\Needspace{8\baselineskip}
+BPE 的工作分两个阶段：
+\begin{enumerate}[leftmargin=2em,itemsep=2pt,topsep=3pt]
+\item \textbf{训练（造词表，只做一次）}：初始词表只含最小片段。
+每轮统计语料中所有相邻片段对的出现次数，把次数最多的一对合并成新 Token，
+记下这条合并规则，并在语料中替换掉这一对；重复到词表够大为止。
+产出是\textbf{词表}和一份\textbf{有先后顺序的合并规则清单}。
+\item \textbf{切分（每来一段新文本都做）}：先把文本拆成最小片段，
+再按学到的先后顺序逐条执行合并规则；这一步不再统计频率。
+\end{enumerate}
+
+用“今天天气好”看切分阶段。
+假设训练语料里“今天”“天气”都很常见，训练依次学到两条规则：
+规则~1：今+天$\to$今天；规则~2：天+气$\to$天气。
+切分时先逐字拆开，再按顺序执行：
 \[
 [\text{今},\text{天},\text{天},\text{气},\text{好}]
-\ \longrightarrow\
+\ \xrightarrow{\ \text{规则 1}\ }\
+[\text{今天},\text{天},\text{气},\text{好}]
+\ \xrightarrow{\ \text{规则 2}\ }\
 [\text{今天},\text{天气},\text{好}].
 \]
-\textbf{这是从汉字出发的教学示意，不是真实 GPT 分词器的逐字节运行记录。}
-真正的 BPE 词表及合并规则因模型不同而不同，
-中文有时会被切成字、子词甚至字节片段。
+五个片段变成三个 Token。
+规则只在文本中真的出现对应相邻对时才生效：
+“明天天气好”里没有“今+天”，规则~1 不起作用，结果是 $[\text{明},\text{天},\text{天气},\text{好}]$。
+下一小节用字母语料手算训练阶段，看规则怎样从计数中产生。
+
+名字里的“字节对”来自它的起源：它原本是一种数据压缩方法，
+反复把最常见的一对字节替换成一个新符号。
+今天的大模型多采用\textbf{字节级 BPE}，初始片段是 UTF-8 字节而非汉字；
+常用汉字在 UTF-8 中占三个字节，一开始就是三个片段。
+常见字会被合并回整字甚至词，少见字可能停留在字节片段。
+\textbf{因此上面从汉字出发的例子只是教学示意}；
+真实的词表和合并规则因模型而异，中文可能被切成字、子词或字节片段。
 
 同一段文字切得更细，会增加序列长度；若要用更大的片段覆盖更多词形，词表就需要收录更多条目。
 Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
@@ -75,6 +113,9 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 
 合并后词表成为 $\{a,b,ab,abab\}$；它\textbf{不会删除初始字符}
 （这样未被合并的其他文本仍可编码）。
+训练产出的规则清单依次是规则~1：\texttt{a+b}；规则~2：\texttt{ab+ab}。
+切分新文本 \texttt{a b a b a b} 时，规则~1 得到 \texttt{ab ab ab}，
+规则~2 从左到右合并得到 \texttt{abab ab}，共两个 Token。
 真实字节级 BPE 还包含初始字节表示、预分词和特殊 Token 等实现细节。
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 执行 \texttt{python3 scripts/bpe\_demo.py} 可以重放两轮计数与合并。

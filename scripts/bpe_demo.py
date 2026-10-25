@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Replay a minimal BPE pair-frequency merge (illustrative character tokens).
 
-Uses two document sequences and never joins across document boundaries.
+Uses two document sequences and never joins across document boundaries,
+then applies the learned merge list, in order, to new text.
 Run: python3 scripts/bpe_demo.py
 """
 from __future__ import annotations
@@ -28,6 +29,12 @@ def merge(tokens: list[str], pair: tuple[str, str]) -> list[str]:
     return output
 
 
+def encode(tokens: list[str], merges: list[tuple[str, str]]) -> list[str]:
+    for pair in merges:
+        tokens = merge(tokens, pair)
+    return tokens
+
+
 def main() -> None:
     expected_pairs = [("a", "b"), ("ab", "ab")]
     for round_no, expected in enumerate(expected_pairs, 1):
@@ -41,6 +48,15 @@ def main() -> None:
 
     assert corpus == [["abab"], ["ab"]]
     assert vocab == {"a", "b", "ab", "abab"}
+
+    encoded = encode(list("ababab"), expected_pairs)
+    print(f"encode a b a b a b -> {encoded}")
+    assert encoded == ["abab", "ab"]
+
+    # Chinese illustration in the text: the same two rules on two sentences.
+    rules = [("今", "天"), ("天", "气")]
+    assert encode(list("今天天气好"), rules) == ["今天", "天气", "好"]
+    assert encode(list("明天天气好"), rules) == ["明", "天", "天气", "好"]
 
 
 if __name__ == "__main__":
