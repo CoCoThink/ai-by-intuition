@@ -1,0 +1,21 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B",
+  "revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+  "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B/resolve/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json",
+  "checked_utc": "2026-10-25",
+  "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+  "text": "春天花开了。",
+  "add_special_tokens": false,
+  "ids": [
+    105303,
+    99232,
+    101467,
+    1773
+  ],
+  "pieces": [
+    "春天",
+    "花",
+    "开了",
+    "。"
+  ]
+}

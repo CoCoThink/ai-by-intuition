@@ -211,6 +211,11 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 注意力的匹配与缓存也要支付相应成本。
 本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算。
 
+\noindent\textbf{这些权重会学成什么？}本章手设的投影只负责把 Q/K/V 的计算展开；
+“开了”对自身权重大，不是语言规律。
+第~\ref*{intro:22c-language-training}~章的训练前后权重表展示主例怎样改变；
+第~\ref*{experiment:attention-selection}~节再用含干扰项的对照解释 Q/K 怎样学会选中所需记录。
+
 \chapterchecktasks{21b-why-attention}{正文基础三题}{
 \item \textbf{定位：}一句话说明 Query、Key、Value 三者在“计算匹配／提供内容”中的分工，并标出分数和读出的形状：$q:1\times2,K:3\times2,V:3\times2$。\chapterinlinehint{分别追踪分数路径与内容加权路径。}
 \item \textbf{手算：}只有两个 Value 为 $(1,0),(0,1)$，权重为 $(0.2,0.8)$，求加权读出。\chapterinlinehint{把每个 Value 乘其权重，再逐分量相加。}

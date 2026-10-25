@@ -100,6 +100,59 @@ def fitting_color_errors(body):
         'Fitting illustration and caption must agree: black noise points, blue-gray curves']
 
 
+def visible_exercise_errors(body, valid_ids=()):
+    """A hidden compatibility label may exist while its printed ID is obsolete."""
+    import re
+    visible=re.sub(r'\\label\{[^}]+\}|\\hyperref\[[^]]+\]', '', body)
+    errors=[]
+    if re.search(r'(?<![A-Za-z0-9])C[1-4]-\d+(?!\d)',visible):
+        errors.append('Visible legacy exercise ID: use the canonical C-xxx or R-xx label')
+    if valid_ids:
+        missing=set(re.findall(r'(?<![A-Za-z0-9])(?:C-\d{3}|R-\d{2})(?!\d)',visible))-set(valid_ids)
+        if missing:errors.append(f'Unknown printed exercise IDs: {sorted(missing)}')
+    return errors
+
+
+def exercise_link_text_errors(body, aliases):
+    errors=[]
+    for match in re.finditer(r'\\hyperref\[exercise:([^]]+)\]\{',body):
+        text,_=argument(body,match.end()-1)
+        printed=re.findall(r'(?<![A-Za-z0-9])(?:C-\d{3}|R-\d{2})(?!\d)',text)
+        if printed and (match[1] not in aliases or printed!=[aliases[match[1]]]):
+            errors.append(f'Exercise link {match[1]} prints the wrong canonical ID: {printed}')
+    return errors
+
+
+def review_ownership_errors(data, navigation):
+    reviews={r['id'] for r in data if r.get('part_review')}
+    errors=[]
+    if len(reviews)!=18 or any(not re.fullmatch(r'R-\d{2}',x) for x in reviews):
+        errors.append('Cumulative reviews require 18 independent R IDs')
+    if reviews & set(re.findall(r'R-\d{2}',navigation)):
+        errors.append('Cumulative review must not also be assigned as last-chapter practice')
+    return errors
+
+
+def route_caption_errors(body):
+    return ['Route micro-map must have an unnumbered semantic caption'] if (
+        r'\captionof{figure}' in body or r'tag=Caption' not in body) else []
+
+
+def chapter_opening_errors(destination_top, page_height, text, parameter_han_count=0):
+    errors=[]
+    # PDF coordinates grow upwards: reserve one-third of the printable body.
+    if destination_top-65 < .32*(page_height-120):
+        errors.append('Chapter starts in the bottom third of the printable page')
+    compact=re.sub(r'\s+','',text)
+    if '参数／是否训练：' in compact:
+        after=compact.split('参数／是否训练：',1)[1]
+        if len(re.findall(r'[\u4e00-\u9fff]',after))<parameter_han_count+30:
+            errors.append('Chapter opener strands its title/compass without substantive text')
+    else:
+        errors.append('Chapter opening is missing its input/output compass')
+    return errors
+
+
 def validate_contract():
     errors=[]
     main,sources=read_sources()
@@ -192,6 +245,21 @@ def validate_contract():
     require({r['legacy_id'] for r in data if r['legacy_id']}==expected_legacy,'All 101 original exercise IDs must survive the bank merge')
     require(len([r for r in data if r.get('part_review')])==18,'Nine parts need two cumulative exercises each')
     legacy={r['legacy_id']:r for r in data if r['legacy_id']}
+    for name,body in combined.items():errors.extend(f'{name}: {e}' for e in visible_exercise_errors(body,[r['id'] for r in data]))
+    aliases={}
+    for row in data:
+        for anchor in [row['id'],row['legacy_id'],*re.findall(r'\\label\{exercise:([^}]+)\}',row['question'])]:
+            if anchor:aliases[anchor]=row['id']
+    for name,body in combined.items():errors.extend(f'{name}: {e}' for e in exercise_link_text_errors(body,aliases))
+    errors.extend(review_ownership_errors(data,(BOOK/'chapter-practice.tex').read_text()))
+    errors.extend(route_caption_errors(combined['part-maps']))
+    guard=re.search(r'\\newcommand\{\\chapterrule\}\{\\Needspace\{([.0-9]+)\\textheight\}',main)
+    require(bool(guard) and float(guard[1])>=1/3,'Chapter opening guard must reserve at least one-third of a page')
+    chart_font=re.search(r'\\renewcommand\{\\scriptsize\}\{\\fontsize\{([.0-9]+)\}',main)
+    require(bool(chart_font) and float(chart_font[1])>=8.5,'Chart annotations must be at least 8.5 pt')
+    require(main.index(r'\input{chapters/23f-foundation-recap}')>main.index(r'\partreviewmemory'),'Closing recap must follow the final part')
+    require('终章：回到那四个 Token' in sources['23f-foundation-recap'],'Missing final bookend')
+    require('一句话本质' not in main,'Remove redundant chapter-compass label')
     require(r'\answerresult{1280}' in legacy['C4-41']['solution'],'C4-41 must include bytes, not 640 elements')
     for fragment in (r'W_{\rm up}=I_2','关闭两次 Norm',r'r=x+aXW_V',r'f=\relu(rW_{\rm up})'):
         require(fragment in legacy['C2-13']['question'],f'C2-13 simplified model contract missing: {fragment}')
@@ -225,7 +293,7 @@ def validate_contract():
             require(r'\hyperref['+target+']' in sources[name],f'{name}: missing lookup destination {target}')
     index_rows=[]
     for name in ('24e-bilingual-glossary','24f-chinese-index'):
-        index_rows.append({tuple(line.split(' & ')[:2]): tuple(re.findall(r'\\hyperref\[([^]]+)\]',line))
+        index_rows.append({tuple(sorted(line.split(' & ')[:2])): tuple(re.findall(r'\\hyperref\[([^]]+)\]',line))
                            for line in sources[name].splitlines() if ' & ' in line and r'\hyperref[' in line})
     require(index_rows[0]==index_rows[1],'English and pinyin lookup destinations differ')
     for term in ('提示注入','困惑度','自回归','蒸馏','剪枝','评测污染','混合精度','BOS/EOS'):
@@ -256,7 +324,7 @@ def validate_contract():
     # No screen-only navigation wording in the printable active edition.
     for name,body in combined.items():
         if re.search(r'点击题目标题|（返回正文）',body):errors.append(f'{name}: replace screen-only navigation with page references')
-    for name in ('context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace'):
+    for name in ('context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace','chinese_tokenizer_demo','icl_policy_demo'):
         spelling=name.replace('_',r'\_')
         require(spelling in sources['29-revision-notes'] or name in sources['29-revision-notes'],f'Missing reproduction entry: {name}')
     return errors
@@ -281,7 +349,24 @@ def self_test():
     assert not fitting_color_errors(fitting)
     assert fitting_color_errors(fitting.replace('黑点','橙点'))
     assert fitting_color_errors(fitting.replace('noisecolor','orange'))
-    print('Book contract regression tests: chapter roles, accent scope, notation, concept counters and figure/caption colors rejected')
+    assert not visible_exercise_errors(r'\label{exercise:C2-21}\hyperref[exercise:C2-21]{C-044}', {'C-044'})
+    for old in ('C2-21','C3-12','C1-17、C1-18','做C2-21题'):
+        assert visible_exercise_errors(r'\hyperref[exercise:valid]{附录 C 的 '+old+'}')
+    assert visible_exercise_errors('C-999', {'C-001'})
+    assert visible_exercise_errors('做C-999题', {'C-001'})
+    assert not exercise_link_text_errors(r'\hyperref[exercise:alias]{C-001}',{'alias':'C-001'})
+    assert exercise_link_text_errors(r'\hyperref[exercise:alias]{C-002}',{'alias':'C-001'})
+    reviews=[{'id':f'R-{i:02d}','part_review':'learning'} for i in range(1,19)]
+    assert not review_ownership_errors(reviews,'C-001')
+    assert review_ownership_errors(reviews,'C-001、R-01')
+    assert not route_caption_errors(r'\tagstructbegin{tag=Caption}')
+    assert route_caption_errors(r'\captionof{figure}{全书路线}')
+    opener='参数／是否训练：'+('这是连续的正文内容'*5)
+    assert not chapter_opening_errors(740,842,opener)
+    assert chapter_opening_errors(180,842,opener)
+    assert chapter_opening_errors(740,842,'参数／是否训练：冻结权重')
+    assert chapter_opening_errors(740,842,'参数／是否训练：'+('参数说明'*10),40)
+    print('Book contract regressions passed: chapter roles, notation, figure colors, printed exercise IDs, review ownership, map captions and chapter openings')
 
 
 def main():

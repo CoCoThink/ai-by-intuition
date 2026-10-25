@@ -161,24 +161,9 @@ python3 scripts/gpt2_demo.py
 \begin{verbatim}
 python3 scripts/gpt2_demo.py --real
 \end{verbatim}
-若权重与分词器已缓存，可加
-\texttt{--local-files-only} 防止网络访问。
-也可使用仓库的
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/docs/GPT2_REAL_RUN.md}{固定环境真实权重实验}
-独立生成报告与热图。
-保存第一层第零个注意力头热图时，可额外指定
-\texttt{--heatmap gpt2-attn.png}；实验使用
-\texttt{eager} 注意力后端以便读出权重。
-
-\textbf{观察四项可验证的数字：}
-脚本打印分词后的\textbf{真实 Token 数 $T$}；
-logits 的完整形状应为 $1\times T\times50{,}257$，
-最后一个位置的分数向量宽 $50{,}257$；
-在每个正温度下，全词表 Softmax 的概率和应接近 $\boxed{1}$；
-请求热图后，第一层首个头在对角线上方
-（未来 Key 位置）的权重最大绝对值应接近 $\boxed{0}$。
-脚本会自动检查这些不变量，同时打印 Top-5 候选概率。
-对五万余个概率求和时使用 float64，减少单精度舍入造成的验证误差。
+已有缓存可加 \texttt{--local-files-only}；\texttt{--heatmap gpt2-attn.png} 导出首层首头图。
+脚本核对四项：真实 Token 数、$1\times T\times50{,}257$ logits、各温度概率和、未来位置权重为零。
+完整环境、后端与运行记录集中见附录 G。
 
 \begin{example}
 \noindent\emph{一份真实 GPT-2 small 的复算记录}\par
@@ -219,7 +204,7 @@ GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
 \phantomsection\label{concept:evaluation-contamination}
 预训练先把网页、书籍、代码与问答整理成\textbf{来源可追溯的 Token 样本}。
 
-\begin{enumerate}[itemsep=2pt]
+\begin{enumerate}[itemsep=0pt,parsep=0pt,topsep=2pt]
 \item \textbf{来源与授权：}记录许可和使用范围，剔除敏感信息与禁止使用的数据；
 \item \textbf{清洗：}去掉破损编码、导航和广告模板，保留正文与必要上下文；
 \item \textbf{去重：}哈希识别完全重复，分片相似度发现近重复候选；
@@ -228,11 +213,7 @@ GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
 \end{enumerate}
 
 \localfixture{从“春天花开了”做一次真实可复算的去重}
-取四条小文本：A“春天花开了”、B“春天 花 开了。”、
-C“春天的花开了”、D“春天花谢了”。
-先做全半角规范化，并在本例中去掉空格和标点。
-A 与 B 的规范化正文相同，SHA-256 哈希也相同，保留一份即可。
-图中只显示哈希前八位便于阅读；脚本比较完整哈希。
+图中四条文本先做全半角规范化，并去掉空格和标点。A、B 的正文与完整 SHA-256 相同，保留一份；图中显示哈希前八位。
 
 \input{figures/corpus-dedup}
 

@@ -5,10 +5,10 @@
  font=\small,minimum height=12mm,text width=58mm}]
 \node[n] (a) at (0,0) {A：春天花开了\\B：春天 花 开了。};
 \node[n,fill=paper] (ab) at (78,0) {规范化后完全相同\\哈希 \texttt{c0ac0b65}，保留一份};
-\node[n] (c) at (0,-21) {C：春天的花开了\\哈希 \texttt{db2d9197}};
-\node[n,fill=linegray!25] (near) at (78,-21) {$J(A,C)=3/6=0.5$\\近重复候选 $\to$ 内容复核};
-\node[n] (d) at (0,-42) {D：春天花谢了\\哈希 \texttt{b3dc2f3b}};
-\node[n,fill=linegray!15] (keep) at (78,-42) {$J(A,D)=2/6\approx0.333$\\含义相反，保留不同事实};
+\node[n] (c) at (0,-16) {C：春天的花开了\\哈希 \texttt{db2d9197}};
+\node[n,fill=linegray!25] (near) at (78,-16) {$J(A,C)=3/6=0.5$\\近重复候选 $\to$ 内容复核};
+\node[n] (d) at (0,-32) {D：春天花谢了\\哈希 \texttt{b3dc2f3b}};
+\node[n,fill=linegray!15] (keep) at (78,-32) {$J(A,D)=2/6\approx0.333$\\含义相反，保留不同事实};
 \draw[->,thick,flowcolor] (a)--(ab);
 \draw[->,thick,flowcolor] (c)--(near);
 \draw[->,thick,flowcolor] (d)--(keep);

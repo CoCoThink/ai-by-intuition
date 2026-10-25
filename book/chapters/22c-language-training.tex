@@ -289,6 +289,23 @@ $20$ & $0.483173$ & $[4,5,3]$ & 三位置在本样本均预测正确\\
 完整表格，并可运行 \texttt{scripts/teaching\_trace.py} 从参考参数重新生成。
 
 
+\subsubsection*{训练前后，Attention 究竟怎样变化？}
+下面两列都取同一个三位置输入；行是 Query，列是 Key，未来位置仍被遮蔽。
+使用三维主例的全部参数同步 SGD，学习率 $0.04$、共 $20$ 步：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{23mm}XX@{}}\toprule
+Query & 第 0 步：对春天／花／开了 & 第 20 步：对春天／花／开了\\\midrule
+春天 & $(1,0,0)$ & $(1,0,0)$\\
+花 & $(0.124387,0.875613,0)$ & $(0.074939,0.925061,0)$\\
+开了 & $(0.167972,0.241768,0.590260)$ & $(0.118790,0.325602,0.555608)$\\\bottomrule
+\end{tabularx}
+\end{center}
+“开了”读“花”的权重由 $0.241768$ 增至 $0.325602$。
+这展示梯度确实经过 Q/K；单凭一张权重表还不足以解释语言关系。
+主例服务于计算图核对，选择性是否必要由下一节的干扰项消融另行回答。
+运行 \texttt{python3 scripts/teaching\_trace.py --attention} 可复核这两张矩阵。
+
 \subsection{怎样独立检查数值不是手工凑的？}
 
 在仓库根目录运行：

@@ -42,3 +42,13 @@
 ## 正式发布的可复核证据
 
 [主分支全量 CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 和 [Release v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 对应提交 `55b55e4308028763a0b1952f1a02642e4d9829d8`。官方 PDF 文件 SHA-256：`211a1144770e9f712f2714b4652d30ee7643c5f8390fbb78cbbd39965ff95520`。完整机器审计随 Release 归档；若要升级 TeX Live 镜像或系统包，仍应比较新旧审计环境再决定是否锁定更底层的不可变镜像。
+
+### 本轮新增的复算与结构检查
+
+- `scripts/check_book_contract.py --self-test` 覆盖“旧锚点有效但可见题号过时”、规范题号与目标不符、R 题混入章末导航、部分小地图误用编号图注、章首位于页底及只剩定位框等回归。
+- `scripts/icl_policy_demo.py` 用 NumPy 核对前缀匹配与复制，以及固定采样动作、固定优势下的策略梯度；该简化不替代完整 GRPO。
+- `scripts/chinese_tokenizer_demo.py --real` 运行固定完整修订的中文分词器，检查文件 SHA-256、ID、逐项解码与正文数值；依赖 `tokenizers==0.22.1`，首次下载约 7 MB 分词器文件。
+- `scripts/generate_reference_assets.py --check` 比对参考链接网页和 TikZ 二维码，依赖 `qrcode==8.2`；二维码目标是仓库 `docs/REFERENCES.md`。
+- `scripts/teaching_trace.py --attention` 打印第 0、20 步的注意力矩阵；`check_teaching_claims.py` 将真实训练结果与正文权重表比较。
+
+沿用现有 Python 环境，缺包用 pip 安装；本轮没有另装 Python 或更换 TeX 引擎。完整 PDF 仍需通过 MathML 关联、PDF/UA-2、最终引用、章节导航及分页密度检查。

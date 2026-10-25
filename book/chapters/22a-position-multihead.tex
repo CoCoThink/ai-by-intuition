@@ -13,38 +13,30 @@
 \setlength{\belowdisplayshortskip}{2pt}
 \subsection{交换两个 Token：统一三维参数为什么需要位置？}
 
-前面已经确定唯一三维 Embedding。为了比较顺序，
-这里只拿两个已出现的 Token“春天、花”：
+取“春天、花”的两行 Embedding，再交换行得到 $X' $：
 \[
 X=\begin{bmatrix}1.2&0&-0.2\\-0.3&1.1&0.2\end{bmatrix}
 \in\R^{2\times3},\qquad
 X'=\begin{bmatrix}-0.3&1.1&0.2\\1.2&0&-0.2\end{bmatrix}.
 \]
-保持与统一教学参考脚本相同的 $W_Q,W_K,W_V$，先做\textbf{无位置、
-无因果 Mask} 的一次双向 Attention。这里只隔离位置对比，
-暂不执行 LayerNorm 与残差：
+固定主例的 $W_Q,W_K,W_V$，暂不加位置、因果 Mask、Norm 与残差：
 \[
 O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
 \approx\begin{bmatrix}
 0.6693&0.4934&0.0066\\0.2019&0.6886&0.1683
 \end{bmatrix}.
 \]
-交换输入两行后，$O(X')$ 的第一行就是上式第二行，第二行就是上式第一行。
-这叫行置换的\textbf{等变性}：输出随输入换行，却没有额外标记“原来在哪个位置”。
+交换输入两行，输出也只换行：这就是行置换的\textbf{等变性}，没有额外的顺序信号。
 
 \subsection{加入位置绑定的向量，再观察交换后的区别}
-这次位置消融对照使用\textbf{同一组给定的位置数值}；
-在实际训练中，本书三维主例的位置向量表 $P_{\rm pos}$ 仍是\textbf{可训练参数}。
-也可采用正余弦位置编码。
-
-位置向量取自贯通主实验的\textbf{前两行}，不因交换 Token 而移动：
+取主例位置表的前两行，绑定位置而不随 Token 交换；该表在训练中可学习：
 \[
 {P_{\rm pos}}_{1:2}=\begin{bmatrix}
 0.10&0.05&-0.10\\0&-0.05&0.12
 \end{bmatrix},\quad
 X_+=X+{P_{\rm pos}}_{1:2},\quad X'_+=X'+{P_{\rm pos}}_{1:2}.
 \]
-仍用\textbf{相同的三组可训练投影}，只是输入加了位置信息：
+同一组 Q/K/V 投影得到：
 \begin{equation}
 O(X_+)\approx\begin{bmatrix}
 0.7680&0.5138&-0.0265\\0.2324&0.6726&0.2092
@@ -54,42 +46,23 @@ O(X'_+)\approx\begin{bmatrix}
 \end{bmatrix}.
 \label{eq:pos-swap-d3}
 \end{equation}
-注意交换后的第一行\textbf{并不}等于交换前的第二行：
-例如第一坐标分别为 $0.2812$ 和 $0.2324$。
-位置向量提供了独立于内容的位置信号。
-两种顺序下的输出也没有退化成两行完全相同。
-
-\textbf{位置消融条件：}这里暂不加因果 Mask、LayerNorm 和残差；
-完整自回归 Block 则包含这些步骤。
+第一坐标 $0.2812\ne0.2324$：输出不再只是换行。位置表提供了独立于内容的顺序信号。
+完整自回归 Block 还会接回因果 Mask、Norm 与残差。
 
 \subsection{\texorpdfstring{为什么点积要除以 $\sqrt{d_k}$？算一次波动尺度}{为什么点积要除以 Key 维度平方根？}}
 \phantomsection\label{concept:scaled-dot-product}
 
-\noindent\emph{数学随手查：}独立零均值随机量相加时，方差相加，标准差取方差的平方根。
-求和与平方根可回看\hyperref[app:math-tools]{数学速查}。
-
-
-假设两个 Key/Query 向量的每一维都是\textbf{独立、等概率取 $\pm1$}
-的随机变量，且维度之间也独立。
-每个分量乘积平均为 $0$、方差为 $1$。
-$d_k$ 个分量求和，点积的方差为 $d_k$，
-标准差为 $\sqrt{d_k}$；当 $d_k=64$ 时约为 $8$。
-
-比如两个候选的未缩放分数恰好是 $(8,0)$，
-Softmax 第一项为
-$\frac{e^8}{e^8+1}\approx0.9997$，
-另一项几乎为零。除以 $\sqrt{64}=8$ 后，
-分数变成 $(1,0)$，第一项变成
-$\frac e{e+1}\approx0.731$。
-缩放能防止高维点积的典型量级随着维度扩大而直接变得很尖锐；
-这不是保证所有 Attention 都不会饱和的定理。
+Q/K 各维独立、等概率取 $\pm1$ 时，点积均值为 $0$、方差为 $d_k$，
+标准差为 $\sqrt{d_k}$（见\hyperref[app:math-tools]{数学速查}）。
+分数 $(8,0)$ 的第一项概率为 $e^8/(e^8+1)\approx0.9997$；
+当 $d_k=64$，除以 $8$ 后分数变成 $(1,0)$，概率为 $e/(e+1)\approx0.731$。
+缩放控制典型量级，Softmax 仍可饱和。
 
 \subsection{两个头各算二维，再拼接：数字完整走一遍}
 \phantomsection\label{concept:multihead}
 
 \localfixture{四维双头}
-取 $d_{\rm model}=4$，每头宽度为 $2$，观察最后位置读取两个 Key。
-给定两头的最后位置 Query 为
+令模型宽度 $4$、每头宽度 $2$，最后位置的 Query 为
 $q^{(1)}=(0,1)$、$q^{(2)}=(1,0)$，两头的 Key 都为 $I_2$，
 Value 分别为
 \[
@@ -101,15 +74,13 @@ V^{(2)}=\begin{bmatrix}0&1\\1&0\end{bmatrix}.
 \[
 \begin{aligned}
 s^{(1)}&=(0,1)/\sqrt2,&
-a^{(1)}&\approx(0.330,0.670),\\
-o^{(1)}&=a^{(1)}V^{(1)}=(0.660,1.340),\\
+a^{(1)}&\approx(0.330,0.670),&
+o^{(1)}&=(0.660,1.340),\\
 s^{(2)}&=(1,0)/\sqrt2,&
-a^{(2)}&\approx(0.670,0.330),\\
-o^{(2)}&=a^{(2)}V^{(2)}=(0.330,0.670).
+a^{(2)}&\approx(0.670,0.330),&
+o^{(2)}&=(0.330,0.670).
 \end{aligned}
 \]
-若省略缩放，第一头权重会变成 $(0.269,0.731)$；
-本例统一使用上面的缩放结果。
 沿\textbf{特征列}拼接，得到
 $O_{\rm cat}=(0.660,1.340,0.330,0.670):1\times4$。
 再取演示投影
@@ -121,7 +92,7 @@ W_O=\begin{bmatrix}1&0&1&0\\0&1&0&1\end{bmatrix}^{\top},
 这里用 $4\times2$ 演示投影；完整四维残差 Block 的输出投影则应为 $4\times4$。
 
 \chapterchecktasks{22a-position-multihead}{正文基础三题}{
-\item \textbf{预测：}句子里同一个 Token 在不同位置出现，只有内容 Embedding 而没有任何位置机制时，网络失去什么信息？为什么需要位置表示？\chapterinlinehint{交换两个相同 Token 的位置，检查输入有无变化。}
+\item \textbf{预测：}同一 Token 出现在两处，只有内容 Embedding 时缺少什么信息？\chapterinlinehint{交换两个相同 Token 的位置，检查输入有无变化。}
 \item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{先累加拼接宽度，再与输出投影核对内侧维度。}
 \item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{比较尺度变换与区间裁剪的定义。}
 }

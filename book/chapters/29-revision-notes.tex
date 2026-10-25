@@ -5,47 +5,36 @@
 
 \subsubsection*{从可复算的例子开始}
 
-\begin{itemize}[itemsep=1pt,parsep=0pt,topsep=3pt]
-\item \textbf{三维 Transformer：}
-运行 \texttt{python3 scripts/teaching\_reference.py --json}，
-检查三个位置的概率、损失和一次联合参数更新。
-\item \textbf{连续训练与自动求导：}以下命令各自运行：
-\begin{verbatim}
-python3 scripts/teaching_trace.py
-python3 scripts/pytorch_starter.py
-\end{verbatim}
-前者打印第 0--20 步的损失与贪心预测（需要 NumPy）；后者用 PyTorch 自动求导复核同一模型的梯度和更新（需要 NumPy、PyTorch）。
-\item \textbf{预训练数据去重：}
-运行 \texttt{python3 scripts/pretraining\_data\_demo.py}，
-核对小文本的规范化、SHA-256 哈希及二元组 Jaccard 相似度；只用 Python 标准库。
-\item \textbf{测试时计算：}
-运行 \texttt{python3 scripts/test\_time\_compute\_demo.py}，
-枚举核对 Best-of-$n$ 的成功率、候选相关性、错误核验器与 $90\%$ 预算门槛；只用 Python 标准库。
-\item \textbf{联想记忆：}
-运行 \texttt{python3 scripts/memory\_demo.py}，
-检查外积写入、串扰、Delta 残差与交替重访。
-\item \textbf{Tokenizer、检索与工具：}三项实验各自运行：
-\begin{verbatim}
-python3 scripts/bpe_demo.py
-python3 scripts/rag_demo.py
-python3 scripts/agent_loop.py
-\end{verbatim}
-\item \textbf{现代架构与视觉：}以下命令各自运行：
-\begin{verbatim}
-python3 scripts/config_table.py
-python3 scripts/architecture_demo.py
-python3 scripts/vision_bridge_demo.py
-\end{verbatim}
-架构缓存与视觉桥接数据是独立教学设定。
-\item \textbf{综合练习数值：}
-运行 \texttt{python3 scripts/review\_exercises\_demo.py}，
-核对 C-021、C-028、C-084、C-095、C-031、C-096 的中间计算。
-\item \texttt{python3 scripts/context\_contrast\_demo.py}：相同 Token、相同位置、不同前文的消融训练，比较逐位置损失下界与上下文读取。
-\item \texttt{python3 scripts/attention\_selection\_demo.py}：相同均值、不同记录绑定的四例训练，核对 Q/K 选择性、恢复均匀后的退化与梯度。
-\item \texttt{python3 scripts/mini\_transformer\_demo.py}：二维分数参数的完整前向与反向，有限差分核对全部 $24$ 个导数。
-\item \texttt{python3 scripts/cache\_budget\_demo.py}：从固定配置计算每 Token 与 32K 的 KV 字节数，同时核对缓存练习答案。
-\end{itemize}
-
+在仓库根目录运行 \texttt{python3 scripts/脚本名}；表内省略共同的目录前缀。
+“标准库”表示无需额外 Python 包。依赖按需用 pip 安装。
+\begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.22}
+\tagpdfsetup{table/header-rows={1}}
+\begin{longtable}{@{}p{14mm}>{\raggedright\arraybackslash}p{58mm}>{\raggedright\arraybackslash}p{19mm}>{\raggedright\arraybackslash}p{33mm}>{\raggedright\arraybackslash}p{27mm}@{}}
+\toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
+\endfirsthead
+\toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
+\endhead
+\bottomrule\endfoot
+14、23--24 & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
+24 & \path{teaching_trace.py} & NumPy & 0--20 步；--attention 看权重 & 末步 0.483173\\
+24 & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
+26 & \path{pretraining_data_demo.py} & 标准库 & 规范化、哈希、近重复 & 去重断言通过\\
+11 & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
+11 & \path{chinese_tokenizer_demo.py} \texttt{--real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\
+24.10 & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 log 2\\
+24.10 & \path{attention_selection_demo.py} & NumPy & Q/K 选择与均匀退化 & 损失 0.000502\\
+29--30 & \path{icl_policy_demo.py} & NumPy & 前缀读取、优势梯度 & 0.982014／0.367456\\
+31 & \path{test_time_compute_demo.py} & 标准库 & 多采样与错误验证器 & 成功率断言通过\\
+32 & \path{rag_demo.py} & 标准库 & 点积排序与环比 & Q3、Q1；10\%\\
+33--34 & \path{agent_loop.py} & 标准库 & 工具循环与失败处理 & 受控任务轨迹\\
+28、36 & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
+36 & \path{config_table.py} & 标准库 & 固定公开配置 & 24 层、2 KV 头\\
+36 & \path{architecture_demo.py} & 标准库 & 位置与头分组 & 架构断言通过\\
+36 & \path{cache_budget_demo.py} & 标准库 & 真实 KV 预算与练习 & 12,288 字节/Token\\
+38--41 & \path{memory_demo.py} & 标准库 & 外积与 Delta 残差 & 记忆断言通过\\
+附录 B & \path{mini_transformer_demo.py} & NumPy & 分数参数前向与反传 & 24 个导数一致\\
+附录 C & \path{review_exercises_demo.py} & 标准库 & 综合练习中间数值 & 习题断言通过\\
+\end{longtable}\endgroup
 \subsubsection*{真实 GPT-2：运行方式与实测来源}
 
 \texttt{python3 scripts/gpt2\_demo.py}
@@ -55,11 +44,9 @@ python3 scripts/vision_bridge_demo.py
 \texttt{--local-files-only} 仅读本地缓存，安装 Matplotlib 后可用
 \texttt{--heatmap} 保存注意力图。复现时保留输入、权重修订和环境信息。
 
-正文中的 GPT-2 small 实测示例来自
-\href{https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969}{GitHub Actions 运行记录 \#39897932969}，
-对应源码短 SHA \texttt{a20a0c15}。
-Token ID、Top-5 及首层注意力热图以该记录的环境、Prompt 与权重修订为准；
-本书 99 参数网络另属教学设定。
+正文 GPT-2 small 实测来自
+\href{https://github.com/CoCoThink/ai-by-intuition/actions/runs/39897932969}{Actions 记录 \#39897932969}，源码短 SHA \texttt{a20a0c15}。
+输入、权重修订和环境共同确定以下结果；备份见仓库 \texttt{docs/GPT2\_REAL\_RUN.md}。
 
 \textbf{2026-10-23 已存档实测（GPT-2 small，$T=1.0$）：}
 Prompt：\texttt{The capital of France is}。
@@ -80,23 +67,18 @@ ID & 解码文本 & 概率\\\midrule
 \bottomrule
 \end{tabularx}
 \end{center}
-这些是固定权重与输入下的\textbf{下一 Token 候选}，不是模型能力基准。
-证据备份在仓库的 \texttt{docs/} 目录，
-文件名为 \texttt{GPT2\_REAL\_RUN.md}；
-工作流编号 \#39897932969 仅作补充溯源，避免依赖可能过期的工件下载。
+这些是下一 Token 候选概率，单个 Prompt 的排序不作为能力基准。
 
 \subsubsection*{版本与勘误}
 \textbf{来源版本：}模型配置和报告的 UTC 核验日期见附录 F；复算采用所列固定提交，后续版本另作对照。\par
-当前教材编辑稿为 \textbf{v0.2.0-draft（未发布）}。\textbf{v0.1.0} 是此前已发布的独立版本。\bookbuildsource
+\bookbuildsource
 
 教学初始矩阵为本书的独立设定，应配合相应版本的公式与脚本复算。
 反馈问题时请记录章节、输入与期待结果。
 
 \noindent\textbf{仓库与纸质版入口：}\par\nobreak
 \begingroup\small\setlength{\parskip}{2pt}
-\noindent 仓库：\url{https://github.com/CoCoThink/ai-by-intuition}\par
-\noindent 发布版本：\url{https://github.com/CoCoThink/ai-by-intuition/releases}\par
-\noindent 反馈：\url{https://github.com/CoCoThink/ai-by-intuition/issues}\par
-\noindent 勘误：\texttt{docs/ERRATA.md}；构建与复现：\texttt{docs/BUILD-REPRODUCIBILITY.md}。\par
-\noindent 脚本入口：从仓库进入 \texttt{scripts/}；复现 PDF 时切换到版权页提交。
+\noindent\url{https://github.com/CoCoThink/ai-by-intuition}\par
+\noindent 发布与反馈见仓库 \texttt{Releases/Issues}；勘误与构建说明见 \texttt{docs/}。\par
+\noindent 脚本在 \texttt{scripts/}；复现 PDF 时切换到版权页提交。
 \endgroup

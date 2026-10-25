@@ -6,9 +6,7 @@
 \modelpipelinefocus{3}{高维记忆容量}
 
 
-高维空间能容纳许多彼此区分的方向。
-在随机 Key 近似独立的理想联想记忆模型中，维度增加时，干扰会如何变化？
-下面用典型尺度估算可区分的关联数量。
+在随机 Key 近似独立的理想模型中，提高维度能减小交叉点积。下面估算这一变化怎样影响干扰和容量。
 
 \subsection{随机高维向量往往近似正交}
 如果两个独立随机单位向量在 $d_k$ 维空间中，那么它们点积的典型尺度为：
@@ -17,40 +15,24 @@
 \end{equation}
 这里的 $\approx$ 表示随机情况下的\textbf{典型尺度}。
 
-当 $d_k=64$，典型干扰相似度量级为：
-\[
-\frac{1}{\sqrt{64}}=\frac18=0.125.
-\]
-空间维度越高，随机无关 Key 往往越接近垂直，单条记忆造成的干扰通常越小。
+例如 $d_k=64$ 时为 $1/8=0.125$；维度越高，随机无关 Key 越接近垂直。
 
 \subsection{为什么有 \texorpdfstring{$\sqrt{T_k}$}{记忆条数的平方根}？}
-想象随机向左或向右走，每一步长度为 $1$。走 $100$ 步，并不是必然离原点 $100$ 步；方向会互相抵消，最终位移的典型大小是 $\sqrt{100}=10$。
-
-如果各条干扰的方向、符号足够随机且近似独立，那么 $T_k$ 个小干扰的总波动规模通常不是 $T_k$ 倍，而是 $\sqrt{T_k}$ 倍。
-
-将两条结果合并：
+随机向左或向右各走一步，$100$ 步的典型位移是 $\sqrt{100}=10$。
+同样，独立随机干扰的波动按 $\sqrt{T_k}$ 累积；结合单条匹配的尺度：
 \begin{equation}
-\boxed{\frac{\text{干扰}}{\text{信号}}\ \approx\ \sqrt{T_k}\times\frac{1}{\sqrt{d_k}}
-=\sqrt{\frac{T_k}{d_k}}.}
-\end{equation}
-当干扰与信号处于同一量级时：
-\begin{equation}
-\sqrt{\frac{T_k}{d_k}}\approx1\quad\Rightarrow\quad T_k\approx d_k.
+\frac{\text{干扰}}{\text{信号}}\approx\sqrt{\frac{T_k}{d_k}},\qquad
+\sqrt{\frac{T_k}{d_k}}\approx1\ \Rightarrow\ T_k\approx d_k.
 \end{equation}
 因此在这个\textbf{随机 Key/Value、简单外积求和}的模型里，容量的标度大约是维度 $d_k$。
 
 \subsection{平方激活为何带来平方量级？}
 不相关 Key 的相似度量级从 $1/\sqrt{d_k}$ 平方成 $1/d_k$。
 $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
-若 Value 全同号，干扰可随 $T_k$ 累加。满足抵消假设时：
-\[
-\frac{\text{干扰}}{\text{信号}}\ \approx\ \frac{\sqrt{T_k}}{d_k}.
-\]
-设这个量级达到 $1$：
+若 Value 全同号，干扰会随 $T_k$ 累加。满足随机抵消假设时：
 \begin{equation}
-\frac{\sqrt{T_k}}{d_k}\approx1
-\quad\Rightarrow\quad
-\boxed{T_k\approx d_k^2.}
+\frac{\text{干扰}}{\text{信号}}\approx\frac{\sqrt{T_k}}{d_k},\qquad
+\frac{\sqrt{T_k}}{d_k}\approx1\ \Rightarrow\ T_k\approx d_k^2.
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $T_k\approx d_k^p$ 这一类标度。
 

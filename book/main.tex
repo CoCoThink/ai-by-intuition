@@ -33,9 +33,12 @@
 \usepackage{xurl}
 \usepackage{hyperref}
 \urlstyle{same}
-\newcommand{\sourcecheck}[2]{\par\noindent{\scriptsize\color{muted}链接检查：#1（UTC）；#2。}\par}
+\newcommand{\sourcecheck}[2]{\ifstrequal{#2}{链接可访问}{}{\par\noindent{\footnotesize\color{muted}#1（UTC）：#2。}\par}}
 \newcommand{\sourceurl}[1]{\par\noindent{\footnotesize\raggedright\url{#1}\par}}
 \usepackage{needspace}
+% Readable annotation floor: Chinese chart labels must not fall below 9 pt.
+\renewcommand{\scriptsize}{\fontsize{9}{11}\selectfont}
+\newcommand{\sourceqr}{\input{figures/reference-qr}}
 \usepackage{float}
 \usepackage{verbatim}
 \usepackage{fancyvrb}
@@ -79,8 +82,8 @@
 % Preserve the same numbered part/chapter/appendix hierarchy in reader bookmarks.
 \hypersetup{unicode=true,bookmarksnumbered=true,bookmarksdepth=2,pdfdisplaydoctitle=true,colorlinks=true,linkcolor=blue,urlcolor=blue,pdftitle={AI by Intuition：从函数到 Transformer，再到助手与 Agent},pdfauthor={AI by Intuition},pdfsubject={用可手算的例子理解表示、学习、上下文和模型生成}}
 \setlength{\parindent}{2em}
-\setlength{\parskip}{4pt}
-\linespread{1.23}
+\setlength{\parskip}{3.5pt}
+\linespread{1.18}
 \setlist[itemize]{leftmargin=2.0em,itemsep=2pt,topsep=4pt}
 \setlist[enumerate]{leftmargin=2.0em,itemsep=2pt,topsep=4pt}
 \numberwithin{equation}{section}
@@ -123,7 +126,7 @@
 % In tagged TeX Live 2026 the native heading template owns the visual
 % layout: ctexset alone does not change section display there.
 \EditInstance{heading}{section}{
-  heading-decls=\sffamily\LARGE\bfseries\color{ink},
+  heading-decls=\sffamily\huge\bfseries\color{ink},
   number-format=\textcolor{blue}{第\theheading 章},
   before-vspace=25pt,
   after-vspace=9pt
@@ -140,7 +143,8 @@
 \renewcommand{\thepart}{第\chinese{part}部分}
 
 \newtcolorbox{idea}[1][]{enhanced,breakable,colback=lavender,colframe=lavender,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ◆} 直觉},#1}
-\newtcolorbox{example}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▸} 动手算},#1}
+\newtcolorbox{example}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▸} 动手算},#1}
+\newtcolorbox{casebox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.5pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={案例},#1}
 \newtcolorbox{conclusion}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,before skip=6pt,after skip=4pt,fontupper=\small,borderline west={2.5pt}{0pt}{muted},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ■} 小结},#1}
 \newtcolorbox{warningbox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={! 易错},borderline west={2pt}{0pt}{muted},#1}
 \newtcolorbox{boundarybox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▣} 边界},borderline west={1.6pt}{0pt}{muted},#1}
@@ -168,7 +172,7 @@
 \begin{tcolorbox}[enhanced,breakable,colback=paper,colframe=linegray,
   boxrule=.5pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm]
 {\sffamily\bfseries\color{blue}本章先问}\enspace #1\par
-{\sffamily\bfseries 一句话本质}\enspace #2\par
+#2\par
 {\sffamily\footnotesize\color{muted}输入与输出：}\enspace #3\par
 {\sffamily\footnotesize\color{muted}参数／是否训练：}\enspace #4
 \end{tcolorbox}\par\smallskip
@@ -181,7 +185,7 @@
 \input{chapter-practice}
 \newcommand{\chapterpracticejump}[1]{%
  \ifcsname chapterpractice@#1\endcsname
- \par\nobreak\smallskip\noindent{\footnotesize\color{blue}附录 C · 本章对应题号：\csname chapterpractice@#1\endcsname}\par\nobreak
+ \par\nobreak\smallskip\noindent{\footnotesize\color{blue}附录 C · 本章对应题号：\csname chapterpractice@#1\endcsname}\nobreak\enspace
  \fi}
 % Editorial clues stay in source; reader hints and results are in Appendix D.
 \newcommand{\chapterinlinehint}[1]{}
@@ -203,9 +207,9 @@
 \begin{enumerate}[label=\arabic*.,leftmargin=2em,itemsep=2pt,topsep=0pt,parsep=0pt,endpenalty=10000]
 #3
 \end{enumerate}
+\end{tcolorbox}\par\nobreak\smallskip
 \chapterpracticejump{#1}
-{\footnotesize\color{ink}\hyperref[answer:#1]{提示与解答：附录~\ref*{app:chapter-checks}，第~\pageref*{answer:#1}~页}。}
-\end{tcolorbox}\par\smallskip
+{\footnotesize\color{ink}\hyperref[answer:#1]{提示与解答：附录~\ref*{app:chapter-checks}，第~\pageref*{answer:#1}~页}。}\par\smallskip
 }
 % Keep editorial recaps and clues in source; reader help is in Appendix D.2.
 % Detailed worked answers remain available via the individual Appendix D.2 link.
@@ -228,7 +232,8 @@
 % Plain core formulas: reserve visible boxing for Appendix A's mathematical quick reference.
 \let\bookboxed\boxed
 \renewcommand{\boxed}[1]{#1}
-\newcommand{\chapterrule}{\Needspace{13\baselineskip}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
+% Include the enlarged title and divider in the one-third opening allowance.
+\newcommand{\chapterrule}{\Needspace{.40\textheight}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
 \begin{document}
 \thispagestyle{empty}
 \vspace*{7mm}
@@ -288,6 +293,8 @@
 \patchcmd{\l@part}{2.25em}{1.4em}{}{\PackageError{book}{TOC part spacing patch failed}{Check the tagged article TOC implementation.}}
 \makeatother
 \tableofcontents
+\par\smallskip\noindent{\footnotesize {\symboliconfont ★}选读入口：原论文对照（\ref*{elective:original-paper} 节，第~\pageref*{elective:original-paper}~页）；
+现代架构扩展（\ref*{elective:architecture-extras} 节起，第~\pageref*{elective:architecture-extras}~页）。}
 \clearpage
 \endgroup
 
@@ -302,7 +309,6 @@
 \partmaplearning
 \clearpage
 \input{chapters/00-guide}
-\clearpage
 \markboth{学习是什么：从规则到参数更新}{}
 \input{chapters/00-functions}
 \input{chapters/16-loss-gradient}
@@ -392,9 +398,6 @@
 \input{chapters/22d-modern-transformers}
 \input{chapters/23e-tech-judgement}
 \partreviewarchitecture
-% Keep the unnumbered end-of-core recap on one dedicated page.
-\clearpage
-\input{chapters/23f-foundation-recap}
 
 \clearpage
 \part{联想记忆与线性状态}\label{part:memory}\markboth{联想记忆与线性状态}{}
@@ -412,6 +415,9 @@
 \input{chapters/14-summary}
 \input{chapters/13-capacity}
 \partreviewmemory
+
+\clearpage
+\input{chapters/23f-foundation-recap}
 
 
 
@@ -438,6 +444,7 @@
 \input{chapters/00b-math-tools}
 \input{chapters/00c-symbols}
 \input{chapters/30-optimizer-appendix}
+\input{chapters/00i-data-map}
 
 \renewcommand{\boxed}[1]{#1}
 \clearpage
@@ -465,7 +472,7 @@
 \section{来源与延伸阅读}
 \input{chapters/26-sources}
 
-\clearpage
+\Needspace{.36\textheight}
 \section{版本、勘误与复现说明}
 \input{chapters/29-revision-notes}
 

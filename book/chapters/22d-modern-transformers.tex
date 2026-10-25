@@ -35,8 +35,7 @@ $m\theta$ 和 $n\theta$，则
 \end{equation}
 \textbf{右边出现了相对位置差 $n-m$。}
 这让注意力分数有机会利用两位置之间的距离和方向。
-高维 RoPE 对多个特征对使用不同角频率；
-长距离外推效果仍要用实际序列长度和检索任务检验。
+高维 RoPE 对多个特征对使用不同角频率，把多种距离尺度一起带入匹配。
 
 \begin{example}
 \noindent\emph{两个位置的一次旋转}\par
@@ -73,7 +72,7 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 
 
 \textbf{Pre-Norm 与 Post-Norm} 的差别是归一化位于子层之前还是之后。
-它改变残差与梯度路径；比较时应观察训练稳定性、收敛和任务质量。
+它改变残差与梯度路径，训练中的梯度因而经过不同的归一化位置。
 
 \subsection{必读 3：GQA 怎样减少 KV 缓存？}
 \phantomsection\label{concept:mla}
@@ -240,6 +239,7 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 \subsection*{提高选读：FFN、稀疏与线性状态的变体}
 \noindent\textcolor{muted}{以下按需选读；首次阅读可直接跳到章末自测。}\par
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
+\label{elective:architecture-extras}
 \phantomsection\label{concept:router}
 \phantomsection\label{concept:swiglu}
 \phantomsection\label{concept:moe}
@@ -295,7 +295,6 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$。
 \begin{warningbox}
 MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 每个 Token 只激活部分专家，设备仍需存储或调度专家权重，并承担路由与通信成本。
-Dense（稠密）与 MoE 应在同一质量、硬件和预算约束下比较。
 \end{warningbox}
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：长上下文与稀疏访问}
@@ -461,7 +460,7 @@ $8\times(3+2)=\answerresult{40}$。
 \]
 最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
 窗口掩码有 $1+2+3+3+3=\answerresult{12}$ 个可见位置对，
-全量因果 Mask 则有 $15$ 个；
+全量因果 Mask 则有 $15$ 个。
 \begin{boundarybox}
 \textbf{计算口径：}以上 $128/64/40$ 是\textbf{示例结构的缓存元素数}；
 实际 MLA 还涉及位置分支、张量布局、投影与解码重建。
@@ -473,6 +472,12 @@ $8\times(3+2)=\answerresult{40}$。
 运行 \texttt{python3 scripts/architecture\_demo.py}
 可以检查缓存元素数与 $5\times5$ 掩码的 12 个可见位置。
 
+
+\begin{boundarybox}[title={适用条件：结构计数与实际性能}]
+本章的缓存字节数、激活专家数与位置对数按给定配置计算。
+性能对照统一输入长度、批量、精度、硬件和目标质量，另测长程检索、吞吐与延迟；
+计数节省先解释瓶颈，实际收益由实现与负载决定。
+\end{boundarybox}
 
 \chapterchecktasks{22d-modern-transformers}{正文基础三题}{
 \item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}

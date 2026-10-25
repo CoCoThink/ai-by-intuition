@@ -17,9 +17,10 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
-from check_book_contract import PART_TITLES as PARTS, CHAPTER_COUNT, core_groups, validate_contract
+from check_book_contract import PART_TITLES as PARTS, CHAPTER_COUNT, core_groups, validate_contract, visible_exercise_errors, chapter_opening_errors
 from generate_exercise_bank import load_exercises
 from generate_bilingual_glossary import entries as glossary_entries
+from generate_chapter_navigation import argument
 REQUIRED = re.findall(r"\\input\{chapters/([^}]+)\}", (BOOK / "main.tex").read_text())
 CHECK_COUNT = CHAPTER_COUNT + 1
 EXERCISE_COUNT = len(load_exercises()[0])
@@ -468,7 +469,7 @@ def validate_pdf(path: Path) -> None:
             if match:
                 chapter_numbers.append(int(match.group(1)))
             elif not (title.startswith("序章：") or
-                      title.startswith("技术底座回顾：")):
+                      title.startswith("终章：回到那四个 Token")):
                 fail(f"Unnumbered PDF chapter bookmark: {title!r}")
     if chapter_numbers != list(range(1, CHAPTER_COUNT + 1)):
         fail(f"PDF chapter bookmark numbers must be 1--41 in order; "
@@ -537,6 +538,15 @@ def validate_pdf(path: Path) -> None:
             or question_count != CHECK_COUNT):
         fail(f"Expected one self-check per chapter and prelude: rendered self-check boxes and unique D.2 / E.1; "
              f"found {question_count} checks")
+    compact_selfchecks=normalized(text)
+    if re.search(r'读完自测[（(]续[）)](?:附录C[^。]{0,100})?提示与解答',compact_selfchecks):
+        fail("A self-check continuation contains only navigation, without a question")
+    obsolete=visible_exercise_errors(text)
+    if obsolete:fail("Printed PDF contains a legacy exercise ID: "+'; '.join(obsolete))
+    if re.search(r"图\s*\d+[^\n]{0,12}全书路线",text):
+        fail("Route micro-map occupies a numbered figure caption")
+    if text.count("终章：回到那四个 Token")<2:
+        fail("Final chapter bookend missing from contents/body")
     if "思路提示：" in normalized(text):
         fail("Hints must stay in Appendix D, not under self-check questions")
     rendered_metadata = re.findall(
@@ -633,6 +643,7 @@ def validate_pdf(path: Path) -> None:
     # chapters 10 and 14 must end with a self-check AND a conclusion on the same
     # substantive page. Never lower the generic orphan/blank-page thresholds.
     numbered_pages: dict[int, int] = {}
+    chapter_tops: dict[int, float] = {}
     part_pages = [reader.get_destination_page_number(item)
                   for item in reader.outline if not isinstance(item, list)]
     for item in reader.outline:
@@ -641,6 +652,7 @@ def validate_pdf(path: Path) -> None:
                 title = str(getattr(bookmark, "title", ""))
                 match = re.match(r"^(?:第)?(\d+)(?:章)?\s+\S", title)
                 if match:
+                    chapter_tops[int(match.group(1))]=float(bookmark.top)
                     numbered_pages[int(match.group(1))] = (
                         reader.get_destination_page_number(bookmark)
                     )
@@ -743,6 +755,7 @@ def validate_pdf(path: Path) -> None:
     if len(pages_with_boxes) != len(pages)-1:
         fail(f"PDF bbox page count mismatch: {len(pages_with_boxes)}")
     words_checked = 0
+    page_body_words = []
     for pageno, (attrs, body) in enumerate(pages_with_boxes, 1):
         size = re.search(r'width="([\d.]+)"\s+height="([\d.]+)"', attrs)
         if not size:
@@ -763,6 +776,7 @@ def validate_pdf(path: Path) -> None:
             words_checked += 1
             if not (-2 <= xmin <= xmax <= width + 2 and -2 <= ymin <= ymax <= height + 2):
                 fail(f"Text outside PDF page bounds on page {pageno}: {vals}")
+        page_body_words.append(body_words)
         if (body_words and pageno > guide_index + 1
                 and pageno not in part_openers):
             body_text = "".join(word[2] for word in body_words)
@@ -787,10 +801,28 @@ def validate_pdf(path: Path) -> None:
     # the page-wide bounding-box and orphan-page checks above remain in effect.
     if sorted(numbered_pages) != list(range(1, CHAPTER_COUNT + 1)):
         fail("Opening guard requires chapter bookmarks 1..41")
+    parameter_han_counts=[]
+    for name in REQUIRED:
+        source=chapter(name)
+        for compass in re.finditer(r'\\chaptercompass\{',source):
+            pos=compass.end()-1
+            for _ in range(4):
+                value,pos=argument(source,pos)
+                while pos<len(source) and source[pos].isspace():pos+=1
+            parameter_han_counts.append(len(re.findall(r'[\u4e00-\u9fff]',value)))
+    if len(parameter_han_counts)!=CHAPTER_COUNT:
+        fail("Opening guard requires one compass per numbered chapter")
     for chapter_number, opening_index in sorted(numbered_pages.items()):
         if not pages_with_boxes[opening_index][1].strip():
             fail(f"Empty chapter opening page for chapter {chapter_number}")
-    print("Chapter opening destinations QA passed: 41/41 bookmarks with visible content")
+        height=float(reader.pages[opening_index].mediabox.height)
+        # Exclude any preceding chapter on a shared page, including its compass.
+        opening_text=''.join(word[2] for word in page_body_words[opening_index]
+            if word[0]>=height-chapter_tops[chapter_number]-2)
+        opening_errors=chapter_opening_errors(chapter_tops[chapter_number],
+            height,opening_text,parameter_han_counts[chapter_number-1])
+        if opening_errors:fail(f"Chapter {chapter_number} opening page {opening_index+1}: "+'; '.join(opening_errors))
+    print("Chapter opening QA passed: 41/41 destinations above bottom third, with substantive text")
     # Source-level hyperlinks may have existing labels but resolve incorrectly
     # once TeX has built bookmarks and named destinations. Audit the actual PDF.
     named_destinations = reader.named_destinations

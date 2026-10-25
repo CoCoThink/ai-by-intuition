@@ -1,62 +1,46 @@
-\section*{技术底座回顾：把全书的线索接成一张图}
+\section*{终章：回到那四个 Token}
 \phantomsection\label{sec:foundation-recap}
-\addcontentsline{toc}{section}{技术底座回顾：把全书的线索接成一张图}
+\addcontentsline{toc}{section}{终章：回到那四个 Token}
+\markboth{终章：回到那四个 Token}{终章：回到那四个 Token}
 
-本书从能调整的\textbf{标量函数}出发，
-沿一个贯通问题走到 \textbf{Token 概率与可控的应用系统}。
-在进入选读专题之前，先把每层做的事情与下一层的缺口对齐。
+再次写下封面的短句：\textbf{春天／花／开了／。}
+最初它只是四块文字；现在，你已经能沿着每个数字追到一次预测，
+沿着一次误差追到参数更新，再把生成接到有证据、有权限的应用任务。
 
 \begin{center}\small
-\renewcommand{\arraystretch}{1.18}
+\renewcommand{\arraystretch}{1.25}
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}p{47mm}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{31mm}@{}}
 \toprule
-技术底座 & 本书能够亲手验证的事实 & 它解决或留下的缺口\\\midrule
-函数与数学 &
-$\widehat{y}=wx+b$、向量、矩阵乘法、求导 &
-用可调参数代替手写所有规则；单个标量表达能力有限\\
-损失与学习 &
-MSE、交叉熵、链式法则、反传与 SGD &
-以可比较的目标调整参数；需要结构表达复杂关系\\
-神经网络 &
-ReLU、MLP、残差和归一化 &
-多层非线性表示；逐位置 MLP 不能独自读取其他 Token\\
-序列建模 &
-RNN 的状态、Attention 的 Q/K/V &
-利用上下文；因果 Mask 保证训练中不能偷看未来标签\\
-Transformer &
-Embedding $\to$ Attention $\to$ FFN $\to$ 输出概率 &
-在同一网络里连接表示、上下文、训练与生成\\
-联想记忆 &
-$\mathcal{M}=\sum_i k_i^\top v_i$ 与 $y=x\mathcal{M}$ &
-用外积、串扰与 Delta 更新解释线性状态\\
-模型之外 &
-后训练、检索、工具、权限与 Agent &
-让产品处理可靠证据和真实操作，不等于每次调用都训练权重\\
+同一句话走到哪里 & 你现在能解释的动作 & 回看章节／页\\\midrule
+文字变成 ID & 教学词表得到 $[2,4,5,3]$；真实分词器可产生另一种切分 & 第~\ref*{intro:20a-tokenizer}~章／\pageref*{intro:20a-tokenizer}\\
+ID 变成行向量 & 查 Embedding 行，加入位置向量，核对 $X$ 的形状 & 第~\ref*{intro:20-embeddings}--\ref*{intro:20b-task-contract}~章／\pageref*{intro:20-embeddings}\\
+“开了”读取前文 & Query 匹配 Key，把 Value 加权汇总；训练让读取具有选择性 & 第~\ref*{intro:21b-why-attention}--\ref*{intro:11-softmax-memory}~章／\pageref*{intro:21b-why-attention}\\
+向量变成下一词概率 & 残差、Norm 与 FFN 组装计算链，输出头得到 logits，Softmax 得到概率 & 第~\ref*{intro:22-transformer-architecture}--\ref*{intro:22b-token-to-output}~章／\pageref*{intro:22-transformer-architecture}\\
+错误变成参数更新 & 用目标“花／开了／。”计算平均损失，反传到每份共享参数 & 第~\ref*{intro:22c-language-training}~章／\pageref*{intro:22c-language-training}\\
+预测变成生成 & 选 Token、追加上下文，使用缓存，按 EOS 或长度预算停止 & 第~\ref*{intro:23-llm-systems}~章／\pageref*{intro:23-llm-systems}\\
+短句进入报告任务 & 从上下文示例读出格式，用后训练调整回应，再检索证据、调用工具、组织 Agent & 第~\ref*{intro:23aa-pretraining-icl}--\ref*{intro:23d-agent-protocols}~章／\pageref*{intro:23aa-pretraining-icl}\\
+换一条路径理解读取 & 把 Key--Value 当作存入与取出，比较外积、串扰与非线性检索 & 第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章／\pageref*{intro:04-key-value-outer-product}\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\textbf{把公式收成一条主线：}
+\textbf{现在，把主线连成一口气：}
 \[
 \begin{aligned}
-X&=E_{\rm ids}+P_{\rm pos},\\
-A&=\operatorname{softmax}(QK^\top/\sqrt{d_k}+C),\\
-H&=\operatorname{TransformerBlock}(X),\qquad
-Z=HW_{\rm out},\\
-\Pi&=\operatorname{softmax}(Z),\qquad
-L=-\log p_y,\\
-\theta'&=\theta-\eta\nabla_\theta L.
+X&=E_{\rm ids}+P_{\rm pos},\qquad
+A=\softmax(QK^\top/\sqrt{d_k}+C),\\
+H&=\operatorname{TransformerBlock}(X),\qquad Z=HW_{\rm out},\\
+\Pi&=\softmax(Z),\qquad L=-\log p_y,\qquad
+\theta'=\theta-\eta\nabla_\theta L.
 \end{aligned}
 \]
-矩阵形状在正文均可追踪，
-详细三维参数与全部中间数值保留在附录 B。
-它只是\textbf{教学主例的一层单头计算链}，
-不能据此推断真实大模型的语言能力。
+同一套参数可以在训练时接受梯度，也可以在推理时固定下来读取不同上下文。
+当任务从续写短句变成比较季度收入，变化的不只是 Prompt：
+还要给系统接上原始资料、计算程序和授权范围。
 
-\begin{conclusion}
-今后遇到任何新的模型、训练法或 Agent 框架，
-都可以先问：它修改了哪一层？输入和输出如何表示？
-证据是什么？性能代价转移到了哪里？
-保留这四个问题，比背下更多新名词更有价值。
-\end{conclusion}
+\textbf{最后一次自问：}若输出把 Q3 的环比写错了，你会去改哪里？
+先追踪错误来自词义理解、证据缺失、单位转换还是工具计算，
+再选择补数据、改上下文、训练模型或修应用。
+能够定位这一层，你就已经从记住术语走到了使用计算图思考。
+新的模型名称还会出现；这四个 Token 留下的，是一条可以继续追问、复算和验证的路。

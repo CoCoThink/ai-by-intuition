@@ -33,7 +33,7 @@ def main() -> None:
     if not declared or int(declared[1]) != len(rows):
         raise SystemExit("Declared glossary count must match generated rows")
     grouped = defaultdict(list)
-    for zh, en, _definition, target in rows:
+    for en, zh, _definition, target in rows:
         key = sort_key(zh)
         letter = key[0].upper()
         if letter < "A" or letter > "Z":
@@ -46,9 +46,9 @@ def main() -> None:
         "按中文名称的普通话拼音顺序排列，优先从第一个汉字检索；",
         "缩写词与英文起首的术语按照名称中的首个汉字归类。",
         "按每一项的章号／页码查找正文；英文全量定义见前面的对照表。",
-        r"\begingroup\footnotesize",
+        r"\begingroup\small",
         r"\setlength{\tabcolsep}{3pt}",
-        r"\renewcommand{\arraystretch}{1.10}",
+        r"\renewcommand{\arraystretch}{1.05}",
         r"\tagpdfsetup{table/header-rows={1}}",
         r"\begin{longtable}{@{}>{\raggedright\arraybackslash}p{47mm}>{\raggedright\arraybackslash}p{80mm}>{\centering\arraybackslash}p{20mm}@{}}",
         r"\toprule",

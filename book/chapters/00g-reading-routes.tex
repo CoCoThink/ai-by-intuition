@@ -4,10 +4,14 @@
 \setlength{\parskip}{3pt}
 本书把学习、矩阵、上下文读取和生成接成一条路线，再扩展到视觉与助手。
 先看每步的输入、输出和用途，再追踪矩阵元素。
-\globalroute{0}
-\noindent\textbf{速读：}看部分地图、章首问题、形状图和小结，尝试向同学口述计算链。\par
-\noindent\textbf{标准：}按顺序复算正文，独立做章末自测；卡住时读附录 D 的“第一步”，再核对完整解答。\par
-\noindent\textbf{动手：}用章末题号选练附录 C，先做附录 B 的二维迷你版，再运行三维实验。每部分末的累积复习把前几章连起来。
+\noindent\textbf{速读：}第 1--2、7--9、11--15、17--19、21--25、29、32--34 章；约 70 页。
+先看问题、输入输出和小结，跳过标有\textbf{{\symboliconfont ★}选读}的小节及全部复算推导。\par
+\noindent\textbf{标准：}按第 1--37 章顺序读；约 125 页。首次可跳过第~\ref*{intro:22-transformer-architecture}~章原论文对照、
+第~\ref*{intro:23a-from-toy-to-gpt}~章脚本追踪及第~\ref*{intro:22d-modern-transformers}~章{\symboliconfont ★}选读专题；用章末自测核对理解。\par
+\noindent\textbf{动手：}重点复算第 2--5、8--10、12--13、18--24、29--31 章及附录 B；约 90 页。
+按 C 题选练，按 R 题跨章复习；先完成二维迷你版，再跑三维训练。
+\textbf{\hyperref[part:memory]{联想记忆部分（第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章）}是理解 Attention 的第二条路径}，三条路线均可在主线后转入。
+页数是含所选章图表的阅读预算，不含扩展练习。
 
 \subsection*{数学预备与表示约定}
 需要会一元一次方程、负数、平方、函数、对数与一元导数；
@@ -21,13 +25,21 @@
 输出头 $W_{\rm out}$、位置 $P_{\rm pos}$、概率 $\Pi$ 的统一符号表见第~\pageref*{app:symbols}~页。
 
 \subsection*{图例：先判断这一块要你做什么}
-\textbf{{\symboliconfont ◆}直觉}给结论与类比；\textbf{{\symboliconfont ▸}动手算}按给定数据计算；
-\textbf{!易错／{\symboliconfont ▣}边界}分别纠正步骤、说明会改变使用方式的条件；
-\textbf{{\symboliconfont ■}小结}收束本章；\textbf{［复算］}给脚本或参数入口；
-\textbf{独立例}使用自己的输入／参数；\textbf{{\symboliconfont ★}选读}可在首读跳过。
-自测先独立作答，题下不印提示；页码把你带到分层帮助。
+\tagpdfsetup{table/header-rows={1}}
+\noindent\begin{tabularx}{\linewidth}{@{}p{34mm}X@{}}
+\toprule
+标记 & 阅读动作\\\midrule
+直觉／小结 & 先抓结论，再回看计算链\\
+动手算／复算 & 纸笔算给定数据／运行脚本核对\\
+易错／边界 & 纠正计算步骤／检查影响结论的适用条件\\
+独立例／案例 & 切换到另一套参数／分析现实事件\\
+{\symboliconfont ★}选读 & 首读可跳过；小节目录在 PDF 书签中展开\\
+\bottomrule
+\end{tabularx}\par
+自测只留题目；提示和答案按页码到附录 D 查找。
 
 Q 蓝、K 青、V 橙只表示三种角色；可见／遮蔽、数据流、数据点另用各自图色，
 同时保留标签、线型与标记。完整色彩表见第~\pageref*{app:color-semantics}~页。
 纸面目录列到章，PDF 书签可展开小节；正文引用均可按页码查找。
+\globalroute{0}
 \endgroup

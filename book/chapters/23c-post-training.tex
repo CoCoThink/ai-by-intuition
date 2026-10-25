@@ -114,6 +114,35 @@ P(A\succ B)=\sigma(r_A-r_B)
 与 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1}。
 \end{example}
 
+\subsubsection*{再走一步：优势怎样推高或压低一个 logit？}
+把已采样答案与优势固定，先忽略裁剪和正则化，单个样本的策略损失写成
+\[
+\ell_i=-\mathcal A_i\log p_\theta(y_i),\qquad
+\frac{\partial\ell_i}{\partial Z_j}
+=\mathcal A_i\bigl(p_j-\mathbf1_{j=y_i}\bigr).
+\]
+它就是第~\ref*{intro:20c-classification-loss}~章的 $p-\mathrm{onehot}$ 乘上优势：
+正优势提高所选答案的分数，负优势压低它。
+仅就单样本形式而言，$\mathcal A_i=+1$ 时得到 SFT 的交叉熵梯度；
+SFT 的示范来自数据集，策略学习的动作来自采样、反馈来自奖励。
+
+沿用 $(42,41,42,50)$ 与 $(+1,-1,+1,-1)$。
+把整条回答暂作一个三分类动作，候选依次为 $42,41,50$，初始 $Z=(0,0,0)$、$p_j=1/3$。
+四项梯度取平均为
+\[
+\begin{aligned}
+\nabla_Z L
+&=\tfrac14\bigl[(-2/3,1/3,1/3)+(-1/3,2/3,-1/3)\\
+&\hspace{17mm}+(-2/3,1/3,1/3)+(-1/3,-1/3,2/3)\bigr]\\
+&=\boxed{(-0.5,0.25,0.25)}.
+\end{aligned}
+\]
+学习率 $\eta=0.2$ 时，一步得到 $Z'=(0.1,-0.05,-0.05)$，
+正确答案的概率从 $1/3$ 升至 $\boxed{0.367456}$。
+真实语言策略对回答中的各 Token 计分；完整 GRPO 还要组合旧策略概率比、裁剪和正则化。
+此处隔离的是\textbf{奖励方向怎样沿 Softmax 梯度传回分数}。
+脚本 \texttt{icl\_policy\_demo.py} 还用有限差分核对这三个导数。
+
 把自动验证用在更复杂的任务上，还需要检查答案格式、代码测试结果、奖励漏洞以及验证器本身的错误。
 
 \subsection{“让模型写步骤”与“训练模型推理”不是一回事}

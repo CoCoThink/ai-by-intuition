@@ -80,6 +80,40 @@ g_{Q3}=\frac{132-120}{120}=\boxed{10\%}.
 对检索文档、网页和工具返回值执行前文所述的提示注入检查：
 只提取获授权的事实与证据，不接受材料内部提出的越权指令。
 
+\subsection{回看完整系统：七个可核对的关口}
+\phantomsection\label{sec:agent-seven-gates}
+
+以一份\textbf{季度收入对比报告}为例：输入是三份允许访问的报表，
+输出须列出 Q1--Q3 收入、Q2/Q3 环比、单位及可追溯的表格位置。
+这里最关键的问题不是“怎样让模型扮演某种角色”，
+而是\textbf{哪些要求可以验证，哪些步骤必须由外部程序负责}。
+
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}p{39mm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+核对关口 & 可选机制 & 可核对的交付条件\\\midrule
+1. 范围与权限 & 任务契约、Prompt & 指标、日期、授权资源确定\\
+2. 证据覆盖 & 检索、RAG & 三季度证据均存在且可定位\\
+3. 计算校验 & Tool Calling、程序校验 & 单位、公式和来源可复算\\
+4. 跨轮状态 & 应用 Memory & 已核验信息按需恢复\\
+5. 失败处理 & Workflow／Agent & 重试、预算、停止条件可追踪\\
+6. 接口复用 & MCP、Skill／Subagent & 连接受控、任务边界明确\\
+7. 交付复核 & 引用审计与人工复核 & 每条结论对应证据\\
+\bottomrule
+\end{tabularx}
+\end{center}
+把这七行看作一次任务的验收清单：先核对授权与证据，再校验计算，最后交付可追溯的结果。
+现在可以沿这七行复述检索、工具和协议如何协作。
+沿用季度报表：Q1、Q2、Q3 收入分别为 $100,120,132$ 百万元。
+工具核对单位与来源后，计算
+\[
+g_{Q2}=(120-100)/100=20\%,\qquad
+g_{Q3}=(132-120)/120=10\%.
+\]
+
+
+
 \chapterchecktasks{23d-agent-systems}{正文基础三题}{
 \item \textbf{分工：}应用通过 MCP 发现并请求一个报表工具，另通过 A2A 向独立审计 Agent 交付任务。两种协议各连接谁？协议是否替应用授予读取权限？\chapterinlinehint{先画两种连接的两端，再寻找授权检查的位置。}
 \item \textbf{比较：}把报告格式与核查步骤写成一份 Skill，和把单位检查交给一个 Subagent，各增加了什么？哪一种需要安排独立任务的上下文、权限与结果汇总？\chapterinlinehint{区分提供操作材料与执行独立任务的运行安排。}

@@ -1,6 +1,9 @@
 \subsection{参考与延伸阅读}
-各条链接后的日期统一用 UTC，记录本版的链接检查时间；
-历史发布日与内容检索日另列。链接可访问只说明入口能打开，不能代替对来源主张的核对。
+本版常规链接统一于 \textbf{2026-10-24（UTC）} 检查，可访问的条目不再逐条重复说明；
+访问受限、另日核对或新增的内容，单独列出日期与结果。
+历史发布日与内容检索日另列。完整 URL 与逐条核验记录见仓库
+\texttt{docs/REFERENCES.md}；链接打开与主张成立是两项不同检查。
+\sourceqr
 
 \subsubsection*{公开视频与课程参考}
 
@@ -51,6 +54,9 @@ Distill (2016)：
 \item Brown et al., \emph{Language Models are Few-Shot Learners} (2020)：
 \sourceurl{https://arxiv.org/abs/2005.14165}
 \sourcecheck{2026-10-24}{链接可访问}
+\item Olsson et al., \emph{In-context Learning and Induction Heads}（2022；前缀匹配与后继复制）：
+\sourceurl{https://arxiv.org/abs/2209.11895}
+\sourcecheck{2026-10-25}{已核对归纳头的两阶段匹配与复制机制}
 \item Kaplan et al., \emph{Scaling Laws for Neural Language Models} (2020)：
 \sourceurl{https://arxiv.org/abs/2001.08361}
 \sourcecheck{2026-10-24}{链接可访问}
@@ -91,6 +97,9 @@ GPT-2 small（revision: \texttt{607a30d}）：\sourceurl{https://huggingface.co/
 \item Qwen2.5-0.5B 配置文件（固定提交）：\\
 Qwen2.5-0.5B（revision: \texttt{060db64}）：\sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json}
 \sourcecheck{2026-10-24}{链接可访问}
+\item 同一 Qwen 修订的 Tokenizer（中文切分复算，不加载权重）：
+\sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json}
+\sourcecheck{2026-10-25}{已实际运行分词器并核对四个 Token ID}
 \item Dosovitskiy et al., \emph{An Image Is Worth 16x16 Words}
 （ViT, 2020）：
 \sourceurl{https://arxiv.org/abs/2010.11929}

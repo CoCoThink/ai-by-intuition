@@ -13,6 +13,8 @@ import numpy as np
 from cache_budget_demo import kv_bytes,run_checks as check_cache
 from context_contrast_demo import run_checks as check_context
 from attention_selection_demo import run_checks as check_selection
+from icl_policy_demo import run_checks as check_icl_policy
+from chinese_tokenizer_demo import run_checks as check_tokenizer
 from mini_transformer_demo import run_checks as check_mini
 from pretraining_data_demo import run_checks as check_data
 from teaching_reference import parameters,forward,backward,LR
@@ -78,6 +80,19 @@ def main():
     for value in learned['weights'][0]:
         assert f'{value:.6f}' in selection, 'Printed selection weight differs from trained Q/K'
         assert f'{value:.6f}' in figure or f'{value:.6f}'.lstrip('0') in figure
+    _,_,icl_p,_,_,policy_p=check_icl_policy()
+    icl=(ROOT/'book/chapters/23aa-pretraining-icl.tex').read_text()
+    post=(ROOT/'book/chapters/23c-post-training.tex').read_text()
+    assert f'{icl_p[0]:.6f}' in icl and f'{policy_p[0]:.6f}' in post
+    check_tokenizer()
+    trained=parameters();a0=forward(trained)['a']
+    for _ in range(20):
+        st=forward(trained);gr=backward(trained,st)
+        for name in trained:trained[name]-=LR*gr[name]
+    a20=forward(trained)['a']
+    attention_table=training.split('训练前后，Attention 究竟怎样变化？',1)[1].split(r'\subsection{',1)[0]
+    for array in (a0,a20):
+        for value in array[1:,:][array[1:,:]>0]:assert f'{value:.6f}' in attention_table
     w=parameters();state=forward(w);g=backward(w,state)
     updated=forward({k:v-LR*g[k] for k,v in w.items()})
     assert f"{state['loss']:.6f}" in training

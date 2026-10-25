@@ -31,7 +31,7 @@
 
 **每章一个自测块，共 42 组**。正文只印题目，提示统一放在[附录 D.2](chapters/28-chapter-checks.tex)的“第一步”中，再展开解题过程。四对重复自测已合并，保留全部问题；一般章有三题，四个合并章有六题。每组保留唯一 `check:` 和 `answer:` 锚点。
 
-附录 C 为一套按章排列的 **122 题**，全部用 C-001 至 C-122 标识，逐题印难度、预计耗时和章页。含原有 101 题、三个教学闭环新题和每部分两题累积复习；累积复习在部分末与题库共用同一题号。题目、解答、章末导航和累积复习都从 [exercises.json](exercises.json) 生成，避免多套题库漂移。编辑后依次运行 `scripts/generate_exercise_bank.py` 和 `scripts/generate_chapter_navigation.py`，CI 以 `--check` 验证。旧题号只作为隐藏锚点保留，纸面显示统一题号。
+附录 C 含 **104 道按章练习（C-001 至 C-104）和 18 道独立累积复习（R-01 至 R-18）**，逐题印难度、预计耗时和入口页码。R 题按部分分组，不再列入末章题号。题目、解答、章末导航和部分末复习都从 [exercises.json](exercises.json) 生成；编辑后依次运行 `scripts/generate_exercise_bank.py` 和 `scripts/generate_chapter_navigation.py`，CI 以 `--check` 验证。旧题号只作隐藏锚点，源码和成品 PDF 均拦截可见旧编号，并检查链接显示的题号是否与实际目标一致。
 
 纸面目录仅列到章，控制在两页内；PDF 书签仍提供全部小节导航。自测允许接排和跨页，避免整块自测、小结被挤成稀疏尾页。
 
@@ -83,3 +83,7 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。当前正文与附录的页数、图数、题目链接数量随修订变化，均以最新的 GitHub Actions 构建报告和实际 PDF 检查为准，不把过去某次成功构建的统计数据当作永久指标。本书仍标为 v0.2.0-draft（未发布）。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
 
 **中文检索：**附录 E 还提供 146 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对术语表实际条目数与全部链接；标题总数从规范术语表生成。
+
+中文分词实测：`python3 scripts/chinese_tokenizer_demo.py --real` 下载固定修订的 Qwen2.5-0.5B 分词器并校验 SHA-256，不加载模型权重。需要 `tokenizers==0.22.1`。归纳读取与优势到 logits 的更新由 `python3 scripts/icl_policy_demo.py` 复算，需 NumPy。
+
+附录 F 的二维码与网页参考索引由 `python3 scripts/generate_reference_assets.py` 从核验清单生成，需要 `qrcode==8.2`；CI 用 `--check` 比对两项产物。二维码是 TikZ 矢量路径，不依赖位图或 LaTeX 二维码宏的嵌套段落标签。
