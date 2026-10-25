@@ -10,7 +10,7 @@ CI 成功不等于发布。主分支的构建只产生草稿工件；正式版�
 2. **机器检查：**源码与数值检查、成品排版检查、全部公式 MathML 关联、veraPDF PDF/UA-2 零失败。
 3. **人工校样：**按 [维护手册](MAINTENANCE.md#灰度与人工校样)用同一份 PDF 生成灰度校样并逐页审阅；重点看新改动的算例、图表和分页。
 4. **来源与授权：**
-   - 讲解路径受飞天闪客两部公开课程启发（[从函数到 Transformer](https://www.bilibili.com/video/BV1NCgVzoEG9/)、[从 Transformer 到大模型](https://www.bilibili.com/video/BV15z4C6SEHT/)），课程页面注明未经授权禁止转载。致谢不能代替授权：发布前需对照原课程，确认助手与 Agent 各章（以及其他借鉴了讲解顺序的章节）没有沿用受保护的具体表达、图示或例子；有疑问的段落重写，或取得书面授权并记录条件。
+   - 讲解路径受飞天闪客两部公开课程启发（[从函数到 Transformer](https://www.bilibili.com/video/BV1NCgVzoEG9/)、[从 Transformer 到大模型](https://www.bilibili.com/video/BV15z4C6SEHT/)）。
    - 联想记忆部分借鉴 Alex Wang 文章的讲解框架，署名与链接集中在附录 F；核对没有复制原文文字或图片。
    - 引用的模型配置、JSON 片段和第三方图示，核对其使用条款；能在网上查看不等于可以再出版。
 5. **带日期断言：**附录 G 中没有到期或落后于官方新修订的条目（`python3 scripts/check_dated_claims.py --self-test --online --check-due`）。
