@@ -17,9 +17,9 @@ EXPECTED_PARTS = (
     ("tokens", "让文字进入计算"),
     ("context", "让词与词交换信息"),
     ("transformer", "组装并训练 Transformer"),
-    ("vision", "换一种数据看 Transformer：从 CNN 到 ViT"),
     ("assistant", "从语言模型到助手"),
     ("architecture", "架构为什么在变，往哪走"),
+    ("vision", "换一种数据看 Transformer：从 CNN 到 ViT"),
     ("memory", "联想记忆与线性状态"),
 )
 PART_HEADING = re.compile(r"\\part\{([^}\n]+)\}\\label\{part:([^}\n]+)\}")

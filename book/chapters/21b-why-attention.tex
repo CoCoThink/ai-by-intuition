@@ -1,80 +1,19 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{Attention 是什么？让一个词直接读取其他位置}
-\phantomsection\label{concept:attention}
+\section{Q/K/V：把提问、匹配与内容拆开}
 \label{intro:21b-why-attention}
-\chaptercompass{为什么需要把提问、匹配与读取分成三种角色？}{Q 问问题，K 负责匹配，V 提供被读取的内容。}{$X:T\times d_{\rm model}\to Q,K,V\to Y:T\times d_v$}{$W_Q,W_K,W_V$}
-\modelpipelinefocus{3}{Attention}
+\chaptercompass{为什么要把提问、匹配与读取分成三种角色？}{每个位置经三组投影得到 Query、Key、Value：Q 发问，K 负责被匹配，V 提供被读取的内容。}{$X:T\times d_{\rm model}\to Q,K:T\times d_k,\ V:T\times d_v\to Y:T\times d_v$}{$W_Q,W_K,W_V$ 可学习；本章演示值为手设}
+\modelpipelinefocus{3}{Q/K/V 投影}
 
 \begin{idea}
-\noindent\emph{按相关性读取上下文}\par
+\noindent\emph{同一个位置，三种身份}\par
 
-Attention（注意力）是一种按相关性读取信息的方法：
-当前这个位置先对\textbf{可读取的每个位置}算一个匹配分数，
-再把这些分数变成\textbf{权重}，
-最后把各位置提供的信息按权重\textbf{加起来}。
-
-它最核心的三个动作就是
-\textbf{比较 $\to$ 分配权重 $\to$ 加权读取}。
+\hyperref[intro:21c-naive-attention]{上一章}让每条输入向量同时负责发起比较、被比较和交出内容，
+匹配规则因此固定：原始分数对称，长向量在各行都得高分。
+现在给这三种职责各配一组\textbf{可训练投影}：
+同一条输入分别变成 Query（查询）、Key（键）和 Value（值）。
+比较、分配权重、加权读取这三个动作不变，变的是参与比较和读取的向量。
 \end{idea}
-
-\subsection{从逐步传递到直接读取}
-
-前面介绍的 \conceptlink{rnn}{RNN} 让模型按顺序读，Attention 则能为当前查询直接读取可见位置。
-先比较两条信息路径：
-\input{figures/attention-rnn-bridge}
-RNN 按次序处理三个词：
-\[
-\text{春天}\ \longrightarrow\
-\text{花}\ \longrightarrow\
-\text{开了}.
-\]
-RNN 的第 3 步能读到\textbf{上一份状态} $h_2$，
-但如果想重点利用第 1 个词的信息，
-它必须依赖这份状态此前是否保留了相关内容。
-
-现在试想另一种设计：当我们读到第三个词“开了”时，
-不必只能通过 $h_2$ 间接获得过去的信息；
-让第三个位置直接查看前三个位置，各自决定读多少。
-
-图中，位置 3 可以直接读取位置 1、2、3 的信息，
-不同位置的读取比例可以不同。接下来要解决的，就是怎样算出这些比例。
-
-\subsection{从平均读取到按需读取}
-
-设当前位置可以读取三个位置，它们各自提供一条\textbf{内容向量}：
-\[
-\vect v_1=\begin{bmatrix}1\\0\end{bmatrix},\quad
-\vect v_2=\begin{bmatrix}0\\1\end{bmatrix},\quad
-\vect v_3=\begin{bmatrix}1\\1\end{bmatrix}.
-\]
-最简单的方法是把它们\textbf{平均}：
-\[
-\vect y_{\rm avg}
-=\frac13(\vect v_1+\vect v_2+\vect v_3)
-=\begin{bmatrix}2/3\\2/3\end{bmatrix}.
-\]
-但无论当前位置想查找什么，只要内容不变，
-平均结果就不变。它没有考虑当前的查找需要。
-
-不妨先给三条内容分配权重 $a_1,a_2,a_3$，
-且规定权重非负、总和为 $1$：
-\begin{equation}
-\boxed{\vect y=a_1\vect v_1+a_2\vect v_2+a_3\vect v_3,\qquad
-a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
-\label{eq:attention-design-goal}
-\end{equation}
-平均对应 $a_1=a_2=a_3=1/3$。
-要让读取结果随着当前位置的需要而变化，就得让权重取决于当前查询与各个位置的匹配程度。
-
-因此，一次按需读取分为两步：先比较\textbf{当前想找什么}与\textbf{各位置有哪些匹配特征}，算出权重；
-再用权重组合各位置提供的内容。
-这三种角色分别称为 Query（查询）、Key（键）和 Value（值）。
-
-
-上章已经验证了零参数点积能产生注意力权重，
-也看到原始分数对称性与向量范数的限制。
-下面开始拆开 Q、K、V 三种角色。
 
 \subsection{Query、Key、Value 各负责什么？}
 \phantomsection\label{concept:qkv}
@@ -86,8 +25,8 @@ a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
 \item \textbf{Key（键，记作 $\vect k_i$）：}
 第 $i$ 个位置\textbf{凭什么被找到}？它与 Query 比较，
 产生一个\textbf{匹配分数}。
-\item \textbf{Value（内容，记作 $\vect v_i$）：}
-第 $i$ 个位置\textbf{被找到后交出什么}？
+\item \textbf{Value（值，记作 $\vect v_i$）：}
+第 $i$ 个位置\textbf{被找到后交出什么内容}？
 它不是匹配分数，而是最终\textbf{被加权相加}的向量。
 \end{itemize}
 
@@ -99,7 +38,7 @@ Query 和 Key 用来计算权重，Value 则是按权重组合的内容。
 \textbf{Q、K、V 是三种角色。}在 Self-Attention 中，
 第 3 个 Token 一方面能发出自己的 Query，
 另一方面也像其他位置一样提供 Key 和 Value。
-每个位置原本有一条输入表示 $\vect x_i$，
+每个位置原本有一条输入表示 $\vect x_i^\top$，
 在真实网络中可以经过\textbf{不同的可训练投影}，得到
 \[
 \vect q_i^\top=\vect x_i^\top W_Q,\qquad
@@ -124,8 +63,8 @@ Value 的维度也不必等于 Key 的维度。
 
 \subsection{匹配：独立投影让分数不再对称}
 
-\localfixture{二维 Q/K/V，与上一章使用同一组 X；此处未缩放、未加因果 Mask}
-沿用三个 Token“春天、花、开了”的行向量：
+\localfixture{二维 Q/K/V；沿用上一章的三条二维输入 $\vect x_1^\top,\vect x_2^\top,\vect x_3^\top$（与主线 $E$ 无关）；未缩放、未加因果 Mask}
+沿用上一章三条二维输入组成的 $X$，每行一个位置：
 \[
 X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\qquad
 W_Q=I_2,\qquad
@@ -138,20 +77,19 @@ Q=XW_Q=X,\quad
 K=XW_K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix},\quad
 V=XW_V=X.
 \]
-Key 的三行现在是 $(1,0)$、$(1,1)$、$(2,1)$；得分矩阵 $S$ 的尺寸为 $3\times3$，
-它们已经不再与输入向量逐行相同。
-将所有 Query 的点积合成矩阵：
+Key 的三行变成 $(1,0)$、$(1,1)$、$(2,1)$，不再等于输入（只有第一行碰巧相同）。
+三条 Query 与三条 Key 两两做点积，得到 $3\times3$ 的分数矩阵：
 \begin{equation}
 S=QK^\top
 =\boxed{\begin{bmatrix}1&1&2\\0&1&1\\1&2&3\end{bmatrix}}.
 \label{eq:asymmetric-qk-example}
 \end{equation}
-\textbf{对照前一章：}原始 $XX^\top$ 必定对称，
+\textbf{对照上一章：}原始 $XX^\top$ 必定对称，
 而此处 $S_{12}=\boxed{1}$、$S_{21}=\boxed{0}$。
-“春天”查询“花”与“花”查询“春天”的匹配分数可以不同；
+位置 1 查询位置 2 与位置 2 查询位置 1 的匹配分数可以不同；
 这正是\textbf{拆开 Query 和 Key 的新增表达能力}。
-逐行 Softmax 之后权重一般也不对称，但不能反过来用
-Softmax 权重不对称来证明原始点积分数不对称。
+判断匹配是否对称要看原始分数 $S$：逐行 Softmax 各用自己的分母，
+权重矩阵是否对称反映不了 $S$ 是否对称。
 
 \subsection{分配：以第三个位置为 Query 计算权重}
 
@@ -163,7 +101,8 @@ Softmax 权重不对称来证明原始点积分数不对称。
 \approx\boxed{(0.090,0.245,0.665)}.
 \]
 若是 Decoder-only 模型的第三个位置，三个 Key 均在可见前缀；
-第一、二位置还应通过因果 Mask 排除各自的未来位置。
+第一、二位置还要用因果 Mask 排除各自的未来位置，
+\hyperref[concept:causal-mask]{下一章}会算出这两行的因果版本。
 本节使用\textbf{未缩放}的原始点积以便比较投影；
 标准缩放点积还会除以 $\sqrt{d_k}$。
 
@@ -208,33 +147,43 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 \end{tabularx}
 \end{center}
 
-回到主线，需要把两条规则放进模型：\textbf{因果 Mask}
+回到主线，还需要把两条规则放进模型：\textbf{因果 Mask}
 让当前位置只读取已经可见的 Token；序列变长时，
 注意力的匹配与缓存也要支付相应成本。
-本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算。
+本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算，并加上因果 Mask。
 
-\noindent\textbf{这些权重会学成什么？}本章手设的投影只负责把 Q/K/V 的计算展开；
-“开了”对自身权重大，不是语言规律。
-第~\ref*{intro:22c-language-training}~章的训练前后权重表展示主例怎样改变；
-第~\ref*{experiment:attention-selection}~节再用含干扰项的对照解释 Q/K 怎样学会选中所需记录。
+\subsection{训练后的 Q/K 会选中所需的记录吗？}
+
+本章手设的投影只负责把 Q/K/V 的计算展开；
+位置 3 对自身权重最大，只是这组手设数值的结果，不是语言规律。
+\hyperref[experiment:attention-selection]{第~\ref*{experiment:attention-selection}~节的记录查询对照}
+把“能读到前文”与“学会挑选前文”分开检验：
+输入含“花”“窗”两条记录和一条查询，两条记录的值互为干扰。
+只给均匀读取时，平均交叉熵停在 $\ln2\approx0.693147$；
+训练 $8$ 个 Q/K 参数后降到约 $0.000502$，
+“问花”的 Query 把约 $0.987$ 的权重放在“花”的记录上，“问窗”则改放到“窗”的记录上。
+保留学好的输出头、只把权重重设为均匀，损失又回到 $\ln2$。
+上下文读取提供了信息通路，训练 Q/K 提供了按查询选择记录的能力。
+能接收全部历史的 RNN 或固定窗口 MLP 也可以学这种绑定；这个对照检验的是 Attention 内部靠什么完成选择。
+运行 \texttt{python3 scripts/attention\_selection\_demo.py} 可复算；
+主例训练前后的权重表也在该章。
 
 \chapterchecktasks{21b-why-attention}{正文基础三题}{
-\item \textbf{定位：}一句话说明 Query、Key、Value 三者在“计算匹配／提供内容”中的分工，并标出分数和读出的形状：$q:1\times2,K:3\times2,V:3\times2$。\chapterinlinehint{分别追踪分数路径与内容加权路径。}
+\item \textbf{定位：}一句话说明 Query、Key、Value 三者在“计算匹配／提供内容”中的分工，并标出分数和读出的形状：$\vect q^\top:1\times2,K:3\times2,V:3\times2$。\chapterinlinehint{分别追踪分数路径与内容加权路径。}
 \item \textbf{手算：}只有两个 Value 为 $(1,0),(0,1)$，权重为 $(0.2,0.8)$，求加权读出。\chapterinlinehint{把每个 Value 乘其权重，再逐分量相加。}
 \item \textbf{找错：}同学说“保持 Q、K 不变，修改第三条 Value 后，每条原始匹配分数必定改变”。指出混淆了哪两个路径。\chapterinlinehint{写出分数公式，检查其中是否出现 Value。}
 }
-\chapterrecallanswer{Q/K 决定匹配，V 决定被读取的内容；改变 Value 不直接改动 Q/K 的原始分数。}
+\chapterrecallanswer{三组可训练投影把一个位置拆成 Q、K、V：Q/K 决定匹配，V 决定被读取的内容；改变 Value 不直接改动 Q/K 的原始分数。}
 
 
 
 \begin{conclusion}
-先记住\textbf{为什么}：
-要按当前需要读取前文，就得决定“读谁多少”和“取出什么”。
-在本书使用的点积 Attention 中，
 Query 和 Key 产生相关性分数，Softmax 分配比例，
-Value 是真正加权求和的内容。
+Value 是真正加权求和的内容；三组投影都可以训练。
+拆开 Query 与 Key 后，原始分数不再必须对称，
+训练还能让 Query 学会选中所需的记录。
 
 你已经亲手得到：三个候选位置 $\to$ 三个点积分数
 $\to$ 三个权重 $\to$ 一条输出向量。
-下一章唯一要新增的，是如何把同一运算更高效地组织成矩阵。
+下一章把同一运算组织成矩阵，一次算完所有位置，并加上因果 Mask。
 \end{conclusion}

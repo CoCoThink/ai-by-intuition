@@ -140,7 +140,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2505.09388",
     "checked_utc": "2026-10-25",
-    "method": "Primary source content review: architecture-cases; see book/dated-claims.json for the reviewed scope",
+    "method": "Primary source content review; further reading only, not part of a dated assertion",
     "result": "已核对 Dense/MoE 家族的公开描述"
   },
   {
@@ -149,7 +149,15 @@
     "final_url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/",
     "checked_utc": "2026-10-25",
     "method": "Primary source content review: architecture-cases; see book/dated-claims.json for the reviewed scope",
-    "result": "已核对官方公告的因果编码器—解码器描述"
+    "result": "已核对官方公告的因果编码器—解码器与输入／输出激活参数描述"
+  },
+  {
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+    "status": 200,
+    "final_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+    "checked_utc": "2026-10-25",
+    "method": "Primary source content review: architecture-cases; see book/dated-claims.json for the reviewed scope",
+    "result": "已核对 40 层分为 20 层因果编码器与 20 层解码器、自回归生成及 KV Cache 来源"
   },
   {
     "url": "https://arxiv.org/abs/2609.19969",
@@ -199,6 +207,38 @@
     "final_url": "https://arxiv.org/abs/2501.12948",
     "checked_utc": "2026-10-24",
     "method": "HTTP GET; link accessibility only, not full content verification"
+  },
+  {
+    "url": "https://arxiv.org/abs/2405.04434",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2405.04434",
+    "checked_utc": "2026-10-25",
+    "method": "Primary source content review of the abstract (MLA definition)",
+    "result": "已核对摘要中 MLA 把 KV Cache 压缩为潜在向量的描述"
+  },
+  {
+    "url": "https://arxiv.org/abs/2409.19606",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2409.19606",
+    "checked_utc": "2026-10-25",
+    "method": "Primary source content review of the abstract",
+    "result": "已核对其作为残差连接替代方案的定位"
+  },
+  {
+    "url": "https://arxiv.org/abs/2305.18290",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2305.18290",
+    "checked_utc": "2026-10-25",
+    "method": "Primary source content review of the abstract and DPO objective",
+    "result": "已核对成对分类损失与参考策略重参数化"
+  },
+  {
+    "url": "https://arxiv.org/abs/2503.20783",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2503.20783",
+    "checked_utc": "2026-10-25",
+    "method": "Primary source content review of the Dr. GRPO section (HTML full text)",
+    "result": "已核对去掉标准差与长度归一化的修改"
   },
   {
     "url": "https://huggingface.co/docs/transformers/main/en/chat_templating",

@@ -2,7 +2,6 @@
 \section{三个位置一起训练：从交叉熵到共享参数更新}
 \label{intro:22c-language-training}
 \chaptercompass{三个位置怎样联合训练同一套参数？}{按三位置平均损失，沿完整计算图反传并统一更新。}{$\Pi:3\times5\to L\to\nabla_\theta L$}{Embedding、位置、Q/K/V、FFN、输出头共同更新}
-手算入口：先做\hyperref[app:rational-mini]{附录 B 的二维分数迷你版（第~\pageref*{app:rational-mini}~页）}，再用本章四位小数核对脚本。
 \modelpipelinefocus{0}{联合训练与反向传播}
 
 
@@ -110,74 +109,8 @@ $(\nabla_{W_{\rm out}}L)_{1,4}\approx-0.8595$。
 $0.2-0.04(-0.859532)\approx0.23438$。
 \textbf{训练会更新整个矩阵；这里选一个元素手算。}
 
-\subsection{三项分数手算一次 Attention 的反向传播}
-\label{sec:attention-backward-three-scores}
-\localfixture{三项 Softmax 的独立求导例；参数不取三维贯通主算例}
-上一节的词表交叉熵给出 $G_Z$，还需回答：误差怎样穿过
-\textbf{Attention 的 Softmax}，回到 Query 和 Key？
-取一个二维 Query，三个 Key，以及三个标量 Value：
-\[
-q=(\sqrt2,0),\quad
-K=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},\quad
-v=(1,0,-1)^\top.
-\]
-缩放分数 $s=qK^\top/\sqrt2=(1,0,0)$。
-这是三个可手算分数，不加因果 Mask。
-令 $a=\operatorname{softmax}(s)$、$y=av$、
-目标 $y^\star=1$，损失 $L=(y-1)^2/2$。于是
-\[
-a=\frac{(e,1,1)}{e+2}\approx(0.5761,0.2119,0.2119),
-\quad y=\frac{e-1}{e+2}\approx0.3642,\quad
-g_y:=\frac{\partial L}{\partial y}=y-1\approx-0.6358.
-\]
-\textbf{先对读取结果求导。}
-因为 $y=\sum_j a_jv_j$，
-$\partial L/\partial a_j=g_yv_j$。
-Softmax 的关键局部导数是
-$\partial a_i/\partial s_j=a_i(\delta_{ij}-a_j)$。
-链式法则把三项合并为
-\begin{equation}
-\boxed{\frac{\partial L}{\partial s_j}
-=g_ya_j(v_j-y).}
-\label{eq:attention-softmax-backward}
-\end{equation}
-代入得 $g_s\approx(-0.2329,\ 0.0491,\ 0.1838)$；
-三项和为零，是平移所有分数不改变 Softmax 的检验。
-\textbf{再穿回 Query 和 Key。}
-由于 $s_j=q\cdot k_j/\sqrt2$，
-\[
-\boxed{\nabla_qL=\frac{g_sK}{\sqrt2}
-\approx(-0.1647,\ 0.0347)},\qquad
-\boxed{\nabla_{k_j}L=\frac{g_{s_j}q}{\sqrt2}
-=(g_{s_j},0).}
-\]
-Value 也收到梯度 $\partial L/\partial v_j=g_ya_j$。
-这就打通了“预测误差 $\to$ 读取 $\to$ Softmax
-$\to$ Q/K”整条路径；多个位置与头的梯度再按共享参数求和。
-
-\textbf{LayerNorm 如何继续向输入传？}
-对一个三维行 $x=(1,2,3)$，取 $\epsilon=0$、
-无仿射参数，$\mu=2$、$\sigma=\sqrt{2/3}$、
-$\widehat{x}=(x-\mu)/\sigma$。
-若来自后层的梯度 $g=(1,0,0)$，则
-\[
-\frac{\partial L}{\partial x_i}
-=\frac{g_i-\overline g-\widehat{x}_i\,
-\overline{g\widehat{x}}}{\sigma}
-\quad\Longrightarrow\quad
-\nabla_xL=\frac{(1/6,-1/3,1/6)}{\sqrt{2/3}}.
-\]
-这里 $\overline g$ 表示三个分量的均值，
-$\overline{g\widehat{x}}$ 表示逐项乘积的均值；
-三项输入梯度之和为零，反映减去均值的操作。
-实际 LayerNorm 使用正的 $\epsilon$ 避免零方差，
-有 $\gamma,\beta$ 时还需沿仿射变换应用链式法则。
-
-\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
-可用上面三条公式逐项核对 $g_s$、$g_q$、$g_K$，
-再与附录 B 的真实三维全网络梯度相对照。\par\medskip
-
 \subsection{梯度能走回 Query、Key、Value、Norm、FFN 和词向量吗？}
+\label{sec:gradient-paths}
 
 误差经输出头先传回隐藏状态 $H$：
 $G_H=G_ZW_{\rm out}^\top$。
@@ -186,6 +119,9 @@ FFN 的权重梯度、ReLU 传导与第二次 LayerNorm
 又把误差传回 $X_{\rm att}$；
 沿第一条残差、输出投影与 $AV$ 则可继续到 Value，
 并沿 Softmax 与 $QK^\top$ 返回 Query、Key。
+穿过 Softmax 时，某个分数的梯度正比于它的权重，
+以及它的 Value 与当前读取结果之差（式~\eqref{eq:attention-softmax-backward}）；
+三项分数的逐步手算放在\sectionentry{sec:attention-backward-three-scores}的选读。
 最后，经第一层 LayerNorm 回到 $X=E+P_{\rm pos}$，
 每个出现过的 Token ID 汇总梯度到 Embedding 行。
 
@@ -251,9 +187,6 @@ L_{\rm after}=1.611377.}
 更新后位置 1 预测已变成“花”，位置 2 仍偏向“花”而不是“开了”，
 位置 3 仍预测“。”。概率改善先发生，贪心标签随后才会跨过最高项。
 
-这次损失下降验证了同一样本上的优化，泛化质量仍需独立数据检验。
-
-
 \subsection{同一网络继续做 20 步，会发生什么？}
 
 不换数据、不重设权重，每一步都重新前向、反传，
@@ -291,7 +224,7 @@ $20$ & $0.483173$ & $[4,5,3]$ & 三位置在本样本均预测正确\\
 
 \subsubsection*{训练前后，Attention 究竟怎样变化？}
 下面两列都取同一个三位置输入；行是 Query，列是 Key，未来位置仍被遮蔽。
-使用三维主例的全部参数同步 SGD，学习率 $0.04$、共 $20$ 步：
+对三维主例的全部参数做全批次梯度下降（每步同步更新），学习率 $0.04$、共 $20$ 步：
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}p{23mm}XX@{}}\toprule
@@ -302,9 +235,15 @@ Query & 第 0 步：对春天／花／开了 & 第 20 步：对春天／花／�
 \end{tabularx}
 \end{center}
 “开了”读“花”的权重由 $0.241768$ 增至 $0.325602$。
-这展示梯度确实经过 Q/K；单凭一张权重表还不足以解释语言关系。
-主例服务于计算图核对，选择性是否必要由下一节的干扰项消融另行回答。
-运行 \texttt{python3 scripts/teaching\_trace.py --attention} 可复核这两张矩阵。
+\textbf{这一变化主要来自输入表示的更新。}
+冻结 $W_Q,W_K$、其余参数照常训练 $20$ 步，$A_{3,2}$ 仍升至 $0.324789$；
+只训练 $W_Q,W_K$，或冻结 $E,P_{\rm pos}$ 而训练其余参数，
+它反而分别降到 $0.223962$ 和 $0.218699$。
+$E$ 与 $P_{\rm pos}$ 改变了进入 LayerNorm 的行，Query 和 Key 随之改变。
+Q/K 的梯度本身非零（\sectionentry{sec:gradient-paths}）；
+Q/K 能否学会按需选择，由\sectionentry{experiment:context-training}的第二级干扰项实验回答。
+运行 \texttt{python3 scripts/teaching\_trace.py --attention} 复核两张矩阵；
+加 \texttt{--freeze Wq,Wk}、\texttt{--only Wq,Wk} 或 \texttt{--freeze E,P} 复核三组对照。
 
 \subsection{怎样独立检查数值不是手工凑的？}
 
@@ -322,11 +261,78 @@ python3 scripts/teaching\_reference.py --json
 \end{itemize}
 脚本的反向传播使用矩阵链式法则，
 并用每个参数张量的中心有限差分抽样进行数值核验。
-下游真正部署的语言模型会有不同宽度、层数、归一化及更多参数，
+真正部署的语言模型会有不同宽度、层数、归一化及更多参数，
 但本章的共享训练原则不会改变。
 
-\subsection{回到上下文缺口：去掉 Attention 会怎样？}
-\phantomsection\label{experiment:context-training}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：三项分数手算一次 Attention 的反向传播}
+\label{sec:attention-backward-three-scores}
+\localfixture{三项 Softmax 的独立求导例；参数不取三维贯通主算例}
+\sectionentry{sec:gradient-paths}只给出梯度路径；这里用三项分数回答：误差怎样穿过
+\textbf{Attention 的 Softmax}，回到 Query 和 Key？
+取一个二维 Query，三个 Key，以及三个标量 Value：
+\[
+q=(\sqrt2,0),\quad
+K=\begin{bmatrix}1&0\\0&1\\0&0\end{bmatrix},\quad
+v=(1,0,-1)^\top.
+\]
+缩放分数 $s=qK^\top/\sqrt2=(1,0,0)$。
+这是三个可手算分数，不加因果 Mask。
+令 $a=\operatorname{softmax}(s)$、$y=av$、
+目标 $y^\star=1$，损失 $L=(y-1)^2/2$。于是
+\[
+a=\frac{(e,1,1)}{e+2}\approx(0.5761,0.2119,0.2119),
+\quad y=\frac{e-1}{e+2}\approx0.3642,\quad
+g_y:=\frac{\partial L}{\partial y}=y-1\approx-0.6358.
+\]
+\textbf{先对读取结果求导。}
+因为 $y=\sum_j a_jv_j$，
+$\partial L/\partial a_j=g_yv_j$。
+Softmax 的关键局部导数是
+$\partial a_i/\partial s_j=a_i(\delta_{ij}-a_j)$。
+链式法则把三项合并为
+\begin{equation}
+\boxed{\frac{\partial L}{\partial s_j}
+=g_ya_j(v_j-y).}
+\label{eq:attention-softmax-backward}
+\end{equation}
+代入得 $g_s\approx(-0.2329,\ 0.0491,\ 0.1838)$；
+三项和为零，是平移所有分数不改变 Softmax 的检验。
+\textbf{再穿回 Query 和 Key。}
+由于 $s_j=q\cdot k_j/\sqrt2$，
+\[
+\boxed{\nabla_qL=\frac{g_sK}{\sqrt2}
+\approx(-0.1647,\ 0.0347)},\qquad
+\boxed{\nabla_{k_j}L=\frac{g_{s_j}q}{\sqrt2}
+=(g_{s_j},0).}
+\]
+Value 也收到梯度 $\partial L/\partial v_j=g_ya_j$。
+这就打通了“预测误差 $\to$ 读取 $\to$ Softmax
+$\to$ Q/K”整条路径；多个位置与头的梯度再按共享参数求和。
+
+\textbf{LayerNorm 如何继续向输入传？}
+对一个三维行 $x=(1,2,3)$，取 $\varepsilon=0$、
+无仿射参数，$\mu=2$、$\sigma=\sqrt{2/3}$、
+$\widehat{x}=(x-\mu)/\sigma$。
+若来自后层的梯度 $g=(1,0,0)$，则
+\[
+\frac{\partial L}{\partial x_i}
+=\frac{g_i-\overline g-\widehat{x}_i\,
+\overline{g\widehat{x}}}{\sigma}
+\quad\Longrightarrow\quad
+\nabla_xL=\frac{(1/6,-1/3,1/6)}{\sqrt{2/3}}.
+\]
+这里 $\overline g$ 表示三个分量的均值，
+$\overline{g\widehat{x}}$ 表示逐项乘积的均值；
+三项输入梯度之和为零，反映减去均值的操作。
+实际 LayerNorm 使用正的 $\varepsilon$ 避免零方差，
+有 $\gamma,\beta$ 时还需沿仿射变换应用链式法则。
+
+\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
+可用上面三条公式逐项核对 $g_s$、$g_q$、$g_K$，
+再与附录 B 的真实三维全网络梯度相对照。\par\medskip
+
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：回到上下文缺口，去掉 Attention 会怎样？}
+\label{experiment:context-training}
 \subsubsection*{第一级：有无前文读取通路}
 复用第~\ref*{intro:21a-context-gap}~章的两条冲突样本，
 只监督相同位置的“花”，目标依前文分别为“开了／谢了”。
@@ -419,7 +425,7 @@ CI 核对均值不可区分、两种查询的权重、恢复均匀后的退化�
 \chapterchecktasks{22c-language-training}{正文基础三题}{
 \item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果 Mask 与损失 Mask。\chapterinlinehint{先错位对齐目标，再分别追踪可见性和计损位置。}
 \item \textbf{手算：}三个位置平均交叉熵；某位置正确类概率为 $0.3$，该类 logit 的梯度是多少？若只计两位置呢？\chapterinlinehint{先求单位置 $p-y$，再除以有效位置数。}
-\item \textbf{找错：}同学为更新输出头先改了 $W_{\rm out}$，再拿新权重反传得到 $W_Q$ 梯度，称为“同一次同步 SGD”。问题在哪里？\chapterinlinehint{给计算图中的全部权重标记本次使用的快照。}
+\item \textbf{找错：}同学为更新输出头先改了 $W_{\rm out}$，再拿新权重反传得到 $W_Q$ 梯度，称为“同一次同步更新”。问题在哪里？\chapterinlinehint{给计算图中的全部权重标记本次使用的快照。}
 }
 \chapterrecallanswer{已知真实前缀可并行计算多个自回归训练位置，但每个位置仍不能读取自己的未来目标；一次梯度必须来自同一旧参数。}
 

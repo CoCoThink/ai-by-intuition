@@ -8,6 +8,9 @@
 
 
 \subsection{欠拟合、合适的拟合、过拟合}
+\phantomsection\label{concept:underfitting}
+\phantomsection\label{concept:overfitting}
+\phantomsection\label{concept:generalization}
 
 真实规律接近 $y=2x+1$，测量带有噪声。
 \textbf{欠拟合}是训练与新数据都表现差；\textbf{合适的拟合}抓住模式；
@@ -16,7 +19,39 @@
 
 \input{figures/generalization-three-fits}
 
+\subsection{手算：训练误差为零，新题却错得最多}
+
+沿用 $y\approx2x+1$，但这次三个训练点带有测量噪声：
+\[
+(-1,-1.5),\qquad(0,2),\qquad(1,2.5).
+\]
+另留一个不参与训练的\textbf{验证点} $(2,4.5)$。比较两个模型：
+\begin{itemize}
+\item \textbf{直线}：按\hyperref[intro:16-loss-gradient]{第~\ref*{intro:16-loss-gradient}~章}的均方误差求最佳直线，
+三点输入仍围绕零对称，令两个偏导数为零可得：$b$ 是三个 $y$ 的平均 $1$，
+$w=(2.5-(-1.5))/2=2$，恰好还是 $\widehat{y}=2x+1$；
+\item \textbf{二次曲线}：令 $\widehat{y}=a_2x^2+a_1x+a_0$ 精确穿过三点，
+由 $x=0$ 得 $a_0=2$，再由两端解出 $a_2=-1.5,a_1=2$，即 $\widehat{y}=-1.5x^2+2x+2$。
+\end{itemize}
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{lccc}
+\toprule
+模型 & 训练残差 & 训练均方误差 & 验证点平方误差\\\midrule
+直线 $2x+1$ & $(0.5,-1,0.5)$ & $0.5$ & $(5-4.5)^2=0.25$\\
+二次曲线 & $(0,0,0)$ & $0$ & $(0-4.5)^2=20.25$\\
+\bottomrule
+\end{tabular}
+\end{center}
+二次曲线把 $x=0$ 处多出的 $+1$ 噪声当成了规律，向下弯折，
+在 $x=2$ 只预测出 $0$。\textbf{训练误差为零的模型，验证误差反而是直线的 $81$ 倍}：
+这就是过拟合。只看训练集无法发现，留出的验证点一算就暴露。
+
 \subsection{为什么需要训练、验证和测试三份数据？}
+\phantomsection\label{concept:training-set}
+\phantomsection\label{concept:validation-set}
+\phantomsection\label{concept:test-set}
+\phantomsection\label{concept:hyperparameter}
 
 \begin{center}
 \small
@@ -31,6 +66,9 @@
 如果反复根据测试集成绩修改模型，测试集也会被间接“学会”，无法再充当可信的独立评估。数据切分还应避免重复样本和时间泄漏。
 
 \subsection{四种常见的抗过拟合办法}
+\phantomsection\label{concept:data-augmentation}
+\phantomsection\label{concept:regularization}
+\phantomsection\label{concept:early-stopping}
 
 \textbf{一是增加数据并合理增强。}
 适度旋转、平移、裁剪图片可增加训练模式，但增强须保持标签；例如把数字 $6$ 旋转 $180^\circ$，会把它变成另一类的外形。
@@ -57,12 +95,21 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 
 \input{figures/validation-early-stop}
 
+% Keep Dropout with the chapter close so the self-check page is not a sparse tail.
+\Needspace{14\baselineskip}
 \subsection{Dropout 到底丢弃了什么？}
 \phantomsection\label{concept:dropout}
 
-训练时暂时置零\textbf{部分激活}，例如 $(2,1,3,4)\to(2,0,3,0)$，权重仍保留。
-反向缩放 Dropout 将保留值除以保留概率。
-推理用 \texttt{model.eval()} 关闭 Dropout；仅关闭梯度记录不会切换模式。
+训练时随机把\textbf{部分激活}暂时置零，权重本身仍保留。
+常用的反向缩放 Dropout 还把保留下来的值除以保留概率。
+例如保留概率为 $0.5$，某次抽到保留第 1、3 项：
+\[
+(2,1,3,4)\ \longrightarrow\ \left(\tfrac{2}{0.5},0,\tfrac{3}{0.5},0\right)=(4,0,6,0).
+\]
+每一项以 $0.5$ 的概率变成原值的 $2$ 倍、以 $0.5$ 的概率变成 $0$，
+期望仍是原值，例如第 1 项 $0.5\times4+0.5\times0=2$。
+所以推理时直接关闭 Dropout、使用全部激活，各层输入的平均尺度与训练时一致；
+在 PyTorch 中这一切换由 \texttt{model.eval()} 完成。
 
 
 

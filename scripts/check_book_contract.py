@@ -19,8 +19,8 @@ ROOT=Path(__file__).resolve().parents[1]
 BOOK=ROOT/'book'
 PART_TITLES=[
     '学习是什么：从规则到参数更新','把许多数一起算','让文字进入计算',
-    '让词与词交换信息','组装并训练 Transformer','换一种数据看 Transformer：从 CNN 到 ViT',
-    '从语言模型到助手','架构为什么在变，往哪走','联想记忆与线性状态']
+    '让词与词交换信息','组装并训练 Transformer','从语言模型到助手',
+    '架构为什么在变，往哪走','换一种数据看 Transformer：从 CNN 到 ViT','联想记忆与线性状态']
 CHAPTER_COUNT=41
 
 
@@ -299,16 +299,32 @@ def validate_contract():
     total=len(entries('24-lexicon.tex'))+len(entries('24b-modern-lexicon.tex'))
     require(f'全量中英对照：{total} 项' in sources['24e-bilingual-glossary'],'Glossary count must be generated')
     expected_links=sum(line.count(r'\hyperref[') for line in generate().splitlines() if ' & ' in line and r'\hyperref[' in line)
+    def lookup_entries(name):
+        """Each glossary row is one entry; the English lookup prints two
+        (English, 中文, 页码) triples per source row."""
+        found=[]
+        for line in sources[name].splitlines():
+            if ' & ' not in line or r'\hyperref[' not in line:
+                continue
+            cells=line.rstrip().removesuffix('\\\\').split(' & ')
+            if name=='24f-chinese-index':
+                # A group's first entry is prefixed by its printed initial.
+                cells=[re.sub(r'^\{\\sffamily\\bfseries\\color\{blue\}[A-Z]\}\\enspace ','',c) for c in cells]
+                found += [cells[i:i+3] for i in range(0,len(cells),3) if cells[i].strip()]
+            else:
+                found.append(cells)
+        return found
     for name in ('24e-bilingual-glossary','24f-chinese-index'):
-        require(sum(' & ' in line and r'\hyperref[' in line for line in sources[name].splitlines())==total,
-                f'{name}: glossary row count mismatch')
-        require(sum(line.count(r'\hyperref[') for line in sources[name].splitlines() if ' & ' in line and r'\hyperref[' in line)==expected_links,f'{name}: glossary reference count mismatch')
+        rows=lookup_entries(name)
+        require(len(rows)==total,f'{name}: glossary row count mismatch')
+        require(all(r'\hyperref[' in ' & '.join(row) for row in rows),f'{name}: glossary entry without a link')
+        require(sum(' & '.join(row).count(r'\hyperref[') for row in rows)==expected_links,f'{name}: glossary reference count mismatch')
         for target in ('concept:evaluation-contamination','concept:evaluation-contamination-benchmark','concept:autoregressive'):
             require(r'\hyperref['+target+']' in sources[name],f'{name}: missing lookup destination {target}')
     index_rows=[]
     for name in ('24e-bilingual-glossary','24f-chinese-index'):
-        index_rows.append({tuple(sorted(line.split(' & ')[:2])): tuple(re.findall(r'\\hyperref\[([^]]+)\]',line))
-                           for line in sources[name].splitlines() if ' & ' in line and r'\hyperref[' in line})
+        index_rows.append({tuple(sorted(row[:2])): tuple(re.findall(r'\\hyperref\[([^]]+)\]',' & '.join(row)))
+                           for row in lookup_entries(name)})
     require(index_rows[0]==index_rows[1],'English and pinyin lookup destinations differ')
     for term in ('提示注入','困惑度','自回归','蒸馏','剪枝','评测污染','混合精度','BOS/EOS'):
         require(term in sources['24e-bilingual-glossary'],f'Missing glossary term {term}')
@@ -340,7 +356,8 @@ def validate_contract():
         if re.search(r'点击题目标题|（返回正文）',body):errors.append(f'{name}: replace screen-only navigation with page references')
     for name in ('beginner_training_demo','claude_function_call_demo','context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace','chinese_tokenizer_demo','icl_policy_demo'):
         spelling=name.replace('_',r'\_')
-        require(spelling in sources['29-revision-notes'] or name in sources['29-revision-notes'],f'Missing reproduction entry: {name}')
+        # The reproduction table lives in Appendix B beside the experiments it reruns.
+        require(spelling in sources['24e-pytorch-lab'] or name in sources['24e-pytorch-lab'],f'Missing reproduction entry: {name}')
     for name in ('23d-agent-protocols','23b-deployment-and-ecosystem','22d-modern-transformers','23e-tech-judgement'):
         stamp=re.search(r'\\asof\{(\d{4}-\d{2}-\d{2})\}\{([^}]+)\}',sources[name])
         require(bool(stamp),f'{name}: date and stable-principle stamp required')

@@ -276,10 +276,10 @@
 \tagpdfsetup{table/header-rows={1}}
 \noindent\begin{tabularx}{\linewidth}{@{}XXX@{}}
 \toprule
-学习与表示 & 上下文与模型 & 系统与另一条路径\\\midrule
-一 · 函数怎样学习 & 四 · 词怎样交换信息 & 七 · 从模型到助手\\
-二 · 把许多数一起算 & 五 · 组装并训练 Transformer & 八 · 架构为什么变化\\
-三 · 文字进入计算 & 六 · 从 CNN 到 ViT & 九 · 联想记忆与线性状态\\
+学习与表示 & 上下文、模型与助手 & 架构与扩展路径\\\midrule
+一 · 函数怎样学习 & 四 · 词怎样交换信息 & 七 · 架构为什么变化\\
+二 · 把许多数一起算 & 五 · 组装并训练 Transformer & 八 · 从 CNN 到 ViT\\
+三 · 文字进入计算 & 六 · 从模型到助手 & 九 · 联想记忆与线性状态\\
 \bottomrule
 \end{tabularx}\par\vspace{5mm}
 \vfill
@@ -307,14 +307,16 @@
 \patchcmd{\l@part}{2.25em}{1.4em}{}{\PackageError{book}{TOC part spacing patch failed}{Check the tagged article TOC implementation.}}
 \makeatother
 \tableofcontents
-\par\smallskip\noindent{\footnotesize {\symboliconfont ★}选读入口：原论文对照（\sectionentry{elective:original-paper}）；
-现代架构扩展（\sectionentry{elective:architecture-extras} 起）。}
+\par\smallskip\noindent{\footnotesize {\symboliconfont ★}选读入口：原论文对照见\sectionentry{elective:original-paper}；
+现代架构扩展从\sectionentry{elective:architecture-extras}起。}
 \clearpage
 \endgroup
 
 % Reading conventions follow the TOC, before chapter one.
 \clearpage
 \input{chapters/00g-reading-routes}
+% Entry check and its answers sit together before Part 1 (no chapter number).
+\input{chapters/00j-entry-check}
 \clearpage
 
 
@@ -382,15 +384,6 @@
 \partreviewtransformer
 
 \clearpage
-\part{换一种数据看 Transformer：从 CNN 到 ViT}\label{part:vision}\markboth{换一种数据看 Transformer：从 CNN 到 ViT}{}
-\learningbridge{语言模型已经能处理 Token；图像也能切成可训练的局部表示并与语言序列桥接。}{从卷积小窗口与权重共享理解 CNN，再理解视觉 Transformer 如何处理图像块并对接语言模型。}
-\partmapvision
-\clearpage
-\input{chapters/19-cnn}
-\input{chapters/19b-vit}
-\partreviewvision
-
-\clearpage
 \part{从语言模型到助手}\label{part:assistant}\markboth{从语言模型到助手}{}
 \learningbridge{预训练模型能够续写，却未必懂得任务格式、读取可靠的当前数据或执行获得授权的操作。}{区分 ICL 与后训练，并用统一季度报表案例串起 RAG、工具、Agent、部署和安全边界。}
 \partmapassistant
@@ -412,6 +405,15 @@
 \input{chapters/22d-modern-transformers}
 \input{chapters/23e-tech-judgement}
 \partreviewarchitecture
+
+\clearpage
+\part{换一种数据看 Transformer：从 CNN 到 ViT}\label{part:vision}\markboth{换一种数据看 Transformer：从 CNN 到 ViT}{}
+\learningbridge{语言模型已经能处理 Token；图像也能切成可训练的局部表示并与语言序列桥接。}{从卷积小窗口与权重共享理解 CNN，再理解视觉 Transformer 如何处理图像块并对接语言模型。}
+\partmapvision
+\clearpage
+\input{chapters/19-cnn}
+\input{chapters/19b-vit}
+\partreviewvision
 
 \clearpage
 \part{联想记忆与线性状态}\label{part:memory}\markboth{联想记忆与线性状态}{}
@@ -478,6 +480,7 @@
 \clearpage
 \section{术语地图、概念关系与索引}
 % Canonical definitions and English aliases remain generator data only.
+% E.1 pinyin glossary with definitions; E.3 compact English lookup without definitions.
 \input{chapters/24e-bilingual-glossary}
 \input{chapters/24c-concept-map}
 \input{chapters/24f-chinese-index}

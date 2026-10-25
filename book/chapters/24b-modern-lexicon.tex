@@ -50,8 +50,8 @@
 
 \subsubsection*{Agent 系统中的边界}
 \begin{itemize}
-\item \textbf{Prompt}：提供给模型的任务说明、示例、问题等提示输入。 \termref{concept:prompt}
-\item \textbf{Context}：一次推理可读取的对话、检索片段和工具结果等上下文内容。 \termref{concept:context}
+\item \textbf{Prompt}：本次请求中写给模型的任务说明、约束、示例与问题文本。 \termref{concept:prompt}
+\item \textbf{Context}：一次推理中模型能读取的全部 Token：对话历史、检索片段、工具结果与当前请求。 \termref{concept:context}
 \item \textbf{Memory}：应用保存并在需要时恢复的信息，不等于模型权重或 KV Cache。 \termref{concept:app-memory}
 \item \textbf{Tool Calling}：模型提出结构化请求，系统在检查后调用外部工具。 \termref{concept:tool-calling}
 \item \textbf{Skill}：把一类任务的说明、约束和脚本包装为可复用能力。 \termref{concept:skill}

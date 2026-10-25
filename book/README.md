@@ -9,7 +9,7 @@
 
 ## 当前目录：九部分、41 章、附录 A–G
 
-章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。视觉桥接位于 Transformer 之后，联想记忆为第九部分；终章位于联想记忆部分之后，回顾全书。
+章节顺序、自动章号与附录定位以 [main.tex](main.tex) 为准。主线依次为学习、矩阵、文字、上下文、Transformer、助手；其后是架构、视觉、联想记忆三部分扩展路径；终章位于联想记忆部分之后，回顾全书。
 
 | 部分 | 章节和源码 |
 |---|---|
@@ -18,12 +18,12 @@
 | III · 文字与 Token | [Tokenizer](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、[Embedding](chapters/20-embeddings.tex)、[任务契约](chapters/20b-task-contract.tex) |
 | IV · 上下文 | [RNN](chapters/21-rnn.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[Self-Attention](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
 | V · Transformer | [Block](chapters/22-transformer-architecture.tex)、[FFN](chapters/10b-ffn-output-head.tex)、[贯通前向](chapters/22b-token-to-output.tex)、[联合训练](chapters/22c-language-training.tex)、[生成](chapters/23-llm-systems.tex)、[玩具到 GPT](chapters/23a-from-toy-to-gpt.tex) |
-| VI · 视觉桥接 | [CNN](chapters/19-cnn.tex) → [ViT 与多模态](chapters/19b-vit.tex) |
-| VII · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[数据、训练与部署](chapters/23b-deployment-and-ecosystem.tex) |
-| VIII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex) |
+| VI · 助手与 Agent | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[Agent loop](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[数据、训练与部署](chapters/23b-deployment-and-ecosystem.tex) |
+| VII · 架构与判断 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[评测与技术判断](chapters/23e-tech-judgement.tex) |
+| VIII · 视觉桥接 | [CNN](chapters/19-cnn.tex) → [ViT 与多模态](chapters/19b-vit.tex) |
 | IX · 联想记忆 | [外积与串扰](chapters/04-key-value-outer-product.tex)、[Delta 更新](chapters/06-better-linear-memory.tex)、[非线性读取](chapters/09-nonlinearity-and-memory.tex)、[容量](chapters/13-capacity.tex) |
 
-**附录 A–G**：公式、实验、按章题库、参考答案、术语、文献与勘误。
+**附录 A–G**：A 公式、符号与优化器速查；B 三维贯通实验、PyTorch 复现与复算脚本总表；C 按章题库与累积复习；D 参考答案（D.1 题库、D.2 随堂自测）；E 术语表（拼音主表、概念图、英文索引）；F 来源；G 版本、勘误与带日期断言。开读前的五题入门自检及答案位于阅读路线之后、第一部分之前。
 
 章节间跨引优先采用 `\\label`／`\\ref`，而非写死章号。 CI 在编译前运行 `scripts/check_chapter_crossrefs.py`，拦截写死的“第 N 章”，另由 `scripts/check_part_references.py` 禁止包括“第 VI 部分／第六部分／第6部分”在内的硬编码部分编号，并检查九个 `part:` 标签与实际部分标题、顺序匹配，并依 `main.tex` 的实际 `\\section` 顺序逐项校验附录 D 的章号；编译后仍由 `check_latex_references.py` 拦截未解析引用与 PDF 的 `??`。正文所有算例和教学实验仍以三维贯通参考脚本为数值基线。自测答案详解保留在附录 D，并按正文编号及提高专题排列。
 
@@ -31,7 +31,7 @@
 
 **每章一个自测块，共 42 组**。正文只印题目，提示统一放在[附录 D.2](chapters/28-chapter-checks.tex)的“第一步”中，再展开解题过程。四对重复自测已合并，保留全部问题；一般章有三题，四个合并章有六题。每组保留唯一 `check:` 和 `answer:` 锚点。
 
-附录 C 含 **104 道按章练习（C-001 至 C-104）和 18 道独立累积复习（R-01 至 R-18）**，逐题印难度、预计耗时和入口页码。R 题按部分分组，不再列入末章题号。题目、解答、章末导航和部分末复习都从 [exercises.json](exercises.json) 生成；编辑后依次运行 `scripts/generate_exercise_bank.py` 和 `scripts/generate_chapter_navigation.py`，CI 以 `--check` 验证。旧题号只作隐藏锚点，源码和成品 PDF 均拦截可见旧编号，并检查链接显示的题号是否与实际目标一致。
+附录 C 含 **116 道按章练习（C-001 至 C-116）和 18 道独立累积复习（R-01 至 R-18）**，按印刷顺序连续编号；章小标题印章号与正文页码，每题只印解答页码、难度和预计耗时。R 题按部分分组，不再列入末章题号。题目、解答、章末导航和部分末复习都从 [exercises.json](exercises.json) 生成；编辑后依次运行 `scripts/generate_exercise_bank.py` 和 `scripts/generate_chapter_navigation.py`，CI 以 `--check` 验证。旧题号只作隐藏锚点，源码和成品 PDF 均拦截可见旧编号，并检查链接显示的题号是否与实际目标一致。
 
 纸面目录仅列到章，控制在两页内；PDF 书签仍提供全部小节导航。自测允许接排和跨页，避免整块自测、小结被挤成稀疏尾页。
 
@@ -82,7 +82,7 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 
 正式回归 CI 检查图注父子结构、超宽盒子和标题层级，防止这些已修复问题再次出现。公式 MathML 已在正式构建中启用，`scripts/validate_mathml_af.py` 对**实际生成的每一个公式节点**核对 MathML-AF 关联，而不是将旧版的 1,472 个节点误写为当前固定目标。当前正文与附录的页数、图数、题目链接数量随修订变化，均以最新的 GitHub Actions 构建报告和实际 PDF 检查为准，不把过去某次成功构建的统计数据当作永久指标。本书仍标为 v0.2.0-draft（未发布）。真实屏幕阅读器、纸质印刷与读者试做尚未人工签核，不能把机器合规等同于无障碍使用体验；详见[自动化验收说明](../docs/ACCESSIBILITY.md)。
 
-**中文检索：**附录 E 还提供 149 项按拼音排序的中文索引，附正文页码链接。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0` 和 `python3 scripts/generate_chinese_index.py`；CI 会自动生成索引并核对术语表实际条目数与全部链接；标题总数从规范术语表生成。
+**术语检索：**附录 E.1 是 149 项按拼音逐字排序的中英对照主表（含释义与定义处节号／页码），E.3 是不含释义的英文→中文简表。首次本地构建前运行 `python3 -m pip install pypinyin==0.55.0`，再依次运行 `python3 scripts/generate_bilingual_glossary.py` 与 `python3 scripts/generate_chinese_index.py`；CI 会重新生成并核对两表的条目数与链接目标一致。
 
 中文分词实测：`python3 scripts/chinese_tokenizer_demo.py --real` 下载固定修订的 Qwen2.5-0.5B 分词器并校验 SHA-256，不加载模型权重。需要 `tokenizers==0.22.1`。归纳读取与优势到 logits 的更新由 `python3 scripts/icl_policy_demo.py` 复算，需 NumPy。
 
@@ -90,8 +90,8 @@ pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
 
 ## 本轮开篇与导航修订
 
-第 1–3 章补充双参数直接求解、迭代表及步长稳定区间；第 26 章专注规模和真实分词，数据工程移入训练系统章。参见 [开篇与导航修订记录](../docs/REVIEW-OPENING-AND-NAVIGATION.md)。目录标题、页码和章末答案均可点击；CI 检查实际目的页、双向答案链接与图/图题同页。术语的主要位置在附录 E，全部出现章节另见 [自动索引](../docs/TERM_OCCURRENCES.md)。
+开篇三章补充双参数直接求解、迭代表及步长稳定区间；“从三维到真实模型”一章专注规模和真实分词，数据工程移入训练系统章。参见 [开篇与导航修订记录](../docs/REVIEW-OPENING-AND-NAVIGATION.md)。目录标题、页码和章末答案均可点击；CI 检查实际目的页、双向答案链接与图/图题同页。术语的主要位置在附录 E，全部出现章节另见 [自动索引](../docs/TERM_OCCURRENCES.md)。
 
-MCP 示例采用 2026-07-28，附录 G 的 [带日期断言来源](dated-claims.json) 区分版本、内容核验范围和构建日期；CI 比较官方当前入口并核对请求字段。第 4 章增加三点 ReLU 拟合与输出权重迭代，第 35 章按数据、训练、部署衔接。参见 [协议与 ReLU 修订记录](../docs/REVIEW-PROTOCOL-AND-RELU.md)。
+MCP 示例采用 2026-07-28，附录 G 的 [带日期断言来源](dated-claims.json) 区分版本、内容核验范围和构建日期；CI 比较官方当前入口并核对请求字段。非线性一章增加三点 ReLU 拟合与输出权重迭代，“数据、训练系统与部署”一章按数据、训练、部署衔接。参见 [协议与 ReLU 修订记录](../docs/REVIEW-PROTOCOL-AND-RELU.md)。
 
 清单现按 90 天或新修订复查，并由每周定时 CI 检查；MCP 代码引导句保持同页，Claude 示例补齐必填请求体和请求头。参见 [本轮记录](../docs/REVIEW-REQUESTS-AND-RECHECK.md) 与 [下一版教学计划](../docs/NEXT_EDITION.md)。

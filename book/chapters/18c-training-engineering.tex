@@ -1,31 +1,37 @@
-\subsection{训练如何组织？小批次、优化器与稳定性}
+\subsection{训练如何组织？小批次、Epoch 与随机梯度下降}
 \label{intro:18c-training-engineering}
 
-训练除了定义损失函数，还要安排每次使用的数据量、更新参数的方法以及数值稳定措施。
-这些设置会影响训练速度和收敛行为。
+前面每一步都用全部三个样本求梯度。样本很多时，每次只读一部分样本就更新一次，
+参数能更早、更频繁地得到调整。
 
 \subsubsection{Mini-batch、Batch Size 与 Epoch 是什么？}
+\phantomsection\label{concept:mini-batch}
+\phantomsection\label{concept:epoch}
+\phantomsection\label{concept:batch-size}
+\phantomsection\label{concept:optimizer}
 
-设有 $100$ 条训练样本。如果每次取其中 $10$ 条一起估计梯度，那么 \textbf{Batch Size（批量大小）}是 $10$，这一组样本叫 \textbf{Mini-batch（小批次）}。把全部 $100$ 条训练样本完整处理一遍，称为一个 \textbf{Epoch（训练轮次）}；本例中每轮大约需要 $100/10=10$ 次参数更新。
+设有 $100$ 条训练样本。如果每次取其中 $10$ 条一起估计梯度，那么 \textbf{Batch Size（批量大小）}是 $10$，这一组样本叫 \textbf{Mini-batch（小批次）}。把全部 $100$ 条训练样本完整处理一遍，称为一个 \textbf{Epoch（训练轮次）}；本例中每轮需要 $100/10=10$ 次参数更新。
 
-\textbf{优化器}决定怎样利用梯度调整参数。普通梯度下降按学习率和梯度更新权重；\textbf{Adam} 会进一步使用梯度的一阶与二阶矩估计，自适应地调节更新幅度。
+每次只用一个小批次估计梯度、再按 $\theta\leftarrow\theta-\eta\nabla_\theta L$ 更新的梯度下降，
+叫\textbf{随机梯度下降（SGD）}；“随机”指每批抽到哪些样本。
+小批次梯度是全部样本梯度的估计，相邻两步的方向会有些波动。
+回到三点数据：Batch Size 取 $1$ 时，一个 Epoch 更新 $3$ 次；
+取 $3$ 时，每批就是全部样本，正是前几节的做法，后文也称\textbf{全批次 SGD}。
 
-若梯度特别大，\textbf{梯度裁剪}可以在更新前限制其幅度。例如梯度向量的长度超过设定阈值时，可以将其整体按比例缩小。学习率选择与数据检查仍分别进行。
-
-\noindent\textbf{先记主线：}掌握 Mini-batch、Epoch 与同步 SGD；出现不稳定时，先检查数据、梯度大小与学习率。
-第二遍再到\hyperref[app:optimizer-details]{附录 A.4（第~\pageref*{app:optimizer-details}~页）}
-做动量、Adam、AdamW、Warmup 与稳定性诊断的独立手算。\par\medskip
+按梯度修改参数的具体规则叫\textbf{优化器}，正文始终使用 SGD。
+动量、Adam、梯度裁剪与训练不稳定的诊断要用到梯度向量和多步历史，
+放在\hyperref[app:optimizer-details]{附录~\ref*{app:optimizer-details}（第~\pageref*{app:optimizer-details}~页）}逐步手算，学完向量后再读。\par\medskip
 
 \chapterchecktasks{16-loss-gradient}{正文基础三题}{
 \item \textbf{预测：}沿用三点损失 $L(w,b)=\frac23(w-2)^2+(b-1)^2$，从 $(1,0)$ 出发。若学习率由 $0.3$ 改为 $0$，参数与损失会怎样变化？这为什么不等于“模型已收敛”？\chapterinlinehint{把零学习率代入更新式，再检查梯度。}
 \item \textbf{手算：}写出 $(w,b)=(1,0)$ 的两个偏导数；以 $\eta=0.3$ 同步更新 $w,b$，再代回损失函数。\chapterinlinehint{先在旧参数处求梯度，再同步更新并复算损失。}
-\item \textbf{找错：}有人先更新 $w$，再用新 $w$ 与旧 $b$ 算同一次迭代的另一个梯度，并说这是标准同步 SGD。指出哪里违背了本章的梯度与参数约定。\chapterinlinehint{给本次迭代的所有参数标上同一个步数。}
+\item \textbf{找错：}有人先更新 $w$，再用新 $w$ 与旧 $b$ 算同一次迭代的另一个梯度，并说这仍是同步更新。指出哪里违背了本章的梯度与参数约定。\chapterinlinehint{给本次迭代的所有参数标上同一个步数。}
 }
-\chapterrecallanswer{梯度下降沿负梯度方向；一次同步更新的各项梯度都应来自同一组旧参数。}
+\chapterrecallanswer{梯度下降沿负梯度方向；一次同步更新的各项梯度都应来自同一组旧参数；每次只用一个小批次估计梯度的梯度下降叫 SGD。}
 
 
 \begin{conclusion}
-我们已用三点数据算出损失、梯度和同步更新；
-批次、学习率调度与优化器进一步决定训练怎样执行。
+我们已用三点数据算出损失、梯度和同步更新，并看到学习率决定收敛还是发散；
+样本多时，按小批次估计梯度、一轮轮遍历数据，就是 SGD。
 接下来研究：若函数只是一条直线，怎样表示弯曲的关系？
 \end{conclusion}

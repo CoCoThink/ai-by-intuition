@@ -108,6 +108,22 @@ def main():
     attention_table=training.split('训练前后，Attention 究竟怎样变化？',1)[1].split(r'\subsection{',1)[0]
     for array in (a0,a20):
         for value in array[1:,:][array[1:,:]>0]:assert f'{value:.6f}' in attention_table
+    # Attribution of A[3,2]: frozen/only-Q/K and frozen-E/P ablations printed in prose.
+    from teaching_trace import NAMES,train,greedy_generate
+    for trainable in (tuple(n for n in NAMES if n not in ('Wq','Wk')),('Wq','Wk'),
+                      tuple(n for n in NAMES if n not in ('E','P'))):
+        value=forward(train(trainable=trainable))['a'][2,1]
+        assert f'{value:.6f}' in attention_table,('A32 ablation',trainable,value)
+    # Greedy generation with the 20-step weights, KV-cache row and context window.
+    generation=(ROOT/'book/chapters/23-llm-systems.tex').read_text()
+    ids,trace=greedy_generate(train())
+    assert ids==[2,4,5,3] and len(ids)>trained['P'].shape[0]
+    for item in trace:
+        assert f"{item['prob']:.4f}" in generation,('generation prob',item['prob'])
+        assert np.allclose(item['k'][0],trace[0]['k'][0])
+    assert all(f'{v:.4f}' in generation for v in trace[-1]['attention'])
+    assert all(f'{v:.4f}' in generation for v in trace[0]['k'][0])
+    assert np.allclose(trace[-1]['attention'],a20[2])
     w=parameters();state=forward(w);g=backward(w,state)
     updated=forward({k:v-LR*g[k] for k,v in w.items()})
     assert f"{state['loss']:.6f}" in training

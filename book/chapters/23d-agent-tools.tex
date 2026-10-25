@@ -10,7 +10,7 @@
 
 \begin{center}
 \tagstructbegin{tag=Figure,alttext={工具调用的三泳道：用户目标进入模型，模型输出请求；应用系统校验权限并调用外部工具；工具返回数据后由应用检查并供模型生成回答，最终再经复核交付}}
-\begin{tikzpicture}[>=Latex,scale=.94,transform shape,
+\begin{tikzpicture}[>=Latex,scale=.86,transform shape,
  lane/.style={rounded corners=3pt,draw=linegray,thick},
  n/.style={rounded corners=3pt,draw=linegray,fill=white,minimum width=30mm,minimum height=10mm,align=center,font=\small}]
 \fill[paper] (0,0) rectangle (4.1,7.0);
@@ -46,7 +46,8 @@
 
 同理，若用户询问前文“春天花开了”在\textbf{某日某地}是否属实，
 模型可提出 \texttt{read\_observations} 请求（参数为日期与地点）；
-宿主应用验证访问范围、日期与地点，再读带时间戳的数据。
+应用（宿主）验证访问范围、日期与地点，再读带时间戳的数据。
+后文把执行这些检查的程序统称为\textbf{应用}。
 返回“未找到记录”是有效工具结果，\textbf{不是可以让模型编造“已开花”的许可}。
 这和季度报告先查来源再算数字，属于同一套核证流程。
 
@@ -57,7 +58,7 @@
 应用程序仍需验证参数并决定是否执行：
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
-{"id":"call_q3_01","tool":"read_reports",
+{"id":"call_q3_01","tool":"read_report",
  "arguments":{"quarter":"2026Q3"}}
 \end{Verbatim}
 \end{tcolorbox}
@@ -72,6 +73,9 @@
 
 
 \subsection{Agent loop：一次任务在消息里怎样向前推进？}
+\phantomsection\label{concept:agent}
+\textbf{Agent（智能体）}把模型放进一个由应用控制的循环：
+模型读消息、提出下一步动作，应用授权并执行，再把结果交回模型，直到满足完成条件或预算用尽。
 \par\medskip
 \tagstructbegin{tag=Figure,alttext={Agent 逐轮执行流程：模型规划动作，应用进行授权和参数检查，工具在限制内执行或返回拒绝，结果追加到消息列表，再由模型判断是否结束；任务未完成则重新规划，完成后输出最终答复。}}
 \begin{center}
@@ -121,10 +125,7 @@ for step in range(MAX_STEPS):
 return {"error": "step_budget_exceeded"}
 \end{Verbatim}
 \end{tcolorbox}
-\textbf{真实接口对照：}这里的 \texttt{answer.tool\_calls} 是伪代码中的统一表示。
-Claude 客户端工具循环以 \texttt{stop\_reason == "tool\_use"} 为继续条件，
-从 \texttt{content} 提取全部 \texttt{tool\_use} 块；校验并执行后，按 ID 追加结果再请求。
-长度截断、拒绝与正常结束分别处理，实际字段见本章选读。
+这里的 \texttt{answer.tool\_calls} 是伪代码中的统一表示，某一真实接口的字段见\hyperref[elective:real-function-call]{本章选读}。
 \textbf{缩进线标出循环、条件与工具调用的层次}；循环次数和权限检查由应用控制，模型不会替应用执行工具。
 示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
 
@@ -148,7 +149,7 @@ Claude 客户端工具循环以 \texttt{stop\_reason == "tool\_use"} 为继续�
 若 Q2 工具失败或无权限，应返回错误，不能跳过证据仍声称得到了可靠环比。
 
 \par\smallskip\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}\enspace
-运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹。
+运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹，并复算下文每次模型调用的输入 Token。
 
 \subsection*{再回到“春天 花 开了 。”：查证今天的花期}
 仍以\hyperref[intro:23d-agent-systems]{前章那句“春天花开了”}为例。
@@ -156,12 +157,12 @@ Claude 客户端工具循环以 \texttt{stop\_reason == "tool\_use"} 为继续�
 而不是计算续写“开了”的概率。按下面的工具记录逐步核查：
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
 \item \textbf{提出请求：}模型建议调用
-\texttt{read\_observations(park="A", date="04-06")}；
+\texttt{read\_observations(park="A", date="2026-04-06")}；
 \item \textbf{检查权限：}应用核对用户允许的园区资料范围，才执行检索；
 \item \textbf{返回证据：}工具找到“4 月 1 日盛开”和“4 月 5 日花期结束”
-两份带日期的记录，却没有 4 月 6 日现场观测；
+两份带日期的记录，却没有 2026 年 4 月 6 日的现场观测；
 \item \textbf{交付结论：}系统可说明“4 月 5 日记录为花期结束，
-4 月 6 日尚无直接观测”，并链接来源，不把 4 月 1 日的照片当成当天证据。
+4 月 6 日尚无直接观测”，并链接来源；4 月 1 日的照片只证明当日的花期。
 \end{enumerate}
 这段教学记录与季度收入例子共享同一组关口：
 \textbf{明确任务 $\to$ 获得授权 $\to$ 返回有时效的证据
@@ -190,21 +191,25 @@ $\to$ 核查缺口 $\to$ 给出带来源的答案}。
 \midrule
 固定流程 & 步骤稳定，便于重复测试；变化过大可能需增添分支\\
 Agent & 动态选工具和步骤；需要权限、预算与终止条件\\
-Skill/操作指南 & 为某类任务提供步骤、示例与脚本；内容本身不是额外模型权重\\
-Subagent/子任务分工 & 隔离部分上下文和工作；会带来协调与复核成本\\
 \bottomrule
 \end{tabularx}
 \end{center}
+可复用的操作指南（Skill）与子任务分工（Subagent）见下一章\hyperref[concept:skill]{协议与多 Agent 一节}。
 
 
 \begin{example}[breakable=false]
-\noindent\emph{工具读数之后再做算术}\par
-工具返回 Q1 = $100$、Q2 = $120$、Q3 = $132$（百万元），程序计算：
+\noindent\emph{每轮循环都重读全部消息：输入 Token 怎样累积？}\par
+\localfixture{教学用的固定消息长度，不对应某一分词器}
+设系统与用户消息共 $80$ 个 Token，每条工具请求 $20$ 个、每条工具结果 $40$ 个。
+前面的逐轮消息记录中，模型一共被调用 $4$ 次（三次请求工具，一次给出答复）。
+第 $j$ 次调用要读入此前全部消息，长度为 $80+60(j-1)$：
 \[
-g_{Q2}=(120-100)/100=20\%,\qquad
-g_{Q3}=(132-120)/120=10\%.
+(80,140,200,260),\qquad
+\text{合计 } 4\times80+60\times(0+1+2+3)=\boxed{680}\ \text{个输入 Token}.
 \]
-如果 \texttt{read\_report(Q2)} 返回权限错误，程序记录 Q2 缺失，并停止依赖 Q2 的环比计算。
+若模型在第一次调用中一并请求三份报表，只需两次调用：$80+(80+3\times20+3\times40)=340$ 个。
+步数预算因此同时约束了时延与输入成本；
+若 \texttt{read\_report(Q2)} 返回权限错误，循环在第 $2$ 次调用后停止，并报告 Q2 缺失。
 \end{example}
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：一个真实函数调用接口的最小闭环}
 \phantomsection\label{elective:real-function-call}
@@ -224,9 +229,9 @@ g_{Q3}=(132-120)/120=10\%.
    "additionalProperties":false}}
 \end{Verbatim}
 名称标识工具，描述说明何时使用和业务含义，\texttt{input\_schema} 约束参数形状；
-三者共同帮助模型选择工具与填写参数，执行权限由宿主另外检查。
+三者共同帮助模型选择工具与填写参数，执行权限由应用另外检查。
 模型返回 \texttt{tool\_use} 内容块，其 \texttt{id}、\texttt{name} 和 \texttt{input}
-分别表示本次请求、工具名和参数。宿主检查工具白名单、数值及任务授权，
+分别表示本次请求、工具名和参数。应用检查工具白名单、数值及任务授权，
 按已核验的 $120,132$ 计算出 $0.1$，再在下一条 \texttt{user} 消息中回传：
 \begin{Verbatim}[fontsize=\small]
 {"type":"tool_result","tool_use_id":"实际调用ID",
@@ -234,7 +239,7 @@ g_{Q3}=(132-120)/120=10\%.
 \end{Verbatim}
 下一次请求保留完整的 \texttt{assistant} 内容块和上述结果，模型据此继续。
 只要 \texttt{stop\_reason} 仍为 \texttt{"tool\_use"}，就在预算内重复这一步；
-取到 \texttt{"end\_turn"} 才按正常完成交付。
+取到 \texttt{"end\_turn"} 才按正常完成交付；长度截断与拒绝等其他停止原因分别处理。
 这是真实接口的字段约定，示例数值仍来自本书季度报表。
 完整最小客户端见 \path{scripts/claude_function_call_demo.py}；
 直接运行只验证离线合成消息、ID 关联、计算与越权拒绝，\textbf{不调用在线模型}。
@@ -245,7 +250,7 @@ g_{Q3}=(132-120)/120=10\%.
 
 \chapterchecktasks{23d-agent-tools}{正文基础三题}{
 \item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？\chapterinlinehint{追踪请求从模型交到执行器之前的检查环节。}
-\item \textbf{计算：}Q1、Q2、Q3 的收入是 $100$、$120$、$132$ 百万元，求两次环比增长率。若误把 Q1 作为 Q3 的基期，会得到多少？\chapterinlinehint{分别写出三种比较的基期和分母。}
+\item \textbf{计算：}沿用本章消息长度：系统与用户消息 $80$ Token，每条工具请求 $20$、每条结果 $40$。若要逐份读取 Q1--Q4 四份报表再答复，模型共被调用几次？累计输入多少 Token？\chapterinlinehint{第 $j$ 次调用读入 $80+60(j-1)$ 个 Token，再逐次相加。}
 \item \textbf{找错：}工具拒绝读取 Q2 时，Agent 自行补上 $120$ 并写“已核实”。哪一步失实？\chapterinlinehint{把“已核实”的声明与工具实际返回状态对照。}
 }
 \chapterrecallanswer{模型只产生工具请求；应用执行、授权、错误处理与交付核对。}

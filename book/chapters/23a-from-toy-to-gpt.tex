@@ -16,10 +16,11 @@
 词表 $50{,}257$，隐藏宽度 $768$，
 $12$ 层 Transformer Block、$12$ 个注意力头，
 每层 FFN 中间宽度为 $3{,}072$，最大配置位置数 $1{,}024$。
-这些值来自
-\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/configuration_gpt2.py}{GPT-2 配置}
-和
-\href{https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py}{相应 FFN 实现}。
+这些值来自固定修订 \texttt{607a30d} 的
+\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 配置}
+和 Transformers 4.46.3 的
+\href{https://github.com/huggingface/transformers/blob/v4.46.3/src/transformers/models/gpt2/modeling_gpt2.py}{相应 FFN 实现}
+（配置未给 FFN 宽度时取 $4\times768$）。
 这不是 2026 年所有 LLM 的统一规格。
 
 \subsection{宽度、层数、头数分别在改变什么？}
@@ -31,14 +32,16 @@ GPT-2 small 为 $1\times768$。
 \textbf{头数}让不同注意力头在不同投影子空间中读取内容。
 若将 768 个隐藏维度等分给 12 个注意力头，
 每头 Query/Key 的宽度为 $768/12=64$。
-这与本书另设的 $d_{\rm model}=4$ 两头示例相同地遵守整除原则，
-因此三维主例保留一个头，双头例另用四维。
+多头要求 $d_{\rm model}$ 能被头数整除；为让每头至少有 $2$ 维，
+双头例另用 $d_{\rm model}=4$，三维主例保留单头。
 
 \textbf{层数}允许把一个 Block 的输出作为下一个 Block 的输入，
 让上下文特征反复组合。它不是简单把每层的预测概率相加。
 
 \textbf{FFN 宽度}决定每个 Token 经过非线性中间层时可用的特征数量，
 不是 Token 的个数；它与词表输出头也不是同一个矩阵。
+GPT-2 的 FFN 激活函数是 GELU（配置中的 \texttt{gelu\_new}），
+本书主例用 ReLU；两者都是逐元素非线性，GELU 在零附近平滑过渡，负输入给出接近零的小负值。
 
 \subsection{参数怎么数：99 个教学参数与 GPT-2 量级}
 
@@ -70,9 +73,9 @@ $50{,}257\times768=38{,}597{,}376$ 个参数，约 $38.6$ M；
 十二层约 $84.9$ M；再加可学习位置 Embedding
 $1{,}024\times768\approx0.79$ M、
 归一化参数与偏置，得到约 $124$ M 的经典量级。
-这是\textbf{结构上的近似预算}，
-精确数值需按具体权重共享、偏置及 checkpoint 逐项核对；
-GPT-2 的输入与输出权重共享规则应按真实结构计数。
+这是\textbf{结构上的近似预算}；逐项计入偏置与归一化参数，精确值为 $124{,}439{,}808$。
+GPT-2 的输出头复用 Token Embedding，不再另加约 $38.6$ M；
+若不共享，总数约为 $163$ M（精确为 $163{,}037{,}184$）。
 
 \subsection{［复算］标准 GPT Block 的 FFN 为什么比 Attention 参数多？}
 
@@ -139,7 +142,7 @@ GPT-2 small 的词表规模为 $50{,}257$，
 真实模型还要计入位置 Embedding、归一化和偏置等部分。
 其他模型是否绑定权重，应检查其配置与输出头实现。
 
-\subsection{［复算］真实 GPT-2：分词、概率、温度与注意力}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读复算：真实 GPT-2 的分词、概率、温度与注意力}
 
 \localfixture{公开 GPT-2 small 预训练权重；非本书三维参数}
 这一节提供一个\textbf{独立运行的真实模型实验}：
@@ -199,7 +202,7 @@ Transformers 4.46.3 下，
 GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
 \sectionentry{elective:original-paper}。
 
-\subsection{［复算］同一句中文，真实分词器怎样编号？}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读复算：同一句中文，真实分词器怎样编号？}
 \phantomsection\label{experiment:real-chinese-tokenizer}
 
 回到“春天花开了。”。沿用第~\ref*{intro:20a-tokenizer}~章锁定的
@@ -221,6 +224,8 @@ Qwen2.5-0.5B 分词器，\texttt{add\_special\_tokens=False} 时实测为：
 真实 ID 直接用作分词器所属模型的数组索引；本书教学 ID 从 1 起，写 Python 时才减 1。
 输入别的句子应重新运行分词器，不能把这四个片段推成通用中文分词规则。
 
+% Keep this closing block with the self-check so the part-end page is not a sparse tail.
+\Needspace{12\baselineskip}
 运行：
 \begin{verbatim}
 python3 scripts/chinese_tokenizer_demo.py --real
@@ -234,7 +239,7 @@ python3 scripts/chinese_tokenizer_demo.py --real
 \chapterchecktasks{23a-from-toy-to-gpt}{正文基础三题}{
 \item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？\chapterinlinehint{用隐藏宽度除以头数，再单独检查层数配置。}
 \item \textbf{估算：}忽略偏置，令每层 Attention 投影参数约 $4d^2$、FFN 参数约 $8d^2$。代入 $d=768$，哪个组件占更多层内参数？\chapterinlinehint{先比较两个参数公式的系数。}
-\item \textbf{找错：}同学在三维玩具任务上降低了损失，便声称其真实性与大型模型等同。还缺哪两类独立证据？\chapterinlinehint{分别列出未见任务评测与事实核验所需证据。}
+\item \textbf{找错：}同学在三维玩具任务上降低了损失，便声称它已具备大型模型的能力。还缺哪两类独立证据？\chapterinlinehint{分别列出未见任务评测与事实核验所需证据。}
 }
 \chapterrecallanswer{玩具与 GPT 可使用相同计算框架，但宽度、层数、数据、参数与外部评测共同决定模型能力。}
 
@@ -244,5 +249,5 @@ python3 scripts/chinese_tokenizer_demo.py --real
 
 \begin{conclusion}
 从三维模型到真实预训练，计算链相通；规模、数据质量与独立评测共同决定效果。
-下一部分把图像局部特征与 Patch 向量接入这条链。
+下一部分把模型接到证据、工具与授权边界；图像输入作为扩展路径，放在\hyperref[part:vision]{视觉部分}。
 \end{conclusion}

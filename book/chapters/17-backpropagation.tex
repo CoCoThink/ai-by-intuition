@@ -16,9 +16,11 @@
 \[
 x\xrightarrow{\times\,w_1}h
 \xrightarrow{\times\,w_2}\widehat{y}
-\xrightarrow{\text{算误差}}L.
+\xrightarrow{\text{算损失}}L.
 \]
 令 $h=w_1x$、$\widehat{y}=w_2h$、$L=\tfrac12(\widehat{y}-y)^2$。
+这里只有一个样本，所以不再像前几章那样对三点求平均；
+系数 $\tfrac12$ 只为让导数 $\partial L/\partial\widehat{y}=\widehat{y}-y$ 更简洁。
 现在要问：调整 $w_1$ 一点点，最后的损失 $L$ 会变多少？
 
 最直接的做法是把整个函数展开，但神经网络可以有数十乃至更多层。链式法则沿着计算路径，把各步的\textbf{局部变化率}相乘：
@@ -32,6 +34,7 @@ x\xrightarrow{\times\,w_1}h
 这叫\textbf{链式法则}（chain rule）。
 
 \subsection{亲手算一次两层网络的梯度}
+\label{sec:backprop-weight-gradients}
 
 取 $x=2$、真实目标 $y=5$、初始权重 $w_1=1$、$w_2=2$。
 前向过程：
@@ -60,15 +63,16 @@ L=\tfrac12(4-5)^2=\tfrac12.
 \frac{\partial\widehat{y}}{\partial w_2}
 =(-1)\times h=-2.
 \]
-本章先只算出两条梯度：$\partial L/\partial w_1=-4$，
-$\partial L/\partial w_2=-2$，\textbf{暂不更新参数}。
-本章后半段将在同一个例子上增加两项偏置，使用同一次前向得到的所有梯度，
-然后让四个参数一起更新。这样先把\textbf{求梯度}与\textbf{更新参数}分清。
+两条梯度都为负：略增 $w_1$ 或 $w_2$，预测 $4$ 都会向目标 $5$ 靠近。
+\hyperref[sec:end-to-end-step]{本章最后一节}给这个网络加上两项偏置，
+只需补算偏置的梯度，再让四个参数一起更新。
 
 \input{figures/backprop-computation}
 
 \begin{idea}
-反向传播（backpropagation）传的不是文字、答案或原始输入，而是损失对中间变量的梯度。先算后面的局部变化率，再复用它们，避免每求一个权重都从头展开整条函数。
+反向传播（backpropagation）传的不是文字、答案或原始输入，而是损失对中间变量的梯度。
+前向时从 $x$ 算到 $L$；求梯度时从 $\partial L/\partial\widehat{y}$ 出发，沿同一条链倒着走，这就是“反向”的含义。
+后面的局部变化率先算出来，前面的参数直接复用，避免每求一个权重都从头展开整条函数。
 \end{idea}
 
 \subsection{如果中间有 ReLU，怎样求导？}
@@ -98,7 +102,8 @@ ReLU 的导数在 $z>0$ 时为 $1$，在 $z<0$ 时为 $0$。因此某条计算�
 更复杂的计算图会有分叉和相加：同一个参数影响损失的多条路径需要把各条路径的梯度贡献相加。自动微分框架正是在计算图上应用这个规则。
 
 \begin{warningbox}
-本书的每个训练步先完成前向与反向传播，算出全部梯度，再由优化器统一更新参数。不是“反向传到某一层就立刻修改那一层”，否则会在同一步中混用新旧权重。
+每个训练步都用同一组旧参数完成前向与反向传播，算出全部梯度，再由优化器统一更新所有参数。
+不要反传到某一层就立刻修改那一层，否则同一步会混用新旧权重。
 \end{warningbox}
 
 

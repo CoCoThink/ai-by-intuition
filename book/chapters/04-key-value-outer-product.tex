@@ -5,6 +5,10 @@
 \modelpipelinefocus{3}{Attention 的记忆视角}
 \phantomsection\label{concept:outer-product}
 
+\noindent\textbf{{\symboliconfont ★} 扩展路径：从存入与取出的角度重看 Attention。}
+主线已经讲完 Attention、FFN，以及\hyperref[sec:modern-delta-rule]{现代架构章的线性状态与 Delta 规则}；
+本部分不引入新的主线依赖，而是把同样的计算拆成外积写入、串扰与非线性检索逐步复算。
+
 Transformer 主线里每个 Token 占一行。现在换一种视角理解线性层：
 能否把“遇见 Key 就读出 Value”的关联写入一个矩阵？
 和前面一样，Key、Query 与 Value 都以\textbf{一条记录占一行}来表示。

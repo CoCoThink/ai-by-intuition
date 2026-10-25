@@ -1,8 +1,10 @@
 % The Figure structure intentionally includes the non-floating caption.
+% The box must stay unbreakable: inside this minipage a breakable tcolorbox
+% still splits against \pagegoal-\pagetotal, and the stacked parts overlap.
 \par\noindent\begin{minipage}{\linewidth}
 \tagstructbegin{tag=Figure,alttext={三条二维向量按行放置形成三乘二矩阵，转置后按列排列得到二乘三矩阵}}
 \begin{tcolorbox}[
-  enhanced,breakable,colback=paper,colframe=linegray,
+  enhanced,breakable=false,colback=paper,colframe=linegray,
   boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=3mm,
   fonttitle=\sffamily\bfseries,coltitle=ink,
   title={图解：同一批向量，可以按行排，也可以按列排}
@@ -55,7 +57,7 @@ $A^\top:\ 2\times3$\\[-1mm]
 A^\top=\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}.
 \]
 
-\textbf{先看方向，再检查尺寸。}
+\textbf{先看方向，再检查形状。}
 一般地，$M$ 条 $d$ 维向量，按行排列是
 $\underbrace{M\times d}_{\text{一条向量占一行}}$，
 转置后按列排列是

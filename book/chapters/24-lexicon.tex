@@ -42,105 +42,105 @@
 
 \subsubsection{第一组：基本概念}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=1]
-\item \textbf{函数}：输入经过确定的计算规则得到输出，例如 $y=2x+1$。 \termref{intro:00-functions}
-\item \textbf{模型}：为完成任务选定的一套计算结构和参数。 \termref{intro:00-functions}
-\item \textbf{参数}：训练中直接学习的数，如权重 $w$ 和偏置 $b$。 \termref{intro:00-functions}
-\item \textbf{权重}：控制输入特征对输出贡献的参数。 \termref{intro:00-functions}
+\item \textbf{函数}：输入经过确定的计算规则得到输出，例如 $y=2x+1$。 \termref{concept:function}
+\item \textbf{模型}：为完成任务选定的一套计算结构和参数。 \termref{concept:model}
+\item \textbf{参数}：训练中直接学习的数，如权重 $w$ 和偏置 $b$。 \termref{concept:parameter}
+\item \textbf{权重}：控制输入特征对输出贡献的参数。 \termref{concept:weight}
 \item \textbf{偏置}：线性变换后添加的常数或向量，使模型不必经过原点。 \termref{intro:10-mlp}
-\item \textbf{超参数}：控制训练或结构的设置，如学习率、层数与批量大小。 \termref{intro:18-generalization}
-\item \textbf{训练}：利用数据和损失函数更新模型参数。 \termref{intro:00-functions}
-\item \textbf{推理}：用已训练的模型对新输入产生输出。 \termref{intro:00-functions}
-\item \textbf{样本}：用于训练或评估的一组输入及可能的目标值。 \termref{intro:00-functions}
-\item \textbf{标签}：监督学习中为样本提供的目标或正确类别。 \termref{intro:18-generalization}
+\item \textbf{超参数}：控制训练或结构的设置，如学习率、层数与批量大小。 \termref{concept:hyperparameter}
+\item \textbf{训练}：利用数据和损失函数更新模型参数。 \termref{concept:training}
+\item \textbf{推理}：用已训练的模型对新输入产生输出。 \termref{concept:inference}
+\item \textbf{样本}：用于训练或评估的一组输入及可能的目标值。 \termref{concept:sample}
+\item \textbf{标签}：监督学习中为样本提供的目标或正确类别。 \termref{concept:loss}
 \end{enumerate}
 
 \subsubsection{第二组：最少数学}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=11]
-\item \textbf{向量}：有顺序的一列数字；可用来表示一个对象的多个特征。 \termref{intro:01-vectors}
+\item \textbf{向量}：一组有顺序的数字，每个位置对应一种特征；本书按行书写，如 $(1,2)$。 \termref{intro:01-vectors}
 \item \textbf{维度}：向量有几个数，或矩阵有几行几列。 \termref{intro:01-vectors}
 \item \textbf{矩阵}：按行和列排列的数字表；可同时执行多个点积。 \termref{intro:03-matrix-multiplication}
 \item \textbf{转置}：交换行与列，例如 $V$ 转成 $V^\top$。 \termref{intro:03-matrix-multiplication}
 \item \textbf{点积}：对应分量相乘后求和；若向量归一化，可反映夹角余弦。 \termref{intro:02-dot-product}
 \item \textbf{范数}：衡量向量长度或大小的一类函数。 \termref{intro:01-vectors}
 \item \textbf{余弦相似度}：点积除以两向量长度之积，关注方向。 \termref{intro:02-dot-product}
-\item \textbf{线性变换}：可写成 $W\vect x$ 的运算；满足叠加规则。 \termref{intro:03-matrix-multiplication}
+\item \textbf{线性变换}：按本书行向量约定写作 $\vect x^\top W$（整批为 $XW$）的运算；满足叠加规则。 \termref{intro:03-matrix-multiplication}
 \item \textbf{非线性}：不满足简单线性叠加的变化，例如 ReLU。 \termref{intro:07-functions-relu}
 \item \textbf{激活函数}：应用在线性层输出上的函数，扩展模型表达能力。 \termref{intro:07-functions-relu}
 \end{enumerate}
 
 \subsubsection{第三组：学会参数}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=21]
-\item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:16-loss-gradient}
-\item \textbf{损失函数}：用数字评估预测与目标之间的差距。 \termref{intro:16-loss-gradient}
-\item \textbf{均方误差}：误差平方再取平均，常用于回归。 \termref{intro:16-loss-gradient}
+\item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:17-backpropagation}
+\item \textbf{损失函数}：用数字评估预测与目标之间的差距。 \termref{concept:loss}
+\item \textbf{均方误差}：误差平方再取平均，常用于回归。 \termref{concept:loss}
 \item \textbf{交叉熵}：衡量预测概率分布与目标之间差距的常用损失。 \termref{concept:cross-entropy}
-\item \textbf{导数}：衡量函数在某一点的局部变化率。 \termref{intro:16-loss-gradient}
-\item \textbf{偏导数}：多变量函数对某个变量求变化率，其他变量暂时固定。 \termref{intro:16-loss-gradient}
-\item \textbf{梯度}：将各个参数方向的偏导数组合起来。 \termref{intro:16-loss-gradient}
-\item \textbf{学习率}：控制每次梯度更新步长的系数。 \termref{intro:16-loss-gradient}
-\item \textbf{梯度下降}：沿梯度反方向逐步调整参数，尝试降低损失。 \termref{intro:16a-gradient-descent}
-\item \textbf{反向传播}：利用链式法则高效计算计算图中全部参数的梯度。 \termref{intro:17-backpropagation}
+\item \textbf{导数}：衡量函数在某一点的局部变化率。 \termref{intro:16a-gradient-descent}
+\item \textbf{偏导数}：多变量函数对某个变量求变化率，其他变量暂时固定。 \termref{concept:gradient}
+\item \textbf{梯度}：将各个参数方向的偏导数组合起来。 \termref{concept:gradient}
+\item \textbf{学习率}：控制每次梯度更新步长的系数。 \termref{concept:gradient-descent}
+\item \textbf{梯度下降}：沿梯度反方向逐步调整参数，尝试降低损失。 \termref{concept:gradient-descent}
+\item \textbf{反向传播}：利用链式法则高效计算计算图中全部参数的梯度。 \termref{concept:backprop}
 \end{enumerate}
 
 \subsubsection{第四组：让模型泛化}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=31]
-\item \textbf{训练集}：用于直接计算参数梯度与更新权重的数据。 \termref{intro:18-generalization}
-\item \textbf{验证集}：用于选择超参数、模型方案和提前停止的数据。 \termref{intro:18-generalization}
-\item \textbf{测试集}：尽量保留到最后，估计泛化性能的数据。 \termref{intro:18-generalization}
-\item \textbf{过拟合}：训练表现优异但未见数据表现较差。 \termref{intro:18-generalization}
-\item \textbf{欠拟合}：模型没学到主要规律，训练和评估表现都不理想。 \termref{intro:18-generalization}
-\item \textbf{泛化}：从已见样本学到能应用于新样本的规律。 \termref{intro:18-generalization}
-\item \textbf{数据增强}：在标签语义不变的前提下变换样本，增加训练多样性。 \termref{intro:18-generalization}
-\item \textbf{正则化}：通过参数惩罚或其他限制降低过拟合风险。 \termref{intro:18-generalization}
+\item \textbf{训练集}：用于直接计算参数梯度与更新权重的数据。 \termref{concept:training-set}
+\item \textbf{验证集}：用于选择超参数、模型方案和提前停止的数据。 \termref{concept:validation-set}
+\item \textbf{测试集}：尽量保留到最后，估计泛化性能的数据。 \termref{concept:test-set}
+\item \textbf{过拟合}：训练表现优异但未见数据表现较差。 \termref{concept:overfitting}
+\item \textbf{欠拟合}：模型没学到主要规律，训练和评估表现都不理想。 \termref{concept:underfitting}
+\item \textbf{泛化}：从已见样本学到能应用于新样本的规律。 \termref{concept:generalization}
+\item \textbf{数据增强}：在标签语义不变的前提下变换样本，增加训练多样性。 \termref{concept:data-augmentation}
+\item \textbf{正则化}：通过参数惩罚或其他限制降低过拟合风险。 \termref{concept:regularization}
 \item \textbf{Dropout}：训练时随机屏蔽一部分激活；评估模式下关闭随机屏蔽。 \termref{concept:dropout}
-\item \textbf{提前停止}：根据验证表现决定停止训练的时机。 \termref{intro:18-generalization}
+\item \textbf{提前停止}：根据验证表现决定停止训练的时机。 \termref{concept:early-stopping}
 \end{enumerate}
 
 \subsubsection{第五组：优化与工程}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=41]
-\item \textbf{Mini-batch}：将数据分为较小的批次计算梯度。 \termref{intro:18c-training-engineering}
-\item \textbf{Epoch}：训练过程完整遍历一次训练数据。 \termref{intro:18c-training-engineering}
-\item \textbf{Batch Size}：一个批次包含多少训练样本。 \termref{intro:18c-training-engineering}
-\item \textbf{优化器}：根据梯度与状态计算参数更新的算法。 \termref{intro:18c-training-engineering}
-\item \textbf{Adam}：结合动量和自适应尺度估计的常用优化器。 \termref{intro:18c-training-engineering}
-\item \textbf{梯度裁剪}：限制梯度幅度，减少过大更新的风险。 \termref{intro:18c-training-engineering}
-\item \textbf{梯度消失}：反向传播到较早层时梯度变得过小。 \termref{intro:18c-training-engineering}
-\item \textbf{梯度爆炸}：反向传播中梯度幅度变得过大。 \termref{intro:18c-training-engineering}
+\item \textbf{Mini-batch}：将数据分为较小的批次计算梯度。 \termref{concept:mini-batch}
+\item \textbf{Epoch}：训练过程完整遍历一次训练数据。 \termref{concept:epoch}
+\item \textbf{Batch Size}：一个批次包含多少训练样本。 \termref{concept:batch-size}
+\item \textbf{优化器}：根据梯度与状态计算参数更新的算法。 \termref{concept:optimizer}
+\item \textbf{Adam}：结合动量和自适应尺度估计的常用优化器。 \termref{app:optimizer-details}
+\item \textbf{梯度裁剪}：限制梯度幅度，减少过大更新的风险。 \termref{app:training-diagnostics}
+\item \textbf{梯度消失}：反向传播到较早层时梯度变得过小。 \termref{app:training-diagnostics}
+\item \textbf{梯度爆炸}：反向传播中梯度幅度变得过大。 \termref{app:training-diagnostics}
 \item \textbf{残差连接}：把输入直接加回模块输出，为信息传播提供旁路。 \termref{concept:residual}
-\item \textbf{归一化}：调整激活尺度或统计分布以辅助稳定训练。 \termref{intro:22-transformer-architecture}
+\item \textbf{归一化}：调整激活尺度或统计分布以辅助稳定训练。 \termref{concept:pre-norm}
 \end{enumerate}
 
 \subsubsection{第六组：不同的网络架构}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=51]
-\item \textbf{MLP}：多层感知机；组合矩阵乘法、偏置和非线性激活。 \termref{intro:10-mlp}
-\item \textbf{全连接层}：本层各输出单元能使用前一层所有输入特征。 \termref{intro:19-cnn}
-\item \textbf{CNN}：卷积神经网络；利用局部运算和共享权重处理空间模式。 \termref{intro:19-cnn}
-\item \textbf{卷积核}：在图片局部区域滑动的可训练权重小矩阵。 \termref{intro:19-cnn}
-\item \textbf{步幅}：卷积核在相邻位置移动的距离。 \termref{intro:19-cnn}
-\item \textbf{填充}：在输入边界增添数值，用于调节输出大小与边界处理。 \termref{intro:19-cnn}
-\item \textbf{特征图}：卷积层输出的空间数字表。 \termref{intro:19-cnn}
-\item \textbf{池化}：对局部区域做最大值或平均等汇总。 \termref{intro:19-cnn}
-\item \textbf{RNN}：循环神经网络；用递推隐藏状态处理序列。 \termref{intro:21-rnn}
-\item \textbf{隐藏状态}：序列模型随位置传递的中间向量。 \termref{intro:21-rnn}
+\item \textbf{MLP}：把矩阵乘法、偏置和非线性激活逐层组合的前馈网络。 \termref{concept:mlp}
+\item \textbf{全连接层}：本层各输出单元能使用前一层所有输入特征。 \termref{concept:neuron}
+\item \textbf{CNN}：利用局部窗口运算和共享权重处理图像等空间模式的网络。 \termref{intro:19-cnn}
+\item \textbf{卷积核}：在图片局部区域滑动的可训练权重小矩阵。 \termref{concept:kernel}
+\item \textbf{步幅}：卷积核在相邻位置移动的距离。 \termref{concept:stride}
+\item \textbf{填充}：在边界或末尾补上占位值：卷积中用于调节输出尺寸与边界处理；序列批处理中把不同长度补齐，并用掩码排除这些位置。 \termref{concept:padding}
+\item \textbf{特征图}：卷积层输出的空间数字表。 \termref{concept:feature-map}
+\item \textbf{池化}：对局部区域做最大值或平均等汇总。 \termref{concept:pooling}
+\item \textbf{RNN}：按时间步递推隐藏状态、逐个读取序列元素的网络。 \termref{concept:rnn}
+\item \textbf{隐藏状态}：序列模型随位置传递的中间向量。 \termref{concept:hidden-state}
 \end{enumerate}
 
 \subsubsection{第七组：语言变成数字}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=61]
-\item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{intro:20a-tokenizer}
+\item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{concept:token}
 \item \textbf{Tokenizer}：将文本切成 Token 并映射到整数 ID 的方法。 \termref{intro:20a-tokenizer}
 \item \textbf{词表}：允许的 Token 与其 ID 的集合。 \termref{intro:20a-tokenizer}
-\item \textbf{One-hot}：只有对应类别位置为一，其余为零的编码。 \termref{intro:20-embeddings}
-\item \textbf{Embedding}：把离散 Token ID 映射到可学习的稠密向量。 \termref{intro:20-embeddings}
-\item \textbf{嵌入矩阵}：存放词表各 Token 向量的一张权重表。 \termref{intro:20-embeddings}
-\item \textbf{序列}：有顺序的输入元素集合，例如一串 Token。 \termref{intro:20-embeddings}
-\item \textbf{时间步}：RNN 递推中当前处理到的序列位置。 \termref{intro:21-rnn}
-\item \textbf{长期依赖}：较早位置的信息影响较晚位置的预测。 \termref{intro:21-rnn}
-\item \textbf{LSTM}：利用门控状态改进长期信息传播的一类循环网络。 \termref{intro:21-rnn}
+\item \textbf{One-hot}：只有对应类别位置为一，其余为零的编码。 \termref{concept:cross-entropy}
+\item \textbf{Embedding}：把离散 Token ID 映射到可学习的稠密向量。 \termref{concept:embedding}
+\item \textbf{嵌入矩阵}：存放词表各 Token 向量的一张权重表。 \termref{concept:embedding}
+\item \textbf{序列}：有顺序的输入元素集合，例如一串 Token。 \termref{concept:token}
+\item \textbf{时间步}：RNN 递推中当前处理到的序列位置。 \termref{concept:time-step}
+\item \textbf{长期依赖}：较早位置的信息影响较晚位置的预测。 \termref{concept:long-term-dependency}
+\item \textbf{LSTM}：利用门控状态改进长期信息传播的一类循环网络。 \termref{concept:lstm}
 \end{enumerate}
 
 \subsubsection{第八组：从注意力到 Transformer}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=71]
-\item \textbf{Query}：查询向量，表达当前这个位置想寻找什么。 \termref{concept:qkv}
+\item \textbf{Query}：表达当前位置“想寻找什么”的向量，与各 Key 做匹配。 \termref{concept:qkv}
 \item \textbf{Key}：与 Query 做匹配的向量。 \termref{concept:qkv}
 \item \textbf{Value}：被注意力权重组合后形成输出的向量。 \termref{concept:qkv}
 \item \textbf{Self-Attention}：Query、Key、Value 都来源于同一序列的注意力机制。 \termref{concept:self-attention}
@@ -154,8 +154,8 @@
 
 \subsubsection{第九组：训练与采样生成}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=81]
-\item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{intro:22-transformer-architecture}
-\item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{intro:22-transformer-architecture}
+\item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{elective:original-paper}
+\item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{elective:original-paper}
 \item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{concept:pretraining}
 \item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:23c-post-training}
 \item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{concept:sft}
@@ -170,9 +170,9 @@
 \subsubsection{第十组：大模型应用与边界}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=92]
 \item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
-\item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{intro:23d-agent-systems}
+\item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{concept:hallucination-calibration}
 \item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{concept:rag}
-\item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{intro:23d-agent-systems}
+\item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{concept:rag}
 \item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{concept:mcp}
 \item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{concept:agent}
 \item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{concept:workflow}

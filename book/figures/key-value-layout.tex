@@ -8,15 +8,15 @@
 ]
 \small
 \noindent{\sffamily\bfseries\color{ink}图解：为什么一会儿写 $K$，一会儿写 $K^\top$？}\par\smallskip
-延续本章开头的单 Query 示例：$K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix}$，有 $T_k=3$ 条 Key、$d_k=2$ 个数字。
-\textbf{相同底色表示同一条 Key：两栏中的数字相同，只是摆放方向不同。}
+沿用本章开头的 $K$：$T_k=3$ 条 Key，每条 $d_k=2$ 个数字。
+\textbf{相同底色表示同一条 Key：两栏数字相同，只是摆放方向不同。}
 
-\vspace{1.5mm}
+\vspace{1mm}
 \noindent
 \begin{minipage}[t]{.49\linewidth}
 \centering
-\textbf{列向量 Query 的写法}\\[2mm]
-\begin{tikzpicture}[x=10mm,y=9mm]
+\textbf{列向量 Query 的写法}\\[1mm]
+\begin{tikzpicture}[x=10mm,y=7mm]
 \foreach \r/\shade in {1/paper,2/linegray!25,3/linegray!15}{
   \foreach \c in {1,2}{
     \filldraw[draw=linegray,fill=\shade,line width=.55pt]
@@ -27,14 +27,14 @@
 \node at (.5,-1.5){1}; \node at (1.5,-1.5){1};
 \node at (.5,-2.5){2}; \node at (1.5,-2.5){1};
 \end{tikzpicture}
-\\[1mm]
-$K\in\R^{T_k\times d_k}$\\
-{\footnotesize 每行一条 Key}
+\\[.5mm]
+$K\in\R^{T_k\times d_k}$，{\footnotesize 每行一条 Key}\\[.5mm]
+$K\vect q=\vect s$
 \end{minipage}%
 \begin{minipage}[t]{.49\linewidth}
 \centering
-\textbf{行向量 Query 的写法}\\[2mm]
-\begin{tikzpicture}[x=10mm,y=9mm]
+\textbf{行向量 Query 的写法}\\[1mm]
+\begin{tikzpicture}[x=10mm,y=7mm]
 \foreach \c/\shade in {1/paper,2/linegray!25,3/linegray!15}{
   \foreach \r in {1,2}{
     \filldraw[draw=linegray,fill=\shade,line width=.55pt]
@@ -44,38 +44,20 @@ $K\in\R^{T_k\times d_k}$\\
 \node at (.5,-.5){1}; \node at (1.5,-.5){1}; \node at (2.5,-.5){2};
 \node at (.5,-1.5){0}; \node at (1.5,-1.5){1}; \node at (2.5,-1.5){1};
 \end{tikzpicture}
-\\[1mm]
-$K^\top\in\R^{d_k\times T_k}$\\
-{\footnotesize 每列一条 Key}
+\\[.5mm]
+$K^\top\in\R^{d_k\times T_k}$，{\footnotesize 每列一条 Key}\\[.5mm]
+$\vect q^\top K^\top=\vect s^\top$
 \end{minipage}
 
-\[
-K\vect q=\vect s,\qquad
-\vect q^\top K^\top=\vect s^\top.
-\]
-{\footnotesize\color{muted}形状：$K:T_k\times d_k$，$\vect q:d_k\times1$，
-$\vect s:T_k\times1$；转置后为 $1\times d_k$ 乘 $d_k\times T_k$。}\par
-\begin{center}
-{\color{flowcolor}\bfseries $(K\vect q)^\top=\vect q^\top K^\top$}
-\end{center}
+\par\smallskip
+\noindent\textbf{形状：}$\vect q^\top:1\times d_k$ 乘 $K^\top:d_k\times T_k$ 得 $1\times T_k$ 的分数；
+两种写法互为\textbf{整体转置}：{\color{flowcolor}\bfseries $(K\vect q)^\top=\vect q^\top K^\top$}。
 
-\textbf{Value 同理：}约定 $V$ 的\textbf{每行是一条 Value}，
-可以按需转置，读取相同的加权结果：
-\[
-V\ \xleftrightarrow{\text{转置}}\ V^\top,\qquad
-V^\top\vect a=\vect y,\quad \vect a^\top V=\vect y^\top.
-\]
-{\footnotesize\color{muted}形状：$V:T_k\times d_v$，
-$V^\top:d_v\times T_k$，$\vect a:T_k\times1$，
-$\vect y:d_v\times1$。}\par
-\textbf{检查：}若 $T_k=3$、$d_k=2$、$d_v=4$，
-则 $K:3\times2$、$K^\top:2\times3$、
-$V:3\times4$、$V^\top:4\times3$。
-\textbf{Key 和 Value 不必具有相同维度。}
+\noindent\textbf{Value 同理：}$V:T_k\times d_v$ 每行一条 Value，
+$\vect a^\top V=\vect y^\top$（$1\times d_v$）与 $V^\top\vect a=\vect y$ 是同一次读取；
+$d_v$ 不必等于 $d_k$。
 
-\textbf{重要边界：}上面比较的是\emph{同一个单 Query}的转置写法。
-扩展成多个 Query 后使用 $QK^\top$；
-不要把 $QK^\top$ 和 $KQ^\top$ 直接当作可以交换的运算。
+\noindent\textbf{多个 Query：}写成 $QK^\top$；它与 $KQ^\top$ 互为转置，不能随意交换。
 \par % Flush the final box paragraph before the Figure caption tag.
 \end{tcolorbox}
 

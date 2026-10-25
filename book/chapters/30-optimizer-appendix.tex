@@ -1,7 +1,7 @@
 \subsection{提高选读：动量、Adam／AdamW、Warmup 与衰减}
 \phantomsection\label{app:optimizer-details}
 
-这是第三章训练工程小节的扩展内容。\textbf{初读只需掌握 SGD：}$w_{t+1}=w_t-\eta g_t$；以下手算保留给第二遍或对应的附录 C 练习。
+这是第~\ref*{intro:16a-gradient-descent}~章\hyperref[intro:18c-training-engineering]{训练组织小节}的扩展内容。\textbf{初读只需掌握 SGD：}$w_{t+1}=w_t-\eta g_t$；以下手算保留给第二遍或对应的附录 C 练习。
 
 \subsubsection{训练不稳定时先诊断什么？}
 \label{app:training-diagnostics}
@@ -15,6 +15,9 @@
 不能互相替代。
 
 \textbf{超参数}是训练前或训练过程中设定的控制量，如学习率、正则化系数、批次大小；\textbf{模型参数}则是通过优化直接学习的权重。
+
+若某一步的梯度特别大，\textbf{梯度裁剪}在更新前限制它的幅度：
+把全部参数的偏导数排成一条梯度向量，长度超过设定阈值时整体按比例缩小，方向保持不变。
 
 \begin{example}
 \noindent\emph{一次实际的梯度裁剪}\par
@@ -33,7 +36,9 @@ m_t=0.5m_{t-1}+0.5g_t,\qquad m_1=1,\quad m_2=1.
 \]
 这里展示的是带归一权重的指数移动平均；其他动量实现可能使用不同的缩放约定。
 
-Adam 还跟踪\textbf{梯度平方的移动平均}。取 $\beta_2=0.5$，
+\textbf{Adam} 同时保存两组历史：梯度的移动平均（一阶矩估计，即上面的 $m_t$）
+与\textbf{梯度平方的移动平均}（二阶矩估计），并据此自适应地调节每个参数的更新幅度。
+取 $\beta_2=0.5$，
 初值 $v_0=0$，同样两步可得
 \[
 v_t=0.5v_{t-1}+0.5g_t^2,\qquad
@@ -121,8 +126,8 @@ Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选�
 
 
 \noindent\emph{对应练习：}
-\hyperref[exercise:warmup-schedule]{C-103 的三步 Warmup}和
-\hyperref[exercise:adamw-decay]{C-104 的 AdamW 解耦衰减}，
+\hyperref[exercise:warmup-schedule]{C-115 的变梯度三步 Warmup}和
+\hyperref[exercise:adamw-decay]{C-116 的 AdamW 与 L2 对照}，
 请在看答案前分别复算。
 
 \chapterpracticejump{optimizer-details}

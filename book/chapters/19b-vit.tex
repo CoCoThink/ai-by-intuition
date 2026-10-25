@@ -13,7 +13,10 @@
 \subsection{第一步：把一张图片切成 Patch}
 
 先用一张只有一个通道的 $4\times4$ 小图，
-不涉及颜色，也不用真实照片：
+不涉及颜色，也不用真实照片。
+第~\ref*{intro:19-cnn}~章的 $X$ 在每个 $2\times2$ 块内数值相同，
+切块后只剩全 $1$ 与全 $0$ 两种行，看不出块内按什么顺序展开；
+这里换一张每块内容都不同的小图：
 \[
 I=\begin{bmatrix}
 1&1&0&0\\
@@ -94,9 +97,11 @@ E_{\rm patch}=X_{\rm patch}W_{\rm patch}
 
 \subsection{第三步：如果只给四行向量，怎么分清图像位置？}
 
-\hyperref[intro:21b-why-attention]{前文的换位与 Attention 实验}表明：
+\hyperref[intro:22a-position-multihead]{前文的换位与 Attention 实验}表明：
 不含位置信息的 Self-Attention 对输入行置换等变。
 ViT 因此也要标明\textbf{空间位置}。
+若改用 CNN 那张图，左上与右下两块的像素完全相同，$E_{\rm patch}$ 的两行也相同，
+只有位置信息能说明它们来自哪里。
 给四行向量加入 $P_{\rm patch}\in\R^{4\times3}$：
 \[
 X_{\rm vis}=E_{\rm patch}+P_{\rm patch}\in\R^{4\times3}.
@@ -133,8 +138,9 @@ Attention 分数由 $4\times4$ 变成 $5\times5$。
 
 假定视觉编码器将四个 Patch 输出为
 $H_{\rm img}:4\times3$。为了只研究接口，
-暂取 $H_{\rm img}=E_{\rm patch}$，
-\textbf{省略视觉编码器内部层}。
+暂取 $H_{\rm img}=E_{\rm patch}$：
+\textbf{同时省略 $P_{\rm patch}$ 与视觉编码器内部层}，
+相当于令 $P_{\rm patch}=0$、编码器为恒等映射，只看宽度怎样对齐。
 语言模型所需隐藏宽度为 $d_{\rm lm}=4$，
 使用一个可训练的视觉到语言投影：
 \[
@@ -192,7 +198,8 @@ ViT 本身输出向量，不会直接生成自然语言。
 \localfixture{两张图与两段说明的二维对比损失；不使用前面的 Patch 权重}
 设花图、窗图的向量分别为 $(1,0),(0,1)$，
 “花开了”“窗开了”的文字向量也分别为 $(1,0),(0,1)$。
-取相似度乘数为 2，图片对文字的分数矩阵为
+取相似度乘数为 2，它就是第~\ref*{intro:23-llm-systems}~章的逆温度 $\beta=1/\tau$（此处 $\tau=0.5$）。
+图片对文字的分数矩阵为
 \[
 Z_{\rm pair}=2I_2,\qquad
 \softmax(2,0)=\left(\frac{e^2}{e^2+1},\frac1{e^2+1}\right)
@@ -223,13 +230,9 @@ $16\times16\times3=768$ 维。投影宽度若也是 $768$，
 
 
 
-\textbf{再扩展到声音与视频。}多模态模型用各类编码器或共享表示接收不同数据，
-再通过注意力、投影等机制融合。ASR 把声音转成文字，TTS 把文字合成为声音。
-AIGC 描述 AI 内容生成，AGI 描述通用智能研究目标。
-
 \chapterchecktasks{19b-vit}{正文基础三题}{
 \item \textbf{形状：}四个图像 Patch 各投影为三维向量，再加一个 CLS Token。ViT 的输入序列是几行？若使用全局自注意力，分数矩阵什么形状？\chapterinlinehint{先数序列行，再写所有行之间的配对形状。}
-\item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？前述五条视觉向量经投影后是什么形状？\chapterinlinehint{让视觉特征宽度与语言隐藏宽度对齐。}
+\item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？上一题含 CLS 的五条向量经投影后是什么形状？\chapterinlinehint{让视觉特征宽度与语言隐藏宽度对齐。}
 \item \textbf{预测：}固定图像尺寸而把 Patch 边长减半，忽略边界时 Patch 数量约变为多少倍？全局 Attention 的位置配对数又约变为多少倍？\chapterinlinehint{先按面积比算 Patch 数，再算两两配对数。}
 }
 \chapterrecallanswer{ViT 把图像 Patch 变成带位置的 Token 序列，视觉到语言模型的接口还须对齐隐藏维度。}
@@ -237,4 +240,8 @@ AIGC 描述 AI 内容生成，AGI 描述通用智能研究目标。
 \begin{conclusion}
 Patch 投影形成图像序列，位置编码保留空间身份，
 Attention 让各图像块交换信息；CNN 则先强调局部扫描。
+桥接矩阵把视觉宽度对齐到语言模型宽度，视觉前缀便能与文字 Token 排成一列；
+对比学习或回答训练再让图文向量在含义上对应。
+下一部分\hyperref[part:memory]{联想记忆与线性状态}回到 Key 与 Value 本身：
+不逐个比较全部历史，能否把键值关联直接写进一个矩阵状态？
 \end{conclusion}

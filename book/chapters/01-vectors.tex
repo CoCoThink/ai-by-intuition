@@ -1,7 +1,7 @@
 \chapterrule
 \section{向量：如何用数字表示一个东西？}
 \label{intro:01-vectors}
-\chaptercompass{一个数字不够表示多种特征怎么办？}{把有序特征排成向量，统一检查形状。}{$\vect x^\top:1\times d$，每列一个特征}{表示本身可以是固定特征，也可以由模型学习}
+\chaptercompass{一个数字不够表示多种特征怎么办？}{把有序特征排成向量，统一检查形状。}{一条 $d$ 维向量写成一行，共 $d$ 个数，每个位置一个特征}{表示本身可以是固定特征，也可以由模型学习}
 \modelpipelinefocus{0}{向量表示}
 
 上一部分用一个数走通训练循环。但仅靠一个数不足以同时表示
@@ -26,14 +26,23 @@ $0$ 属于 B 类。若只准用一个阈值按“左边一类、右边一类”�
 
 \subsection{向量把特征放在同一份表示中}
 
+\localfixture{二维教学特征；与后面主线的三维 Embedding 无关}
 以“春天”和“花”的两维教学特征为例：
 \begin{equation}
-\vect x_{\text{春天}}=\begin{bmatrix}1\\0\end{bmatrix},\qquad
-\vect x_{\text{花}}=\begin{bmatrix}0\\1\end{bmatrix}.
+\vect x_{\text{春天}}^\top=(1,0),\qquad
+\vect x_{\text{花}}^\top=(0,1).
 \end{equation}
 
 这种按顺序排列的数字叫作\textbf{向量（vector）}。$(1,0)$ 和 $(0,1)$ 都是二维向量；大型模型往往使用维度更高的表示。
+右上角的 $\top$ 读作“转置”：数学里习惯把向量 $\vect x$ 竖着写成一列，
+$\vect x^\top$ 则把同样的数\textbf{横着写成一行}。
+本书约定一个 Token 的特征占一行，所以给单条向量起名时写 $\vect x^\top$；括号写法 $(1,0)$ 也按一行来读。
 
+两条同维向量相加时，\textbf{同位置的分量相加}：
+$(1,0)+(0,1)=(1,1)$。相加的前提是两条向量每个位置表示同一种特征。
+
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={二维坐标平面上从原点出发的两条箭头：春天指向一零，沿横轴；花指向零一，沿纵轴。两条向量互相垂直。}}
 \begin{center}
 \begin{tikzpicture}[x=2.6cm,y=2.6cm,>=Latex]
 \draw[->,gray!70] (-.12,0)--(1.5,0) node[below] {$x$};
@@ -42,18 +51,18 @@ $0$ 属于 B 类。若只准用一个阈值按“左边一类、右边一类”�
 \draw[->,line width=1.6pt,flowcolor] (0,0)--(0,1) node[right] {花 $(0,1)$};
 \fill[ink] (0,0) circle(1.2pt);\node[below left] at (0,0) {$0$};
 \end{tikzpicture}
+\captionof{figure}{两条二维教学向量：每个坐标轴对应一个特征}
+\label{fig:vector-two-features}
 \end{center}
+\tagstructend
+\end{minipage}\par
+\medskip
 
 向量还有一个重要性质：\textbf{长度}。二维向量 $\vect{a}=(a_1,a_2)$ 的长度就是勾股定理：
 \begin{equation}
 \|\vect{a}\|=\sqrt{a_1^2+a_2^2}.
 \end{equation}
 例如 $(0.6,0.8)$ 的长度为 $\sqrt{0.6^2+0.8^2}=1$。长度等于 $1$ 的向量叫\textbf{单位向量}，后面很多计算会方便得多。
-
-\begin{idea}
-向量既能表示不同特征，也能比较长度与方向。
-有了两条向量，怎样判断它们是否匹配？下一章从点积开始。
-\end{idea}
 
 \chapterchecktasks{01-vectors}{正文基础三题}{
 \item \textbf{定义：}向量 $(2,3)$ 与 $(3,2)$ 为什么一般不代表同一条数据记录？解释位置与含义之间的关系。\chapterinlinehint{先给每个坐标标上字段名称。}
@@ -62,5 +71,7 @@ $0$ 属于 B 类。若只准用一个阈值按“左边一类、右边一类”�
 }
 \chapterrecallanswer{向量不只是几个数字，分量的顺序、单位和语义也必须对齐。}
 
-
-
+\begin{conclusion}
+向量把多个特征按固定顺序放进一行；同维向量按位置相加，长度用勾股定理计算。
+有了两条向量，怎样判断它们是否匹配？下一章从点积开始。
+\end{conclusion}

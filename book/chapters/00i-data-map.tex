@@ -9,17 +9,17 @@
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}p{45mm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 算例／入口 & $X$、$W$ 或记录是什么 & 用途与对应章节\\\midrule
-标量与两层网络 & $x,w,b$；再到 $xW_1,W_2$ & 函数、损失与反传；第 1--10 章\\
-二维 Q/K/V & 手设向量与投影；各节写出 $X,W_Q,W_K,W_V$ & 逐项核对点积、读取与形状；第 17--19 章\\
+标量与两层网络 & $x,w,b$；再到 $xW_1,W_2$ & 函数、损失与反传；第~\ref*{intro:00-functions}--\ref*{intro:10-mlp}~章\\
+二维 Q/K/V & 手设向量与投影；各节写出 $X,W_Q,W_K,W_V$ & 逐项核对点积、读取与形状；第~\ref*{intro:21c-naive-attention}--\ref*{intro:11-softmax-memory}~章\\
 四维双头 & 三行、每行四维；拆为两个二维头 & 拼接和输出投影；第~\ref*{intro:22a-position-multihead}~章\\
-三维贯通例 & $X=E_{[2,4,5]}+P_{\rm pos}$；参数见附录 B & 前向、联合训练、生成；第 14、21--26 章\\
-上下文与选择消融 & 相同末 Token／相同均值；冻结或训练 Q/K & 区分读取前文与选择记录；24.10 节\\
-二维 ICL 记录 & $K=I_2$，$V=I_2$ 或交换行；查询前缀 & 示例改变、权重固定；29.3 节\\
-三分类奖励 & logits 三维；四个采样动作与固定优势 & 优势如何改变 logits；30.4 节\\
+三维贯通例 & $X=E_{[2,4,5]}+P_{\rm pos}$；参数见附录 B & 前向、联合训练、生成；第~\ref*{intro:20b-task-contract}、\ref*{intro:22-transformer-architecture}--\ref*{intro:23a-from-toy-to-gpt}~章\\
+上下文与选择消融 & 相同末 Token／相同均值；冻结或训练 Q/K & 区分读取前文与选择记录；第~\ref*{intro:22c-language-training}~章（第~\pageref*{experiment:attention-selection}~页）\\
+二维 ICL 记录 & $K=I_2$，$V=I_2$ 或交换行；查询前缀 & 示例改变、权重固定；第~\ref*{sec:icl-induction}~节\\
+三分类奖励 & logits 三维；四个采样动作与固定优势 & 优势如何改变 logits；第~\ref*{concept:rlvr}~节\\
 二维 RAG & $q=(1,0.5)$；三行文档矩阵 $D$ & 检索排序与证据覆盖；第~\ref*{intro:23d-agent-systems}~章\\
 二维分数迷你版 & 两位置、两维；完整分数参数见 B.1 & 20 分钟前向与反向；附录 B\\
-联想记忆 & 各节给出 Key/Value，写入 $\mathcal M$ & 外积、串扰、Delta 与非线性；第 38--41 章\\
+联想记忆 & 各节给出 Key/Value，写入 $\mathcal M$ & 外积、串扰、Delta 与非线性；第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章\\
 \bottomrule
 \end{tabularx}
 \end{center}
-手算数据与脚本的对应入口见附录 G 的复算表。
+手算数据与脚本的对应入口见\hyperref[app:reproduction-scripts]{附录~\ref*{app:reproduction-scripts} 的复算脚本表（第~\pageref*{app:reproduction-scripts}~页）}。

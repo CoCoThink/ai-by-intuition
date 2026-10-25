@@ -1,3 +1,12 @@
+\chapterrule
+\section{用 MLP 的眼光重新理解记忆检索}
+\phantomsection\label{intro:09-nonlinearity-and-memory}
+\chaptercompass{匹配分数为什么需要非线性？}{先把 Key/Value 堆成矩阵，再用非线性筛选匹配分数，按权重组合每条 Value。}{$xK^\top:1\times T_k\to\sigma(\cdot)V:1\times d_v$}{在 MLP 解释中 K/V 对应可训练的层权重}
+\modelpipelinefocus{3}{非线性记忆检索}
+
+上一章的两种线性写法都只在写入端减少串扰，读取时所有非零匹配仍按原值参与输出。
+本章转到读取端：先把多条 Key、Value 堆成矩阵，再让权重随匹配强弱非线性变化。
+
 \subsection{把 Key 和 Value 堆成矩阵：从匹配到读出}
 \phantomsection\label{intro:08-stacking-key-value}
 设 Query $x:1\times d_k$，$T_k$ 条 Key 按行排成
@@ -54,28 +63,15 @@ $T_k$ 是记忆条数，$d_k$ 是每条 Key 的宽度，$d_v$ 是 Value 的宽�
 x\mathcal{M}=(1,-0.2)V=\boxed{(2,0.4)},
 \]
 而非线性读出为 $\relu(xK^\top)V=(2,1)$。
-\textbf{外积和可先写成固定状态；插入 ReLU 后一般无法与两层线性矩阵合并。}
-这种可合并性不代表普通 Softmax Attention 等价于线性注意力。
+\textbf{不插 ReLU 时，两步可预先合并成固定状态 $\mathcal{M}=K^\top V$；
+插入 ReLU 后，每条匹配先按正负筛选，读出只能逐条匹配后再组合。}
+Softmax Attention 也先逐条匹配、归一化再读出，属于后一类。
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查两种读出结果、存储形状与串扰。
 
-% Chapter 28 comprises the Delta subsection and the stacked K/V subsection.
-\chapterchecktasks{06-better-linear-memory}{基础与贯通复习}{
-\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先写目标读出与当前读出的差。}
-\item \textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
-\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{考察新增外积与另一条 Key 的点积。}
-
-\item \textbf{形状：}$q:1\times2,K:3\times2,V:3\times4$。写出 $qK^\top$ 与最终加权读出的形状。\chapterinlinehint{依次核对查询、转置 Key 与 Value 的内侧维度。}
-\item \textbf{手算：}本章 $qK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
-\item \textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留原负权重重算，再对照中间匹配向量。}
-}
-\chapterrecallanswer{先核对输入、计算图和状态来源，再用完整流程检验局部推导。}
-
-
-
-\begin{conclusion}
+\begin{idea}
 统一记住一条式子：$\sigma(xK^\top)V$。
 先匹配所有 Key，再把这些分数当作读取各行 Value 的权重。
-\end{conclusion}
+\end{idea}

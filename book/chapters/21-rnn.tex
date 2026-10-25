@@ -3,7 +3,7 @@
 \section{RNN 是什么？让网络一个词一个词地读}
 \phantomsection\label{concept:rnn}
 \label{intro:21-rnn}
-\chaptercompass{怎样把前一个 Token 的信息传给当前 Token？}{RNN 逐位置更新隐藏状态，把之前信息随时间传递。}{$x_t:1\times d_x,\ h_{t-1}:1\times d_h\to h_t:1\times d_h$}{$W_x,W_h,b$ 可学习；隐藏状态随输入改变，不是新训练权重}
+\chaptercompass{怎样把前一个 Token 的信息传给当前 Token？}{RNN 逐位置更新隐藏状态，把之前信息随时间传递。}{$\vect x_t^\top:1\times d_x,\ \vect h_{t-1}^\top:1\times d_h\to\vect h_t^\top:1\times d_h$}{$W_x,W_h,b$ 可学习；隐藏状态随输入改变，不是新训练权重}
 \modelpipelinefocus{3}{RNN 的历史状态}
 
 \begin{idea}
@@ -33,6 +33,7 @@ RNN（循环神经网络）是一种按顺序处理输入的网络：
 一种最直观的方案，就是让模型\textbf{依次阅读}，每次带着上一份笔记。
 
 \subsection{用上一时刻的状态处理新输入}
+\phantomsection\label{concept:hidden-state}
 
 RNN 依次进行三个状态更新：
 \begin{enumerate}
@@ -47,13 +48,14 @@ RNN 依次进行三个状态更新：
 
 \subsection{把更新函数缩到只有一个数字，真正手算一次}
 
-假设每个 Token 已经转成向量，再从中取一个特征值用于手算：
+\localfixture{一维线性递推；输入为人为设定，不取自主线 $E$}
+为了手算，直接给三个位置各设定一个一维输入特征：
 \[
 \text{春天：}x_1=1,\qquad
 \text{花：}x_2=2,\qquad
 \text{开了：}x_3=0.
 \]
-这些 $x_t$ 表示输入特征，与前面的 Token ID 不同。
+这些 $x_t$ 是人为设定的特征值，既不是 Token ID，也不取自主线 Embedding 表。
 
 只用一个数字记录状态。规定：
 \[
@@ -108,6 +110,7 @@ RNN 额外增加了从上一步状态到下一步状态的通路。
 \end{center}
 
 \subsection{用向量和矩阵写出 RNN}
+\phantomsection\label{concept:time-step}
 
 把单个数字推广成向量，输入与状态就能包含更多特征。
 我们约定：
@@ -145,6 +148,8 @@ $\tanh$ 是\textbf{逐元素非线性函数}，
 再乘以 $d_h\times|\mathcal V|$ 的词表权重就能得到候选分数。
 
 \subsection{RNN 的限制，正好引出下一个问题}
+\phantomsection\label{concept:long-term-dependency}
+\phantomsection\label{concept:lstm}
 
 上面的规则里，第一步的影响在第三步前就经过多次 $0.5$ 缩小。
 随着状态多次更新，早期信息有衰减风险。
@@ -171,5 +176,5 @@ RNN = 当前输入 + 上一步状态 $\to$ 同一个更新函数 $\to$ 下一步
 
 如果当前词想直接查看很早以前的某个词，
 怎样绕过中间的一长串状态，直接读取那个位置？
-这就是下一章 Attention 要解决的问题。
+下一章从这个问题出发，建立 Attention 的直觉。
 \end{conclusion}

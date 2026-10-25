@@ -110,8 +110,12 @@ def validate_existing_regressions(main, sources):
                                  cwd=ROOT, capture_output=True, text=True)
     if gpt2_result.returncode or "Offline smoke passed:" not in gpt2_result.stdout:
         fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
-    includes(sources["29-revision-notes"], "39897932969",
+    # Run IDs are maintainer provenance: keep them in the archived run record,
+    # and keep the reader appendix pointing at that record.
+    includes((ROOT / "docs" / "GPT2_REAL_RUN.md").read_text(encoding="utf-8"), "39897932969",
              "successful source-pinned real GPT-2 inference reference")
+    includes(sources["29-revision-notes"], "docs/GPT2_REAL_RUN.md",
+             "reader pointer to the archived real GPT-2 run record")
     includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
              "reproducible optional real GPT-2 example (verbatim command)")
     includes(gpt2_source.read_text(encoding="utf-8"), "masked_future",
@@ -244,7 +248,7 @@ def validate_existing_regressions(main, sources):
     for early, late, check_id in (
         ("04-key-value-outer-product", "05-memory-interference", "04-key-value-outer-product"),
         ("17-backpropagation", "18b-end-to-end-learning", "17-backpropagation"),
-        ("06-better-linear-memory", "08-stacking-key-value", "06-better-linear-memory"),
+        ("08-stacking-key-value", "14-summary", "09-nonlinearity-and-memory"),
         ("09-nonlinearity-and-memory", "14-summary", "09-nonlinearity-and-memory"),
     ):
         marker = r"\chapterchecktasks{" + check_id + "}"
@@ -257,9 +261,9 @@ def validate_existing_regressions(main, sources):
         if lex == "24-lexicon":
             key_terms = {
                 "交叉熵": "concept:cross-entropy",
-                "梯度下降": "intro:16a-gradient-descent",
+                "梯度下降": "concept:gradient-descent",
                 "残差连接": "concept:residual",
-                "Token": "intro:20a-tokenizer",
+                "Token": "concept:token",
                 "Query": "concept:qkv",
                 "Key": "concept:qkv",
                 "Value": "concept:qkv",

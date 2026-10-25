@@ -2,7 +2,7 @@
 \chapterrule
 \section{把语言练习变成一道可计算的预测题}
 \label{intro:20b-task-contract}
-\chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{把输入 ID 序列与右移一位的目标 ID 配对，再约定预测形状和评测。}{$[2,4,5]\to[4,5,3]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；后续模型中的 Embedding、投影等参数需训练}
+\chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{完整序列去掉末项作输入、去掉首项作目标（目标是输入整体左移一位），再约定预测形状和评测。}{$[2,4,5]\to[4,5,3]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；后续模型中的 Embedding、投影等参数需训练}
 \modelpipelinefocus{0}{训练样本与目标}
 
 下一 Token 预测把已有文本变成训练答案，把新 Token 接回输入又能继续生成。
@@ -22,7 +22,8 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 
 我们希望读到“春天”时能预测“花”，
 读到“春天、花”时能预测“开了”。
-因此把一段数据\textbf{错开一个位置}：
+因此把一段数据\textbf{错开一个位置}：输入取完整序列的前三项，
+目标取后三项。换句话说，目标就是输入\textbf{整体左移一位}（去掉首项，末尾接上下一 Token）：
 \[
 \underbrace{[2,\ 4,\ 5]}_{\text{输入 Token}}
 \quad\longrightarrow\quad
@@ -37,7 +38,6 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 先看整套\textbf{可训练网络}：ID 查表后，Attention 读取此前可见的 Token，
 逐位置 FFN 变换特征，输出头给词表候选打分。
 训练时用右侧的目标计算损失，反向更新前面各组共享参数。
-外部资料则由应用检索并提供给模型。
 
 \par\medskip
 \tagstructbegin{tag=Figure,alttext={语言模型形状流程：三枚 Token ID 查五乘三的词嵌入表，形成三乘三向量；上下文注意力和逐位置前馈层维持三乘三形状，输出头映射为三乘五 logits，再转换为三个位置各五类的概率。}}
@@ -85,11 +85,11 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 规模与配置见第~\ref*{intro:23a-from-toy-to-gpt}~章。
 
 \chapterchecktasks{20b-task-contract}{正文基础三题}{
-\item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列向左错开一位，对齐三个位置。}
+\item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列整体左移一位（去掉首项），对齐三个位置。}
 \item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
 \item \textbf{找错：}同学让第一个位置通过 Attention 直接看见第二个位置的正确答案，再计算第一个位置的预测损失。哪里发生信息泄漏？\chapterinlinehint{画出目标 Token 流向第一个位置的路径。}
 }
-\chapterrecallanswer{下一 Token 的目标来自原序列向右错一位；因果掩码禁止当前位置读取未来输入。}
+\chapterrecallanswer{下一 Token 的目标是完整序列整体左移一位（去掉首项）；因果掩码禁止当前位置读取未来输入。}
 
 
 

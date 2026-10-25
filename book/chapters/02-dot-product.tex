@@ -1,9 +1,10 @@
 \chapterrule
 \section{点积：如何判断两条线索相不相似？}
 \label{intro:02-dot-product}
-\chaptercompass{怎样把两条线索的匹配度算成一个分数？}{对应分量相乘再求和，方向与长度共同影响点积。}{$a,b:1\times d\to ab^\top:1\times1$}{直接点积无可训练参数；投影权重可学习}
+\chaptercompass{怎样把两条线索的匹配度算成一个分数？}{对应分量相乘再求和，方向与长度共同影响点积。}{两条 $d$ 维行向量 $\vect a^\top,\vect b^\top$ $\to$ 一个数 $\vect a^\top\vect b$}{直接点积无可训练参数；投影权重可学习}
 \modelpipelinefocus{0}{点积与匹配}
 
+上一章把一个东西写成一行数字；要判断两行数字“像不像”，最直接的办法是逐项比较再汇总成一个分数。
 给定 $\vect{a}=(a_1,a_2)$ 和 $\vect{b}=(b_1,b_2)$，它们的\textbf{点积}定义为：
 \begin{equation}
 \boxed{\vect{a}\cdot\vect{b}=a_1b_1+a_2b_2.}
@@ -99,21 +100,16 @@ $\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$
 \end{center}
 \tagstructend
 
-如果以后需要比较一条\textbf{查询向量} $\vect q$
-与一条\textbf{候选向量} $\vect k_i$，可以用点积定义匹配分数：
+如果以后需要比较一条\textbf{查询向量} $\vect q^\top$
+与一条\textbf{候选向量} $\vect k_i^\top$（两者都是含 $d$ 个数的一行），可以用点积定义匹配分数：
 \[
-s_i=\vect k_i^\top\vect q.
+s_i=\vect q^\top\vect k_i=\vect q\cdot\vect k_i.
 \]
-上标 $\top$ 叫转置，把一列变成一行；
-下一章会专门说明这个记号。
-这个式子与 $\vect k_i\cdot\vect q$ 表示同一个点积。
+这里把 $\vect k_i^\top$ 转置回一列 $\vect k_i$，让左边一行 $\vect q^\top$ 与右边一列逐项相乘再求和，结果正是点积；
+把许多候选的 $\vect k_i^\top$ 按行叠成矩阵 $K$，所有分数就排成 $\vect q^\top K^\top$，这正是后面 Attention 中 $QK^\top$ 的写法。
+下一章把这种“行乘列”推广为矩阵乘法。
 
-\par\Needspace{18\baselineskip}
-\textbf{GPU 并行的起点：}一条点积先逐项相乘，再将结果求和；
-这个求和过程叫\textbf{归约}（reduction）。
-若有许多不同的 Query--Key 配对，每对的分数可以分别计算，
-大量乘加和局部归约适合在 GPU 上并行执行。
-下一章把许多点积排成矩阵乘法；小规模运算的启动和数据搬运开销会抵消并行收益；实际速度要连同这些开销测量。
+许多 Query--Key 配对的点积彼此独立，可以同时计算，这正是 GPU 擅长的并行乘加。
 
 
 \chapterchecktasks{02-dot-product}{正文基础三题}{

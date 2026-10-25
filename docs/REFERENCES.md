@@ -24,7 +24,8 @@
 | [huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json](https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json) | 2026-10-25 | 已重新读取层数、Q/KV 头数与隐藏宽度 |
 | [arxiv.org/abs/2010.11929](https://arxiv.org/abs/2010.11929) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2505.09388](https://arxiv.org/abs/2505.09388) | 2026-10-25 | 已核对 Dense/MoE 家族的公开描述 |
-| [www.deepseek.com/en/news/deepseek-v4-1-flash/](https://www.deepseek.com/en/news/deepseek-v4-1-flash/) | 2026-10-25 | 已核对官方公告的因果编码器—解码器描述 |
+| [www.deepseek.com/en/news/deepseek-v4-1-flash/](https://www.deepseek.com/en/news/deepseek-v4-1-flash/) | 2026-10-25 | 已核对官方公告的因果编码器—解码器与输入／输出激活参数描述 |
+| [huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) | 2026-10-25 | 已核对 40 层分为 20 层因果编码器与 20 层解码器、自回归生成及 KV Cache 来源 |
 | [arxiv.org/abs/2609.19969](https://arxiv.org/abs/2609.19969) | 2026-10-24 | 链接可访问 |
 | [api-docs.deepseek.com/updates/](https://api-docs.deepseek.com/updates/) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2104.09864](https://arxiv.org/abs/2104.09864) | 2026-10-24 | 链接可访问 |
@@ -32,6 +33,10 @@
 | [arxiv.org/abs/2002.05202](https://arxiv.org/abs/2002.05202) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2101.03961](https://arxiv.org/abs/2101.03961) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2501.12948](https://arxiv.org/abs/2501.12948) | 2026-10-24 | 链接可访问 |
+| [arxiv.org/abs/2405.04434](https://arxiv.org/abs/2405.04434) | 2026-10-25 | 已核对摘要中 MLA 把 KV Cache 压缩为潜在向量的描述 |
+| [arxiv.org/abs/2409.19606](https://arxiv.org/abs/2409.19606) | 2026-10-25 | 已核对其作为残差连接替代方案的定位 |
+| [arxiv.org/abs/2305.18290](https://arxiv.org/abs/2305.18290) | 2026-10-25 | 已核对成对分类损失与参考策略重参数化 |
+| [arxiv.org/abs/2503.20783](https://arxiv.org/abs/2503.20783) | 2026-10-25 | 已核对去掉标准差与长度归一化的修改 |
 | [huggingface.co/docs/transformers/main/en/chat_templating](https://huggingface.co/docs/transformers/main/en/chat_templating) | 2026-10-24 | 链接可访问 |
 | [huggingface.co/docs/transformers/main/en/cache_explanation](https://huggingface.co/docs/transformers/main/en/cache_explanation) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2209.11895](https://arxiv.org/abs/2209.11895) | 2026-10-25 | 已核对归纳头的两阶段匹配与复制机制 |

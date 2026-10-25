@@ -87,8 +87,6 @@ L=(m-z_{\rm correct})+\ln\sum_k e^{z_k-m}
 =1+\ln(1+e^{-1})\approx1.3133.
 \]
 这个 LogSumExp 写法连极小概率下溢成零的问题也一并避开。
-Attention 遇到因果 Mask 时，对\textbf{每行可见的 Key}减去最大分数；
-每行至少保留一个可见位置，整行全遮住需要另外处理。
 
 \subsection{为什么取对数：把一串概率变成可以相加的惊讶度}
 正确答案的概率越小，看到它时越“意外”。用 $-\ln p$ 表示这份惊讶：
@@ -132,6 +130,22 @@ L=-z_{\rm correct}+\ln\!\left(\sum_k e^{z_k}\right).
 每个位置的这项梯度还要除以 $N$。
 这正是后面三个 Token 位置联合训练时出现 $1/3$ 的原因。
 
+\subsection{回到主线：五个候选怎样计分？}
+
+主线的五项教学词表就是 $C=|\mathcal V|=5$ 个类别，
+每个输入位置输出一行五个 logits，逐行 Softmax 后排成概率矩阵 $\Pi$，
+第 $i$ 行第 $j$ 列记作 $\Pi_{i,j}$。
+读到“春天”时，下一 Token 应是“花”，即第一行的目标 ID 为 $4$
+（三个位置的完整对齐见\hyperref[intro:20b-task-contract]{预测任务章}）。
+交叉熵只读取目标列：
+\[
+L_1=-\ln\Pi_{1,4}.
+\]
+若五个 logits 相等，$\Pi_{1,4}=1/5$，$L_1=\ln5\approx1.609$；
+第~\ref*{intro:22b-token-to-output}~章的初始网络给出 $\Pi_{1,4}\approx0.2617$，
+对应 $L_1\approx1.341$。
+本章三分类例的 $p-y$ 梯度照样适用：只是 $\vect y$ 换成第 $4$ 列为 $1$ 的五维 one-hot。
+
 \begin{warningbox}
 “输出维度等于类别数”适用于这里的多类分类输出头，
 不是所有任务都必须改写成分类；连续数值预测等任务可以使用其他输出与损失。
@@ -142,7 +156,7 @@ L=-z_{\rm correct}+\ln\!\left(\sum_k e^{z_k}\right).
 \item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}
 \item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{比较负对数函数在这两个概率处的大小。}
 }
-\chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\ln p_y$，梯度采用 one-hot 标签。}
+\chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\ln p_y$，logit 梯度为 $p-y$，其中 $y$ 是 one-hot 标签；主线五类第一行的损失为 $-\ln\Pi_{1,4}$。}
 
 
 

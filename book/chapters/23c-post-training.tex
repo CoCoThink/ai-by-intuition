@@ -60,8 +60,10 @@ SFT 的损失掩码再决定哪些回答位置计分。
 但我们希望让更有帮助、事实更可靠的回答得到更高偏好。
 
 基于人类反馈的强化学习（RLHF）是一类利用偏好或评价信号
-优化模型行为的方法。某些流程会训练\phantomsection\label{concept:reward-model}奖励模型，再对语言模型做策略优化；
-也有与强化学习不同的直接偏好优化方法。
+优化模型行为的方法。经典流程先训练\phantomsection\label{concept:reward-model}奖励模型，再对语言模型做策略优化；
+策略优化通常附加对\textbf{参考策略} $\pi_{\rm ref}$（一般取 SFT 后的模型）的 KL 约束，
+让新策略在提高奖励的同时不远离原有的语言分布，也减少钻奖励模型漏洞的空间。
+下文的直接偏好优化（DPO）则跳过单独的奖励模型。
 偏好数据质量要通过多人标注一致性、不同群体的分组评测及失败案例验证。
 
 \subsection{成对偏好怎样变成训练信号？}
@@ -76,6 +78,26 @@ P(A\succ B)=\sigma(r_A-r_B)
 -\ln P(A\succ B)\approx\boxed{0.313}.
 \]
 这是成对偏好建模的一种损失。进入策略优化时，还要按所选算法组织采样、优势估计与约束。
+
+\subsubsection*{DPO：让对数概率比充当隐式奖励}
+\phantomsection\label{concept:dpo}
+\textbf{直接偏好优化（Direct Preference Optimization, DPO）}把同一个成对损失直接写到语言模型上。
+对偏好回答 $y_w$ 与较差回答 $y_l$，各算一次当前策略相对参考策略的对数概率比
+\[
+\Delta_w=\ln\frac{\pi_\theta(y_w\mid x)}{\pi_{\rm ref}(y_w\mid x)},\qquad
+\Delta_l=\ln\frac{\pi_\theta(y_l\mid x)}{\pi_{\rm ref}(y_l\mid x)},\qquad
+\ell_{\rm DPO}=-\ln\sigma\bigl(\beta(\Delta_w-\Delta_l)\bigr).
+\]
+$\beta\Delta$ 扮演\textbf{隐式奖励}：在带 KL 约束的 RLHF 目标下，最优策略满足
+$r(x,y)=\beta\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{只依赖 }x\text{ 的常数}$，
+成对相减时常数抵消。所以 DPO 不必另训奖励模型，训练时也不必从模型采样。
+取 $\beta=1$，若当前策略相对参考策略把 $y_w$ 的对数概率提高 $0.5$、把 $y_l$ 的降低 $0.5$，
+则 $\Delta_w-\Delta_l=1$，
+\[
+\ell_{\rm DPO}=-\ln\sigma(1)\approx\boxed{0.313},
+\]
+与上面 $r_A-r_B=1$ 的成对损失相同。继续训练会增大这个差，$\beta$ 越大，同样的概率比变化被放大得越多。
+公式见 \href{https://arxiv.org/abs/2305.18290}{Rafailov 等（2023）的 DPO 论文}。
 
 \subsection{可验证奖励：让模型在能自动检查的任务中尝试改进}
 \phantomsection\label{concept:grpo}
@@ -109,9 +131,13 @@ P(A\succ B)=\sigma(r_A-r_B)
 (\mathcal A_1,\mathcal A_2,\mathcal A_3,\mathcal A_4)=\boxed{(+1,-1,+1,-1)}.
 \]
 奖励高低对应正负优势；若整组奖励相同，需加稳定项处理 $\sigma_r=0$。
+归一化口径因实现而异：改用样本标准差（分母为 $3$）时 $\sigma_r=\sqrt{1/3}\approx0.577$，
+优势约为 $\pm0.866$；Dr.~GRPO 等变体只减组均值、不除以标准差，得到 $\pm0.5$。
+比较报告时要写明所用口径。
 \textbf{注意：}此处只算组内优势；完整 GRPO 还涉及策略概率比、裁剪和正则化。
 可参见 \href{https://arxiv.org/abs/2402.03300}{DeepSeekMath}
-与 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1}。
+与 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1}；
+不除标准差的分析见 \href{https://arxiv.org/abs/2503.20783}{Liu 等（2025）}。
 \end{example}
 
 \subsubsection*{再走一步：优势怎样推高或压低一个 logit？}
@@ -153,13 +179,8 @@ SFT 的示范来自数据集，策略学习的动作来自采样、反馈来自�
 每个新 Token 都经过一次模型前向计算，后续生成又能读取此前写出的步骤，
 于是多步任务得到更多串行计算与中间记录。
 
-要区分三种情况：
-\begin{enumerate}
-\item \textbf{提示策略：}改变输入指令，不修改参数。
-\item \textbf{训练策略：}通过示范、偏好或奖励信号修改模型参数。
-\item \textbf{推理时计算：}增加候选采样、验证或搜索步骤，
-以更多计算换取一定条件下更高的解题成功率。
-\end{enumerate}
+CoT 提示只改变输入，训练才修改参数，推理时搜索则额外花费计算；
+三者的分工集中列在本章末的\hyperref[sec:training-inference-roles]{分工表}中。
 
 \begin{boundarybox}
 步骤写得完整仍需逐项核对；它们是生成文本，无法直接证明模型内部采用了同一推理过程。
@@ -193,6 +214,10 @@ SFT 的示范来自数据集，策略学习的动作来自采样、反馈来自�
 
 
 \subsection{不同训练与推理策略的分工}
+\phantomsection\label{sec:training-inference-roles}
+提示、训练与推理时计算的区别全书只在这里列一次：
+提示策略改变输入而不修改参数；SFT、偏好与奖励信号修改参数；
+推理时采样、验证或搜索在固定参数下多花计算，换取一定条件下更高的成功率。
 
 \begin{center}
 \small
@@ -204,7 +229,7 @@ SFT 的示范来自数据集，策略学习的动作来自采样、反馈来自�
 \midrule
 预训练 & 大规模数据中学习一般 Token 预测模式\\
 SFT & 利用示范答案塑造特定任务与回应方式\\
-RLHF/偏好优化 & 根据比较或反馈优化回答偏好\\
+RLHF/DPO 等偏好优化 & 根据比较或反馈优化回答偏好；通常约束新策略不远离参考策略\\
 RLVR & 利用可程序化检查的奖励训练某些任务能力\\
 CoT 提示 & 改变输入组织方式，不必修改模型权重\\
 推理时搜索/验证 & 使用额外计算与外部规则筛选候选结果\\

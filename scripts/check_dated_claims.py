@@ -104,23 +104,32 @@ def mcp_page_errors(pages):
 
 
 def rendered(rows):
+    """Reader table; a shared review cycle is stated once instead of on every row."""
+    cycles={(r['review_interval_days'],r['review_on_new_revision']) for r in rows}
+    shared=len(cycles)==1
+    if shared:
+        days=next(iter(cycles))[0]
+        cycle=f'每条断言均在 {days} 天内或新修订发布时复查，以先到者为准；重新编译不会刷新核验日期。'
+        columns=r'@{}>{\raggedright\arraybackslash}p{50mm}>{\raggedright\arraybackslash}p{26mm}>{\raggedright\arraybackslash}p{80mm}@{}'
+        header=r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围\\\midrule'
+    else:
+        cycle='每行注明复查周期，以周期与新修订发布先到者为准；重新编译不会刷新核验日期。'
+        columns=r'@{}>{\raggedright\arraybackslash}p{43mm}>{\raggedright\arraybackslash}p{26mm}>{\raggedright\arraybackslash}p{62mm}>{\raggedright\arraybackslash}p{25mm}@{}'
+        header=r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围 & 建议复查周期\\\midrule'
     lines=[BEGIN,r'\subsubsection*{带日期断言清单}',r'\phantomsection\label{app:dated-claims}',
-        '下表记录所用版本、内容核验日期与范围；编译日期和 Git 提交只标识产物。',
-        '链接可访问与内容复核分别记录，重编译不会刷新这里的日期。表中来源均列于附录 F。',
-        '建议每 90 天或新修订发布时复查，以先到者为准；下表简称“90 天／新修订”。',
+        '下表列出带日期的断言：所用版本、内容核验日（UTC）与核验范围；来源均列于附录 F。',
+        cycle,
         r'\begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.25}',
         r'\tagpdfsetup{table/header-rows={1}}',
-        r'\begin{longtable}{@{}>{\raggedright\arraybackslash}p{43mm}>{\raggedright\arraybackslash}p{26mm}>{\raggedright\arraybackslash}p{62mm}>{\raggedright\arraybackslash}p{25mm}@{}}',
-        r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围 & 建议复查周期\\\midrule',
-        r'\endfirsthead',
-        r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围 & 建议复查周期\\\midrule',
+        r'\begin{longtable}{'+columns+'}',
+        header,r'\endfirsthead',header,
         r'\endhead',r'\bottomrule\endfoot']
     for row in rows:
         target=row['target']
         entry=row['claim']+r'（\hyperref['+target+r']{第~\pageref*{'+target+r'}~页}）'
         sources='、'.join(r'\href{'+s['url']+'}{'+s['name']+'}' for s in row['sources'])
-        lines.append(entry+' & '+row['version']+r'\newline '+row['checked_utc']+' & '+sources+'。'+row['scope']+
-                     ' & '+str(row['review_interval_days'])+r' 天／新修订\\')
+        line=entry+' & '+row['version']+r'\newline '+row['checked_utc']+' & '+sources+'。'+row['scope']
+        lines.append(line+(r'\\' if shared else ' & '+str(row['review_interval_days'])+r' 天／新修订\\'))
     lines += [r'\end{longtable}\endgroup',END]
     return '\n'.join(lines)
 

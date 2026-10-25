@@ -66,10 +66,14 @@ def main() -> None:
     close(exp(-1000), 0)
     close(1000 + log(1 + exp(-1000)), 1000)
 
-    # C1-15. A different input X still has a symmetric Gram score matrix.
-    x = [[1, 1], [1, -1]]
+    # C1-15. Non-orthogonal rows: XX^T is symmetric, XWX^T is not for asymmetric W.
+    x = [[1, 2], [0, 1], [1, -1]]
     gram = matmul(x, transpose(x))
-    assert gram == [[2, 0], [0, 2]]
+    assert gram == [[5, 2, -1], [2, 1, -1], [-1, -1, 2]] == transpose(gram)
+    w = [[1, 1], [0, 1]]
+    assert matmul(x, w) == [[1, 3], [0, 1], [1, 0]]
+    s = matmul(matmul(x, w), transpose(x))
+    assert s == [[7, 3, -2], [2, 1, -1], [1, 0, 1]] and s != transpose(s)
 
     # C1-16. Recompute pair frequency before a single BPE merge.
     corpus = [["a", "a", "b"], ["a", "b"]]
@@ -99,9 +103,31 @@ def main() -> None:
     assert list(map(sum, mask3)) == [1, 2, 3, 3, 3]
     assert sum(map(sum, mask3)) == 12
 
-    # C2-19. Cross-entropy of an exactly uniform thousand-word vocabulary.
-    close(-log(1 / 1000), log(1000))
-    close(log(1000), 6.907755278982137)
+    # C2-19. Softmax/cross-entropy logit gradient p - y; C2-5 loss comparison.
+    p, y = (0.2, 0.5, 0.3), (1, 0, 0)
+    for got, wanted in zip([a - b for a, b in zip(p, y)], (-0.8, 0.5, 0.3)):
+        close(got, wanted)
+    close(-log(0.2) - (-log(0.8)), log(4))
+
+    # Rewritten transfer items: FFN with a negative unit, RNN decay, clipping.
+    hidden = matmul([[2, 1]], [[1, 0, 1], [0, 1, -3]])[0]
+    assert hidden == [2, 1, -1]
+    down = [[2, 0], [0, 1], [1, 1]]
+    assert matmul([[max(0, v) for v in hidden]], down)[0] == [4, 1]
+    assert matmul([hidden], down)[0] == [3, 0]
+    assert min(t for t in range(1, 40) if 0.8 ** (t - 1) < 0.1) == 12
+    scale = 6.5 / (5 ** 2 + 12 ** 2) ** 0.5
+    close(5 * scale, 2.5); close(12 * scale, 6)
+    assert min(n for n in range(1, 30) if 0.7 ** n <= 0.1) == 7
+    w = 1.0
+    for rate in (0.01, 0.02, 0.03):
+        w -= rate * 2 * w
+    close(w, 0.884352)
+    close((1 - 0.1 * 0.05) * 4 - 0.1, 3.88)   # AdamW; L2-in-Adam gives 4 - 0.1
+    logits = (0.5, 4.5)                        # ICL query C, W_out = 5 I
+    close(exp(logits[1]) / (exp(logits[0]) + exp(logits[1])), 0.9820137900379085)
+    close(1 / (1 + exp(-2.5)), 0.9241418199787566)
+    assert 24 * 2 * 64 * 2 * 2 == 12288 and 2 * 12288 * 32768 == 805306368
 
     # Additional guard on the new asymmetric Q/K reading calculation.
     q_rows = [[1, 0], [0, 1], [1, 1]]
@@ -116,7 +142,7 @@ def main() -> None:
     close(read[0], 0.7552715289452023)
     close(read[1], 0.9099694268296196)
 
-    print("Review exercises QA passed: C1-15/16, C2-17/18/19/20, asymmetric Q/K, stable Softmax")
+    print("Review exercises QA passed: C1-15/16, C2-17/18/19/20, rewritten transfer items, asymmetric Q/K, stable Softmax")
 
 
 if __name__ == "__main__":

@@ -1,30 +1,31 @@
 \section*{怎么读：路线与数学预备}
 \phantomsection\label{front:reading-routes}
 \begingroup\small
+\newcommand{\routech}[1]{\ref*{intro:#1}}
 \setlength{\parskip}{3pt}
-本书把学习、矩阵、上下文读取和生成接成一条路线，再扩展到视觉与助手。
+本书把学习、矩阵、上下文读取和生成接成一条路线，再扩展到助手系统；视觉输入与联想记忆是主线之后的两条扩展路径。
 先看每步的输入、输出和用途，再追踪矩阵元素。\par
 \tagpdfsetup{table/header-rows={1}}
 \noindent\begin{tabularx}{\linewidth}{@{}p{12mm}p{65mm}X@{}}
 \toprule
 路线 & 章节与阅读预算 & 怎样读\\\midrule
-速读 & 1--2、7--9、11--15、17--19、21--25、29、32--34；约 75 页 & 读问题、输入输出、小结；跳过{\symboliconfont ★}选读与复算推导\\
-标准 & 1--37；约 140 页 & 顺序读并做自测；首读可跳过原论文对照、GPT-2 追踪及现代架构{\symboliconfont ★}专题\\
-动手 & 2--5、8--10、12--13、18--24、29--31，附录 B；约 95 页 & 先算二维迷你版，再跑三维训练；选练 C 题，按 R 题跨章复习\\
+速读 & \routech{00-functions}--\routech{16a-gradient-descent}、\routech{01-vectors}--\routech{10-mlp}、\routech{20a-tokenizer}--\routech{21a-context-gap}、\routech{21c-naive-attention}--\routech{11-softmax-memory}、\routech{22-transformer-architecture}--\routech{23-llm-systems}、\routech{23aa-pretraining-icl}、\routech{23d-agent-systems}--\routech{23d-agent-protocols}；约 80 页 & 读问题、输入输出、小结；跳过{\symboliconfont ★}选读与复算推导\\
+标准 & \routech{00-functions}--\routech{23e-tech-judgement}；约 135 页 & 顺序读并做自测；首读可跳过原论文对照、GPT-2 追踪及现代架构{\symboliconfont ★}专题\\
+动手 & \routech{16-loss-gradient}--\routech{17-backpropagation}、\routech{02-dot-product}--\routech{10-mlp}、\routech{20c-classification-loss}--\routech{20-embeddings}、\routech{21b-why-attention}--\routech{22c-language-training}、\routech{23aa-pretraining-icl}--\routech{23cc-test-time-compute}，附录 B；约 95 页 & 先算二维迷你版，再跑三维训练；选练 C 题，按 R 题跨章复习\\
 \bottomrule
 \end{tabularx}\par
-\textbf{\hyperref[part:memory]{联想记忆部分（第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章）}是理解 Attention 的第二条路径}，三条路线均可在主线后转入。
+表中数字均为章号。主线之后有两条{\symboliconfont ★}扩展路径，三条路线读完均可转入：
+\hyperref[part:vision]{视觉部分（第~\routech{19-cnn}--\routech{19b-vit}~章）}把同一套 Transformer 主干接到图像输入；
+\textbf{\hyperref[part:memory]{联想记忆部分（第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章）}是理解 Attention 的第二条路径}。
 页数是含所选章图表的阅读预算，不含扩展练习。
 
 \subsection*{数学预备与表示约定}
 先做\hyperref[app:math-entry]{五题入门自检（第~\pageref*{app:math-entry}~页）}，核对方程、平方、函数、自然对数与导数；薄弱项先读\hyperref[app:math-tools]{附录 A.2（第~\pageref*{app:math-tools}~页）}。
 
 
-\textbf{ID、位置和矩阵行列从 1 数，Python 索引减 1。}
-词表 $1=\text{其他},2=\text{春天},3=\text{。},4=\text{花},5=\text{开了}$。
-第一位置预测“花”的概率是 $\Pi_{1,4}$，代码是 \texttt{probs[0,3]}。
-每个 Token 占一行，投影写 $XW$。
-输出头 $W_{\rm out}$、位置 $P_{\rm pos}$、概率 $\Pi$ 的统一符号表见第~\pageref*{app:symbols}~页。
+\textbf{ID、位置和矩阵行列从 1 数，Python 索引减 1}：数学上的第 1 行第 4 列，在代码中写作 \texttt{[0,3]}。
+教学词表 $1=\text{其他},2=\text{春天},3=\text{句号“。”},4=\text{花},5=\text{开了}$。
+每个 Token 占一行，投影写 $XW$。全书统一符号表见第~\pageref*{app:symbols}~页。
 
 \subsection*{图例：先判断这一块要你做什么}
 \tagpdfsetup{table/header-rows={1}}
@@ -40,8 +41,7 @@
 \end{tabularx}\par
 章末统一为“自测 $\to$ 题号与解答入口 $\to$ 小结”；电子版可点击双向跳转。
 
-Q 蓝、K 深青、V 橙只表示三种角色；可见／遮蔽、数据流、数据点另用各自图色，
-同时保留标签、线型与标记。完整色彩表见第~\pageref*{app:color-semantics}~页。
+图中颜色只区分角色（如 Q、K、V），同时保留标签、线型与标记，黑白打印也能分辨；色彩表见第~\pageref*{app:color-semantics}~页。
 术语可按\hyperref[app:chinese-index]{中文拼音索引}或\hyperref[app:bilingual-glossary]{英文对照表}查询。纸面目录列到章，电子目录与书签均可点击。
 \globalroute{0}
 \endgroup

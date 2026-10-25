@@ -1,7 +1,7 @@
 \chapterrule
 \section{前馈网络与输出头：两种不同的特征变换}
 \label{intro:10b-ffn-output-head}
-\chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{$X:T\times d_{\rm model}\to F:T\times d_{\rm model}\to Z:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm out}$（及相应偏置）}
+\chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{FFN：$X\to F_{\rm out}:T\times d_{\rm model}$；输出头：$H\to Z:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm out}$（及相应偏置）}
 \modelpipelinefocus{4}{FFN}
 
 \begin{idea}
@@ -24,11 +24,7 @@ F_{\rm out}=F_{\rm mid}W_{\rm down}+\vect b_{\rm down}.
 \label{eq:ffn-batched}
 \end{equation}
 这里的偏置向量按行广播，意味着每一行加上同一组数。
-两次矩阵乘法本身只有
-\[
-XW_{\rm up}=Z,\qquad F_{\rm mid}W_{\rm down}=F_{\rm out}.
-\]
-形状放在旁边的小表，更容易逐行核对：
+两次矩阵乘法的形状可用下表逐行核对：
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{25mm}>{\raggedright\arraybackslash}X@{}}
@@ -79,13 +75,15 @@ F_{\rm out}=F_{\rm mid}W_{\rm down}=
 \phantomsection\label{concept:output-head}
 
 FFN 的下投影将隐藏宽度还原为 $d_{\rm model}$，
-是为了继续堆叠后续 Block；
-而\textbf{词表输出头}要把隐藏状态映射到候选 Token 分数：
+是为了与第二条残差相加（此时 FFN 的输入是 $\operatorname{Norm}(X_{\rm att})$，$X_{\rm block}=X_{\rm att}+F_{\rm out}$），再继续堆叠后续 Block；
+而\textbf{词表输出头}只接在最后一个 Block 之后，把隐藏状态映射到候选 Token 分数：
 \begin{equation}
-Z=F_{\rm out}W_{\rm out}+\vect b_{\rm out},
+Z=HW_{\rm out}+\vect b_{\rm out},
 \quad
 W_{\rm out}\in\R^{d_{\rm model}\times|\mathcal V|}.
 \end{equation}
+这里 $H$ 是最后一个 Block 经过第二条残差后的输出，不是单独的 $F_{\rm out}$。
+本书三维主例不设 $\vect b_{\rm out}$，即 $Z=HW_{\rm out}$。
 假设 $d_{\rm model}=2$，词表有五个 Token，
 则 $W_{\rm out}$ 是 $2\times5$，
 每个 Token 产生五个 \conceptlink{logits}{logits}，即还未经过 Softmax 的原始候选分数。
@@ -96,8 +94,8 @@ W_{\rm out}\in\R^{d_{\rm model}\times|\mathcal V|}.
  n/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=105mm,minimum height=10mm,align=center,font=\small}]
 \node[n] (x) {$T\times d_{\rm model}$：每个 Token 的隐藏表示};
 \node[n,below=of x] (up) {FFN 上投影 $T\times d_{\rm ff}$，激活，再下投影};
-\node[n,below=of up] (y) {$T\times d_{\rm model}$：供下一个 Block 使用};
-\node[n,below=of y] (out) {词表输出头 $T\times|\mathcal V|$：预测候选分数};
+\node[n,below=of up] (y) {$T\times d_{\rm model}$：加回残差，供下一个 Block 使用};
+\node[n,below=of y] (out) {末层 $H$ 经词表输出头：$T\times|\mathcal V|$ 候选分数};
 \draw[->,flowcolor,thick] (x)--(up);
 \draw[->,flowcolor,thick] (up)--(y);
 \draw[->,flowcolor,thick] (y)--(out);

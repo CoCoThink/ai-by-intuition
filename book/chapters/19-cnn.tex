@@ -1,7 +1,7 @@
 \chapterrule
 \section{为什么图片不能只靠大矩阵？从局部特征到 CNN}
 \label{intro:19-cnn}
-\chaptercompass{如何利用图像的局部空间结构？}{卷积核在不同位置共享权重，逐窗提取局部特征。}{图像 $H\times W\times C\to$ 多通道特征图}{卷积核和偏置可学习，滑动位置共享参数}
+\chaptercompass{如何利用图像的局部空间结构？}{卷积核在不同位置共享权重，逐窗提取局部特征。}{图像（高$\times$宽$\times$通道）$\to$ 多通道特征图}{卷积核和偏置可学习，滑动位置共享参数}
 \modelpipelinefocus{2}{视觉局部特征}
 
 文本有顺序，图片则同时具有宽度、高度和局部空间关系。
@@ -20,6 +20,10 @@ W\in\R^{900\times1000}
 就需要\textbf{900,000 个权重}，还不包括偏置。更糟的是，单纯铺平会使图片中“相邻像素”的结构不再显式体现在模型里；为了在不同位置识别相同的边缘或图案，全连接层往往要重复学习类似模式。
 
 \subsection{小区域扫描：卷积核到底做了什么？}
+\phantomsection\label{concept:kernel}
+\phantomsection\label{concept:stride}
+\phantomsection\label{concept:padding}
+\phantomsection\label{concept:feature-map}
 
 考虑一张 $4\times4$ 的极简图片：
 \[
@@ -63,6 +67,7 @@ $2\times2$ 的核只有\textbf{4 个可学习数字}，但可以在所有位置\
 如果每个输出通道各有一个偏置，还需另加 $C_{\rm out}$ 个参数。这个数量\textbf{不依赖于图片的宽高}，这是卷积层在局部处理中的重要优势。
 
 \subsection{池化又是干什么的？}
+\phantomsection\label{concept:pooling}
 
 例如对 $2\times2$ 小块
 \[
@@ -93,5 +98,5 @@ CNN 的关键是局部连接与权重共享：同一组参数可以检测不同�
 
 
 \begin{conclusion}
-图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。下一章将换一条路线：把同样的图像切成 Patch，使图像也能输入 Transformer。
+图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。下一章换一条路线：把一张 $4\times4$ 小图切成 Patch，使图像也能输入 Transformer；为了看清切块顺序，那里会换一张每块内容都不同的小图。
 \end{conclusion}

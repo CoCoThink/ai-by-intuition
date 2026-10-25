@@ -11,17 +11,15 @@
 更重要的是拿到一个新技术时，能独立判断\textbf{它解决了哪个瓶颈，
 用什么证据证明，付出了什么代价，以及哪些条件下会失效}。
 
-\subsection{先把“改进”分到五层，而不是混在一起}
+\subsection{先把“改进”分到四层，而不是混在一起}
 
 \begin{enumerate}
 \item \textbf{表示层：}Tokenizer、Embedding、位置表示如何编码输入？
 先追踪文本怎样进入网络，再测量表示改变带来的收益。
 \item \textbf{模型计算层：}Attention、FFN、MoE、归一化与缓存改变什么？
 区分训练 FLOPs、解码延迟、KV 内存和总参数量。
-\item \textbf{训练与反馈层：}预训练、SFT、偏好优化、RLVR 是否修改权重？
-数据、奖励与评测目标一致吗？
-\item \textbf{推理策略层：}采样、验证、搜索、上下文示例是否使用额外计算，
-在固定权重下改变输出选择？
+\item \textbf{训练与反馈层／推理策略层：}改动修改了权重，还是在固定权重下多花计算？
+两层的区分见\hyperref[sec:training-inference-roles]{后训练章分工表}；这里追问数据、奖励与评测目标是否一致。
 \item \textbf{系统层：}RAG、工具、MCP、Workflow、Agent/A2A 是怎样连接
 资料与授权动作的？安全责任归谁？
 \end{enumerate}
@@ -52,27 +50,11 @@ Richard Sutton 在
 \hyperref[part:learning]{开篇的学习与训练部分}问“为什么规则难以写尽”，在这里得到了一次回响：
 \textbf{让系统学会一般模式，与让应用遵守明确规则，并不矛盾。}
 
-\subsection{莫拉维克悖论：容易说清的事情，不一定容易做成}
-
-所谓\textbf{莫拉维克悖论（Moravec's paradox）}，
-是 AI 与机器人研究史中的一项\textbf{观察和解释框架}：
-人类觉得“需要思考”的棋类、符号运算等任务，
-在一定程度上能够被计算机用形式化规则处理；
-人类不假思索完成的视觉辨认、触觉操作、
-在陌生环境中保持身体平衡等任务，
-在真实世界中反而需要复杂的感知与控制。
-
-直觉上，符号任务常具有明确的输入、状态和计分方式；
-现实操作要应对遮挡、传感器噪声、接触力和环境变化，
-很难仅靠一串标准答案穷尽。
-按输入与输出列出典型能力：
-现代视觉识别已经取得长足进展，
-一些电子游戏与规划任务仍很难，
-机器人还需在目标环境测试感知、动作与失败恢复。
-真正可用的问题是：\textbf{训练分布以外，哪些感知和行动条件会失败？}
-阅读可参考
-\href{https://en.wikipedia.org/wiki/Moravec%27s_paradox}{历史背景概述}；
-不要把悖论当作当代能力排行榜。
+常与此并提的\textbf{莫拉维克悖论（Moravec's paradox）}则指出：
+棋类、符号运算有明确的输入与计分，较早被计算机处理；
+人类不假思索的感知与身体操作，反而要应对噪声、遮挡和环境变化。
+评估一项技术时，因此要追问\textbf{训练分布以外，哪些输入条件会失败}
+（\href{https://en.wikipedia.org/wiki/Moravec%27s_paradox}{历史背景概述}）。
 
 \subsection{“架构创新空间正在收窄”是可检验的争议观点}
 
@@ -122,9 +104,9 @@ Richard Sutton 在
 \item \textbf{实验条件：}输入长度、并发数、精度、缓存策略和训练量是否相同？
 \item \textbf{应用边界：}引用核查、工具权限、失败处理有没有另外验证？
 \end{itemize}
-一项技术主要减少显存，
-另一项主要增加训练期活跃参数，
-第三项主要减少人为操作；\textbf{三者应按各自的瓶颈与指标比较}。
+不同技术的收益落在不同指标上：GQA 主要减少解码时的 KV 缓存显存，
+MoE 增加总参数而每个 Token 激活的计算量基本不变，
+固定 Workflow 主要减少人工操作；\textbf{三者应按各自的瓶颈与指标比较}。
 
 
 \subsection{从交叉熵到困惑度：评测先要明确量尺}
@@ -137,7 +119,7 @@ Richard Sutton 在
 
 \begin{example}[breakable=false]
 \noindent\emph{沿用三位置前向实验的损失}\par
-本书三维贯通例初始平均交叉熵为 $L=1.798430$，
+第~\ref*{intro:22c-language-training}~章训练前的三维贯通例，三个预测位置的平均交叉熵为 $L=1.798430$，
 因此
 \[
 \mathrm{PPL}=e^{1.798430}\approx 6.04.
@@ -157,11 +139,10 @@ Agent 还需记录工具成功率、越权率、延迟、成本和失败恢复�
 \phantomsection\label{concept:evaluation-contamination-benchmark}
 
 \textbf{Benchmark（基准测试）}必须说明数据构造、题目来源、
-评分脚本、样本量与置信区间。若测试题或答案出现在训练集、
-微调集、检索库或反复调参所见的测试集里，
-就有\textbf{评测污染（Benchmark Contamination）}的风险。
-重复内容会让榜单分数混入对见过内容的记忆。
-在可行时用时间隔离的保留集、去重与来源追踪，并对新题复测。
+评分脚本、样本量与置信区间。
+榜单高分还要排除\textbf{评测污染（Benchmark Contamination）}：
+它的定义与去重、按组切分的做法见\hyperref[concept:evaluation-contamination]{训练数据工程一节}；
+读榜时追问测试题是否进入过训练、微调、检索库或反复调参，并优先看时间隔离的新题复测。
 
 \textbf{数据偏见与模型偏见}同样需要评估：
 训练资料是否遗漏特定语言、地区或群体？
@@ -185,6 +166,8 @@ Agent 还需记录工具成功率、越权率、延迟、成本和失败恢复�
 长回答、特定风格与同源模型都可能影响偏好，因此质量结论要和评分协议一起报告。
 这些偏差在\href{https://arxiv.org/abs/2306.05685}{Zheng 等（2023）的 LLM-as-a-Judge 研究}中有实证讨论。
 
+% Keep this closing block with the self-check so the part-end page is not a sparse tail.
+\Needspace{12\baselineskip}
 \textbf{每次选型都留下五项记录：}旧方法的瓶颈，新方法的输入与输出，
 可复算证据，被转移的成本或风险，以及退回简单方法的条件。
 

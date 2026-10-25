@@ -1,6 +1,6 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{进阶探索：高维空间与记忆容量}
+\section{\texorpdfstring{{\symboliconfont ★}}{★} 选读：高维空间与记忆容量}
 \phantomsection\label{intro:13-capacity}
 \chaptercompass{提高维度和匹配选择性，会改变哪些干扰尺度？}{从随机 Key 的点积和 Value 的符号抵消估计容量。}{$|k_i k_j^\top|\approx1/\sqrt{d_k}$}{本章分析理想随机状态，不估计实际模型可靠知识量}
 \modelpipelinefocus{3}{高维记忆容量}
@@ -38,15 +38,10 @@ $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
 
 \subsection{线性注意力的状态，就是累加的外积记忆}
 
-Key、Value 为行向量，前缀外积逐步写入：
-\[
-\underbrace{\mathcal{M}_0}_{d_k\times d_v}=0,\quad
-\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+k_t^\top v_t
-=\sum_{i\le t}k_i^\top v_i,\qquad y_t=q_t\mathcal{M}_t.}
-\]
-$q_t:1\times d_k$ 读取 $y_t:1\times d_v$；只累加因果前缀。
-这是\textbf{未归一化线性状态}；实际线性 Attention 还需特征映射或归一化，
-Gated DeltaNet 另加误差修正和门控。
+\hyperref[sec:modern-delta-rule]{现代架构章的线性状态}$\mathcal{M}_t=\sum_{i\le t}k_i^\top v_i$
+正是本部分的外积记忆按因果前缀逐步写入；本章的容量估计因此也适用于这种未归一化状态。
+实际线性 Attention 还需特征映射或归一化，Gated DeltaNet 另加误差修正和门控，
+干扰项要按各自的更新公式重新估计。
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。
@@ -62,7 +57,7 @@ Gated DeltaNet 另加误差修正和门控。
 
 
 \begin{conclusion}
-\textbf{提高专题收束：联想记忆的关键结论。}
+\textbf{选读收束：联想记忆的关键结论。}
 点积匹配，外积写入；线性读取会串扰，非线性与 Softmax 提高选择性。
 行向量约定为 $\mathcal{M}=\sum_i k_i^\top v_i$、$x\mathcal{M}=\sum_i(xk_i^\top)v_i$。
 沿着这条\textbf{匹配与读取}主线，回看 Attention 与 FFN 的分工。

@@ -1,7 +1,6 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{检索与证据：RAG 怎样回答有来源的问题？}
-\phantomsection\label{concept:agent}
 \label{intro:23d-agent-systems}
 \chaptercompass{三季度报告都找到了吗？}{RAG 先定位有出处的材料，再核对证据覆盖与计算所需的输入。}{查询／文档块 $\to$ 相似度排序 $\to$ 可核对证据}{检索和外部状态不自动更新模型权重}
 \modelpipelinefocus{8}{RAG 与证据覆盖}
@@ -29,8 +28,16 @@
 \subsection{无状态请求、会话历史与 KV Cache 的区别}
 
 对于\textbf{无状态的模型请求接口}，应用把相关系统约束、用户消息、工具结果和历史重新提交，模型据此继续生成。
-若每一轮都无删减地重传历史，请求 Token 数量会增长；摘要、检索筛选、截断和提示缓存可以帮助控制成本，
-摘要与截断会舍弃部分信息，需按任务保留关键证据。采用服务端会话管理的 API 则由服务保存历史，按该接口约定恢复状态。
+\localfixture{每轮固定新增 200 Token 的教学假设}
+设每轮对话新增 $200$ 个 Token。第 $t$ 轮无删减重传时要提交 $200t$ 个，十轮累计
+\[
+200\times(1+2+\cdots+10)=200\times55=\boxed{11{,}000}\ \text{个输入 Token},
+\]
+而新内容只有 $2{,}000$ 个。若只保留最近 $3$ 轮，累计为
+$200\times(1+2+3)+7\times600=\boxed{5{,}400}$ 个，代价是更早的信息不再可见。
+摘要、检索筛选、截断和提示缓存都在这两端之间取舍，需按任务保留关键证据。
+采用服务端会话管理的 API 则由服务保存历史，按该接口约定恢复状态。
+\texttt{scripts/agent\_loop.py} 复算这两项累计值。
 
 
 \textbf{KV Cache} 则是模型执行 Attention 时对已处理 Token 的 Key/Value 缓存，
@@ -99,6 +106,13 @@ qD^\top
 按原始点积降序取 $\operatorname{top}\text{-}2$：
 第 3 块（得分 $1.2$）、第 1 块（得分 $1.0$），
 \textbf{第 2 块 Q2 被排除}。
+\phantomsection\label{concept:recall-at-k}%
+用\textbf{必需证据召回率（recall@$k$）}衡量覆盖：前 $k$ 个结果中命中的必需文档数，除以必需文档总数。
+本任务需要 Q1、Q2、Q3 三份，
+\[
+\text{recall@}2=\frac{|\{Q3,Q1\}\cap\{Q1,Q2,Q3\}|}{3}=\frac23\approx\boxed{66.7\%},\qquad
+\text{recall@}3=\frac33=100\%.
+\]
 问题不是排名算法“算错”：\textbf{即使 top-k 完全按定义执行，
 固定 $k=2$ 也装不下任务明确需要的三个季度的证据}。
 真实系统应先检查每个必要季度是否有可靠来源；
@@ -124,7 +138,7 @@ $(132-120)/120=\boxed{10\%}$。
 \end{example}
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
-运行 \texttt{python3 scripts/rag\_demo.py} 可核对向量形状、三项分数、top-k 排序及两种增长率。
+运行 \texttt{python3 scripts/rag\_demo.py} 可核对向量形状、三项分数、top-k 排序、recall@$k$ 及两种增长率。
 
 
 \subsection{幻觉与校准：回答流畅，依据够吗？}
@@ -152,7 +166,7 @@ $(132-120)/120=\boxed{10\%}$。
 
 \chapterchecktasks{23d-agent-rag}{正文基础三题}{
 \item \textbf{证据：}要比较 Q1--Q3，Top-2 只返回 Q3 和 Q1。先不计算增长率，指出缺哪份证据，以及系统下一步该怎样办。\chapterinlinehint{把任务所需季度与已返回季度做集合对照。}
-\item \textbf{手算：}已核实 Q2、Q3 收入为 $120$、$132$ 百万元，计算 Q3 环比。\chapterinlinehint{按本季减上季，再除以上季收入。}
+\item \textbf{手算：}任务需要 Q1--Q4 四份报表，Top-3 返回 Q4、Q2、去年 Q4（不在任务范围内）。求必需证据的 recall@3；若改取 Top-5 后又命中 Q1、Q3，recall@5 是多少？\chapterinlinehint{先写出必需集合，再数前 $k$ 个结果中命中的必需文档。}
 \item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？\chapterinlinehint{分别检查相关性排名、出处、单位与原表口径。}
 }
 \chapterrecallanswer{检索证据先核对必需季度，再用真实数据计算；缺表时报告缺口。}

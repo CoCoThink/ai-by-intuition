@@ -26,7 +26,10 @@ O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
 0.6693&0.4934&0.0066\\0.2019&0.6886&0.1683
 \end{bmatrix}.
 \]
-交换输入两行，输出也只换行：这就是行置换的\textbf{等变性}，没有额外的顺序信号。
+交换输入两行，输出也只换行：这就是行置换的\textbf{等变性}，未加 Mask 时没有额外的顺序信号。
+加上因果 Mask 后，位置 $i$ 只能看到前 $i$ 个 Token，各位置可见前缀长短不同，
+这带来一点隐含的顺序线索；显式的位置向量则直接把“第几位”写进每一行。
+现代模型常用的旋转位置表示（RoPE）见第~\ref*{intro:22d-modern-transformers}~章。
 
 \subsection{加入位置绑定的向量，再观察交换后的区别}
 取主例位置表的前两行，绑定位置而不随 Token 交换；该表在训练中可学习：
@@ -61,38 +64,47 @@ Q/K 各维独立、等概率取 $\pm1$ 时，点积均值为 $0$、方差为 $d_
 \subsection{两个头各算二维，再拼接：数字完整走一遍}
 \phantomsection\label{concept:multihead}
 
-\localfixture{四维双头}
-令模型宽度 $4$、每头宽度 $2$，最后位置的 Query 为
-$q^{(1)}=(0,1)$、$q^{(2)}=(1,0)$，两头的 Key 都为 $I_2$，
-Value 分别为
+\localfixture{四维双头；两个位置，与主线三维参数无关；圆括号元组均为行向量}
+令模型宽度 $4$、每头宽度 $2$，序列有两个位置。
+最后位置的输入经投影得到一条 $1\times4$ 的 Query 行
+$\vect x^\top W_Q=(0,1,1,0)$，再\textbf{按列切成两段}：
+前两列给头 1，后两列给头 2，即
+$\vect q^{(1)\top}=(0,1)$、$\vect q^{(2)\top}=(1,0)$。
+Key 矩阵 $XW_K:2\times4$ 也按同样的列切分，本例两段都恰为 $I_2$；
+Value 两段分别为
 \[
 V^{(1)}=\begin{bmatrix}2&0\\0&2\end{bmatrix},
 \qquad
 V^{(2)}=\begin{bmatrix}0&1\\1&0\end{bmatrix}.
 \]
-按“点积 $\to$ 除以 $\sqrt2$ $\to$ Softmax $\to$ 加权 Value”逐行计算：
+按“点积 $\to$ 除以 $\sqrt2$ $\to$ Softmax $\to$ 加权 Value”逐头计算，
+输出以未舍入的权重求和后保留三位小数：
 \[
 \begin{aligned}
-s^{(1)}&=(0,1)/\sqrt2,&
-a^{(1)}&\approx(0.330,0.670),&
-o^{(1)}&=(0.660,1.340),\\
-s^{(2)}&=(1,0)/\sqrt2,&
-a^{(2)}&\approx(0.670,0.330),&
-o^{(2)}&=(0.330,0.670).
+\vect s^{(1)\top}&=(0,1)/\sqrt2,&
+\vect a^{(1)\top}&\approx(0.330,0.670),&
+\vect o^{(1)\top}&\approx(0.660,1.340),\\
+\vect s^{(2)\top}&=(1,0)/\sqrt2,&
+\vect a^{(2)\top}&\approx(0.670,0.330),&
+\vect o^{(2)\top}&\approx(0.330,0.670).
 \end{aligned}
 \]
+头 1 把 $0.670$ 的权重放在位置 2，头 2 则把 $0.670$ 放在位置 1：
+\textbf{同一个位置的 Query 在两个子空间里重点读取了不同位置。}
 沿\textbf{特征列}拼接，得到
-$O_{\rm cat}=(0.660,1.340,0.330,0.670):1\times4$。
+$O_{\rm cat}\approx(0.660,1.340,0.330,0.670):1\times4$。
 再取演示投影
 \[
 W_O=\begin{bmatrix}1&0&1&0\\0&1&0&1\end{bmatrix}^{\top},
-\qquad O_{\rm cat}W_O=(0.990,2.010):1\times2.
+\qquad O_{\rm cat}W_O\approx(0.991,2.009):1\times2.
 \]
+这里同样先用未舍入的读出相乘，最后再保留三位小数；
+若直接相加上面已舍入的数字，会得到 $(0.990,2.010)$。
 \textbf{多头拼接各头读出的特征，再投影到目标宽度。}
 这里用 $4\times2$ 演示投影；完整四维残差 Block 的输出投影则应为 $4\times4$。
 
 \chapterchecktasks{22a-position-multihead}{正文基础三题}{
-\item \textbf{预测：}同一 Token 出现在两处，只有内容 Embedding 时缺少什么信息？\chapterinlinehint{交换两个相同 Token 的位置，检查输入有无变化。}
+\item \textbf{手算：}把本章头 2 的 Query 改成与头 1 相同的 $(0,1)$，Key 与 Value 不变。头 2 的权重和读出变成多少？两个头还在重点读取不同位置吗？\chapterinlinehint{先算缩放分数的 Softmax，再看最大权重落在哪个位置。}
 \item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{先累加拼接宽度，再与输出投影核对内侧维度。}
 \item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{比较尺度变换与区间裁剪的定义。}
 }

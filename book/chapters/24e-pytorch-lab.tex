@@ -1,4 +1,17 @@
-\subsection{动手层：用 PyTorch 自动求导复现 99 参数主模型}
+\subsection{先数一数：主模型有多少个可训练参数？}
+\phantomsection\label{app:parameter-count}
+
+运行脚本前先手算。主模型的参数是：$E:5\times3$、$P_{\rm pos}:3\times3$，
+四组 $3\times3$ Attention 投影（$W_Q,W_K,W_V,W_O$）、$3\times4$ 与 $4\times3$ 两张 FFN 矩阵、
+一个 $3\times5$ 输出头。忽略固定的 LayerNorm 与中间激活，可训练元素共有多少个？
+若输出头改为与 $E$ 共享权重，输出头应取什么形状，独立存储的参数又剩多少？
+
+\noindent{\small\textbf{核对（先遮住）：}$15+9+4\times9+12+12+15=\answerresult{99}$，
+与\hyperref[eq:toy-99-parameters]{正文参数总数公式}一致，脚本也会打印 \texttt{Parameters: 99}。
+共享时输出头写作 $E^\top:3\times5$，独立存储 $99-15=84$ 个；这改变了结构，
+$E$ 的梯度要把查表与输出头两条路径相加，不能只在总数里扣掉 15 而保持原计算不变。}\par
+
+\subsection{动手层：用 PyTorch 自动求导复现三维主模型}
 \label{app:pytorch-lab}
 
 读过三维算例后，可以在电脑上用教学脚本核对
@@ -13,9 +26,10 @@
 python3 -m pip install numpy torch
 python3 scripts/pytorch_starter.py
 \end{verbatim}
-不方便在本地安装时，可以在
-\href{https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/main/notebooks/pytorch_starter.ipynb}{在线 Colab 教学 Notebook}
-执行同一套脚本；必须允许 Notebook 读取公开仓库代码，不需要连接任何私有数据。
+不方便在本地安装时，可以打开固定到提交 \texttt{07841c1} 的在线 Colab 教学 Notebook：\par
+{\footnotesize\noindent\url{https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/07841c1cbb59d09b7b116f1cb993d385e97473d1/notebooks/pytorch_starter.ipynb}\par}
+\noindent Notebook 会克隆公开仓库并运行同一套脚本，不需要连接任何私有数据；
+它克隆的是仓库最新代码，若要与本 PDF 逐位一致，克隆后先切换到版权页所列提交。
 
 \textbf{预期标准输出：}
 \begin{verbatim}
@@ -59,17 +73,6 @@ python3 scripts/teaching_reference.py --json
 PyTorch 自动求导与 NumPy 手工反传是\textbf{两种独立实现途径}；跨硬件和 Torch 版本时，浮点结果按数值容差比较。
 
 
-\subsection{参数计数小练习}
-
-沿用上述脚本的模型：$E:5\times3$、$P_{\rm pos}:3\times3$，
-四组 $3\times3$ Attention 投影、两组 $3\times4$ 和 $4\times3$ FFN 矩阵、
-一个 $3\times5$ 输出头。忽略固定 LayerNorm 与中间激活，
-手算可训练元素个数，再对照\hyperref[eq:toy-99-parameters]{正文参数总数公式}。
-作为延伸：若输出头与 $E$ 共享权重，
-需要明确转置的形状，以及哪些原有参数不再独立存储；
-不能在不改结构的情况下简单从总数扣除 15。
-
-
 \subsection{完整 20 步轨迹：三个位置何时预测正确？}
 
 如果不安装 PyTorch，也可以只安装 NumPy，在仓库根目录执行：
@@ -110,3 +113,41 @@ $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 正确标签一直是 $[4,5,3]$。损失曲线由三位置\textbf{连续概率}决定；
 即使某步的最高概率类别发生切换，损失仍可以平滑下降。
 这是同一个样本上的训练行为，不是对未见文本的性能评测。
+
+
+\subsection{复算脚本总表}
+\phantomsection\label{app:reproduction-scripts}
+
+在仓库根目录运行 \texttt{python3 scripts/脚本名}；表内省略共同的目录前缀，章号为正文章号。
+“标准库”表示无需额外 Python 包，其余依赖按需用 pip 安装。
+\begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.22}
+\tagpdfsetup{table/header-rows={1}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{19mm}>{\raggedright\arraybackslash}p{54mm}>{\raggedright\arraybackslash}p{19mm}>{\raggedright\arraybackslash}p{32mm}>{\raggedright\arraybackslash}p{27mm}@{}}
+\toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
+\endfirsthead
+\toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
+\endhead
+\bottomrule\endfoot
+\ref*{intro:16-loss-gradient}--\ref*{intro:07-functions-relu} & \path{beginner_training_demo.py} & 标准库 & 双参数迭代、步长、ReLU 拟合 & 直线下界 2/9\\
+\ref*{intro:20b-task-contract}、\ref*{intro:22b-token-to-output}--\ref*{intro:22c-language-training} & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
+\ref*{intro:22c-language-training} & \path{teaching_trace.py} & NumPy & 0--20 步；\texttt{-{}-attention} 看权重，\texttt{-{}-freeze}/\texttt{-{}-only} 冻结参数 & 末步 0.483173\\
+\ref*{intro:22c-language-training}、附录 B & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
+\ref*{intro:20a-tokenizer} & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
+\ref*{intro:20a-tokenizer} & \path{chinese_tokenizer_demo.py} \texttt{-{}-real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\
+\ref*{intro:21a-context-gap}、\ref*{intro:22c-language-training} & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 ln 2\\
+\ref*{intro:22c-language-training} & \path{attention_selection_demo.py} & NumPy & Q/K 选择与均匀退化 & 损失 0.000502\\
+\ref*{intro:23aa-pretraining-icl}--\ref*{intro:23c-post-training} & \path{icl_policy_demo.py} & NumPy & 前缀读取、优势梯度 & 0.982014／0.367456\\
+\ref*{intro:23cc-test-time-compute} & \path{test_time_compute_demo.py} & 标准库 & 多采样与错误验证器 & 成功率断言通过\\
+\ref*{intro:23d-agent-systems} & \path{rag_demo.py} & 标准库 & 点积排序与环比 & Q3、Q1；10\%\\
+\ref*{intro:23d-agent-tools} & \path{claude_function_call_demo.py} & 标准库 & 离线多轮、并行调用与停止原因 & 10\% 与预算检查\\
+\ref*{intro:23d-agent-tools}--\ref*{intro:23d-agent-protocols} & \path{agent_loop.py} & 标准库 & 工具循环与失败处理 & 受控任务轨迹\\
+\ref*{intro:23b-deployment-and-ecosystem} & \path{pretraining_data_demo.py} & 标准库 & 规范化、哈希、近重复 & 去重断言通过\\
+\ref*{intro:22d-modern-transformers} & \path{config_table.py} & 标准库 & 固定公开配置 & 24 层、2 KV 头\\
+\ref*{intro:22d-modern-transformers} & \path{architecture_demo.py} & 标准库 & 位置与头分组 & 架构断言通过\\
+\ref*{intro:22d-modern-transformers} & \path{cache_budget_demo.py} & 标准库 & 真实 KV 预算与练习 & 12,288 字节/Token\\
+\ref*{intro:22d-modern-transformers}、\ref*{intro:19b-vit} & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
+\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity} & \path{memory_demo.py} & 标准库 & 外积与 Delta 残差 & 记忆断言通过\\
+附录 B & \path{mini_transformer_demo.py} & NumPy & 分数参数前向与反传 & 24 个导数一致\\
+附录 C & \path{review_exercises_demo.py} & 标准库 & 综合练习中间数值 & 习题断言通过\\
+\end{longtable}\endgroup
+真实 GPT-2 权重实验（\path{gpt2_demo.py}）的运行方式与存档结果见\hyperref[app:revision-notes]{附录~\ref*{app:revision-notes}}。

@@ -39,20 +39,22 @@ $m\theta$ 和 $n\theta$，则
 高维 RoPE 对多个特征对使用不同角频率，把多种距离尺度一起带入匹配。
 
 \begin{example}
-\noindent\emph{两个位置的一次旋转}\par
+\noindent\emph{平移两个位置，分数不变}\par
 
-取 $\vect q^\top=\vect k^\top=(1,0)$，
-Query 位于 $m=0$，Key 位于 $n=1$，
-选择角频率 $\theta=\pi/2$。
-沿用全书的行向量约定，在右侧乘旋转矩阵的转置：
+取 $\vect q^\top=\vect k^\top=(1,0)$，角频率 $\theta=\pi/3$。
+沿用全书的行向量约定，在右侧乘旋转矩阵的转置，
+$(1,0)R(\phi)^\top=(\cos\phi,\sin\phi)$。
+先放 Query 于 $m=0$、Key 于 $n=1$：
 \[
-(1,0)R(0)^\top=(1,0),\qquad
-(1,0)R(\pi/2)^\top=(0,1).
+(1,0)\cdot\bigl(\tfrac12,\tfrac{\sqrt3}2\bigr)=\boxed{\tfrac12}.
 \]
-两者点积等于 $0$。
-若 $m=n=0$，两个向量都为 $(1,0)$，
-点积为 $1$。因此即使内容特征不变，
-相对位置也能改变 Q/K 分数。
+再把两者整体后移两位，$m=2$、$n=3$：
+\[
+\bigl(-\tfrac12,\tfrac{\sqrt3}2\bigr)\cdot(-1,0)=\boxed{\tfrac12}.
+\]
+绝对位置变了，分数相同，因为两者都等于 $\cos\bigl((n-m)\theta\bigr)=\cos(\pi/3)$。
+距离改成 $2$（如 $m=0,n=2$）时分数变为 $\cos(2\pi/3)=-\tfrac12$：
+\textbf{分数只随相对距离变化}，而加在输入上的绝对位置向量一般不具备这种平移不变性。
 \end{example}
 
 \input{figures/rope-relative-rotation}
@@ -116,7 +118,7 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
  \draw[share] (qMQA\i.south)--(kQ.north);
 }
 \end{tikzpicture}
-\captionof{figure}{四个 Query 头的三种 K/V 共享方式：MHA 4 组、GQA 2 组、MQA 1 组；MLA 是另一类潜在压缩思路}
+\captionof{figure}{四个 Query 头的三种 K/V 共享方式：MHA 4 组、GQA 2 组、MQA 1 组；多头潜在注意力（MLA）是另一类潜在压缩思路}
 \label{fig:mha-gqa-mqa}
 \end{center}
 \tagstructend
@@ -128,7 +130,7 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 \[
 \underbrace{2}_{K,V}\times
 \underbrace{100}_{T}\times
-\underbrace{8}_{h_{kv}}\times
+\underbrace{8}_{H_{KV}}\times
 \underbrace{8}_{d_k}
 =\answerresult{12{,}800\ \text{个数}}.
 \]
@@ -142,7 +144,9 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 
 \input{figures/gqa-cache-read}
 
-\textbf{MLA} 等低秩潜在表示技术通过压缩缓存状态走另一条路线；
+\textbf{多头潜在注意力}（Multi-head Latent Attention，MLA）
+由 \href{https://arxiv.org/abs/2405.04434}{DeepSeek-V2（arXiv:\allowbreak 2405.04434）}提出，
+把每个 Token 的 K/V 压缩成一条低秩潜在向量来缓存，走另一条路线；
 GQA 则直接减少独立 K/V 头数。选型时要比较质量和实际缓存字节数。
 
 \begin{example}[breakable]
@@ -237,7 +241,7 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 这张表只比较\textbf{结构元数据}；
 模型质量与推理速度需由独立基准测量。
 
-\subsection*{提高选读：FFN、稀疏与线性状态的变体}
+\subsection*{\texorpdfstring{{\symboliconfont ★}}{★} 选读：FFN、稀疏与线性状态的变体}
 \noindent\textcolor{muted}{以下按需选读；首次阅读可直接跳到章末自测。}\par
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
 \label{elective:architecture-extras}
@@ -265,7 +269,13 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$。
 一个最简单的路由示例：三个专家的得分是 $(2,1,0)$，
 如果只选择最高的一个专家，本次仅计算专家 1，
 其他专家并未被本次 Token 调用。
-选择 Top-2 时计算两个专家，再按路由权重组合。
+选择 Top-2 时计算专家 1、2，再对入选的两个分数做 Softmax 重归一化：
+\[
+w_1=\frac{e^2}{e^2+e^1}\approx\boxed{0.731},\qquad
+w_2=\frac{e^1}{e^2+e^1}\approx\boxed{0.269},\qquad
+\text{输出}=0.731\,f_1(\vect x)+0.269\,f_2(\vect x).
+\]
+先对三个分数做 Softmax 得 $(0.665,0.245,0.090)$，再把前两项除以它们的和 $0.910$，结果相同。
 实际系统还需要处理负载均衡、通信与容量限制。
 
 \par\Needspace{15\baselineskip}
@@ -360,32 +370,47 @@ MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：线性 Attention 与 Delta 规则}
 
 \textbf{将历史压入固定形状的状态，就能逐步写入与读取。}
-\hyperref[intro:04-key-value-outer-product]{联想记忆专题}提供一条可手算的行向量路线：
+沿用行向量约定，每来一对 Key--Value，就把外积 $k_i^\top v_i$（$d_k\times d_v$）加进状态：
 \[
 \underbrace{\mathcal{M}_t}_{d_k\times d_v}
 =\sum_{i\le t}k_i^\top v_i,\qquad
 \underbrace{y_t}_{1\times d_v}=q_t\mathcal{M}_t.
 \]
-每来一对 Key--Value，就把外积加到 $\mathcal{M}_t$；查询时只读这个状态。
-
-\textbf{与 Delta 规则的连接：}
-线性记忆的\hyperref[check:06-better-linear-memory]{减少干扰}
-已经尝试先读旧状态再修正：
-\[
-r_t=v_t-k_t\mathcal{M}_{t-1},\qquad
-\mathcal{M}_t=\mathcal{M}_{t-1}+\eta k_t^\top r_t.
-\]
-Delta 更新先测量当前读出与目标的残差，再把修正写回状态。
-Gated DeltaNet 将这种残差更新与门控结合，用于高效序列建模。
+查询时只读这个固定大小的状态，长度增加也不必保存每个位置的 K/V。
 
 \begin{example}
 \noindent\emph{两条关联如何汇成一个状态}\par
+\localfixture{二维行向量状态，独立于三维 Transformer 贯通参数}
 若 $k_1=(1,0)$、$v_1=(2,0)$，
 $k_2=(0,1)$、$v_2=(0,3)$，
 则外积相加得到 $\mathcal{M}_2=\begin{bmatrix}2&0\\0&3\end{bmatrix}$。
 用 $q_2=(1,1)$ 查询，$q_2\mathcal{M}_2=(2,3)$；
 两条 Value 的贡献直接相加，保留了累计幅度。
 \end{example}
+
+\phantomsection\label{sec:modern-delta-rule}
+\textbf{Key 不正交时，直接相加会串扰。}
+先写入 $k_A=(1,0)$、$v_A=(1,0)$，得 $\mathcal{M}_1=k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix}$。
+再来 $k_B=(0.6,0.8)$、$v_B=(0,1)$：若直接加上 $k_B^\top v_B$，
+\[
+\mathcal{M}_2^{\rm add}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix},\qquad
+k_B\mathcal{M}_2^{\rm add}=(0.6,\,1),
+\]
+多出的 $0.6$ 来自旧记忆 A，因为 $k_Bk_A^\top=0.6\ne0$。
+\textbf{Delta 规则}先读旧状态，只写入还没记住的残差：
+\[
+r_t=v_t-k_t\mathcal{M}_{t-1},\qquad
+\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta\, k_t^\top r_t}.
+\]
+取 $\eta=1$：$r_B=(0,1)-(0.6,0)=(-0.6,1)$，
+\[
+\mathcal{M}_2=\mathcal{M}_1+\begin{bmatrix}0.6\\0.8\end{bmatrix}(-0.6,1)
+=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix},\qquad
+k_B\mathcal{M}_2=\boxed{(0,1)}.
+\]
+B 的读出被精确修正。Gated DeltaNet 把这种残差写入与遗忘门控结合，用于高效序列建模。
+写入 B 对旧 Key A 有什么影响、反复写入会收敛到哪里，
+\hyperref[part:memory]{联想记忆部分}用外积视角再算一遍（可选延伸）。
 
 
 \begin{boundarybox}
@@ -411,7 +436,7 @@ LayerNorm / Pre-Norm & RMSNorm 等 & 是否中心化、参数量、数值稳定�
 缩放 $QK^\top$ & QK-Norm 等 & Q/K 是否归一化；分数尺度和 Softmax 饱和\\
 Dense FFN（GELU） & SwiGLU / 稀疏 MoE & 门控、活跃专家、通信与总参数量\\
 MHA 的 K/V 头 & MQA、GQA、MLA & 每层 KV Cache 布局、元素数与质量\\
-简单残差旁路 & HC / mHC 连接变体 & 多路径信息流与训练稳定性\\
+简单残差旁路 & 超连接（HC）/ mHC & 多路径信息流与训练稳定性\\
 Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混合层 & 长程访问、缓存、计算与训练/解码差别\\
 \bottomrule
 \end{tabularx}
@@ -421,17 +446,35 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 \textbf{NoPE} 表示某些设计不在该层显式加入位置编码，
 顺序还可通过因果可见性等结构进入计算。
 \textbf{QK-Norm} 尝试控制 Q/K 的尺度与分数饱和；
-而 HC / mHC 改变残差信息流拓扑与约束，
+\textbf{超连接（Hyper-Connections, HC）}用多条可学习的残差通路替代单一残差旁路，
+\textbf{mHC（Manifold-Constrained Hyper-Connections）}再约束这些通路的混合矩阵以恢复恒等映射性质；
 这些设计要连同连接路径与约束一起理解。
 可参考
 \href{https://arxiv.org/abs/2309.00071}{YaRN}、
-\href{https://aclanthology.org/2020.findings-emnlp.379/}{QK-Norm}
+\href{https://aclanthology.org/2020.findings-emnlp.379/}{QK-Norm}、
+\href{https://arxiv.org/abs/2409.19606}{HC}
 与 \href{https://arxiv.org/abs/2512.24880}{mHC} 的原始论文。
 \textbf{Mamba} 是选择性状态空间模型的一类路线，
 \textbf{Gated DeltaNet} 采用门控 Delta 状态更新的高效序列建模路线；
 两者按各自的状态更新公式建立比较。
 参见 \href{https://arxiv.org/abs/2312.00752}{Mamba} 和
 \href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}。
+
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读案例：因果编码器—解码器重新分工}
+\phantomsection\label{elective:causal-encoder-decoder}
+
+第~\ref*{intro:22-transformer-architecture}~章区分了原始 Encoder--Decoder 与 Decoder-only。
+新架构也会重新组合编码与解码：截至 2026-10-25（UTC），
+\href{https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash}{DeepSeek-V4.1-Flash 官方模型卡}
+介绍的\textbf{因果编码器—解码器（Causal Encoder--Decoder, CED）}
+把 $40$ 层组织为 $20$ 层因果编码器加 $20$ 层解码器，整个模型仍按自回归方式生成文本；
+解码器的全局 KV Cache 由编码器最后一层的隐藏状态投影得到。
+\href{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}{官方发布公告}给出的激活参数是：
+处理输入时每 Token $8$B，生成输出时每 Token $16$B（MoE 骨干共 $552$B 参数）。
+原始翻译模型的编码器双向读取整句源文；这里的编码器冠以“因果”，读结构图时先核对它的可见范围。
+按本章的问法，它替换的是“每层同时负责读入与生成”的统一堆叠；
+首先检查 KV Cache 来自哪一层、预填充与解码各激活多少参数。
+这些是厂商公布的结构描述，质量与速度需按本章末的条件另行对照。
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：MLA 缓存与窗口}
 
@@ -471,7 +514,8 @@ $8\times(3+2)=\answerresult{40}$。
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 运行 \texttt{python3 scripts/architecture\_demo.py}
-可以检查缓存元素数与 $5\times5$ 掩码的 12 个可见位置。
+可以检查 RoPE 平移例、MoE Top-2 权重、缓存元素数与 $5\times5$ 掩码的 12 个可见位置；
+\texttt{python3 scripts/memory\_demo.py} 复算上文的串扰与 Delta 写入。
 
 
 \begin{boundarybox}[title={适用条件：结构计数与实际性能}]

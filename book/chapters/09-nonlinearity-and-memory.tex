@@ -1,14 +1,5 @@
-\chapterrule
-\section{用 MLP 的眼光重新理解记忆检索}
-\phantomsection\label{intro:09-nonlinearity-and-memory}
-\chaptercompass{匹配分数为什么需要非线性？}{先筛选 Key 的匹配分数，再按权重组合每条 Value。}{$xK^\top:1\times T_k\to\sigma(\cdot)V:1\times d_v$}{在 MLP 解释中 K/V 对应可训练的层权重}
-\modelpipelinefocus{3}{非线性记忆检索}
-
-
-上一章的线性读取让所有非零匹配都参与输出。
-现在让权重随匹配强弱非线性变化。
-
 \subsection{为什么平方可能提高选择性？}
+ReLU 只区分正负；若还想让强匹配与弱匹配拉开差距，可以对匹配分数取幂。
 若相似度处于 $[0,1]$，则
 \[
 1^2=1,\quad0.6^2=0.36;\qquad
@@ -16,8 +7,7 @@
 \]
 弱相似度被进一步压低。为了避免负分数平方后变正，
 可以先取 ReLU 再平方：$\sigma(s)=\relu(s)^2$。
-但如果 $s>1$，幂次也可能放大它；
-不能把这一招写成对所有输入都保证可靠的机制。
+若 $s>1$，幂次反而放大它，所以这一招适用于先归一化到 $[0,1]$ 的相似度。
 
 \subsection{用同一套行向量写出 MLP}
 令每条 Key 和 Value 都占一行：
@@ -29,7 +19,7 @@ f(x)=\sum_i\sigma(xk_i^\top)v_i
 $\sigma(xW_1)W_2$ 对照：
 第一层的列可扮演匹配模板，第二层的行可扮演输出模板；
 偏置在这里只为突出结构而省略。
-这种理解是一种\textbf{计算视角}，并不意味着每个神经元存一条独立事实。
+这是一种\textbf{计算视角}：整组参数共同实现匹配与读出，单个神经元不必对应一条独立事实。
 
 \begin{idea}
 MLP 的参数在训练中更新；Attention 的 Key/Value 往往由当前上下文生成。

@@ -27,6 +27,7 @@ def main():
     state = plus(outer(k_a, v_a), outer(k_b, v_b))
     assert state == ((1.0, 0.6), (0.0, 0.8))
     close(mul(k_a, state), (1, 0.6))
+    close(mul(k_b, state), (0.6, 1))  # Modern-architecture chapter: additive crosstalk on B.
     better = ((1, 0), (-0.75, 1.25))
     close(mul(k_a, better), v_a)
     close(mul(k_b, better), v_b)

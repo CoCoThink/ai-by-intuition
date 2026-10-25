@@ -32,6 +32,7 @@ Q=UW_Q,\quad K=UW_K,\quad V=UW_V,\qquad
 A=\operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}+C\right),
 \quad R=AV.
 \]
+其中 $U=\operatorname{LN}(X)$ 是 Pre-Norm 之后的输入（与第四组公式相同）。
 对 Decoder-only 语言模型，因果 Mask $C$ 阻止读取未来位置；
 Softmax 对\textbf{每一行}的可见 Key 分数归一化。
 
@@ -49,7 +50,7 @@ L=-\frac1T\sum_{i=1}^{T}\ln p_\theta(y_i\mid x_{\le i}).
 这条损失假设所有 $T$ 个位置参与平均；
 若使用损失掩码，应按\textbf{实际计分位置数}归一化。
 \textbf{Q/K/V、FFN、输出头都能获得共享训练梯度}；
-本书的统一数值实验请回查第 23、24 章的原始算例。
+本书的统一数值实验请回查第~\ref*{intro:22b-token-to-output}、\ref*{intro:22c-language-training}~章的原始算例。
 
 \begin{conclusion}
 读公式先核对三个问题：是哪组输入、输出形状是什么、

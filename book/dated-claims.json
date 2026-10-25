@@ -19,7 +19,7 @@
         "url": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools"
       }
     ],
-    "scope": "已阅读规范并核对正文请求体；HTTP 传输头另见规范。CI 比较当前入口的版本，升级后须重新审阅。",
+    "scope": "已阅读规范并核对正文请求体；HTTP 传输头另见规范。",
     "review_interval_days": 90,
     "review_on_new_revision": true
   },
@@ -117,14 +117,14 @@
   },
   {
     "id": "architecture-cases",
-    "target": "intro:22d-modern-transformers",
-    "claim": "Qwen3 的 Dense/MoE 家族与 DeepSeek 的因果编码器—解码器案例",
-    "version": "2025／2026 报告",
+    "target": "elective:causal-encoder-decoder",
+    "claim": "DeepSeek-V4.1-Flash 的因果编码器—解码器：40 层分为 20+20，输入／输出每 Token 激活 8B／16B",
+    "version": "2026-09-10 公告／模型卡",
     "checked_utc": "2026-10-25",
     "sources": [
       {
-        "name": "Qwen3 报告",
-        "url": "https://arxiv.org/abs/2505.09388"
+        "name": "DeepSeek 模型卡",
+        "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash"
       },
       {
         "name": "DeepSeek 公告",

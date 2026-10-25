@@ -24,6 +24,9 @@ def main() -> None:
     ranked = sorted(scores, key=lambda name: (-scores[name], name))
     assert [round(scores[name], 4) for name in ("Q1", "Q2", "Q3")] == [1, 0.5, 1.2]
     assert ranked[:2] == ["Q3", "Q1"]
+    required = {"Q1", "Q2", "Q3"}
+    recall = {k: len(set(ranked[:k]) & required) / len(required) for k in (2, 3)}
+    assert abs(recall[2] - 2 / 3) < 1e-12 and recall[3] == 1
 
     revenue = {name: amount for name, (_, amount) in CHUNKS.items()}
     incorrect = (revenue["Q3"] - revenue["Q1"]) / revenue["Q1"]
@@ -33,6 +36,7 @@ def main() -> None:
 
     print("query:", QUERY, "scores:", scores)
     print("top-2:", ranked[:2], "(Q2 is missing)")
+    print(f"required-evidence recall@2={recall[2]:.3f}, recall@3={recall[3]:.0%}")
     print(f"Wrong Q3 QoQ if Q1 replaces Q2: {incorrect:.0%}")
     print(f"Correct Q3 QoQ with Q2: {correct:.0%}")
 

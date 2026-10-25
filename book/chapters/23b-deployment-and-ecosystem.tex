@@ -44,6 +44,9 @@ $J(A,C)=|S_A\cap S_C|/|S_A\cup S_C|=3/6=0.5$。
 
 运行 \texttt{python3 scripts/pretraining\_data\_demo.py} 可复算全部哈希与相似度。
 同源文本先分组，再按组切分训练／验证／测试集，避免同一内容跨集合泄漏。
+若测试题、答案或它们的近重复版本进入了训练集、微调集、检索库，或在反复调参中被看过，
+评测分数就会混入对见过内容的记忆，这称为\textbf{评测污染}。
+上面的哈希与片段相似度同样可用来比对测试集；在可行时再用时间隔离的保留集与来源追踪，并对新题复测。
 
 \textbf{应用条件：}本例删除标点、采用二字片段和 $0.5$ 阈值。
 真实语料需保留有意义的符号，按领域选择分片与阈值；金额、日期或否定词的变化须内容复核。
@@ -93,13 +96,8 @@ BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
 有结构和代码但没有训练好的权重，模型还无法提供成熟的语言能力；
 拿到权重后，也需要合适的推理程序才能运行。
 
-\textbf{还要区分“公司／模型／产品”三个层次。}
-\textbf{公司}是研发或运营的组织；
-\textbf{模型}是有明确架构、参数和版本的计算系统；
-\textbf{产品}是用户实际接触的应用、界面或 API，
-往往还组合检索、工具调用、审核与计费。
-同一模型可服务多个产品；同一产品也可接入多个模型。
-因此比较产品与模型时，要分别记录产品功能、使用的权重版本和模型配置。
+\textbf{模型}是有明确架构、参数和版本的计算系统；\textbf{产品}是用户接触的应用、界面或 API，
+往往还组合检索、工具、审核与计费，所以比较时分别记录产品功能与所用权重版本。
 
 \textbf{开放权重}意味着外部能够获取模型参数；开源程度则应分别核对训练代码、数据、再分发条款与商业许可。
 
@@ -200,6 +198,8 @@ $V_{\rm lr}:8\times1000$，则需要
 
 这些技术解决的成本不同：量化和剪枝常用于减小部署开销，LoRA 主要减少微调时需要更新的参数。
 
+% Keep this closing block with the self-check so the part-end page is not a sparse tail.
+\Needspace{15\baselineskip}
 \subsubsection*{从权重到服务：工具链各管哪一段？}
 
 常见工作链是：模型权重 $\to$ 推理引擎 $\to$ 接口服务 $\to$ 应用与工具。
@@ -207,40 +207,16 @@ $V_{\rm lr}:8\times1000$，则需要
 \textbf{接口和协议}约定 \conceptlink{agent}{Agent} 怎样请求模型、通过 \conceptlink{mcp}{MCP} 接入工具。
 本书的推理过程固定模型参数。
 
-下表把硬件平台、训练框架、权重仓库和运行工具放回同一条工作链：
-
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.2}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{26mm}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-项目 & 主要定位 & 在一条常见工作链中做什么\\\midrule
-CUDA & NVIDIA GPU 计算平台与工具链 &
-提供 GPU 并行计算接口、编译器与加速库；本身不是神经网络\\
-PyTorch & 张量计算与自动求导框架 &
-定义模型、训练/反传，也可执行推理；可使用 CPU 或支持的加速设备\\
-Hugging Face & 模型、数据与工具生态 &
-Hub 管理模型/数据仓库和说明文档；Transformers 等库加载和运行模型\\
-Ollama & 本地模型管理与运行工具 &
-在支持的机器上拉取、运行模型，并提供本地服务接口\\
-vLLM & 面向服务的模型推理引擎 &
-组织高并发批处理、KV Cache 和模型服务；强调推理吞吐与资源利用\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-例如，从 Hugging Face Hub 取得获许可的权重，用 PyTorch 做研究或微调，再选推理引擎上线。
-NVIDIA GPU 可配合 CUDA，其他设备按支持情况选择后端。
-Ollama 侧重本地运行，vLLM 侧重服务型推理；比较性能时固定权重、硬件、输入长度、并发数与量化方案。
-
+按这条链定位具体工具：硬件计算平台（如 CUDA）与张量框架（如 PyTorch）负责训练和执行矩阵运算，
+权重仓库（如 Hugging Face Hub）保存模型与说明，本地运行工具或服务型推理引擎（如 Ollama、vLLM）负责加载权重、批处理与缓存。
+比较两套推理工具时，固定权重、硬件、输入长度、并发数与量化方案。
 \textbf{查询入口：}
 \href{https://docs.nvidia.com/cuda/cuda-programming-guide/index.html}{CUDA}、
 \href{https://docs.pytorch.org/docs/stable/index.html}{PyTorch}、
 \href{https://huggingface.co/docs/hub/index}{Hugging Face Hub}、
 \href{https://docs.ollama.com/}{Ollama}、
 \href{https://docs.vllm.ai/}{vLLM}。
-本表说明各层职责；软件版本、设备兼容与许可证以项目文档为准。
+软件版本、设备兼容与许可证以项目文档为准。
 
 \chapterchecktasks{23b-deployment-and-ecosystem}{正文基础三题}{
 \item \textbf{区分：}训练代码、模型权重、推理引擎和对外 API 在一个产品里承担什么不同职责？\chapterinlinehint{按训练、存储、执行和服务四个环节追踪职责。}

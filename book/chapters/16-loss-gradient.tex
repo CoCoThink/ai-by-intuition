@@ -1,7 +1,7 @@
 \chapterrule
 \section{怎样量“猜得多差”？损失与一次直接求解}
 \label{intro:16-loss-gradient}
-\chaptercompass{怎样衡量同一组预测错得多远？}{平方误差汇成损失，简单二次式还可以直接求最小值。}{三个 $(x_i,y_i)$ 输入 $\to L(w,b)$ 输出}{$w,b$ 是待优化参数}
+\chaptercompass{怎样衡量同一组预测错得多远？}{残差平方汇成损失，简单二次式还可以直接求最小值。}{三组样本与一组 $w,b$ $\to$ 一个损失值 $L$}{$w,b$ 是待优化参数}
 \modelpipelinefocus{0}{损失与解析解}
 
 
@@ -15,7 +15,9 @@ $\widehat{y}=wx+b$。均方误差（MSE）为
 \boxed{L(w,b)=\frac13\sum_{i=1}^{3}(\widehat{y}_i-y_i)^2.}
 \label{eq:three-point-mse}
 \end{equation}
-平方使正负误差不会抵消，较大的误差也受到更大惩罚。
+其中每个样本的\textbf{残差}定义为预测减真实：$\widehat{y}_i-y_i$，
+也就是上一章表格的最后一列。
+平方使正负残差不会抵消，较大的残差也受到更大惩罚。
 从初值 $w=1,b=0$ 出发，三项预测为 $(-1,0,1)$，
 与真实结果 $(-1,1,3)$ 比较，残差是 $(0,-1,-2)$：
 \[
@@ -29,9 +31,9 @@ L(1,0)=\frac{0^2+(-1)^2+(-2)^2}{3}=\boxed{\frac53}.
 \end{equation}
 可见理论最优参数是 $(w,b)=(2,1)$，此时训练损失为 $0$。
 
-\subsection{把三个平方拆开：为什么会出现两个独立的误差？}
+\subsection{把三个平方拆开：为什么会出现两个独立的参数偏差？}
 
-令 $a=w-2$、$c=b-1$，它们是斜率和截距离正确值的距离。
+令 $a=w-2$、$c=b-1$，它们是斜率和截距离最优值的距离，称为\textbf{参数偏差}。
 三个残差依次为 $-a+c,c,a+c$，因此
 \[
 \begin{aligned}
@@ -61,8 +63,7 @@ $x=-1$ 的剩余样本用来检查：$2(-1)+1=-1$，吻合。
 \frac43(w-2)=0,\quad 2(b-1)=0
 \quad\Longrightarrow\quad\boxed{(w,b)=(2,1)}.
 \]
-\textbf{这个解确实是全局最小值}：它使两个非负平方项同时为零，任何其他参数的损失都更大。
-这里的理由是损失的具体形状，后面遇到更复杂的函数时，也要分别检查形状。
+\textbf{这个解是全局最小值}：能这样判断，是因为损失由两个非负平方项组成。
 
 \subsection{固定偏置，看清一条截面}
 
@@ -83,11 +84,11 @@ L(w,1)=\frac23(w-2)^2,\qquad
 \end{boundarybox}
 
 \chapterchecktasks{16-loss-analytic}{正文基础三题}{
-\item \textbf{解释：}三点线性拟合的 MSE 为什么是三个平方误差的平均，而不是把带符号误差相加？\chapterinlinehint{比较带符号误差能否互相抵消。}
+\item \textbf{解释：}三点线性拟合的 MSE 为什么是三个残差平方的平均，而不是把带符号的残差直接相加？\chapterinlinehint{比较带符号残差能否互相抵消。}
 \item \textbf{手算：}固定 $b=1$ 且 $L(w,1)=\frac23(w-2)^2$，分别算 $w=2$ 与 $w=3$ 时的损失。\chapterinlinehint{把两个权重值分别代入同一平方项。}
 \item \textbf{找错：}有人说“$w=2$ 后损失就一定为零，$b$ 可以随便取”。用完整的 $L(w,b)=\frac23(w-2)^2+(b-1)^2$ 订正。\chapterinlinehint{固定权重后，保留损失中的偏置项。}
 }
-\chapterrecallanswer{平方误差不会正负抵消；完整损失同时由斜率误差和偏置误差决定。}
+\chapterrecallanswer{残差平方不会正负抵消；完整损失同时由斜率和截距两项参数偏差决定。}
 
 
 
@@ -99,7 +100,7 @@ L(w,1)=\frac23(w-2)^2,\qquad
 \chapterrule
 \section{从直接求解到迭代：梯度下降怎样调参数？}
 \label{intro:16a-gradient-descent}
-\chaptercompass{不知道解析解时怎样移动参数？}{沿负梯度方向，以学习率控制每一步的更新。}{$(w,b),\nabla L,\eta\to(w',b')$}{$w,b$ 同步更新}
+\chaptercompass{不知道解析解时怎样移动参数？}{沿负梯度方向，以学习率控制每一步的更新。}{当前 $w,b$、两个偏导数与学习率 $\eta$ $\to$ 新的 $w,b$}{$w,b$ 同步更新}
 \modelpipelinefocus{0}{梯度下降与参数更新}
 
 上章已求出 $(2,1)$，这里借已知答案检验一种可复用的算法：
@@ -158,11 +159,11 @@ w_1=1-0.3(-4/3)=1.4,
 L(1,0)=\frac53,\qquad
 \nabla L(1,0)=\boxed{\left(-\frac43,-2\right)}.
 \]
-学习率同样取 $\eta=0.3$，\textbf{两个参数用同一组旧梯度一起更新}：
+学习率同样取 $\eta=0.3$，两个参数用同一组旧参数处的梯度一起更新，这叫\textbf{同步更新}：
 \[
 (w',b')=(1,0)-0.3(-4/3,-2)=\boxed{(1.4,0.6)}.
 \]
-新预测为 $(-0.8,0.6,2.0)$，三个误差为 $(0.2,-0.4,-1)$，
+新预测为 $(-0.8,0.6,2.0)$，三个残差为 $(0.2,-0.4,-1)$，
 因此
 \[
 L(1.4,0.6)
@@ -198,7 +199,7 @@ L(1.4,0.6)
 \end{center}
 例如第 1 行的梯度为 $(-0.8,-0.8)$，所以第 2 行是
 $(1.4,0.6)-0.3(-0.8,-0.8)=(1.64,0.84)$。
-第 5 步已经接近 $(2,1)$；继续更新，两个误差都趋于零。
+第 5 步已经接近 $(2,1)$；继续更新，两个参数偏差都趋于零。
 运行下列命令可核对整张表：
 \begin{verbatim}
 python3 scripts/beginner_training_demo.py
@@ -207,20 +208,20 @@ python3 scripts/beginner_training_demo.py
 \subsection{学习率多大才稳？把“会发散”算出来}
 \phantomsection\label{experiment:learning-rate-stability}
 
-将更新式移项，直接追踪离最优点的误差：
+将更新式移项，直接追踪\hyperref[intro:16-loss-gradient]{上一章}定义的参数偏差 $w-2$ 与 $b-1$：
 \[
 \begin{aligned}
 w_{t+1}-2&=\left(1-\frac43\eta\right)(w_t-2),\\
 b_{t+1}-1&=(1-2\eta)(b_t-1).
 \end{aligned}
 \]
-因此每走一步，$w$ 的误差乘 $r_w=1-4\eta/3$，
-$b$ 的误差乘 $r_b=1-2\eta$。
+因此每走一步，$w$ 的参数偏差乘 $r_w=1-4\eta/3$，
+$b$ 的参数偏差乘 $r_b=1-2\eta$。
 取 $\eta=0.3$ 时，$r_w=0.6,r_b=0.4$：
-初始误差 $(-1,-1)$ 变成 $(-0.6,-0.4)$，正好得到 $(1.4,0.6)$。
+初始偏差 $(-1,-1)$ 变成 $(-0.6,-0.4)$，正好得到 $(1.4,0.6)$。
 第 $t$ 步还能直接写成 $w_t=2-0.6^t,b_t=1-0.4^t$。
 
-\textbf{因子绝对值小于 1，误差就逐步缩小。}
+\textbf{因子绝对值小于 1，参数偏差就逐步缩小。}
 解 $|r_w|<1$ 得 $0<\eta<1.5$，
 解 $|r_b|<1$ 得 $0<\eta<1$；两者同时收敛的区间是 $\boxed{0<\eta<1}$。
 负因子意味着在最低点两侧交替移动；绝对值仍小于 1 时，震荡会逐步缩小。
@@ -243,13 +244,13 @@ $\eta$ & $r_w$ & $r_b$ & 从本例初值出发的结果\\\midrule
 \begin{boundarybox}
 这些阈值由本例损失的二次项系数决定，适用于恒定学习率和全量梯度。
 换数据、损失尺度或优化器后，要重新判断步长；
-某方向若从最优值开始，其误差始终为零。
+某方向若从最优值开始，其参数偏差始终为零。
 \end{boundarybox}
 
 \subsection{一次训练要做哪四件事？}
 \begin{enumerate}
 \item \textbf{前向传播}：用当前参数计算 $\widehat{y}$。
 \item \textbf{计算损失}：比较预测 $\widehat{y}$ 与真实目标 $y$。
-\item \textbf{求梯度}：在同一旧参数状态下求各项偏导数。
+\item \textbf{求梯度}：求损失对各个参数的偏导数。
 \item \textbf{更新参数}：统一执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
 \end{enumerate}

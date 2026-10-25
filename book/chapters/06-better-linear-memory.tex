@@ -88,13 +88,25 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。
-两者都试图减少干扰，但不是完全相同的算法。
-正文第~\ref*{intro:22d-modern-transformers}~章的 Gated DeltaNet 正是从“纠正旧状态”的角度引入这条规则。
+两者都在减少干扰：前者一次求联立解，后者逐条修正当前读出。
+\hyperref[sec:modern-delta-rule]{现代架构章}用同一对 Key 看到 B 被精确修正；
+这里补上另一半：旧 Key A 随之被扰动；Gated DeltaNet 的遗忘门控就在调节旧记忆保留多少。
 \end{idea}
 
-\noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 C-092}
+\noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 C-104}
 交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
 
+\chapterchecktasks{06-better-linear-memory}{正文基础三题}{
+\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先写目标读出与当前读出的差。}
+\item \textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
+\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{考察新增外积与另一条 Key 的点积。}
+}
+\chapterrecallanswer{Delta 写入按残差精确修正当前 Key；非正交的旧 Key 会被扰动，交替重访才收敛到联立解。}
+
+\begin{conclusion}
+减少串扰的线性办法都在\textbf{写入端}：联立求解或逐条按残差修正。
+下一章转到\textbf{读取端}，让匹配分数先经过非线性筛选再读出 Value。
+\end{conclusion}
 
 
 

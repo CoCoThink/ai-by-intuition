@@ -16,7 +16,12 @@ ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
 INPUT_OR_APPENDIX = re.compile(r"\\appendix\b|\\input\{chapters/([^}]+)\}")
 SECTION_OR_CHECK = re.compile(r"\\section\s*\{|\\chapterchecktasks\{([^}]+)\}")
-NUMERIC_CHAPTER = re.compile(r"第[ \t~]*([0-9]{1,2})[ \t~]*章")
+# Also catch Chinese numerals ("第三章"), lists and ranges ("第 23、24 章",
+# "第 1–10 章") and dotted section numbers ("第 24.10 节").
+NUMERIC_CHAPTER = re.compile(
+    r"第[ \t~]*([0-9]{1,2}|[一二三四五六七八九十]{1,3})"
+    r"(?:[ \t~]*(?:--|[、，,–—-])[ \t~]*[0-9]{1,2})*[ \t~]*章"
+    r"|第[ \t~]*([0-9]{1,2}\.[0-9]{1,2})[ \t~]*节")
 ANSWER_CHAPTER = re.compile(
     r"\\item\s*\[\s*\\textbf\{第\s*(\d+)\s*章\}\s*\]"
     r"\s*\\phantomsection\s*\\label\{answer:([^}]+)\}"
@@ -72,7 +77,7 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
         for found in NUMERIC_CHAPTER.finditer(body):
             line = body.count("\n", 0, found.start()) + 1
             errors.append(
-                f"chapters/{name}.tex:{line}: hard-coded '第 {found.group(1)} 章'; "
+                f"chapters/{name}.tex:{line}: hard-coded '{found.group(0)}'; "
                 "use 第~\\ref*{intro:target}~章 instead"
             )
 
@@ -130,13 +135,18 @@ def self_test() -> None:
     assert any("actual chapter is 2" in e for e in check_crossrefs(main, wrong))
     stale = dict(inputs, b=b + "\n更多信息见第 2 章。")
     assert any("hard-coded" in e for e in check_crossrefs(main, stale))
+    for literal in ("见第三章。", "见第 23、24 章。", "见第 1–10 章。", "见第 17--19 章。", "见第 24.10 节。"):
+        stale = dict(inputs, b=b + "\n" + literal)
+        assert any("hard-coded" in e for e in check_crossrefs(main, stale)), literal
+    linked = dict(inputs, b=b + r"见第~\ref*{intro:a}~章与第一部分。")
+    assert check_crossrefs(main, linked) == check_crossrefs(main, inputs)
     missing = dict(inputs, **{"28-chapter-checks": answers.splitlines()[0]})
     assert any("missing numbered answer entry two" in e
                for e in check_crossrefs(main, missing))
     assert uncomment(r"A \% escaped" "\n" r"% 第 5 章 commented") == (
         r"A \% escaped" "\n"
     )
-    print("Chapter cross-reference gate self-test passed (stale number, wrong answer, missing answer)")
+    print("Chapter cross-reference gate self-test passed (stale number, Chinese numeral, list/range, dotted section, wrong answer, missing answer)")
 
 
 def main() -> int:

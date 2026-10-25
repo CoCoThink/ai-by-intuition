@@ -1,58 +1,112 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{最朴素的注意力：直接用词向量做点积}
+\section{Attention 的直觉：直接读取其他位置，先用输入点积}
 \label{intro:21c-naive-attention}
-\chaptercompass{不增加 Q/K/V 参数，能否先做一次按需读取？}{用原始词向量点积匹配，再用 Softmax 加权求和。}{$X:3\times2\to XX^\top:3\times3\to Y:3\times2$}{本章无新可训练投影参数}
-\modelpipelinefocus{3}{朴素点积注意力}
+\phantomsection\label{concept:attention}
+\chaptercompass{当前位置能否绕过逐步传递的状态，直接读取前文的某个位置？}{先比较当前位置与各位置的匹配程度，用 Softmax 把分数变成权重，再加权读取；最朴素的比较就是输入向量的点积。}{$X:3\times2\to S=XX^\top:3\times3\to Y:3\times2$}{本章不新增可训练参数}
+\modelpipelinefocus{3}{Attention 的直觉}
 
+\begin{idea}
+\noindent\emph{按相关性读取上下文}\par
 
-顺序传递状态会把早先信息压进连续更新的向量。
-现在换一个思路：直接将当前词与可见位置逐个比较，
-先检验\textbf{不增加投影参数}的简单读取能做到什么。
+Attention（注意力）是一种按相关性读取信息的方法：
+当前位置先对\textbf{可读取的每个位置}算一个匹配分数，
+再把这些分数变成\textbf{权重}，
+最后把各位置提供的信息按权重\textbf{加起来}。
+
+它最核心的三个动作就是
+\textbf{比较 $\to$ 分配权重 $\to$ 加权读取}。
+\end{idea}
+
+\subsection{从逐步传递到直接读取}
+
+\conceptlink{rnn}{RNN} 让模型按顺序读，前文要经过一份份状态才能传到当前位置。
+先比较两条信息路径：
+\input{figures/attention-rnn-bridge}
+RNN 的第 3 步能读到\textbf{上一份状态} $h_2$；
+想重点利用第 1 个词的信息，就要靠这份状态此前保留了相关内容。
+
+换一种设计：读到第三个词“开了”时，
+让第三个位置直接查看位置 1、2、3，各自决定读多少。
+图中右侧的线宽表示读取比例不同。接下来要解决的，就是怎样算出这些比例。
+
+\subsection{从平均读取到按需读取}
+
+\localfixture{二维输入，每行一个位置；与主线三维 Embedding 无关，本部分后两章继续沿用}
+设当前位置可以读取三个位置，它们各自提供一条\textbf{内容向量}（行向量）：
+\[
+\vect v_1^\top=(1,0),\qquad
+\vect v_2^\top=(0,1),\qquad
+\vect v_3^\top=(1,1).
+\]
+最简单的方法是把它们\textbf{平均}：
+\[
+\vect y_{\rm avg}^\top
+=\tfrac13\bigl(\vect v_1^\top+\vect v_2^\top+\vect v_3^\top\bigr)
+=(2/3,\ 2/3).
+\]
+无论当前位置想查找什么，只要内容不变，平均结果就不变。
+
+改为给三条内容分配权重 $a_1,a_2,a_3$，
+并规定权重非负、总和为 $1$：
+\begin{equation}
+\boxed{\vect y^\top=a_1\vect v_1^\top+a_2\vect v_2^\top+a_3\vect v_3^\top,\qquad
+a_i\ge0,\quad \sum_{i=1}^3 a_i=1.}
+\label{eq:attention-design-goal}
+\end{equation}
+平均对应 $a_1=a_2=a_3=1/3$。
+要让读取结果随当前位置的需要而变化，权重就得取决于
+\textbf{当前想找什么}与\textbf{各位置凭什么被找到}的匹配程度。
+于是每个位置在读取中承担三种职责：发起比较、被比较、交出内容。
+本章先让同一条输入向量兼任这三种职责。
 
 \subsection{三个二维输入，零参数读取}
 
-\localfixture{无参数二维注意力；每行一个 Token}
-先不要立即引入三种新参数。设三个 Token 的输入就是
-$x_1=(1,0),\,x_2=(0,1),\,x_3=(1,1)$，
-直接让每条输入向量同时承担查询、匹配和读取的职责：
+把上一节的三条内容向量直接当作输入：
+$\vect x_1^\top=(1,0)$，$\vect x_2^\top=(0,1)$，$\vect x_3^\top=(1,1)$。
+每条输入既拿去比较，也被比较，还作为读出的内容：
 \[
 X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}
 \ (3\times2),\quad
 \underbrace{S}_{3\times3}=XX^\top
 =\boxed{\begin{bmatrix}1&0&1\\0&1&1\\1&1&2\end{bmatrix}}.
 \]
-此处\textbf{［未缩放］、未加因果 Mask}。例如第三行
-$(1,1,2)$ 经 Softmax 得
-$(0.212,0.212,0.576)$，继续把输入作为 Value，
+此处\textbf{未缩放、未加因果 Mask}。第 $i$ 行是位置 $i$ 与三个位置的点积。
+例如第三行 $(1,1,2)$ 经 Softmax 得
+$(0.212,0.212,0.576)$，继续把输入作为内容向量，
 读出约为 $(0.788,0.788)$。
-这说明不增加投影也可以做一次“比较、分配、读取”。
+与平均读取的 $(0.667,0.667)$ 相比，结果偏向了匹配分数最高的位置 3。
+不增加任何参数，也能完成一次“比较、分配、读取”。
 
 \begin{boundarybox}
-\textbf{朴素方案有两个缺口：}
-(1) 未加 Mask 的原始分数矩阵满足 $S=S^\top$，
-无法让“位置 $i$ 对 $j$ 的原始匹配分数”独立于反方向；
-但逐行 Softmax 后的权重矩阵\textbf{不一定对称}。
-(2) 点积受到向量范数影响，有时偏向自身；
-\textbf{不是每个位置与自身的分数都必然最高}，
-本例第一行的自匹配分数就与第三条 Key 打成平手。
+\textbf{零参数点积的匹配规则是固定的：}
+(1) \textbf{分数对称。}$S=XX^\top=S^\top$：
+“位置 $i$ 拿自己去比 $j$”与“位置 $j$ 拿自己去比 $i$”得到同一个原始分数。
+(2) \textbf{长度也计入分数。}点积同时受方向和长度影响。
+$\vect x_3^\top=(1,1)$ 最长，在三行里都拿到最高或并列最高的分数：
+第一行 $(1,0,1)$、第二行 $(0,1,1)$、第三行 $(1,1,2)$。
+于是三个位置都把最大权重给了位置 3，这来自向量长度，而不是某项任务的需要。
+两点同出一源：本章没有可调的数，训练无法让模型学会“按哪些特征匹配”。
 \end{boundarybox}
 
-要放宽这些限制，就让“拿什么询问”和“凭什么被找到”
-不再必须是同一条表示，并把“读出什么内容”也分开。
-这便是接下来引入 Query、Key、Value 三种角色的动机。
+要放宽这些限制，就让“拿什么询问”“凭什么被找到”“读出什么内容”
+各由一组可训练投影产生。
+这便是下一章 Query、Key、Value 三种角色的动机；
+该章末尾还会用一个对照实验检验训练 Q/K 带来的选择性。
 
 
 \chapterchecktasks{21c-naive-attention}{正文基础三题}{
-\item \textbf{手算：}本章 $x_1=(1,0),x_2=(0,1),x_3=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$。\chapterinlinehint{让对应输入行分别与所有输入行做点积。}
+\item \textbf{手算：}本章 $\vect x_1^\top=(1,0),\vect x_2^\top=(0,1),\vect x_3^\top=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$。\chapterinlinehint{让对应输入行分别与所有输入行做点积。}
 \item \textbf{预测：}对每一行分开做 Softmax 后，$A_{13}$ 与 $A_{31}$ 还一定相等吗？请先比较两行的分母。\chapterinlinehint{将两个相同分子与各自行的分母对照。}
 \item \textbf{找错：}同学说“直接点积能自定义‘我如何问’和‘别人如何被问’这两套不同视角”。这一零参数方案缺少什么？\chapterinlinehint{检查提问与匹配是否使用两套可训练矩阵。}
 }
-\chapterrecallanswer{直接点积 $XX^	op$ 的原始分数对称，但逐行 Softmax 的归一化分母可不同；独立 Q/K 投影可以表达不对称匹配。}
+\chapterrecallanswer{Attention 按“比较、分配权重、加权读取”直接读取其他位置；零参数 $XX^\top$ 的原始分数对称且偏向长向量，独立的可训练 Q/K 投影让匹配规则可以学习。}
 
 
 
 \begin{conclusion}
-最朴素的点积已经能计算权重，却把“拿什么提问”和“凭什么被匹配”绑定在一起。
-接下来拆开 Q/K/V 三种角色，让模型能分别学习匹配与读出的表示。
+Attention = 比较 $\to$ Softmax 分配权重 $\to$ 加权读取。
+最朴素的版本直接用输入点积，已经能按匹配程度读取其他位置，
+但匹配规则固定：分数对称，长向量处处得高分。
+下一章把提问、匹配与内容拆成 Query、Key、Value 三组投影。
 \end{conclusion}

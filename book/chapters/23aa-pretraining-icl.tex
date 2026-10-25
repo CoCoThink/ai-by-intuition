@@ -80,7 +80,7 @@ V=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
 q_A=(\sqrt2\ln9,0).
 \]
 $K$ 两行分别表示前驱 $A,C$；$V$ 两行在 $B,D$ 坐标上编码后继。
-沿第~\ref*{intro:21b-why-attention}~章的机器计算：
+沿用第~\ref*{intro:21b-why-attention}~章的缩放点积 Attention 计算：
 \[
 s=\frac{q_AK^\top}{\sqrt2}=(\ln9,0),\qquad
 \alpha=\softmax(s)=(0.9,0.1),\qquad c=\alpha V=(0.9,0.1).
@@ -98,15 +98,10 @@ $\Pr(B)=e^{4.5}/(e^{4.5}+e^{0.5})\approx\boxed{0.982014}$。
 
 \subsection{一条清楚的边界：上下文 vs 权重 vs 外部资料}
 
-\begin{itemize}
-\item \textbf{预训练/微调}：计算损失和梯度，改变权重 $\theta$；
-持久改变模型参数，但更新成本与风险高。
-\item \textbf{ICL/Prompt}：只改变本次上下文，不改变 $\theta$；
-会受到上下文长度、顺序、示例质量影响。
-\item \textbf{RAG}：从系统允许的数据中检索片段并放入上下文；
-本章的 RAG 在固定权重下工作；检索来源与准确性仍需应用层核验，RAG 本身不提供这一保证。
-\end{itemize}
-这里的区别落在更新对象上：Few-shot 示例参与本次前向计算；预训练则通过梯度更新参数。
+区别落在更新对象上：Few-shot 示例只参与本次前向计算，受上下文长度、顺序与示例质量影响；
+预训练和微调通过梯度持久改变 $\theta$。
+RAG 则从系统允许的数据中检索片段放进上下文，同样在固定权重下工作，来源与准确性由应用核验。
+提示、训练与推理时计算的完整分工见下一章的\hyperref[sec:training-inference-roles]{分工表}。
 
 \subsection{为什么大规模预训练也不是万能钥匙？}
 
