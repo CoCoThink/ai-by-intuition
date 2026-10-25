@@ -1,0 +1,105 @@
+# AGENTS.md
+
+本文件适用于整个仓库。用户当前指令及会话中已明确的偏好优先；在已授权范围内完成修改、验证和交付，不重复询问已经确认的事项。
+
+## 项目与维护入口
+
+这是中文 AI 原理教材 **AI by Intuition**，以可手算、可复算的小例子串起函数、训练、Transformer 与助手系统。读者阅读一本 PDF，作者维护分章 LaTeX。
+
+- [book/main.tex](book/main.tex)：唯一整书入口；实际章节顺序与编号以这里的 `\input`、`\section` 为准，不能从文件名前缀推断章号。
+- `book/chapters/`：正文与附录；`book/figures/`：TikZ 矢量教学图。
+- [scripts/teaching_reference.py](scripts/teaching_reference.py)：三维主线实验的数值基线。其他 `scripts/*_demo.py` 提供局部实验与复算。
+- `.github/workflows/`：实际 CI 配置与依赖版本的维护入口。
+- [book/README.md](book/README.md)：阅读顺序和构建说明；[docs/ERRATA.md](docs/ERRATA.md)：勘误；[docs/NEXT_EDITION.md](docs/NEXT_EDITION.md)：尚未实施的下一版计划。
+
+历史评审、Release 和审计报告只证明各自提交的状态。文档统计与实际源码冲突时，先检查源码、生成器及最新对应提交的 CI，不照搬旧章数、页数或公式数。
+
+## 教材编辑约定
+
+- 用中文交流和撰写正文。先给清楚的结论与直觉，再用小数值例子说明，最后推广为公式；交代输入、输出、维度及参数是否参与训练。
+- 保持同一组数据贯穿推导。二维、四维、多头或其他独立例子须交代与主线的关系，不混用参数。
+- 主线采用行向量，每个 Token 占一行。教学词表 ID、数学位置及行列从 1 起；Python 索引减 1。改动 ID 时同步 Embedding、one-hot、目标、概率索引、脚本和答案。
+- 符号以 [全书符号表](book/chapters/00c-symbols.tex) 为准：输出头 `W_out`、logits `Z`、损失 `L`、概率 `\Pi`、位置 `P_pos`、记忆状态 `\mathcal{M}`；自然对数用 `\ln`。
+- 正面解释机制，保留会改变结论或读者操作的限制。合并重复提醒，避免连续堆叠“不能／不保证／不代表”，也不要机械删除真实系统行为所需的限定。
+- 新增“需要 Attention”等动机时，用对照实验支持结论，区分上下文读取与训练 Q/K 的选择性；说明其他接收历史的模型能解决哪些问题。
+- 正文自测保留问题，提示与数值答案放入附录 D，按“第一步＋解题过程”展开。章末题号、题目归属、答案标题与正文保持一致；部分累积复习独立于末章练习。
+- 引用章节、部分、题号和页码使用已有标签及 `\ref`、`\pageref`、`\hyperref`，不写死印刷章号或页码；公开题号不能恢复为旧的 C1/C2/C3/C4 体系。
+- 修改章标题或顺序时，同步导航、答案、习题归属、术语锚点和相关检查。来源署名集中放在合适的位置，避免在部首及各章重复同一框架致谢。
+
+## 生成内容：修改来源，再运行生成器
+
+不要只改生成结果；如需调整生成版式，修改生成器并重新生成。生成器可能读取正文锚点，应在正文修改完成后运行。
+
+| 内容 | 维护入口 | 生成命令（仓库根目录） |
+| --- | --- | --- |
+| 附录 C 题库、D.1 解答、部分复习 | [book/exercises.json](book/exercises.json) | `python3 scripts/generate_exercise_bank.py` |
+| 各章练习指针与答案导航 | 题库、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
+| 双语术语表及全文出现位置 | [基础词条](book/chapters/24-lexicon.tex)、[现代词条](book/chapters/24b-modern-lexicon.tex)、[英文索引映射](book/chapters/24d-english-index.tex) 及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
+| 中文拼音索引 | 已生成的双语术语表 | `python3 scripts/generate_chinese_index.py` |
+| 附录 F 二维码、网页参考清单 | [book/source-audit.json](book/source-audit.json) | `python3 scripts/generate_reference_assets.py` |
+| 附录 G 带日期断言表 | [book/dated-claims.json](book/dated-claims.json) | `python3 scripts/check_dated_claims.py --write` |
+
+前述题库、章末导航、双语术语和参考资产生成器支持 `--check`。中文索引生成器直接写文件，应检查生成后的差异；不要给它使用不存在的 `--check` 参数。
+
+## 本地环境与构建
+
+- 使用 **TeX Live 2026 + LuaLaTeX + latexmk**；统一从根目录运行 `bash scripts/build_book.sh`，不要换用其他引擎规避 Tagged PDF 问题。
+- 当前 Linux 工作环境复用 `daily` Python；本机解释器为 `/home/guan/mamba/envs/daily/bin/python3`。其他机器使用对应已有环境，缺包用该解释器的 `-m pip` 安装，不另装一套 Python。
+- 当前环境的 TeX 通过 Homebrew 管理，字体通过系统包管理器管理。需要 Noto CJK 与西文字体、Poppler；具体 Python 依赖版本以工作流为准。
+- 默认运行离线教学实验。Claude 等付费 API 的真实调用须有对应的明确授权；中文分词器的 `--real` 是下载固定分词器，不等于加载模型权重或调用付费 API。
+
+正文、公式或章节结构改动后，按影响范围运行源码检查：
+
+```bash
+python3 scripts/generate_exercise_bank.py --check
+python3 scripts/generate_chapter_navigation.py --check
+python3 scripts/generate_bilingual_glossary.py --check
+python3 scripts/check_book_contract.py --self-test
+python3 scripts/validate_book.py
+python3 scripts/check_teaching_claims.py
+python3 scripts/check_chapter_crossrefs.py
+python3 scripts/check_part_references.py
+```
+
+需要验证排版时，构建并检查最终产物：
+
+```bash
+bash scripts/build_book.sh
+python3 scripts/validate_book.py --pdf book/build/main.pdf
+python3 scripts/check_latex_references.py --log book/build/main.log --pdf book/build/main.pdf
+python3 scripts/check_section_navigation.py --pdf book/build/main.pdf --aux book/build/main.aux
+python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
+```
+
+等 `latexmk` 全部轮次完成后再读取、复制或检查 PDF 与 `.aux`，避免使用正在重写的中间产物。构建脚本自动写入 Git 提交号；不要手填 `local-build`，也不要把未提交修改的预览称为对应提交的最终 CI 产物。
+
+纯 Markdown 修改运行 `python3 scripts/check_markdown_links.py` 和 `git diff --check` 即可，无须重编译整本书。工作流修改另运行 `python3 scripts/check_workflows.py`；数值与算法修改运行相关复算及梯度检查。新增回归应复现具体错误，避免为措辞修改编写同构测试。
+
+## 排版、图表与 CI 门禁
+
+- 保留 `\DocumentMetadata`、结构标签、MathML-AF 与 PDF/UA-2 设置；不得通过关闭标签、忽略失败、降低阈值来修复 CI。
+- 有语义的图保留 Figure、Caption 和中文替代文字，图与图题同页。部分开篇复用的路线小地图不占编号图号；优先维护已有 TikZ 图。
+- 表格设置语义表头，保证列宽与中文可读性；颜色遵守 `book/main.tex` 的角色定义，图中标签、线型及文字说明一致。
+- 自测允许接排和跨页，避免整块被推成稀疏尾页；答案章标题与下一条内容相连，引导句与对应代码块相连。调整分页后同时检查章首位置、页底留白与章节收尾。
+- 修复肉眼可见的公式、引用或分页错误时，先定位现有 CI 为什么漏检；能稳定识别的错误增加源码或成品回归，检查实际目标与页面，不能只检查标签存在。
+- 图形或版式改动后渲染相关页目视检查，并按 [完整构建工作流](.github/workflows/build-latex.yml) 运行灰度、色觉模拟、全部公式 MathML 关联及 veraPDF 验证。机器合规与人工阅读检查分别记录。
+
+## 时效断言与来源
+
+- 协议、API、模型配置和架构事实查官方规范、固定提交或原论文；正文、脚本、附录 F、附录 G 及来源记录一起更新。
+- `checked_utc` 表示实际内容复核日期，使用 UTC。编译日期、链接可访问或 CI 成功都不能替代内容核验，不能自动刷新核验日期。
+- 断言按清单中的周期或新修订复查，以先到者为准。运行 `python3 scripts/check_dated_claims.py --self-test --online --check-due` 检查当前 MCP 修订及到期日期；历史版本仍可离线构建。
+- 每周复查由 [check-dated-claims.yml](.github/workflows/check-dated-claims.yml) 执行。遇到过期或版本变化先复核来源与示例，再改版本和日期，不为解除门禁直接改日期。
+
+## Git、CI 与交付
+
+- 开始时检查 `git status`，保留用户已有改动；不提交 `book/build/`、编译 PDF、日志或 LaTeX 中间文件。
+- 是否提交、推送或发行遵循用户在会话中的授权。已要求推送并检查 CI 时，完成推送并等待同一 HEAD 的相关工作流结束；失败则定位修复，不能以历史绿色构建代替。
+- 纯文档提交通常只触发 Markdown 检查。修改正文或检查脚本会触发完整 PDF 构建；检查当前工作流的路径过滤，不把未触发说成已通过。
+- 交付最终 PDF 时，优先下载指定成功 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` 工件，核对提交号、PDF 哈希、审计报告及版权页／附录 G 来源一致。
+- 普通推送与正式 Release 分开；只有明确要求发行时才运行发布流程，不覆盖历史 Release 资产。
+- 完成后简要说明改动、已运行的验证、提交及相关 CI 链接；有最终 PDF 时给出可点击路径。未运行的检查如实说明。
+
+## 许可
+
+教材、LaTeX/TikZ、文档与正式 PDF 使用 [CC BY 4.0](LICENSE)；`scripts/` 与 GitHub Actions 工作流使用 [MIT](scripts/LICENSE)。保留适用的署名与许可，第三方引用不因加入本仓库自动获得再授权。
