@@ -10,7 +10,7 @@
 - `book/chapters/`：正文与附录；`book/figures/`：TikZ 矢量教学图。
 - [scripts/teaching_reference.py](scripts/teaching_reference.py)：三维主线实验的数值基线。其他 `scripts/*_demo.py` 提供局部实验与复算。
 - `.github/workflows/`：实际 CI 配置与依赖版本的维护入口。
-- [book/README.md](book/README.md)：阅读顺序和构建说明；[docs/ERRATA.md](docs/ERRATA.md)：勘误；[docs/NEXT_EDITION.md](docs/NEXT_EDITION.md)：尚未实施的下一版计划。
+- [book/README.md](book/README.md)：章节与源码文件对照、生成文件一览；[docs/MAINTENANCE.md](docs/MAINTENANCE.md)：CI、依赖固定、无障碍验收与来源复核；[docs/PUBLISHING.md](docs/PUBLISHING.md)：发布签核；[docs/ERRATA.md](docs/ERRATA.md)：勘误；[docs/NEXT_EDITION.md](docs/NEXT_EDITION.md)：尚未实施的下一版计划。
 
 历史评审、Release 和审计报告只证明各自提交的状态。文档统计与实际源码冲突时，先检查源码、生成器及最新对应提交的 CI，不照搬旧章数、页数或公式数。
 
@@ -34,12 +34,12 @@
 | --- | --- | --- |
 | 附录 C 题库、D.1 解答、部分复习 | [book/exercises.json](book/exercises.json) | `python3 scripts/generate_exercise_bank.py` |
 | 各章练习指针与答案导航 | 题库、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
-| 双语术语表及全文出现位置 | [基础词条](book/chapters/24-lexicon.tex)、[现代词条](book/chapters/24b-modern-lexicon.tex)、[英文索引映射](book/chapters/24d-english-index.tex) 及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
-| 中文拼音索引 | 已生成的双语术语表 | `python3 scripts/generate_chinese_index.py` |
+| 附录 E.1 拼音排序术语主表及全文出现位置 | [基础词条](book/chapters/24-lexicon.tex)、[现代词条](book/chapters/24b-modern-lexicon.tex)、[英文索引映射](book/chapters/24d-english-index.tex) 及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
+| 附录 E.3 英文简表 | 已生成的术语主表 | `python3 scripts/generate_chinese_index.py` |
 | 附录 F 二维码、网页参考清单 | [book/source-audit.json](book/source-audit.json) | `python3 scripts/generate_reference_assets.py` |
 | 附录 G 带日期断言表 | [book/dated-claims.json](book/dated-claims.json) | `python3 scripts/check_dated_claims.py --write` |
 
-前述题库、章末导航、双语术语和参考资产生成器支持 `--check`。中文索引生成器直接写文件，应检查生成后的差异；不要给它使用不存在的 `--check` 参数。
+前述题库、章末导航、双语术语和参考资产生成器支持 `--check`。英文简表生成器（`generate_chinese_index.py`）直接写文件，应检查生成后的差异；不要给它使用不存在的 `--check` 参数。
 
 ## 本地环境与构建
 
@@ -59,6 +59,7 @@ python3 scripts/validate_book.py
 python3 scripts/check_teaching_claims.py
 python3 scripts/check_chapter_crossrefs.py
 python3 scripts/check_part_references.py
+python3 scripts/check_source_hygiene.py --self-test
 ```
 
 需要验证排版时，构建并检查最终产物：

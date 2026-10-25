@@ -1,41 +1,34 @@
-# AI by Intuition · 正式发布流程
+# 正式发布流程
 
-本仓库将“通过测试”和“正式出版”分开处理：PR 和主分支 CI 成功不会自动创建 Release。出版必须由维护者明确签核并手动启动发布工作流。
+CI 成功不等于发布。主分支的构建只产生草稿工件；正式版本由维护者签核后手动运行发布工作流，生成不可覆盖的 Release。已发布的 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 保持原样，修订一律用新版本号。
 
-## 当前发行基线
+## 发布前签核
 
-- 已正式发行的归档版本为 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)；保留其 PDF、校验和及审计工件，不覆盖原版本。
-- 本轮九部分、39 章候选在 [V3 发布前验收](V3_RELEASE_READINESS.md) 记录；[V2 发布前验收](V2_RELEASE_READINESS.md) 保留为历史工作台。签核和手动发布前不得将最新 CI 称作正式版。
-- 教材源码的唯一编排入口为 [book/main.tex](../book/main.tex)，自动验收基于 [Build one PDF book](../.github/workflows/build-latex.yml)。
+对拟发布的那一次构建逐项确认，并在发布说明或 Issue 中留下记录（提交号、CI 运行号、负责人、日期）：
 
-## 发布前的必要检查
+1. **选定构建：**`main` 分支上一次成功的 [Build one PDF book](../.github/workflows/build-latex.yml)，同时具备 `ai-by-intuition-book` 与 `pdfua2-machine-audit` 两份工件。PR 上的绿灯不能替代。
+2. **机器检查：**源码与数值检查、成品排版检查、全部公式 MathML 关联、veraPDF PDF/UA-2 零失败。
+3. **人工校样：**按 [维护手册](MAINTENANCE.md#灰度与人工校样)用同一份 PDF 生成灰度校样并逐页审阅；重点看新改动的算例、图表和分页。
+4. **来源与授权：**
+   - 讲解路径受飞天闪客两部公开课程启发（[从函数到 Transformer](https://www.bilibili.com/video/BV1NCgVzoEG9/)、[从 Transformer 到大模型](https://www.bilibili.com/video/BV15z4C6SEHT/)），课程页面注明未经授权禁止转载。致谢不能代替授权：发布前需对照原课程，确认助手与 Agent 各章（以及其他借鉴了讲解顺序的章节）没有沿用受保护的具体表达、图示或例子；有疑问的段落重写，或取得书面授权并记录条件。
+   - 联想记忆部分借鉴 Alex Wang 文章的讲解框架，署名与链接集中在附录 F；核对没有复制原文文字或图片。
+   - 引用的模型配置、JSON 片段和第三方图示，核对其使用条款；能在网上查看不等于可以再出版。
+5. **带日期断言：**附录 G 中没有到期或落后于官方新修订的条目（`python3 scripts/check_dated_claims.py --self-test --online --check-due`）。
+6. **版本信息：**确定新的语义化版本号，写好发布说明，并核对封面、版权页与附录 G 中的版本与提交号。
 
-1. 将所有教材、练习、术语索引、LaTeX 图形和验证规则的变更合入 `main`；确认不存在遗漏的待处理审稿阻断项。
-2. 选择一次在 **`main` 分支**成功完成的 **Build one PDF book** 运行。PR 检查即便全绿，也不能代替这个发布来源。
-3. 确认该次运行生成的 `ai-by-intuition-book` 与 `pdfua2-machine-audit` 两份工件：前者包含单册 PDF，后者包含公式 MathML-AF、veraPDF PDF/UA-2 和构建环境记录。
-4. 确认源码/数值、PDF 排版与页面边界、图表结构和替代文字、全部公式 MathML-AF、PDF/UA-2 检查均通过；新增排版仍应进行作者目视核对。机器通过不等于已做真实读屏体验测试。
-5. 作者或维护者完成版本内容和发行说明签核，并在 [V3 发布前验收](V3_RELEASE_READINESS.md) 记录所选提交、运行链接、灰度审校、授权核对与阻断项结论。
+## 运行发布工作流
 
-## 手动发布步骤
+在 GitHub Actions 中选择 [Publish validated book](../.github/workflows/publish-release.yml)，从 `main` 手动运行，填写：
 
-在 GitHub Actions 选择 [Publish validated book](../.github/workflows/publish-release.yml)，从 `main` 手动执行 `workflow_dispatch`，填写：
+- `version`：尚不存在的新版本号，如 `v0.2.0`；
+- `build_run_id`：第 1 步选定的成功运行编号。
 
-- `version`：尚不存在的新语义化版本号，如 `v0.2.0`；
-- `build_run_id`：已成功的 `main` 分支“Build one PDF book”运行编号。
+工作流会拒绝：已存在的标签或 Release；不属于本仓库、未成功或不在 `main` 上的构建；构建提交之后 `main` 又改动了 `book/`、`scripts/` 或构建工作流却没有重新构建的情况。
 
-发布工作流将拒绝重复的标签或 Release，以及不属于本仓库、未成功或不是 `main` 的源构建。选用构建的提交必须属于 `main` 历史；从该提交到发布时的 `main`，不得再次改动 `book/`、`scripts/` 或构建工作流而未重建。
+通过后，它直接下载该次构建的 PDF 与机器审计，复核页数、MathML 关联、veraPDF 结果和环境记录，再创建 Release，附件为：
 
-工作流会直接下载**所选同一次构建**的 PDF 和机器审计，再核对 PDF 页数、MathML-AF 关联、veraPDF PDF/UA-2 零失败结果及运行环境记录。通过后才创建**不可覆盖**的带版本号 Release，包含：
+- `AI-by-Intuition-Book.pdf`
+- `SHA256SUMS`
+- `build-audit.zip`
 
-- `AI-by-Intuition-Book.pdf`；
-- `SHA256SUMS`；
-- `build-audit.zip`。
-
-Release 描述将标明对应的源码 SHA 和原始成功构建。需要修订已发布内容时应使用新版本号，而非替换历史工件。
-
-## 相关资料
-
-- [阅读顺序与构建说明](../book/README.md)
-- [无障碍机器验收及边界](ACCESSIBILITY.md)
-- [构建可复现性与环境审计](BUILD-REPRODUCIBILITY.md)
-- [V3 候选状态与作者签核](V3_RELEASE_READINESS.md)
+Release 说明会标明源码提交和原始构建。发布后在 [CHANGELOG](../CHANGELOG.md) 中把草稿条目改为正式版本号与日期。

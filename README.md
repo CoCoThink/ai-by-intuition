@@ -1,33 +1,63 @@
-# AI by Intuition · 从函数到 Transformer 的直觉之旅
+# AI by Intuition · 从函数到 Transformer，再到助手与 Agent
 
 > **先有问题，再有直觉，然后才有公式。**
 
-一本从**“计算机怎样学会生成有用的语言回答？”**出发的中文 AI 原理教程。我们先解释为什么可以用原始文本构造“预测下一个 Token”的训练题——**它是学习语言规律的一种具体方法，不是 AI 的终极目标**——再从函数、向量、矩阵和 MLP 出发，走到反向传播、RNN、Attention、Transformer 的训练与生成。最后解释模型为什么还需要后训练、检索、工具以及部署系统。
+一本中文 AI 原理教材。全书从“计算机怎样学会生成有用的语言回答？”出发，用一组可以手算、也能用脚本复算的小例子，从函数、损失和梯度一路讲到矩阵、Attention、Transformer 的训练与生成，最后讲清后训练、检索、工具调用和 Agent 系统怎样把模型变成助手。
 
-**读者阅读一个完整 PDF，作者维护分开的 LaTeX 章节源码。** 最新验证构建采用 **TeX Live 2026 + LuaLaTeX**，生成带结构标签的 PDF。
+主线例子是四个 Token“春天 / 花 / 开了 / 。”：三维 Transformer 用 `[2,4,5]` 预测 `[4,5,3]`，一次联合训练把平均损失从 **1.798430** 降到 **1.611377**。数值基线是 [teaching_reference.py](scripts/teaching_reference.py)。
 
-[**下载正式版 PDF · v0.1.0**](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) · [新版发布流程](docs/PUBLISHING.md) · [全书顺序与可点击目录](book/README.md) · [学习路线设计](ROADMAP.md) · [无障碍现状及验收](docs/ACCESSIBILITY.md) · [最新构建工件](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)
+## 获取 PDF
 
-## 主分支修订候选（尚未发布）
+- **正式版：**[v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，附 PDF、`SHA256SUMS` 和机器审计。
+- **主分支草稿（v0.2.0-draft，未发布）：**从 [Build one PDF book](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 中对应提交的成功运行下载 `ai-by-intuition-book` 工件。草稿相对 v0.1.0 的变化见 [CHANGELOG](CHANGELOG.md)。
 
-**v0.1.0 的正式 Release 不变。**
-当前 \`main\` 根据 [REVIEW.md](docs/REVIEW.md) 已建立
-**九部分、41 章、A–G 附录**的新目录：I–VII 构成主线，VIII（视觉）与 IX（联想记忆）是主线之后的两条扩展路径；测试时计算独立成章。第 1、2 章已合并；联想记忆专题统一使用行向量，
-朴素点积 Attention 已独立成章；RAG、Agent、BPE 也有可复算新例。
+仓库不提交编译后的 PDF。
 
-修订候选已存在可追溯的[成功全量 PDF/UA-2 构建 #39929702902](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39929702902)
-（对应 `07b368c`、144 页、2,366／2,366 个公式关联）。
-**上述成功记录只对应历史提交，当前修订仍需重新通过构建和印刷审校，不代表已重新发布。**
-请参见 [V3 发布前验收](docs/V3_RELEASE_READINESS.md)与
-[灰度逐页校样流程](docs/PRINT_PROOF.md)。
-具体参见 [修订映射](docs/CHAPTER_MAPPING.md)、
-[实际章节顺序](book/README.md) 与
-[最新 PDF 构建](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)。
-本轮的数值、结构及新增 CI 检查见[上下文闭环与修订记录](docs/REVIEW-CONTEXT-AND-STRUCTURE.md)。
-后续评审修订补充了[带干扰的 Q/K 选择性实验](scripts/attention_selection_demo.py)：均匀平均无法区分同一组值的不同名字绑定，训练后按查询选择记录；符号、图例、框架署名与索引一并修正。
-原 V2 候选的历史成功构建
-[39816203928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928)
-仅对应当时提交 \`2cad92cd\`，不是本次修订版的正式发布证据。
+## 全书结构
+
+正文共九部分。前七部分是主线，第八、九部分是主线之后的两条扩展路径；章号由 LaTeX 自动生成，以 [book/main.tex](book/main.tex) 为准。
+
+| 部分 | 回答的问题 |
+|---|---|
+| 一 · 学习 | 函数怎样从样本、损失和梯度中学出参数？ |
+| 二 · 矩阵 | 怎样把许多特征和样本放进向量与矩阵？ |
+| 三 · 文字 | Token 怎样变成可训练的数字表示？ |
+| 四 · 上下文 | 为什么需要 Attention，Q/K/V 和因果 Mask 各做什么？ |
+| 五 · Transformer | Block、FFN、输出头怎样组装、一起训练并逐词生成？ |
+| 六 · 助手 | 后训练、测试时计算、RAG、工具、协议和部署怎样分工？ |
+| 七 · 架构 | RoPE、GQA、MoE、KV Cache 改了哪一步，怎样判断值不值得？ |
+| 八 · 视觉（扩展） | CNN 和 ViT 怎样把图像接到同一个 Transformer 主干？ |
+| 九 · 联想记忆（扩展） | 外积、串扰和 Delta 规则怎样从“存入与取出”重看 Attention？ |
+
+附录 A–G 依次是公式与符号速查、三维实验与复算脚本、按章题库与累积复习、参考答案、术语表与索引、来源、版本与带日期断言。源码与章节的对应见 [book/README.md](book/README.md)。
+
+## 本地构建
+
+需要 TeX Live 2026（LuaLaTeX、latexmk）、Noto Serif/Sans CJK SC 与 Noto Serif/Sans 字体、Poppler。在仓库根目录运行：
+
+```bash
+python3 -m pip install pypinyin==0.55.0 pypdf==5.9.0 numpy
+python3 scripts/validate_book.py
+bash scripts/build_book.sh
+python3 scripts/validate_book.py --pdf book/build/main.pdf
+```
+
+产物是 `book/build/main.pdf`，版权页和附录 G 自动印出当前 Git 提交号。完整的检查命令与 CI 门禁见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+## 文档
+
+| 文档 | 用途 |
+|---|---|
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 写作原则、修改流程与提交前检查 |
+| [AGENTS.md](AGENTS.md) | 编辑约定、生成内容的维护入口、构建与 CI 规则（人和编码助手共用） |
+| [book/README.md](book/README.md) | 部分与章节源码对照、生成文件一览 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本变化 |
+| [docs/ERRATA.md](docs/ERRATA.md) | 勘误与反馈方式 |
+| [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | CI 门禁、依赖固定、无障碍机器验收、来源复核 |
+| [docs/PUBLISHING.md](docs/PUBLISHING.md) | 正式发布流程与发布前签核 |
+| [docs/NEXT_EDITION.md](docs/NEXT_EDITION.md) | 尚未实施的下一版计划 |
+| [docs/GPT2_REAL_RUN.md](docs/GPT2_REAL_RUN.md) | GPT-2 真实权重实验的固定版本与结果 |
+| [docs/REFERENCES.md](docs/REFERENCES.md)、[docs/TERM_OCCURRENCES.md](docs/TERM_OCCURRENCES.md) | 自动生成的网页参考清单与术语出现位置 |
 
 ## 开放许可证与转载
 
@@ -35,61 +65,16 @@
 
 **软件与自动化：** `scripts/` 下的 Python 工具及 `.github/workflows/` 下的 GitHub Actions 工作流，以 [MIT License](scripts/LICENSE) 授权。复用代码时应保留 MIT 版权与许可声明。
 
-**建议署名：** AI by Intuition · CoCoThink and contributors；项目地址：<https://github.com/CoCoThink/ai-by-intuition>；许可：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。改编或翻译时请注明变更。仅对项目权利人拥有或有权授权的原创部分授予以上许可；引用的第三方文本、图像、品牌及依赖库仍受各自权利或许可约束，引用链接本身不构成再授权。
+**建议署名：** AI by Intuition · CoCoThink and contributors；项目地址：<https://github.com/CoCoThink/ai-by-intuition>；许可：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。改编或翻译时请注明变更。以上许可只覆盖项目权利人拥有或有权授权的原创部分；引用的第三方文本、图像、品牌及依赖库仍受各自权利或许可约束。
 
-**版本说明：** v0.1.0 于加入许可证前发布，历史 Release 资产和当时的说明保留原样；本次授权同样覆盖本项目有权授权的该版本 PDF。后续 PDF 应随发布说明一并提供许可与署名信息。
+v0.1.0 发布于加入许可证之前，其 Release 资产保留原样；本授权同样覆盖该版本中项目有权授权的内容。
 
-## 为什么这样组织？
+## 启发与参考
 
-| 部分 | 从上一步留下的问题 |
-|---|---|
-| I · 学习 | 函数怎样从样本、损失和梯度中学出参数？ |
-| II · 多维计算 | 怎样把许多特征和样本放进矩阵？ |
-| III · 文字 | Token 怎样进入可训练的数字表示？ |
-| IV · 上下文 | 朴素点积有何限制，为什么要引入 Q/K/V？ |
-| V · Transformer | 如何组装 Block、FFN、输出头并共同训练？ |
-| VI · 助手与 Agent | 后训练、RAG、工具循环、协议、权限和部署如何分工？ |
-| VII · 架构判断 | 怎样权衡长上下文、KV Cache、效率与质量？ |
-| VIII · 视觉桥接（扩展） | CNN、ViT 与视觉前缀怎样连接 Token 主线？ |
-| IX · 联想记忆（扩展） | 外积、串扰、Delta 规则如何解释线性状态？ |
+- 飞天闪客：[《一小时从函数到 Transformer》](https://www.bilibili.com/video/BV1NCgVzoEG9/)、[《一小时从 Transformer 到大模型》](https://www.bilibili.com/video/BV15z4C6SEHT/)
+- Alex Wang：[You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/)
+- Vaswani et al.：[Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
-附录 A–G 包含数学、实验、按章题库、答案、术语、文献与勘误。
-三维主例仍用 \`[2,4,5]\` 预测 \`[4,5,3]\`；
-一次联合训练的损失为 **1.798430 → 1.611377**。
-[teaching_reference.py](scripts/teaching_reference.py) 是主例数值的唯一基线，
-二维记忆、Agent 与 BPE 均独立标注，不能混用参数。
+这些资源启发了选题和讲解路径；教材按学习依赖重新组织，文字、图表、数值例题和实验独立编写。完整来源见附录 F。
 
-## 最新 PDF 与构建状态
-
-**v0.1.0 已于 2026-10-22 正式发布。** [主分支全量 CI #39699805713](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39699805713) 通过，生成 **99 页 Tagged PDF**，检测到 **1,472 个公式节点、21 张表格（59 个 TH 表头单元格）、16 个 Figure 及 16 处替代文字、48 个 H1 和 180 个 H2**，并通过章节、数值、页面边界及机器无障碍验证。请从 [正式 Release（PDF、SHA256SUMS、审计工件）](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 下载归档版；仓库不提交编译后的 PDF。
-
-**PDF/UA-2 与 MathML 机器验收均已通过：**正式构建使用 `mathml-AF`，CI 验证 **1,472 个 Formula 均带有效的 MathML 关联文件**（933 种不同内容），veraPDF 1.30.2 的 PDF/UA-2 检查报告零失败。两项检查都阻断不达标的 PDF 发布。**项目仅设置自动化验收门槛**：持续检查 PDF/UA-2、MathML-AF、结构标签和页面布局；真实屏读体验测试与人工无障碍验收不列入待办。机器检查的通过仅代表验证工具覆盖的规则，详见[自动化验收说明](docs/ACCESSIBILITY.md)。
-
-## 本地编译
-
-推荐使用 **TeX Live 2026、LuaLaTeX**，安装中文/西文字体 **Noto Serif CJK SC、Noto Sans CJK SC、Noto Serif、Noto Sans**，并具备 `latexmk`、TikZ/PGF、`poppler-utils` 和 `pypdf==5.9.0`。CI 选择 TeX Live 2026 并固定执行 Action 的 commit SHA，但 TeX Live 基础镜像和 apt 软件包尚未达到字节级冻结；详见[构建复现说明](docs/BUILD-REPRODUCIBILITY.md)。旧版本内核不保证能正确处理 Tagged PDF。
-
-```bash
-# 中文索引由双语术语表生成；先生成，避免直接编译占位页
-python3 -m pip install pypinyin==0.55.0
-python3 scripts/generate_chinese_index.py
-python3 scripts/validate_book.py
-cd book
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex
-cd ..
-python3 -m pip install pypdf==5.9.0
-python3 scripts/validate_book.py --pdf book/build/main.pdf
-```
-
-PDF 生成于 `book/build/main.pdf`；如需复现带中文、数学、`tabularx` 和 TikZ 的最小测试，请参阅 [book/README.md](book/README.md)。常见贡献流程参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
-
-## 原视频与研究参考
-
-- [飞天闪客：《一小时从函数到 Transformer》](https://www.bilibili.com/video/BV1NCgVzoEG9/)
-- [飞天闪客：《一小时从 Transformer 到大模型》](https://www.bilibili.com/video/BV15z4C6SEHT/)
-- [Alex Wang：You could have invented transformers from memory](https://alexwang.ai/posts/associative-memory/)
-- [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
-
-视频启发了选题和问题意识；教材根据学习依赖重新安排内容，不按分集照抄。更多引文见 [参考与延伸阅读](book/chapters/26-sources.tex)。
-
-欢迎通过 Issue 提供计算核对、未解释的符号及跨章衔接建议。转载、改编及代码复用请遵循上文按目录划分的授权范围。
+欢迎通过 Issue 报告看不懂的段落、跳过的步骤、算错的数字或形状不对的地方。

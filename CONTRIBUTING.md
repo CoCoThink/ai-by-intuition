@@ -1,54 +1,60 @@
 # 参与改进 AI by Intuition
 
-目标是让没有系统学习过高等数学的读者也能真正理解 AI 中的矩阵计算和推导，而不是只记住术语。
+目标是让没有系统学过高等数学的读者，也能真正理解 AI 里的矩阵计算和推导，而不只是记住术语。
 
-## 内容原则
+完整的编辑约定、生成内容入口和 CI 规则写在 [AGENTS.md](AGENTS.md)，人和编码助手共用。本页只列最常用的部分。
 
-- 每章先说明上一方法的缺口，用标量或小型数值例子解释，再给一般数学形式；遵守**标量学习先于矩阵**的主线。
-- Transformer 贯通实验统一使用 `scripts/teaching_reference.py` 中的 **d_model=3** 单头参数；独立 d_model=4 双头或二维局部例子必须标注不同参数，禁止混拼。
-- 新增的数学、术语和算法应写出输入/输出形状、约束及可复算校验，保持练习和答案一一对应；不要让核心内容依赖尚未介绍的后续概念。
-- 首次出现矩阵乘法时，写出逐行与逐列的计算过程。
-- 明确输入、输出、矩阵尺寸与每一维的含义。
-- 区分等式、近似、启发式解释与实际模型。
-- 不使用「神经元必然对应单条事实」一类过度简化表述。
-- 引用原作者和研究结论，并尽量提供原始参考链接。
+## 写作原则
 
-## 目录与编译
+- **先结论与直觉，再小数值例子，最后推广为公式。**交代输入、输出、形状，以及哪些参数参与训练。
+- **同一组数据贯穿推导。**三维主例的参数只取自 [teaching_reference.py](scripts/teaching_reference.py)；二维、四维或其他局部例子用 `\localfixture` 标为“独立例”，不借用主线的词名和参数。
+- **行向量约定：**每个 Token 占一行，投影写 `XW`；教学词表 ID、位置和矩阵行列从 1 起，Python 索引减 1。符号以[符号表](book/chapters/00c-symbols.tex)为准。
+- **区分等式、近似、启发式解释与真实系统行为。**保留会改变结论的限制，合并重复提醒。
+- **不写死章号、页码和题号。**用 `\ref`、`\pageref`、`\hyperref`；CI 会拦截“第 3 章”“第三章”“第 24.10 节”这类字面编号。
+- 新增数学、术语或算法时给出可复算的检查；练习和答案保持一一对应。
 
-新增教程文件写入 `book/chapters/NN-name.tex`，并将 `\input{chapters/NN-name}` 加入 `book/main.tex` 的正确阅读顺序。当前修订候选为 I–VIII 八个必读部分、IX 视觉选读，共 39 个显示章节；附录 A–G 收录公式、实验、练习、答案、术语、来源与版本勘误。改变章节顺序时需同步 `scripts/validate_book.py`、随堂自测答案及 `docs/CHAPTER_MAPPING.md`。
+## 修改流程
 
-全书唯一 PDF 由 `book/main.tex` 使用 **TeX Live 2026 + LuaLaTeX** 构建。安装 `latexmk`、Noto 中文/西文字体、`poppler-utils`、相应 TeX Live 宏包后，从仓库根目录运行：
+1. 正文在 `book/chapters/`，图在 `book/figures/`，章节顺序只由 [book/main.tex](book/main.tex) 的 `\input` 决定。
+2. 题库、答案、章末导航、术语表、参考清单和附录 G 断言表都是**生成内容**：改源文件（如 `book/exercises.json`），再运行对应生成器。入口表见 [AGENTS.md](AGENTS.md#生成内容修改来源再运行生成器)。
+3. 时效性断言（协议、API、模型配置）要查官方来源，同步正文、[dated-claims.json](book/dated-claims.json) 和 [source-audit.json](book/source-audit.json)；`checked_utc` 只在实际复核内容后更新。
+
+## 提交前检查
+
+源码检查（不需要 TeX）：
 
 ```bash
+python3 scripts/generate_exercise_bank.py --check
+python3 scripts/generate_chapter_navigation.py --check
+python3 scripts/generate_bilingual_glossary.py --check
+python3 scripts/check_book_contract.py --self-test
+python3 scripts/check_source_hygiene.py --self-test
 python3 scripts/validate_book.py
-cd book
-mkdir -p build/smoke
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build/smoke smoke-tagging.tex
-pdfinfo build/smoke/smoke-tagging.pdf | grep '^Tagged:'
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build main.tex
-cd ..
-python3 -m pip install pypdf==5.9.0
-python3 scripts/validate_book.py --pdf book/build/main.pdf
+python3 scripts/check_teaching_claims.py
+python3 scripts/check_chapter_crossrefs.py
+python3 scripts/check_part_references.py
 ```
 
-不要单凭 `pdfinfo` 的 `Tagged:` 行宣布无障碍合规：最后一步还会检查 PDF 结构树、公式及图像节点、目录、正文内容与文字边界。相关背景见 [无障碍现状和验收清单](docs/ACCESSIBILITY.md)。
+改动影响排版时，构建并检查成品：
 
-请勿逐章提交 PDF，也勿提交 LaTeX 中间文件。CI 每次完整成功构建只上传**一个**正式 PDF 工件；已发布版本则从 [GitHub Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 获取 PDF 与 SHA256SUMS。仅编辑 Markdown 文档时会运行轻量的站内 Markdown 链接检查，不会强制编译整本书。所有 `scripts/**/*.py` 验证脚本改动将触发完整 PDF CI；也可在 GitHub Actions 手动运行 `workflow_dispatch`。依赖固定与构建审计见 [构建复现说明](docs/BUILD-REPRODUCIBILITY.md)，出版版本流程见 [出版检查清单](docs/PUBLISHING.md)。
+```bash
+bash scripts/build_book.sh
+python3 scripts/validate_book.py --pdf book/build/main.pdf
+python3 scripts/check_latex_references.py --log book/build/main.log --pdf book/build/main.pdf
+python3 scripts/check_section_navigation.py --pdf book/build/main.pdf --aux book/build/main.aux
+python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
+```
 
-## 图形与内容验收
+构建日志中不能出现 `Overfull \hbox`、缺字（`Missing character`）或 tagpdf 父子关系警告。veraPDF 的 PDF/UA-2 检查在 CI 中运行。图形或版式改动后，渲染相关页目视检查。
 
-- 每次修改公式，核对维度、样例数字和最终答案，并运行 `scripts/validate_book.py`。
-- 新增有语义的 TikZ 图时，补充中文替代文字，并由结构检查确认 `/Figure` 与 `/Caption` 的嵌套关系。
-- 新增数据表格时设置 `TH` 表头并检查单元格结构；CI 的 veraPDF PDF/UA-2 验证为发布门槛。
-- 不要随意删除 `\DocumentMetadata`、回退编译引擎，或重新使用旧版 `latex-lab-testphase-table` 兼容补丁。
-- 图表和文字不得超出版心；复杂页面仍需人工目视检查。
+只改 Markdown 时运行 `python3 scripts/check_markdown_links.py` 和 `git diff --check` 即可；改工作流时另运行 `python3 scripts/check_workflows.py`。
 
-## Issue / PR
+不要提交 `book/build/`、编译 PDF、日志或 LaTeX 中间文件。不要为了通过 CI 关闭 `\DocumentMetadata`、结构标签或 MathML-AF，也不要降低检查阈值；能稳定识别的新错误，应补一条回归检查。
 
-优先报告：哪一段无法理解、跳过了哪个步骤、某次形状检查是否有问题。提交 PR 时请写明你改进了哪一种初学者困惑，附上手算核验步骤，并确认 LuaLaTeX 构建与相关验收可通过。
+## Issue 与 PR
+
+优先报告：哪一段看不懂、跳过了哪一步、哪个数字或形状不对。提交 PR 时说明改善了哪一种初学者困惑，附上手算核对步骤，并确认上面的检查通过。
 
 ## 贡献与许可
 
-项目采用双许可证：教材正文、LaTeX/TikZ、文档及正式 PDF 依照 [CC BY 4.0](LICENSE)；`scripts/` Python 工具及 `.github/workflows/` 工作流依照 [MIT](scripts/LICENSE)。具体范围和建议署名见 [README](README.md#开放许可证与转载)。
-
-提交 PR 前请确认自己有权按对应许可证贡献原创内容与代码；引用第三方材料时标明来源和原始许可，未经授权的内容不要混入可再授权的项目文件。修改教材时保留必要的署名和变更说明，修改软件时保留适用的 MIT 许可和版权声明。
+教材正文、LaTeX/TikZ、文档及正式 PDF 采用 [CC BY 4.0](LICENSE)；`scripts/` 与 `.github/workflows/` 采用 [MIT](scripts/LICENSE)，范围和建议署名见 [README](README.md#开放许可证与转载)。提交前请确认你有权按对应许可证贡献这些内容；引用第三方材料时标明来源和原始许可，未经授权的内容不要并入仓库。
