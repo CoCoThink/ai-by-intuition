@@ -100,7 +100,3 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 - 交付最终 PDF 时，优先下载指定成功 CI 的 `ai-by-intuition-book` 和 `pdfua2-machine-audit` 工件，核对提交号、PDF 哈希、审计报告及版权页／附录 G 来源一致。
 - 普通推送与正式 Release 分开；只有明确要求发行时才运行发布流程，不覆盖历史 Release 资产。
 - 完成后简要说明改动、已运行的验证、提交及相关 CI 链接；有最终 PDF 时给出可点击路径。未运行的检查如实说明。
-
-## 许可
-
-教材、LaTeX/TikZ、文档与正式 PDF 使用 [CC BY 4.0](LICENSE)；`scripts/` 与 GitHub Actions 工作流使用 [MIT](scripts/LICENSE)。保留适用的署名与许可，第三方引用不因加入本仓库自动获得再授权。
