@@ -1,0 +1,22 @@
+\par\smallskip
+\tagstructbegin{tag=Figure,alttext={学习后的注意力权重。查询花时，花记录的权重为 0.986722，窗记录为 0.000175，查询自身为 0.013103；查询窗时，前两项交换。虚线标出均匀读取的三分之一水平。记录值固定由 Value 提供，图中的柱只表示 Attention 读取权重。}}
+\begin{center}
+\begin{tikzpicture}[x=1mm,y=1mm]
+\foreach \offset/\title/\first/\second in {0/问花/.986722/.000175,77/问窗/.000175/.986722}{
+ \begin{scope}[xshift=\offset mm]
+ \node[font=\small\bfseries] at (31,43) {\title};
+ \draw[->,linegray] (0,0)--(66,0);
+ \draw[->,linegray] (0,0)--(0,38);
+ \draw[muted,dashed] (0,12)--(63,12);
+ \foreach \x/\weight/\name in {8/\first/花记录,28/\second/窗记录,48/.013103/查询自身}{
+   \filldraw[draw=flowcolor,fill=flowcolor!35] (\x,0) rectangle ++(12,{36*\weight});
+   \node[font=\scriptsize] at (\x+6,-4) {\name};
+ }
+ \end{scope}
+}
+\node[font=\scriptsize,text=muted] at (72,-12) {虚线：初始均匀权重 $1/3$；柱高：训练后的读取权重};
+\end{tikzpicture}
+\captionof{figure}{学到的 Q/K 匹配随查询选择记录，抑制另一条记录的干扰}
+\label{fig:learned-attention-selection}
+\end{center}
+\tagstructend

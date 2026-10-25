@@ -1,12 +1,12 @@
 \par\medskip
 \Needspace{85mm}
 \begin{center}
-\tagstructbegin{tag=Figure,alttext={Best-of-N 教学成功率图。横轴为一到十六份候选，纵轴为交付正确答案的概率。独立候选且完美核验时，单次成功率四分之一，曲线经过 N 为一、二、四、八、十六时的百分之二十五、四十三点七五、六十八点三六、八十九点九九、九十九点零零。候选完全复制时，成功率始终为百分之二十五。}}
+\tagstructbegin{tag=Figure,alttext={Best-of-n 教学成功率图。横轴为一到十六份候选，纵轴为交付正确答案的概率。独立候选且完美核验时，单次成功率四分之一，曲线经过 n 为一、二、四、八、十六时的百分之二十五、四十三点七五、六十八点三六、八十九点九九、九十九点零零。候选完全复制时，成功率始终为百分之二十五。}}
 \begin{tikzpicture}
 \begin{axis}[width=.88\linewidth,height=61mm,
  xmin=1,xmax=16,ymin=0,ymax=1.06,
  xtick={1,2,4,8,16},ytick={0,.25,.5,.75,1},
- xlabel={候选数 $N$},ylabel={成功率},
+ xlabel={候选数 $n$},ylabel={成功率},
  tick label style={font=\footnotesize},label style={font=\small},
  axis lines=left,axis line style={draw=muted},
  grid=major,grid style={draw=linegray},

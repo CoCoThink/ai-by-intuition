@@ -3,7 +3,7 @@
 \section{进阶探索：高维空间与记忆容量}
 \phantomsection\label{intro:13-capacity}
 \chaptercompass{提高维度和匹配选择性，会改变哪些干扰尺度？}{从随机 Key 的点积和 Value 的符号抵消估计容量。}{$|k_i k_j^\top|\approx1/\sqrt{d_k}$}{本章分析理想随机状态，不估计实际模型可靠知识量}
-\modelpipelinefocus{3}{高维记忆容量}
+\modelpipelinefocus{3}{高维记忆容量}\par\smallskip\noindent{\small 本章借鉴 Alex Wang 的联想记忆框架；来源见第~\pageref{source:alex-wang}~页。}\par
 
 
 高维空间能容纳许多彼此区分的方向。
@@ -23,36 +23,36 @@
 \]
 空间维度越高，随机无关 Key 往往越接近垂直，单条记忆造成的干扰通常越小。
 
-\subsection{为什么有 \texorpdfstring{$\sqrt M$}{√M}？}
+\subsection{为什么有 \texorpdfstring{$\sqrt{T_k}$}{记忆条数的平方根}？}
 想象随机向左或向右走，每一步长度为 $1$。走 $100$ 步，并不是必然离原点 $100$ 步；方向会互相抵消，最终位移的典型大小是 $\sqrt{100}=10$。
 
-如果各条干扰的方向、符号足够随机且近似独立，那么 $M$ 个小干扰的总波动规模通常不是 $M$ 倍，而是 $\sqrt M$ 倍。
+如果各条干扰的方向、符号足够随机且近似独立，那么 $T_k$ 个小干扰的总波动规模通常不是 $T_k$ 倍，而是 $\sqrt{T_k}$ 倍。
 
 将两条结果合并：
 \begin{equation}
-\boxed{\frac{\text{干扰}}{\text{信号}}\ \approx\ \sqrt M\times\frac{1}{\sqrt{d_k}}
-=\sqrt{\frac{M}{d_k}}.}
+\boxed{\frac{\text{干扰}}{\text{信号}}\ \approx\ \sqrt{T_k}\times\frac{1}{\sqrt{d_k}}
+=\sqrt{\frac{T_k}{d_k}}.}
 \end{equation}
 当干扰与信号处于同一量级时：
 \begin{equation}
-\sqrt{\frac{M}{d_k}}\approx1\quad\Rightarrow\quad M\approx d_k.
+\sqrt{\frac{T_k}{d_k}}\approx1\quad\Rightarrow\quad T_k\approx d_k.
 \end{equation}
 因此在这个\textbf{随机 Key/Value、简单外积求和}的模型里，容量的标度大约是维度 $d_k$。
 
 \subsection{平方激活为何带来平方量级？}
 不相关 Key 的相似度量级从 $1/\sqrt{d_k}$ 平方成 $1/d_k$。
 $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
-若 Value 全同号，干扰可随 $M$ 累加。满足抵消假设时：
+若 Value 全同号，干扰可随 $T_k$ 累加。满足抵消假设时：
 \[
-\frac{\text{干扰}}{\text{信号}}\ \approx\ \frac{\sqrt M}{d_k}.
+\frac{\text{干扰}}{\text{信号}}\ \approx\ \frac{\sqrt{T_k}}{d_k}.
 \]
 设这个量级达到 $1$：
 \begin{equation}
-\frac{\sqrt M}{d_k}\approx1
+\frac{\sqrt{T_k}}{d_k}\approx1
 \quad\Rightarrow\quad
-\boxed{M\approx d_k^2.}
+\boxed{T_k\approx d_k^2.}
 \end{equation}
-这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $M\approx d_k^p$ 这一类标度。
+这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $T_k\approx d_k^p$ 这一类标度。
 
 \subsection{线性注意力的状态，就是累加的外积记忆}
 

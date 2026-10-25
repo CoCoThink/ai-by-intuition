@@ -910,7 +910,7 @@
     "difficulty": "标准",
     "minutes": 8,
     "question": "\\textbf{【估算／解释】}独立候选的单次成功率 $p=1/2$，完美核验器筛选。至少要几份才能让成功率达到 $95\\%$？若所有候选复制同一次结果，增加份数能达到吗？",
-    "solution": "\\textbf{第一步：}先要求全部失败概率不超过 $0.05$。\\par\\nobreak\\textbf{解题过程：}$2^{-N}\\leq0.05$，$N\\geq\\log(20)/\\log2\\approx4.322$，所以最少 $5$ 份；四份仅 $93.75\\%$。完全相关时仍只有 $50\\%$，份数增加没有独立试错收益。",
+    "solution": "\\textbf{第一步：}先要求全部失败概率不超过 $0.05$。\\par\\nobreak\\textbf{解题过程：}$2^{-n}\\leq0.05$，$n\\geq\\log(20)/\\log2\\approx4.322$，所以最少 $5$ 份；四份仅 $93.75\\%$。完全相关时仍只有 $50\\%$，份数增加没有独立试错收益。",
     "legacy_answer_anchor": "",
     "id": "C-081"
   },
@@ -1089,7 +1089,7 @@
     "slug": "22d-modern-transformers",
     "difficulty": "标准",
     "minutes": 5,
-    "question": "\\phantomsection\\label{exercise:linked-22d-modern-transformers}  \\textbf{【手算】} 只有一层 Attention，序列长度 $T=120$，\n每个 K/V 头 $d_h=4$ 个数字；MHA 有 $6$ 个 K/V 头，\n\\conceptlink{gqa}{GQA} 只有 $2$ 个 K/V 头。两者各需缓存几个数？\n若每个数占两字节，GQA 的这些数需要多少字节（不计其他开销）？",
+    "question": "\\phantomsection\\label{exercise:linked-22d-modern-transformers}  \\textbf{【手算】} 只有一层 Attention，序列长度 $T=120$，\n每个 K/V 头 $d_k=4$ 个数字；MHA 有 $6$ 个 K/V 头，\n\\conceptlink{gqa}{GQA} 只有 $2$ 个 K/V 头。两者各需缓存几个数？\n若每个数占两字节，GQA 的这些数需要多少字节（不计其他开销）？",
     "solution": "{\\footnotesize\\textbf{第一步：}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。}\\par\\nobreak\n\\textbf{解答：} MHA：$2\\times120\\times6\\times4=5{,}760$ 个数；\nGQA：$2\\times120\\times2\\times4=1{,}920$ 个数；\n每个两字节时是 $3{,}840$ 字节（仅本层这些缓存数值）。",
     "legacy_answer_anchor": "",
     "id": "C-097"

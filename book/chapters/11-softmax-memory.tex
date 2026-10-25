@@ -39,9 +39,9 @@ Query 与三个 Key 的分数一次求出；下面同时计算全部 Query。
 \subsection{\texorpdfstring{为什么是 $K^\top$ 而不是 $K$？}{为什么是 K 转置而不是 K？}}
 \label{sec:key-layout-card}
 \input{figures/key-value-layout}
-$K:M\times d_k$，$\vect q^\top:1\times d_k$。
-因此 $\vect q^\top K^\top:1\times M$ 才能相乘；
-权重乘 $V:M\times d_v$ 才有输出 $1\times d_v$。
+$K:T_k\times d_k$，$\vect q^\top:1\times d_k$。
+因此 $\vect q^\top K^\top:1\times T_k$ 才能相乘；
+权重乘 $V:T_k\times d_v$ 才有输出 $1\times d_v$。
 列向量写法是对\textbf{整个等式转置}，两种写法的运算相同。
 
 \subsection{从一个 Query 到整句：Q/K/V 如何生成？}
@@ -61,9 +61,9 @@ $W_Q=\begin{bmatrix}1&1\\0&2\end{bmatrix}$，
 如果用列向量写同一映射，必须写
 $\vect q=W_Q^\top\vect x$；输入与权重需要一起转置。
 
-若一次有 $N$ 个 Query 和 $M$ 个 Key，
-$Q:N\times d_k$、$K:M\times d_k$、
-$V:M\times d_v$；Self-Attention 中 $N=M=T$。
+若一次有 $T_q$ 个 Query 和 $T_k$ 个 Key，
+$Q:T_q\times d_k$、$K:T_k\times d_k$、
+$V:T_k\times d_v$；Self-Attention 中 $T_q=T_k=T$。
 第 $i$ 行 Query 与每条 Key 依次匹配，
 一次矩阵乘法即可完成全部 Query 的匹配：
 \[
@@ -74,9 +74,9 @@ QK^\top=S.
 \begin{tabular}{@{}lll@{}}
 \toprule
 计算 & 输入形状 & 输出形状\\\midrule
-匹配 $QK^\top$ & $(N\times d_k)(d_k\times M)$ & $S:N\times M$\\
-逐行 Softmax & $S:N\times M$ & $A:N\times M$\\
-读取 $AV$ & $(N\times M)(M\times d_v)$ & $Y:N\times d_v$\\
+匹配 $QK^\top$ & $(T_q\times d_k)(d_k\times T_k)$ & $S:T_q\times T_k$\\
+逐行 Softmax & $S:T_q\times T_k$ & $A:T_q\times T_k$\\
+读取 $AV$ & $(T_q\times T_k)(T_k\times d_v)$ & $Y:T_q\times d_v$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -134,7 +134,7 @@ Y=AV=
 \label{eq:attention-transformer}
 \end{equation}
 \phantomsection\label{eq:multi-query-attention}
-Softmax 对每个 Query 的一行单独归一化，输出 $N\times d_v$。
+Softmax 对每个 Query 的一行单独归一化，输出 $T_q\times d_v$。
 除以 $\sqrt{d_k}$ 用于控制高维点积分数的典型量级；
 缩放会改变 Softmax 权重，因此需要根据新的分数重新计算。
 
@@ -161,5 +161,5 @@ $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 
 \begin{conclusion}
 现在你能从单次 Query 的点积与加权求和，直接写出
-$QK^\top\to\softmax\to AV$，并核对 $N,M,d_k,d_v$ 的形状。
+$QK^\top\to\softmax\to AV$，并核对 $T_q,T_k,d_k,d_v$ 的形状。
 \end{conclusion}

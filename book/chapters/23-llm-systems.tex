@@ -67,6 +67,7 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 这两种方法的截断集合依赖具体分布，并不总相同。
 
 \subsection{为什么训练能一次算多个位置，自回归生成却要逐个产生？}
+\phantomsection\label{concept:autoregressive}
 
 训练时，“春天 / 花 / 开了 / 。”的正确 Token
 已经在数据中，因此 \conceptlink{causal-mask}{因果掩码} 可以让各位置在同一次前向计算中
@@ -87,7 +88,6 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 
 \subsection{从哪里开始，到哪里停止：BOS、EOS 与长度预算}
 \phantomsection\label{concept:bos-eos}
-\phantomsection\label{concept:autoregressive}
 \textbf{BOS} 是开始标记，\textbf{EOS} 是结束标记；它们有词表中的专用 ID。
 是否插入 BOS、使用哪些结束 ID，遵循模型与分词器的配置。
 本书五项主词表为手算省略了特殊 Token，“。”只是标点，不能当成通用 EOS。

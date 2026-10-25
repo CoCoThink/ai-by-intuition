@@ -1,11 +1,11 @@
 \subsection{多条记忆：为什么会互相干扰？}
 \phantomsection\label{intro:05-memory-interference}
 \phantomsection\label{concept:memory-interference}
-对 $M$ 条行向量 Key--Value 配对，最直接的写入是外积累加：
+对 $T_k$ 条行向量 Key--Value 配对，最直接的写入是外积累加：
 \begin{equation}
-\boxed{\mathcal{M}=\sum_{i=1}^{M}k_i^\top v_i},
+\boxed{\mathcal{M}=\sum_{i=1}^{T_k}k_i^\top v_i},
 \qquad
-\boxed{x\mathcal{M}=\sum_{i=1}^{M}(xk_i^\top)v_i}.
+\boxed{x\mathcal{M}=\sum_{i=1}^{T_k}(xk_i^\top)v_i}.
 \end{equation}
 这里 $\mathcal{M}:d_k\times d_v$，$x:1\times d_k$，读取输出仍是一行。
 

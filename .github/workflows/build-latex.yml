@@ -97,7 +97,7 @@ jobs:
           python-version: '3.12'
       - name: Install PDF inspector and numeric teaching dependencies
         run: python -m pip install --disable-pip-version-check pypdf==5.9.0 numpy==2.3.5
-      - name: Check three-token Transformer reference (M1)
+      - name: Check printed numeric claims, learned QK selection and reference (M1)
         run: |
           python3 scripts/teaching_reference.py
           python3 scripts/check_teaching_claims.py

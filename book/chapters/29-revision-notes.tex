@@ -5,7 +5,7 @@
 
 \subsubsection*{从可复算的例子开始}
 
-\begin{itemize}
+\begin{itemize}[itemsep=1pt,parsep=0pt,topsep=3pt]
 \item \textbf{三维 Transformer：}
 运行 \texttt{python3 scripts/teaching\_reference.py --json}，
 检查三个位置的概率、损失和一次联合参数更新。
@@ -20,7 +20,7 @@ python3 scripts/pytorch_starter.py
 核对小文本的规范化、SHA-256 哈希及二元组 Jaccard 相似度；只用 Python 标准库。
 \item \textbf{测试时计算：}
 运行 \texttt{python3 scripts/test\_time\_compute\_demo.py}，
-枚举核对 Best-of-$N$ 的成功率、候选相关性、错误核验器与 $90\%$ 预算门槛；只用 Python 标准库。
+枚举核对 Best-of-$n$ 的成功率、候选相关性、错误核验器与 $90\%$ 预算门槛；只用 Python 标准库。
 \item \textbf{联想记忆：}
 运行 \texttt{python3 scripts/memory\_demo.py}，
 检查外积写入、串扰、Delta 残差与交替重访。
@@ -41,6 +41,7 @@ python3 scripts/vision_bridge_demo.py
 运行 \texttt{python3 scripts/review\_exercises\_demo.py}，
 核对 C-021、C-028、C-084、C-095、C-031、C-096 的中间计算。
 \item \texttt{python3 scripts/context\_contrast\_demo.py}：相同 Token、相同位置、不同前文的消融训练，比较逐位置损失下界与上下文读取。
+\item \texttt{python3 scripts/attention\_selection\_demo.py}：相同均值、不同记录绑定的四例训练，核对 Q/K 选择性、恢复均匀后的退化与梯度。
 \item \texttt{python3 scripts/mini\_transformer\_demo.py}：二维分数参数的完整前向与反向，有限差分核对全部 $24$ 个导数。
 \item \texttt{python3 scripts/cache\_budget\_demo.py}：从固定配置计算每 Token 与 32K 的 KV 字节数，同时核对缓存练习答案。
 \end{itemize}

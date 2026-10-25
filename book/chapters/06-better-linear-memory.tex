@@ -2,12 +2,12 @@
 \section{线性记忆怎样减少干扰？}
 \phantomsection\label{intro:06-better-linear-memory}
 \chaptercompass{写入 B 时能同时保护旧记忆 A 吗？}{比较最小二乘与逐条残差 Delta 更新，并看旧记忆受损。}{$\mathcal{M}:2\times2,\ k:1\times2,\ r:1\times2$}{这里修正外部状态 $\mathcal{M}$，不是训练神经网络参数}
-\modelpipelinefocus{3}{Delta 规则与残差记忆}
+\modelpipelinefocus{3}{Delta 规则与残差记忆}\par\smallskip\noindent{\small 本章借鉴 Alex Wang 的联想记忆框架；来源见第~\pageref{source:alex-wang}~页。}\par
 
 直接累加外积时，每条新记忆可能改变旧 Key 的输出。
 可以让矩阵同时拟合全部输入与目标：
 \[
-\boxed{\min_{\mathcal{M}}\sum_{i=1}^{M}\|k_i\mathcal{M}-v_i\|^2}.
+\boxed{\min_{\mathcal{M}}\sum_{i=1}^{T_k}\|k_i\mathcal{M}-v_i\|^2}.
 \]
 这叫最小二乘，注意\textbf{行向量 Key 从左边乘状态矩阵}。
 

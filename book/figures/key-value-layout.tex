@@ -8,7 +8,7 @@
 ]
 \small
 \noindent{\sffamily\bfseries\color{ink}图解：为什么一会儿写 $K$，一会儿写 $K^\top$？}\par\smallskip
-延续本章开头的单 Query 示例：$K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix}$，有 $M=3$ 条 Key、$d_k=2$ 个数字。
+延续本章开头的单 Query 示例：$K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix}$，有 $T_k=3$ 条 Key、$d_k=2$ 个数字。
 \textbf{相同底色表示同一条 Key：两栏中的数字相同，只是摆放方向不同。}
 
 \vspace{1.5mm}
@@ -28,7 +28,7 @@
 \node at (.5,-2.5){2}; \node at (1.5,-2.5){1};
 \end{tikzpicture}
 \\[1mm]
-$K\in\R^{M\times d_k}$\\
+$K\in\R^{T_k\times d_k}$\\
 {\footnotesize 每行一条 Key}
 \end{minipage}%
 \begin{minipage}[t]{.49\linewidth}
@@ -45,7 +45,7 @@ $K\in\R^{M\times d_k}$\\
 \node at (.5,-1.5){0}; \node at (1.5,-1.5){1}; \node at (2.5,-1.5){1};
 \end{tikzpicture}
 \\[1mm]
-$K^\top\in\R^{d_k\times M}$\\
+$K^\top\in\R^{d_k\times T_k}$\\
 {\footnotesize 每列一条 Key}
 \end{minipage}
 
@@ -53,8 +53,8 @@ $K^\top\in\R^{d_k\times M}$\\
 K\vect q=\vect s,\qquad
 \vect q^\top K^\top=\vect s^\top.
 \]
-{\footnotesize\color{muted}形状：$K:M\times d_k$，$\vect q:d_k\times1$，
-$\vect s:M\times1$；转置后为 $1\times d_k$ 乘 $d_k\times M$。}\par
+{\footnotesize\color{muted}形状：$K:T_k\times d_k$，$\vect q:d_k\times1$，
+$\vect s:T_k\times1$；转置后为 $1\times d_k$ 乘 $d_k\times T_k$。}\par
 \begin{center}
 {\color{flowcolor}\bfseries $(K\vect q)^\top=\vect q^\top K^\top$}
 \end{center}
@@ -65,10 +65,10 @@ $\vect s:M\times1$；转置后为 $1\times d_k$ 乘 $d_k\times M$。}\par
 V\ \xleftrightarrow{\text{转置}}\ V^\top,\qquad
 V^\top\vect a=\vect y,\quad \vect a^\top V=\vect y^\top.
 \]
-{\footnotesize\color{muted}形状：$V:M\times d_v$，
-$V^\top:d_v\times M$，$\vect a:M\times1$，
+{\footnotesize\color{muted}形状：$V:T_k\times d_v$，
+$V^\top:d_v\times T_k$，$\vect a:T_k\times1$，
 $\vect y:d_v\times1$。}\par
-\textbf{检查：}若 $M=3$、$d_k=2$、$d_v=4$，
+\textbf{检查：}若 $T_k=3$、$d_k=2$、$d_v=4$，
 则 $K:3\times2$、$K^\top:2\times3$、
 $V:3\times4$、$V^\top:4\times3$。
 \textbf{Key 和 Value 不必具有相同维度。}

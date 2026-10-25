@@ -216,6 +216,7 @@ GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
 
 \subsection{训练资料从哪里来：来源、清洗、去重与配比}
 \phantomsection\label{concept:pretraining-data}
+\phantomsection\label{concept:evaluation-contamination}
 预训练先把网页、书籍、代码与问答整理成\textbf{来源可追溯的 Token 样本}。
 
 \begin{enumerate}[itemsep=2pt]
@@ -223,7 +224,7 @@ GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
 \item \textbf{清洗：}去掉破损编码、导航和广告模板，保留正文与必要上下文；
 \item \textbf{去重：}哈希识别完全重复，分片相似度发现近重复候选；
 \item \textbf{质量与配比：}平衡语言和领域，测量各来源贡献，避免模板挤占信号；
-\item \phantomsection\label{concept:evaluation-contamination}\textbf{切分与污染：}按组划分训练／验证／测试，核对测试题和答案是否泄漏。
+\item \textbf{切分与污染：}按组划分训练／验证／测试，核对测试题和答案是否泄漏。
 \end{enumerate}
 
 \localfixture{从“春天花开了”做一次真实可复算的去重}

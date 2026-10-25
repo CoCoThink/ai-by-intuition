@@ -37,7 +37,9 @@
 
 正文的教学词表 ID、位置与数学行列从 1 起，五项是“其他、春天、。、花、开了”；Python 索引减 1。数学符号统一为输出头 `W_out`、logits `Z`、词表概率 `Π`、位置 `P_pos` 与记忆状态 `𝓜`，脚本接口名在附录 A 对照。
 
-新增的 `scripts/check_book_contract.py` 检查**引用用途**（第十步必须依次指向训练与生成）、每章唯一自测、题答对应、符号与帽子作用域、逐条 UTC 来源日期及生成题库。`scripts/check_teaching_claims.py` 复算缓存字节、简化残差梯度、同 Token 上下文消融和二维完整反传；已有 PDF 标签、MathML、引用、版面和 PDF/UA-2 检查继续运行。
+新增的 `scripts/check_book_contract.py` 检查**引用用途**（第十步必须依次指向训练与生成）、每章唯一自测、题答对应、符号与帽子作用域、逐条 UTC 来源日期及生成题库。索引锚点还需紧随对应小节，防止继承枚举项号；图中配色与文字说明共同检查。`scripts/check_teaching_claims.py` 复算缓存字节、简化残差梯度、同 Token 上下文消融、带干扰的 Q/K 选择性和二维完整反传；已有 PDF 标签、MathML、引用、版面和 PDF/UA-2 检查继续运行。
+
+第 24.10 节的第二级对照可用 `python3 scripts/attention_selection_demo.py` 独立复算：均匀读取损失为 `ln 2`；训练 Q/K 后约 `0.000502`，查询改变时重点读取的记录随之改变。脚本还会交换记录顺序、测试未见过的值组合，并逐项核对十个参数的梯度。
 
 测试时计算的概率、候选相关性和核验器反例可用 `python3 scripts/test_time_compute_demo.py` 复算，无须安装额外依赖。
 

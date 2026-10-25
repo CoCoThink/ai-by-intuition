@@ -24,6 +24,7 @@
 [实际章节顺序](book/README.md) 与
 [最新 PDF 构建](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml)。
 本轮的数值、结构及新增 CI 检查见[上下文闭环与修订记录](docs/REVIEW-CONTEXT-AND-STRUCTURE.md)。
+后续评审修订补充了[带干扰的 Q/K 选择性实验](scripts/attention_selection_demo.py)：均匀平均无法区分同一组值的不同名字绑定，训练后按查询选择记录；符号、图例、框架署名与索引一并修正。
 原 V2 候选的历史成功构建
 [39816203928](https://github.com/CoCoThink/ai-by-intuition/actions/runs/39816203928)
 仅对应当时提交 \`2cad92cd\`，不是本次修订版的正式发布证据。

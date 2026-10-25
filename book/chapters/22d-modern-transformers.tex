@@ -1,7 +1,7 @@
 \chapterrule
 \section{现代 Transformer 为什么看起来越来越不像原版？}
 \label{intro:22d-modern-transformers}
-\chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_h,\quad KV:T\times H_{KV}\times d_h$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
+\chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_k,\quad KV:T\times H_{KV}\times d_k$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
 \modelpipelinefocus{3}{现代注意力与架构}
 
 
@@ -123,13 +123,13 @@ RMS 归一化后的数字约为 $(0.849,1.131)$。
 
 
 为了比较缓存的\textbf{理论元素个数}，假设单层：
-上下文长度 $T=100$，每头维度 $d_h=8$，
+上下文长度 $T=100$，每头维度 $d_k=8$，
 有 8 个 Query 头。如果 MHA 有 8 个 K/V 头：
 \[
 \underbrace{2}_{K,V}\times
 \underbrace{100}_{T}\times
 \underbrace{8}_{h_{kv}}\times
-\underbrace{8}_{d_h}
+\underbrace{8}_{d_k}
 =\answerresult{12{,}800\ \text{个数}}.
 \]
 若采用 2 个 K/V 头的 GQA：

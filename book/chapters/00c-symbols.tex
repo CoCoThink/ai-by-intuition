@@ -13,21 +13,22 @@
 \toprule
 符号 & 含义 & 典型形状\\\midrule
 $T$ & 当前序列 Token 数 & $X:T\times d_{\rm model}$\\
-$N$ & Query 位置数 & $Q:N\times d_k$\\
-$M$ & Key/Value 位置数 & $K:M\times d_k$，$V:M\times d_v$\\
+$T_q$ & Query 位置数 & $Q:T_q\times d_k$\\
+$T_k$ & Key/Value 位置数 & $K:T_k\times d_k$，$V:T_k\times d_v$\\
+$n$ & 测试时采样的候选份数 & Best-of-$n$；不表示位置数或层数\\
 $d_{\rm model}$ & 每个 Token 的隐藏宽度 & $W_Q:d_{\rm model}\times d_k$\\
-$d_k$ & Query 与 Key 的匹配宽度 & $QK^\top:N\times M$\\
-$d_v$ & Value 的特征数 & $AV:N\times d_v$\\
+$d_k$ & Query 与 Key 的匹配宽度 & $QK^\top:T_q\times T_k$\\
+$d_v$ & Value 的特征数 & $AV:T_q\times d_v$\\
 $d_{\rm ff}$ & FFN 内部宽度 & $W_{\rm up}:d_{\rm model}\times d_{\rm ff}$\\
 $|\mathcal V|$ & 词表大小 & $W_{\rm out}:d_{\rm model}\times|\mathcal V|$\\
 \bottomrule
 \end{tabularx}
 \end{center}
-Self-Attention 中 $N=M=T$；跨序列读取时 $N$ 与 $M$ 可以不同。
+Self-Attention 中 $T_q=T_k=T$；跨序列读取时 $T_q$ 与 $T_k$ 可以不同。
 $\softmax$ 对矩阵默认逐行归一化。
 温度 $\tau>0$ 与逆温度 $\beta=1/\tau$ 会在采样章继续出现。
 
-\subsubsection*{同一个符号，只承担一个主角色}
+\subsubsection*{主线矩阵与局部参数的约定}
 \begin{center}\small
 \renewcommand{\arraystretch}{1.2}
 \tagpdfsetup{table/header-rows={1}}
@@ -41,10 +42,12 @@ $S,A$ & 注意力匹配分数、逐行 Softmax 后的读取权重\\
 $\mathcal{M}$ & 外积记忆／线性注意力的状态，与分数 $S$ 区分\\
 $F^{(\ell)},F_{\rm mid}$ & MLP 的第 $\ell$ 层激活、FFN 中间表示\\
 $\mathcal A_i$ & 奖励归一化后的相对优势，与注意力权重 $A$ 区分\\
+$\beta,\beta_1,\beta_2$ & $\beta=1/\tau$ 为逆温度；$\beta_1,\beta_2$ 为 Adam 的历史平均系数。LayerNorm 公式中的 $\beta$ 单独表示可学习偏移，按所在公式区分\\
 \bottomrule\end{tabularx}
 \end{center}
 脚本为保持接口简短，使用 \texttt{P} 对应 $P_{\rm pos}$、
-\texttt{probs} 对应 $\Pi$、\texttt{Wout} 对应 $W_{\rm out}$；
+\texttt{probs} 对应 $\Pi$、\texttt{Wout} 对应 $W_{\rm out}$、
+\texttt{loss} 对应 $L$、\texttt{logits} 对应 $Z$；
 大小写相近的 \texttt{Wo} 对应 $W_O$。代码名与数学名在此一一对照。
 
 \subsubsection*{全书色彩表：用标签和线型共同识别}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enumerate the book's 17 + 25 Best-of-N example; no network or dependencies."""
+"""Enumerate the book's 17 + 25 Best-of-n example; no network or dependencies."""
 from itertools import product
 from math import ceil, isclose, log
 
@@ -25,7 +25,7 @@ def enumerate_success(n, *, copied=False, verifier=verify):
 
 
 def main():
-    print('N   independent/perfect   copied/perfect   independent/faulty')
+    print('n   independent/perfect   copied/perfect   independent/faulty')
     for n in (1, 2, 4, 8):
         independent = enumerate_success(n)
         copied = enumerate_success(n, copied=True)
@@ -38,7 +38,7 @@ def main():
     minimum = ceil(log(.1) / log(.75))
     assert minimum == 9 and 1 - .75 ** 8 < .9 <= 1 - .75 ** minimum
     assert isclose(1 - .75 ** 16, .9899774042423815)
-    print(f'90% target: N >= {minimum}; N=8 costs 8 * 128 = {8 * 128} output tokens')
+    print(f'90% target: n >= {minimum}; n=8 costs 8 * 128 = {8 * 128} output tokens')
 
 
 if __name__ == '__main__':

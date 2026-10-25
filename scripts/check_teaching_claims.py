@@ -12,6 +12,7 @@ import re
 import numpy as np
 from cache_budget_demo import kv_bytes,run_checks as check_cache
 from context_contrast_demo import run_checks as check_context
+from attention_selection_demo import run_checks as check_selection
 from mini_transformer_demo import run_checks as check_mini
 from pretraining_data_demo import run_checks as check_data
 from teaching_reference import parameters,forward,backward,LR
@@ -68,6 +69,15 @@ def main():
     local,context=check_context()
     training=(ROOT/'book/chapters/22c-language-training.tex').read_text()
     assert f'{local:.6f}' in training and f'{context:.6f}' in training
+    uniform, learned, restored = check_selection()
+    selection = training.split(r'\label{experiment:attention-selection}', 1)[1]
+    figure = (ROOT/'book/figures/learned-attention-selection.tex').read_text()
+    for state in (uniform, learned, restored):
+        assert f'{state["loss"]:.6f}' in selection
+        assert f'{state["correct_probs"][0]:.6f}' in selection
+    for value in learned['weights'][0]:
+        assert f'{value:.6f}' in selection, 'Printed selection weight differs from trained Q/K'
+        assert f'{value:.6f}' in figure or f'{value:.6f}'.lstrip('0') in figure
     w=parameters();state=forward(w);g=backward(w,state)
     updated=forward({k:v-LR*g[k] for k,v in w.items()})
     assert f"{state['loss']:.6f}" in training

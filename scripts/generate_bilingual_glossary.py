@@ -15,6 +15,19 @@ ROOT = Path(__file__).resolve().parents[1]
 CHAPTERS = ROOT / "book" / "chapters"
 TARGET = CHAPTERS / "24e-bilingual-glossary.tex"
 
+# The data-preparation introduction and the later benchmark discussion are both
+# useful lookup destinations. Store this once for both generated indices.
+EXTRA_REFERENCES = {
+    "concept:evaluation-contamination": ("concept:evaluation-contamination-benchmark",),
+}
+
+
+def reference_cell(reference: str) -> str:
+    return r"\newline ".join(
+        r"\hyperref[" + target + r"]{\ref*{" + target + r"}/\pageref*{" + target + r"}}"
+        for target in (reference, *EXTRA_REFERENCES.get(reference, ()))
+    )
+
 # The English lookup already maps every one of the 100 foundation terms.
 # Only the modern additions need an explicit bilingual display mapping.
 MODERN_PAIRS = """任务契约 | Task contract
@@ -142,7 +155,7 @@ def generate() -> str:
     def add_row(zh: str, en: str, definition: str, reference: str) -> None:
         tex = (
             f"{zh} & {en} & {definition} & "
-            + r"\hyperref[" + reference + r"]{\ref*{" + reference + r"}/\pageref*{" + reference + r"}}\\"
+            + reference_cell(reference) + r"\\"
         )
         rows.append((en.casefold(), tex))
 

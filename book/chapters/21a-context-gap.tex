@@ -43,7 +43,10 @@ L_{\rm local}=-\tfrac12[\log p+\log(1-p)]\geq\log2.
 \]
 因为 $p(1-p)\leq1/4$，增加逐位置网络容量也突破不了这个下界。
 加入上下文读取后，输入才变得可区分。
-第~\ref*{intro:22c-language-training}~章会训练两个版本，检验这个预测。
+能接收这些历史的固定窗口 MLP 或 RNN 也能拟合这两例。
+主线“春天、花、开了”用于核对完整计算图；
+第~\ref*{intro:22c-language-training}~章另做两级对照：先检验前文读取，
+再加入干扰记录，让模型学习 Q/K，观察它怎样按查询选择线索。
 
 \subsection{朴素办法：把前几个 Token 直接拼起来}
 

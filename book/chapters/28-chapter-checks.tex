@@ -176,7 +176,7 @@
 \par\answerpiece{3}{找错}{先查相对优势之外还有哪些策略目标项。}完整目标还涉及新旧策略概率比、裁剪和可能的正则化；奖励完全相同时标准差为零，需数值稳定处理。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 31 章}] \phantomsection\label{answer:23cc-test-time-compute}\textbf{\hyperref[check:23cc-test-time-compute]{推理时多算几次，怎样提高解题成功率？}}\par\nobreak
-\answerpiece{1}{解释}{先检查参数有没有被更新。}RLVR 用验证结果构造奖励并更新策略；Best-of-$N$ 冻结参数，用验证结果选出本次候选。
+\answerpiece{1}{解释}{先检查参数有没有被更新。}RLVR 用验证结果构造奖励并更新策略；Best-of-$n$ 冻结参数，用验证结果选出本次候选。
 \par\answerpiece{2}{估算}{先计算四次都失败的概率。}$1-(1-1/2)^4=15/16=93.75\%$。
 \par\answerpiece{3}{复现}{枚举四个独立二值结果，再对比一个共享结果。}独立情况的 $16$ 种等概率结果里只有全错一种失败，成功率 $15/16$；完全相同候选只有一次随机尝试，成功率 $1/2$。代码可用 \texttt{itertools.product((0,1), repeat=4)} 枚举并统计 \texttt{any}，再对比 \texttt{(0,0,0,0)} 与 \texttt{(1,1,1,1)}。
 \par\Needspace{8\baselineskip}

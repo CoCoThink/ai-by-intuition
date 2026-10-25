@@ -2,7 +2,7 @@
 \section{外积与矩阵：如何真正“写入”一条记忆？}
 \label{intro:04-key-value-outer-product}
 \chaptercompass{一个矩阵怎样保存 Key 和 Value 的关联？}{外积写入 $\mathcal{M}=k^\top v$，行查询从左边读取 $x\mathcal{M}$。}{$k:1\times d_k,\ v:1\times d_v\to \mathcal{M}:d_k\times d_v\to x\mathcal{M}$}{这里写入的是示例状态矩阵；是否训练取决于应用场景}
-\modelpipelinefocus{3}{Attention 的记忆视角}
+\modelpipelinefocus{3}{Attention 的记忆视角}\par\smallskip\noindent{\small 本章借鉴 Alex Wang 的联想记忆框架；来源见第~\pageref{source:alex-wang}~页。}\par
 \phantomsection\label{concept:outer-product}
 
 Transformer 主线里每个 Token 占一行。现在换一种视角理解线性层：
@@ -40,9 +40,9 @@ Value 为 $v:1\times d_v$。我们希望读出一行 $1\times d_v$ 的结果。
 
 \begin{idea}
 这就是同一计算的两种写法：$x(k^\top v)=(xk^\top)v$。
-如果有 $M$ 条记忆，Key 和 Value 分别\textbf{按行}存进
-$K:M\times d_k$、$V:M\times d_v$，
-匹配权重为 $\vect a^\top:1\times M$，
+如果有 $T_k$ 条记忆，Key 和 Value 分别\textbf{按行}存进
+$K:T_k\times d_k$、$V:T_k\times d_v$，
+匹配权重为 $\vect a^\top:1\times T_k$，
 则最后读出为 $\vect a^\top V:1\times d_v$。
 形式直接对齐主线 Attention 的“权重乘 Value”。
 \end{idea}

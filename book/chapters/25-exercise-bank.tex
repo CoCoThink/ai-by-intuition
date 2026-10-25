@@ -284,7 +284,7 @@ Top-2 文档次序与缺失的季度证据。 \hyperref[solution:C-084]{解答�
 再为 $n=5,w=3$ 添加一条计算所有矩阵元素之和的断言。
 期望的允许位置对总数是多少？与 $w=2$ 相比增加多少？ \hyperref[solution:C-096]{解答见第~\pageref*{solution:C-096}~页。}
 \item[\textbf{C-097.}] \phantomsection\label{exercise:C-097}\label{exercise:C2-6}\exercisemeta{标准}{5}{第~\ref*{intro:22d-modern-transformers}~章／第~\pageref*{intro:22d-modern-transformers}~页}\phantomsection\label{exercise:linked-22d-modern-transformers}  \textbf{【手算】} 只有一层 Attention，序列长度 $T=120$，
-每个 K/V 头 $d_h=4$ 个数字；MHA 有 $6$ 个 K/V 头，
+每个 K/V 头 $d_k=4$ 个数字；MHA 有 $6$ 个 K/V 头，
 \conceptlink{gqa}{GQA} 只有 $2$ 个 K/V 头。两者各需缓存几个数？
 若每个数占两字节，GQA 的这些数需要多少字节（不计其他开销）？ \hyperref[solution:C-097]{解答见第~\pageref*{solution:C-097}~页。}
 \item[\textbf{C-098.}] \phantomsection\label{exercise:C-098}\label{exercise:C2-7}\exercisemeta{标准}{5}{第~\ref*{intro:22d-modern-transformers}~章／第~\pageref*{intro:22d-modern-transformers}~页}\textbf{【手算】} \conceptlink{rope}{RoPE} 的简化二维推导中，Query 在位置 $m=2$，

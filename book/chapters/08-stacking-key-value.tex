@@ -1,12 +1,12 @@
 \subsection{把 Key 和 Value 堆成矩阵：从匹配到读出}
 \phantomsection\label{intro:08-stacking-key-value}
-设 Query $x:1\times d_k$，$M$ 条 Key 按行排成
-$K:M\times d_k$，Value 按行排成 $V:M\times d_v$。
+设 Query $x:1\times d_k$，$T_k$ 条 Key 按行排成
+$K:T_k\times d_k$，Value 按行排成 $V:T_k\times d_v$。
 一次查询经过三步：
 \begin{equation}
 \boxed{\underbrace{y}_{1\times d_v}
-=\underbrace{\sigma(xK^\top)}_{1\times M}
-\underbrace{V}_{M\times d_v}.}
+=\underbrace{\sigma(xK^\top)}_{1\times T_k}
+\underbrace{V}_{T_k\times d_v}.}
 \end{equation}
 这与前面 $\softmax(QK^\top)V$ 采用同一个行向量约定。
 
@@ -35,11 +35,11 @@ aV=(1,0)\begin{bmatrix}2&1\\0&3\end{bmatrix}
 ReLU 是作用于分数，而不是事先作用于 Key 矩阵。
 
 \subsubsection{从二维推广到不同维度}
-$M$ 是记忆条数，$d_k$ 是每条 Key 的宽度，$d_v$ 是 Value 的宽度。
+$T_k$ 是记忆条数，$d_k$ 是每条 Key 的宽度，$d_v$ 是 Value 的宽度。
 \[
-(1\times d_k)(d_k\times M)(M\times d_v)=(1\times d_v).
+(1\times d_k)(d_k\times T_k)(T_k\times d_v)=(1\times d_v).
 \]
-例如 $M=100$、$d_k=64$、$d_v=32$，
+例如 $T_k=100$、$d_k=64$、$d_v=32$，
 匹配结果是 $1\times100$，输出是 $1\times32$。
 每个 Token 占一行的规则始终不变。
 

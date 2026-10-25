@@ -67,8 +67,37 @@ def notation_errors(body):
     if re.search(r'\\to L:T\\times\|',body):errors.append('Logits must be Z; L is loss')
     if re.search(r'A\^\{\(\\ell\)\}',body):errors.append('MLP activations must be F, not attention A')
     if re.search(r'(?<![A-Za-z])P\s*&:',body):errors.append('Position parameter counts must use P_pos')
+    if re.search(r'Best-of-(?:\$N\$|N\b)',body):errors.append('Candidate counts must use Best-of-n')
+    if re.search(r'\\(?:nolinkurl|url)\{python3\s',body):errors.append('Typeset shell commands with texttt; URL macros discard spaces')
     if re.search(r'[\x00-\x08\x0b\x0c\x0e-\x1f]',body):errors.append('Control character in TeX')
     return errors
+
+
+def concept_anchor_errors(body, label, heading):
+    """A valid label can silently inherit an item number or the wrong section."""
+    marker = r'\label{' + label + '}'
+    if body.count(marker) != 1:
+        return [f'{label}: expected one concept anchor']
+    prefix = body.split(marker, 1)[0]
+    headings = list(re.finditer(r'\\subsection\{', prefix))
+    if not headings:
+        return [f'{label}: missing subsection owner']
+    last = headings[-1]
+    title, end = argument(prefix, last.end()-1)
+    if title != heading:
+        return [f'{label}: concept belongs to {heading}, found {title}']
+    # Requiring placement immediately after its heading avoids inherited item,
+    # equation and other local counters, even though the hyperlink itself works.
+    between = re.sub(r'\\phantomsection|\\label\{[^}]+\}', '', prefix[end:])
+    return [] if not between.strip() else [f'{label}: anchor must follow its subsection heading before any content/counter']
+
+
+def fitting_color_errors(body):
+    """Validate the plotted marks AND their prose key; raw colors alone miss it."""
+    required = (r'\fill[noisecolor]', r'\draw[flowcolor,very thick]',
+                '黑点是带测量噪声的训练样本，蓝灰线')
+    return [] if all(s in body for s in required) and '橙点' not in body else [
+        'Fitting illustration and caption must agree: black noise points, blue-gray curves']
 
 
 def validate_contract():
@@ -85,10 +114,24 @@ def validate_contract():
     require(len(set(allchecks))==len(allchecks),'Repeated self-check slug')
     require('阅读指南' not in main and '阅读指南' not in sources['20b-task-contract'],'Prelude must be called 序章')
     errors.extend(ten_step_errors(sources['22-transformer-architecture']))
+    for filename,label,heading in (
+        ('23a-from-toy-to-gpt','concept:evaluation-contamination','训练资料从哪里来：来源、清洗、去重与配比'),
+        ('23e-tech-judgement','concept:evaluation-contamination-benchmark','为什么 Benchmark 高分仍需要复核？'),
+        ('23-llm-systems','concept:autoregressive','为什么训练能一次算多个位置，自回归生成却要逐个产生？'),
+    ):
+        errors.extend(concept_anchor_errors(sources[filename],label,heading))
     combined={'main':main,**sources,'part-maps':(BOOK/'part-maps.tex').read_text(),
               'part-reviews':(BOOK/'part-reviews.tex').read_text()}
     for p in (BOOK/'figures').glob('*.tex'):combined['figures/'+p.name]=uncomment(p.read_text())
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in notation_errors(body))
+    for name in ('00c-symbols','11-softmax-memory','04-key-value-outer-product',
+                 '05-memory-interference','06-better-linear-memory','08-stacking-key-value',
+                 '09-nonlinearity-and-memory','13-capacity'):
+        body=sources[name].replace(r'\mathcal{M}','')
+        require(not re.search(r'(?<![A-Za-z])M(?![A-Za-z])',body),f'{name}: KV/memory counts must use T_k, not M')
+    require('d_h' not in sources['22d-modern-transformers'],'Modern head widths must use d_k; d_h is the RNN state width')
+    require(not re.search(r'(?<![A-Za-z])N(?![A-Za-z_])', sources['23cc-test-time-compute']),
+            'Test-time candidate counts must use n')
     for name in ('04-key-value-outer-product','05-memory-interference','06-better-linear-memory',
                  '08-stacking-key-value','09-nonlinearity-and-memory','14-summary','13-capacity'):
         require(not re.search(r'(?<![A-Za-z\\])S(?![A-Za-z])', sources[name]),
@@ -127,6 +170,20 @@ def validate_contract():
     require('12{,}288' in sources['22d-modern-transformers'] and '402{,}653{,}184' in sources['22d-modern-transformers'],'Real KV byte estimate missing')
     for fragment in ('P_{\\rm pos}',r'\Pi',r'W_{\rm out}',r'\mathcal{M}',r'N_{\rm layer}'):
         require(fragment in sources['00c-symbols'],f'Symbol table missing {fragment}')
+    for fragment in ('T_q','T_k','Best-of-$n$',r'\beta_1,\beta_2','LayerNorm',r'\texttt{loss}',r'\texttt{logits}'):
+        require(fragment in sources['00c-symbols'],f'Symbol/code table missing {fragment}')
+    require('学' in sources['21a-context-gap'] and 'Q/K' in sources['21a-context-gap'] and
+            '固定窗口 MLP 或 RNN' in sources['21a-context-gap'],'Context motivation must preview selection and alternatives')
+    require('experiment:attention-selection' in sources['22c-language-training'] and
+            'figures/learned-attention-selection' in sources['22c-language-training'],
+            'Context training must show learned Q/K selection')
+    require('叙述借鉴与第三方许可见版权页' not in main,'Remove cover credit pointer')
+    memory_part=main.split(r'\part{联想记忆与线性状态}',1)[1].split(r'\clearpage',1)[0]
+    require('Alex Wang' in memory_part and 'source:alex-wang' in memory_part,'Memory part opener must credit its teaching framework')
+    for name in ('04-key-value-outer-product','06-better-linear-memory','09-nonlinearity-and-memory','13-capacity'):
+        lead=sources[name].split(r'\subsection',1)[0]
+        require('Alex Wang' in lead and 'source:alex-wang' in lead,f'{name}: missing chapter-level framework credit')
+    require('Alex Wang' in sources['00h-colophon'],'Copyright acknowledgments must credit memory framework')
     # One canonical JSON bank; every published ID and answer uses the same value.
     from generate_exercise_bank import load_exercises,render
     data,_,_=load_exercises()
@@ -155,12 +212,22 @@ def validate_contract():
                 ids=re.findall(r'\\answerpiece\{([^}]+)\}',section)
                 require(ids==[str(i) for i in range(1,count+1)],f'{slug}: answer numbering differs from questions: {ids}')
     # Canonical glossary defines its own count; both generated indices must match.
-    from generate_bilingual_glossary import generate,entries
+    from generate_bilingual_glossary import generate,entries,EXTRA_REFERENCES
     require(sources['24e-bilingual-glossary'].strip()==uncomment(generate()).strip(),'Stale generated glossary')
     total=len(entries('24-lexicon.tex'))+len(entries('24b-modern-lexicon.tex'))
     require(f'全量中英对照：{total} 项' in sources['24e-bilingual-glossary'],'Glossary count must be generated')
-    require(sources['24e-bilingual-glossary'].count(r'\hyperref[')==total,'Glossary row count mismatch')
-    require(sources['24f-chinese-index'].count(r'\hyperref[')==total,'Pinyin row count mismatch')
+    expected_links=total+sum(len(extra) for extra in EXTRA_REFERENCES.values())
+    for name in ('24e-bilingual-glossary','24f-chinese-index'):
+        require(sum(' & ' in line and r'\hyperref[' in line for line in sources[name].splitlines())==total,
+                f'{name}: glossary row count mismatch')
+        require(sources[name].count(r'\hyperref[')==expected_links,f'{name}: glossary reference count mismatch')
+        for target in ('concept:evaluation-contamination','concept:evaluation-contamination-benchmark','concept:autoregressive'):
+            require(r'\hyperref['+target+']' in sources[name],f'{name}: missing lookup destination {target}')
+    index_rows=[]
+    for name in ('24e-bilingual-glossary','24f-chinese-index'):
+        index_rows.append({tuple(line.split(' & ')[:2]): tuple(re.findall(r'\\hyperref\[([^]]+)\]',line))
+                           for line in sources[name].splitlines() if ' & ' in line and r'\hyperref[' in line})
+    require(index_rows[0]==index_rows[1],'English and pinyin lookup destinations differ')
     for term in ('提示注入','困惑度','自回归','蒸馏','剪枝','评测污染','混合精度','BOS/EOS'):
         require(term in sources['24e-bilingual-glossary'],f'Missing glossary term {term}')
     # The reserved role colors cannot silently return to the diagrams that
@@ -171,6 +238,7 @@ def validate_contract():
         body = combined['figures/'+name+'.tex']
         require(required in body, f'{name}: semantic color {required} missing')
         require(not re.search(r'\b(?:orange|teal|blue)\b', body), f'{name}: Q/K/V role palette reused for another purpose')
+    errors.extend(fitting_color_errors(combined['figures/generalization-three-fits.tex']))
     # Per-link UTC audit records. Accessibility is deliberately distinct from content verification.
     manifest={r['url']:r for r in json.loads((BOOK/'source-audit.json').read_text())}
     source=sources['26-sources']
@@ -188,7 +256,7 @@ def validate_contract():
     # No screen-only navigation wording in the printable active edition.
     for name,body in combined.items():
         if re.search(r'点击题目标题|（返回正文）',body):errors.append(f'{name}: replace screen-only navigation with page references')
-    for name in ('context_contrast_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace'):
+    for name in ('context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace'):
         spelling=name.replace('_',r'\_')
         require(spelling in sources['29-revision-notes'] or name in sources['29-revision-notes'],f'Missing reproduction entry: {name}')
     return errors
@@ -203,7 +271,17 @@ def self_test():
     assert not notation_errors(r'\widehat{y}_i+\Pi_{1,4}')
     for bad in (r'\widehat y',r'\widehat{P}',r'\widehat{y\approx0}',r'W_{\rm vocab}',r'A^{(\ell)}',r'\to L:T\times|\mathcal V|'):
         assert notation_errors(bad),bad
-    print('Book contract regression tests: valid-but-wrong chapter roles, accent scope, notation conflicts rejected')
+    assert not notation_errors('Best-of-$n$') and notation_errors('Best-of-$N$')
+    assert notation_errors(r'\nolinkurl{python3 scripts/example.py}')
+    good_anchor=r'\subsection{Definition}\phantomsection\label{concept:test}'
+    assert not concept_anchor_errors(good_anchor,'concept:test','Definition')
+    assert concept_anchor_errors(good_anchor.replace(r'\phantomsection',r'\begin{enumerate}\item '),'concept:test','Definition')
+    assert concept_anchor_errors(good_anchor.replace('Definition','Next section'),'concept:test','Definition')
+    fitting=r'\fill[noisecolor] \draw[flowcolor,very thick] 黑点是带测量噪声的训练样本，蓝灰线'
+    assert not fitting_color_errors(fitting)
+    assert fitting_color_errors(fitting.replace('黑点','橙点'))
+    assert fitting_color_errors(fitting.replace('noisecolor','orange'))
+    print('Book contract regression tests: chapter roles, accent scope, notation, concept counters and figure/caption colors rejected')
 
 
 def main():

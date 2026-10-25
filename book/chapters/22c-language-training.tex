@@ -309,6 +309,8 @@ python3 scripts/teaching\_reference.py --json
 但本章的共享训练原则不会改变。
 
 \subsection{回到上下文缺口：去掉 Attention 会怎样？}
+\phantomsection\label{experiment:context-training}
+\subsubsection*{第一级：有无前文读取通路}
 复用第~\ref*{intro:21a-context-gap}~章的两条冲突样本，
 只监督相同位置的“花”，目标依前文分别为“开了／谢了”。
 主线三位置训练用于核对完整计算图；本实验专门检验跨位置信息的作用。
@@ -335,6 +337,67 @@ Attention 版把两份前文送入输出头，损失便能继续下降。
 这个实验说明上下文读取的必要性，不是 Attention 相对所有架构的优越性证明。
 运行 \texttt{python3 scripts/context\_contrast\_demo.py} 可复现；
 CI 同时检查不可区分性、理论下界和训练后的正确类概率。
+
+\subsubsection*{第二级：有干扰时，Q/K 能学会看哪里吗？}
+\phantomsection\label{experiment:attention-selection}
+上面的均匀读取已经够用。现在给出两条带名字的记录，
+再问其中一条；两条记录的值互为干扰。
+把“开／关”编码为 $+1/-1$，构造四个训练样本：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}llcc@{}}\toprule
+花的记录 & 窗的记录 & 查询 & 目标值\\\midrule
+开 $(+1)$ & 关 $(-1)$ & 问花 & $+1$\\
+开 $(+1)$ & 关 $(-1)$ & 问窗 & $-1$\\
+关 $(-1)$ & 开 $(+1)$ & 问花 & $-1$\\
+关 $(-1)$ & 开 $(+1)$ & 问窗 & $+1$\\\bottomrule
+\end{tabular}
+\end{center}
+\textbf{只问“花”时，两份前文有相同的值集合，正确答案却相反；问“窗”时也一样。}
+关键是保留“哪个名字绑定哪个值”，而非只知道前文出现过哪些值。
+
+这是独立的记录查询例，每个输入有三行：花的记录、窗的记录、查询。
+固定五个特征依次为“花键、窗键、问花、问窗、值”。第一条样本是
+\[
+X=\begin{bmatrix}1&0&0&0&1\\0&1&0&0&-1\\0&0&1&0&0\end{bmatrix}.
+\]
+第三行没有答案，只标明要问谁。只监督第三行；因果掩码允许它读三行。
+将两条记录的值互换，\textbf{整张 $X$ 的逐列均值仍相同}。
+因此 $Q=K=0$ 的均匀读取连同固定线性 Value 投影，
+会把同一查询的两个不同答案混成同一个表示。
+任何只接收这个均值的后续分类器都无法恢复已丢失的绑定。
+
+现在固定 $W_V=(0,0,0,0,1)^\top$，只读出值；
+把 Query 投影的第 $3,4$ 行、Key 投影的第 $1,2$ 行设为可训练的 $2\times2$ 块，
+其余行固定为零。于是 Query 由“问谁”产生，Key 由记录名字产生，$d_k=2$。
+Attention 与二分类输出为
+\[
+a=\softmax(qK^\top/\sqrt2),\qquad c=aV,\qquad
+z=wc+b,\quad p(+1)=\frac{1}{1+e^{-z}}.
+\]
+均匀版只训练相同的 $w,b$；学习版再训练 $8$ 个 Q/K 参数。
+两版均从 $w=1,b=0$ 开始；Q 的可训练块初值为 $0.1I_2$，K 的为零，
+初始权重均为 $(1/3,1/3,1/3)$。若 Q/K 同时全零，乘积支路也会落在零梯度点。
+使用学习率 $1$ 的全批次 SGD，共训练 $2000$ 步：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}lcc@{}}\toprule
+读取方式 & 平均交叉熵 & 正确类概率（四例相同）\\\midrule
+固定均匀读取 & $0.693147$ & $0.500000$\\
+学习 Q/K 后 & $0.000502$ & $0.999498$\\
+保留已学输出头，恢复均匀读取 & $0.693147$ & $0.500000$\\\bottomrule
+\end{tabular}
+\end{center}
+\input{figures/learned-attention-selection}
+\textbf{查询改变，重点读取的记录也改变。}
+训练后的“问花”权重依次为 $(0.986722,0.000175,0.013103)$，
+“问窗”则交换前两项。输出头保持不动、把权重重设为均匀，损失便回到 $\log2$。
+这次改进来自学出的非均匀匹配；把前两行交换顺序，模型仍按名字选择，八种名字和值的组合都答对。
+交叉熵在有限步后是上表的小正数；已有正确的非零读出时，继续增大分类间隔可使它趋近零。
+
+运行 \texttt{python3 scripts/attention\_selection\_demo.py} 复算。
+CI 核对均值不可区分、两种查询的权重、恢复均匀后的退化、
+交换记录顺序及全部 $10$ 个可训练标量的有限差分梯度。
 
 \chapterchecktasks{22c-language-training}{正文基础三题}{
 \item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果 Mask 与损失 Mask。\chapterinlinehint{先错位对齐目标，再分别追踪可见性和计损位置。}

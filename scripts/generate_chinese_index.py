@@ -13,7 +13,7 @@ SOURCE = ROOT / "book" / "chapters" / "24e-bilingual-glossary.tex"
 TARGET = ROOT / "book" / "chapters" / "24f-chinese-index.tex"
 
 ROW = re.compile(
-    r"^(.+?) & (.+?) & (.+?) & \\hyperref\[([^]]+)\]",
+    r"^(.+?) & (.+?) & (.+?) & (\\hyperref\[.+)\\\\$",
     re.MULTILINE
 )
 CJK = re.compile(r"[\u3400-\u9fff]")
@@ -69,8 +69,7 @@ def main() -> None:
         for _, zh, en, dest in sorted(grouped[letter]):
             text.append(
                 zh + " & " + en + " & "
-                + r"\hyperref[" + dest + r"]{\ref*{" + dest
-                + r"}/\pageref*{" + dest + r"}}\\"
+                + dest + r"\\"
             )
     text += [r"\end{longtable}", r"\endgroup", ""]
     TARGET.write_text("\n".join(text), encoding="utf-8")
