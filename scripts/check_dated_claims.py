@@ -80,6 +80,35 @@ def manifest_errors(rows, audit, labels):
     return errors
 
 
+def target_region(sources, label):
+    """Source text owned by a label: up to the next chapter heading for chapter
+    targets (intro:...), otherwise up to the next section or subsection."""
+    for text in sources.values():
+        start=text.find(r'\label{'+label+'}')
+        if start<0:continue
+        stop=re.compile(r'\\section\*?\{' if label.startswith('intro:') else r'\\(?:sub)?section\*?\{')
+        end=stop.search(text,start+1)
+        return re.sub(r'\s+',' ',text[start:end.start() if end else len(text)])
+    return None
+
+
+def evidence_errors(rows, sources):
+    """A valid label is not enough: the claimed facts must be printed where the
+    table points. This caught a claim about DeepSeek CED and Qwen3 whose target
+    was a chapter that mentioned neither."""
+    errors=[]
+    for row in rows:
+        evidence=row.get('evidence')
+        if not evidence or not all(isinstance(e,str) and e.strip() for e in evidence):
+            errors.append(f"Assertion needs literal evidence strings: {row['id']}");continue
+        region=target_region(sources,row['target'])
+        if region is None:continue  # unknown targets are reported by manifest_errors
+        for item in evidence:
+            if re.sub(r'\s+',' ',item) not in region:
+                errors.append(f"Evidence {item!r} for {row['id']} is not printed at {row['target']}")
+    return errors
+
+
 def review_due_errors(rows, today=None):
     today=datetime.now(timezone.utc).date() if today is None else today
     errors=[]
@@ -140,6 +169,7 @@ def validate():
     labels=set(re.findall(r'\\label\{([^}]+)\}',sources))
     audit={r['url']:r for r in json.loads((BOOK/'source-audit.json').read_text())}
     errors=manifest_errors(rows,audit,labels)
+    errors.extend(evidence_errors(rows,{p.name:p.read_text() for p in (BOOK/'chapters').glob('*.tex')}))
     expected=rendered(rows)
     if expected not in OUTPUT.read_text():errors.append('Dated assertion table is stale; run check_dated_claims.py --write')
     mcp=next(r for r in rows if r['id']=='mcp')
@@ -192,6 +222,13 @@ def self_test():
                       ('review_interval_days',True),('review_on_new_revision',False)):
         broken=copy.deepcopy(rows);broken[0][key]=value
         assert manifest_errors(broken,audit,labels)
+    sources={'a.tex':'\\section{A}\\label{intro:a}正文 768。\\subsection{X}\\label{concept:x}有 $20$ 层。\\subsection{Y}另有 Qwen3。\\section{B}\\label{intro:b}无关。'}
+    claim=lambda target,evidence:[{'id':'e','target':target,'evidence':evidence}]
+    assert not evidence_errors(claim('concept:x',['$20$ 层']),sources)
+    assert not evidence_errors(claim('intro:a',['768','Qwen3']),sources)
+    assert evidence_errors(claim('concept:x',['Qwen3']),sources)   # later subsection
+    assert evidence_errors(claim('intro:b',['768']),sources)       # wrong chapter
+    assert evidence_errors(claim('intro:a',[]),sources)
     fixture=[{'id':'dated-fixture','checked_utc':'2026-10-25','review_interval_days':90}]
     assert not review_due_errors(fixture,date(2027,1,22))
     assert review_due_errors(fixture,date(2027,1,23))
@@ -202,7 +239,7 @@ def self_test():
     assert mcp_page_errors([intro,request])
     assert mcp_page_errors([request])
     assert mcp_page_errors([intro+'\n'+request.split('clientCapabilities')[0], 'clientCapabilities'+request.split('clientCapabilities')[1]])
-    print('Dated assertion regression tests passed: version/metadata, link-only evidence, invalid or overdue reviews and split MCP lead-in rejected')
+    print('Dated assertion regression tests passed: version/metadata, link-only evidence, claims missing at their target, invalid or overdue reviews and split MCP lead-in rejected')
 
 
 def main():

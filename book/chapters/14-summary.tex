@@ -40,7 +40,6 @@ Softmax 对每条查询重新归一化，所以它的读出随上下文逐条计
 \item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？\chapterinlinehint{把每条 Value 乘权重，再逐分量相加。}
 \item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。\chapterinlinehint{分别检查分母、写入规则与容量假设。}
 }
-\chapterrecallanswer{ReLU 或幂次先筛选匹配分数再读出 Value；外积记忆、MLP 与 Attention 共享匹配—加权形式，区别在归一化与 K/V 来源。}
 
 
 

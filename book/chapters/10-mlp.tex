@@ -138,7 +138,6 @@ FFN 改变每行的特征，跨 Token 的信息交换由 Attention 承担。
 \item \textbf{手算：}沿用本章手算的 $W_1,W_2$（不加偏置），输入改为 $\vect x^\top=(1,-2)$。依次求 $\vect z^\top$、$\vect h^\top$ 与 $\widehat{\vect y}^\top$，并指出哪些隐藏单元被 ReLU 截断。\chapterinlinehint{先让输入行分别点乘 $W_1$ 的三列。}
 \item \textbf{找错：}同学认为两个 Token 共用 FFN 权重，故第二行的输入会直接改变第一行 FFN 的输出。指出错误。\chapterinlinehint{沿计算图追踪第一行依赖哪些输入行。}
 }
-\chapterrecallanswer{MLP 的逐行变换改变隐藏特征但不直接交换 Token；非线性让两层不等同于一层仿射。}
 
 
 

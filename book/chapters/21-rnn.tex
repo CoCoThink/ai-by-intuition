@@ -1,11 +1,5 @@
-\Needspace{13\baselineskip}
-\chapterrule
-\section{RNN 是什么？让网络一个词一个词地读}
+\subsection{RNN 是什么？让网络一个词一个词地读}
 \phantomsection\label{concept:rnn}
-\label{intro:21-rnn}
-\chaptercompass{怎样把前一个 Token 的信息传给当前 Token？}{RNN 逐位置更新隐藏状态，把之前信息随时间传递。}{$\vect x_t^\top:1\times d_x,\ \vect h_{t-1}^\top:1\times d_h\to\vect h_t^\top:1\times d_h$}{$W_x,W_h,b$ 可学习；隐藏状态随输入改变，不是新训练权重}
-\modelpipelinefocus{3}{RNN 的历史状态}
-
 \begin{idea}
 \noindent\emph{一份沿时间更新的状态}\par
 
@@ -18,9 +12,9 @@ RNN（循环神经网络）是一种按顺序处理输入的网络：
 同一个更新函数在不同位置重复使用，状态则随输入不断变化。
 \end{idea}
 
-\subsection{怎样把上一章缺少的前文送进当前位置？}
+\subsection{怎样把缺少的前文送进当前位置？}
 
-上一章发现，只看当前 Token 的独立 MLP 不会凭空得到前文。
+上面发现，只看当前 Token 的独立 MLP 不会凭空得到前文。
 回到“春天、花、开了”这句话：
 \[
 \text{“春天”}\ \to\ \text{“花”}\ \to\ \text{“开了”}
@@ -161,16 +155,19 @@ LSTM 和 GRU 可以改善一部分信息保留问题，
 
 
 
-\chapterchecktasks{21-rnn}{正文基础三题}{
+\chapterchecktasks{21-rnn}{正文基础六题}{
+\item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？\chapterinlinehint{检查函数实际收到的输入是否含有前文。}
+\item \textbf{手算：}两个序列末尾输入均为 $x=3$，同一个逐位置函数 $f(x)=2x+1$ 分别输出什么？\chapterinlinehint{把相同输入代入同一个函数两次。}
+\item \textbf{找错：}同学把过去三个 Token 拼起来当特征，就宣布“任意长历史都能无代价地读到”。还缺少哪两个工程条件？\chapterinlinehint{检查窗口长度和输入维度随历史怎样增长。}
 \item \textbf{流程：}RNN 为什么需要隐藏状态？说明当前输入和前一时刻状态在递推式中如何共同决定下一状态。\chapterinlinehint{在递推式中分别圈出当前输入与历史状态。}
 \item \textbf{手算：}$h_t=x_t+0.5h_{t-1}$，$h_0=0$，输入依次为 $(2,0,1)$。依次求 $h_1,h_2,h_3$。\chapterinlinehint{从初始状态出发，按时间顺序代入。}
 \item \textbf{预测：}把第一个输入由 $2$ 改为 $4$，其余仍为 $(0,1)$。不重新逐项推导全部式子，预测最终 $h_3$ 增大还是减小，变化多少？\chapterinlinehint{只传播首个输入的变化量，逐步乘递推系数。}
 }
-\chapterrecallanswer{RNN 将历史压成逐步传递的状态，能携带前文，沿时间步串行执行，长依赖还可能衰减。}
 
 
 
 \begin{conclusion}
+逐位置函数从相同的当前输入只能得到相同输出，多维 Embedding 不会自动提供跨位置上下文。
 RNN = 当前输入 + 上一步状态 $\to$ 同一个更新函数 $\to$ 下一步状态。
 它解决“词与词如何沿顺序传递信息”，但每次必须经过中间状态。
 

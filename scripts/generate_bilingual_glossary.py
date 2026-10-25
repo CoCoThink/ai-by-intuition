@@ -234,7 +234,7 @@ def occurrence_index(glossary: str) -> str:
             continue
         raw = (CHAPTERS / (name + '.tex')).read_text()
         body = uncomment(raw)
-        for hidden in ('chapterinlinehint', 'chapterrecallanswer', 'modelpipelinefocus'):
+        for hidden in ('chapterinlinehint', 'modelpipelinefocus'):
             while (match := re.search(r'\\' + hidden + r'\{', body)):
                 _, end = argument(body, match.end()-1)
                 if hidden == 'modelpipelinefocus':

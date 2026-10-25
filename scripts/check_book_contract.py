@@ -21,7 +21,7 @@ PART_TITLES=[
     '学习是什么：从规则到参数更新','把许多数一起算','让文字进入计算',
     '让词与词交换信息','组装并训练 Transformer','从语言模型到助手',
     '架构为什么在变，往哪走','换一种数据看 Transformer：从 CNN 到 ViT','联想记忆与线性状态']
-CHAPTER_COUNT=41
+CHAPTER_COUNT=39
 
 
 def read_sources():
@@ -171,7 +171,7 @@ def validate_contract():
         if not condition:errors.append(message)
     require(re.findall(r'\\part\{([^}]+)\}',main)==PART_TITLES,'Nine-part curriculum order changed')
     groups=core_groups()
-    require(sum(g['numbered'] for g in groups)==CHAPTER_COUNT,'Expected 41 numbered chapters')
+    require(sum(g['numbered'] for g in groups)==CHAPTER_COUNT,f'Expected {CHAPTER_COUNT} numbered chapters')
     for g in groups:require(len(g['checks'])==1,f"{g['title']}: needs one self-check, found {g['checks']}")
     require(len(groups)==CHAPTER_COUNT+1,'One unnumbered prelude must have a self-check')
     allchecks=[slug for g in groups for slug in g['checks']]
@@ -418,7 +418,7 @@ def main():
     if args.self_test:self_test();return
     errors=validate_contract()
     if errors:raise SystemExit('\n'.join('CONTRACT ERROR: '+e for e in errors))
-    print('Book source contract passed: 41 chapters, unique self-checks, unified bank, notation and dated sources')
+    print(f'Book source contract passed: {CHAPTER_COUNT} chapters, unique self-checks, unified bank, notation and dated sources')
 
 
 if __name__=='__main__':main()

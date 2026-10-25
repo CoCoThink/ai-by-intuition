@@ -72,7 +72,6 @@ L'&=\frac12(5.30-5)^2=0.045.
 \item \textbf{手算：}$x=2,y=5,w_1=1,w_2=2,b_1=b_2=0$，$h=\relu(w_1x+b_1)$。求 $\widehat{y}$ 与 $\tfrac12(\widehat{y}-y)^2$。\chapterinlinehint{先做隐藏层前向，再算预测与目标的平方差。}
 \item \textbf{手算：}沿用上题参数，只把输入改成 $x=-1$。求 $z,\widehat{y}$ 与 $\partial L/\partial\widehat{y}$，再指出四个参数中哪些梯度为零。\chapterinlinehint{先判断 $z$ 的正负，再看 ReLU 能否传递梯度。}
 }
-\chapterrecallanswer{先核对输入、计算图和状态来源，再用完整流程检验局部推导。}
 
 
 

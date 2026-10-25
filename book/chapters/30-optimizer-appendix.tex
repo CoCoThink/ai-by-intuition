@@ -17,7 +17,7 @@
 \textbf{超参数}是训练前或训练过程中设定的控制量，如学习率、正则化系数、批次大小；\textbf{模型参数}则是通过优化直接学习的权重。
 
 若某一步的梯度特别大，\textbf{梯度裁剪}在更新前限制它的幅度：
-把全部参数的偏导数排成一条梯度向量，长度超过设定阈值时整体按比例缩小，方向保持不变。
+\phantomsection\label{concept:gradient-clipping}把全部参数的偏导数排成一条梯度向量，长度超过设定阈值时整体按比例缩小，方向保持不变。
 
 \begin{example}
 \noindent\emph{一次实际的梯度裁剪}\par
@@ -126,8 +126,8 @@ Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选�
 
 
 \noindent\emph{对应练习：}
-\hyperref[exercise:warmup-schedule]{C-115 的变梯度三步 Warmup}和
-\hyperref[exercise:adamw-decay]{C-116 的 AdamW 与 L2 对照}，
+\hyperref[exercise:warmup-schedule]{C-118 的变梯度三步 Warmup}和
+\hyperref[exercise:adamw-decay]{C-119 的 AdamW 与 L2 对照}，
 请在看答案前分别复算。
 
 \chapterpracticejump{optimizer-details}

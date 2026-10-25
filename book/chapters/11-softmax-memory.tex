@@ -201,7 +201,6 @@ $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 \item \textbf{手算：}仅两条 Key，匹配分数相同，Softmax 权重分别是多少？若 Value 是 $(1,0)$ 与 $(0,1)$，输出是什么？\chapterinlinehint{先利用分数相等的对称性，再加权求和。}
 \item \textbf{预测：}只把同一行中的第一个匹配分数增大，保持第二个不变，Softmax 第一权重变化方向是什么？两者都加同一个常数呢？\chapterinlinehint{比较指数比值，并检查共同平移能否约去。}
 }
-\chapterrecallanswer{矩阵 Attention 先算跨位置匹配 $QK^\top$，因果版本再把对角线以上置为 $-\infty$，逐行归一化后用权重读取 Value。}
 
 
 

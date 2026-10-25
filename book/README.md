@@ -21,9 +21,9 @@
 | 部分 | 章节源码（按印刷顺序） |
 |---|---|
 | 一 · 学习 | [序章](chapters/00-guide.tex)、[函数](chapters/00-functions.tex)、[损失与梯度下降](chapters/16-loss-gradient.tex)（含[训练组织](chapters/18c-training-engineering.tex)）、[非线性](chapters/07-functions-relu.tex)、[反向传播](chapters/17-backpropagation.tex)（含[完整一步](chapters/18b-end-to-end-learning.tex)）、[泛化](chapters/18-generalization.tex) |
-| 二 · 矩阵 | [向量](chapters/01-vectors.tex)、[点积](chapters/02-dot-product.tex)、[矩阵乘法](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex) |
+| 二 · 矩阵 | [向量与点积](chapters/01-vectors.tex)（续 [02](chapters/02-dot-product.tex)）、[矩阵乘法](chapters/03-matrix-multiplication.tex)、[MLP](chapters/10-mlp.tex) |
 | 三 · 文字 | [Tokenizer](chapters/20a-tokenizer.tex)、[分类损失](chapters/20c-classification-loss.tex)、[Embedding](chapters/20-embeddings.tex)、[预测任务](chapters/20b-task-contract.tex) |
-| 四 · 上下文 | [上下文缺口](chapters/21a-context-gap.tex)、[RNN](chapters/21-rnn.tex)、[Attention 的直觉](chapters/21c-naive-attention.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[批量与因果注意力](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
+| 四 · 上下文 | [上下文缺口与 RNN](chapters/21a-context-gap.tex)（续 [21](chapters/21-rnn.tex)）、[Attention 的直觉](chapters/21c-naive-attention.tex)、[Q/K/V](chapters/21b-why-attention.tex)、[批量与因果注意力](chapters/11-softmax-memory.tex)、[位置与多头](chapters/22a-position-multihead.tex) |
 | 五 · Transformer | [Block](chapters/22-transformer-architecture.tex)、[FFN 与输出头](chapters/10b-ffn-output-head.tex)、[三维前向](chapters/22b-token-to-output.tex)、[联合训练](chapters/22c-language-training.tex)、[逐词生成](chapters/23-llm-systems.tex)、[真实尺度](chapters/23a-from-toy-to-gpt.tex) |
 | 六 · 助手 | [ICL](chapters/23aa-pretraining-icl.tex)、[后训练](chapters/23c-post-training.tex)、[测试时计算](chapters/23cc-test-time-compute.tex)、[RAG](chapters/23d-agent-systems.tex)、[工具与 Agent 循环](chapters/23d-agent-tools.tex)、[协议与多 Agent](chapters/23d-agent-protocols.tex)、[数据、训练与部署](chapters/23b-deployment-and-ecosystem.tex) |
 | 七 · 架构 | [现代 Transformer](chapters/22d-modern-transformers.tex)、[技术判断](chapters/23e-tech-judgement.tex) |

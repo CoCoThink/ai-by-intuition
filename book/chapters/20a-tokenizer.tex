@@ -10,6 +10,7 @@
 一句中文如何被拆成离散的 Token，再变成可查表的整数 ID？
 
 \subsection{Token、词表、整数 ID 分别做什么？}
+\phantomsection\label{concept:vocabulary}
 
 \textbf{Token} 是文本处理单位，不一定恰好等于自然语言里的词：
 它的单位包括单字、子词和标点。
@@ -105,7 +106,6 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 \item \textbf{手算：}从五个字符“今／天／天／气／好”出发，假设 BPE 按规则依次合并“今+天”“天+气”。合并后有多少个 Token？列出切分结果。\chapterinlinehint{按给定顺序执行两次合并，并保留未合并项。}
 \item \textbf{找错：}同学认为“BPE 一次合并就会自动在所有句子里产生相同的 Token 数”。用词表和输入文本的关系指出漏洞。\chapterinlinehint{固定合并规则，对照不同输入中的相邻片段。}
 }
-\chapterrecallanswer{Tokenizer 先决定离散单位及 ID；切分策略会影响序列长度与后续计算规模。}
 
 
 

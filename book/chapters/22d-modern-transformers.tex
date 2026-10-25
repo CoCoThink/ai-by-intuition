@@ -529,7 +529,6 @@ $8\times(3+2)=\answerresult{40}$。
 \item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
 \item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
 }
-\chapterrecallanswer{RoPE 编入位置信息，RMSNorm 不减均值；GQA 通过较少 K/V 头降低缓存，但整体性能仍需实测。}
 
 
 

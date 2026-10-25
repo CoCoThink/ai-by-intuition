@@ -8,6 +8,7 @@
 用一次矩阵乘法完成多次点积，并清楚记录输入和输出的形状。
 
 \subsection{矩阵就是一张有行和列的数字表}
+\phantomsection\label{concept:matrix}
 
 \[
 \vect{x}=\begin{bmatrix}4\\5\end{bmatrix},
@@ -64,6 +65,7 @@ $\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以
 我们将两列分别乘以 $5$、$6$，再相加。输出仍然是 $(17,39)^\top$。
 
 \subsection{神经网络中常用的行向量写法}
+\phantomsection\label{concept:linear-map}
 一条输入写成 $\vect x^\top=(5,6)$，使用
 $W=\begin{bmatrix}1&3\\2&4\end{bmatrix}$，那么
 \[
@@ -111,6 +113,7 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 这叫\textbf{形状检查}（shape checking）：学习神经网络时，它比死背公式更有用。
 
 \subsection{转置：为什么同一向量会横着写或竖着写？}
+\phantomsection\label{concept:transpose}
 
 转置就是把行换成列：
 \[
@@ -139,7 +142,6 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 \item \textbf{手算：}行向量 $x=(2,1)$，$W=\begin{bmatrix}1&3\\2&-1\end{bmatrix}$，计算 $xW$，并标出行与列。\chapterinlinehint{让输入行分别与权重的两列做点积。}
 \item \textbf{找错：}某人断言“矩阵相乘和数字相乘一样，可以把 $AB$ 随意换成 $BA$”。用形状或一次反例指出问题。\chapterinlinehint{分别列出两个乘法的内侧维度。}
 }
-\chapterrecallanswer{矩阵乘法必须让内侧维度相同，结果由外侧维度决定；交换乘法顺序一般不成立。}
 
 
 

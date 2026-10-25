@@ -1,8 +1,9 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{逐个处理 Token，为什么仍看不到前文？}
+\section{前文怎样传到当前词？从逐行处理到 RNN}
 \label{intro:21a-context-gap}
-\chaptercompass{只逐行处理 Token，为什么无法理解前文？}{共享的逐位置函数只能看到本行输入，相同当前输入得到相同输出。}{$X:T\times d\to Y:T\times d'$，每个 $Y_t$ 只取决于 $X_t$}{逐位置变换的矩阵可学习，但不会自行产生跨行信息流}
+\label{intro:21-rnn}
+\chaptercompass{只逐行处理 Token 为什么看不到前文？怎样把前一个 Token 的信息传给当前 Token？}{逐位置函数只看本行输入；RNN 逐位置更新隐藏状态，把之前信息沿时间传下去。}{$X:T\times d\to Y:T\times d'$；RNN 中 $\vect x_t^\top,\vect h_{t-1}^\top\to\vect h_t^\top:1\times d_h$}{逐位置矩阵与 $W_x,W_h,b$ 可学习；隐藏状态随输入改变，不是新训练权重}
 \modelpipelinefocus{3}{上下文信息缺口}
 
 独立处理每个 Token 的 MLP，只接收当前位置的向量。
@@ -60,22 +61,7 @@ L_{\rm local}=-\tfrac12[\ln p+\ln(1-p)]\geq\ln2.
 
 我们需要让后一个位置\textbf{能利用}前面位置的信息，
 而不是只做独立行变换。
-下一章先采用容易理解的方案：沿序列传递一份不断更新的状态。
-这叫 RNN。再下一步才尝试不经过一长串状态，直接读取某个位置。
+下面先采用容易理解的方案：沿序列传递一份不断更新的状态，这叫 RNN。
+下一章再尝试不经过一长串状态，直接读取某个位置。
 
 固定窗口拼接、RNN 递推和直接读取这三种机制各有取舍；比较它们时，要把任务长度、数据、参数量和计算代价一起列入评测。
-
-
-\chapterchecktasks{21a-context-gap}{正文基础三题}{
-\item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？\chapterinlinehint{检查函数实际收到的输入是否含有前文。}
-\item \textbf{手算：}两个序列末尾输入均为 $x=3$，同一个逐位置函数 $f(x)=2x+1$ 分别输出什么？\chapterinlinehint{把相同输入代入同一个函数两次。}
-\item \textbf{找错：}同学把过去三个 Token 拼起来当特征，就宣布“任意长历史都能无代价地读到”。还缺少哪两个工程条件？\chapterinlinehint{检查窗口长度和输入维度随历史怎样增长。}
-}
-\chapterrecallanswer{单位置函数从相同当前输入只能得到相同输出；要用上前文，需要拼接窗口、递推状态或跨位置读取。}
-
-
-
-\begin{conclusion}
-多维 Embedding 解决了“单个词怎样表示”，却不会自动提供跨位置上下文。
-下一章试着让历史通过一份递推状态传到当前位置。
-\end{conclusion}

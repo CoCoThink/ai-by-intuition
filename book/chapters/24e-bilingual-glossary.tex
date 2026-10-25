@@ -42,7 +42,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 查询向量 & Query & 表达当前位置“想寻找什么”的向量，与各 Key 做匹配。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\newline \hyperref[experiment:attention-selection]{\ref*{experiment:attention-selection}/\pageref*{experiment:attention-selection}}\\
 超参数 & Hyperparameter & 控制训练或结构的设置，如学习率、层数与批量大小。 & \hyperref[concept:hyperparameter]{\ref*{concept:hyperparameter}/\pageref*{concept:hyperparameter}}\\
 池化 & Pooling & 对局部区域做最大值或平均等汇总。 & \hyperref[concept:pooling]{\ref*{concept:pooling}/\pageref*{concept:pooling}}\\
-词表 & Vocabulary & 允许的 Token 与其 ID 的集合。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\\
+词表 & Vocabulary & 允许的 Token 与其 ID 的集合。 & \hyperref[concept:vocabulary]{\ref*{concept:vocabulary}/\pageref*{concept:vocabulary}}\\
 词元 & Token & 模型分词器定义的文本处理单元，不一定是一个完整词。 & \hyperref[concept:token]{\ref*{concept:token}/\pageref*{concept:token}}\newline \hyperref[experiment:real-chinese-tokenizer]{\ref*{experiment:real-chinese-tokenizer}/\pageref*{experiment:real-chinese-tokenizer}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 D}\\*
@@ -58,7 +58,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 F}\\*
 反向传播 & Backpropagation & 利用链式法则高效计算计算图中全部参数的梯度。 & \hyperref[concept:backprop]{\ref*{concept:backprop}/\pageref*{concept:backprop}}\\
 泛化 & Generalization & 从已见样本学到能应用于新样本的规律。 & \hyperref[concept:generalization]{\ref*{concept:generalization}/\pageref*{concept:generalization}}\\
-范数 & Norm & 衡量向量长度或大小的一类函数。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
+范数 & Norm & 衡量向量长度或大小的一类函数。 & \hyperref[concept:vector-length]{\ref*{concept:vector-length}/\pageref*{concept:vector-length}}\\
 非线性 & Nonlinearity & 不满足简单线性叠加的变化，例如 ReLU。 & \hyperref[intro:07-functions-relu]{\ref*{intro:07-functions-relu}/\pageref*{intro:07-functions-relu}}\\
 分词器 & Tokenizer & 将文本切成 Token 并映射到整数 ID 的方法。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\newline \hyperref[experiment:real-chinese-tokenizer]{\ref*{experiment:real-chinese-tokenizer}/\pageref*{experiment:real-chinese-tokenizer}}\\
 分组查询注意力 & Grouped-query attention (GQA) & 让一组 Query 头共享 K/V 头，降低缓存规模。 & \hyperref[concept:gqa]{\ref*{concept:gqa}/\pageref*{concept:gqa}}\\
@@ -89,7 +89,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 交叉注意力 & Cross-attention & Query 来自一个序列，Key/Value 来自另一序列的注意力。 & \hyperref[concept:cross-attention]{\ref*{concept:cross-attention}/\pageref*{concept:cross-attention}}\\
 教师强制 & Teacher forcing & 训练时以已知真实序列作为条件，一次预测多个后续位置。 & \hyperref[concept:teacher-forcing]{\ref*{concept:teacher-forcing}/\pageref*{concept:teacher-forcing}}\\
 解码器 & Decoder & 按任务条件产生输出序列的网络部分。 & \hyperref[elective:original-paper]{\ref*{elective:original-paper}/\pageref*{elective:original-paper}}\\
-矩阵 & Matrix & 按行和列排列的数字表；可同时执行多个点积。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
+矩阵 & Matrix & 按行和列排列的数字表；可同时执行多个点积。 & \hyperref[concept:matrix]{\ref*{concept:matrix}/\pageref*{concept:matrix}}\\
 卷积核 & Convolution kernel & 在图片局部区域滑动的可训练权重小矩阵。 & \hyperref[concept:kernel]{\ref*{concept:kernel}/\pageref*{concept:kernel}}\\
 卷积神经网络 & Convolutional neural network & 利用局部窗口运算和共享权重处理图像等空间模式的网络。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
 均方根归一化 & Root Mean Square Normalization (RMSNorm) & 按特征的均方根控制数值尺度。 & \hyperref[concept:rmsnorm]{\ref*{concept:rmsnorm}/\pageref*{concept:rmsnorm}}\\
@@ -150,7 +150,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 特征图 & Feature map & 卷积层输出的空间数字表。 & \hyperref[concept:feature-map]{\ref*{concept:feature-map}/\pageref*{concept:feature-map}}\\
 梯度 & Gradient & 将各个参数方向的偏导数组合起来。 & \hyperref[concept:gradient]{\ref*{concept:gradient}/\pageref*{concept:gradient}}\\
 梯度爆炸 & Exploding gradient & 反向传播中梯度幅度变得过大。 & \hyperref[app:training-diagnostics]{\ref*{app:training-diagnostics}/\pageref*{app:training-diagnostics}}\\
-梯度裁剪 & Gradient clipping & 限制梯度幅度，减少过大更新的风险。 & \hyperref[app:training-diagnostics]{\ref*{app:training-diagnostics}/\pageref*{app:training-diagnostics}}\\
+梯度裁剪 & Gradient clipping & 限制梯度幅度，减少过大更新的风险。 & \hyperref[concept:gradient-clipping]{\ref*{concept:gradient-clipping}/\pageref*{concept:gradient-clipping}}\\
 梯度下降 & Gradient descent & 沿梯度反方向逐步调整参数，尝试降低损失。 & \hyperref[concept:gradient-descent]{\ref*{concept:gradient-descent}/\pageref*{concept:gradient-descent}}\newline \hyperref[experiment:beginner-iteration]{\ref*{experiment:beginner-iteration}/\pageref*{experiment:beginner-iteration}}\\
 梯度消失 & Vanishing gradient & 反向传播到较早层时梯度变得过小。 & \hyperref[app:training-diagnostics]{\ref*{app:training-diagnostics}/\pageref*{app:training-diagnostics}}\\
 提前停止 & Early stopping & 根据验证表现决定停止训练的时机。 & \hyperref[concept:early-stopping]{\ref*{concept:early-stopping}/\pageref*{concept:early-stopping}}\\
@@ -163,16 +163,16 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 W}\\*
 外积 & Outer product & 将列形式 Key 与行形式 Value 相乘，写成关联矩阵。 & \hyperref[concept:outer-product]{\ref*{concept:outer-product}/\pageref*{concept:outer-product}}\\
 微调 & Fine-tuning & 在已有模型权重上针对任务或行为继续训练。 & \hyperref[intro:23c-post-training]{\ref*{intro:23c-post-training}/\pageref*{intro:23c-post-training}}\\
-维度 & Dimension & 向量有几个数，或矩阵有几行几列。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
+维度 & Dimension & 向量有几个数，或矩阵有几行几列。 & \hyperref[concept:vector]{\ref*{concept:vector}/\pageref*{concept:vector}}\\
 未归一化分数 & Logits & 进入 Softmax 前、还没归一化的分数。 & \hyperref[concept:logits]{\ref*{concept:logits}/\pageref*{concept:logits}}\\
 温度 & Temperature & 通过缩放 logits 控制输出分布尖锐程度的参数。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 X}\\*
 稀疏注意力 & Sparse attention & 只计算选择的 Token 对，不要求全部两两比较。 & \hyperref[concept:sparse-attention]{\ref*{concept:sparse-attention}/\pageref*{concept:sparse-attention}}\\
-线性变换 & Linear transformation & 按本书行向量约定写作 $\vect x^\top W$（整批为 $XW$）的运算；满足叠加规则。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
+线性变换 & Linear transformation & 按本书行向量约定写作 $\vect x^\top W$（整批为 $XW$）的运算；满足叠加规则。 & \hyperref[concept:linear-map]{\ref*{concept:linear-map}/\pageref*{concept:linear-map}}\\
 线性注意力 & Linear attention & 通过不同运算结构改善长序列计算或状态扩展性，读取规则由具体的核或状态更新公式定义。 & \hyperref[concept:linear-attention]{\ref*{concept:linear-attention}/\pageref*{concept:linear-attention}}\\
-向量 & Vector & 一组有顺序的数字，每个位置对应一种特征；本书按行书写，如 $(1,2)$。 & \hyperref[intro:01-vectors]{\ref*{intro:01-vectors}/\pageref*{intro:01-vectors}}\\
-向量检索 & Vector retrieval & 通过查询向量和候选向量的相似性寻找内容。 & \hyperref[concept:rag]{\ref*{concept:rag}/\pageref*{concept:rag}}\\
+向量 & Vector & 一组有顺序的数字，每个位置对应一种特征；本书按行书写，如 $(1,2)$。 & \hyperref[concept:vector]{\ref*{concept:vector}/\pageref*{concept:vector}}\\
+向量检索 & Vector retrieval & 通过查询向量和候选向量的相似性寻找内容。 & \hyperref[concept:vector-retrieval]{\ref*{concept:vector-retrieval}/\pageref*{concept:vector-retrieval}}\\
 小批次 & Mini-batch & 将数据分为较小的批次计算梯度。 & \hyperref[concept:mini-batch]{\ref*{concept:mini-batch}/\pageref*{concept:mini-batch}}\\
 序列 & Sequence & 有顺序的输入元素集合，例如一串 Token。 & \hyperref[concept:token]{\ref*{concept:token}/\pageref*{concept:token}}\\
 旋转位置编码 & Rotary position embedding (RoPE) & 对 Q/K 中的分量对做位置相关旋转。 & \hyperref[concept:rope]{\ref*{concept:rope}/\pageref*{concept:rope}}\\
@@ -202,7 +202,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 值向量 & Value & 被注意力权重组合后形成输出的向量。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
 智能体 & Agent & 围绕目标选择工具、执行动作并利用结果继续决策的系统。 & \hyperref[concept:agent]{\ref*{concept:agent}/\pageref*{concept:agent}}\\
 专家路由器 & Expert router & 决定当前 Token 由哪些专家处理。 & \hyperref[concept:router]{\ref*{concept:router}/\pageref*{concept:router}}\\
-转置 & Transpose & 交换行与列，例如 $V$ 转成 $V^\top$。 & \hyperref[intro:03-matrix-multiplication]{\ref*{intro:03-matrix-multiplication}/\pageref*{intro:03-matrix-multiplication}}\\
+转置 & Transpose & 交换行与列，例如 $V$ 转成 $V^\top$。 & \hyperref[concept:transpose]{\ref*{concept:transpose}/\pageref*{concept:transpose}}\\
 字节对编码 & Byte pair encoding (BPE) & 在语料中反复合并高频相邻 Token 对，建立子词单元。 & \hyperref[concept:bpe]{\ref*{concept:bpe}/\pageref*{concept:bpe}}\\
 自回归 & Autoregressive generation & 每次以前缀为条件预测下一 Token，并把选定 Token 接回上下文。 & \hyperref[concept:autoregressive]{\ref*{concept:autoregressive}/\pageref*{concept:autoregressive}}\\
 自注意力 & Self-attention & Query、Key、Value 都来源于同一序列的注意力机制。 & \hyperref[concept:self-attention]{\ref*{concept:self-attention}/\pageref*{concept:self-attention}}\\

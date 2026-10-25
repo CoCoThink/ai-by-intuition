@@ -36,6 +36,8 @@ $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $T_k\approx d_k^p$ 这一类标度。
 
+% Keep this closing subsection with the self-check so the part-end page is not a sparse tail.
+\Needspace{10\baselineskip}
 \subsection{线性注意力的状态，就是累加的外积记忆}
 
 \hyperref[sec:modern-delta-rule]{现代架构章的线性状态}$\mathcal{M}_t=\sum_{i\le t}k_i^\top v_i$
@@ -52,7 +54,6 @@ $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
 \item \textbf{手算：}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。\chapterinlinehint{逐项相乘后求和。}
 \item \textbf{找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？\chapterinlinehint{先检查平方项的符号，再回看容量假设。}
 }
-\chapterrecallanswer{随机 Key 近似正交可减串扰；容量结论依赖随机性、噪声与读出误差。}
 
 
 

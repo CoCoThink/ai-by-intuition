@@ -1,7 +1,8 @@
 \chapterrule
-\section{向量：如何用数字表示一个东西？}
+\section{向量与点积：怎样用数字表示一个东西，又怎样比较两个？}
 \label{intro:01-vectors}
-\chaptercompass{一个数字不够表示多种特征怎么办？}{把有序特征排成向量，统一检查形状。}{一条 $d$ 维向量写成一行，共 $d$ 个数，每个位置一个特征}{表示本身可以是固定特征，也可以由模型学习}
+\label{intro:02-dot-product}
+\chaptercompass{一个数字不够表示多种特征怎么办？两条线索相不相似又怎样算成一个分数？}{把有序特征排成向量；对应分量相乘再求和得到点积，方向与长度共同影响它。}{一条 $d$ 维行向量 $\vect a^\top$；两条行向量 $\to$ 一个数 $\vect a^\top\vect b$}{表示可以固定，也可以由模型学习；点积本身没有可训练参数}
 \modelpipelinefocus{0}{向量表示}
 
 上一部分用一个数走通训练循环。但仅靠一个数不足以同时表示
@@ -25,6 +26,7 @@ $0$ 属于 B 类。若只准用一个阈值按“左边一类、右边一类”�
 神经网络以后会通过可训练变换学习类似的特征，而不是总让人手写平方。
 
 \subsection{向量把特征放在同一份表示中}
+\phantomsection\label{concept:vector}
 
 \localfixture{二维教学特征；与后面主线的三维 Embedding 无关}
 以“春天”和“花”的两维教学特征为例：
@@ -58,20 +60,8 @@ $(1,0)+(0,1)=(1,1)$。相加的前提是两条向量每个位置表示同一种�
 \end{minipage}\par
 \medskip
 
-向量还有一个重要性质：\textbf{长度}。二维向量 $\vect{a}=(a_1,a_2)$ 的长度就是勾股定理：
+\phantomsection\label{concept:vector-length}向量还有一个重要性质：\textbf{长度}。二维向量 $\vect{a}=(a_1,a_2)$ 的长度就是勾股定理：
 \begin{equation}
 \|\vect{a}\|=\sqrt{a_1^2+a_2^2}.
 \end{equation}
 例如 $(0.6,0.8)$ 的长度为 $\sqrt{0.6^2+0.8^2}=1$。长度等于 $1$ 的向量叫\textbf{单位向量}，后面很多计算会方便得多。
-
-\chapterchecktasks{01-vectors}{正文基础三题}{
-\item \textbf{定义：}向量 $(2,3)$ 与 $(3,2)$ 为什么一般不代表同一条数据记录？解释位置与含义之间的关系。\chapterinlinehint{先给每个坐标标上字段名称。}
-\item \textbf{手算：}计算 $(2,3)+(1,-1)$，并核对结果有几个分量。\chapterinlinehint{同一位置的分量分别相加。}
-\item \textbf{找错：}程序把二维“年龄／身高”向量和二维“身高／年龄”向量直接逐项相加。形状对了，为什么仍不合理？\chapterinlinehint{先把两个向量的字段顺序写出来。}
-}
-\chapterrecallanswer{向量不只是几个数字，分量的顺序、单位和语义也必须对齐。}
-
-\begin{conclusion}
-向量把多个特征按固定顺序放进一行；同维向量按位置相加，长度用勾股定理计算。
-有了两条向量，怎样判断它们是否匹配？下一章从点积开始。
-\end{conclusion}

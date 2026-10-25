@@ -130,7 +130,7 @@ $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 \bottomrule\endfoot
 \ref*{intro:16-loss-gradient}--\ref*{intro:07-functions-relu} & \path{beginner_training_demo.py} & 标准库 & 双参数迭代、步长、ReLU 拟合 & 直线下界 2/9\\
 \ref*{intro:20b-task-contract}、\ref*{intro:22b-token-to-output}--\ref*{intro:22c-language-training} & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
-\ref*{intro:22c-language-training} & \path{teaching_trace.py} & NumPy & 0--20 步；\texttt{-{}-attention} 看权重，\texttt{-{}-freeze}/\texttt{-{}-only} 冻结参数 & 末步 0.483173\\
+\ref*{intro:22c-language-training}、\ref*{intro:23-llm-systems} & \path{teaching_trace.py} & NumPy & 0--20 步；\texttt{-{}-attention} 看权重，\texttt{-{}-freeze}/\texttt{-{}-only} 冻结参数，\texttt{-{}-lr}、\texttt{-{}-ids} 换学习率或句子，\texttt{-{}-generate} 贪心生成 & 末步 0.483173\\
 \ref*{intro:22c-language-training}、附录 B & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
 \ref*{intro:20a-tokenizer} & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
 \ref*{intro:20a-tokenizer} & \path{chinese_tokenizer_demo.py} \texttt{-{}-real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\

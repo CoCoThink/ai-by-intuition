@@ -212,7 +212,6 @@ Decoder 的四个位置可以并行计算，
 \item \textbf{预测：}训练时若位置 $1$ 能读取位置 $2$ 的输入（它正是位置 $1$ 的目标），这会使下一 Token 训练的什么规则失效？\chapterinlinehint{检查目标是否已经进入本来不可见的前缀。}
 \item \textbf{找错：}同学把 Norm 放在子层与残差相加之后，却称它为本书的 Pre-Norm。写出本书每条残差路径中 Norm、子层、加法的顺序。\chapterinlinehint{按输入旁路与子层主路分别追踪。}
 }
-\chapterrecallanswer{一个 Block 需要形状兼容的残差；因果 Mask 禁止看未来；Decoder-only 自注意力没有默认的 Encoder Cross-Attention。}
 
 
 

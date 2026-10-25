@@ -7,10 +7,14 @@ Options:
   --only Wq,Wk         train only the listed tensors (all others frozen)
   --generate           after training, greedily generate from prompt [2]
                        until the 3-row position table P is exhausted
+  --lr 0.2             learning rate (default: the book's 0.04)
+  --ids 2,5,4          train on other input IDs (exactly 3, vocabulary 1..5);
+                       targets default to the next IDs followed by 3 ("。")
+  --targets 5,4,3      explicit targets for --ids
 """
 import argparse
 import numpy as np
-from teaching_reference import LR, VOCAB, backward, forward, parameters
+from teaching_reference import IDS, LR, TARGETS, VOCAB, backward, forward, parameters
 
 NAMES = tuple(parameters())
 
@@ -23,17 +27,27 @@ def names(text):
     return chosen
 
 
-def train(steps=20, trainable=NAMES, on_step=None):
+def id_list(text):
+    try:
+        chosen = tuple(int(n) for n in text.split(','))
+    except ValueError:
+        raise argparse.ArgumentTypeError('use comma-separated integers, e.g. 2,5,4')
+    if len(chosen) != 3 or not all(1 <= n <= len(VOCAB) for n in chosen):
+        raise argparse.ArgumentTypeError(f'need exactly 3 IDs in 1..{len(VOCAB)} (P has 3 rows)')
+    return chosen
+
+
+def train(steps=20, trainable=NAMES, on_step=None, lr=LR, ids=IDS, targets=TARGETS):
     """Full-batch SGD on the 3-position fixture; frozen tensors keep initial values."""
     weights = parameters()
     for step in range(steps + 1):
-        state = forward(weights)
+        state = forward(weights, ids=ids, targets=targets)
         if on_step:
             on_step(step, state)
         if step != steps:
             grads = backward(weights, state)
             for name in trainable:
-                weights[name] -= LR * grads[name]
+                weights[name] -= lr * grads[name]
     return weights
 
 
@@ -59,7 +73,15 @@ def main():
     group.add_argument('--freeze', type=names, default=())
     group.add_argument('--only', type=names, default=None)
     parser.add_argument('--generate', action='store_true')
+    parser.add_argument('--lr', type=float, default=LR)
+    parser.add_argument('--ids', type=id_list, default=IDS)
+    parser.add_argument('--targets', type=id_list, default=None)
     args = parser.parse_args()
+    if args.targets is not None and args.ids == IDS:
+        parser.error('--targets requires --ids')
+    targets = args.targets or (TARGETS if args.ids == IDS else args.ids[1:] + (3,))
+    if args.lr != LR or args.ids != IDS:
+        print(f'lr={args.lr} ids={list(args.ids)} targets={list(targets)}')
     trainable = args.only if args.only is not None else tuple(n for n in NAMES if n not in args.freeze)
     if set(trainable) != set(NAMES):
         print('trainable:', ','.join(trainable))
@@ -70,7 +92,7 @@ def main():
         if args.attention and step in (0, 20):
             print('attention', np.array2string(state['a'], precision=6))
 
-    weights = train(trainable=trainable, on_step=show)
+    weights = train(trainable=trainable, on_step=show, lr=args.lr, ids=args.ids, targets=targets)
     if args.generate:
         ids, trace = greedy_generate(weights)
         for item in trace:

@@ -91,6 +91,7 @@ Agent 是组织模型决策与工具动作的系统方式。
 
 
 \subsection{［复算］三个二维文档块怎样决定检索结果？}
+\phantomsection\label{concept:vector-retrieval}
 
 \localfixture{二维 RAG 检索，独立于三维 Transformer 贯通参数}
 先用第~\ref*{intro:02-dot-product}~章的点积代替真实系统中复杂的向量检索：查询
@@ -169,7 +170,6 @@ $(132-120)/120=\boxed{10\%}$。
 \item \textbf{手算：}任务需要 Q1--Q4 四份报表，Top-3 返回 Q4、Q2、去年 Q4（不在任务范围内）。求必需证据的 recall@3；若改取 Top-5 后又命中 Q1、Q3，recall@5 是多少？\chapterinlinehint{先写出必需集合，再数前 $k$ 个结果中命中的必需文档。}
 \item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？\chapterinlinehint{分别检查相关性排名、出处、单位与原表口径。}
 }
-\chapterrecallanswer{检索证据先核对必需季度，再用真实数据计算；缺表时报告缺口。}
 \begin{conclusion}
 检索找到候选证据，应用仍需核对覆盖、来源和计算条件。
 接下来让工具读取授权资源并执行可复算的计算。

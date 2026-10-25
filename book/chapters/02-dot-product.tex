@@ -1,10 +1,5 @@
-\chapterrule
-\section{点积：如何判断两条线索相不相似？}
-\label{intro:02-dot-product}
-\chaptercompass{怎样把两条线索的匹配度算成一个分数？}{对应分量相乘再求和，方向与长度共同影响点积。}{两条 $d$ 维行向量 $\vect a^\top,\vect b^\top$ $\to$ 一个数 $\vect a^\top\vect b$}{直接点积无可训练参数；投影权重可学习}
-\modelpipelinefocus{0}{点积与匹配}
-
-上一章把一个东西写成一行数字；要判断两行数字“像不像”，最直接的办法是逐项比较再汇总成一个分数。
+\subsection{点积：同位置相乘再求和}
+上面把一个东西写成一行数字；要判断两行数字“像不像”，最直接的办法是逐项比较再汇总成一个分数。
 给定 $\vect{a}=(a_1,a_2)$ 和 $\vect{b}=(b_1,b_2)$，它们的\textbf{点积}定义为：
 \begin{equation}
 \boxed{\vect{a}\cdot\vect{b}=a_1b_1+a_2b_2.}
@@ -112,17 +107,19 @@ s_i=\vect q^\top\vect k_i=\vect q\cdot\vect k_i.
 许多 Query--Key 配对的点积彼此独立，可以同时计算，这正是 GPU 擅长的并行乘加。
 
 
-\chapterchecktasks{02-dot-product}{正文基础三题}{
+\chapterchecktasks{01-vectors}{正文基础六题}{
+\item \textbf{定义：}向量 $(2,3)$ 与 $(3,2)$ 为什么一般不代表同一条数据记录？解释位置与含义之间的关系。\chapterinlinehint{先给每个坐标标上字段名称。}
+\item \textbf{手算：}计算 $(2,3)+(1,-1)$，并核对结果有几个分量。\chapterinlinehint{同一位置的分量分别相加。}
+\item \textbf{找错：}程序把二维“年龄／身高”向量和二维“身高／年龄”向量直接逐项相加。形状对了，为什么仍不合理？\chapterinlinehint{先把两个向量的字段顺序写出来。}
 \item \textbf{手算：}求 $(1,2)\cdot(3,1)$，并说明点积为何是标量。\chapterinlinehint{将同位置分量相乘，再求和。}
 \item \textbf{预测：}两个单位向量点积为 $0$；若把第一个向量反向，新点积会怎样？\chapterinlinehint{利用点积对第一个向量的线性关系。}
 \item \textbf{找错：}同学说“点积较大总能证明两个句子语义更接近”，哪两项条件没有核对？\chapterinlinehint{检查向量长度与表示的训练方式。}
 }
-\chapterrecallanswer{点积是同位置分量乘积之和，同时受长度与夹角影响；语义匹配还依赖向量如何训练。}
 
 
 
 \begin{conclusion}
-点积就是\textbf{同位置相乘再求和}，既可以用数字算，
-也可以从两个向量之间的夹角理解。后面学习 Attention 时，
-我们会用它衡量不同位置之间的匹配程度。
+向量把多个特征按固定顺序放进一行，同维向量按位置相加，长度用勾股定理计算。
+点积就是\textbf{同位置相乘再求和}，既可以用数字算，也可以从两个向量之间的夹角理解。
+后面学习 Attention 时，我们会用它衡量不同位置之间的匹配程度。
 \end{conclusion}

@@ -108,7 +108,6 @@ W_O=\begin{bmatrix}1&0&1&0\\0&1&0&1\end{bmatrix}^{\top},
 \item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{先累加拼接宽度，再与输出投影核对内侧维度。}
 \item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{比较尺度变换与区间裁剪的定义。}
 }
-\chapterrecallanswer{位置表示携带序列顺序，多头允许独立匹配视角；缩放用于控制点积幅度，不是把分数截成概率。}
 
 
 

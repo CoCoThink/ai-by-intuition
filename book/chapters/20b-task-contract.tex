@@ -89,7 +89,6 @@ Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
 \item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
 \item \textbf{找错：}同学让第一个位置通过 Attention 直接看见第二个位置的正确答案，再计算第一个位置的预测损失。哪里发生信息泄漏？\chapterinlinehint{画出目标 Token 流向第一个位置的路径。}
 }
-\chapterrecallanswer{下一 Token 的目标是完整序列整体左移一位（去掉首项）；因果掩码禁止当前位置读取未来输入。}
 
 
 

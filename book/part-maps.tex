@@ -52,8 +52,7 @@
 }{给 $\widehat{y}=wx+b$ 指出一个输入、两个参数和一个目标；解释损失如何影响下一次更新。能讲清这条闭环，就抓住了后面所有训练章节的主线。}}
 
 \newcommand{\partmapmatrices}{\partmap{
-\mapchapter{01-vectors}{向量} & 同一条记录中的各个数字怎样对应特征？\\
-\mapchapter{02-dot-product}{点积} & 两条线索的方向和大小怎样共同影响匹配分数？\\
+\mapchapter{01-vectors}{向量与点积} & 各个数字怎样对应特征？两条线索的方向和大小怎样影响匹配分数？\\
 \mapchapter{03-matrix-multiplication}{矩阵乘法} & 一行乘一列，怎样组成一整张结果表？\\
 \mapchapter{10-mlp}{矩阵 MLP} & 怎样让一批输入共享两层权重和激活函数？\\
 }{\textbf{已有：}第一部分的函数、损失和更新。\textbf{本段：}把重复计算排成矩阵。\textbf{接下来：}第三部分让 Token 成为矩阵中的行，第四部分让这些行交换信息。
@@ -68,8 +67,7 @@
 }{写出输入“春天、花、开了”各位置的目标，并在词表中指出目标所在列。分清 Token 的身份、向量特征和输出概率这三种表示。}}
 
 \newcommand{\partmapcontext}{\partmap{
-\mapchapter{21a-context-gap}{上下文缺口} & 逐行 MLP 为什么看不到别的 Token？\\
-\mapchapter{21-rnn}{RNN} & 怎样把历史压进逐步传递的状态？\\
+\mapchapter{21a-context-gap}{上下文缺口与 RNN} & 逐行 MLP 为什么看不到别的 Token？怎样把历史压进逐步传递的状态？\\
 \mapchapter{21c-naive-attention}{Attention 的直觉} & 怎样绕过状态直接读取其他位置？先用输入点积试一次。\\
 \mapchapter{21b-why-attention}{Q/K/V} & 为什么要把提问、匹配与内容拆成三组可训练投影？\\
 \mapchapter{11-softmax-memory}{批量与因果注意力} & 所有位置怎样一起算？因果 Mask 怎样只读前缀？\\

@@ -233,7 +233,7 @@ def expected_subsection_bookmarks() -> dict[str, list[str]]:
                     )
 
     if list(expected) != [str(i) for i in range(1, CHAPTER_COUNT + 1)] + list("ABCDEFG"):
-        fail("Bookmark source reference must contain chapters 1..41 and appendices A..G")
+        fail(f"Bookmark source reference must contain chapters 1..{CHAPTER_COUNT} and appendices A..G")
     if len([item for group in expected.values() for item in group]) < 150:
         fail("Suspiciously few numbered subsection headings in source")
     return expected
@@ -431,7 +431,7 @@ def validate_pdf(path: Path) -> None:
     print(f"Heading QA: {heading_counts['/H1']} H1 headings; {heading_counts['/H2']} H2 headings")
     # hyperref's PDF bookmarks are a separate, user-facing navigation system:
     # visible CTeX numbering is insufficient unless the outline contains it.
-    # Nine numbered parts, 41 chapters and A--G appendices must
+    # Nine numbered parts, CHAPTER_COUNT chapters and A--G appendices must
     # retain their numbering and nesting. hyperref in TeX Live 2026 uses plain
     # `1 Title` and `A Title`; older CTeX may write `第1章` and `附录 A`. Two standalone core interludes stay
     # intentionally unnumbered (the reading guide and end-of-core recap).
@@ -474,7 +474,7 @@ def validate_pdf(path: Path) -> None:
                       title.startswith("终章：回到那四个 Token")):
                 fail(f"Unnumbered PDF chapter bookmark: {title!r}")
     if chapter_numbers != list(range(1, CHAPTER_COUNT + 1)):
-        fail(f"PDF chapter bookmark numbers must be 1--41 in order; "
+        fail(f"PDF chapter bookmark numbers must be 1--{CHAPTER_COUNT} in order; "
              f"found {chapter_numbers!r}")
     print(f"PDF bookmark QA: {len(PARTS)} numbered parts, "
           f"{len(chapter_numbers)} numbered chapters, 7 lettered appendices")
@@ -645,8 +645,9 @@ def validate_pdf(path: Path) -> None:
              "the route table must start on the same page")
 
     # R01 explicit pagination regression: after compressing the two-line locator,
-    # chapters 10 and 14 must end with a self-check AND a conclusion on the same
-    # substantive page. Never lower the generic orphan/blank-page thresholds.
+    # the MLP and prediction-task chapters (printed as 9 and 13 since the
+    # vectors/dot-product and context-gap/RNN merges) must end with a self-check
+    # AND a conclusion on the same substantive page. Never lower the generic orphan/blank-page thresholds.
     numbered_pages: dict[int, int] = {}
     chapter_tops: dict[int, float] = {}
     part_pages = [reader.get_destination_page_number(item)
@@ -661,7 +662,7 @@ def validate_pdf(path: Path) -> None:
                     numbered_pages[int(match.group(1))] = (
                         reader.get_destination_page_number(bookmark)
                     )
-    for chapter_number in (10, 14):
+    for chapter_number in (9, 13):
         if chapter_number not in numbered_pages or chapter_number + 1 not in numbered_pages:
             fail(f"Missing chapter bookmarks for R01 page regression: {chapter_number}")
         # A part's introduction can have its own page before its first chapter.
@@ -681,7 +682,7 @@ def validate_pdf(path: Path) -> None:
             fail(f"R01 chapter {chapter_number} stranded its conclusion on PDF "
                  f"page {last_page_index + 1} (Han={han_count}); "
                  "retain the compact locator and real orphan gate")
-    print("R01 chapter-end pagination QA passed: chapters 10 and 14 retain "
+    print("R01 chapter-end pagination QA passed: chapters 9 and 13 retain "
           "self-check and substantive conclusion pages")
 
     compact = normalized(text)
@@ -812,7 +813,7 @@ def validate_pdf(path: Path) -> None:
     # Validate every numbered destination and require substantive page content;
     # the page-wide bounding-box and orphan-page checks above remain in effect.
     if sorted(numbered_pages) != list(range(1, CHAPTER_COUNT + 1)):
-        fail("Opening guard requires chapter bookmarks 1..41")
+        fail(f"Opening guard requires chapter bookmarks 1..{CHAPTER_COUNT}")
     parameter_han_counts=[]
     for name in REQUIRED:
         source=chapter(name)
@@ -834,7 +835,7 @@ def validate_pdf(path: Path) -> None:
         opening_errors=chapter_opening_errors(chapter_tops[chapter_number],
             height,opening_text,parameter_han_counts[chapter_number-1])
         if opening_errors:fail(f"Chapter {chapter_number} opening page {opening_index+1}: "+'; '.join(opening_errors))
-    print("Chapter opening QA passed: 41/41 destinations above bottom third, with substantive text")
+    print(f"Chapter opening QA passed: {CHAPTER_COUNT}/{CHAPTER_COUNT} destinations above bottom third, with substantive text")
     # Source-level hyperlinks may have existing labels but resolve incorrectly
     # once TeX has built bookmarks and named destinations. Audit the actual PDF.
     named_destinations = reader.named_destinations

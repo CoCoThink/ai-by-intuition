@@ -56,14 +56,14 @@
 
 \subsubsection{第二组：最少数学}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=11]
-\item \textbf{向量}：一组有顺序的数字，每个位置对应一种特征；本书按行书写，如 $(1,2)$。 \termref{intro:01-vectors}
-\item \textbf{维度}：向量有几个数，或矩阵有几行几列。 \termref{intro:01-vectors}
-\item \textbf{矩阵}：按行和列排列的数字表；可同时执行多个点积。 \termref{intro:03-matrix-multiplication}
-\item \textbf{转置}：交换行与列，例如 $V$ 转成 $V^\top$。 \termref{intro:03-matrix-multiplication}
+\item \textbf{向量}：一组有顺序的数字，每个位置对应一种特征；本书按行书写，如 $(1,2)$。 \termref{concept:vector}
+\item \textbf{维度}：向量有几个数，或矩阵有几行几列。 \termref{concept:vector}
+\item \textbf{矩阵}：按行和列排列的数字表；可同时执行多个点积。 \termref{concept:matrix}
+\item \textbf{转置}：交换行与列，例如 $V$ 转成 $V^\top$。 \termref{concept:transpose}
 \item \textbf{点积}：对应分量相乘后求和；若向量归一化，可反映夹角余弦。 \termref{intro:02-dot-product}
-\item \textbf{范数}：衡量向量长度或大小的一类函数。 \termref{intro:01-vectors}
+\item \textbf{范数}：衡量向量长度或大小的一类函数。 \termref{concept:vector-length}
 \item \textbf{余弦相似度}：点积除以两向量长度之积，关注方向。 \termref{intro:02-dot-product}
-\item \textbf{线性变换}：按本书行向量约定写作 $\vect x^\top W$（整批为 $XW$）的运算；满足叠加规则。 \termref{intro:03-matrix-multiplication}
+\item \textbf{线性变换}：按本书行向量约定写作 $\vect x^\top W$（整批为 $XW$）的运算；满足叠加规则。 \termref{concept:linear-map}
 \item \textbf{非线性}：不满足简单线性叠加的变化，例如 ReLU。 \termref{intro:07-functions-relu}
 \item \textbf{激活函数}：应用在线性层输出上的函数，扩展模型表达能力。 \termref{intro:07-functions-relu}
 \end{enumerate}
@@ -103,7 +103,7 @@
 \item \textbf{Batch Size}：一个批次包含多少训练样本。 \termref{concept:batch-size}
 \item \textbf{优化器}：根据梯度与状态计算参数更新的算法。 \termref{concept:optimizer}
 \item \textbf{Adam}：结合动量和自适应尺度估计的常用优化器。 \termref{app:optimizer-details}
-\item \textbf{梯度裁剪}：限制梯度幅度，减少过大更新的风险。 \termref{app:training-diagnostics}
+\item \textbf{梯度裁剪}：限制梯度幅度，减少过大更新的风险。 \termref{concept:gradient-clipping}
 \item \textbf{梯度消失}：反向传播到较早层时梯度变得过小。 \termref{app:training-diagnostics}
 \item \textbf{梯度爆炸}：反向传播中梯度幅度变得过大。 \termref{app:training-diagnostics}
 \item \textbf{残差连接}：把输入直接加回模块输出，为信息传播提供旁路。 \termref{concept:residual}
@@ -128,7 +128,7 @@
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=61]
 \item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{concept:token}
 \item \textbf{Tokenizer}：将文本切成 Token 并映射到整数 ID 的方法。 \termref{intro:20a-tokenizer}
-\item \textbf{词表}：允许的 Token 与其 ID 的集合。 \termref{intro:20a-tokenizer}
+\item \textbf{词表}：允许的 Token 与其 ID 的集合。 \termref{concept:vocabulary}
 \item \textbf{One-hot}：只有对应类别位置为一，其余为零的编码。 \termref{concept:cross-entropy}
 \item \textbf{Embedding}：把离散 Token ID 映射到可学习的稠密向量。 \termref{concept:embedding}
 \item \textbf{嵌入矩阵}：存放词表各 Token 向量的一张权重表。 \termref{concept:embedding}
@@ -172,7 +172,7 @@
 \item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
 \item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{concept:hallucination-calibration}
 \item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{concept:rag}
-\item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{concept:rag}
+\item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{concept:vector-retrieval}
 \item \textbf{MCP}：模型应用连接外部工具和数据源的一种标准协议。 \termref{concept:mcp}
 \item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{concept:agent}
 \item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{concept:workflow}

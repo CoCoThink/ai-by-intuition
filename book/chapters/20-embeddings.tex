@@ -154,7 +154,6 @@ E_{20}[5]&\approx(0.1734,\,-0.2188,\,1.3136).
 \item \textbf{比较：}为什么直接拿 ID 数值相乘不能代替 Embedding 查表？one-hot 乘 Embedding 矩阵又为何可以得到同一向量？\chapterinlinehint{把 one-hot 与矩阵相乘展开为各行加权和。}
 \item \textbf{预测：}一句话中同一 ID 出现在位置 $1$ 和 $3$，原始查表向量是否相同？分别加上可训练位置向量后还必定相同吗？\chapterinlinehint{分别比较加位置向量之前与之后的表达式。}
 }
-\chapterrecallanswer{Embedding 是可训练的 ID 到向量映射；同 ID 的查表向量相同，位置与上下文可使最终表示不同。}
 
 
 

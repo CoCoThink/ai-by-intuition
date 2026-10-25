@@ -156,7 +156,6 @@ L_1=-\ln\Pi_{1,4}.
 \item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}
 \item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{比较负对数函数在这两个概率处的大小。}
 }
-\chapterrecallanswer{logits 经 Softmax 才是概率；正确类交叉熵为 $-\ln p_y$，logit 梯度为 $p-y$，其中 $y$ 是 one-hot 标签；主线五类第一行的损失为 $-\ln\Pi_{1,4}$。}
 
 
 

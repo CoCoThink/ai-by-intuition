@@ -118,7 +118,6 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 \item \textbf{手算：}三轮验证损失为 $(0.6,0.4,0.5)$。按最低验证损失早停，选哪一轮？最低是多少？\chapterinlinehint{在验证记录中找最小值及其所在轮次。}
 \item \textbf{找错：}同学说“Dropout 训练时随机删除一些权重参数，再由测试集挑最佳 Dropout 率”。指出两处错误。\chapterinlinehint{分别核对 Dropout 的作用对象与调参数据集。}
 }
-\chapterrecallanswer{训练误差变小不保证验证误差变小；测试集必须留给最后的独立评估。}
 
 \begin{conclusion}
 验证集用于选模，测试集用于独立报告。下一部分把多个输入特征放进同一次计算。

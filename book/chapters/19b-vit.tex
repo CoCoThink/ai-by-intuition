@@ -235,7 +235,6 @@ $16\times16\times3=768$ 维。投影宽度若也是 $768$，
 \item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？上一题含 CLS 的五条向量经投影后是什么形状？\chapterinlinehint{让视觉特征宽度与语言隐藏宽度对齐。}
 \item \textbf{预测：}固定图像尺寸而把 Patch 边长减半，忽略边界时 Patch 数量约变为多少倍？全局 Attention 的位置配对数又约变为多少倍？\chapterinlinehint{先按面积比算 Patch 数，再算两两配对数。}
 }
-\chapterrecallanswer{ViT 把图像 Patch 变成带位置的 Token 序列，视觉到语言模型的接口还须对齐隐藏维度。}
 
 \begin{conclusion}
 Patch 投影形成图像序列，位置编码保留空间身份，

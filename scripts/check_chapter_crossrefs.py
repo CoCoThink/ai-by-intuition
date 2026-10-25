@@ -14,6 +14,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
+# Printed numbered chapters; keep in step with check_book_contract.CHAPTER_COUNT.
+CHAPTER_COUNT = 39
 INPUT_OR_APPENDIX = re.compile(r"\\appendix\b|\\input\{chapters/([^}]+)\}")
 SECTION_OR_CHECK = re.compile(r"\\section\s*\{|\\chapterchecktasks\{([^}]+)\}")
 # Also catch Chinese numerals ("第三章"), lists and ranges ("第 23、24 章",
@@ -64,8 +66,8 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
             elif slug in core_checks:
                 errors.append(f"chapters/{name}.tex: duplicate self-check ID {slug}")
 
-    if chapter_no != 41:
-        errors.append(f"core numbered chapters: expected 41, found {chapter_no}")
+    if chapter_no != CHAPTER_COUNT:
+        errors.append(f"core numbered chapters: expected {CHAPTER_COUNT}, found {chapter_no}")
 
     # Unlinked literal numbers survive LaTeX compilation and can silently go
     # stale after a section is inserted, moved, or removed. The answer bank is
@@ -127,7 +129,7 @@ def self_test() -> None:
     inputs = {"a": a, "b": b, "28-chapter-checks": answers}
     # In this two-chapter fixture only the fixed-book cardinality warning is expected.
     assert check_crossrefs(main, inputs) == [
-        "core numbered chapters: expected 41, found 2"
+        f"core numbered chapters: expected {CHAPTER_COUNT}, found 2"
     ]
     wrong = dict(inputs, **{"28-chapter-checks": answers.replace(
         "第 2 章", "第 1 章"
@@ -174,7 +176,7 @@ def main() -> int:
         for issue in issues:
             print("::error::" + issue, file=sys.stderr)
         return 1
-    print("Chapter reference QA passed: 41 numbered chapters; "
+    print(f"Chapter reference QA passed: {CHAPTER_COUNT} numbered chapters; "
           "all appendix D answer chapter numbers match source order; "
           "no hard-coded numbered chapter mentions")
     return 0
