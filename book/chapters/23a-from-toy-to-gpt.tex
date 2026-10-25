@@ -12,16 +12,12 @@
 \subsection{回看先前的 GPT-2 small 尺度示例}
 
 前面的\hyperref[intro:20b-task-contract]{语言预测任务}已给出尺寸对照。
-经典基础版 GPT-2 的示例配置为：
+按 \href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 small 的公开配置}：
 词表 $50{,}257$，隐藏宽度 $768$，
-$12$ 层 Transformer Block、$12$ 个注意力头，
-每层 FFN 中间宽度为 $3{,}072$，最大配置位置数 $1{,}024$。
-这些值来自固定修订 \texttt{607a30d} 的
-\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 配置}
-和 Transformers 4.46.3 的
-\href{https://github.com/huggingface/transformers/blob/v4.46.3/src/transformers/models/gpt2/modeling_gpt2.py}{相应 FFN 实现}
-（配置未给 FFN 宽度时取 $4\times768$）。
-这不是 2026 年所有 LLM 的统一规格。
+$12$ 层 Transformer Block、$12$ 个注意力头，最多处理 $1{,}024$ 个位置；
+每层 FFN 的中间宽度是隐藏宽度的 $4$ 倍，即 $4\times768=3{,}072$。
+后来的模型普遍更宽、更深，并会替换其中的部件（见第~\ref*{intro:22d-modern-transformers}~章），
+但都可以按这几项来读配置。
 
 \subsection{宽度、层数、头数分别在改变什么？}
 
