@@ -139,6 +139,24 @@ def route_caption_errors(body):
         r'\captionof{figure}' in body or r'tag=Caption' not in body) else []
 
 
+def part_bookend_errors(main, sources):
+    """Each part opens and closes with its own key; the opener's think-first
+    answer (partq:<key>) must be taught inside that same part."""
+    errors=[];core=main.split(r'\appendix',1)[0]
+    first=core.find(r'\part{')
+    if first<0 or core.find(r'\input{chapters/00-guide}') not in range(0,first):
+        errors.append('Prologue must precede Part 1')
+    for seg in re.split(r'(?=\\part\{)',core[first:]):
+        label=re.search(r'\\label\{part:([^}]+)\}',seg)
+        if not label:continue
+        key=label[1]
+        entries=re.findall(r'(?m)^\\partentry([a-z]+)\s*$',seg);exits=re.findall(r'(?m)^\\partexit([a-z]+)\s*$',seg)
+        if entries!=[key] or exits!=[key]:errors.append(f'part:{key}: needs one \\partentry{key} and one \\partexit{key}, found {entries}/{exits}')
+        owners=[n for n in re.findall(r'\\input\{chapters/([^}]+)\}',seg) if r'\label{partq:'+key+'}' in sources.get(n,'')]
+        if len(owners)!=1:errors.append(f'part:{key}: think-first answer partq:{key} must sit in exactly one chapter of this part, found {owners}')
+    return errors
+
+
 def ending_order_errors(body):
     errors=[]
     for chunk in re.split(r'\\section\*?\{',body):
@@ -267,11 +285,12 @@ def validate_contract():
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in exercise_link_text_errors(body,aliases))
     errors.extend(review_ownership_errors(data,(BOOK/'chapter-practice.tex').read_text()))
     errors.extend(route_caption_errors(combined['part-maps']))
+    errors.extend(part_bookend_errors(main,sources))
     guard=re.search(r'\\newcommand\{\\chapterrule\}\{\\Needspace\{([.0-9]+)\\textheight\}',main)
     require(bool(guard) and float(guard[1])>=1/3,'Chapter opening guard must reserve at least one-third of a page')
     chart_font=re.search(r'\\renewcommand\{\\scriptsize\}\{\\fontsize\{([.0-9]+)\}',main)
     require(bool(chart_font) and float(chart_font[1])>=8.5,'Chart annotations must be at least 8.5 pt')
-    require(main.index(r'\input{chapters/23f-foundation-recap}')>main.index(r'\partreviewmemory'),'Closing recap must follow the final part')
+    require(main.index(r'\input{chapters/23f-foundation-recap}')>main.index(r"\partexitmemory"),'Closing recap must follow the final part')
     require('终章：回到那四个 Token' in sources['23f-foundation-recap'],'Missing final bookend')
     require('一句话本质' not in main,'Remove redundant chapter-compass label')
     require(r'\answerresult{1280}' in legacy['C4-41']['solution'],'C4-41 must include bytes, not 640 elements')
@@ -405,12 +424,20 @@ def self_test():
     assert review_ownership_errors(reviews,'C-001、R-01')
     assert not route_caption_errors(r'\tagstructbegin{tag=Caption}')
     assert route_caption_errors(r'\captionof{figure}{全书路线}')
+    book=('\\input{chapters/00-guide}\n\\part{A}\\label{part:context}\n\\partentrycontext\n\\input{chapters/21a}\n\\partexitcontext\n'
+          '\\part{B}\\label{part:transformer}\n\\partentrytransformer\n\\input{chapters/22b}\n\\partexittransformer\n')
+    taught={'21a':r'\label{partq:context}','22b':r'\label{partq:transformer}'}
+    assert not part_bookend_errors(book,taught)
+    # The answer to Part 5's question may not be taught in Part 4.
+    assert part_bookend_errors(book,{'21a':r'\label{partq:context}\label{partq:transformer}','22b':''})
+    assert part_bookend_errors(book.replace('\\partexittransformer','\\partexitcontext'),taught)
+    assert part_bookend_errors(book.replace('\\input{chapters/00-guide}\n','')+'\\input{chapters/00-guide}\n',taught)
     opener='参数／是否训练：'+('这是连续的正文内容'*5)
     assert not chapter_opening_errors(740,842,opener)
     assert chapter_opening_errors(180,842,opener)
     assert chapter_opening_errors(740,842,'参数／是否训练：冻结权重')
     assert chapter_opening_errors(740,842,'参数／是否训练：'+('参数说明'*10),40)
-    print('Book contract regressions passed: chapter roles, notation, figure colors, printed exercise IDs, review ownership, map captions and chapter openings')
+    print('Book contract regressions passed: chapter roles, notation, figure colors, printed exercise IDs, review ownership, map captions, part bookends and chapter openings')
 
 
 def main():

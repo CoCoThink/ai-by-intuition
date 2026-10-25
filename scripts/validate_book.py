@@ -258,6 +258,9 @@ def validate_subsection_bookmarks(reader) -> None:
         return result
 
     roots = nested(reader.outline)
+    # The unnumbered prologue is the single root before Part 1.
+    if roots and roots[0]["title"].startswith("序章："):
+        roots = roots[1:]
     if len(roots) != len(PARTS) + 1:
         fail("PDF bookmark tree must have 9 part roots and 1 appendix root")
     chapter_re = re.compile(r"^(?:第)?(\d+)(?:章)?\s+\S")
@@ -385,7 +388,7 @@ def validate_pdf(path: Path) -> None:
     # Count source tables on the cover separately from included chapter files.
     expected_tables += len(re.findall(r"\\begin\{(?:tabularx|tabular|longtable)\}", (BOOK/'main.tex').read_text()))
     # The reusable part-map table is expanded once on each part opener.
-    expected_tables += len(re.findall(r"(?m)^\\partmap[a-z]+\s*$",
+    expected_tables += len(re.findall(r"(?m)^\\partentry[a-z]+\s*$",
                                      (BOOK / "main.tex").read_text()))
     if len(table_nodes) != expected_tables:
         fail(f"Expected {expected_tables} tagged data tables, found {len(table_nodes)}")
@@ -435,7 +438,9 @@ def validate_pdf(path: Path) -> None:
     # retain their numbering and nesting. hyperref in TeX Live 2026 uses plain
     # `1 Title` and `A Title`; older CTeX may write `第1章` and `附录 A`. Two standalone core interludes stay
     # intentionally unnumbered (the reading guide and end-of-core recap).
+    # The prologue precedes Part 1 and is the only allowed front root.
     outline_groups = []
+    front_roots = []
     for entry in reader.outline:
         if isinstance(entry, list):
             if not outline_groups:
@@ -444,7 +449,13 @@ def validate_pdf(path: Path) -> None:
                 str(item.title).strip() for item in entry if hasattr(item, "title")
             )
         elif hasattr(entry, "title"):
-            outline_groups.append([str(entry.title).strip(), []])
+            title = str(entry.title).strip()
+            if not outline_groups and title.startswith("序章："):
+                front_roots.append(title)
+                continue
+            outline_groups.append([title, []])
+    if len(front_roots) != 1:
+        fail(f"PDF bookmarks need exactly one prologue root before Part 1: {front_roots!r}")
     if len(outline_groups) != len(PARTS) + 1:
         fail(f"PDF bookmark root should have 9 numbered parts plus one "
              f"unnumbered appendix: {len(outline_groups)} roots")
@@ -674,6 +685,10 @@ def validate_pdf(path: Path) -> None:
         last_page_index = next_boundary - 1
         if last_page_index < numbered_pages[chapter_number]:
             fail(f"Chapter {chapter_number} has invalid physical page range")
+        # A part exit may take the page after the chapter; judge the chapter's own ending.
+        if ("回到开篇" in pages[last_page_index] and "小结" not in pages[last_page_index]
+                and last_page_index > numbered_pages[chapter_number]):
+            last_page_index -= 1
         closing_page = pages[last_page_index]
         han_count = len(re.findall(r"[\u4e00-\u9fff]", closing_page))
         if ("读完自测" not in closing_page or "小结" not in closing_page
@@ -730,13 +745,18 @@ def validate_pdf(path: Path) -> None:
             continue
         if re.match(r"^第[一二三四五六七八九十]+部分", str(item.title)):
             index = reader.get_destination_page_number(item)
-            if not all(label in pages[index] for label in ("从这里出发", "本部分你会学会",
-                                                          "本部分地图", "全书路线", "你在这里",
-                                                          "读完试试看")):
+            if not all(label in pages[index] for label in ("为什么从这里开始", "先想一想",
+                                                          "学完你能做到", "本部分地图",
+                                                          "全书路线", "你在这里")):
                 fail(f"Part introduction incomplete on page {index + 1}")
             part_openers.add(index + 1)
     if len(part_openers) != len(PARTS):
         fail(f"Expected {len(PARTS)} dedicated part introductions, got {sorted(part_openers)}")
+    # Each opener's think-first question is answered once at its own part's exit.
+    exits = [i for i, page in enumerate(pages, 1) if "回到开篇" in page and "累积复习" in "".join(pages[i - 1:i + 1])]
+    bounds = sorted(part_openers) + [len(pages) + 1]
+    if len(exits) != len(PARTS) or any(not bounds[n] < page < bounds[n + 1] for n, page in enumerate(exits)):
+        fail(f"Each part needs one exit (回到开篇 + 累积复习) inside its own pages: exits {exits}, openers {sorted(part_openers)}")
     for i, page in enumerate(pages, 1):
         if i < 4 or not page.strip():
             continue

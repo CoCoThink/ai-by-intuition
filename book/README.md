@@ -12,7 +12,7 @@
 | 版权页 | [00h-colophon.tex](chapters/00h-colophon.tex) |
 | 阅读路线与表示约定 | [00g-reading-routes.tex](chapters/00g-reading-routes.tex) |
 | 开读前：五题入门自检 | [00j-entry-check.tex](chapters/00j-entry-check.tex) |
-| 部分开篇地图、累积复习 | [part-maps.tex](part-maps.tex)、[part-reviews.tex](part-reviews.tex)（生成） |
+| 部分开篇（为什么从这里开始、先想一想、地图）与收尾（回到开篇、累积复习、下一步） | [part-maps.tex](part-maps.tex)；累积复习 R 题由 [part-reviews.tex](part-reviews.tex) 生成；“先想一想”答案处标 `partq:<部分>` |
 
 ## 正文
 

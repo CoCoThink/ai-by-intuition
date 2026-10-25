@@ -159,17 +159,6 @@
 \newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{§\ref*{#1} · 第 \pageref*{#1} 页}}}
 \newcommand{\localfixture}[1]{\par\smallskip\noindent{\sffamily\footnotesize\color{muted}\colorbox{paper}{\strut\textbf{独立例}}\enspace #1}\par\smallskip}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
-\newcommand{\learningbridge}[2]{%
-\par\medskip
-\begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,boxrule=.5pt,
-  arc=2mm,left=5mm,right=5mm,top=4mm,bottom=4mm]
-{\sffamily\footnotesize\bfseries\color{muted}从这里出发}\par
-#1\par\medskip
-{\sffamily\footnotesize\bfseries\color{blue}本部分你会学会}\par
-#2
-\end{tcolorbox}\medskip}
-
-
 % Chapter compass: a single, shape-first entry convention for key model components.
 % Question and answer first; the two shape/parameter notes share one small line.
 \newcommand{\chaptercompass}[4]{%
@@ -316,14 +305,14 @@
 % Entry check and its answers sit together before Part 1 (no chapter number).
 \input{chapters/00j-entry-check}
 \clearpage
+% The prologue poses the book's question; Part 1 answers it from the smallest case.
+\input{chapters/00-guide}
+\clearpage
 
 
 \part{学习是什么：从规则到参数更新}\label{part:learning}\markboth{学习是什么：从规则到参数更新}{}
-\learningbridge{当问题变化太多，无法把每一种情况的规则写尽，我们需要让样本参与确定函数。}{从标量函数、损失与梯度，走完反向传播、一次同步更新与泛化的完整训练闭环。}
-\partmaplearning
+\partentrylearning
 \clearpage
-\input{chapters/00-guide}
-\markboth{学习是什么：从规则到参数更新}{}
 \input{chapters/00-functions}
 \input{chapters/16-loss-gradient}
 \input{chapters/18c-training-engineering}
@@ -331,34 +320,31 @@
 \input{chapters/17-backpropagation}
 \input{chapters/18b-end-to-end-learning}
 \input{chapters/18-generalization}
-\partreviewlearning
+\partexitlearning
 
 \clearpage
 \part{把许多数一起算}\label{part:matrices}\markboth{把许多数一起算}{}
-\learningbridge{标量函数已经可以训练，但现实任务有多个特征、许多参数和批量样本。}{用向量、点积和矩阵表示重复计算，把标量两层网络扩展到矩阵 MLP，核对每层输入与输出的形状。}
-\partmapmatrices
+\partentrymatrices
 \clearpage
 \input{chapters/01-vectors}
 \input{chapters/02-dot-product}
 \input{chapters/03-matrix-multiplication}
 \input{chapters/10-mlp}
-\partreviewmatrices
+\partexitmatrices
 
 \clearpage
 \part{让文字进入计算}\label{part:tokens}\markboth{让文字进入计算}{}
-\learningbridge{矩阵能处理数字，可模型的输入却可能是汉字、词与标点。}{通过 Tokenizer 和 Embedding 将文字变成可训练表示，定义三个位置的下一 Token 目标与形状。}
-\partmaptokens
+\partentrytokens
 \clearpage
 \input{chapters/20a-tokenizer}
 \input{chapters/20c-classification-loss}
 \input{chapters/20-embeddings}
 \input{chapters/20b-task-contract}
-\partreviewtokens
+\partexittokens
 
 \clearpage
 \part{让词与词交换信息}\label{part:context}\markboth{让词与词交换信息}{}
-\learningbridge{单个 Token 已经可以成为向量，但逐行计算无法自动看到其他位置。}{比较固定拼接、RNN 与按需读取，最终得到因果 Self-Attention、位置与多头的直觉。}
-\partmapcontext
+\partentrycontext
 \clearpage
 \input{chapters/21a-context-gap}
 \input{chapters/21-rnn}
@@ -366,12 +352,11 @@
 \input{chapters/21b-why-attention}
 \input{chapters/11-softmax-memory}
 \input{chapters/22a-position-multihead}
-\partreviewcontext
+\partexitcontext
 
 \clearpage
 \part{组装并训练 Transformer}\label{part:transformer}\markboth{组装并训练 Transformer}{}
-\learningbridge{Attention 会读取上下文，却还不是能训练、生成的完整语言模型。}{用两次 Norm、两条残差、FFN 与输出头建立三维贯通例，完成三位置联合更新与自回归生成。}
-\partmaptransformer
+\partentrytransformer
 \clearpage
 \input{chapters/22-transformer-architecture}
 \input{chapters/10b-ffn-output-head}
@@ -379,12 +364,11 @@
 \input{chapters/22c-language-training}
 \input{chapters/23-llm-systems}
 \input{chapters/23a-from-toy-to-gpt}
-\partreviewtransformer
+\partexittransformer
 
 \clearpage
 \part{从语言模型到助手}\label{part:assistant}\markboth{从语言模型到助手}{}
-\learningbridge{预训练模型能够续写，却未必懂得任务格式、读取可靠的当前数据或执行获得授权的操作。}{区分 ICL 与后训练，并用统一季度报表案例串起 RAG、工具、Agent、部署和安全边界。}
-\partmapassistant
+\partentryassistant
 \clearpage
 \input{chapters/23aa-pretraining-icl}
 \input{chapters/23c-post-training}
@@ -393,33 +377,30 @@
 \input{chapters/23d-agent-tools}
 \input{chapters/23d-agent-protocols}
 \input{chapters/23b-deployment-and-ecosystem}
-\partreviewassistant
+\partexitassistant
 
 \clearpage
 \part{架构为什么在变，往哪走}\label{part:architecture}\markboth{架构为什么在变，往哪走}{}
-\learningbridge{“忒修斯之船”问：船的部件逐块更换后，还是原来的船吗？现代 Transformer 也在替换位置表示、归一化、Attention 和 FFN；识别架构的延续与变化，要先看计算结构。}{用位置、归一化、专家、KV Cache 与长上下文五问理解架构选择；判断设计是否更好，还要对照相同条件下的质量、延迟与成本。}
-\partmaparchitecture
+\partentryarchitecture
 \clearpage
 \input{chapters/22d-modern-transformers}
 \input{chapters/23e-tech-judgement}
-\partreviewarchitecture
+\partexitarchitecture
 
 \clearpage
 \part{换一种数据看 Transformer：从 CNN 到 ViT}\label{part:vision}\markboth{换一种数据看 Transformer：从 CNN 到 ViT}{}
-\learningbridge{语言模型已经能处理 Token；图像也能切成可训练的局部表示并与语言序列桥接。}{从卷积小窗口与权重共享理解 CNN，再理解视觉 Transformer 如何处理图像块并对接语言模型。}
-\partmapvision
+\partentryvision
 \clearpage
 \input{chapters/19-cnn}
 \input{chapters/19b-vit}
-\partreviewvision
+\partexitvision
 
 \clearpage
 \part{联想记忆与线性状态}\label{part:memory}\markboth{联想记忆与线性状态}{}
-\learningbridge{Attention 与 FFN 已能完成上下文读取和特征变换；这里再从“存入与取出”的角度观察它们。}{通过外积、串扰、Delta 更新与非线性检索理解记忆机制，作为前文线性 Attention 与 Delta 规则的延伸复算。}
-\noindent\textbf{框架来源：}本部分由外积、串扰走向非线性检索的讲解框架，借鉴 Alex Wang 的
+\partentrymemory
+\par\smallskip\noindent\textbf{框架来源：}本部分由外积、串扰走向非线性检索的讲解框架，借鉴 Alex Wang 的
 \emph{You could have invented transformers from memory}。
 本文链接及核验日期见第~\pageref{source:alex-wang}~页；数值推导与练习按本书行向量约定展开。\par
-\partmapmemory
 \clearpage
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
@@ -428,7 +409,7 @@
 \input{chapters/09-nonlinearity-and-memory}
 \input{chapters/14-summary}
 \input{chapters/13-capacity}
-\partreviewmemory
+\partexitmemory
 
 \clearpage
 \input{chapters/23f-foundation-recap}
