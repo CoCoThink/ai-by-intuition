@@ -18,6 +18,37 @@ def gradient(w, b):
             sum(2*(w*x+b-y) for x, y in DATA)/3)
 
 
+def sample_gradient(w, b, x, y):
+    residual=w*x+b-y
+    return 2*x*residual,2*residual
+
+
+def check_sample_gradients():
+    source=(ROOT/'book/chapters/18c-training-engineering.tex').read_text()
+    rows=[sample_gradient(F(1),F(0),x,y) for x,y in DATA]
+    for (x,y),(gw,gb) in zip(DATA,rows):
+        row=f'只有样本 $({x},{y})$ & $({gw},{gb})$'
+        assert row in source, ('Published sample gradient differs',row)
+    mean=tuple(sum(row[j] for row in rows)/len(DATA) for j in range(2))
+    assert mean==gradient(F(1),F(0))==(F(-2,3),F(-2))
+    assert f'全部三个样本，梯度取平均 & $({mean[0]},{mean[1]})$' in source
+    # A zero sample gradient does not imply a zero full-data gradient.
+    assert rows[0]==(0,0) and mean!=(0,0)
+    for w,b in ((1.,0.),(1.5,1.)):
+        for x,y in DATA:
+            gw,gb=sample_gradient(w,b,x,y);eps=1e-5
+            def sample_loss(sw,sb):return (sw*x+sb-y)**2
+            assert math.isclose((sample_loss(w+eps,b)-sample_loss(w-eps,b))/(2*eps),gw,abs_tol=1e-9)
+            assert math.isclose((sample_loss(w,b+eps)-sample_loss(w,b-eps))/(2*eps),gb,abs_tol=1e-9)
+    # At the full-data optimum, a sampled gradient can increase the full loss.
+    w,b=F(3,2),F(1)
+    optimal_rows=[sample_gradient(w,b,x,y) for x,y in DATA]
+    assert tuple(sum(row[j] for row in optimal_rows)/3 for j in range(2))==(0,0)
+    gw,gb=optimal_rows[1]
+    assert loss(w-F(3,10)*gw,b-F(3,10)*gb)>loss(w,b)
+    print('Sample-gradient QA: four printed rows, mean gradient, finite differences and stochastic full-loss increase passed')
+
+
 def check_relu_fit():
     data=((-1,1),(0,0),(1,1))
     source=(ROOT/'book/chapters/07-functions-relu.tex').read_text()
@@ -39,10 +70,11 @@ def check_relu_fit():
         gc=sum(2*max(-x,0)*(a*max(x,0)+c*max(-x,0)-y) for x,y in data)/3
         a,c=a-F(3,4)*ga,c-F(3,4)*gc
     assert F(1,6)<F(2,9)
-    print('ReLU fit QA: affine lower bound 2/9, exact two-unit fit and five printed SGD rows passed')
+    print('ReLU fit QA: affine lower bound 2/9, exact two-unit fit and five printed gradient-descent rows passed')
 
 
 def run_checks():
+    check_sample_gradients()
     check_relu_fit()
     source = (ROOT/'book/chapters/16-loss-gradient.tex').read_text()
     # Recompute candidate scores from individual residuals, before using any optimum.

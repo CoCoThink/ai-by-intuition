@@ -1,11 +1,11 @@
-% Canonical 20-step full-network SGD loss, from scripts/teaching_trace.py.
+% Canonical 20-step full-network gradient-descent loss, from scripts/teaching_trace.py.
 % Checkpoints reproduce teaching_reference.py's initial and final states.
 \tagstructbegin{tag=Figure,alttext={三维教学模型零到二十步联合梯度下降的平均交叉熵下降曲线。初始为一点七九八四三零，第一步一点六一一三七七，第九步约零点八零三九一八，第二十步约零点四八三一七三。}}
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
 width=116mm,height=58mm,
-xlabel={全参数 SGD 步数},ylabel={三位置平均交叉熵},
+xlabel={全参数更新步数},ylabel={三位置平均交叉熵},
 xmin=0,xmax=20,ymin=.35,ymax=1.9,
 xtick={0,1,5,10,15,20},ytick={.5,1,1.5},
 tick label style={font=\footnotesize},label style={font=\small},

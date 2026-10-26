@@ -24,7 +24,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 怎样让损失变小？梯度下降调参数\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16a-gradient-descent}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-006.}] \phantomsection\label{exercise:C-006}\label{exercise:C1-3}\exercisemeta{标准}{10}{\hyperref[solution:C-006]{解答第~\pageref*{solution:C-006}~页}}\textbf{【迁移】} 对同一三点损失 $L(w,b)=\tfrac23(w-\tfrac32)^2+(b-1)^2+\tfrac12$，改从 $(w,b)=(0,3)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。再把学习率分别改为 $1.2$ 和 $0.9$，判断两个参数方向各自收敛还是发散。
-\item[\textbf{C-007.}] \phantomsection\label{exercise:C-007}\label{exercise:C4-4}\exercisemeta{标准}{8}{\hyperref[solution:C-007]{解答第~\pageref*{solution:C-007}~页}}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？
+\item[\textbf{C-007.}] \phantomsection\label{exercise:C-007}\label{exercise:C4-4}\exercisemeta{标准}{8}{\hyperref[solution:C-007]{解答第~\pageref*{solution:C-007}~页}}\textbf{方法选择：}本章能直接求出最优 $w,b$，为什么仍演示梯度下降？样本多时，改用随机样本或小批次估计梯度，主要减少哪部分计算，又会带来什么波动？
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:07-functions-relu}~章 · 非线性：为什么多叠两层直线仍不够？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:07-functions-relu}~页）}}
@@ -89,7 +89,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-031.}] \phantomsection\label{exercise:C-031}\label{exercise:C1-14}\exercisemeta{标准}{6}{\hyperref[solution:C-031]{解答第~\pageref*{solution:C-031}~页}}\textbf{【迁移】}沿用正文的 $5\times3$ Embedding 表，保持参数不变，把输入 $[2,4,5]$ 改为 $[5,4,5]$。已知 $E[4]=(-0.3,1.1,0.2)$、$E[5]=(0.15,-0.2,1.25)$，写出新的三行查表结果。与原输入相比，哪一行查表结果变了？这一步是否更新了 Embedding 参数？
 \item[\textbf{C-032.}] \phantomsection\label{exercise:C-032}\label{exercise:C1-7}\exercisemeta{基础}{3}{\hyperref[solution:C-032]{解答第~\pageref*{solution:C-032}~页}}\phantomsection\label{exercise:linked-20-embeddings}  \textbf{【回忆】} 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
-\item[\textbf{C-033.}] \phantomsection\label{exercise:C-033}\label{exercise:C4-16}\exercisemeta{标准}{5}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。用 SGD 更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
+\item[\textbf{C-033.}] \phantomsection\label{exercise:C-033}\label{exercise:C4-16}\exercisemeta{标准}{5}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。沿负梯度更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20b-task-contract}~页）}}

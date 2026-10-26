@@ -1,7 +1,10 @@
 \subsection{提高选读：动量、Adam／AdamW、Warmup 与衰减}
 \phantomsection\label{app:optimizer-details}
 
-这是第~\ref*{intro:16a-gradient-descent}~章\hyperref[intro:18c-training-engineering]{训练组织小节}的扩展内容。\textbf{初读只需掌握 SGD：}$w_{t+1}=w_t-\eta g_t$；以下手算保留给第二遍或对应的附录 C 练习。
+这是第~\ref*{intro:16a-gradient-descent}~章\hyperref[intro:18c-training-engineering]{小批次训练小节}的扩展内容。
+\textbf{初读先掌握基本梯度更新规则：}$w_{t+1}=w_t-\eta g_t$，
+其中 $g_t$ 是本步使用的全量梯度或抽样得到的梯度估计。
+以下手算保留给第二遍或对应的附录 C 练习。
 
 \subsubsection{训练不稳定时先诊断什么？}
 \label{app:training-diagnostics}

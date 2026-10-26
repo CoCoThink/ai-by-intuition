@@ -162,7 +162,7 @@ def test_numeric_examples() -> None:
                zip(mul_row((1.0, -0.2), ((2.0, 1.0), (0.0, 3.0))), (2.0, 0.4)))
     # Answer key exercise: (6,0) · (5,12) = 30, cos = 5/13.
     assert math.isclose(6 * 13 * (5 / 13), 30)
-    print("Numerical QA passed: 3-position joint SGD loss and legacy independent illustrations checked")
+    print("Numerical QA passed: 3-position joint gradient-descent loss and legacy independent illustrations checked")
 
 
 def validate_source() -> None:

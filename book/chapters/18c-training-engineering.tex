@@ -1,24 +1,54 @@
-\subsection{训练如何组织？小批次、Epoch 与随机梯度下降}
+\subsection{样本多时，为什么每次只用一部分数据？}
 \label{intro:18c-training-engineering}
 
-前面每一步都用全部三个样本求梯度。样本很多时，每次只读一部分样本就更新一次，
-参数能更早、更频繁地得到调整。
+前面每一步都用全部三个样本求梯度，叫作\textbf{全批次梯度下降}。
+样本很多时，每走一步都遍历全部数据，计算量可能很大。
+可以每次只读一部分样本，用它们估计整体梯度，再更新一次参数；
+这样减少了每次更新需要处理的数据量，也会让更新方向更受本次样本的影响。
+
+\subsubsection{同一组数据，全量梯度与单样本梯度有何不同？}
+\phantomsection\label{experiment:sample-gradient}
+
+仍在 $(w,b)=(1,0)$ 处，对每个样本自己的平方误差求梯度。
+例如样本 $(0,2)$ 的平方误差为 $(b-2)^2$，在这里的梯度是 $(0,-4)$。
+下表四行都在\textbf{同一组参数}处独立计算，用来比较不同的数据选择。
+\begin{center}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{lc}
+\toprule
+本次使用的数据 & 梯度（先 $w$，后 $b$）\\\midrule
+只有样本 $(-1,-1)$ & $(0,0)$\\
+只有样本 $(0,2)$ & $(0,-4)$\\
+只有样本 $(1,2)$ & $(-2,-2)$\\
+全部三个样本，梯度取平均 & $(-2/3,-2)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+第一个样本已经预测正确，所以它给出的梯度为零；另外两个样本仍有误差。
+使用全部样本，能综合它们的影响。
+若等概率随机抽取一个样本，用对应行的梯度估计整体梯度并更新参数，
+称为\textbf{单样本随机梯度下降}（Stochastic Gradient Descent，SGD）。
+三个单样本梯度的平均恰好是全量梯度，但一次抽样只会得到其中一项。
 
 \subsubsection{Mini-batch、Batch Size 与 Epoch 是什么？}
 \phantomsection\label{concept:mini-batch}
 \phantomsection\label{concept:epoch}
 \phantomsection\label{concept:batch-size}
-\phantomsection\label{concept:optimizer}
 
-设有 $100$ 条训练样本。如果每次取其中 $10$ 条一起估计梯度，那么 \textbf{Batch Size（批量大小）}是 $10$，这一组样本叫 \textbf{Mini-batch（小批次）}。把全部 $100$ 条训练样本完整处理一遍，称为一个 \textbf{Epoch（训练轮次）}；本例中每轮需要 $100/10=10$ 次参数更新。
+设有 $100$ 条训练样本，先随机打乱，再依次每取 $10$ 条组成一批。
+\textbf{Batch Size（批量大小）}是 $10$，这一组样本叫 \textbf{Mini-batch（小批次）}。
+把这一批样本的梯度取平均，用来更新参数，称为\textbf{小批次 SGD}。
+把全部 $100$ 条训练样本完整处理一遍，称为一个 \textbf{Epoch（训练轮次）}；
+本例中每轮需要 $100/10=10$ 次参数更新，每次只处理 $10$ 条样本。
 
-每次只用一个小批次估计梯度、再按 $\theta\leftarrow\theta-\eta\nabla_\theta L$ 更新的梯度下降，
-叫\textbf{随机梯度下降（SGD）}；“随机”指每批抽到哪些样本。
-小批次梯度是全部样本梯度的估计，相邻两步的方向会有些波动。
+“随机”来自样本的抽取或打乱顺序。小批次梯度是整体梯度的估计，
+更新方向会随本次样本变化，全量训练损失可能暂时上升。
+批量大小是在每次更新的计算量与梯度估计的波动之间做折中。
 回到三点数据：Batch Size 取 $1$ 时，一个 Epoch 更新 $3$ 次；
-取 $3$ 时，每批就是全部样本，正是前几节的做法，后文也称\textbf{全批次 SGD}。
+取 $3$ 时，每批就是全部样本，正是前几节的全批次梯度下降。
 
-按梯度修改参数的具体规则叫\textbf{优化器}，正文始终使用 SGD。
+\phantomsection\label{concept:optimizer}
+按梯度修改参数的具体规则叫\textbf{优化器}，正文用上述梯度下降规则演示训练。
 动量、Adam、梯度裁剪与训练不稳定的诊断要用到梯度向量和多步历史，
 放在\hyperref[app:optimizer-details]{附录~\ref*{app:optimizer-details}（第~\pageref*{app:optimizer-details}~页）}逐步手算，学完向量后再读。\par\medskip
 
@@ -30,7 +60,8 @@
 
 
 \begin{conclusion}
-我们已用三点数据算出损失、梯度和同步更新，并看到学习率决定收敛还是发散；
-样本多时，按小批次估计梯度、一轮轮遍历数据，就是 SGD。
+本例可以直接求解，也适合核验梯度下降怎样从当前参数逐步接近最优解。
+梯度下降提供可反复执行的更新过程；样本多时，小批次 SGD 用部分样本估计梯度，
+减少每次更新的数据处理量，同时带来方向上的波动。
 接下来研究：若函数只是一条直线，怎样表示弯曲的关系？
 \end{conclusion}

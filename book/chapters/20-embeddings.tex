@@ -120,7 +120,7 @@ X=\begin{bmatrix}
 \hyperref[intro:22b-token-to-output]{完整前向计算}和\hyperref[intro:22c-language-training]{语言模型训练}两章。
 在该模型中，以
 $[2,4,5]$ 预测三个位置的目标 $[4,5,3]$，
-所有参数同时用学习率 $0.04$ 做 \textbf{20 步 SGD}。
+所有参数同时用学习率 $0.04$ 做 \textbf{20 步全批次梯度下降}。
 该训练样本的平均交叉熵从约 $1.7984$ 降为 $0.4832$。
 这时对应的三行 Embedding 变为：
 \[

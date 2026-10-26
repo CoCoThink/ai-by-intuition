@@ -26,7 +26,7 @@
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-006.}] \phantomsection\label{solution:C-006}\hyperref[exercise:C-006]{\textbf{第一步：}}先写出 $\partial L/\partial w=\tfrac43w-2$、$\partial L/\partial b=2b-2$，再求每步参数偏差的乘数。\par\nobreak
 \textbf{解题过程：}$\nabla L(0,3)=(-2,4)$；以 $\eta=0.3$ 同步更新至 $(0.6,1.8)$，损失由 $6$ 降为 $\answerresult{1.68}$。每步参数偏差分别乘以 $r_w=1-\tfrac43\eta$、$r_b=1-2\eta$：$\eta=1.2$ 时 $r_w=-0.6,r_b=-1.4$，$w$ 震荡收敛、$b$ 震荡发散；$\eta=0.9$ 时 $r_w=-0.2,r_b=-0.8$，两个方向都震荡收敛。
-\item[\textbf{C-007.}] \phantomsection\label{solution:C-007}\phantomsection\label{answerpiece:16-loss-gradient:4}\hyperref[exercise:C-007]{\textbf{第一步：}}分别比较每步读取的样本量和梯度波动。\par\nobreak\textbf{解题过程：}单样本更新计算较少但梯度更受当前样本影响；全批次更稳但单次计算较重。Mini-batch 折中内存、吞吐量与梯度方差。
+\item[\textbf{C-007.}] \phantomsection\label{solution:C-007}\phantomsection\label{answerpiece:16-loss-gradient:4}\hyperref[exercise:C-007]{\textbf{第一步：}}分别考虑寻找参数的方法与每次求梯度的数据量。\par\nobreak\textbf{解题过程：}本例直接求解更简便；它适合手算每一步，并用最优解核验迭代结果。一般多层网络的参数相互耦合，通常很难一次解出全部最优参数，而当前位置的梯度可以用于逐步更新。随机抽取单个样本或小批次，可以减少每次更新需要处理的数据量；估计的梯度受本次样本影响，全量训练损失可能暂时上升。Mini-batch 在每步计算量与梯度估计的波动之间折中。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:07-functions-relu}~章 · 非线性：为什么多叠两层直线仍不够？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-008]{题目见第~\pageref*{exercise:C-008}~页起}）}}
