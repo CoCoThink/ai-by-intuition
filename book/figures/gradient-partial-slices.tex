@@ -1,0 +1,37 @@
+% Equal coordinate units in both panels; both pass through the old point (1,0).
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={在同一个参数点 w 等于一、b 等于零处观察两个局部截面。左图固定 b，只改变 w，切线斜率为负三分之二；右图固定 w，只改变 b，切线斜率为负二。两图的横轴范围均跨零点三、纵轴范围相同，右图切线更陡。两个斜率按 w、b 的顺序组成梯度。}}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+ width=64mm,height=49mm,xmin=.85,xmax=1.15,ymin=1.30,ymax=2.04,
+ axis lines=left,xlabel={$w$},ylabel={$L(w,0)$},
+ title={固定 $b=0$},title style={font=\small},
+ xtick={.9,1,1.1},ytick={1.4,1.666667,2},yticklabels={$1.4$,$5/3$,$2$},
+ tick label style={font=\footnotesize},label style={font=\small},
+]
+\addplot[flowcolor,very thick,domain=.85:1.15,samples=50] {((1-x)^2+4+(x-2)^2)/3};
+\addplot[residualcolor,thick,dashed,domain=.85:1.15] {5/3-2/3*(x-1)};
+\addplot[datacolor,only marks,mark=*,mark size=2.4pt] coordinates {(1,1.666667)};
+\node[font=\footnotesize] at (axis cs:1,1.93) {$\partial L/\partial w=-2/3$};
+\end{axis}
+\begin{axis}[
+ at={(76mm,0)},width=64mm,height=49mm,xmin=-.15,xmax=.15,ymin=1.30,ymax=2.04,
+ axis lines=left,xlabel={$b$},ylabel={$L(1,b)$},
+ title={固定 $w=1$},title style={font=\small},
+ xtick={-.1,0,.1},ytick={1.4,1.666667,2},yticklabels={$1.4$,$5/3$,$2$},
+ tick label style={font=\footnotesize},label style={font=\small},
+]
+\addplot[flowcolor,very thick,domain=-.15:.15,samples=50] {x^2/3+(x-2)^2/3+(x-1)^2/3};
+\addplot[residualcolor,thick,dashed,domain=-.15:.15] {5/3-2*x};
+\addplot[datacolor,only marks,mark=*,mark size=2.4pt] coordinates {(0,1.666667)};
+\node[font=\footnotesize] at (axis cs:.045,1.93) {$\partial L/\partial b=-2$};
+\end{axis}
+\end{tikzpicture}
+
+{\footnotesize 实线是损失曲线，虚线是当前点的切线；两图使用相同的坐标单位。}
+\captionof{figure}{偏导数每次只改变一个参数，梯度把同一旧点处的两个斜率合在一起}
+\label{fig:gradient-partial-slices}
+\end{center}
+\tagstructend
+\end{minipage}\par

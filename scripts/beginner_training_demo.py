@@ -2,7 +2,9 @@
 """Recompute the opening chapters from one dataset, including stability boundaries."""
 from fractions import Fraction as F
 from pathlib import Path
+import ast
 import math
+import operator
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +23,96 @@ def gradient(w, b):
 def sample_gradient(w, b, x, y):
     residual=w*x+b-y
     return 2*x*residual,2*residual
+
+
+def plotted_value(expression, x):
+    """Evaluate the arithmetic actually drawn by pgfplots, without executing code."""
+    operators={ast.Add:operator.add,ast.Sub:operator.sub,ast.Mult:operator.mul,
+               ast.Div:operator.truediv,ast.Pow:operator.pow}
+    def value(node):
+        if isinstance(node,ast.Constant):return F(str(node.value))
+        if isinstance(node,ast.Name) and node.id=='x':return x
+        if isinstance(node,ast.UnaryOp) and isinstance(node.op,(ast.USub,ast.UAdd)):
+            return -value(node.operand) if isinstance(node.op,ast.USub) else value(node.operand)
+        if isinstance(node,ast.BinOp) and type(node.op) in operators:
+            return operators[type(node.op)](value(node.left),value(node.right))
+        raise AssertionError(('Unsupported plot arithmetic',expression))
+    return value(ast.parse(expression.replace('^','**'),mode='eval').body)
+
+
+def check_optimization_figures():
+    """Recompute plotted curves, predictions, residuals and all trajectory points."""
+    figures=ROOT/'book/figures'
+    def source(name):return (figures/f'{name}.tex').read_text()
+    def points(body):
+        return [tuple(map(float,pair)) for pair in re.findall(r'\(([-+.0-9]+),([-+.0-9]+)\)',body)]
+    def coordinate_plots(body):
+        return [points(block) for block in re.findall(
+            r'\\addplot\[[^\]]*\]\s*coordinates\s*\{([^}]+)\};',body,re.S)]
+    def curves(body):
+        return re.findall(r'\\addplot\[[^\]]*\]\s*\{([^{}]+)\};',body,re.S)
+    def equal_points(actual,expected,tolerance=1e-9):
+        assert len(actual)==len(expected),('Wrong number of plotted points',actual,expected)
+        for row,wanted in zip(actual,expected):
+            assert len(row)==len(wanted),('Wrong plotted coordinate dimensions',row,wanted)
+            assert all(math.isclose(a,float(b),rel_tol=0,abs_tol=tolerance)
+                       for a,b in zip(row,wanted)),('Plotted point differs',row,wanted)
+    probes=(F(9,10),F(1),F(11,10))
+    local=source('loss-descent')
+    equal_points(coordinate_plots(local)[0],[(w,loss(w,F(0))) for w in probes],1e-6)
+    gw,gb=gradient(F(1),F(0))
+    local_curves=curves(local)
+    partial_curves=curves(source('gradient-partial-slices'))
+    assert len(local_curves)==2 and len(partial_curves)==4
+    for w in probes:
+        for expression in (local_curves[0],partial_curves[0]):
+            assert plotted_value(expression,w)==loss(w,F(0))
+        for expression in (local_curves[1],partial_curves[1]):
+            assert plotted_value(expression,w)==loss(F(1),F(0))+gw*(w-1)
+    for b in (F(-1,10),F(0),F(1,10)):
+        assert plotted_value(partial_curves[2],b)==loss(F(1),b)
+        assert plotted_value(partial_curves[3],b)==loss(F(1),F(0))+gb*b
+    fits=((source('gradient-prediction-update'),((F(1),F(0)),(F(6,5),F(3,5)))),
+          (source('loss-two-parameter-contours'),((F(3,2),F(1)),)))
+    for body,parameters in fits:
+        predictions=coordinate_plots(body);expressions=curves(body)
+        assert len(predictions)==2*len(parameters) and len(expressions)==len(parameters)
+        segments=[tuple(map(float,row)) for row in re.findall(
+            r'\\draw\[residualcolor,thick\] \(axis cs:([-+.0-9]+),([-+.0-9]+)\)--'
+            r'\(axis cs:([-+.0-9]+),([-+.0-9]+)\);',body)]
+        assert len(segments)==3*len(parameters)
+        for i,(w,b) in enumerate(parameters):
+            equal_points(predictions[2*i],[(x,w*x+b) for x,_ in DATA])
+            equal_points(predictions[2*i+1],DATA)
+            for j,(x,y) in enumerate(DATA):
+                assert plotted_value(expressions[i],F(x))==w*x+b
+                equal_points([segments[3*i+j]],[(x,y,x,w*x+b)])
+    trajectory=[];losses=[];w,b=F(1),F(0)
+    for t in range(11):
+        trajectory.append((w,b));losses.append((t,loss(w,b)))
+        gw,gb=gradient(w,b);w,b=w-F(3,10)*gw,b-F(3,10)*gb
+    iterations=source('gradient-iteration-path');plots=coordinate_plots(iterations)
+    assert len(plots)==4
+    equal_points(plots[0],trajectory)
+    equal_points(plots[1],[trajectory[t] for t in (0,1,2,5,10)])
+    equal_points(plots[2],losses)
+    equal_points(plots[3],[losses[t] for t in (0,1,2,5,10)])
+    assert curves(iterations)==['2/3']
+    contours=source('loss-two-parameter-contours')
+    path=re.search(r'\\draw\[flowcolor,very thick\] plot coordinates\s*\{([^}]+)\};',contours)
+    assert path, 'Missing actual trajectory on loss contours'
+    equal_points(points(path[1]),trajectory)
+    # The contour radii depend on loss above 1/2 and the actual TikZ axis units.
+    units=re.search(r'\\begin\{tikzpicture\}\[x=([0-9.]+)mm,y=([0-9.]+)mm',contours)
+    assert units and units[1]==units[2], 'Use equal parameter-axis units for the loss contours'
+    unit=float(units[1])
+    radii=re.findall(r'x radius=([0-9.]+)mm,y radius=([0-9.]+)mm',contours)
+    assert len(radii)==2
+    for (rx,ry),level in zip(radii,(F(5,3),F(18,25))):
+        above_min=float(level-F(1,2))
+        assert math.isclose(float(rx),unit*math.sqrt(above_min/(2/3)),abs_tol=.001)
+        assert math.isclose(float(ry),unit*math.sqrt(above_min),abs_tol=.001)
+    print('Optimization figure QA: probe points, partial slopes, fitted lines, residual segments, both 0–10 trajectories and contour radii passed')
 
 
 def check_sample_gradients():
@@ -76,6 +168,7 @@ def check_relu_fit():
 def run_checks():
     check_sample_gradients()
     check_relu_fit()
+    check_optimization_figures()
     source = (ROOT/'book/chapters/16-loss-gradient.tex').read_text()
     # Recompute candidate scores from individual residuals, before using any optimum.
     for w, b, expected in ((1, 0, F(5, 3)), (1, 1, F(2, 3)),
@@ -108,34 +201,13 @@ def run_checks():
         gw, gb = gradient(w, b); eps=1e-5
         assert math.isclose((loss(w+eps,b)-loss(w-eps,b))/(2*eps),gw,abs_tol=1e-9)
         assert math.isclose((loss(w,b+eps)-loss(w,b-eps))/(2*eps),gb,abs_tol=1e-9)
-    # The fixed-b=0 plot is an auxiliary comparison, not the joint-update table.
-    plot = (ROOT/'book/figures/loss-descent.tex').read_text()
-    points = [(float(x), float(y)) for x, y in re.findall(
-        r'\(([0-9.]+),([0-9.]+)\)', plot.split(r'\draw', 1)[0])]
-    w = F(1)
-    for step in range(3):
-        mse = loss(w, F(0))
-        assert math.isclose(float(mse), (5/3, 1.56, 1.5216)[step], abs_tol=1e-12)
-        assert any(math.isclose(x, float(w), abs_tol=1e-6)
-                   and math.isclose(y, float(mse), abs_tol=1e-6)
-                   for x, y in points), ('Fixed-b curve point differs', w, mse)
-        gw, _ = gradient(w, F(0))
-        w -= F(3,10)*gw
     # C-006 uses a different initial point with the same data and update rule.
     gw, gb = gradient(F(0), F(3))
     assert (gw, gb) == (-2, 4)
     assert loss(F(0), F(3)) == 6
     assert loss(-F(3,10)*gw, 3-F(3,10)*gb) == F(42,25)
-    # Ellipse geometry must use loss above the nonzero minimum, not raw loss.
-    contours = (ROOT/'book/figures/loss-two-parameter-contours.tex').read_text()
-    radii = re.findall(r'x radius=([0-9.]+)mm,y radius=([0-9.]+)mm', contours)
-    assert len(radii) == 2
-    for (rx, ry), level in zip(radii, (F(5,3), F(18,25))):
-        above_min = float(level-F(1,2))
-        assert math.isclose(float(rx), 22*math.sqrt(above_min/(2/3)), abs_tol=.001)
-        assert math.isclose(float(ry), 16*math.sqrt(above_min), abs_tol=.001)
     assert loss(F(3,2), F(1)) == F(1,2)
-    print('Opening training QA: candidate MSE, positive minimum, printed 0–10 steps, gradients, fixed-b plot, contours and stability boundaries passed')
+    print('Opening training QA: candidate MSE, positive minimum, printed 0–10 steps, gradients and stability boundaries passed')
 
 
 if __name__ == '__main__':

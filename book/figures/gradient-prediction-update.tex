@@ -1,0 +1,46 @@
+% Same data-space limits and marker meanings as the optimal-fit panel.
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={用同一个旧点处的梯度负三分之二、负二和学习率零点三，将参数从一、零同步更新为一点二、零点六。左右两图分别画更新前后的直线，黑实点为真实样本，空心方点为预测，竖线为残差。更新前残差为零、负二、负一，损失三分之五；更新后残差为零点四、负一点四、负零点二，损失零点七二。左端样本变差，但整组预测的损失下降。}}
+\begin{center}
+{\small $(1,0)\xrightarrow{\eta=0.3,\ \nabla L=(-2/3,-2)}(1.2,0.6)$}\par\smallskip
+\begin{tikzpicture}
+\begin{axis}[
+ name=before,width=64mm,height=54mm,xmin=-1.25,xmax=1.25,ymin=-1.5,ymax=3.1,
+ axis lines=left,xlabel={$x$},ylabel={$y$},title={更新前：$\widehat{y}=x$},
+ title style={font=\small},xtick={-1,0,1},ytick={-1,0,1,2,3},
+ tick label style={font=\footnotesize},label style={font=\small},
+]
+\addplot[flowcolor,thick,dashed,domain=-1.15:1.15] {x};
+\draw[residualcolor,thick] (axis cs:-1,-1)--(axis cs:-1,-1);
+\draw[residualcolor,thick] (axis cs:0,2)--(axis cs:0,0);
+\draw[residualcolor,thick] (axis cs:1,2)--(axis cs:1,1);
+\addplot[only marks,datacolor,mark=square*,mark options={fill=white},mark size=2.4pt]
+ coordinates {(-1,-1) (0,0) (1,1)};
+\addplot[only marks,noisecolor,mark=*,mark size=1.7pt] coordinates {(-1,-1) (0,2) (1,2)};
+\end{axis}
+\begin{axis}[
+ name=after,at={(76mm,0)},width=64mm,height=54mm,xmin=-1.25,xmax=1.25,ymin=-1.5,ymax=3.1,
+ axis lines=left,xlabel={$x$},ylabel={$y$},title={更新后：$\widehat{y}=1.2x+0.6$},
+ title style={font=\small},xtick={-1,0,1},ytick={-1,0,1,2,3},
+ tick label style={font=\footnotesize},label style={font=\small},
+]
+\addplot[flowcolor,thick,domain=-1.15:1.15] {1.2*x+.6};
+\draw[residualcolor,thick] (axis cs:-1,-1)--(axis cs:-1,-.6);
+\draw[residualcolor,thick] (axis cs:0,2)--(axis cs:0,.6);
+\draw[residualcolor,thick] (axis cs:1,2)--(axis cs:1,1.8);
+\addplot[only marks,datacolor,mark=square*,mark options={fill=white},mark size=2.4pt]
+ coordinates {(-1,-.6) (0,.6) (1,1.8)};
+\addplot[only marks,noisecolor,mark=*,mark size=1.7pt] coordinates {(-1,-1) (0,2) (1,2)};
+\end{axis}
+\node[anchor=north,font=\footnotesize,align=center] at ([yshift=-2mm]before.outer south)
+ {残差 $(0,-2,-1)$\\$L=5/3$};
+\node[anchor=north,font=\footnotesize,align=center] at ([yshift=-2mm]after.outer south)
+ {残差 $(0.4,-1.4,-0.2)$\\$L=0.72$};
+\end{tikzpicture}
+
+{\footnotesize 黑实点：真实值；空心方点：预测；竖线：残差。两图坐标范围相同。}
+\captionof{figure}{一次同步更新改变了整条预测直线，整体损失下降而各点改善程度不同}
+\label{fig:gradient-prediction-update}
+\end{center}
+\tagstructend
+\end{minipage}\par

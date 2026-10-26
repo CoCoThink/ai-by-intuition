@@ -125,6 +125,9 @@ L(w,0)=\frac{(1-w)^2+4+(w-2)^2}{3}.
 =\lim_{\varepsilon\to0}\frac{L(w+\varepsilon)-L(w)}{\varepsilon}.
 \]
 这里保持 $b$ 不变，比较 $w$ 的微小变化引起的损失变化。
+图~\ref{fig:loss-descent} 把三个试算点与当前点的切线画在一起：
+附近的曲线向右下方延伸，切线的负斜率概括了这一局部趋势。
+\input{figures/loss-descent}
 
 \subsection{两个参数各往哪里调？偏导数与梯度}
 \phantomsection\label{concept:gradient}
@@ -147,6 +150,9 @@ L(w,0)=\frac{(1-w)^2+4+(w-2)^2}{3}.
 \]
 在初值 $(1,0)$ 处，$\nabla L(1,0)=\boxed{(-2/3,-2)}$。
 两个分量均为负，分别提示增大一点 $w$、增大一点 $b$ 可以降低损失。
+图~\ref{fig:gradient-partial-slices} 从同一个旧点分别观察这两个方向。
+每幅图只改变一个参数；把两条切线的斜率排在一起，就是当前位置的梯度。
+\input{figures/gradient-partial-slices}
 
 \subsection{沿负梯度走一步，再检查新预测}
 \phantomsection\label{concept:gradient-descent}
@@ -169,6 +175,10 @@ b_{\rm new}&=b_{\rm old}-\eta\frac{\partial L}{\partial b}.
 L(1.2,0.6)=\frac{0.4^2+(-1.4)^2+(-0.2)^2}{3}=\boxed{0.72}<\frac53.
 \]
 这一步改善了初始预测。它还没胜过上一章候选 B 的 $2/3$，可以继续按同一规则更新。
+图~\ref{fig:gradient-prediction-update} 回到样本的 $x,y$ 平面，比较更新前后的直线与残差。
+左端样本原先恰好猜对，更新后出现了 $0.4$ 的残差；
+其余两项的改善使整体损失下降。\textbf{整体变好，不要求每个样本都变好。}
+\input{figures/gradient-prediction-update}
 
 \subsection{连走五步：每次都重新求梯度}
 \phantomsection\label{experiment:beginner-iteration}
@@ -200,6 +210,10 @@ L(1.2,0.6)=\frac{0.4^2+(-1.4)^2+(-0.2)^2}{3}=\boxed{0.72}<\frac53.
 \begin{verbatim}
 python3 scripts/beginner_training_demo.py
 \end{verbatim}
+图~\ref{fig:gradient-iteration-path} 用两种坐标记录同一段迭代。
+左图的每个点代表一组参数 $(w,b)$，区别于上一图中代表样本的 $(x,y)$；
+右图把这组参数对应的损失按更新步数画出。每一步重新求梯度，得到的移动方向和距离也随之变化。
+\input{figures/gradient-iteration-path}
 
 \subsection{这个例子能直接求解，迭代结果对不对？}
 
@@ -230,6 +244,10 @@ python3 scripts/beginner_training_demo.py
 因此\textbf{最优参数是 $(3/2,1)$，最小训练损失为 $1/2$}。
 此时三项预测为 $(-0.5,1,2.5)$，残差为 $(0.5,-1,0.5)$，平方平均也恰为 $1/2$。
 表中的迭代确实在接近这个最优结果。
+图~\ref{fig:loss-two-parameter-contours} 将直接求解的结果补回参数轨迹：
+左图中，同一条等高线上的参数具有相同损失，迭代从外侧走向损失更低的内侧；
+右图中，最优直线仍留下三个非零残差，与最小损失 $1/2$ 一致。
+\input{figures/loss-two-parameter-contours}
 
 也可以令前面求出的两个偏导数等于零，即解 $\frac43w-2=0$ 与 $2b-2=0$，
 同样得到 $(w,b)=(3/2,1)$；上面的平方和形式进一步证明了它使损失达到全局最小值。
@@ -241,15 +259,6 @@ python3 scripts/beginner_training_demo.py
 
 回到这三个样本，当前直线模型的最优参数仍会留下残差。
 下一章将研究：更灵活的非线性函数能怎样改变拟合能力？
-
-回看同一个损失，若始终固定 $b=0$，只更新 $w$，便得到下面的辅助对照。
-该截面的最低损失为 $1.5$；上表同时更新两个参数，才能降到更低的 $0.5$ 附近。
-\input{figures/loss-descent}
-
-双参数等高线则展示了上表第一步的实际路径：
-从 $(1,0)$ 到 $(1.2,0.6)$，损失由 $5/3$ 降到 $0.72$。
-\par\medskip
-\input{figures/loss-two-parameter-contours}
 
 \subsection{学习率多大才稳？把“会发散”算出来}
 \phantomsection\label{experiment:learning-rate-stability}

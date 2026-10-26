@@ -1,31 +1,30 @@
-% Auxiliary comparison: same dataset and initial point, with b held at zero.
+% Local probes of the same loss at b=0; no separate training trajectory.
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={固定偏置 b 等于零的辅助对照，只更新斜率时 w 从一到一点二再到一点三二，损失从三分之五降至一点五六和一点五二一六；这条截面的最低损失是一点五，高于同时优化两个参数时的零点五。}}
+\tagstructbegin{tag=Figure,alttext={固定偏置 b 为零，横轴是斜率参数 w，纵轴是损失。三个试算点分别为零点九对应一点七四、一对应三分之五、一点一对应约一点六零六七。曲线在当前点向右下方延伸，虚线切线的斜率为负三分之二，因此在附近增大 w 能减小损失。}}
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
- width=118mm,height=56mm,
- xmin=.8,xmax=2.05,ymin=1.44,ymax=1.84,
+ width=112mm,height=52mm,
+ xmin=.78,xmax=1.24,ymin=1.48,ymax=1.91,
  axis lines=left,xlabel={$w$},ylabel={$L(w,0)$},
- xtick={1,1.2,1.32,1.5},ytick={1.5,1.56,1.666667},
- yticklabels={$1.5$,$1.56$,$5/3$},
- tick label style={font=\footnotesize},
- label style={font=\small},clip=false,
+ xtick={.9,1,1.1},ytick={1.606667,1.666667,1.74},
+ yticklabels={$1.6067$,$5/3$,$1.74$},
+ tick label style={font=\footnotesize},label style={font=\small},
+ legend style={at={(.5,-.30)},anchor=north,draw=none,font=\footnotesize,legend columns=2},
 ]
-\addplot[datacolor,very thick,domain=.85:2,samples=80] {((1-x)^2+4+(x-2)^2)/3};
-\addplot[datacolor,only marks,mark=*,mark size=2.8pt]
- coordinates {(1,1.6666667) (1.2,1.56) (1.32,1.5216)};
-\addplot[datacolor,only marks,mark=*,mark size=2.5pt] coordinates {(1.5,1.5)};
-\draw[-{Latex},datacolor,thick] (axis cs:1.03,1.642) -- (axis cs:1.17,1.573);
-\draw[-{Latex},datacolor,thick] (axis cs:1.22,1.551) -- (axis cs:1.30,1.527);
-\node[anchor=south,font=\footnotesize] at (axis cs:1,1.68) {$w_0$};
-\node[anchor=south west,font=\footnotesize] at (axis cs:1.2,1.57) {$w_1$};
-\node[anchor=south west,font=\footnotesize] at (axis cs:1.32,1.535) {$w_2$};
-\node[anchor=north,font=\footnotesize,datacolor] at (axis cs:1.55,1.49) {截面最低};
+\addplot[flowcolor,very thick,domain=.8:1.22,samples=60] {((1-x)^2+4+(x-2)^2)/3};
+\addlegendentry{损失曲线}
+\addplot[residualcolor,thick,dashed,domain=.8:1.22] {5/3-2/3*(x-1)};
+\addlegendentry{当前点的切线}
+\addplot[datacolor,only marks,mark=*,mark size=2.4pt,forget plot]
+ coordinates {(.9,1.74) (1,1.666667) (1.1,1.606667)};
+\draw[-{Latex},flowcolor,thick] (axis cs:.94,1.855)--(axis cs:1.15,1.855)
+ node[midway,above,font=\footnotesize] {增大 $w$};
+\node[font=\footnotesize,anchor=west] at (axis cs:1.025,1.745) {切线斜率 $-2/3$};
 \end{axis}
 \end{tikzpicture}
-
-{\footnotesize 固定 $b=0$、学习率 $0.3$：只更新 $w$ 的损失为 $5/3\to1.56\to1.5216$。}
-\par\captionof{figure}{固定偏置的辅助对照：只调斜率时，损失最低为 $1.5$}\label{fig:loss-descent}\end{center}
+\captionof{figure}{固定 $b=0$ 的局部观察：试算结果与负斜率指向同一下降方向}
+\label{fig:loss-descent}
+\end{center}
 \tagstructend
 \end{minipage}\par

@@ -1,0 +1,49 @@
+% Joint full-batch updates, not the earlier fixed-b local observation.
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={同一段学习率零点三的迭代，左图画在参数平面，横轴为 w、纵轴为 b，每点是一组参数。轨迹从一、零经过一点二、零点六及一点三二、零点八四，后续各步的移动逐渐缩短。右图横轴为更新步数，纵轴为整组三点的损失，标出相同的第零、一、二、五、十步；第二步损失零点五四七二已低于候选 B 的三分之二，随后变化逐渐变小。}}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+ width=64mm,height=57mm,axis equal image,
+ xmin=.85,xmax=1.98,ymin=-.12,ymax=1.28,
+ axis lines=left,xlabel={$w$},ylabel={$b$},title={参数轨迹},title style={font=\small},
+ xtick={1,1.5},ytick={0,.5,1},
+ tick label style={font=\footnotesize},label style={font=\small},clip=false,
+]
+\addplot[flowcolor,thick,mark=*,mark size=1.3pt] coordinates {
+ (1,0) (1.2,.6) (1.32,.84) (1.392,.936) (1.4352,.9744)
+ (1.46112,.98976) (1.476672,.995904) (1.4860032,.9983616)
+ (1.49160192,.99934464) (1.494961152,.999737856) (1.4969766912,.9998951424)};
+\addplot[datacolor,only marks,mark=*,mark size=2pt] coordinates {
+ (1,0) (1.2,.6) (1.32,.84) (1.46112,.98976) (1.4969766912,.9998951424)};
+\draw[-{Latex},flowcolor,thick,shorten <=2pt,shorten >=2pt] (axis cs:1,0)--(axis cs:1.2,.6);
+\draw[-{Latex},flowcolor,thick,shorten <=2pt,shorten >=2pt] (axis cs:1.2,.6)--(axis cs:1.32,.84);
+\node[anchor=west,font=\footnotesize] at (axis cs:1.04,.08) {$t=0$};
+\node[anchor=west,font=\footnotesize] at (axis cs:1.26,.54) {$t=1$};
+\node[anchor=east,font=\footnotesize] at (axis cs:1.27,.80) {$t=2$};
+\draw[flowcolor,thin] (axis cs:1.46112,.98976)--(axis cs:1.65,.91)
+ node[anchor=west,font=\footnotesize] {$t=5$};
+\draw[flowcolor,thin] (axis cs:1.4969766912,.9998951424)--(axis cs:1.65,1.15)
+ node[anchor=west,font=\footnotesize] {$t=10$};
+\end{axis}
+\begin{axis}[
+ at={(76mm,0)},width=66mm,height=57mm,xmin=-.3,xmax=10.5,ymin=.42,ymax=1.82,
+ axis lines=left,xlabel={更新步数 $t$},ylabel={$L(w_t,b_t)$},title={对应的损失},title style={font=\small},
+ xtick={0,1,2,5,10},ytick={.5,.6666667,1,1.6666667},yticklabels={$0.5$,$2/3$,$1$,$5/3$},
+ tick label style={font=\footnotesize},label style={font=\small},
+]
+\addplot[noisecolor,dashed,domain=0:10] {2/3};
+\addplot[flowcolor,thick,mark=*,mark size=1.3pt] coordinates {
+ (0,1.6666666667) (1,.72) (2,.5472) (3,.511872) (4,.50345472)
+ (5,.5011126272) (6,.5003795743) (7,.5001332913) (8,.5000474480)
+ (9,.5000169954) (10,.5000061046)};
+\addplot[datacolor,only marks,mark=*,mark size=2pt] coordinates {
+ (0,1.6666666667) (1,.72) (2,.5472) (5,.5011126272) (10,.5000061046)};
+\node[font=\footnotesize] at (axis cs:6.8,.83) {候选 B：$L=2/3$};
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{本例取 $\eta=0.3$ 连续更新：参数沿轨迹移动，对应损失逐步降低}
+\label{fig:gradient-iteration-path}
+\end{center}
+\tagstructend
+\end{minipage}\par
