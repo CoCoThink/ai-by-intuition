@@ -15,15 +15,15 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-003.}] \phantomsection\label{exercise:C-003}\label{exercise:C4-2}\exercisemeta{标准}{5}{\hyperref[solution:C-003]{解答第~\pageref*{solution:C-003}~页}}\textbf{场景：}如果同一输入 $x=3$ 的实际目标从 $7$ 改成 $10$，只改变测试输入能解决吗？应调整哪个环节？
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:16-loss-gradient}~章 · 怎样量“猜得多差”？损失与一次直接求解\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16-loss-gradient}~页）}}
+\subsubsection*{第~\ref*{intro:16-loss-gradient}~章 · 怎样量“猜得多差”？用损失比较预测\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16-loss-gradient}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-004.}] \phantomsection\label{exercise:C-004}\label{exercise:C1-2}\exercisemeta{标准}{5}{\hyperref[solution:C-004]{解答第~\pageref*{solution:C-004}~页}}\textbf{【手算】} 沿用三点 $(-1,-1),(0,1),(1,3)$，初值为 $\widehat{y}=x$。求均方误差。
-\item[\textbf{C-005.}] \phantomsection\label{exercise:C-005}\label{exercise:C4-3}\exercisemeta{标准}{5}{\hyperref[solution:C-005]{解答第~\pageref*{solution:C-005}~页}}\textbf{预测：}从 $w=3$ 向 $w=2$ 移动一点而 $b=1$ 不变，损失初期会增大还是减小？根据平方项说明理由。
+\item[\textbf{C-004.}] \phantomsection\label{exercise:C-004}\label{exercise:C1-2}\exercisemeta{标准}{5}{\hyperref[solution:C-004]{解答第~\pageref*{solution:C-004}~页}}\textbf{【手算】} 沿用三点 $(-1,-1),(0,2),(1,2)$，初值为 $\widehat{y}=x$。求均方误差。
+\item[\textbf{C-005.}] \phantomsection\label{exercise:C-005}\label{exercise:C4-3}\exercisemeta{标准}{5}{\hyperref[solution:C-005]{解答第~\pageref*{solution:C-005}~页}}\textbf{比较：} 沿用三点 $(-1,-1),(0,2),(1,2)$，固定 $w=1$。有人主张取 $b=2$，因为这样能把 $x=0$ 的样本猜对。分别求 $b=1$ 与 $b=2$ 时的均方误差，判断这项理由是否足够。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 从直接求解到迭代：梯度下降怎样调参数？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16a-gradient-descent}~页）}}
+\subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 怎样让损失变小？梯度下降调参数\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16a-gradient-descent}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-006.}] \phantomsection\label{exercise:C-006}\label{exercise:C1-3}\exercisemeta{标准}{10}{\hyperref[solution:C-006]{解答第~\pageref*{solution:C-006}~页}}\textbf{【迁移】} 对同一三点损失 $L(w,b)=\tfrac23(w-2)^2+(b-1)^2$，改从 $(w,b)=(0,3)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。再把学习率分别改为 $1.2$ 和 $0.9$，判断两个参数方向各自收敛还是发散。
+\item[\textbf{C-006.}] \phantomsection\label{exercise:C-006}\label{exercise:C1-3}\exercisemeta{标准}{10}{\hyperref[solution:C-006]{解答第~\pageref*{solution:C-006}~页}}\textbf{【迁移】} 对同一三点损失 $L(w,b)=\tfrac23(w-\tfrac32)^2+(b-1)^2+\tfrac12$，改从 $(w,b)=(0,3)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。再把学习率分别改为 $1.2$ 和 $0.9$，判断两个参数方向各自收敛还是发散。
 \item[\textbf{C-007.}] \phantomsection\label{exercise:C-007}\label{exercise:C4-4}\exercisemeta{标准}{8}{\hyperref[solution:C-007]{解答第~\pageref*{solution:C-007}~页}}\textbf{权衡：}只用一个样本估计梯度与用全量样本估计梯度，单次更新的计算量与随机波动一般有什么差别？Mini-batch 在这两者之间如何折中？
 \end{enumerate}
 \Needspace{6\baselineskip}

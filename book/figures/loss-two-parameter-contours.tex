@@ -1,23 +1,24 @@
-% Contours are exact for L(w,b)=2/3(w-2)^2+(b-1)^2.
-% Radii correspond to contour levels 5/3 and 0.4.
-\tagstructbegin{tag=Figure,alttext={双参数均方误差的椭圆等高线，中心为最优解 w 等于二 b 等于一，初始参数一和零沿梯度方向更新至一点四和零点六，损失由三分之五降低到零点四}}
+% Exact contours of L(w,b)=2/3(w-3/2)^2+(b-1)^2+1/2.
+% Ellipse radii use the contour value minus the minimum loss 1/2.
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={同一三点均方误差的双参数等高线，中心为最优参数斜率一点五和偏置一，最小损失零点五。第一步从一和零更新至一点二和零点六，损失由三分之五降低到零点七二。}}
 \begin{center}
 \begin{tikzpicture}[x=22mm,y=16mm,>=Latex]
-\draw[->,gray] (0,-.6)--(4,-.6) node[right] {$w$};
+\draw[->,gray] (0,-.6)--(3.5,-.6) node[right] {$w$};
 \draw[->,gray] (0,-.6)--(0,2.6) node[above] {$b$};
-\draw[flowcolor,thick] (2,1) ellipse [x radius=34.79mm,y radius=20.66mm];
-\draw[flowcolor,thick] (2,1) ellipse [x radius=17.04mm,y radius=10.12mm];
-\node[flowcolor,font=\scriptsize] at (3.58,1.6) {$L=5/3$};
-\node[flowcolor,font=\scriptsize] at (2.84,1.15) {$L=0.4$};
-\fill[flowcolor] (1,0) circle (2.5pt) node[below,font=\scriptsize] {$(1,0)$};
-\fill[flowcolor] (1.4,.6) circle (2.5pt) node[below right,font=\scriptsize,fill=white,inner sep=2pt] {$(1.4,0.6)$};
-\fill[flowcolor] (2,1) circle (2.5pt) node[above,font=\scriptsize] {$(2,1)$ 最优};
-\draw[->,flowcolor,very thick] (1.04,.06)--(1.36,.54);
+\draw[flowcolor,thick] (1.5,1) ellipse [x radius=29.103mm,y radius=17.282mm];
+\draw[flowcolor,thick] (1.5,1) ellipse [x radius=12.638mm,y radius=7.505mm];
+\node[flowcolor,font=\scriptsize] at (2.98,1.6) {$L=5/3$};
+\node[flowcolor,font=\scriptsize] at (2.45,1) {$L=0.72$};
+\fill[flowcolor] (1,0) circle (2.5pt) node[below left,font=\scriptsize] {$(1,0)$};
+\fill[flowcolor] (1.2,.6) circle (2.5pt) node[below right,font=\scriptsize,fill=white,inner sep=2pt] {$(1.2,0.6)$};
+\fill[flowcolor] (1.5,1) circle (2.5pt);
+\node[font=\scriptsize] at (1.5,1.75) {$(1.5,1)$ 最优};
+\node[font=\scriptsize] at (1.5,1.16) {$L=0.5$};
+\draw[->,flowcolor,very thick] (1.02,.06)--(1.18,.54);
 \end{tikzpicture}
-\end{center}
-
-\begin{center}
-\captionof{figure}{同一三点 MSE 的双参数等高线：更新 $w$ 与 $b$ 后向低损失区域移动}
+\captionof{figure}{同一三点损失的双参数等高线：同步更新后的参数位于更低的等损失线上}
 \label{fig:loss-two-parameter-contours}
 \end{center}
 \tagstructend
+\end{minipage}\par

@@ -38,8 +38,8 @@
     "slug": "16-loss-analytic",
     "difficulty": "标准",
     "minutes": 5,
-    "question": "\\textbf{【手算】} 沿用三点 $(-1,-1),(0,1),(1,3)$，初值为 $\\widehat{y}=x$。求均方误差。",
-    "solution": "\\textbf{第一步：}先列出三项残差，再平方求平均。\\par\\nobreak\n\\textbf{解答：} 预测为 $(-1,0,1)$、真实值为 $(-1,1,3)$，故 $\\mathrm{MSE}=(0^2+(-1)^2+(-2)^2)/3=5/3$。",
+    "question": "\\textbf{【手算】} 沿用三点 $(-1,-1),(0,2),(1,2)$，初值为 $\\widehat{y}=x$。求均方误差。",
+    "solution": "\\textbf{第一步：}先列出三项残差，再平方求平均。\\par\\nobreak\n\\textbf{解答：} 预测为 $(-1,0,1)$、真实值为 $(-1,2,2)$，故 $\\mathrm{MSE}=(0^2+(-2)^2+(-1)^2)/3=5/3$。",
     "legacy_answer_anchor": "",
     "id": "C-004"
   },
@@ -49,8 +49,8 @@
     "slug": "16-loss-analytic",
     "difficulty": "标准",
     "minutes": 5,
-    "question": "\\textbf{预测：}从 $w=3$ 向 $w=2$ 移动一点而 $b=1$ 不变，损失初期会增大还是减小？根据平方项说明理由。",
-    "solution": "\\textbf{第一步：}固定偏置，只观察 $(w-2)^2$。\\par\\nobreak\\textbf{解题过程：}从 $3$ 朝 $2$ 移动，$(w-2)^2$ 下降，固定 $b=1$ 时损失下降；靠近极小值的方向才重要。",
+    "question": "\\textbf{比较：} 沿用三点 $(-1,-1),(0,2),(1,2)$，固定 $w=1$。有人主张取 $b=2$，因为这样能把 $x=0$ 的样本猜对。分别求 $b=1$ 与 $b=2$ 时的均方误差，判断这项理由是否足够。",
+    "solution": "\\textbf{第一步：}把两组参数的三个残差分别列全。\\par\\nobreak\\textbf{解题过程：}$b=1$ 时残差为 $(1,-1,0)$，均方误差 $2/3$；$b=2$ 时残差为 $(2,0,1)$，均方误差 $5/3$。单个样本猜对不等于整体损失更小，这两个候选中应选 $b=1$。",
     "legacy_answer_anchor": "answerpiece:16-loss-analytic:4",
     "id": "C-005"
   },
@@ -60,8 +60,8 @@
     "slug": "16-loss-gradient",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【迁移】} 对同一三点损失 $L(w,b)=\\tfrac23(w-2)^2+(b-1)^2$，改从 $(w,b)=(0,3)$ 出发、学习率 $\\eta=0.3$。求两项梯度、更新后参数与损失。再把学习率分别改为 $1.2$ 和 $0.9$，判断两个参数方向各自收敛还是发散。",
-    "solution": "\\textbf{第一步：}先写出 $\\partial L/\\partial w=\\tfrac43(w-2)$、$\\partial L/\\partial b=2(b-1)$，再求每步误差的乘数。\\par\\nobreak\n\\textbf{解题过程：}$\\nabla L(0,3)=(-8/3,4)$；以 $\\eta=0.3$ 同步更新至 $(0.8,1.8)$，损失由 $20/3$ 降为 $\\answerresult{1.6}$。每步误差分别乘以 $r_w=1-\\tfrac43\\eta$、$r_b=1-2\\eta$：$\\eta=1.2$ 时 $r_w=-0.6,r_b=-1.4$，$w$ 震荡收敛、$b$ 震荡发散；$\\eta=0.9$ 时 $r_w=-0.2,r_b=-0.8$，两个方向都震荡收敛。",
+    "question": "\\textbf{【迁移】} 对同一三点损失 $L(w,b)=\\tfrac23(w-\\tfrac32)^2+(b-1)^2+\\tfrac12$，改从 $(w,b)=(0,3)$ 出发、学习率 $\\eta=0.3$。求两项梯度、更新后参数与损失。再把学习率分别改为 $1.2$ 和 $0.9$，判断两个参数方向各自收敛还是发散。",
+    "solution": "\\textbf{第一步：}先写出 $\\partial L/\\partial w=\\tfrac43w-2$、$\\partial L/\\partial b=2b-2$，再求每步参数偏差的乘数。\\par\\nobreak\n\\textbf{解题过程：}$\\nabla L(0,3)=(-2,4)$；以 $\\eta=0.3$ 同步更新至 $(0.6,1.8)$，损失由 $6$ 降为 $\\answerresult{1.68}$。每步参数偏差分别乘以 $r_w=1-\\tfrac43\\eta$、$r_b=1-2\\eta$：$\\eta=1.2$ 时 $r_w=-0.6,r_b=-1.4$，$w$ 震荡收敛、$b$ 震荡发散；$\\eta=0.9$ 时 $r_w=-0.2,r_b=-0.8$，两个方向都震荡收敛。",
     "legacy_answer_anchor": "",
     "id": "C-006"
   },

@@ -11,8 +11,9 @@
 
 为了先看清参数怎样由样本确定，我们先用一个独立的数值例子练习，
 后面再把这套学习思路用于文字预测。
-接下来三章始终使用三个样本 $(-1,-1),(0,1),(1,3)$：
-本章认识参数，第~\ref*{intro:16-loss-gradient}~章直接求解，第~\ref*{intro:16a-gradient-descent}~章从猜测出发逐步逼近同一个解。
+接下来三章始终使用三个样本 $(-1,-1),(0,2),(1,2)$：
+本章认识参数，第~\ref*{intro:16-loss-gradient}~章用损失比较预测，
+第~\ref*{intro:16a-gradient-descent}~章学习怎样逐步改善参数。
 
 
 
@@ -29,12 +30,12 @@ f(x)=2x+1,\qquad f(0)=1,\qquad f(1)=3.
 
 以前我们会先知道公式，再计算结果；机器学习常常反过来：先看到一些输入与结果，再寻找一个能够解释这些例子的函数。
 
-\subsection{一个可以亲手拟合的三点例子}
+\subsection{三个样本，一条可调的直线}
 \phantomsection\label{concept:sample}
 
 设训练数据是
 \[
-(-1,-1),\quad(0,1),\quad(1,3).
+(-1,-1),\quad(0,2),\quad(1,2).
 \]
 我们先选一个最简单的函数族：
 \begin{equation}
@@ -50,43 +51,48 @@ $\widehat{y}$ 表示模型的\textbf{预测值}，而 $y$ 是实际观察到的�
 \toprule
 输入 $x$ & 真实 $y$ & 初始预测 $x$ & 预测减真实\\\midrule
 $-1$ & $-1$ & $-1$ & $0$\\
-$0$ & $1$ & $0$ & $-1$\\
-$1$ & $3$ & $1$ & $-2$\\
+$0$ & $2$ & $0$ & $-2$\\
+$1$ & $2$ & $1$ & $-1$\\
 \bottomrule
 \end{tabular}
 \end{center}
-只有第一点预测正确。接着尝试 $w=2,b=1$：
+只有第一点预测正确。保持 $w=1$，把 $b$ 从 $0$ 调到 $1$，预测变成
 \[
-\widehat{y}(-1)=-1,\qquad \widehat{y}(0)=1,\qquad \widehat{y}(1)=3.
+\widehat{y}(-1)=0,\qquad \widehat{y}(0)=1,\qquad \widehat{y}(1)=2.
 \]
-三个样本均被拟合。先选定一个函数形式，再通过调整 $w,b$ 让预测贴合数据，这正是理解机器学习最直观的起点。
-下一章会从样本推导出这组参数，并用损失衡量拟合结果。
+第二、三个样本的预测更接近真实值了，第一个样本却从猜对变成了猜错。
+若再把 $b$ 加到 $2$，中间的样本猜对了，两端的预测又都偏高。
+参数调整会同时影响多个样本，需要比较整组预测的表现。
 
-\phantomsection\label{partq:learning}
 为什么两个参数各有用处？增大 $b$ 会把三个预测一起向上移；
 增大 $w$ 则让 $x=-1$ 的预测下降、$x=1$ 的预测上升，$x=0$ 的预测保持不变。
-数据同时检查这两种调整，帮助我们分清要改斜率还是截距。
+这三个点也无法被同一条直线全部穿过：输入每次增加 $1$，
+输出却先增加 $3$、再增加 $0$，而直线每次的输出增量相同。
+我们要寻找一组能让整体预测更合适的参数。
 
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={三个观察点负一负一、零一、一三。虚线是初始猜测 y 等于 x，只经过第一个点；粗实线是 y 等于 2x 加 1，同时经过三个点。}}
+\tagstructbegin{tag=Figure,alttext={三个不共线的观察点负一负一、零二、一二。三条候选直线分别为 y 等于 x、x 加一、x 加二；增大偏置使直线整体上移，某个点更准时另一个点可能变差，没有一条直线穿过全部三点。}}
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
 width=.77\linewidth,height=57mm,
-axis lines=middle,xmin=-1.7,xmax=1.7,ymin=-2.2,ymax=4.0,
+axis lines=middle,xmin=-1.7,xmax=1.7,ymin=-2.2,ymax=4.2,
 xlabel={$x$},ylabel={$y$},grid=both,
 grid style={linegray,thin},legend pos=north west,
+legend style={font=\footnotesize},
 xtick={-1,0,1},ytick={-1,0,1,2,3},
 ]
 \addplot[datacolor,thick,dashed,domain=-1.4:1.35,samples=2]{x};
-\addlegendentry{初始猜测 $\hat{y}=x$}
-\addplot[datacolor,very thick,domain=-1.4:1.35,samples=2]{2*x+1};
-\addlegendentry{拟合后 $\hat{y}=2x+1$}
-\addplot[only marks,mark=*,datacolor,mark size=2.5pt] coordinates {(-1,-1) (0,1) (1,3)};
+\addlegendentry{候选 A：$\hat{y}=x$}
+\addplot[datacolor,very thick,domain=-1.4:1.35,samples=2]{x+1};
+\addlegendentry{候选 B：$\hat{y}=x+1$}
+\addplot[datacolor,thick,dashdotted,domain=-1.4:1.35,samples=2]{x+2};
+\addlegendentry{候选 C：$\hat{y}=x+2$}
+\addplot[only marks,mark=*,noisecolor,mark size=2.5pt] coordinates {(-1,-1) (0,2) (1,2)};
 \addlegendentry{观察数据}
 \end{axis}
 \end{tikzpicture}
-\captionof{figure}{同一组三点：初始猜测只经过一点，调整 $w,b$ 后的直线经过全部三点}
+\captionof{figure}{同一组三点与三条候选直线：调整偏置会同时改变各个样本的预测}
 \label{fig:first-line-fit}
 \end{center}
 \tagstructend
@@ -109,18 +115,18 @@ xtick={-1,0,1},ytick={-1,0,1,2,3},
 \end{enumerate}
 在深度学习里，函数可以有数百万乃至更多的可训练参数；但计算过程仍是\textbf{输入、运算、输出}。
 
-拟合需要用新数据检验：多个模型能通过同一组已有样本，对新数据的预测却会分歧。后续的\textbf{泛化}章节专门讨论这个问题。
+拟合需要用新数据检验：模型在已有样本上表现好，对新数据仍可能预测不准。后续的\textbf{泛化}章节专门讨论这个问题。
 
 
 \chapterchecktasks{00-functions}{正文基础三题}{
 \item \textbf{预测：}取 $y=wx+b$，固定 $x=3$、$b=1$，把 $w$ 从 $2$ 增到 $3$，输出怎样变化？先写变化量，再算新输出。\chapterinlinehint{固定输入，先算权重增量乘以输入。}
-\item \textbf{手算：}沿用三个训练样本 $(-1,-1),(0,1),(1,3)$。写出同时通过三点的 $w,b$，再预测 $x=2$。\chapterinlinehint{先比较相邻样本的输出差，再求截距。}
+\item \textbf{手算：}沿用三个训练样本 $(-1,-1),(0,2),(1,2)$，固定 $w=1$，把 $b$ 从 $0$ 调到 $1$。写出新的三项预测，并指出每项比原先更接近还是更远离真实值。\chapterinlinehint{先把每项预测加一，再比较调整前后的偏差大小。}
 \item \textbf{找错：}同学说“推理时输入变了，训练好的 $w,b$ 也会自动再训练一遍”。请分别指出训练与推理究竟改变什么。\chapterinlinehint{分别列出训练阶段和推理阶段的可变量。}
 }
 
 
 
 \begin{conclusion}
-带参数的函数可以根据样本逐步改善预测。
-但光看两组猜测还不知道怎样量化误差。下一章先学习损失函数。
+参数决定同一个函数怎样响应输入；调整参数，会同时改变多个样本的预测。
+各条候选直线各有对错，下一章用损失给整组预测打分。
 \end{conclusion}

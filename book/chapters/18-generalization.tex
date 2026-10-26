@@ -12,7 +12,7 @@
 \phantomsection\label{concept:overfitting}
 \phantomsection\label{concept:generalization}
 
-真实规律接近 $y=2x+1$，测量带有噪声。
+用一组独立的带噪声数据观察泛化：真实规律接近 $y=2x+1$。
 \textbf{欠拟合}是训练与新数据都表现差；\textbf{合适的拟合}抓住模式；
 \textbf{过拟合}把噪声也学进去，训练好、新数据差。
 面对未见数据的表现就是\textbf{泛化能力}。
@@ -21,13 +21,13 @@
 
 \subsection{手算：训练误差为零，新题却错得最多}
 
-沿用 $y\approx2x+1$，但这次三个训练点带有测量噪声：
+围绕这个关系，取三个带有测量噪声的训练点：
 \[
 (-1,-1.5),\qquad(0,2),\qquad(1,2.5).
 \]
 另留一个不参与训练的\textbf{验证点} $(2,4.5)$。比较两个模型：
 \begin{itemize}
-\item \textbf{直线}：按\hyperref[intro:16-loss-gradient]{第~\ref*{intro:16-loss-gradient}~章}的均方误差求最佳直线，
+\item \textbf{直线}：按\hyperref[intro:16a-gradient-descent]{第~\ref*{intro:16a-gradient-descent}~章}的方法最小化均方误差，
 三点输入仍围绕零对称，令两个偏导数为零可得：$b$ 是三个 $y$ 的平均 $1$，
 $w=(2.5-(-1.5))/2=2$，恰好还是 $\widehat{y}=2x+1$；
 \item \textbf{二次曲线}：令 $\widehat{y}=a_2x^2+a_1x+a_0$ 精确穿过三点，

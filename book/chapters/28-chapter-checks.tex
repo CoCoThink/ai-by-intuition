@@ -26,17 +26,17 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 1 章}] \phantomsection\label{answer:00-functions}\textbf{\hyperref[check:00-functions]{为什么从函数开始学 AI？}}\answercheckpage{00-functions}\par\nobreak
 \answerpiece{1}{预测}{先只计算 $w$ 增加的那一份输出。}变化量 $(3-2)\cdot3=3$；原输出 $7$，新输出 $\answerresult{10}$。
-\par\answerpiece{2}{手算}{用任意两点求斜率，再求偏置。}$w=2,b=1$ 通过三点，$x=2$ 预测 $\answerresult{5}$。
+\par\answerpiece{2}{手算}{先把每项旧预测加 $1$。}新预测为 $\answerresult{(0,1,2)}$，残差从 $(0,-2,-1)$ 变为 $(1,-1,0)$。第一个样本更远离真实值，第二、三个更接近，第三个已猜对。
 \par\answerpiece{3}{找错}{先问参数有没有被更新。}推理是固定当前参数计算新输入；训练要用数据、损失和梯度更新参数，不能因更换推理输入便认为已再次训练。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{怎样量“猜得多差”？损失与一次直接求解}}\answercheckpage{16-loss-analytic}\par\nobreak
-\answerpiece{1}{解释}{试把一个正残差和一个负残差相加。}带正负号的残差直接相加可能互相抵消；残差平方非负，平均后能衡量整体偏离。
-\par\answerpiece{2}{手算}{把两组参数分别代入两个平方项。}$L(2,1)=\answerresult{0}$；$L(3,1)=\frac23(1)^2=\answerresult{2/3}$。
-\par\answerpiece{3}{找错}{先写出两个平方项各自为零的条件。}完整损失由两个非负项相加；要同时为零需 $w=2$ \textbf{且} $b=1$，不能任意取偏置。
+\item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-analytic}\textbf{\hyperref[check:16-loss-analytic]{怎样量“猜得多差”？用损失比较预测}}\answercheckpage{16-loss-analytic}\par\nobreak
+\answerpiece{1}{解释}{分别检查前两个样本是否猜对。}残差 $1$ 和 $-1$ 相抵，但对应两个错误预测；均方误差为 $(1^2+(-1)^2+0^2)/3=\answerresult{2/3}>0$。
+\par\answerpiece{2}{手算}{按样本顺序计算三项预测。}$w=2,b=1$ 的预测为 $\answerresult{(-1,1,3)}$，残差为 $(0,-1,1)$，均方误差 $\answerresult{2/3}$，与候选 B 相同。
+\par\answerpiece{3}{找错}{区分候选集合与全部参数。}B 只是已经比较的三个候选中损失最小的一个。要说明全局最优，还需证明其他任意参数都无法得到更小的损失。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{从直接求解到迭代：梯度下降怎样调参数？}}\answercheckpage{16-loss-gradient}\par\nobreak
- \answerpiece{1}{预测}{把学习率零代入更新式。}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；它只执行了零步长更新。
-\par\answerpiece{2}{手算}{先在旧参数处同时求两个偏导。}$\nabla L=(-4/3,-2)$；以 $\eta=0.3$ 同步更新到 $(1.4,0.6)$，损失为 $\frac23(1.4-2)^2+(0.6-1)^2=\answerresult{0.4}$。
+\item[\textbf{第 3 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{怎样让损失变小？梯度下降调参数}}\answercheckpage{16-loss-gradient}\par\nobreak
+ \answerpiece{1}{预测}{把学习率零代入更新式。}学习率为零时仍处于 $(1,0)$，损失为 $5/3$；梯度 $(-2/3,-2)$ 非零，参数不动是因为步长为零，并非到达最优点。
+\par\answerpiece{2}{手算}{先在旧参数处同时求两个偏导。}$\nabla L=(-2/3,-2)$；以 $\eta=0.3$ 同步更新到 $(1.2,0.6)$。新预测为 $(-0.6,0.6,1.8)$，残差为 $(0.4,-1.4,-0.2)$，损失为 $(0.4^2+(-1.4)^2+(-0.2)^2)/3=\answerresult{0.72}$。
 \par\answerpiece{3}{找错}{圈出本次梯度使用的是哪一版参数。}同步更新要在同一旧参数处算完全部梯度后再一起更新；不能将新参数混进本次剩余梯度。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 4 章}] \phantomsection\label{answer:07-functions-relu}\textbf{\hyperref[check:07-functions-relu]{非线性：为什么多叠两层直线仍不够？}}\answercheckpage{07-functions-relu}\par\nobreak

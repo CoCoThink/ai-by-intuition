@@ -79,7 +79,7 @@
 \par\smallskip\noindent{\small\textbf{下一步：}#4}\par}
 
 % ---- 第一部分 ----
-\newcommand{\partthinklearning}{三组样本是 $(-1,-1),(0,1),(1,3)$。用直线 $y=2x$ 去预测，三个预测都比答案低 $1$。该改斜率，还是改截距？}
+\newcommand{\partthinklearning}{三个样本是 $(-1,-1),(0,2),(1,2)$。用 $y=x+1$ 预测，第一项猜高 $1$，第二项猜低 $1$，第三项猜中。前两项的偏差相加为零，就算全猜对了吗？}
 \newcommand{\partentrylearning}{\partentry{%
 序章把“回答问题”变成了“预测下一个 Token”。可预测的规则从哪里来？现实中的情况多到规则写不尽，所以先退到最小的情形：输入一个数、输出一个数，看样本怎样把公式里的空位填上。
 }{\partthinklearning}{%
@@ -87,14 +87,14 @@
 \item 让两层网络从输出的误差倒推每个参数该怎么改；再用没参与训练的样本检查，它是学会了规律，还是只背下了答案。
 }{%
 \mapchapter{00-functions}{函数} & 输入、输出和可学习参数各是什么？\\
-\mapchapter{16-loss-gradient}{损失} & 怎样给预测打分，何时能直接求最优值？\\
+\mapchapter{16-loss-gradient}{损失} & 怎样比较各有对错的整组预测？\\
 \mapchapter{16a-gradient-descent}{梯度下降} & 沿哪个方向、走多大一步才能降低损失？\\
 \mapchapter{07-functions-relu}{非线性} & 为什么两层直线仍不够，ReLU 改变了什么？\\
 \mapchapter{17-backpropagation}{反向传播} & 怎样把输出误差逐层传回每个参数？\\
 \mapchapter{18-generalization}{泛化} & 为什么训练成绩好，还要看验证集？\\
 }}
 \newcommand{\partexitlearning}{\partexit{learning}{\partthinklearning}{%
-改截距。截距加 $1$，三个预测一起上移 $1$，正好得到 $y=2x+1$；改斜率则会让两端的预测朝相反方向变化。
+前两个样本仍然猜错。正负残差会相抵；把残差平方后取平均，得到均方误差 $2/3$，才把两项偏差都计入了分数。
 }{%
 同样的乘加会排进向量和矩阵，一次算完多个特征、多个样本。
 }}
