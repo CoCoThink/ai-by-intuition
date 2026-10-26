@@ -11,7 +11,9 @@
 \node[flowcolor,font=\scriptsize] at (2.98,1.6) {$L=5/3$};
 \node[flowcolor,font=\scriptsize] at (2.45,1) {$L=0.72$};
 \fill[flowcolor] (1,0) circle (2.5pt) node[below left,font=\scriptsize] {$(1,0)$};
-\fill[flowcolor] (1.2,.6) circle (2.5pt) node[below right,font=\scriptsize,fill=white,inner sep=2pt] {$(1.2,0.6)$};
+\fill[flowcolor] (1.2,.6) circle (2.5pt);
+\node[anchor=west,font=\scriptsize] (updated-label) at (2.2,-.28) {$(1.2,0.6)$};
+\draw[flowcolor,thin] (1.2,.6)--(2.05,-.28)--(updated-label.west);
 \fill[flowcolor] (1.5,1) circle (2.5pt);
 \node[font=\scriptsize] at (1.5,1.75) {$(1.5,1)$ 最优};
 \node[font=\scriptsize] at (1.5,1.16) {$L=0.5$};

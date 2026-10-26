@@ -6,6 +6,7 @@ pages. The old undefined-reference gate therefore could not catch this regressio
 """
 from __future__ import annotations
 import argparse
+from html import unescape
 from pathlib import Path
 import re
 import subprocess
@@ -88,6 +89,61 @@ def toc_folio_errors(entries, folio_targets):
             for page,target in entries if target not in folio_targets]
 
 
+def ellipse_rect_intersects(ellipse, rect):
+    """Whether an axis-aligned text rectangle touches an ellipse's boundary."""
+    cx,cy,rx,ry=ellipse
+    x0,y0,x1,y1=rect
+    dx=0 if x0<=cx<=x1 else min(abs(x0-cx),abs(x1-cx))
+    dy=0 if y0<=cy<=y1 else min(abs(y0-cy),abs(y1-cy))
+    nearest=(dx/rx)**2+(dy/ry)**2
+    farthest=(max(abs(x0-cx),abs(x1-cx))/rx)**2+(max(abs(y0-cy),abs(y1-cy))/ry)**2
+    return nearest<=1<=farthest
+
+
+def contour_label_errors(reader, path, labels):
+    """Check actual text/curve clearance in the two-parameter loss figure.
+
+    Bounds/page checks missed a white-backed coordinate label erasing part of
+    the inner ellipse. Read the rendered paths and text, with 1pt clearance
+    around text to allow for the curve's stroke; interior labels remain valid.
+    """
+    from pypdf.generic import ContentStream
+    dest=labels['fig:loss-two-parameter-contours'][3]
+    page_index=reader.get_destination_page_number(reader.named_destinations[dest])
+    page=reader.pages[page_index]
+    ops=ContentStream(page.get_contents(),reader).operations
+    matrix=(1,0,0,1,0,0);stack=[];ellipses=[]
+    for i,(values,op) in enumerate(ops):
+        if op==b'q':stack.append(matrix)
+        elif op==b'Q':matrix=stack.pop()
+        elif op==b'cm':
+            a,b,c,d,e,f=matrix
+            aa,bb,cc,dd,ee,ff=map(float,values)
+            matrix=(a*aa+c*bb,b*aa+d*bb,a*cc+c*dd,b*cc+d*dd,
+                    a*ee+c*ff+e,b*ee+d*ff+f)
+        elif op==b'm' and [v[1] for v in ops[i+1:i+6]]==[b'c']*4+[b'h']:
+            a,b,c,d,e,f=matrix
+            points=[values]+[v[0][-2:] for v in ops[i+1:i+5]]
+            xs=[a*float(x)+c*float(y)+e for x,y in points]
+            ys=[float(page.mediabox.height)-(b*float(x)+d*float(y)+f) for x,y in points]
+            rx=(max(xs)-min(xs))/2;ry=(max(ys)-min(ys))/2
+            if rx>10 and ry>10:  # Exclude the small circular point markers.
+                ellipses.append(((min(xs)+max(xs))/2,(min(ys)+max(ys))/2,rx,ry))
+    if len(ellipses)!=2:
+        return [f'Loss contour audit expected two rendered ellipses, found {len(ellipses)}']
+    bbox=subprocess.check_output(['pdftotext','-f',str(page_index+1),'-l',str(page_index+1),
+                                  '-bbox-layout',str(path),'-'],text=True)
+    errors=[]
+    for attrs,word in re.findall(r'<word\s+([^>]+)>(.*?)</word>',bbox,re.S):
+        bounds=dict(re.findall(r'(xMin|yMin|xMax|yMax)="([^"]+)"',attrs))
+        x0,y0,x1,y1=(float(bounds[key]) for key in ('xMin','yMin','xMax','yMax'))
+        rect=(x0-1,y0-1,x1+1,y1+1)
+        if any(ellipse_rect_intersects(ellipse,rect) for ellipse in ellipses):
+            errors.append(f'Loss contour text/curve collision on PDF page {page_index+1}: {unescape(word)}')
+    if not errors:print(f'Loss contour QA: text clears both rendered ellipses on page {page_index+1}')
+    return errors
+
+
 def check_toc_folios(reader, aux, labels):
     """Require right-column folio links, not merely clickable TOC titles."""
     reading=labels['front:reading-routes'][3]
@@ -137,6 +193,7 @@ def check_pdf(path, aux, used):
             value,start=argument(args,start);fields.append(value)
         if len(fields)>=4:labels[match[1]]=fields
     check_toc_folios(reader,aux,labels)
+    failures.extend(contour_label_errors(reader,path,labels))
     for target,count in used.items():
         if target not in labels:
             failures.append(f'Missing built label: {target}');continue
@@ -169,7 +226,13 @@ def self_test():
     assert agent_intro_errors([intro])
     assert not toc_folio_errors([(64,'subsection.21.7')],{'subsection.21.7'})
     assert toc_folio_errors([(64,'subsection.21.7')],set())
-    print('Section/figure regressions passed: wrong targets, literal folios, split captions and orphaned code introductions are rejected')
+    ellipse=(0,0,4,2)
+    assert not ellipse_rect_intersects(ellipse,(-1,-.5,1,.5))  # Interior label.
+    assert not ellipse_rect_intersects(ellipse,(5,0,6,1))     # Exterior label.
+    assert ellipse_rect_intersects(ellipse,(3.5,-.5,5,.5))    # Mask across curve.
+    assert ellipse_rect_intersects(ellipse,(-5,-3,5,3))        # Boundary enclosed.
+    assert ellipse_rect_intersects(ellipse,(4,0,5,1))         # Touching curve.
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions, orphaned code introductions and contour collisions are rejected')
 
 
 def main():
