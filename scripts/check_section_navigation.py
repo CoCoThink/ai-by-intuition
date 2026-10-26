@@ -100,6 +100,60 @@ def ellipse_rect_intersects(ellipse, rect):
     return nearest<=1<=farthest
 
 
+def iteration_legend_errors(lines, page_width):
+    """Bounds and same-page gates miss a legend continuing beside the picture."""
+    legend=[row for row in lines if '右图虚线为候选' in row[0]]
+    axis=[row for row in lines if row[0].startswith('更新步数')]
+    if len(legend)!=1 or '点线为已知最小损失' not in legend[0][0]:
+        return ['Iteration legend must occupy one complete line below the plot']
+    _,left,top,right,_=legend[0]
+    if abs((left+right)/2-page_width/2)>12:
+        return ['Iteration legend must be centered below the plot']
+    if len(axis)!=1 or top<=axis[0][4]:
+        return ['Iteration legend must follow the plot axis label vertically']
+    return []
+
+
+def check_iteration_legend(reader, path, labels):
+    import xml.etree.ElementTree as ET
+    destination=reader.named_destinations[labels['fig:gradient-iteration-path'][3]]
+    page=reader.get_destination_page_number(destination)+1
+    xml=subprocess.check_output(['pdftotext','-f',str(page),'-l',str(page),'-bbox-layout',str(path),'-'])
+    tree=ET.fromstring(xml);lines=[]
+    for node in tree.iter():
+        if node.tag.rsplit('}',1)[-1]!='line':continue
+        lines.append((re.sub(r'\s+','',''.join(node.itertext())),
+                      *(float(node.get(key)) for key in ('xMin','yMin','xMax','yMax'))))
+    errors=iteration_legend_errors(lines,float(reader.pages[page-1].mediabox.width))
+    if not errors:print(f'Iteration legend QA: one centered line below the plot on page {page}')
+    return errors
+
+
+def activation_label_errors(words):
+    errors=[]
+    labels=[row for row in words if row[0] in ('正数保留','负数归零')]
+    if len(labels)!=2:return ['ReLU figure must have two identifiable branch labels']
+    for label in labels:
+        for other in words:
+            if other is label:continue
+            if (min(label[3],other[3])-max(label[1],other[1])>.5 and
+                    min(label[4],other[4])-max(label[2],other[2])>.5):
+                errors.append(f'ReLU branch label overlaps rendered text: {label[0]} / {other[0]}')
+    return errors
+
+
+def check_activation_labels(reader, path, labels):
+    import xml.etree.ElementTree as ET
+    destination=reader.named_destinations[labels['fig:relu-function'][3]]
+    page=reader.get_destination_page_number(destination)+1
+    xml=subprocess.check_output(['pdftotext','-f',str(page),'-l',str(page),'-bbox-layout',str(path),'-'])
+    words=[(''.join(node.itertext()),*(float(node.get(key)) for key in ('xMin','yMin','xMax','yMax')))
+           for node in ET.fromstring(xml).iter() if node.tag.rsplit('}',1)[-1]=='word']
+    errors=activation_label_errors(words)
+    if not errors:print(f'ReLU label QA: both branch annotations clear all rendered text on page {page}')
+    return errors
+
+
 def contour_label_errors(reader, path, labels):
     """Check actual text/curve clearance in the two-parameter loss figure.
 
@@ -194,6 +248,8 @@ def check_pdf(path, aux, used):
         if len(fields)>=4:labels[match[1]]=fields
     check_toc_folios(reader,aux,labels)
     failures.extend(contour_label_errors(reader,path,labels))
+    failures.extend(check_iteration_legend(reader,path,labels))
+    failures.extend(check_activation_labels(reader,path,labels))
     for target,count in used.items():
         if target not in labels:
             failures.append(f'Missing built label: {target}');continue
@@ -232,7 +288,17 @@ def self_test():
     assert ellipse_rect_intersects(ellipse,(3.5,-.5,5,.5))    # Mask across curve.
     assert ellipse_rect_intersects(ellipse,(-5,-3,5,3))        # Boundary enclosed.
     assert ellipse_rect_intersects(ellipse,(4,0,5,1))         # Touching curve.
-    print('Section/figure regressions passed: wrong targets, literal folios, split captions, orphaned code introductions and contour collisions are rejected')
+    legend=('右图虚线为候选B，点线为已知最小损失',100,300,500,312)
+    axis=('更新步数t',400,280,480,292)
+    assert not iteration_legend_errors([legend,axis],600)
+    assert iteration_legend_errors([('右图虚线为候选',500,300,590,312),axis],600)
+    assert iteration_legend_errors([(legend[0],300,300,590,312),axis],600)
+    assert iteration_legend_errors([legend,('更新步数t',400,310,480,322)],600)
+    positive=('正数保留',335,63,375,78)
+    negative=('负数归零',220,138,260,153)
+    assert activation_label_errors([positive,negative,('ReLU(t)',303,68,340,78)])
+    assert not activation_label_errors([positive,negative,('ReLU(t)',280,68,320,78)])
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions, orphaned code introductions, contour collisions, displaced legends and ReLU label overlaps are rejected')
 
 
 def main():

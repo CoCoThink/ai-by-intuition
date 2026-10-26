@@ -97,7 +97,8 @@ def check_optimization_figures():
     equal_points(plots[1],[trajectory[t] for t in (0,1,2,5,10)])
     equal_points(plots[2],losses)
     equal_points(plots[3],[losses[t] for t in (0,1,2,5,10)])
-    assert curves(iterations)==['2/3']
+    assert curves(iterations)==['2/3','1/2']
+    assert plotted_value(curves(iterations)[1],F(0))==loss(F(3,2),F(1))
     contours=source('loss-two-parameter-contours')
     path=re.search(r'\\draw\[flowcolor,very thick\] plot coordinates\s*\{([^}]+)\};',contours)
     assert path, 'Missing actual trajectory on loss contours'
@@ -144,6 +145,18 @@ def check_sample_gradients():
 def check_relu_fit():
     data=((-1,1),(0,0),(1,1))
     source=(ROOT/'book/chapters/07-functions-relu.tex').read_text()
+    figure=(ROOT/'book/figures/relu-function.tex').read_text()
+    segments=re.findall(r'\\addplot\[[^\]]*domain=([-+.0-9]+):([-+.0-9]+)[^\]]*\]\s*\{([^{}]+)\};',figure)
+    assert len(segments)==2 and F(segments[0][1])==F(segments[1][0])==0
+    assert F(segments[0][0])<0<F(segments[1][1])
+    for left,right,expression in segments:
+        for fraction in (F(0),F(1,2),F(1)):
+            t=F(left)+(F(right)-F(left))*fraction
+            assert plotted_value(expression,t)==max(F(0),t)
+    marked=re.search(r'coordinates\s*\{([^}]+)\}',figure)
+    points=[tuple(map(F,pair)) for pair in re.findall(r'\(([-+.0-9]+),([-+.0-9]+)\)',marked[1])]
+    assert points==[(F(-2),F(0)),(F(1),F(1))]
+    assert all(output==max(F(0),t) for t,output in points)
     for w in (F(-2),F(0),F(1,3)):
         for b in (F(0),F(2,3),F(2)):
             mse=sum((w*x+b-y)**2 for x,y in data)/3
@@ -162,7 +175,7 @@ def check_relu_fit():
         gc=sum(2*max(-x,0)*(a*max(x,0)+c*max(-x,0)-y) for x,y in data)/3
         a,c=a-F(3,4)*ga,c-F(3,4)*gc
     assert F(1,6)<F(2,9)
-    print('ReLU fit QA: affine lower bound 2/9, exact two-unit fit and five printed gradient-descent rows passed')
+    print('ReLU QA: both activation-curve segments and marked examples, affine lower bound 2/9, exact two-unit fit and five printed gradient-descent rows passed')
 
 
 def run_checks():
@@ -196,6 +209,13 @@ def run_checks():
             gw, gb = gradient(w, b)
             w, b = w-rate*gw, b-rate*gb
         assert (abs(rw)<1 and abs(rb)<1) == (0<rate<1)
+    # Recompute the printed divergence phenomenon before using the multiplier formula.
+    b=F(0)
+    for step in range(4):
+        printed_b=f'${float(b):g}$' if b<0 else f'{float(b):g}'
+        row=f'{step} & {printed_b} & {float(abs(b-1)):g}'
+        assert row in source, ('Published divergent b sequence differs',row)
+        b=b-F(6,5)*gradient(F(1),b)[1]
     # Independent finite differences of the sample-wise MSE.
     for w, b in ((1., 0.), (1.2, .6), (1.5, 1.), (0., 3.)):
         gw, gb = gradient(w, b); eps=1e-5

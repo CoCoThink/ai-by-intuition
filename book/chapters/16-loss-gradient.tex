@@ -85,17 +85,16 @@ L(w,b)=\frac{(-w+b+1)^2+(b-2)^2+(w+b-2)^2}{3}.
 \chapterrule
 \section{怎样让损失变小？梯度下降调参数}
 \label{intro:16a-gradient-descent}
-\chaptercompass{有了损失，下一步该怎样调整参数？}{在当前参数处求梯度，沿反方向走一步，再重新计算。}{当前 $w,b$、两个偏导数与学习率 $\eta$ $\to$ 新的 $w,b$}{$w,b$ 同步更新}
+\chaptercompass{有了损失，下一步该怎样调整参数？}{先求出本例的最优解，再核验沿负梯度逐步更新的过程。}{当前 $w,b$、两个偏导数与学习率 $\eta$ $\to$ 新的 $w,b$}{$w,b$ 同步更新}
 \modelpipelinefocus{0}{梯度下降与参数更新}
 
 上一章比较了几组参数，却还没有找到最佳直线。
-这个三点直线拟合问题可以直接求出最优参数。本章用它学习\textbf{逐步更新}：
-每一步都能手算，最后还能用直接求出的最优解核对结果。
-后面的网络会让许多参数共同影响输出，通常很难一次解出使损失最小的全部参数，
-但可以计算当前位置的梯度。这里先从两个参数开始，看懂如何根据当前误差决定下一步。
+这个三点直线拟合问题可以直接求出最优参数；如果只要这两个数，直接解更简便。
+后面的多层网络却通常很难一次解出全部最优参数，需要一种能根据当前误差反复调整参数的方法。
+本章先求出这个小例子的最优解，再把它作为已知终点，核验\textbf{逐步更新}能否走近它。
 
 现在从候选 A 的 $(w,b)=(1,0)$ 出发，先只观察 $w$ 变化时损失怎样变化，
-再把两个参数一起更新。全程使用同一组三点数据；完成几步训练后，再直接求解验算。
+再求出最佳参数、练习同步更新。全程使用同一组三点数据。
 
 \subsection{先试一点：哪一边让损失下降？}
 
@@ -105,6 +104,10 @@ L(w,b)=\frac{(-w+b+1)^2+(b-2)^2+(w+b-2)^2}{3}.
 L(0.9,0)=1.74,\qquad L(1,0)=\frac53,\qquad L(1.1,0)\approx1.6067.
 \]
 在当前位置附近，增大 $w$ 能降低损失。
+如果只靠逐个尝试，每个参数各选 $10$ 个值，两个参数的所有组合就要比较 $10\times10=100$ 次；
+参数更多时，组合数还会继续相乘。
+后文用作真实模型对照的 GPT-2 small 已有上亿个参数（计数见第~\ref*{intro:23a-from-toy-to-gpt}~章），
+穷举这样的组合难以承担，而且有限的候选还可能漏掉更好的值。
 我们可以用\textbf{导数}描述这样的局部变化率，而不必每次试两个方向。
 相关符号见\hyperref[app:math-tools]{数学速查}。
 
@@ -154,9 +157,36 @@ L(w,0)=\frac{(1-w)^2+4+(w-2)^2}{3}.
 每幅图只改变一个参数；把两条切线的斜率排在一起，就是当前位置的梯度。
 \input{figures/gradient-partial-slices}
 
+\subsection{先直接求解：最优参数在哪里？}
+\label{intro:gradient-direct-solution}
+
+刚才已经算出两个偏导数。令它们同时为零，只需解两条一次方程：
+\[
+\begin{aligned}
+\frac43w-2=0&\quad\Longrightarrow\quad w=\frac32,\\
+2b-2=0&\quad\Longrightarrow\quad b=1.
+\end{aligned}
+\]
+代回模型，三项预测为 $(-0.5,1,2.5)$，残差为 $(0.5,-1,0.5)$，因此
+\[
+L\left(\frac32,1\right)=\frac{0.5^2+(-1)^2+0.5^2}{3}=\boxed{\frac12}.
+\]
+本例的\textbf{最优参数为 $(3/2,1)$，最小损失为 $1/2$}。
+为什么这确实是全部参数中的最小值，见后面的\hyperref[proof:three-point-global-minimum]{选读证明框}。
+
+\begin{boundarybox}[title={能直接解，为什么还要学迭代？}]
+本例的两个方程彼此独立，直接求解很容易。
+一般多层网络中，许多参数共同影响输出，令梯度为零会得到相互耦合且含非线性的方程组，
+通常很难直接求解；即使找到了梯度为零的点，也未必是全局最小值。
+梯度下降提供另一条路：每一步计算当前位置的梯度，再按同一规则调整参数。
+这个小例子的终点已知，正适合检查这条路怎样走。
+\end{boundarybox}
+
 \subsection{沿负梯度走一步，再检查新预测}
 \phantomsection\label{concept:gradient-descent}
 
+终点 $(3/2,1)$ 我们已经知道了。现在从 $(1,0)$ 出发，
+更新时只用当前位置的梯度，看能否逐步走近它。
 \textbf{梯度下降}沿梯度的反方向更新参数，以\textbf{学习率} $\eta$ 控制步长。
 两个参数都用同一组旧参数处的梯度计算，这叫\textbf{同步更新}：
 \begin{equation}
@@ -205,7 +235,8 @@ L(1.2,0.6)=\frac{0.4^2+(-1.4)^2+(-0.2)^2}{3}=\boxed{0.72}<\frac53.
 (1.2,0.6)-0.3(-0.4,-0.8)=(1.32,0.84).
 \]
 第二步的损失 $0.5472$ 已低于候选 B 的 $2/3$。
-继续更新时，表中损失逐渐接近 $0.5$；它还能降到多低？
+继续更新时，参数逐渐接近已知的 $(1.5,1)$，损失也逐渐接近已知的最小值 $0.5$。
+这些数值验证了本例在所选学习率下的迭代效果。
 运行下列命令可核对整张表：
 \begin{verbatim}
 python3 scripts/beginner_training_demo.py
@@ -215,64 +246,56 @@ python3 scripts/beginner_training_demo.py
 右图把这组参数对应的损失按更新步数画出。每一步重新求梯度，得到的移动方向和距离也随之变化。
 \input{figures/gradient-iteration-path}
 
-\subsection{这个例子能直接求解，迭代结果对不对？}
-
-现在再从原始残差展开同一个损失，核验迭代找到的结果：
-\[
-\begin{aligned}
-3L={}&(-w+b+1)^2+(b-2)^2+(w+b-2)^2\\
-={}&(w^2-2wb-2w+b^2+2b+1)\\
-&+(b^2-4b+4)\\
-&+(w^2+2wb-4w+b^2-4b+4)\\
-={}&2w^2-6w+3b^2-6b+9.
-\end{aligned}
-\]
-交叉项 $-2wb$ 与 $2wb$ 抵消，原因是本例的输入围绕零对称。
-分别把关于 $w$、$b$ 的二次式凑成平方：
-\[
-\begin{aligned}
-2w^2-6w&=2\left(w-\frac32\right)^2-\frac92,\\
-3b^2-6b&=3(b-1)^2-3.
-\end{aligned}
-\]
-代回并除以三，得到
-\begin{equation}
-\boxed{L(w,b)=\frac23\left(w-\frac32\right)^2+(b-1)^2+\frac12.}
-\label{eq:three-point-loss-surface}
-\end{equation}
-两个平方项都非负，并且在 $w=3/2,b=1$ 时同时为零。
-因此\textbf{最优参数是 $(3/2,1)$，最小训练损失为 $1/2$}。
-此时三项预测为 $(-0.5,1,2.5)$，残差为 $(0.5,-1,0.5)$，平方平均也恰为 $1/2$。
-表中的迭代确实在接近这个最优结果。
-图~\ref{fig:loss-two-parameter-contours} 将直接求解的结果补回参数轨迹：
+图~\ref{fig:loss-two-parameter-contours} 再把已知最优点与迭代路径放在同一张图中：
 左图中，同一条等高线上的参数具有相同损失，迭代从外侧走向损失更低的内侧；
 右图中，最优直线仍留下三个非零残差，与最小损失 $1/2$ 一致。
 \input{figures/loss-two-parameter-contours}
 
-也可以令前面求出的两个偏导数等于零，即解 $\frac43w-2=0$ 与 $2b-2=0$，
-同样得到 $(w,b)=(3/2,1)$；上面的平方和形式进一步证明了它使损失达到全局最小值。
-\textbf{如果任务只是求出这两个参数，直接求解更简便。}
-前面的迭代展示了另一种寻找参数的方法：每一步只需要当前参数处的梯度，
-这套更新规则将在后面的网络训练中继续使用。
-对一般的多层网络，令梯度等于零会得到相互耦合的方程组，写出方程后仍需寻找它的解；
-梯度为零本身也不足以证明损失达到全局最小值。
+\subsection{一次训练要做哪四件事？}
+\label{intro:training-four-steps}
 
-回到这三个样本，当前直线模型的最优参数仍会留下残差。
-下一章将研究：更灵活的非线性函数能怎样改变拟合能力？
+把刚才每次更新的过程归纳起来，就是反复执行四件事：
+\begin{enumerate}
+\item \textbf{前向传播}：用当前参数计算 $\widehat{y}$。
+\item \textbf{计算损失}：比较预测 $\widehat{y}$ 与真实目标 $y$。
+\item \textbf{求梯度}：求损失对各个参数的偏导数。
+\item \textbf{更新参数}：统一执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
+\end{enumerate}
+这里 $\theta$ 统称需要训练的参数，本例就是 $w,b$。
+更新后回到第一件事，用新参数重新预测、计算损失和梯度。
+后面的网络会增加前向传播与求梯度的内部步骤，这四件事仍构成训练的基本循环。
 
 \subsection{学习率多大才稳？把“会发散”算出来}
 \phantomsection\label{experiment:learning-rate-stability}
 
-已知最优参数后，可以追踪参数偏离它的距离。
-将更新式移项，直接写出带正负号的\textbf{参数偏差} $w-3/2$ 与 $b-1$：
+方向有了，步子太大会怎样？仍从 $(1,0)$ 出发，把学习率改为 $\eta=1.2$。
+只看 $b$，更新式是 $b_{t+1}=b_t-1.2(2b_t-2)$，例如第一步为 $0-1.2\times(-2)=2.4$。
+继续算下去：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{rrr}
+\toprule
+已更新步数 $t$ & $b_t$ & 到最优值的距离 $|b_t-1|$\\\midrule
+0 & 0 & 1\\
+1 & 2.4 & 1.4\\
+2 & $-0.96$ & 1.96\\
+3 & 3.744 & 2.744\\
+\bottomrule
+\end{tabular}
+\end{center}
+$b$ 在最优值 $1$ 的两侧来回跳，距离却逐步变大；这就是这个方向上的\textbf{发散}。
+
+为什么每次恰好远了 $1.4$ 倍？把一般学习率下的更新式减去最优值 $1$：
 \[
-\begin{aligned}
-w_{t+1}-\frac32&=\left(1-\frac43\eta\right)\left(w_t-\frac32\right),\\
-b_{t+1}-1&=(1-2\eta)(b_t-1).
-\end{aligned}
+b_{t+1}-1=b_t-\eta(2b_t-2)-1=(1-2\eta)(b_t-1).
 \]
-因此每走一步，$w$ 的参数偏差乘 $r_w=1-4\eta/3$，
-$b$ 的参数偏差乘 $r_b=1-2\eta$。
+带正负号的\textbf{参数偏差} $b-1$ 每步都乘 $r_b=1-2\eta$。
+当 $\eta=1.2$ 时，$r_b=-1.4$：负号解释左右交替，绝对值 $1.4$ 解释距离放大。
+同样处理 $w$，得到
+\[
+w_{t+1}-\frac32=\left(1-\frac43\eta\right)\left(w_t-\frac32\right),
+\qquad r_w=1-\frac43\eta.
+\]
 取 $\eta=0.3$ 时，$r_w=0.6,r_b=0.4$：
 初始偏差 $(-0.5,-1)$ 变成 $(-0.3,-0.4)$，正好得到 $(1.2,0.6)$。
 第 $t$ 步还能直接写成 $w_t=1.5-0.5\times0.6^t,b_t=1-0.4^t$。
@@ -295,18 +318,22 @@ $\eta$ & $r_w$ & $r_b$ & 从本例初值出发的结果\\\midrule
 \bottomrule
 \end{tabularx}
 \end{center}
-例如 $\eta=1.2$ 时，$b$ 依次为 $0,2.4,-0.96,3.744$，离 1 越来越远。
-这给“学习率过大”的提醒提供了可复算的证据。
 \begin{boundarybox}
 这些阈值由本例损失的二次项系数决定，适用于恒定学习率和全量梯度。
 换数据、损失尺度或优化器后，要重新判断步长；
 某方向若从最优值开始，其参数偏差始终为零。
 \end{boundarybox}
 
-\subsection{一次训练要做哪四件事？}
-\begin{enumerate}
-\item \textbf{前向传播}：用当前参数计算 $\widehat{y}$。
-\item \textbf{计算损失}：比较预测 $\widehat{y}$ 与真实目标 $y$。
-\item \textbf{求梯度}：求损失对各个参数的偏导数。
-\item \textbf{更新参数}：统一执行 $\theta\leftarrow\theta-\eta\nabla_\theta L$。
-\end{enumerate}
+\begin{example}[breakable=false,title={{\symboliconfont ★} 选读证明：为什么这是全局最小？}]
+\phantomsection\label{proof:three-point-global-minimum}
+令梯度为零找到了候选点。将\eqref{eq:three-point-residual-loss} 展开、合并，再配方：
+\begin{equation}
+\begin{aligned}
+L(w,b)&=\frac{2w^2-6w+3b^2-6b+9}{3}\\
+&=\frac23\left(w-\frac32\right)^2+(b-1)^2+\frac12.
+\end{aligned}
+\label{eq:three-point-loss-surface}
+\end{equation}
+两个平方项都非负，在 $(w,b)=(3/2,1)$ 时同时为零。
+这就证明了：全部参数中的最小损失恰为 $1/2$，前面的候选点确实是全局最优解。
+\end{example}

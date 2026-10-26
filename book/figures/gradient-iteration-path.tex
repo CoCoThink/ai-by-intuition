@@ -1,6 +1,6 @@
 % Joint full-batch updates, not the earlier fixed-b local observation.
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={同一段学习率零点三的迭代，左图画在参数平面，横轴为 w、纵轴为 b，每点是一组参数。轨迹从一、零经过一点二、零点六及一点三二、零点八四，后续各步的移动逐渐缩短。右图横轴为更新步数，纵轴为整组三点的损失，标出相同的第零、一、二、五、十步；第二步损失零点五四七二已低于候选 B 的三分之二，随后变化逐渐变小。}}
+\tagstructbegin{tag=Figure,alttext={同一段学习率零点三的迭代，左图画在参数平面，横轴为 w、纵轴为 b，每点是一组参数。轨迹从一、零经过一点二、零点六及一点三二、零点八四，逐渐接近前面已求出的最优参数一点五、一。右图横轴为更新步数，纵轴为整组三点的损失，标出相同的第零、一、二、五、十步；第二步损失零点五四七二已低于候选 B 的三分之二，随后趋近点线所示的已知最小损失二分之一。}}
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
@@ -33,6 +33,7 @@
  tick label style={font=\footnotesize},label style={font=\small},
 ]
 \addplot[noisecolor,dashed,domain=0:10] {2/3};
+\addplot[noisecolor,densely dotted,thick,domain=0:10] {1/2};
 \addplot[flowcolor,thick,mark=*,mark size=1.3pt] coordinates {
  (0,1.6666666667) (1,.72) (2,.5472) (3,.511872) (4,.50345472)
  (5,.5011126272) (6,.5003795743) (7,.5001332913) (8,.5000474480)
@@ -42,7 +43,9 @@
 \node[font=\footnotesize] at (axis cs:6.8,.83) {候选 B：$L=2/3$};
 \end{axis}
 \end{tikzpicture}
-\captionof{figure}{本例取 $\eta=0.3$ 连续更新：参数沿轨迹移动，对应损失逐步降低}
+
+{\footnotesize 右图虚线为候选 B 的 $L=2/3$，点线为已知最小损失 $L=1/2$。}
+\captionof{figure}{本例取 $\eta=0.3$ 连续更新：参数逐步接近已知最优点，损失趋近已知最小值}
 \label{fig:gradient-iteration-path}
 \end{center}
 \tagstructend

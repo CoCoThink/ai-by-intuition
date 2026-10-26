@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Architecture hand calculations: RoPE shift, MoE Top-2, illustrative MLA cache, window."""
 from __future__ import annotations
-from math import cos, exp, isclose, pi, sin
+from math import cos, exp, isclose, pi, sin, sqrt
+from pathlib import Path
+import re
+
+ROOT=Path(__file__).resolve().parents[1]
 
 
 def rope_score(m: int, n: int, theta: float) -> float:
@@ -11,6 +15,36 @@ def rope_score(m: int, n: int, theta: float) -> float:
     return q[0] * k[0] + q[1] * k[1]
 
 
+def check_rope_figure(prose, figure):
+    """Compare the actual plotted rotations and printed coordinates with the prose."""
+    denominator=int(re.search(r'角频率 \$\\theta=\\pi/(\d+)\$',prose)[1])
+    theta=pi/denominator
+    pairs=[tuple(map(int,row)) for row in re.findall(r'm=(\d+).*?n=(\d+)',prose,re.S)][:2]
+    titles=[tuple(map(int,row)) for row in re.findall(r'位置 \$m=(\d+),\\ n=(\d+)\$',figure)]
+    assert titles==pairs and len(pairs)==2, ('RoPE figure positions differ from prose',titles,pairs)
+    vectors=re.findall(r'\\draw\[->,very thick,(blue|teal)\] \(0,0\)--\((\d+):([0-9.]+)\)'
+                       r' node\[[^\]]+\] \{([QK]) \$\(([^$]+)\)\$\};',figure)
+    assert len(vectors)==4, 'Expected two Q/K vector pairs with explicit polar coordinates'
+    def tex_number(value):
+        fraction=re.fullmatch(r'(-?)\\tfrac(?:\{\\sqrt(\d+)\}|(\d))(\d)',value)
+        if not fraction:return float(value)
+        sign,radical,numerator,divisor=fraction.groups()
+        return (-1 if sign else 1)*(sqrt(int(radical)) if radical else int(numerator))/int(divisor)
+    for pair,drawn in zip(pairs,(vectors[:2],vectors[2:])):
+        assert [(row[0],row[3]) for row in drawn]==[('blue','Q'),('teal','K')]
+        for position,(color,angle,radius,name,label) in zip(pair,drawn):
+            assert isclose(float(angle)*pi/180,position*theta) and float(radius)==1
+            expected=(cos(position*theta),sin(position*theta))
+            actual=tuple(map(tex_number,label.split(',')))
+            assert len(actual)==2 and all(isclose(a,b,abs_tol=1e-12) for a,b in zip(actual,expected)),label
+        printed=re.findall(r'点积 \$(\d+)/(\d+)\$',figure)
+        assert printed and all(isclose(int(a)/int(b),rope_score(*pair,theta)) for a,b in printed)
+    arcs=[tuple(map(int,row)) for row in re.findall(r'arc \((\d+):(\d+):\.4\)',figure)]
+    assert arcs==[tuple(int(position*180/denominator) for position in pair) for pair in pairs]
+    assert f'\\theta=\\pi/{denominator}' in figure
+    print('RoPE figure QA: prose positions/frequency, all four drawn vectors and coordinate labels, angle arcs and printed dot products agree')
+
+
 def mask(n: int, window: int):
     assert 1 <= window <= n
     return [[int(j <= i and j >= max(0, i - window + 1))
@@ -18,6 +52,8 @@ def mask(n: int, window: int):
 
 
 def main():
+    check_rope_figure((ROOT/'book/chapters/22d-modern-transformers.tex').read_text(),
+                      (ROOT/'book/figures/rope-relative-rotation.tex').read_text())
     theta = pi / 3
     assert isclose(rope_score(0, 1, theta), .5) and isclose(rope_score(2, 3, theta), .5)
     assert isclose(rope_score(0, 2, theta), -.5)

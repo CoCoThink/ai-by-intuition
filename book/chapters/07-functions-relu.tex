@@ -23,6 +23,10 @@
 \relu(t)=\max(0,t)=
 \begin{cases}t,&t>0,\\0,&t\le0.\end{cases}
 \end{equation}
+图~\ref{fig:relu-function} 把定义画成输入与输出的曲线：负数归零，正数保留，原点处出现折角。
+ReLU 本身没有可训练参数；要训练的是它前后线性层的权重与偏置。
+\input{figures/relu-function}
+
 例如 $\relu(-2)=0$，$\relu(1)=1$。
 $\relu(1+(-2))=0$，但
 $\relu(1)+\relu(-2)=1$，所以 ReLU 不是线性函数。

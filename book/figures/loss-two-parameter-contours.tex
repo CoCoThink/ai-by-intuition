@@ -1,9 +1,9 @@
 % Exact contours of L=2/3(w-3/2)^2+(b-1)^2+1/2; equal 15mm units.
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={左图是在参数平面上的全局验算，等高线损失为三分之五和零点七二，迭代路径由一、零经过一点二、零点六逐步接近中心一点五、一，中心最小损失为零点五。右图用相同的三个样本画最优直线，预测为负零点五、一、二点五，残差为零点五、负一、零点五。参数空间的最低点对应数据空间中仍有残差的最优直线。}}
+\tagstructbegin{tag=Figure,alttext={左图把已知最优点与迭代路径放在同一参数平面，等高线损失为三分之五和零点七二，迭代由一、零经过一点二、零点六逐步接近中心一点五、一，中心最小损失为零点五。右图用相同的三个样本画最优直线，预测为负零点五、一、二点五，残差为零点五、负一、零点五。参数空间的最低点对应数据空间中仍有残差的最优直线。}}
 \begin{center}
 \begin{tikzpicture}[x=15mm,y=15mm,>=Latex]
-\node[font=\small] at (1.8,2.55) {参数空间：验算最低点};
+\node[font=\small] at (1.8,2.55) {参数空间：走近已知最优点};
 \draw[->,muted] (0,-.6)--(3.7,-.6) node[right] {$w$};
 \draw[->,muted] (0,-.6)--(0,2.4) node[above] {$b$};
 \foreach \value in {1,1.5,3}
@@ -44,7 +44,7 @@
 \end{tikzpicture}
 
 {\footnotesize 最优参数 $(1.5,1)$；右图黑实点为真实值，空心方点为预测，残差为 $(0.5,-1,0.5)$。}
-\captionof{figure}{直接求解验证迭代趋近的最优点：最小损失为 $0.5$，最优直线仍保留残差}
+\captionof{figure}{对照已知最优解观察迭代：最小损失为 $0.5$，最优直线仍保留残差}
 \label{fig:loss-two-parameter-contours}
 \end{center}
 \tagstructend

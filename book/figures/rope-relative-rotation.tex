@@ -1,28 +1,34 @@
-\par\Needspace{75mm}
-\tagstructbegin{tag=Figure,alttext={两个二维坐标图演示相对旋转。左图位置零的 Q 向右，位置一的 K 向上，相差九十度，点积零。右图两个位置同时加一，Q 向上、K 向左，仍相差九十度，点积仍为零。内容向量都取一零，角频率为二分之派。}}
+% Same unit vectors, angular frequency and position pairs as the preceding prose.
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={沿用正文的二维 RoPE 算例，内容向量均为一、零，角频率为三分之派。左图 Query 在位置零，旋转后为一、零；Key 在位置一，旋转后为二分之一、二分之根号三。右图两位置同时后移两位，Query 在位置二，旋转后为负二分之一、二分之根号三；Key 在位置三，旋转后为负一、零。两图的相对夹角均为六十度，相对位置差均为一，点积均为二分之一。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,x=1cm,y=1cm]
-\foreach \shift/\title in {0/{位置 $m=0,\ n=1$},7.4/{位置 $m=1,\ n=2$}}{
+\begin{tikzpicture}[>=Latex,x=14mm,y=14mm]
+\foreach \shift/\title in {0/{位置 $m=0,\ n=1$},8.5/{位置 $m=2,\ n=3$}}{
  \begin{scope}[xshift=\shift cm]
- \draw[->,linegray] (-1.65,0)--(1.9,0);
- \draw[->,linegray] (0,-.45)--(0,2.0);
- \draw[linegray,dashed] (0,0) circle (1.4);
- \node[font=\small\sffamily\bfseries] at (0,2.65) {\title};
+ \draw[->,linegray] (-1.5,0)--(1.65,0);
+ \draw[->,linegray] (0,-1.2)--(0,1.7);
+ \draw[linegray,dashed] (0,0) circle (1);
+ \node[font=\small\sffamily\bfseries] at (0,2.05) {\title};
+ \node[font=\small] at (0,-1.6) {$n-m=1$，点积 $1/2$};
  \end{scope}
 }
-\draw[->,very thick,blue] (0,0)--(1.4,0) node[right,font=\small] {Q $(1,0)$};
-\draw[->,very thick,teal] (0,0)--(0,1.4) node[above,font=\small] {K $(0,1)$};
-\draw[->,flowcolor,thick] (.55,0) arc (0:90:.55);
-\node[font=\small] at (.9,.7) {$90^\circ$};
-\draw[->,very thick,blue] (7.4,0)--(7.4,1.4) node[above,font=\small] {Q $(0,1)$};
-\draw[->,very thick,teal] (7.4,0)--(6,0) node[left,font=\small] {K $(-1,0)$};
-\draw[->,flowcolor,thick] (7.4,.55) arc (90:180:.55);
-\node[font=\small] at (6.55,.75) {$90^\circ$};
-\node[font=\small,align=center] at (0,-2) {$n-m=1$，点积 $0$};
-\node[font=\small,align=center] at (7.4,-2) {$n-m=1$，点积 $0$};
-\node[font=\small\sffamily,text=muted,align=center] at (3.7,-3) {两位置同时平移，Q/K 都转过相同角度；相对夹角保持不变};
+\begin{scope}
+ \draw[->,very thick,blue] (0,0)--(0:1) node[below right,font=\small] {Q $(1,0)$};
+ \draw[->,very thick,teal] (0,0)--(60:1) node[above,font=\small] {K $(\tfrac12,\tfrac{\sqrt3}2)$};
+ \draw[->,flowcolor,thick] (.4,0) arc (0:60:.4);
+ \node[font=\small] at (.65,.3) {$60^\circ$};
+\end{scope}
+\begin{scope}[xshift=8.5cm]
+ \draw[->,very thick,blue] (0,0)--(120:1) node[above,font=\small] {Q $(-\tfrac12,\tfrac{\sqrt3}2)$};
+ \draw[->,very thick,teal] (0,0)--(180:1) node[below left,font=\small] {K $(-1,0)$};
+ \draw[->,flowcolor,thick] (120:.4) arc (120:180:.4);
+ \node[font=\small] at (-.65,.3) {$60^\circ$};
+\end{scope}
+\node[font=\small,text=muted] at (3.0357,-2.35)
+ {共同后移两位：两向量都多转 $120^\circ$，相对夹角仍为 $60^\circ$};
 \end{tikzpicture}
-\captionof{figure}{RoPE 的二维直觉：本例内容均为 $(1,0)$、角频率 $\pi/2$；点积由相对位置决定}
+\captionof{figure}{沿用正文的 $\theta=\pi/3$：$(m,n)$ 从 $(0,1)$ 平移到 $(2,3)$，点积仍为 $1/2$}
 \label{fig:rope-relative-rotation}
 \end{center}
 \tagstructend
+\end{minipage}\par
