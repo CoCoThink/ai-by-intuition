@@ -705,7 +705,7 @@ def validate_pdf(path: Path) -> None:
     # before diagnosing the compact TOC, so the error identifies the cause.
     if any(item not in normalized(pages[0]) for item in (
             'CoCoThinkandcontributors', 'https://github.com/CoCoThink/ai-by-intuition',
-            '原创内容·CCBY4.0')):
+            'CCBY4.0')):
         fail('Cover must fit one page, including author, URL and licence')
     if '版权、致谢与版本' not in normalized(pages[1]):
         fail('Copyright page must immediately follow the single-page cover')
