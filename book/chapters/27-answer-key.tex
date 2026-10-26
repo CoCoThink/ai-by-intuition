@@ -117,10 +117,12 @@ $(a,a):1$，$(a,b):2$；第一轮合并 $a+b\to ab$，
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-034.}] \phantomsection\label{solution:C-034}\hyperref[exercise:C-034]{\textbf{第一步：}}训练时输入序列和目标序列错开一个位置。\par\nobreak
 \textbf{解答：} 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
-\item[\textbf{C-035.}] \phantomsection\label{solution:C-035}\hyperref[exercise:C-035]{\textbf{第一步：}}区分读取权限掩码和损失统计掩码。\par\nobreak
-\textbf{解答：} 因果掩码限制当前位置能够读取的 Key；
-损失掩码决定哪些位置的预测误差参加训练目标的统计。
-\item[\textbf{C-036.}] \phantomsection\label{solution:C-036}\phantomsection\label{answerpiece:20b-task-contract:4}\hyperref[exercise:C-036]{\textbf{第一步：}}分别问两个 Mask 控制读取还是计分。\par\nobreak\textbf{解题过程：}训练数据里的真实前缀已知，因果 Mask 允许各位置并行算分数；生成的下一输入取决于前一步实际选出的 Token，必须依次确定。
+\item[\textbf{C-035.}] \phantomsection\label{solution:C-035}\hyperref[exercise:C-035]{\textbf{第一步：}}从当前位置向前列出允许读取的位置，再找到目标与预测概率汇合的步骤。\par\nobreak
+\textbf{解答：} 三个位置分别允许读取位置 $\answerresult{\{1\}}$、$\answerresult{\{1,2\}}$、$\answerresult{\{1,2,3\}}$。
+第三位置的目标 ID $3$ 指出该行概率的第 $3$ 列，交叉熵用这一项概率计算该位置的损失。
+\item[\textbf{C-036.}] \phantomsection\label{solution:C-036}\phantomsection\label{answerpiece:20b-task-contract:4}\hyperref[exercise:C-036]{\textbf{第一步：}}分别追踪训练目标和生成时新输入的来源。\par\nobreak\textbf{解题过程：}训练目标来自已有文本：输入 $[2,4,5]$，对应目标是 $[4,5,3]$，即“花、开了、。”。
+生成时只有给定的“春天”，模型先输出下一 Token 的概率，再按选取规则得到一个 Token 并追加到输入；若选出“花”，下一轮输入就是“春天 花”。
+训练目标从文本直接取得，生成时追加的 Token 来自模型的预测与选取。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:21a-context-gap}~章 · 前文怎样传到当前词？从逐行处理到 RNN\enspace{\mdseries\footnotesize（\hyperref[exercise:C-037]{题目见第~\pageref*{exercise:C-037}~页起}）}}

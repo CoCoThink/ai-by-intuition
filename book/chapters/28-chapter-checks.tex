@@ -93,7 +93,7 @@
 \item[\textbf{第 13 章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{把语言练习变成一道可计算的预测题}}\answercheckpage{20b-task-contract}\par\nobreak
 \answerpiece{1}{对齐}{把完整序列整体左移一位（去掉首项）。}三个目标是 $\answerresult{[4,5,3]}$。
 \par\answerpiece{2}{形状}{先数预测位置，再数每行候选。}三个位置乘五类分数，logits 为 $\answerresult{3\times5}$。
-\par\answerpiece{3}{找错}{先检查预测位置是否读到了未来输入。}把未来目标送进了当前位置可见的输入，违反因果预测的可见性约束。
+\par\answerpiece{3}{找错}{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}第一个位置的目标就是“花”，本应只利用“春天”来预测；读取第二位置的“花”等于提前看到了答案。目标应在得到预测概率后参与损失计算。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 14 章}] \phantomsection\label{answer:21-rnn}\textbf{\hyperref[check:21-rnn]{前文怎样传到当前词？从逐行处理到 RNN}}\answercheckpage{21-rnn}\par\nobreak
 \answerpiece{1}{预测}{先比较两句传给当前 Token 函数的输入。}不能。输入只保留当前 Token 时，两句进入函数的是同一个表示，输出无法仅因不可见的前文改变。

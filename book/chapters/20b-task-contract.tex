@@ -2,7 +2,7 @@
 \chapterrule
 \section{把语言练习变成一道可计算的预测题}
 \label{intro:20b-task-contract}
-\chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{完整序列去掉末项作输入、去掉首项作目标（目标是输入整体左移一位），再约定预测形状和评测。}{$[2,4,5]\to[4,5,3]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；后续模型中的 Embedding、投影等参数需训练}
+\chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{完整序列去掉末项作输入、去掉首项作目标（目标是输入整体左移一位），再约定预测形状和可见范围。}{$[2,4,5]\to[4,5,3]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；Embedding 与预测模型中的其他可学习参数需训练}
 \modelpipelinefocus{0}{训练样本与目标}
 
 下一 Token 预测把已有文本变成训练答案，把新 Token 接回输入又能继续生成。
@@ -31,68 +31,81 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 \]
 第一行用“春天”预测“花”，第二行用“春天、花”预测“开了”，第三行预测句号。
 输入查表成为三行向量，目标 ID 指出每行应该提高哪一列的概率。
-分类交叉熵已给出计分公式；接下来还要建立上下文读取和因果可见性。
+分类交叉熵已给出计分公式；下面把输入、预测概率和目标接起来，再确定每个位置可以利用哪些输入。
 
-\subsection{先看全图：Attention 是网络内部的上下文读取步骤}
+\subsection{从输入到损失：先看预测任务}
 
-先看整套\textbf{可训练网络}：ID 查表后，Attention 读取此前可见的 Token，
-逐位置 FFN 变换特征，输出头给词表候选打分。
-训练时用右侧的目标计算损失，反向更新前面各组共享参数。
+词表的 $5$ 个 Token 各用 $3$ 维向量表示，Embedding 表为 $5\times3$。
+三个输入 ID 经过查表，成为一个 $3\times3$ 的向量矩阵，每个位置一行。
+模型根据这些输入，为每个位置计算五个候选 Token 的分数，
+组成一个 $3\times5$ 的 logits 矩阵；再逐行通过 Softmax 得到同样形状的概率矩阵 $\Pi$。
 
-\par\medskip
-\tagstructbegin{tag=Figure,alttext={语言模型形状流程：三枚 Token ID 查五乘三的词嵌入表，形成三乘三向量；上下文注意力和逐位置前馈层维持三乘三形状，输出头映射为三乘五 logits，再转换为三个位置各五类的概率。}}
+图中把从输入 ID 到预测概率的计算统称为\textbf{预测模型}，
+其内部结构将在后续章节逐步展开。
+本章先确定它接收什么、输出什么，以及怎样衡量预测的好坏。
+
+训练时，交叉熵读取每行目标 Token 对应的概率，计算三个位置的平均损失。
+本例依次读取第一行“花”、第二行“开了”、第三行“。”的概率。
+再通过反向传播，更新 Embedding 和模型中的其他可学习参数。
+
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={下一 Token 预测的训练任务：输入 Token ID 为二、四、五，经过预测模型得到三行五列的词表概率。概率与另一条分支上的目标 Token ID 四、五、三共同送入交叉熵，计算平均损失 L；目标来自错开一位的训练文本。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,node distance=3mm,
+\begin{tikzpicture}[>=Latex,node distance=6mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=white,align=center,
- font=\sffamily\footnotesize,minimum height=14mm,minimum width=25mm,inner sep=1mm}]
-\node[n,fill=paper] (t) {Token ID\\ $3$ 个整数};
-\node[n,right=of t] (e) {Embedding\\ $3\times3$};
-\node[n,right=of e,fill=linegray!15] (a) {Attention\\ $3\times3$};
-\node[n,right=of a] (f) {FFN\\ $3\times3$};
-\node[n,right=of f,fill=linegray!25] (z) {输出头\\ $3\times5$};
-\foreach \a/\b in {t/e,e/a,a/f,f/z}{\draw[->,flowcolor,thick] (\a.east)--(\b.west);}
-\node[font=\scriptsize,text=muted,below=2mm of a] {由前文注入上下文};
+ font=\sffamily\footnotesize,minimum height=12mm,minimum width=28mm,inner sep=1mm}]
+\node[n,fill=paper] (input) {输入 Token ID\\ $[2,4,5]$};
+\node[n,right=of input,minimum width=32mm] (model) {预测模型\\ 内部随后展开};
+\node[n,right=of model] (probability) {词表概率 $\Pi$\\ $3\times5$};
+\node[n,right=of probability,fill=linegray!15] (loss) {交叉熵损失 $L$\\ 三个位置取平均};
+\node[n,below=6mm of probability,fill=paper] (target) {目标 Token ID\\ $[4,5,3]$};
+\foreach \a/\b in {input/model,model/probability,probability/loss}{\draw[->,flowcolor,thick] (\a.east)--(\b.west);}
+\draw[->,flowcolor,thick] (target.east)-|(loss.south);
 \end{tikzpicture}
-\captionof{figure}{语言预测任务的形状地图：词表概率与训练损失接在输出头之后}
+\captionof{figure}{下一 Token 预测的训练任务：预测概率与错开一位的目标共同确定损失}
 \label{fig:token-ffn-output-pipeline}
 \end{center}
 \tagstructend
-
-\subsection{先约定输入，再约定预测的输出}
-
-\textbf{输入：}词表的 $5$ 个 Token 各用 $3$ 维向量表示，Embedding 表为 $5\times3$。
-三个输入查表后组成 $3\times3$ 矩阵，每个位置一行。
-\textbf{输出：}每行给 $5$ 个候选打分，三位置的 logits 合为 $3\times5$，逐行转成概率。
-
-\begin{center}
-\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{30mm}p{30mm}X@{}}
-\toprule
-对象 & 示例尺寸 & 为什么是这个数\\
-\midrule
-输入 Token ID & $3$ 个整数 & 有 3 个已知位置\\
-Embedding 表 & $5\times3$ & 词表 5 项，每项 3 个特征\\
-输入向量矩阵 & $3\times3$ & 3 个位置，每行 3 个特征\\
-每个位置的候选 & $5$ 个 & 词表共有 5 个候选输出\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-
+\end{minipage}\par
 
 真实 GPT-2 small 的词表有 $50{,}257$ 项，仍沿用下一 Token 目标；
 规模与配置见第~\ref*{intro:23a-from-toy-to-gpt}~章。
 
+\subsection{每个位置能看到哪些输入？}
+
+预测下一 Token 时，每个位置可以利用\textbf{当前位置及之前}的输入。
+同一段训练数据因此对应三种可见范围：
+
+\begin{center}
+\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{22mm}Xp{28mm}@{}}
+\toprule
+预测位置 & 该位置可以利用的输入 & 对应目标\\
+\midrule
+1 & 春天 & 花\\
+2 & 春天、花 & 开了\\
+3 & 春天、花、开了 & 。\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+训练文本虽然已经给出了完整序列，每个位置做预测时仍要遵守这条规则。
+例如，第一位置要预测“花”，若计算预测时已经读到了第二位置的“花”，
+就提前看到了答案，造成\textbf{信息泄漏}。
+目标应当参与损失计算；预测模型怎样利用允许读取的前文，将从下一部分逐步展开。
+
 \chapterchecktasks{20b-task-contract}{正文基础三题}{
 \item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列整体左移一位（去掉首项），对齐三个位置。}
 \item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
-\item \textbf{找错：}同学让第一个位置通过 Attention 直接看见第二个位置的正确答案，再计算第一个位置的预测损失。哪里发生信息泄漏？\chapterinlinehint{画出目标 Token 流向第一个位置的路径。}
+\item \textbf{找错：}同学让第一个位置直接读取第二个位置的“花”，再预测第一个位置的下一 Token。哪里发生信息泄漏？\chapterinlinehint{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}
 }
 
 
 
 \begin{conclusion}
 输入 $[2,4,5]$，目标 $[4,5,3]$；每位置输出五类分数，交叉熵读取目标列。
-下一部分比较 RNN 与 Attention 怎样把前文送给当前位置。
+现在已经约定了输入、目标、输出概率与损失。
+下一个问题是：前面的词，怎样参与当前位置的计算？
+下一部分先检查逐行处理缺少什么，再研究传递和读取前文的方法。
 \end{conclusion}

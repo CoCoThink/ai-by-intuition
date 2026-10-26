@@ -103,9 +103,10 @@ ${P_{\rm pos}}_{1,:}=(0.10,0.05,-0.10)$。
 \item[\textbf{C-034.}] \phantomsection\label{exercise:C-034}\label{exercise:C2-1}\exercisemeta{基础}{3}{\hyperref[solution:C-034]{解答第~\pageref*{solution:C-034}~页}}\phantomsection\label{exercise:linked-20b-task-contract}  \textbf{【手算】} 词表有 $10$ 个 Token，编号从 $1$ 到 $10$。
 一个序列的 Token ID 是 $(2,4,1,8)$。
 采用“错开一格”的语言建模目标，写出长度为 $3$ 的输入与标签。
-\item[\textbf{C-035.}] \phantomsection\label{exercise:C-035}\label{exercise:C2-9}\exercisemeta{基础}{5}{\hyperref[solution:C-035]{解答第~\pageref*{solution:C-035}~页}}\textbf{【回忆】} 一组训练数据用正确 Token 当标签，但还想过滤 padding。
-\textbf{\conceptlink{causal-mask}{因果注意力掩码}}和\textbf{损失掩码}各解决什么问题？
-\item[\textbf{C-036.}] \phantomsection\label{exercise:C-036}\label{exercise:C4-17}\exercisemeta{标准}{5}{\hyperref[solution:C-036]{解答第~\pageref*{solution:C-036}~页}}\textbf{方案：}同一份文本既做训练又做推理。训练为什么能在一次前向中计算多个位置，而推理时新 Token 的输入往往要逐个确认？
+\item[\textbf{C-035.}] \phantomsection\label{exercise:C-035}\label{exercise:C2-9}\exercisemeta{基础}{5}{\hyperref[solution:C-035]{解答第~\pageref*{solution:C-035}~页}}\textbf{【回忆】} 输入 Token ID 为 $[2,4,5]$，对应目标为 $[4,5,3]$。
+分别列出三个预测位置允许读取的输入位置编号，并说明第三个位置的目标 ID $3$ 在哪里参与训练计算。
+\item[\textbf{C-036.}] \phantomsection\label{exercise:C-036}\label{exercise:C4-17}\exercisemeta{标准}{5}{\hyperref[solution:C-036]{解答第~\pageref*{solution:C-036}~页}}\textbf{辨析：}用“春天 花 开了 。”训练下一 Token 预测时，三个位置的目标从哪里来？
+若生成时只给“春天”作为开头，下一轮追加到输入中的 Token 又从哪里来？用这个例子说明两种数据来源的区别。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:21a-context-gap}~章 · 前文怎样传到当前词？从逐行处理到 RNN\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21a-context-gap}~页）}}
