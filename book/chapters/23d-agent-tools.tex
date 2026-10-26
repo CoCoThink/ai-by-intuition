@@ -98,8 +98,8 @@
 \draw[agentline] (plan)--node[above,font=\scriptsize]{答复} (done);
 \draw[agentline] (plan)--node[left,font=\scriptsize]{工具请求} (gate);
 \draw[agentline] (gate)--node[left,font=\scriptsize]{通过} (exec);
-\draw[agentline] (gate.east)--++(6,0) |- node[pos=.7,above,font=\scriptsize]{拒绝} (error.north);
-\draw[agentline] (exec.east)--++(6,0) |- node[pos=.7,below,font=\scriptsize]{失败} (error.south);
+\draw[agentline] (gate.east)--node[above,sloped,font=\scriptsize]{拒绝} (error.west);
+\draw[agentline] (exec.east)--node[below,sloped,font=\scriptsize]{失败} (error.west);
 \draw[agentline] (exec)--node[left,font=\scriptsize]{成功} (feedback);
 \draw[agentline] (feedback.west)--++(-7,0) |- (budget.west);
 \end{tikzpicture}
@@ -110,6 +110,7 @@
 \end{minipage}\par
 
 
+\Needspace{20\baselineskip}
 前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\small]

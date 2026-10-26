@@ -67,6 +67,22 @@ def caption_errors(figures):
             for alt,pages in figures if len(pages)!=1]
 
 
+def agent_intro_errors(pages):
+    """Reject the concrete orphaned lead-in above the Agent pseudocode.
+
+    Figure checks do not cover prose: the flowchart fit with its caption, but
+    left one line of the following introduction behind on the previous page.
+    """
+    normalized=[re.sub(r'\s+','',page) for page in pages]
+    intro=[i+1 for i,page in enumerate(normalized)
+           if '前面的工具例子只展示了一次调用。' in page]
+    code=[i+1 for i,page in enumerate(normalized)
+          if 'messages=[system_message,user_message]' in page]
+    if len(intro)!=1 or len(code)!=1 or intro!=code:
+        return [f'Agent pseudocode lead-in/code split or missing: intro pages {intro}, code pages {code}']
+    return []
+
+
 def toc_folio_errors(entries, folio_targets):
     return [f'TOC page number is not independently linked to {target} (page {page})'
             for page,target in entries if target not in folio_targets]
@@ -108,7 +124,9 @@ def check_pdf(path, aux, used):
     from pypdf import PdfReader
     reader=PdfReader(path)
     failures=caption_errors(figure_page_sets(reader))
-    text=re.sub(r'\s+','',subprocess.check_output(['pdftotext',str(path),'-'],text=True))
+    raw_text=subprocess.check_output(['pdftotext',str(path),'-'],text=True)
+    failures.extend(agent_intro_errors(raw_text.split('\f')))
+    text=re.sub(r'\s+','',raw_text)
     labels={}
     for line in aux.read_text().splitlines():
         match=re.match(r'\\newlabel\{([^}]+)\}\{',line)
@@ -144,9 +162,14 @@ def self_test():
     assert source_errors('见第 65 页',targets)
     assert not caption_errors([('kept together',{50})])
     assert caption_errors([('old RNN diagram regression',{50,51})])
+    intro='前面的工具例子只展示了一次调用。'
+    code='1 messages = [system_message, user_message]'
+    assert not agent_intro_errors([intro+'\n'+code])
+    assert agent_intro_errors([intro,code])
+    assert agent_intro_errors([intro])
     assert not toc_folio_errors([(64,'subsection.21.7')],{'subsection.21.7'})
     assert toc_folio_errors([(64,'subsection.21.7')],set())
-    print('Section/figure regressions passed: valid-but-wrong targets, literal folios and split captions are rejected')
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions and orphaned code introductions are rejected')
 
 
 def main():
