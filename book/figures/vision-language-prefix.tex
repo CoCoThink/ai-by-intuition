@@ -9,7 +9,7 @@
 \draw[->,thick,flowcolor] (image)--(bridge);
 \draw[->,thick,flowcolor] (bridge)--(prefix);
 \node[block,fill=paper] (text) at (0,-36) {两行文字向量\\$E_{\rm text}:2\times4$};
-\node[block,text width=48mm,minimum height=30mm] (input) at (87,-45) {图 1、图 2、图 3、图 4\\[2mm]\textcolor{flowcolor}{文 1、文 2}\\[2mm]$X_{\rm LLM}:6\times4$};
+\node[block,text width=48mm,minimum height=30mm] (input) at (87,-45) {位置 1--4：视觉前缀\\[2mm]\textcolor{flowcolor}{位置 5--6：文字向量}\\[2mm]$X_{\rm LLM}:6\times4$};
 \draw[->,thick,flowcolor] (prefix.south)--(input.north -| prefix.south);
 \draw[->,thick,flowcolor] (text.east)--(input.west |- text.east);
 \node[font=\footnotesize,text=muted,align=center] at (16,-62) {先对齐列宽，再增加行数\\最后一个文字位置可读取六行};

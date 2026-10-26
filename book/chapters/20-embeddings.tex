@@ -116,8 +116,9 @@ X=\begin{bmatrix}
 
 \subsection{训练前后，向量真的变了什么？}
 
-我们先看结果，等 Transformer 部分再逐层算出它的来历。
-用一层三维、单头、Pre-Norm 教学网络，以
+先观察后续完整模型的训练结果；模型的逐层计算与训练过程见
+\hyperref[intro:22b-token-to-output]{完整前向计算}和\hyperref[intro:22c-language-training]{语言模型训练}两章。
+在该模型中，以
 $[2,4,5]$ 预测三个位置的目标 $[4,5,3]$，
 所有参数同时用学习率 $0.04$ 做 \textbf{20 步 SGD}。
 该训练样本的平均交叉熵从约 $1.7984$ 降为 $0.4832$。
@@ -153,7 +154,7 @@ E_{20}[5]&\approx(0.1734,\,-0.2188,\,1.3136).
 \chapterchecktasks{20-embeddings}{正文基础三题}{
 \item \textbf{形状：}词表有 $5$ 个 ID，Embedding 宽为 $3$，三个 Token 输入 ID 为 $[2,4,5]$。查表后形状是多少？解释每一行对应什么。\chapterinlinehint{每个输入 ID 选一行，向量宽度保持不变。}
 \item \textbf{比较：}为什么直接拿 ID 数值相乘不能代替 Embedding 查表？one-hot 乘 Embedding 矩阵又为何可以得到同一向量？\chapterinlinehint{把 one-hot 与矩阵相乘展开为各行加权和。}
-\item \textbf{预测：}一句话中同一 ID 出现在位置 $1$ 和 $3$，原始查表向量是否相同？分别加上可训练位置向量后还必定相同吗？\chapterinlinehint{分别比较加位置向量之前与之后的表达式。}
+\item \textbf{预测：}一句话中同一 ID 出现在位置 $1$ 和 $3$，原始查表向量是否相同？训练更新了这个 ID 对应的表行后，下次在这两个位置查表会得到什么？\chapterinlinehint{两个位置都用同一个 ID 读取同一张表。}
 }
 
 

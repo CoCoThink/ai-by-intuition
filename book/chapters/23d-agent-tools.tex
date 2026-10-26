@@ -75,58 +75,67 @@
 \subsection{Agent loop：一次任务在消息里怎样向前推进？}
 \phantomsection\label{concept:agent}
 \textbf{Agent（智能体）}把模型放进一个由应用控制的循环：
-模型读消息、提出下一步动作，应用授权并执行，再把结果交回模型，直到满足完成条件或预算用尽。
+模型读消息、提出下一步动作，应用授权并执行，再把结果交回模型。
+本节采用一条便于追踪的规则：工具被拒绝或执行失败时立即停止，由应用报告缺失信息；
+模型直接给出答复时，应用核验后交付，预算用尽时也由应用报告未完成状态。
 \par\medskip
-\tagstructbegin{tag=Figure,alttext={Agent 逐轮执行流程：模型规划动作，应用进行授权和参数检查，工具在限制内执行或返回拒绝，结果追加到消息列表，再由模型判断是否结束；任务未完成则重新规划，完成后输出最终答复。}}
+\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={Agent 循环从应用检查步数预算开始。有预算则调用模型：模型直接答复时进入应用核验，模型请求工具时进入权限与参数检查。授权后执行工具，成功则将结果及来源追加到消息并返回预算检查。授权被拒绝或工具失败时立即停止，由应用报告错误与缺失；预算用尽也由应用报告未完成。工具结果必须先返回模型，不能直接绕过模型成为最终答复。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,node distance=4mm,
- agentnode/.style={draw=linegray,fill=paper,rounded corners=3pt,minimum width=98mm,minimum height=9mm,align=center,font=\small},
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ agentnode/.style={draw=linegray,fill=paper,rounded corners=3pt,text width=58mm,minimum height=10mm,align=center,font=\small},
  agentline/.style={->,line width=.75pt,draw=flowcolor}]
-\node[agentnode] (plan) {模型：读消息、提出下一步或直接给出最终答复};
-\node[agentnode,below=of plan] (gate) {应用：检查工具白名单、参数、用户授权与步数预算};
-\node[agentnode,below=of gate] (exec) {执行：受限工具调用；拒绝时返回错误而非执行};
-\node[agentnode,below=of exec] (feedback) {应用：将工具结果及来源追加到消息历史};
-\node[agentnode,below=of feedback,fill=linegray!15] (done) {完成条件满足时：答复用户并保留可核对的证据};
-\draw[agentline] (plan)--(gate);
-\draw[agentline] (gate)--(exec);
-\draw[agentline] (exec)--(feedback);
-\draw[agentline] (feedback)--node[right,font=\scriptsize]{完成} (done);
-\draw[agentline,flowcolor] (feedback.east)--++(7mm,0) |- node[pos=.47,right,font=\scriptsize,text=flowcolor]{未完成：下一轮} (plan.east);
+\node[agentnode] (budget) at (0,0) {应用：检查步数预算};
+\node[agentnode] (plan) at (0,-18) {模型：读消息，给出答复或工具请求};
+\node[agentnode] (gate) at (0,-36) {应用：检查工具、参数与授权};
+\node[agentnode] (exec) at (0,-54) {在限制内执行工具};
+\node[agentnode] (feedback) at (0,-72) {追加成功结果及来源到消息};
+\node[agentnode,text width=43mm,fill=linegray!15] (exhausted) at (70,0) {应用报告预算用尽\\及未完成事项};
+\node[agentnode,text width=43mm,fill=linegray!15] (done) at (70,-18) {应用核验答复\\交付或报告缺失};
+\node[agentnode,text width=43mm,fill=linegray!15] (error) at (70,-45) {应用记录错误与缺失\\立即停止};
+\draw[agentline] (budget)--node[left,font=\scriptsize]{有预算} (plan);
+\draw[agentline] (budget)--node[above,font=\scriptsize]{用尽} (exhausted);
+\draw[agentline] (plan)--node[above,font=\scriptsize]{答复} (done);
+\draw[agentline] (plan)--node[left,font=\scriptsize]{工具请求} (gate);
+\draw[agentline] (gate)--node[left,font=\scriptsize]{通过} (exec);
+\draw[agentline] (gate.east)--++(6,0) |- node[pos=.7,above,font=\scriptsize]{拒绝} (error.north);
+\draw[agentline] (exec.east)--++(6,0) |- node[pos=.7,below,font=\scriptsize]{失败} (error.south);
+\draw[agentline] (exec)--node[left,font=\scriptsize]{成功} (feedback);
+\draw[agentline] (feedback.west)--++(-7,0) |- (budget.west);
 \end{tikzpicture}
-\captionof{figure}{Agent loop：模型提出动作，应用负责权限与执行，每轮工具结果返回模型；实际应用还需终止与超时机制}
+\captionof{figure}{Agent loop：成功的工具结果返回模型；答复核验、错误终止与预算终止由应用控制}
 \label{fig:agent-loop}
 \end{center}
 \tagstructend
+\end{minipage}\par
 
 
 前面的工具例子只展示了一次调用。下面把\textbf{模型提出动作、应用校验权限、工具返回结果、模型继续}写成一段可追踪的伪代码。
-\begin{tcolorbox}[enhanced,colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm,
-  overlay={
-    \draw[draw=muted!55,densely dotted,line width=.4pt]
-      ([xshift=7mm,yshift=-7mm]interior.north west) --
-      ([xshift=7mm,yshift=5mm]interior.south west);
-    \draw[draw=muted!55,densely dotted,line width=.4pt]
-      ([xshift=14mm,yshift=-27mm]interior.north west) --
-      ([xshift=14mm,yshift=10mm]interior.south west);
-  }]
+\begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\small]
 messages = [system_message, user_message]
 for step in range(MAX_STEPS):
     answer = model(messages, allowed_tools)
     messages.append(answer)
-    if not answer.tool_calls:
-        return answer.text
-    for call in answer.tool_calls:
+    if not answer.get("tool_calls"):
+        return app_finish("answer", messages)
+    for call in answer["tool_calls"]:
         if not is_authorized(call):
-            result = {"error": "permission_denied"}
+            result = {"ok": False, "error": "permission_denied"}
         else:
             result = execute_with_limits(call)
-        messages.append(tool_message(call.id, result))
-return {"error": "step_budget_exceeded"}
+        messages.append(tool_message(call["id"], result))
+        if not result["ok"]:
+            return app_finish("tool_error", messages)
+return app_finish("step_budget_exceeded", messages)
 \end{Verbatim}
 \end{tcolorbox}
-这里的 \texttt{answer.tool\_calls} 是伪代码中的统一表示，某一真实接口的字段见\hyperref[elective:real-function-call]{本章选读}。
-\textbf{缩进线标出循环、条件与工具调用的层次}；循环次数和权限检查由应用控制，模型不会替应用执行工具。
+这里用字典字段 \texttt{tool\_calls} 统一表示工具请求，某一真实接口的字段见\hyperref[elective:real-function-call]{本章选读}。
+
+\texttt{execute\_with\_limits} 将超时等执行失败封装为 \texttt{ok=False}；
+\texttt{app\_finish} 核验已有来源、数值与任务要求，返回完成状态或缺失清单。
+它是应用逻辑，不额外调用模型；循环次数和权限检查也由应用控制。
+这里一步指一次模型调用，同一次调用可以提出多个工具请求。
 示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
 
 \begin{center}\small
@@ -209,7 +218,8 @@ Agent & 动态选工具和步骤；需要权限、预算与终止条件\\
 \]
 若模型在第一次调用中一并请求三份报表，只需两次调用：$80+(80+3\times20+3\times40)=340$ 个。
 步数预算因此同时约束了时延与输入成本；
-若 \texttt{read\_report(Q2)} 返回权限错误，循环在第 $2$ 次调用后停止，并报告 Q2 缺失。
+若 \texttt{read\_report(Q2)} 返回权限错误，循环在第 $2$ 次\textbf{模型调用}之后停止。
+应用报告 Q2 缺失、Q3 尚未读取；这条状态报告不增加一次模型调用。
 \end{example}
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：一个真实函数调用接口的最小闭环}
 \phantomsection\label{elective:real-function-call}

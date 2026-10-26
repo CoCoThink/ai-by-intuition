@@ -7,9 +7,10 @@
 \phantomsection\label{concept:in-context-learning}
 
 
-前面的小模型用“春天 花 开了 。”学习下一 Token 预测。
-现在把输入换成一段季度报告：文字仍然经过 Tokenizer、Embedding、
-Transformer 和输出头，输出也仍是下一 Token 概率。
+前面用五项词表和三维网络演示了下一 Token 计算。
+下面换用能够处理报告文本的预训练语言模型。
+文字仍然经过 Tokenizer、Embedding、Transformer 和输出头，
+输出也仍是下一 Token 概率；处理这次请求时，该模型的参数保持固定。
 助手在这条计算链外增加任务说明、文件读取和结果校验。
 
 \input{figures/model-to-assistant}
@@ -40,18 +41,18 @@ $N$ 按参与计分的训练位置计数。
 \phantomsection\label{concept:few-shot}
 
 继续处理同一份\textbf{公园季度运营报告}。
-先提出一个纯文本格式要求：“阅读指标，输出季度与收入，附原文出处”；
+先提出一个纯文本格式要求：“阅读指标，输出季度、收入、单位与原文出处”；
 这是\textbf{零样本提示}（Zero-shot）的一种形式。
 再在 Prompt 中给出两条例子：
 
 \begin{quote}
-输入：一季度收入为 100 百万元。\\
-输出：季度=Q1；收入=100；单位=百万元。\\
-输入：二季度收入为 120 百万元。\\
-输出：季度=Q2；收入=120；单位=百万元。
+输入〔出处：Q1-report/table-A〕：一季度收入为 100 百万元。\\
+输出：季度=Q1；收入=100；单位=百万元；出处=Q1-report/table-A。\\
+输入〔出处：Q2-report/table-A〕：二季度收入为 120 百万元。\\
+输出：季度=Q2；收入=120；单位=百万元；出处=Q2-report/table-A。
 \end{quote}
 
-然后输入“第三季度收入为 132 百万元”，
+然后输入“〔出处：Q3-report/table-A〕第三季度收入为 132 百万元”，
 希望模型按示例输出相同格式。
 这叫\textbf{上下文学习}（In-context Learning, ICL）中
 常见的 Few-shot（少样本）使用方式。

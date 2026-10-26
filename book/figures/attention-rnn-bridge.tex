@@ -18,9 +18,9 @@
 \node[font=\footnotesize,align=center] at (30,-2) {较早信息经过中间状态};
 \draw[linegray] (68,28)--(68,-9);
 \node[font=\sffamily\bfseries\small,anchor=west] at (75,25) {Attention：直接读取};
-\node[word] (a1) at (84,13) {春天\\$k_1,v_1$};
-\node[word] (a2) at (108,13) {花\\$k_2,v_2$};
-\node[word] (a3) at (132,13) {开了\\$k_3,v_3$};
+\node[word] (a1) at (84,13) {春天\\位置 1 输入};
+\node[word] (a2) at (108,13) {花\\位置 2 输入};
+\node[word] (a3) at (132,13) {开了\\位置 3 输入};
 \node[output] (at) at (108,-4) {位置 3 的\\读取结果};
 \draw[->,flowcolor,line width=2pt] (a1.south) to[out=-80,in=165] (at.west);
 \draw[->,flowcolor,line width=.6pt] (a2.south)--(at.north);

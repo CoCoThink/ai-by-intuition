@@ -88,7 +88,7 @@
 \item[\textbf{第 12 章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding：让 Token ID 变成可训练的向量}}\answercheckpage{20-embeddings}\par\nobreak
 \answerpiece{1}{形状}{先数查出的行数与每行宽度。}Embedding 表为 $5\times3$，三个 ID 查表为 $\answerresult{3\times3}$，每行属于输入的一个位置。
 \par\answerpiece{2}{比较}{把 one-hot 与表的每一行分别配对。}ID 只是任意编号；one-hot 行仅有对应 ID 列为 $1$，右乘 Embedding 表正好选出对应行，与查表同义。
-\par\answerpiece{3}{预测}{先区分查表向量和加位置后的向量。}重复 ID 的原始查表向量相同；第 1、3 位置的可训练位置向量可能不同，因此二者叠加后不必相同。
+\par\answerpiece{3}{预测}{先找到两个位置读取的表行。}重复 ID 的原始查表向量相同；训练更新这行后，下次两个位置都读到同一条更新后的向量。位置不同本身不会改变查表结果。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 13 章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{把语言练习变成一道可计算的预测题}}\answercheckpage{20b-task-contract}\par\nobreak
 \answerpiece{1}{对齐}{把完整序列整体左移一位（去掉首项）。}三个目标是 $\answerresult{[4,5,3]}$。

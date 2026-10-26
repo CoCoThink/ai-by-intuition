@@ -1,21 +1,23 @@
-\tagstructbegin{tag=Figure,alttext={同一语言模型进入助手系统：春天花开了的训练文本经 Token 预测和交叉熵改变参数；请求时，季度报告原文和任务指令也先变成 Token，经同一模型输出提取结果，再由程序核对来源并计算环比。}}
+\tagstructbegin{tag=Figure,alttext={两条计算路径。教学输入 ID 2、4、5 进入五项词表的三维教学模型，得到三行五列概率。报告原文与任务指令进入能处理报告的预训练语言模型，得到结构化提取草稿，再由程序核对出处与环比。两种模型的计算原理相通，使用各自的参数；处理报告请求时真实模型参数固定。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,node distance=5mm,
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=paper,align=center,
- font=\sffamily\small,minimum height=15mm,text width=35mm}]
-\node[n,fill=paper] (train) {春天 花 开了 。\\训练文本 Token};
-\node[n,right=of train] (loss) {预测 $\to$ 交叉熵\\梯度更新 $\theta$};
-\node[n,right=of loss,fill=linegray!15] (model) {训练好的模型\\$p_\theta(\text{下一 Token}\mid\text{前文})$};
-\draw[->,thick,flowcolor] (train)--(loss);
-\draw[->,thick,flowcolor] (loss)--(model);
-\node[n,below=10mm of train,fill=linegray!25] (report) {报告原文＋任务\\请求的上下文 Token};
-\node[n,right=of report] (infer) {同一模型前向\\输出提取结果};
-\node[n,right=of infer] (check) {程序核对出处\\计算 $20\%$、$10\%$};
-\draw[->,thick,flowcolor] (report)--(infer);
-\draw[->,thick,flowcolor] (infer)--(check);
-\draw[->,thick,flowcolor] (model.south)--++(0,-3mm)-|(infer.north);
+ font=\sffamily\small,minimum height=17mm,text width=29mm}]
+\node[n] (toyinput) at (0,0) {教学输入\\ID $[2,4,5]$};
+\node[n,fill=linegray!15] (toy) at (46,0) {三维教学模型\\五项词表};
+\node[n] (probs) at (92,0) {三个位置的概率\\$\Pi:3\times5$};
+\draw[->,thick,flowcolor] (toyinput)--(toy);
+\draw[->,thick,flowcolor] (toy)--(probs);
+\node[n] (report) at (0,-37) {报告原文＋任务\\含原文出处};
+\node[n,fill=linegray!15] (real) at (46,-37) {预训练语言模型\\请求中 $\theta_{\rm real}$ 固定};
+\node[n] (draft) at (92,-37) {结构化提取草稿\\季度、收入、出处};
+\node[n] (check) at (92,-64) {程序核对出处\\计算 $20\%$、$10\%$};
+\draw[->,thick,flowcolor] (report)--(real);
+\draw[->,thick,flowcolor] (real)--(draft);
+\draw[->,thick,flowcolor] (draft)--(check);
+\draw[densely dotted,thick,draw=muted] (toy)--node[right,font=\footnotesize,text=muted]{计算原理相通} (real);
 \end{tikzpicture}
-\captionof{figure}{从短句续写到报告助手：沿用 Token 预测，加入任务上下文与外部核验}
+\captionof{figure}{从教学算例的计算原理到真实模型的报告应用}
 \label{fig:model-to-assistant}
 \end{center}
 \tagstructend

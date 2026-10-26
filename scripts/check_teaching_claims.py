@@ -20,6 +20,7 @@ from chinese_tokenizer_demo import run_checks as check_tokenizer
 from mini_transformer_demo import run_checks as check_mini
 from pretraining_data_demo import run_checks as check_data
 from teaching_reference import parameters,forward,backward,LR
+from check_agent_loop import run_checks as check_agent_loop
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -74,6 +75,7 @@ def check_printed_mini(c, gradients):
 
 
 def main():
+    check_agent_loop()
     data=json.loads((ROOT/'book/exercises.json').read_text())
     by_legacy={r['legacy_id']:r for r in data if r['legacy_id']}
     byte_answer=kv_bytes(2,2,8,10,2)

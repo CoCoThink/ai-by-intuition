@@ -56,7 +56,7 @@ O(X'_+)\approx\begin{bmatrix}
 \phantomsection\label{concept:scaled-dot-product}
 
 Q/K 各维独立、等概率取 $\pm1$ 时，点积均值为 $0$、方差为 $d_k$，
-标准差为 $\sqrt{d_k}$（见\hyperref[app:math-tools]{数学速查}）。
+标准差为 $\sqrt{d_k}$（见\hyperref[app:variance-scaling]{数学速查中的四结果算例}）。
 分数 $(8,0)$ 的第一项概率为 $e^8/(e^8+1)\approx0.9997$；
 当 $d_k=64$，除以 $8$ 后分数变成 $(1,0)$，概率为 $e/(e+1)\approx0.731$。
 缩放控制典型量级，Softmax 仍可饱和。

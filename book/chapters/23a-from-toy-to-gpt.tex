@@ -9,9 +9,8 @@
 但我们手算的网络只有一层、一个头、三个隐藏特征和五项词表。
 它怎样展示 GPT 的训练原理，真实模型还要扩大哪些部分？
 
-\subsection{回看先前的 GPT-2 small 尺度示例}
+\subsection{用 GPT-2 small 对照真实模型的尺寸}
 
-前面的\hyperref[intro:20b-task-contract]{语言预测任务}已给出尺寸对照。
 按 \href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 small 的公开配置}：
 词表 $50{,}257$，隐藏宽度 $768$，
 $12$ 层 Transformer Block、$12$ 个注意力头，最多处理 $1{,}024$ 个位置；

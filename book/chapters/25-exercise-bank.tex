@@ -87,15 +87,9 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20-embeddings}~章 · Embedding：让 Token ID 变成可训练的向量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20-embeddings}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-031.}] \phantomsection\label{exercise:C-031}\label{exercise:C1-14}\exercisemeta{标准}{10}{\hyperref[solution:C-031]{解答第~\pageref*{solution:C-031}~页}}\textbf{【迁移】}沿用正文统一的 $5\times3$ Embedding 和位置参数。
-把输入 $[2,4,5]$ 中第一个 ID 改为 $5$，成为 $[5,4,5]$。
-已知 $E[5]=(0.15,-0.2,1.25)$、第一位置向量
-${P_{\rm pos}}_{1,:}=(0.10,0.05,-0.10)$。
-求 Block 的新输入第一行 $X'_1=E[5]+{P_{\rm pos}}_{1,:}$。
-第 2、3 位置的输出是否\textbf{可能}发生变化？
-这属于重新训练还是保持权重的输入消融？
+\item[\textbf{C-031.}] \phantomsection\label{exercise:C-031}\label{exercise:C1-14}\exercisemeta{标准}{6}{\hyperref[solution:C-031]{解答第~\pageref*{solution:C-031}~页}}\textbf{【迁移】}沿用正文的 $5\times3$ Embedding 表，保持参数不变，把输入 $[2,4,5]$ 改为 $[5,4,5]$。已知 $E[4]=(-0.3,1.1,0.2)$、$E[5]=(0.15,-0.2,1.25)$，写出新的三行查表结果。与原输入相比，哪一行查表结果变了？这一步是否更新了 Embedding 参数？
 \item[\textbf{C-032.}] \phantomsection\label{exercise:C-032}\label{exercise:C1-7}\exercisemeta{基础}{3}{\hyperref[solution:C-032]{解答第~\pageref*{solution:C-032}~页}}\phantomsection\label{exercise:linked-20-embeddings}  \textbf{【回忆】} 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
-\item[\textbf{C-033.}] \phantomsection\label{exercise:C-033}\label{exercise:C4-16}\exercisemeta{标准}{8}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{诊断：}训练一步之后某个输入 Token 的 Embedding 行变化了，但另一个从未出现在输入位置的 ID 的\textbf{输入查表行}没变化。能否据此断言后一 ID 在输出头中没有梯度？
+\item[\textbf{C-033.}] \phantomsection\label{exercise:C-033}\label{exercise:C4-16}\exercisemeta{标准}{5}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。用 SGD 更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20b-task-contract}~页）}}
@@ -111,15 +105,15 @@ ${P_{\rm pos}}_{1,:}=(0.10,0.05,-0.10)$。
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:21a-context-gap}~章 · 前文怎样传到当前词？从逐行处理到 RNN\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21a-context-gap}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-037.}] \phantomsection\label{exercise:C-037}\label{exercise:C4-18}\exercisemeta{标准}{8}{\hyperref[solution:C-037]{解答第~\pageref*{solution:C-037}~页}}\textbf{方案：}给出两种把前文送到当前位置的途径：一种沿时间传递状态，一种直接按需读取；写出各自潜在成本。
+\item[\textbf{C-037.}] \phantomsection\label{exercise:C-037}\label{exercise:C4-18}\exercisemeta{标准}{6}{\hyperref[solution:C-037]{解答第~\pageref*{solution:C-037}~页}}\textbf{方案：}本章的固定窗口拼接与 RNN 都能把部分前文送到当前位置。分别说明它们怎样传递历史：窗口以外的信息还能直接读到吗？RNN 是否为每个历史位置保留一条可单独读取的状态？
 \item[\textbf{C-038.}] \phantomsection\label{exercise:C-038}\exercisemeta{标准}{6}{\hyperref[solution:C-038]{解答第~\pageref*{solution:C-038}~页}}\textbf{【估算】} 把包括当前位置在内的最近 $n$ 个 Token 的三维 Embedding 直接拼接，送入 MLP。$n=2$ 与 $n=8$ 时输入宽度各是多少？若关键线索在当前位置之前第 $4$ 个 Token，两个窗口各能看到它吗？
 \item[\textbf{C-039.}] \phantomsection\label{exercise:C-039}\label{exercise:C1-8}\exercisemeta{标准}{6}{\hyperref[solution:C-039]{解答第~\pageref*{solution:C-039}~页}}\textbf{【手算】} 把递推系数改为 $0.8$：$h_t=x_t+0.8h_{t-1}$，$h_0=0$，输入为 $(1,0,0,0)$。计算 $h_1$ 到 $h_4$；若之后输入一直为 $0$，第一个输入留下的状态从第几步起小于 $0.1$？
-\item[\textbf{C-040.}] \phantomsection\label{exercise:C-040}\label{exercise:C4-19}\exercisemeta{标准}{8}{\hyperref[solution:C-040]{解答第~\pageref*{solution:C-040}~页}}\textbf{权衡：}长文本建模时，RNN 的顺序依赖和 Attention 的直接读取各有什么典型计算或记忆代价？
+\item[\textbf{C-040.}] \phantomsection\label{exercise:C-040}\label{exercise:C4-19}\exercisemeta{标准}{6}{\hyperref[solution:C-040]{解答第~\pageref*{solution:C-040}~页}}\textbf{权衡：}设 RNN 状态宽度固定为 $d$，文本从 $T$ 个 Token 增长为 $2T$ 个。单个状态的形状和状态更新的次数各怎样变化？最后一步直接接收上一状态，还是全部历史状态？这对保留远处信息有什么要求？
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:21c-naive-attention}~章 · Attention 的直觉：直接读取其他位置，先用输入点积\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21c-naive-attention}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-041.}] \phantomsection\label{exercise:C-041}\label{exercise:C4-20}\exercisemeta{标准}{5}{\hyperref[solution:C-041]{解答第~\pageref*{solution:C-041}~页}}\textbf{比较：}保持三个输入不变，改用独立可训练 $W_Q,W_K$，哪一种对称性约束可能被打破？为什么它更灵活？
+\item[\textbf{C-041.}] \phantomsection\label{exercise:C-041}\label{exercise:C4-20}\exercisemeta{标准}{5}{\hyperref[solution:C-041]{解答第~\pageref*{solution:C-041}~页}}\textbf{手算与比较：}沿用本章 $x_1=(1,0)$、$x_2=(0,1)$，把 $x_3=(1,1)$ 改为 $(2,2)$。在 $S=XX^\top$ 中，求新的 $S_{13}$、$S_{31}$ 与 $S_{33}$。分数矩阵还对称吗？这个变化怎样说明向量长度也会影响匹配分数？
 \item[\textbf{C-042.}] \phantomsection\label{exercise:C-042}\label{exercise:C3-7}\exercisemeta{标准}{5}{\hyperref[solution:C-042]{解答第~\pageref*{solution:C-042}~页}}若 $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$、$a=(0,2)$，计算 $aV$，并用「按行加权求和」解释结果。
 \end{enumerate}
 \Needspace{6\baselineskip}
