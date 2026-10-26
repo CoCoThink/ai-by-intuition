@@ -77,15 +77,61 @@ L=\tfrac12(4-5)^2=\tfrac12.
 
 \subsection{如果中间有 ReLU，怎样求导？}
 
-对 $z=w_1x+b_1$、$h=\relu(z)$、$\widehat{y}=w_2h+b_2$，有
+先只看 ReLU 这一步：输入记作 $z$，输出记作 $h$，即
 \[
-\frac{\partial L}{\partial w_1}
-=\frac{\partial L}{\partial\widehat{y}}
-\frac{\partial\widehat{y}}{\partial h}
-\frac{\partial h}{\partial z}
-\frac{\partial z}{\partial w_1}.
+h=\relu(z)=\max(0,z).
 \]
-ReLU 的导数在 $z>0$ 时为 $1$，在 $z<0$ 时为 $0$。因此某条计算路径如果被 ReLU 截断，这个样本沿着该分支传播的梯度就是零。$z=0$ 处不可导，实际优化实现为这个点约定一个次梯度值，例如取 $0$。
+求导就是问：\textbf{输入稍微变化时，输出跟着变化多少？}
+图~\ref{fig:relu-function} 中的两段直线，可以分开来看。
+
+\textbf{输入为正时，$h=z$。}
+例如 $z$ 从 $2$ 增加到 $2.1$，$h$ 也从 $2$ 增加到 $2.1$。
+输出变化量除以输入变化量是 $0.1/0.1=1$，所以这一段的导数为 $1$。
+
+\textbf{输入为负时，$h=0$。}
+例如 $z$ 从 $-2$ 增加到 $-1.9$，$h$ 始终为 $0$。
+输出变化量除以输入变化量是 $0/0.1=0$，所以这一段的导数为 $0$。
+只要输入的变化留在同一段内，把变化量缩得再小，这两个比例也不变。因此
+\[
+\frac{\partial h}{\partial z}=\relu'(z)=
+\begin{cases}
+0,&z<0,\\
+1,&z>0.
+\end{cases}
+\]
+
+\textbf{恰好在 $z=0$ 时，两段在这里形成折角。}
+从左侧靠近，斜率是 $0$；从右侧靠近，斜率是 $1$。
+两侧不一致，所以这一点没有通常意义下的导数。
+但反向传播程序仍需要一个数来完成下面的乘法。
+本书把零点按负数一侧处理，约定：\textbf{若输入恰好为 $0$，反传经过 ReLU 时也乘 $0$。}
+这是折角处采用的计算规则，并不是求出了该点的导数。
+
+现在把 ReLU 接回网络：
+$z=w_1x+b_1$、$h=\relu(z)$、$\widehat{y}=w_2h+b_2$。
+先从输出端算出 $\partial L/\partial h$；反传经过 ReLU 时，乘上刚求出的局部导数：
+\[
+\frac{\partial L}{\partial z}
+=\frac{\partial L}{\partial h}\frac{\partial h}{\partial z},\qquad
+\frac{\partial L}{\partial w_1}
+=\frac{\partial L}{\partial z}\frac{\partial z}{\partial w_1}
+=\frac{\partial L}{\partial z}\,x.
+\]
+
+沿用前面的 $x=2,y=5,w_1=1,w_2=2$，两项偏置取 $0$。
+此时 $z=2,h=2,\widehat{y}=4$，所以
+\[
+\frac{\partial L}{\partial h}=(4-5)\times2=-2,\qquad
+\frac{\partial L}{\partial w_1}=(-2)\times\underbrace{1}_{\text{ReLU 导数}}\times2=-4.
+\]
+只把输入改成 $x=-2$，目标和参数不变，则 $z=-2,h=0,\widehat{y}=0$，此时
+\[
+\frac{\partial L}{\partial h}=(0-5)\times2=-10,\qquad
+\frac{\partial L}{\partial w_1}=(-10)\times\underbrace{0}_{\text{ReLU 导数}}\times(-2)=0.
+\]
+虽然预测仍有误差，乘积中的 ReLU 导数为 $0$，使这个样本经这条路径传给 $w_1$ 的梯度为 $0$。
+这就是“梯度被截断”的含义：负数段的输出保持不变，前面参数的微小变化暂时无法沿这条路径影响损失。
+其他不经过这个 ReLU 的路径仍可能提供梯度。
 
 \subsection{反向传播负责求梯度，优化器负责更新}
 
