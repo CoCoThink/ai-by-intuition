@@ -125,6 +125,13 @@ def check_sample_gradients():
     mean=tuple(sum(row[j] for row in rows)/len(DATA) for j in range(2))
     assert mean==gradient(F(1),F(0))==(F(-2,3),F(-2))
     assert f'全部三个样本，梯度取平均 & $({mean[0]},{mean[1]})$' in source
+    # The two-sample batch uses the same old parameters for both gradients.
+    batch_mean=tuple(sum(row[j] for row in rows[1:])/2 for j in range(2))
+    assert batch_mean==(F(-1),F(-3))
+    assert rf'\frac{{(0,-4)+(-2,-2)}}{{2}}=({batch_mean[0]},{batch_mean[1]})' in source
+    updated=tuple(value-F(3,10)*grad for value,grad in zip((F(1),F(0)),batch_mean))
+    assert updated==(F(13,10),F(9,10))
+    assert f'(w,b)=(1,0)-0.3(-1,-3)=({float(updated[0]):g},{float(updated[1]):g})' in source
     # A zero sample gradient does not imply a zero full-data gradient.
     assert rows[0]==(0,0) and mean!=(0,0)
     for w,b in ((1.,0.),(1.5,1.)):
@@ -139,7 +146,7 @@ def check_sample_gradients():
     assert tuple(sum(row[j] for row in optimal_rows)/3 for j in range(2))==(0,0)
     gw,gb=optimal_rows[1]
     assert loss(w-F(3,10)*gw,b-F(3,10)*gb)>loss(w,b)
-    print('Sample-gradient QA: four printed rows, mean gradient, finite differences and stochastic full-loss increase passed')
+    print('Sample-gradient QA: four printed rows, two-sample batch gradient/update, finite differences and stochastic full-loss increase passed')
 
 
 def check_relu_fit():

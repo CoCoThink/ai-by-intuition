@@ -1,0 +1,22 @@
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={一百条训练样本先随机打乱，再依次分成十批，每批十条。图中依次展示第一批、第二批和第十批，中间省略其余批次。每批用当前参数计算平均梯度并更新一次，箭头把更新后的新参数传给下一批。全部一百条样本处理一遍，完成一个训练轮次，累计更新十次。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ batch/.style={draw=linegray,rounded corners=2pt,fill=paper,
+ align=center,font=\footnotesize,text width=35mm,inner sep=1.5mm,minimum height=18mm}]
+\node[font=\small] at (55,16) {$100$ 条样本，先随机打乱，再依次分批};
+\node[batch] (first) at (0,0) {第 $1$ 批：$10$ 条\\求平均梯度\\第 $1$ 次参数更新};
+\node[batch] (second) at (50,0) {第 $2$ 批：$10$ 条\\求平均梯度\\第 $2$ 次参数更新};
+\node[font=\small] (omitted) at (80,0) {$\cdots$};
+\node[batch] (last) at (110,0) {第 $10$ 批：$10$ 条\\求平均梯度\\第 $10$ 次参数更新};
+\draw[->,thick,flowcolor] (first.east)--node[above,font=\scriptsize] {新参数} (second.west);
+\draw[->,thick,flowcolor] (second.east)--(omitted.west);
+\draw[->,thick,flowcolor] (omitted.east)--(last.west);
+\draw[thick,flowcolor] (-19,-13)--(-19,-16)--(129,-16)--(129,-13);
+\node[font=\small] at (55,-23) {全部 $100$ 条处理一遍：$1$ 轮，累计更新 $10$ 次};
+\end{tikzpicture}
+\captionof{figure}{本例每批更新一次参数，全部数据处理一遍完成一个训练轮次}
+\label{fig:minibatch-epoch-cycle}
+\end{center}
+\tagstructend
+\end{minipage}\par
