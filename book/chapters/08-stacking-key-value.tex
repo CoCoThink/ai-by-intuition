@@ -1,8 +1,7 @@
 \chapterrule
-\section{用 MLP 的眼光重新理解记忆检索}
+\section{非线性检索：从 MLP 视角到记忆容量}
 \phantomsection\label{intro:09-nonlinearity-and-memory}
-\chaptercompass{匹配分数为什么需要非线性？}{先把 Key/Value 堆成矩阵，再用非线性筛选匹配分数，按权重组合每条 Value。}{$xK^\top:1\times T_k\to\sigma(\cdot)V:1\times d_v$}{在 MLP 解释中 K/V 对应可训练的层权重}
-\modelpipelinefocus{3}{非线性记忆检索}
+\label{intro:13-capacity}
 
 上一章的两种线性写法都只在写入端减少串扰，读取时所有非零匹配仍按原值参与输出。
 本章转到读取端：先把多条 Key、Value 堆成矩阵，再让权重随匹配强弱非线性变化。
@@ -20,7 +19,7 @@ $K:T_k\times d_k$，Value 按行排成 $V:T_k\times d_v$。
 这与前面 $\softmax(QK^\top)V$ 采用同一个行向量约定。
 
 \subsubsection{两条二维记忆，手算一次}
-\localfixture{二维 Key/Value；独立于三维主例}
+\localfixture{二维例；Key 沿用上一章，Value 改为 $(2,1),(0,3)$；与三维主例无关}
 \[
 x=(1,-1),\quad
 K=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix},\quad

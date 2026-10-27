@@ -3,8 +3,6 @@
 \section{前文怎样传到当前词？从逐行处理到 RNN}
 \label{intro:21a-context-gap}
 \label{intro:21-rnn}
-\chaptercompass{只逐行处理 Token 为什么看不到前文？怎样把前一个 Token 的信息传给当前 Token？}{逐位置函数只看本行输入；RNN 逐位置更新隐藏状态，把之前信息沿时间传下去。}{$X:T\times d\to Y:T\times d'$；RNN 中 $\vect x_t^\top,\vect h_{t-1}^\top\to\vect h_t^\top:1\times d_h$}{逐位置矩阵与 $W_x,W_h,b$ 可学习；隐藏状态随输入改变，不是新训练权重}
-\modelpipelinefocus{3}{上下文信息缺口}
 
 独立处理每个 Token 的 MLP，只接收当前位置的向量。
 如果下一 Token 的正确预测还取决于\textbf{前面说过什么}，

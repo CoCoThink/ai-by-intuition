@@ -649,20 +649,17 @@ def validate_pdf(path: Path) -> None:
     route_pages = [i for i, page_text in enumerate(pages, 1)
                    if "本章运算路线" in page_text]
     if len(route_pages) != 1:
-        fail(f"Expected one chapter 23 route caption, found pages {route_pages}")
+        fail(f"Expected one forward-pass route caption, found pages {route_pages}")
     route_page = route_pages[0]
     if "查表与位置" not in pages[route_page - 1]:
-        fail(f"Chapter 23 route heading stranded on PDF page {route_page}; "
+        fail(f"Forward-pass route heading stranded on PDF page {route_page}; "
              "the route table must start on the same page")
 
-    # R01 explicit pagination regression: after compressing the two-line locator,
-    # the MLP and prediction-task chapters (printed as 9 and 13 since the
-    # vectors/dot-product and context-gap/RNN merges) must end with a self-check
-    # AND a conclusion on the same substantive page. Never lower the generic orphan/blank-page thresholds.
+    # R01: inspect the original MLP/task destinations after chapter reordering.
+    # Their ending must keep the self-check and its answer navigation on a
+    # substantive page; the part exit now supplies the concluding recap.
     numbered_pages: dict[int, int] = {}
     chapter_tops: dict[int, float] = {}
-    part_pages = [reader.get_destination_page_number(item)
-                  for item in reader.outline if not isinstance(item, list)]
     for item in reader.outline:
         if isinstance(item, list):
             for bookmark in item:
@@ -673,32 +670,20 @@ def validate_pdf(path: Path) -> None:
                     numbered_pages[int(match.group(1))] = (
                         reader.get_destination_page_number(bookmark)
                     )
-    for chapter_number in (9, 13):
-        if chapter_number not in numbered_pages or chapter_number + 1 not in numbered_pages:
-            fail(f"Missing chapter bookmarks for R01 page regression: {chapter_number}")
-        # A part's introduction can have its own page before its first chapter.
-        # End the preceding chapter at that boundary, not at the next chapter.
-        next_boundary = min([numbered_pages[chapter_number + 1]] + [
-            p for p in part_pages
-            if numbered_pages[chapter_number] < p < numbered_pages[chapter_number + 1]
-        ])
-        last_page_index = next_boundary - 1
-        if last_page_index < numbered_pages[chapter_number]:
-            fail(f"Chapter {chapter_number} has invalid physical page range")
-        # A part exit may take the page after the chapter; judge the chapter's own ending.
-        if ("回到开篇" in pages[last_page_index] and "小结" not in pages[last_page_index]
-                and last_page_index > numbered_pages[chapter_number]):
-            last_page_index -= 1
-        closing_page = pages[last_page_index]
-        han_count = len(re.findall(r"[\u4e00-\u9fff]", closing_page))
-        if ("读完自测" not in closing_page or "小结" not in closing_page
-                or han_count < 260
-                or closing_page.rfind("小结") < closing_page.rfind("读完自测")):
-            fail(f"R01 chapter {chapter_number} stranded its conclusion on PDF "
-                 f"page {last_page_index + 1} (Han={han_count}); "
-                 "retain the compact locator and real orphan gate")
-    print("R01 chapter-end pagination QA passed: chapters 9 and 13 retain "
-          "self-check and substantive conclusion pages")
+    chapter_checks={g['checks'][0]:number for number,g in
+                    enumerate((g for g in core_groups() if g['numbered']),1)}
+    for slug in ('10-mlp','20b-task-contract'):
+        number=chapter_checks[slug]
+        candidates=[page for page in question_pages if
+                    numbered_pages[number]<=page<numbered_pages[number+1]]
+        if len(candidates)!=1:
+            fail(f"R01 {slug}: expected one self-check page, found {candidates}")
+        check_page=candidates[0]
+        page_text=pages[check_page]
+        if ('读完自测' not in page_text or '提示与解答' not in normalized(page_text)
+                or len(re.findall(r"[\u4e00-\u9fff]",page_text))<260):
+            fail(f"R01 {slug} has a sparse self-check landing page {check_page+1}")
+    print("R01 chapter-end pagination QA passed: MLP/task self-check pages retain substantive content")
 
     compact = normalized(text)
     # A spilled cover can masquerade as an extra TOC page. Check both locations
@@ -815,7 +800,7 @@ def validate_pdf(path: Path) -> None:
             body_text = "".join(word[2] for word in body_words)
             occupied = (max(word[1] for word in body_words) - 55) / (height - 120)
             self_check_tail = re.match(
-                r"^(?:读完自测|[■]?\s*小结|提示与解答|提示与完整解答|完整解答与订正说明|本部分累积复习|附录C[·：]|"
+                r"^(?:读完自测|[■]?\s*小结|提示与解答|提示与完整解答|完整解答与订正说明|本部分累积复习|附录C(?:[·：]|练习)|"
                 r"[123]\.(?:形状|手算|预测|找错|计算|区分|估算|比较|解释|定位|分工|证据|分类))",
                 normalized(body_text))
             if self_check_tail and occupied < .5:
@@ -834,17 +819,24 @@ def validate_pdf(path: Path) -> None:
     # the page-wide bounding-box and orphan-page checks above remain in effect.
     if sorted(numbered_pages) != list(range(1, CHAPTER_COUNT + 1)):
         fail(f"Opening guard requires chapter bookmarks 1..{CHAPTER_COUNT}")
-    parameter_han_counts=[]
-    for name in REQUIRED:
+    # Follow actual source order. Ordinary prose openers exclude just the title;
+    # optional route boxes also exclude their four arguments from body density.
+    opening_han_counts=[]
+    for name in re.findall(r'\\input\{chapters/([^}]+)\}',(BOOK/'main.tex').read_text().split(r'\appendix',1)[0]):
         source=chapter(name)
-        for compass in re.finditer(r'\\chaptercompass\{',source):
-            pos=compass.end()-1
-            for _ in range(4):
+        for event in re.finditer(r'\\section\{|\\chaptercompass\{',source):
+            pos=event.end()-1
+            if event[0].startswith(r'\section'):
                 value,pos=argument(source,pos)
-                while pos<len(source) and source[pos].isspace():pos+=1
-            parameter_han_counts.append(len(re.findall(r'[\u4e00-\u9fff]',value)))
-    if len(parameter_han_counts)!=CHAPTER_COUNT:
-        fail("Opening guard requires one compass per numbered chapter")
+                opening_han_counts.append(len(re.findall(r'[\u4e00-\u9fff]',value)))
+            else:
+                for _ in range(4):
+                    while source[pos].isspace():pos+=1
+                    value,pos=argument(source,pos)
+                    opening_han_counts[-1]+=len(re.findall(r'[\u4e00-\u9fff]',value))
+                opening_han_counts[-1]+=len('本章先问输入与输出参数是否训练')
+    if len(opening_han_counts)!=CHAPTER_COUNT:
+        fail("Opening guard source metadata differs from numbered chapters")
     for chapter_number, opening_index in sorted(numbered_pages.items()):
         if not pages_with_boxes[opening_index][1].strip():
             fail(f"Empty chapter opening page for chapter {chapter_number}")
@@ -853,7 +845,7 @@ def validate_pdf(path: Path) -> None:
         opening_text=''.join(word[2] for word in page_body_words[opening_index]
             if word[0]>=height-chapter_tops[chapter_number]-2)
         opening_errors=chapter_opening_errors(chapter_tops[chapter_number],
-            height,opening_text,parameter_han_counts[chapter_number-1])
+            height,opening_text,opening_han_counts[chapter_number-1])
         if opening_errors:fail(f"Chapter {chapter_number} opening page {opening_index+1}: "+'; '.join(opening_errors))
     print(f"Chapter opening QA passed: {CHAPTER_COUNT}/{CHAPTER_COUNT} destinations above bottom third, with substantive text")
     # Source-level hyperlinks may have existing labels but resolve incorrectly

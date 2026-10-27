@@ -86,8 +86,7 @@
 \item 给一组样本和一条直线，算出“错了多少”，再判断参数该往哪个方向改、改多大一步。
 \item 让两层网络从输出的误差倒推每个参数该怎么改；再用没参与训练的样本检查，它是学会了规律，还是只背下了答案。
 }{%
-\mapchapter{00-functions}{函数} & 输入、输出和可学习参数各是什么？\\
-\mapchapter{16-loss-gradient}{损失} & 怎样比较各有对错的整组预测？\\
+\mapchapter{00-functions}{函数与损失} & 参数怎样改变预测，损失怎样比较整体表现？\\
 \mapchapter{16a-gradient-descent}{梯度下降} & 沿哪个方向、走多大一步才能降低损失？\\
 \mapchapter{07-functions-relu}{非线性} & 为什么两层直线仍不够，ReLU 改变了什么？\\
 \mapchapter{17-backpropagation}{反向传播} & 怎样把输出误差逐层传回每个参数？\\
@@ -145,8 +144,7 @@
 \item 说明怎样让一个位置按需读取前文，以及为什么只能读已经出现的词。
 }{%
 \mapchapter{21a-context-gap}{上下文缺口与 RNN} & 逐行 MLP 为什么看不到别的 Token？怎样把历史压进逐步传递的状态？\\
-\mapchapter{21c-naive-attention}{Attention 的直觉} & 怎样绕过状态直接读取其他位置？先用输入点积试一次。\\
-\mapchapter{21b-why-attention}{Q/K/V} & 为什么要把提问、匹配与内容拆成三组可训练投影？\\
+\mapchapter{21c-naive-attention}{Attention 与 Q/K/V} & 直接读取怎样计算，三组投影怎样改变匹配与内容？\\
 \mapchapter{11-softmax-memory}{批量与因果注意力} & 所有位置怎样一起算？因果 Mask 怎样只读前缀？\\
 \mapchapter{22a-position-multihead}{位置与多头} & 怎样标明顺序，并行使用不同匹配方式？\\
 }}
@@ -186,8 +184,7 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 \item 给报告中的每个数字找到来源，并说明工具调用由谁提出、由谁执行、失败了怎么办。
 }{%
 \mapchapter{23aa-pretraining-icl}{ICL} & 更新权重和临时提供样例有何区别？\\
-\mapchapter{23c-post-training}{后训练} & 示范、偏好和可验证奖励怎样改变模型？\\
-\mapchapter{23cc-test-time-compute}{测试时计算} & 多采样与验证如何分配预算？\\
+\mapchapter{23c-post-training}{训练反馈与推理时计算} & 奖励怎样更新参数，验证又怎样筛选本次候选？\\
 \mapchapter{23d-agent-systems}{RAG} & 报告中的数字怎样找到可核查的来源？\\
 \mapchapter{23d-agent-tools}{工具与 Agent} & 谁提出调用，谁执行，怎样处理失败？\\
 \mapchapter{23d-agent-protocols}{协作边界} & 协议、Skill 和多个 Agent 怎样分工？\\
@@ -241,10 +238,8 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 \item 把两条记录写进同一张表，算出读取时它们互相干扰了多少。
 \item 解释按读出的误差修正写入时，为什么修正一条会扰动其他记录。
 }{%
-\mapchapter{04-key-value-outer-product}{外积与串扰} & 多条 Key/Value 怎样写入，为什么互相影响？\\
-\mapchapter{06-better-linear-memory}{线性修正} & Delta 写入怎样校准当前误差？\\
-\mapchapter{09-nonlinearity-and-memory}{非线性读取} & MLP、外积记忆和 Attention 如何比较？\\
-\mapchapter{13-capacity}{容量与状态} & 随机向量假设怎样限制容量结论？\\
+\mapchapter{04-key-value-outer-product}{写入与误差修正} & 怎样写入、读出串扰，再联立求解或逐条修正？\\
+\mapchapter{09-nonlinearity-and-memory}{非线性检索与容量} & 筛选怎样改变读出，{\symboliconfont ★}随机容量估计有哪些条件？\\
 }}
 \newcommand{\partexitmemory}{\partexit{memory}{\partthinkmemory}{%
 两把钥匙不垂直、匹配分数不为零时，会混进第二条，这就是串扰；两把钥匙垂直时互不干扰。

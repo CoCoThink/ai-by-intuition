@@ -1,8 +1,6 @@
 \chapterrule
 \section{前馈网络与输出头：两种不同的特征变换}
 \label{intro:10b-ffn-output-head}
-\chaptercompass{读取上下文后，怎样变换特征并预测词表？}{FFN 在每行做共享非线性变换，输出头映射为 logits。}{FFN：$X\to F_{\rm out}:T\times d_{\rm model}$；输出头：$H\to Z:T\times|\mathcal V|$}{$W_{\rm up},W_{\rm down},W_{\rm out}$（及相应偏置）}
-\modelpipelinefocus{4}{FFN}
 
 \begin{idea}
 \noindent\emph{这一章的核心问题}\par
@@ -120,18 +118,13 @@ FFN & 每个 Token 的特征 & 非线性变换当前表示\\
 \end{center}
 
 
-
-\chapterchecktasks{10b-ffn-output-head}{正文基础三题}{
+\chapterchecktasks{10b-ffn-output-head}{理解与复算}{
 \item \textbf{定位：}给出 FFN 与词表输出头各自的输入／输出单位：它们是隐藏特征变换还是词表类别打分？\chapterinlinehint{分别标出隐藏特征轴与词表类别轴。}
 \item \textbf{手算：}若 $T=4,d=6,d_{\rm ff}=18$，求 FFN 上投影和下投影的矩阵形状，以及整个 FFN 的输出形状。\chapterinlinehint{让上投影扩宽、下投影恢复原宽度。}
 \item \textbf{找错：}有人说“FFN 把每行的特征变成词表概率，因此无需再接输出头或 Softmax”。指出两个漏掉的步骤。\chapterinlinehint{检查输出头和概率归一化各做哪一步。}
 }
 
 
-
-\begin{conclusion}
-同一隐藏宽度进、同一宽度出，是堆叠 Block 的便利条件；
-词表投影则是把内部表示变成预测任务答案的接口。
-两者都包含矩阵乘法，但在网络中承担不同的任务。
-下一章不再孤立地算两个 Token；我们将沿用前文的\textbf{三维、三个位置}统一参数，把位置、两个 Norm、Attention、残差、FFN 与输出头全部接起来。
-\end{conclusion}
+\par\smallskip
+FFN 改变每个位置的特征，输出头把最终表示映射到词表分数。
+下一章沿用统一的三维参数，把这些组件接成一次完整前向。

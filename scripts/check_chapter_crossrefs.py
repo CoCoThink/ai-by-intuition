@@ -15,7 +15,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
 # Printed numbered chapters; keep in step with check_book_contract.CHAPTER_COUNT.
-CHAPTER_COUNT = 39
+CHAPTER_COUNT = 34
 INPUT_OR_APPENDIX = re.compile(r"\\appendix\b|\\input\{chapters/([^}]+)\}")
 SECTION_OR_CHECK = re.compile(r"\\section\s*\{|\\chapterchecktasks\{([^}]+)\}")
 # Also catch Chinese numerals ("第三章"), lists and ranges ("第 23、24 章",

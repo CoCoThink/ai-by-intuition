@@ -10,7 +10,7 @@
 \noindent\begin{tabularx}{\linewidth}{@{}p{12mm}p{65mm}X@{}}
 \toprule
 路线 & 章节与阅读预算 & 怎样读\\\midrule
-速读 & \routech{00-functions}--\routech{16a-gradient-descent}、\routech{01-vectors}--\routech{10-mlp}、\routech{20a-tokenizer}--\routech{21a-context-gap}、\routech{21c-naive-attention}--\routech{11-softmax-memory}、\routech{22-transformer-architecture}--\routech{23-llm-systems}、\routech{23aa-pretraining-icl}、\routech{23d-agent-systems}--\routech{23d-agent-protocols}；约 80 页 & 读问题、输入输出、小结；跳过{\symboliconfont ★}选读与复算推导\\
+速读 & \routech{00-functions}--\routech{16a-gradient-descent}、\routech{01-vectors}--\routech{10-mlp}、\routech{20a-tokenizer}--\routech{21a-context-gap}、\routech{21c-naive-attention}--\routech{11-softmax-memory}、\routech{22-transformer-architecture}--\routech{23-llm-systems}、\routech{23aa-pretraining-icl}、\routech{23d-agent-systems}--\routech{23d-agent-protocols}；约 80 页 & 读导入、关键计算与收束；跳过{\symboliconfont ★}选读与复算推导\\
 标准 & \routech{00-functions}--\routech{23e-tech-judgement}；约 135 页 & 顺序读并做自测；首读可跳过原论文对照、GPT-2 追踪及现代架构{\symboliconfont ★}专题\\
 动手 & \routech{16-loss-gradient}--\routech{17-backpropagation}、\routech{01-vectors}--\routech{10-mlp}、\routech{20c-classification-loss}--\routech{20-embeddings}、\routech{21b-why-attention}--\routech{22c-language-training}、\routech{23aa-pretraining-icl}--\routech{23cc-test-time-compute}，附录 B；约 95 页 & 先算二维迷你版，再跑三维训练；选练 C 题，按 R 题跨章复习\\
 \bottomrule
@@ -33,14 +33,15 @@
 \noindent\begin{tabularx}{\linewidth}{@{}p{34mm}X@{}}
 \toprule
 标记 & 阅读动作\\\midrule
-直觉／小结 & 先抓结论，再回看计算链\\
+直觉 & 理解新机制，再回看计算链\\
 动手算／复算 & 纸笔算给定数据／运行脚本核对\\
 ! 注意 & 核对易错步骤和影响结论的适用条件\\
 独立例／案例 & 切换到另一套参数／分析现实事件\\
 {\symboliconfont ★}选读 & 首读可跳过；小节目录在 PDF 书签中展开\\
 \bottomrule
 \end{tabularx}\par
-章末统一为“自测 $\to$ 题号与解答入口 $\to$ 小结”；电子版可点击双向跳转。
+章末自测按学习目标设置题数，{\symboliconfont ★}题可选做；题号、提示与解答共用一行入口，电子版可双向跳转。
+章节按内容收束，部分末章与部分复习衔接。
 
 图中颜色只区分角色（如 Q、K、V），同时保留标签、线型与标记，黑白打印也能分辨；色彩表见第~\pageref*{app:color-semantics}~页。
 术语可按\hyperref[app:chinese-index]{中文拼音索引}或\hyperref[app:bilingual-glossary]{英文对照表}查询。纸面目录列到章，电子目录与书签均可点击。

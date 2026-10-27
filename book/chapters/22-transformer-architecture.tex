@@ -1,9 +1,6 @@
 \chapterrule
 \section{把 Attention 组装起来：Transformer 不只是一个公式}
 \label{intro:22-transformer-architecture}
-\chaptercompass{只会 Attention 为什么还不够？}{残差和归一化连接 Attention 与 FFN，使表示可以逐层更新。}{$X:T\times d\to H:T\times d$}{Attention 的投影矩阵、FFN 两层权重；本书三维主例固定 Norm 仿射系数}
-\modelpipelinefocus{3}{Transformer Block}
-
 
 \begin{idea}
 \noindent\emph{从“所有词都能互相查看”到完整网络}\par
@@ -139,7 +136,6 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 下面的图把这些额外部件与本书的 Decoder-only 路线对照起来。
 
 
-
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：对照原论文：Encoder、Decoder、Cross-Attention 分别在哪里？}
 \label{elective:original-paper}
 
@@ -207,16 +203,14 @@ Decoder 的四个位置可以并行计算，
 
 \input{figures/original-transformer-map}
 
-\chapterchecktasks{22-transformer-architecture}{正文基础三题}{
+\chapterchecktasks{22-transformer-architecture}{理解与复算}{
 \item \textbf{形状：}$T=3,d=4$，两头 Attention 每头输出 $3\times2$。拼接后是什么形状？残差加法应检查什么？\chapterinlinehint{先沿特征轴拼接，再核对残差两项的形状。}
 \item \textbf{预测：}训练时若位置 $1$ 能读取位置 $2$ 的输入（它正是位置 $1$ 的目标），这会使下一 Token 训练的什么规则失效？\chapterinlinehint{检查目标是否已经进入本来不可见的前缀。}
 \item \textbf{找错：}同学把 Norm 放在子层与残差相加之后，却称它为本书的 Pre-Norm。写出本书每条残差路径中 Norm、子层、加法的顺序。\chapterinlinehint{按输入旁路与子层主路分别追踪。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 一个常见的 Transformer Block 由注意力、逐 Token 的前馈网络、残差与归一化构成，
 整个语言模型还需要 Token 表示与输出头。
 现在网络的\textbf{组件清单}已经齐了，下一章先辨清Block 内的 FFN 与最终输出头为何不是一回事。
-\end{conclusion}

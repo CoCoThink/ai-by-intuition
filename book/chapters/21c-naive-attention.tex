@@ -1,10 +1,9 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{Attention 的直觉：直接读取其他位置，先用输入点积}
+\section{Attention：从直接读取到 Q/K/V 分工}
 \label{intro:21c-naive-attention}
+\label{intro:21b-why-attention}
 \phantomsection\label{concept:attention}
-\chaptercompass{当前位置能否绕过逐步传递的状态，直接读取前文的某个位置？}{先比较当前位置与各位置的匹配程度，用 Softmax 把分数变成权重，再加权读取；最朴素的比较就是输入向量的点积。}{$X:3\times2\to S=XX^\top:3\times3\to Y:3\times2$}{本章不新增可训练参数}
-\modelpipelinefocus{3}{Attention 的直觉}
 
 \begin{idea}
 \noindent\emph{按相关性读取上下文}\par
@@ -32,7 +31,7 @@ RNN 的第 3 步能读到\textbf{上一份状态} $h_2$；
 
 \subsection{从平均读取到按需读取}
 
-\localfixture{二维输入，每行一个位置；与主线三维 Embedding 无关，本部分后两章继续沿用}
+\localfixture{二维输入，每行一个位置；与主线三维 Embedding 无关，本章后续投影对照与下一章批量计算继续沿用}
 设当前位置可以读取三个位置，它们各自提供一条\textbf{内容向量}（行向量）：
 \[
 \vect v_1^\top=(1,0),\qquad
@@ -86,26 +85,10 @@ $(0.212,0.212,0.576)$，继续把输入作为内容向量，
 $\vect x_3^\top=(1,1)$ 最长，在三行里都拿到最高或并列最高的分数：
 第一行 $(1,0,1)$、第二行 $(0,1,1)$、第三行 $(1,1,2)$。
 于是三个位置都把最大权重给了位置 3，这来自向量长度，而不是某项任务的需要。
-两点同出一源：本章没有可调的数，训练无法让模型学会“按哪些特征匹配”。
+两点同出一源：这一版本没有可调的数，训练无法让模型学会“按哪些特征匹配”。
 \end{boundarybox}
 
 要放宽这些限制，就让“拿什么询问”“凭什么被找到”“读出什么内容”
 各由一组可训练投影产生。
-这便是下一章 Query、Key、Value 三种角色的动机；
-该章末尾还会用一个对照实验检验训练 Q/K 带来的选择性。
-
-
-\chapterchecktasks{21c-naive-attention}{正文基础三题}{
-\item \textbf{手算：}本章 $\vect x_1^\top=(1,0),\vect x_2^\top=(0,1),\vect x_3^\top=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$。\chapterinlinehint{让对应输入行分别与所有输入行做点积。}
-\item \textbf{预测：}对每一行分开做 Softmax 后，$A_{13}$ 与 $A_{31}$ 还一定相等吗？请先比较两行的分母。\chapterinlinehint{将两个相同分子与各自行的分母对照。}
-\item \textbf{找错：}同学说“直接点积能自定义‘我如何问’和‘别人如何被问’这两套不同视角”。这一零参数方案缺少什么？\chapterinlinehint{检查提问与匹配是否使用两套可训练矩阵。}
-}
-
-
-
-\begin{conclusion}
-Attention = 比较 $\to$ Softmax 分配权重 $\to$ 加权读取。
-最朴素的版本直接用输入点积，已经能按匹配程度读取其他位置，
-但匹配规则固定：分数对称，长向量处处得高分。
-下一章把提问、匹配与内容拆成 Query、Key、Value 三组投影。
-\end{conclusion}
+下面就把三种职责拆开，并沿用同一组输入比较读出变化。
+章末再给出训练 Q/K 选择所需记录的实验入口。

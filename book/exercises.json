@@ -34,8 +34,8 @@
   },
   {
     "legacy_id": "C1-2",
-    "owner": "intro:16-loss-gradient",
-    "slug": "16-loss-analytic",
+    "owner": "intro:00-functions",
+    "slug": "00-functions",
     "difficulty": "标准",
     "minutes": 5,
     "question": "\\textbf{【手算】} 沿用三点 $(-1,-1),(0,2),(1,2)$，初值为 $\\widehat{y}=x$。求均方误差。",
@@ -45,8 +45,8 @@
   },
   {
     "legacy_id": "C4-3",
-    "owner": "intro:16-loss-gradient",
-    "slug": "16-loss-analytic",
+    "owner": "intro:00-functions",
+    "slug": "00-functions",
     "difficulty": "标准",
     "minutes": 5,
     "question": "\\textbf{比较：} 沿用三点 $(-1,-1),(0,2),(1,2)$，固定 $w=1$。有人主张取 $b=2$，因为这样能把 $x=0$ 的样本猜对。分别求 $b=1$ 与 $b=2$ 时的均方误差，判断这项理由是否足够。",
@@ -541,8 +541,8 @@
   },
   {
     "legacy_id": "C3-10",
-    "owner": "intro:21b-why-attention",
-    "slug": "21b-why-attention",
+    "owner": "intro:21c-naive-attention",
+    "slug": "21c-naive-attention",
     "difficulty": "基础",
     "minutes": 3,
     "question": "用一句话说明为什么简化模型可以取 $\\vect q^\\top=\\vect x^\\top$，而真实 Transformer 中两者往往不同。",
@@ -552,8 +552,8 @@
   },
   {
     "legacy_id": "C4-21",
-    "owner": "intro:21b-why-attention",
-    "slug": "21b-why-attention",
+    "owner": "intro:21c-naive-attention",
+    "slug": "21c-naive-attention",
     "difficulty": "标准",
     "minutes": 8,
     "question": "\\textbf{设计：}若不同词都用相同的内容向量当作 Key 与 Value，模型表达灵活性有什么限制？独立投影怎样缓解？",
@@ -563,8 +563,8 @@
   },
   {
     "legacy_id": "C3-9",
-    "owner": "intro:21b-why-attention",
-    "slug": "21b-why-attention",
+    "owner": "intro:21c-naive-attention",
+    "slug": "21c-naive-attention",
     "difficulty": "标准",
     "minutes": 5,
     "question": "若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。",
@@ -967,8 +967,8 @@
   },
   {
     "legacy_id": "",
-    "owner": "intro:23cc-test-time-compute",
-    "slug": "23cc-test-time-compute",
+    "owner": "intro:23c-post-training",
+    "slug": "23c-post-training",
     "difficulty": "标准",
     "minutes": 8,
     "question": "\\textbf{【估算／解释】}独立候选的单次成功率降为 $p=0.3$，仍由完美验证器筛选。至少要几份候选才能让成功率达到 $90\\%$？六份与七份各是多少？若所有候选复制同一次结果，增加份数能达到吗？",
@@ -978,8 +978,8 @@
   },
   {
     "legacy_id": "",
-    "owner": "intro:23cc-test-time-compute",
-    "slug": "23cc-test-time-compute",
+    "owner": "intro:23c-post-training",
+    "slug": "23c-post-training",
     "difficulty": "标准",
     "minutes": 8,
     "question": "\\textbf{【手算／解释】}沿用正文的错误验证器：候选等概率取自 $\\{41,42,43,50\\}$，验证器把 41、42、43 都判为通过，系统交付第一份通过的候选。（a）$n=2$ 时交付正确答案 42 的概率是多少？（b）$n\\to\\infty$ 时趋于多少？（c）为什么继续增加候选不能把成功率推到 1？",
@@ -1375,8 +1375,8 @@
   },
   {
     "legacy_id": "C3-12",
-    "owner": "intro:06-better-linear-memory",
-    "slug": "06-better-linear-memory",
+    "owner": "intro:04-key-value-outer-product",
+    "slug": "04-key-value-outer-product",
     "difficulty": "挑战",
     "minutes": 10,
     "question": "\\phantomsection\\label{exercise:delta-reverse}\n\\textbf{【手算／迁移】} 沿用第~\\ref*{intro:06-better-linear-memory}~章 Delta 规则：\n$k_A=(1,0),v_A=(1,0)$，$k_B=(0.6,0.8),v_B=(0,1)$，\n$\\mathcal{M}_0=0$、$\\eta=1$。交换写入顺序，先写 B 再写 A。\n求两次写入后的 $\\mathcal{M}_2$、$k_A\\mathcal{M}_2$、$k_B\\mathcal{M}_2$ 和 B 的误差范数；\n与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。",
@@ -1386,8 +1386,8 @@
   },
   {
     "legacy_id": "C4-46",
-    "owner": "intro:06-better-linear-memory",
-    "slug": "06-better-linear-memory",
+    "owner": "intro:04-key-value-outer-product",
+    "slug": "04-key-value-outer-product",
     "difficulty": "标准",
     "minutes": 5,
     "question": "\\textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。",
@@ -1489,8 +1489,8 @@
   },
   {
     "legacy_id": "C4-50",
-    "owner": "intro:13-capacity",
-    "slug": "13-capacity",
+    "owner": "intro:09-nonlinearity-and-memory",
+    "slug": "09-nonlinearity-and-memory",
     "difficulty": "标准",
     "minutes": 5,
     "question": "\\textbf{判断：}把理想随机容量结论用于真实模型前，需要实测哪两项条件？",
@@ -1500,8 +1500,8 @@
   },
   {
     "legacy_id": "",
-    "owner": "intro:13-capacity",
-    "slug": "13-capacity",
+    "owner": "intro:09-nonlinearity-and-memory",
+    "slug": "09-nonlinearity-and-memory",
     "difficulty": "标准",
     "minutes": 6,
     "question": "\\textbf{【估算】} 在 $d_k=4$ 维中，最多能放几条两两正交的非零 Key？再写入第 5 条时，交叉点积还能全部为 $0$ 吗？对随机单位向量，交叉点积的典型大小约为 $1/\\sqrt{d_k}$；分别估算 $d_k=64$ 与 $d_k=1024$。",
@@ -1541,5 +1541,60 @@
     "solution": "\\textbf{第一步：}第一步偏置校正后 $\\widehat{m}_1/\\sqrt{\\widehat{v}_1}=g_1/|g_1|$，先算出这一方向。\\par\\nobreak\n\\textbf{解题过程：}（a）方向为 $1$，$w_1=(1-0.1\\times0.05)\\times4-0.1\\times1=\\answerresult{3.88}$。（b）$g_1'=0.5+0.2=0.7$，但 $\\widehat{m}_1/\\sqrt{\\widehat{v}_1}=0.7/0.7=1$，$w_1=4-0.1=\\answerresult{3.9}$：衰减在第一步被自适应归一化抵消。AdamW 把缩小项放在梯度统计之外，才保证每步都按 $\\eta\\lambda w$ 衰减。",
     "legacy_answer_anchor": "",
     "id": "C-119"
+  },
+  {
+    "id": "C-120",
+    "slug": "00-functions",
+    "owner": "intro:00-functions",
+    "difficulty": "基础",
+    "minutes": 4,
+    "question": "沿用三个训练样本 $(-1,-1),(0,2),(1,2)$，固定 $w=1$，把 $b$ 从 $0$ 调到 $1$。写出新的三项预测，并指出每项比原先更接近还是更远离真实值。",
+    "solution": "\\textbf{第一步：}先把每项旧预测加 $1$。\\par\\nobreak\n\\textbf{解题过程：}新预测为 $\\answerresult{(0,1,2)}$，残差从 $(0,-2,-1)$ 变为 $(1,-1,0)$。第一个样本更远离真实值，第二、三个更接近，第三个已猜对。",
+    "legacy_id": "",
+    "legacy_answer_anchor": ""
+  },
+  {
+    "id": "C-121",
+    "slug": "04-key-value-outer-product",
+    "owner": "intro:04-key-value-outer-product",
+    "difficulty": "基础",
+    "minutes": 4,
+    "question": "$k=(1,0),v=(0,1)$，写出矩阵 $\\mathcal{M}=k^\\top v$，再用 $q=(1,0)$ 读取。",
+    "solution": "\\textbf{第一步：}先写外积，再用查询左乘状态。\\par\\nobreak\n\\textbf{解题过程：}$\\mathcal{M}=\\begin{bmatrix}0&1\\\\0&0\\end{bmatrix}$，$(1,0)\\mathcal{M}=\\answerresult{(0,1)}$。",
+    "legacy_id": "",
+    "legacy_answer_anchor": ""
+  },
+  {
+    "id": "C-122",
+    "slug": "04-key-value-outer-product",
+    "owner": "intro:04-key-value-outer-product",
+    "difficulty": "基础",
+    "minutes": 4,
+    "question": "两条记忆各写入 $k_i^\\top v_i$，为什么用 $k_A$ 读取时可能含有 $v_B$ 的一部分？指出交叉项。",
+    "solution": "\\textbf{第一步：}将查询对状态的乘法按每条记忆展开。\\par\\nobreak\n\\textbf{解题过程：}$k_A(k_B^\\top v_B)=(k_Ak_B^\\top)v_B$，非零交叉点积带来别条 Value。",
+    "legacy_id": "",
+    "legacy_answer_anchor": ""
+  },
+  {
+    "id": "C-123",
+    "slug": "09-nonlinearity-and-memory",
+    "owner": "intro:09-nonlinearity-and-memory",
+    "difficulty": "基础",
+    "minutes": 4,
+    "question": "两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？",
+    "solution": "\\textbf{第一步：}将两个 Value 逐项乘权重再相加。\\par\\nobreak\n\\textbf{解题过程：}$0.25(1,0)+0.75(0,1)=\\answerresult{(0.25,0.75)}$。",
+    "legacy_id": "",
+    "legacy_answer_anchor": ""
+  },
+  {
+    "id": "C-124",
+    "slug": "09-nonlinearity-and-memory",
+    "owner": "intro:09-nonlinearity-and-memory",
+    "difficulty": "基础",
+    "minutes": 4,
+    "question": "计算 $(1,0)\\cdot(0,1)$ 与 $(1,0)\\cdot(0.6,0.8)$。",
+    "solution": "\\textbf{第一步：}分别算两组 Key 的交叉点积。\\par\\nobreak\n\\textbf{解题过程：}正交点积 $\\answerresult{0}$；另一组为 $\\answerresult{0.6}$。",
+    "legacy_id": "",
+    "legacy_answer_anchor": ""
   }
 ]

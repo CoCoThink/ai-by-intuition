@@ -145,7 +145,6 @@
 \newtcolorbox{idea}[1][]{enhanced,breakable,colback=lavender,colframe=lavender,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ◆} 直觉},#1}
 \newtcolorbox{example}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm,borderline west={2.5pt}{0pt}{purple},fonttitle=\sffamily\bfseries,coltitle=ink,title={{\symboliconfont ▸} 动手算},#1}
 \newtcolorbox{casebox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.5pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={案例},#1}
-\newtcolorbox{conclusion}[1][]{enhanced,breakable=false,colback=paper,colframe=linegray,boxrule=0pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm,before skip=6pt,after skip=4pt,fontupper=\small,borderline west={2.5pt}{0pt}{muted},fonttitle=\sffamily\bfseries,coltitle=ink,title={小结},#1}
 % One caution style covers arithmetic pitfalls and applicability conditions.
 \newtcolorbox{boundarybox}[1][]{enhanced,breakable,colback=paper,colframe=linegray,boxrule=.6pt,arc=1.5mm,left=3.5mm,right=3.5mm,top=2.5mm,bottom=2.5mm,fonttitle=\sffamily\bfseries,coltitle=ink,title={! 注意},borderline west={1.6pt}{0pt}{muted},#1}
 \newenvironment{warningbox}[1][]{\begin{boundarybox}[#1]}{\end{boundarybox}}
@@ -159,8 +158,8 @@
 \newcommand{\termref}[1]{\nobreak\hspace{0.2em}{\footnotesize\hyperref[#1]{§\ref*{#1} · 第 \pageref*{#1} 页}}}
 \newcommand{\localfixture}[1]{\par\smallskip\noindent{\sffamily\footnotesize\color{muted}\colorbox{paper}{\strut\textbf{独立例}}\enspace #1}\par\smallskip}
 \newcommand{\conceptlink}[2]{\hyperref[concept:#1]{#2}} % link to first full definition
-% Chapter compass: a single, shape-first entry convention for key model components.
-% Question and answer first; the two shape/parameter notes share one small line.
+% Optional route box for long forward/backward experiments and architecture comparisons.
+% Ordinary chapters introduce shapes and trainable quantities beside the calculation.
 \newcommand{\chaptercompass}[4]{%
 \begin{tcolorbox}[enhanced,breakable,colback=paper,colframe=linegray,
   boxrule=.5pt,arc=2mm,left=4mm,right=4mm,top=2mm,bottom=2mm]
@@ -172,13 +171,11 @@
 }
 
 
-% The four-row compass supersedes the old duplicate locator.
-\newcommand{\modelpipelinefocus}[2]{}
 % Generated from the ownership printed beside each Appendix C exercise.
 \input{chapter-practice}
 \newcommand{\chapterpracticejump}[1]{%
  \ifcsname chapterpractice@#1\endcsname
- \par\nobreak\smallskip\noindent{\footnotesize\color{blue}附录 C · 本章对应题号：\csname chapterpractice@#1\endcsname}\nobreak\enspace
+ \par\nobreak\smallskip\noindent{\footnotesize\color{blue}附录 C 练习：\csname chapterpractice@#1\endcsname}\nobreak\enspace
  \fi}
 % Editorial clues stay in source; reader hints and results are in Appendix D.
 \newcommand{\chapterinlinehint}[1]{}
@@ -313,6 +310,7 @@
 \part{学习是什么：从规则到参数更新}\label{part:learning}\markboth{学习是什么：从规则到参数更新}{}
 \partentrylearning
 \clearpage
+% 函数与损失合为一章；16-loss-gradient 同时承接下一章梯度下降。
 \input{chapters/00-functions}
 \input{chapters/16-loss-gradient}
 \input{chapters/18c-training-engineering}
@@ -348,6 +346,7 @@
 \clearpage
 \input{chapters/21a-context-gap}
 \input{chapters/21-rnn}
+% 同一章从零参数读取接到 Q/K/V 投影对照。
 \input{chapters/21c-naive-attention}
 \input{chapters/21b-why-attention}
 \input{chapters/11-softmax-memory}
@@ -371,6 +370,7 @@
 \partentryassistant
 \clearpage
 \input{chapters/23aa-pretraining-icl}
+% 同一章比较奖励用于训练与验证用于本次选答。
 \input{chapters/23c-post-training}
 \input{chapters/23cc-test-time-compute}
 \input{chapters/23d-agent-systems}
@@ -402,6 +402,7 @@
 \emph{You could have invented transformers from memory}。
 本文链接及核验日期见第~\pageref{source:alex-wang}~页；数值推导与练习按本书行向量约定展开。\par
 \clearpage
+% 扩展路径两章：线性写入与修正；非线性读取与选读容量。
 \input{chapters/04-key-value-outer-product}
 \input{chapters/05-memory-interference}
 \input{chapters/06-better-linear-memory}
@@ -473,13 +474,3 @@
 \input{chapters/29-revision-notes}
 
 \end{document}
-
-
-
-
-
-
-
-
-
-

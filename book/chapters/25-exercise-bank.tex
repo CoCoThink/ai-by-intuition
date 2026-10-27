@@ -9,16 +9,13 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-001.}] \phantomsection\label{exercise:C-001}\label{exercise:C4-1}\exercisemeta{标准}{8}{\hyperref[solution:C-001]{解答第~\pageref*{solution:C-001}~页}}\textbf{方案：}读者希望验证一条模型生成的最新消息。请给出至少两步独立核查动作，说明为什么光改写 Prompt 不足以完成证据核验。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:00-functions}~章 · 为什么从函数开始学 AI？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:00-functions}~页）}}
+\subsubsection*{第~\ref*{intro:00-functions}~章 · 从可调函数到损失：怎样比较预测？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:00-functions}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-002.}] \phantomsection\label{exercise:C-002}\label{exercise:C1-1}\exercisemeta{基础}{3}{\hyperref[solution:C-002]{解答第~\pageref*{solution:C-002}~页}}\phantomsection\label{exercise:linked-00-functions}  \textbf{【手算】} 直线模型 $\widehat{y}=wx+b$，取 $w=2,b=1$。当 $x=-1,0,2$ 时，预测分别是多少？
 \item[\textbf{C-003.}] \phantomsection\label{exercise:C-003}\label{exercise:C4-2}\exercisemeta{标准}{5}{\hyperref[solution:C-003]{解答第~\pageref*{solution:C-003}~页}}\textbf{场景：}如果同一输入 $x=3$ 的实际目标从 $7$ 改成 $10$，只改变测试输入能解决吗？应调整哪个环节？
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:16-loss-gradient}~章 · 怎样量“猜得多差”？用损失比较预测\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16-loss-gradient}~页）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-004.}] \phantomsection\label{exercise:C-004}\label{exercise:C1-2}\exercisemeta{标准}{5}{\hyperref[solution:C-004]{解答第~\pageref*{solution:C-004}~页}}\textbf{【手算】} 沿用三点 $(-1,-1),(0,2),(1,2)$，初值为 $\widehat{y}=x$。求均方误差。
 \item[\textbf{C-005.}] \phantomsection\label{exercise:C-005}\label{exercise:C4-3}\exercisemeta{标准}{5}{\hyperref[solution:C-005]{解答第~\pageref*{solution:C-005}~页}}\textbf{比较：} 沿用三点 $(-1,-1),(0,2),(1,2)$，固定 $w=1$。有人主张取 $b=2$，因为这样能把 $x=0$ 的样本猜对。分别求 $b=1$ 与 $b=2$ 时的均方误差，判断这项理由是否足够。
+\item[\textbf{C-120.}] \phantomsection\label{exercise:C-120}\exercisemeta{基础}{4}{\hyperref[solution:C-120]{解答第~\pageref*{solution:C-120}~页}}沿用三个训练样本 $(-1,-1),(0,2),(1,2)$，固定 $w=1$，把 $b$ 从 $0$ 调到 $1$。写出新的三项预测，并指出每项比原先更接近还是更远离真实值。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:16a-gradient-descent}~章 · 怎样让损失变小？梯度下降调参数\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:16a-gradient-descent}~页）}}
@@ -111,14 +108,10 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-040.}] \phantomsection\label{exercise:C-040}\label{exercise:C4-19}\exercisemeta{标准}{6}{\hyperref[solution:C-040]{解答第~\pageref*{solution:C-040}~页}}\textbf{权衡：}设 RNN 状态宽度固定为 $d$，文本从 $T$ 个 Token 增长为 $2T$ 个。单个状态的形状和状态更新的次数各怎样变化？最后一步直接接收上一状态，还是全部历史状态？这对保留远处信息有什么要求？
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:21c-naive-attention}~章 · Attention 的直觉：直接读取其他位置，先用输入点积\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21c-naive-attention}~页）}}
+\subsubsection*{第~\ref*{intro:21c-naive-attention}~章 · Attention：从直接读取到 Q/K/V 分工\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21c-naive-attention}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-041.}] \phantomsection\label{exercise:C-041}\label{exercise:C4-20}\exercisemeta{标准}{5}{\hyperref[solution:C-041]{解答第~\pageref*{solution:C-041}~页}}\textbf{手算与比较：}沿用本章 $x_1=(1,0)$、$x_2=(0,1)$，把 $x_3=(1,1)$ 改为 $(2,2)$。在 $S=XX^\top$ 中，求新的 $S_{13}$、$S_{31}$ 与 $S_{33}$。分数矩阵还对称吗？这个变化怎样说明向量长度也会影响匹配分数？
 \item[\textbf{C-042.}] \phantomsection\label{exercise:C-042}\label{exercise:C3-7}\exercisemeta{标准}{5}{\hyperref[solution:C-042]{解答第~\pageref*{solution:C-042}~页}}若 $V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$、$a=(0,2)$，计算 $aV$，并用「按行加权求和」解释结果。
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:21b-why-attention}~章 · Q/K/V：把提问、匹配与内容拆开\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21b-why-attention}~页）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-043.}] \phantomsection\label{exercise:C-043}\label{exercise:C3-10}\exercisemeta{基础}{3}{\hyperref[solution:C-043]{解答第~\pageref*{solution:C-043}~页}}用一句话说明为什么简化模型可以取 $\vect q^\top=\vect x^\top$，而真实 Transformer 中两者往往不同。
 \item[\textbf{C-044.}] \phantomsection\label{exercise:C-044}\label{exercise:C4-21}\exercisemeta{标准}{8}{\hyperref[solution:C-044]{解答第~\pageref*{solution:C-044}~页}}\textbf{设计：}若不同词都用相同的内容向量当作 Key 与 Value，模型表达灵活性有什么限制？独立投影怎样缓解？
 \item[\textbf{C-045.}] \phantomsection\label{exercise:C-045}\label{exercise:C3-9}\exercisemeta{标准}{5}{\hyperref[solution:C-045]{解答第~\pageref*{solution:C-045}~页}}若 $v_1=(2,1)$、$v_2=(0,3)$、$a=(0.8,0.2)$，写出按行保存的 $V$，再算 $aV$。
@@ -215,15 +208,11 @@ $\partial L/\partial W_V$ 的 $2\times2$ 数值矩阵。
 \item[\textbf{C-074.}] \phantomsection\label{exercise:C-074}\exercisemeta{标准}{8}{\hyperref[solution:C-074]{解答第~\pageref*{solution:C-074}~页}}\textbf{【手算】} 沿用第~\ref*{intro:23aa-pretraining-icl}~章的二维读取：$K=V=I_2$、$W_{\rm out}=5I_2$，分数为 $s=qK^\top/\sqrt2$。（a）末尾查询换成 $q_C=(0,\sqrt2\ln9)$，求权重、读出与 $\Pr(D)$；（b）若查询尺度减半为 $q_A=(\sqrt2\ln3,0)$，$\Pr(B)$ 变为多少？
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23c-post-training}~章 · 会接龙，还要怎样学会对话与解决任务？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:23c-post-training}~页）}}
+\subsubsection*{第~\ref*{intro:23c-post-training}~章 · 怎样改进回答：训练反馈与推理时计算\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:23c-post-training}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-075.}] \phantomsection\label{exercise:C-075}\label{exercise:C2-12}\exercisemeta{基础}{5}{\hyperref[solution:C-075]{解答第~\pageref*{solution:C-075}~页}}\phantomsection\label{exercise:linked-23c-post-training}  \textbf{【回忆】} 用一句话区分 \conceptlink{sft}{SFT}、\conceptlink{rlvr}{RLVR} 和“让模型把步骤写出来”的 CoT 提示；
 哪几个通常涉及模型训练时的参数更新？
 \item[\textbf{C-076.}] \phantomsection\label{exercise:C-076}\label{exercise:C4-36}\exercisemeta{标准}{10}{\hyperref[solution:C-076]{解答第~\pageref*{solution:C-076}~页}}\textbf{方案：}要使模型写出可核验的数学推导，比较“在 Prompt 中要求分步”“用示范数据 SFT”“根据最终答案正确与否作可验证奖励”改变了什么。
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23cc-test-time-compute}~章 · 推理时多算几次，怎样提高解题成功率？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:23cc-test-time-compute}~页）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-077.}] \phantomsection\label{exercise:C-077}\exercisemeta{标准}{8}{\hyperref[solution:C-077]{解答第~\pageref*{solution:C-077}~页}}\textbf{【估算／解释】}独立候选的单次成功率降为 $p=0.3$，仍由完美验证器筛选。至少要几份候选才能让成功率达到 $90\%$？六份与七份各是多少？若所有候选复制同一次结果，增加份数能达到吗？
 \item[\textbf{C-078.}] \phantomsection\label{exercise:C-078}\exercisemeta{标准}{8}{\hyperref[solution:C-078]{解答第~\pageref*{solution:C-078}~页}}\textbf{【手算／解释】}沿用正文的错误验证器：候选等概率取自 $\{41,42,43,50\}$，验证器把 41、42、43 都判为通过，系统交付第一份通过的候选。（a）$n=2$ 时交付正确答案 42 的概率是多少？（b）$n\to\infty$ 时趋于多少？（c）为什么继续增加候选不能把成功率推到 1？
 \end{enumerate}
@@ -308,16 +297,12 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 \item[\textbf{C-102.}] \phantomsection\label{exercise:C-102}\exercisemeta{标准}{6}{\hyperref[solution:C-102]{解答第~\pageref*{solution:C-102}~页}}\textbf{【手算】} 一张 $32\times32$ 的 RGB 图片切成不重叠的 $8\times8$ Patch。共有多少个 Patch？每个 Patch 展平后多长？若线性投影到 $64$ 维，投影矩阵是什么形状、有多少权重（不计偏置）？再加一个 CLS Token，序列长度是多少？
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:04-key-value-outer-product}~章 · 外积与矩阵：如何真正“写入”一条记忆？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:04-key-value-outer-product}~页）}}
+\subsubsection*{第~\ref*{intro:04-key-value-outer-product}~章 · 线性联想记忆：写入、串扰与误差修正\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:04-key-value-outer-product}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-103.}] \phantomsection\label{exercise:C-103}\label{exercise:C3-2}\exercisemeta{基础}{3}{\hyperref[solution:C-103]{解答第~\pageref*{solution:C-103}~页}}如果只存一条行向量记忆 $\mathcal{M}=k^\top v$ 且 $k$ 为单位行向量，查询 $k\mathcal{M}$ 得到什么？
 \item[\textbf{C-104.}] \phantomsection\label{exercise:C-104}\label{exercise:C3-3}\exercisemeta{标准}{5}{\hyperref[solution:C-104]{解答第~\pageref*{solution:C-104}~页}}为什么行向量记忆 $\mathcal{M}=\sum_i k_i^\top v_i$ 在查询某条 Key 时仍可能产生串扰？
 \item[\textbf{C-105.}] \phantomsection\label{exercise:C-105}\label{exercise:C4-44}\exercisemeta{标准}{5}{\hyperref[solution:C-105]{解答第~\pageref*{solution:C-105}~页}}\textbf{找错：}设 Key $k:1\times2$、Value $v:1\times3$。同学把 $\mathcal{M}$ 写成 $vk^\top$，仍称它是按行向量约定可供 $q\mathcal{M}$ 查询的状态。说明为何形状或方向不匹配；若 $d_k=d_v$，$vk^\top$ 又是什么？
 \item[\textbf{C-106.}] \phantomsection\label{exercise:C-106}\label{exercise:C4-45}\exercisemeta{标准}{8}{\hyperref[solution:C-106]{解答第~\pageref*{solution:C-106}~页}}\textbf{方案：}比较让 Key 更接近正交、写入时按残差修正，以及读出时提高选择性的三条方向；它们分别在哪一步处理问题？
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:06-better-linear-memory}~章 · 线性记忆怎样减少干扰？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:06-better-linear-memory}~页）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-107.}] \phantomsection\label{exercise:C-107}\label{exercise:C3-12}\exercisemeta{挑战}{10}{\hyperref[solution:C-107]{解答第~\pageref*{solution:C-107}~页}}\phantomsection\label{exercise:delta-reverse}
 \textbf{【手算／迁移】} 沿用第~\ref*{intro:06-better-linear-memory}~章 Delta 规则：
 $k_A=(1,0),v_A=(1,0)$，$k_B=(0.6,0.8),v_B=(0,1)$，
@@ -325,9 +310,11 @@ $\mathcal{M}_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
 求两次写入后的 $\mathcal{M}_2$、$k_A\mathcal{M}_2$、$k_B\mathcal{M}_2$ 和 B 的误差范数；
 与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。
 \item[\textbf{C-108.}] \phantomsection\label{exercise:C-108}\label{exercise:C4-46}\exercisemeta{标准}{5}{\hyperref[solution:C-108]{解答第~\pageref*{solution:C-108}~页}}\textbf{权衡：}如果必须同时把 A、B 都读准，是逐条贪心 Delta 写入一次就一定够，还是可能要重复校正或求联立解？说明条件。
+\item[\textbf{C-121.}] \phantomsection\label{exercise:C-121}\exercisemeta{基础}{4}{\hyperref[solution:C-121]{解答第~\pageref*{solution:C-121}~页}}$k=(1,0),v=(0,1)$，写出矩阵 $\mathcal{M}=k^\top v$，再用 $q=(1,0)$ 读取。
+\item[\textbf{C-122.}] \phantomsection\label{exercise:C-122}\exercisemeta{基础}{4}{\hyperref[solution:C-122]{解答第~\pageref*{solution:C-122}~页}}两条记忆各写入 $k_i^\top v_i$，为什么用 $k_A$ 读取时可能含有 $v_B$ 的一部分？指出交叉项。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:09-nonlinearity-and-memory}~章 · 用 MLP 的眼光重新理解记忆检索\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:09-nonlinearity-and-memory}~页）}}
+\subsubsection*{第~\ref*{intro:09-nonlinearity-and-memory}~章 · 非线性检索：从 MLP 视角到记忆容量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:09-nonlinearity-and-memory}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-109.}] \phantomsection\label{exercise:C-109}\label{exercise:C4-47}\exercisemeta{标准}{5}{\hyperref[solution:C-109]{解答第~\pageref*{solution:C-109}~页}}\textbf{找错：}某人把 Key 改成四行、Value 仍留三行，声称只要特征宽度没变就能继续用匹配权重乘 Value。指出形状问题。
 \item[\textbf{C-110.}] \phantomsection\label{exercise:C-110}\label{exercise:C3-4}\exercisemeta{基础}{3}{\hyperref[solution:C-110]{解答第~\pageref*{solution:C-110}~页}}比较 $0.5$、$0.5^2$、$0.5^3$：越来越高次的激活为什么有助于压低弱匹配？
@@ -335,12 +322,10 @@ $\mathcal{M}_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
 \item[\textbf{C-112.}] \phantomsection\label{exercise:C-112}\label{exercise:C3-6}\exercisemeta{标准}{5}{\hyperref[solution:C-112]{解答第~\pageref*{solution:C-112}~页}}若 $K=\begin{bmatrix}1&2\\3&1\end{bmatrix}$、$x=(1,-1)$，计算 $xK^\top$ 与 $\relu(xK^\top)$，并说明哪条记忆被关闭。
 \item[\textbf{C-113.}] \phantomsection\label{exercise:C-113}\label{exercise:C4-48}\exercisemeta{标准}{8}{\hyperref[solution:C-113]{解答第~\pageref*{solution:C-113}~页}}\textbf{比较：}把 MLP 解释成“Key 匹配、Value 读取”有什么直觉收益？为什么不能据此宣称神经元一对一存储真实事实？
 \item[\textbf{C-114.}] \phantomsection\label{exercise:C-114}\label{exercise:C4-49}\exercisemeta{标准}{5}{\hyperref[solution:C-114]{解答第~\pageref*{solution:C-114}~页}}\textbf{场景：}若模型给出一句看似事实的答案，能否只根据某 FFN 神经元被激活就断言那是一条被验证的事实？应怎样补证？
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:13-capacity}~章 · \texorpdfstring{{\symboliconfont ★}}{★} 选读：高维空间与记忆容量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:13-capacity}~页）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-115.}] \phantomsection\label{exercise:C-115}\label{exercise:C4-50}\exercisemeta{标准}{5}{\hyperref[solution:C-115]{解答第~\pageref*{solution:C-115}~页}}\textbf{判断：}把理想随机容量结论用于真实模型前，需要实测哪两项条件？
 \item[\textbf{C-116.}] \phantomsection\label{exercise:C-116}\exercisemeta{标准}{6}{\hyperref[solution:C-116]{解答第~\pageref*{solution:C-116}~页}}\textbf{【估算】} 在 $d_k=4$ 维中，最多能放几条两两正交的非零 Key？再写入第 5 条时，交叉点积还能全部为 $0$ 吗？对随机单位向量，交叉点积的典型大小约为 $1/\sqrt{d_k}$；分别估算 $d_k=64$ 与 $d_k=1024$。
+\item[\textbf{C-123.}] \phantomsection\label{exercise:C-123}\exercisemeta{基础}{4}{\hyperref[solution:C-123]{解答第~\pageref*{solution:C-123}~页}}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？
+\item[\textbf{C-124.}] \phantomsection\label{exercise:C-124}\exercisemeta{基础}{4}{\hyperref[solution:C-124]{解答第~\pageref*{solution:C-124}~页}}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{附录 A · 优化器\enspace{\mdseries\footnotesize（正文第~\pageref*{app:optimizer-details}~页）}}

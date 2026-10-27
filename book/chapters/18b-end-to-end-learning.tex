@@ -63,7 +63,7 @@ L'&=\frac12(5.30-5)^2=0.045.
 
 % The earlier backpropagation lesson belongs to this same numbered chapter.
 % Keep both complete exercise sets after section 5.5, not before it.
-\chapterchecktasks{17-backpropagation}{基础与贯通复习}{
+\chapterchecktasks{17-backpropagation}{基础与贯通复算}{
 \item \textbf{计算：}设 $h=w_1x,\widehat{y}=w_2h$。当 $x=3,w_2=2$ 时，按链式法则求 $\partial\widehat{y}/\partial w_1$。\chapterinlinehint{沿输出到隐藏层、隐藏层到权重逐段求导。}
 \item \textbf{预测：}在 $h=\relu(z)$ 且 $z=-2$ 时，从输出侧传来的梯度经过这条 ReLU 分支传向 $z$ 后还剩多少？\chapterinlinehint{先看该输入处 ReLU 的局部导数。}
 \item \textbf{找错：}同学把 $\partial L/\partial h$ 直接当作 $\partial L/\partial w_1$。缺了哪一个局部导数？\chapterinlinehint{补上隐藏变量对权重的局部导数。}
@@ -74,9 +74,7 @@ L'&=\frac12(5.30-5)^2=0.045.
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 训练的基本循环是：预测 $\to$ 算损失 $\to$ 求梯度 $\to$ 更新参数。
 这个例子说明了参数怎样被更新；至于新样本是否预测得准，还涉及泛化问题。
 下一章解释什么叫泛化，以及怎样识别模型把样本噪声当成规律。
-\end{conclusion}

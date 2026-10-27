@@ -1,22 +1,21 @@
-\chapterrule
-\section{线性记忆怎样减少干扰？}
-\phantomsection\label{intro:06-better-linear-memory}
-\chaptercompass{写入 B 时能同时保护旧记忆 A 吗？}{比较最小二乘与逐条残差 Delta 更新，并看旧记忆受损。}{$\mathcal{M}:2\times2,\ k:1\times2,\ r:1\times2$}{这里修正外部状态 $\mathcal{M}$，不是训练神经网络参数}
-\modelpipelinefocus{3}{Delta 规则与残差记忆}
-
+\subsection{联立求解：同时拟合两条记忆}
 直接累加外积时，每条新记忆可能改变旧 Key 的输出。
 可以让矩阵同时拟合全部输入与目标：
 \[
 \boxed{\min_{\mathcal{M}}\sum_{i=1}^{T_k}\|k_i\mathcal{M}-v_i\|^2}.
 \]
-这叫最小二乘，注意\textbf{行向量 Key 从左边乘状态矩阵}。
+这叫最小二乘：让同一个状态同时满足各条关联。
 
-\subsection{两条二维记忆：一个精确解}
 刚才的外积相加得到
 \[
 \mathcal{M}_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
 \]
-改用
+要同时读对 A、B，可以直接联立求解。设矩阵的两行为 $m_1,m_2$。
+A 要求 $m_1=(1,0)$；B 要求 $0.6m_1+0.8m_2=(0,1)$，所以
+\[
+m_2=\frac{(0,1)-0.6(1,0)}{0.8}=(-0.75,1.25).
+\]
+于是
 \[
 \boxed{\mathcal{M}_{\rm better}=\begin{bmatrix}1&0\\-0.75&1.25\end{bmatrix}},
 \]
@@ -96,16 +95,17 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 C-107}
 交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
 
-\chapterchecktasks{06-better-linear-memory}{正文基础三题}{
-\item \textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先写目标读出与当前读出的差。}
-\item \textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
-\item \textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{考察新增外积与另一条 Key 的点积。}
+\chapterchecktasks{04-key-value-outer-product}{理解、手算与判断}{
+\label{check:06-better-linear-memory}
+\item\textbf{形状：}行向量 Key $k:1\times2$、Value $v:1\times3$。外积写入 $\mathcal{M}=k^\top v$ 的形状是什么？查询 $q:1\times2$ 后 $q\mathcal{M}$ 又是什么形状？\chapterinlinehint{先写转置 Key 的形状，再核对内侧维度。}
+\item\textbf{预测：}同一条记忆若把 Key 写入时改为 $k'=(0.5,0)$，再以 $q=k'$ 读取，恢复的 Value 是多少倍？\chapterinlinehint{把写入和读取两次出现的 Key 缩放都算上。}
+\item\textbf{手算：}$k_A=(1,0),k_B=(0.6,0.8)$；$v_A=(1,0),v_B=(0,1)$。把两条外积相加，用 $k_A$ 查询得到什么？\chapterinlinehint{分别求两条外积，再相加并用查询读取。}
+\item\textbf{预测：}若把 $k_B$ 改为 $(0,1)$，保持其他项不变，$k_A$ 查询时串扰如何变化？\chapterinlinehint{先比较修改前后的交叉点积。}
+\item\textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先写目标读出与当前读出的差。}
+\item\textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
+\item\textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{考察新增外积与另一条 Key 的点积。}
 }
 
-\begin{conclusion}
+\par\smallskip
 减少串扰的线性办法都在\textbf{写入端}：联立求解或逐条按残差修正。
 下一章转到\textbf{读取端}，让匹配分数先经过非线性筛选再读出 Value。
-\end{conclusion}
-
-
-

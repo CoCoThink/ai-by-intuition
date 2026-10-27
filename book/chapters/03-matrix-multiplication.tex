@@ -1,8 +1,6 @@
 \chapterrule
 \section{矩阵乘法到底在算什么？}
 \label{intro:03-matrix-multiplication}
-\chaptercompass{怎样一次计算多组向量的点积？}{矩阵乘法把逐行点积组织成批量运算。}{$A:m\times n,\ B:n\times p\to AB:m\times p$}{纯矩阵乘法无参数；线性层的 $W$ 可学习}
-\modelpipelinefocus{0}{矩阵与批量运算}
 
 点积每次得到一个分数。要对大量向量执行相似的运算，可以把它们排成矩阵，
 用一次矩阵乘法完成多次点积，并清楚记录输入和输出的形状。
@@ -137,16 +135,14 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），交换后还须重新检查 $BA$ 的形状；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。
 \end{warningbox}
 
-\chapterchecktasks{03-matrix-multiplication}{正文基础三题}{
+\chapterchecktasks{03-matrix-multiplication}{理解与复算}{
 \item \textbf{形状：}若 $A:2\times3$、$B:3\times4$，说明为什么 $AB$ 合法，并给出输出形状。若 $B$ 换为 $4\times3$ 呢？\chapterinlinehint{先核对内侧维度，再保留外侧维度。}
 \item \textbf{手算：}行向量 $x=(2,1)$，$W=\begin{bmatrix}1&3\\2&-1\end{bmatrix}$，计算 $xW$，并标出行与列。\chapterinlinehint{让输入行分别与权重的两列做点积。}
 \item \textbf{找错：}某人断言“矩阵相乘和数字相乘一样，可以把 $AB$ 随意换成 $BA$”。用形状或一次反例指出问题。\chapterinlinehint{分别列出两个乘法的内侧维度。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 矩阵乘向量既可以理解为每行依次做点积，也可以理解为按系数组合各列。
 行向量与列向量的写法通过转置相互对应；计算前先核对矩阵的形状，便能避免大多数形状错误。
 下一章用这些运算把前面学过的标量两层网络推广到多维。
-\end{conclusion}

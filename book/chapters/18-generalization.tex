@@ -2,10 +2,6 @@
 \chapterrule
 \section{训练得很好，为什么新题反而做错？}
 \label{intro:18-generalization}
-\chaptercompass{训练集很准，为何新样本仍会出错？}{用独立验证集区分拟合训练样本与泛化能力。}{训练/验证/测试样本 $\to$ 各自损失}{模型参数在训练集更新；验证集不反传}
-\modelpipelinefocus{0}{泛化与验证}
-
-
 
 \subsection{欠拟合、合适的拟合、过拟合}
 \phantomsection\label{concept:underfitting}
@@ -112,13 +108,8 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大
 在 PyTorch 中这一切换由 \texttt{model.eval()} 完成。
 
 
-
-\chapterchecktasks{18-generalization}{正文基础三题}{
+\chapterchecktasks{18-generalization}{理解与复算}{
 \item \textbf{预测：}训练损失持续下降，验证损失却开始上升，模型更可能在欠拟合、过拟合、还是健康泛化？先提出一种排查办法。\chapterinlinehint{先比较训练曲线与验证曲线的方向。}
 \item \textbf{手算：}三轮验证损失为 $(0.6,0.4,0.5)$。按最低验证损失早停，选哪一轮？最低是多少？\chapterinlinehint{在验证记录中找最小值及其所在轮次。}
 \item \textbf{找错：}同学说“Dropout 训练时随机删除一些权重参数，再由测试集挑最佳 Dropout 率”。指出两处错误。\chapterinlinehint{分别核对 Dropout 的作用对象与调参数据集。}
 }
-
-\begin{conclusion}
-验证集用于选模，测试集用于独立报告。下一部分把多个输入特征放进同一次计算。
-\end{conclusion}

@@ -2,8 +2,6 @@
 \chapterrule
 \section{分类损失：预测错了哪一类，怎样调整分数？}
 \label{intro:20c-classification-loss}
-\chaptercompass{怎样把 logits 变成概率？}{Softmax 将一行候选分数归一化，交叉熵度量目标类别概率。}{$z:1\times C\to p:1\times C\to L:1\times1$}{Softmax 与交叉熵没有自身可训练参数；上游输出头的权重可学习}
-\modelpipelinefocus{6}{词表 Softmax 与交叉熵}
 
 预测下一 Token 是一个\textbf{多类别预测}问题：
 模型要为词表里的每个候选 ID 打分，据此比较下一 Token 的候选。
@@ -151,16 +149,14 @@ L_1=-\ln\Pi_{1,4}.
 不是所有任务都必须改写成分类；连续数值预测等任务可以使用其他输出与损失。
 \end{warningbox}
 
-\chapterchecktasks{20c-classification-loss}{正文基础三题}{
+\chapterchecktasks{20c-classification-loss}{理解与复算}{
 \item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。为什么它们不是合法概率，Softmax 要满足哪些条件？\chapterinlinehint{核对非负性与归一化，再对照原始分数。}
 \item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}
 \item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{比较负对数函数在这两个概率处的大小。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 分类任务先输出 logits，再用 Softmax 得到概率，
 用交叉熵衡量正确类概率的高低；logit 梯度为 $p-y$。
 接下来要问：Token ID 如何变成神经网络可学习的输入？
-\end{conclusion}

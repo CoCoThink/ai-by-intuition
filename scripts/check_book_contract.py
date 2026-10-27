@@ -21,7 +21,7 @@ PART_TITLES=[
     '学习是什么：从规则到参数更新','把许多数一起算','让文字进入计算',
     '让词与词交换信息','组装并训练 Transformer','从语言模型到助手',
     '架构为什么在变，往哪走','换一种数据看 Transformer：从 CNN 到 ViT','联想记忆与线性状态']
-CHAPTER_COUNT=39
+CHAPTER_COUNT=34
 
 
 def read_sources():
@@ -167,18 +167,16 @@ def ending_order_errors(body):
     return errors
 
 
-def chapter_opening_errors(destination_top, page_height, text, parameter_han_count=0):
+def chapter_opening_errors(destination_top, page_height, text, boilerplate_han_count=0):
     errors=[]
     # PDF coordinates grow upwards: reserve one-third of the printable body.
     if destination_top-65 < .32*(page_height-120):
         errors.append('Chapter starts in the bottom third of the printable page')
-    compact=re.sub(r'\s+','',text)
-    if '参数／是否训练：' in compact:
-        after=compact.split('参数／是否训练：',1)[1]
-        if len(re.findall(r'[\u4e00-\u9fff]',after))<parameter_han_count+30:
-            errors.append('Chapter opener strands its title/compass without substantive text')
-    else:
-        errors.append('Chapter opening is missing its input/output compass')
+    # Count the actual body after excluding the title and any optional route box.
+    # A prose opener and a route box must both leave room for substantive text.
+    han_count=len(re.findall(r'[\u4e00-\u9fff]',text))
+    if han_count < boilerplate_han_count+30:
+        errors.append('Chapter opener strands its heading without substantive text')
     return errors
 
 
@@ -194,6 +192,23 @@ def validate_contract():
     require(len(groups)==CHAPTER_COUNT+1,'One unnumbered prelude must have a self-check')
     allchecks=[slug for g in groups for slug in g['checks']]
     require(len(set(allchecks))==len(allchecks),'Repeated self-check slug')
+    # Merged legacy chapter links must resolve to the same numbered chapter,
+    # and each part map must contain one entry per actual chapter.
+    owners,_=lesson_metadata()
+    for primary,legacy in (
+        ('00-functions','16-loss-gradient'),
+        ('21c-naive-attention','21b-why-attention'),
+        ('23c-post-training','23cc-test-time-compute'),
+        ('04-key-value-outer-product','06-better-linear-memory'),
+        ('09-nonlinearity-and-memory','13-capacity'),
+    ):
+        require(owners.get('intro:'+primary)==owners.get('intro:'+legacy)==primary,
+                f'{legacy}: old chapter link is not owned by merged chapter {primary}')
+    part_maps=(BOOK/'part-maps.tex').read_text()
+    entries=re.findall(r'\\mapchapter\{([^}]+)\}',part_maps)
+    mapped=[owners.get('intro:'+entry) for entry in entries]
+    require(len(mapped)==CHAPTER_COUNT and len(set(mapped))==CHAPTER_COUNT,
+            'Part maps must list each merged chapter once')
     require('阅读指南' not in main and '阅读指南' not in sources['20b-task-contract'],'Prelude must be called 序章')
     errors.extend(ten_step_errors(sources['22-transformer-architecture']))
     for filename,label,heading in (
@@ -247,8 +262,9 @@ def validate_contract():
     require('训练资料从哪里来' not in sources['23aa-pretraining-icl'] and
             '训练数据工程' in sources['23b-deployment-and-ecosystem'] and
             'concept:pretraining-data' not in sources['23a-from-toy-to-gpt'],'Data cleaning must be outside ICL chapter')
-    require('推理模型与测试时计算' not in sources['23c-post-training'] and
-            'intro:23cc-test-time-compute' in sources['23cc-test-time-compute'],'Test-time compute needs an independent chapter')
+    require(lesson_metadata()[0].get('intro:23cc-test-time-compute')=='23c-post-training' and
+            '冻结参数' in sources['23cc-test-time-compute'],
+            'Training feedback and fixed-weight verification must share a chapter with an explicit boundary')
     for marker in ('concept:bos-eos','concept:prefill-decode','concept:autoregressive'):
         require(marker in sources['23-llm-systems'],f'Missing generation interface: {marker}')
     require('concept:chat-template' in sources['23c-post-training'],'Chat template explanation missing')
@@ -297,14 +313,14 @@ def validate_contract():
     for fragment in (r'W_{\rm up}=I_2','关闭两次 Norm',r'r=x+aXW_V',r'f=\relu(rW_{\rm up})'):
         require(fragment in legacy['C2-13']['question'],f'C2-13 simplified model contract missing: {fragment}')
     errors.extend(validate_navigation())
-    # Self-check/answer bijection including the four merged six-question groups.
+    # Self-check/answer bijection follows the actual learning goals of each chapter.
     ans=sources['28-chapter-checks']
     require(ans.count(r'\par\Needspace{8\baselineskip}')==len(allchecks),'Every answer heading must keep its first answer')
     for name,body in sources.items():
         for m in re.finditer(r'\\chapterchecktasks\{',body):
             slug,e=argument(body,m.end()-1);_,e=argument(body,e);questions,_=argument(body,e)
             count=len(re.findall(r'\\item\b',questions))
-            require(count in (3,6),f'{slug}: expected 3 or 6 substantive self-checks')
+            require(count>0,f'{slug}: expected substantive self-check questions')
             require(questions.count(r'\chapterinlinehint{')==count,f'{slug}: source clues and questions must match')
             marker=r'\label{answer:'+slug+'}'
             require(marker in ans,f'{slug}: missing self-check answers')
@@ -436,7 +452,9 @@ def self_test():
     assert not chapter_opening_errors(740,842,opener)
     assert chapter_opening_errors(180,842,opener)
     assert chapter_opening_errors(740,842,'参数／是否训练：冻结权重')
-    assert chapter_opening_errors(740,842,'参数／是否训练：'+('参数说明'*10),40)
+    assert chapter_opening_errors(740,842,'参数／是否训练：'+('参数说明'*10),50)
+    assert not chapter_opening_errors(740,842,'正文内容'*20,10)
+    assert chapter_opening_errors(740,842,'只有章标题',5)
     print('Book contract regressions passed: chapter roles, notation, figure colors, printed exercise IDs, review ownership, map captions, part bookends and chapter openings')
 
 

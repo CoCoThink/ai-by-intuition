@@ -2,8 +2,7 @@
 \chapterrule
 \section{Token 与 ID：文字怎样进入数字世界？}
 \label{intro:20a-tokenizer}
-\chaptercompass{文字怎样变成可以查表的 Token ID？}{Tokenizer 依据分词规则与词表把文本切成 Token，再映射为离散整数 ID。}{原始文字 $\to$ $T$ 个 Token ID；长度 $T$ 依分词规则而变}{可训练：本章无；不训练：已构造的词表和分词规则}
-\modelpipelinefocus{1}{分词器}
+
 \phantomsection\label{concept:token}
 
 矩阵接收的是数字，但语言模型首先拿到的是文字。
@@ -142,16 +141,14 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 真实模型并不保证将“春天”或“开了”保留为单个 Token。
 \end{warningbox}
 
-\chapterchecktasks{20a-tokenizer}{正文基础三题}{
+\chapterchecktasks{20a-tokenizer}{理解与复算}{
 \item \textbf{解释：}为什么整数 Token ID 只是词表索引，而不是“数字越大、词义越强”的语义分数？\chapterinlinehint{想一想重新排列词表编号是否会改变词义。}
 \item \textbf{手算：}从五个字符“今／天／天／气／好”出发，假设 BPE 按规则依次合并“今+天”“天+气”。合并后有多少个 Token？列出切分结果。\chapterinlinehint{按给定顺序执行两次合并，并保留未合并项。}
 \item \textbf{找错：}同学认为“BPE 一次合并就会自动在所有句子里产生相同的 Token 数”。用词表和输入文本的关系指出漏洞。\chapterinlinehint{固定合并规则，对照不同输入中的相邻片段。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 Token 化将原始文字变成离散 ID，但 ID 只是类别标签。
 下一章先问：预测某个 Token ID 时，怎样衡量哪个候选类别更合理？
 之后再研究怎样为每个 ID 学到可用于计算的数值特征。
-\end{conclusion}

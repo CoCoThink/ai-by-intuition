@@ -2,8 +2,6 @@
 \chapterrule
 \section{把语言练习变成一道可计算的预测题}
 \label{intro:20b-task-contract}
-\chaptercompass{训练下一 Token 时，输入与正确答案怎样对齐？}{完整序列去掉末项作输入、去掉首项作目标（目标是输入整体左移一位），再约定预测形状和可见范围。}{$[2,4,5]\to[4,5,3]$；每个位置的 logits 为 $1\times|\mathcal V|$}{任务契约不新增权重；Embedding 与预测模型中的其他可学习参数需训练}
-\modelpipelinefocus{0}{训练样本与目标}
 
 下一 Token 预测把已有文本变成训练答案，把新 Token 接回输入又能继续生成。
 现在把这个任务写成一份\textbf{任务契约（Task Contract）}：
@@ -95,17 +93,8 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 就提前看到了答案，造成\textbf{信息泄漏}。
 目标应当参与损失计算；预测模型怎样利用允许读取的前文，将从下一部分逐步展开。
 
-\chapterchecktasks{20b-task-contract}{正文基础三题}{
+\chapterchecktasks{20b-task-contract}{理解与复算}{
 \item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列整体左移一位（去掉首项），对齐三个位置。}
 \item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
 \item \textbf{找错：}同学让第一个位置直接读取第二个位置的“花”，再预测第一个位置的下一 Token。哪里发生信息泄漏？\chapterinlinehint{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}
 }
-
-
-
-\begin{conclusion}
-输入 $[2,4,5]$，目标 $[4,5,3]$；每位置输出五类分数，交叉熵读取目标列。
-现在已经约定了输入、目标、输出概率与损失。
-下一个问题是：前面的词，怎样参与当前位置的计算？
-下一部分先检查逐行处理缺少什么，再研究传递和读取前文的方法。
-\end{conclusion}

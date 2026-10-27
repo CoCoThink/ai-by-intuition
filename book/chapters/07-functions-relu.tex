@@ -1,8 +1,6 @@
 \chapterrule
 \section{非线性：为什么多叠两层直线仍不够？}
 \label{intro:07-functions-relu}
-\chaptercompass{为什么两层直线还不够？}{纯线性层能合并，ReLU 才带来分段非线性。}{$x\to h=\relu(w_1x+b_1)\to\widehat{y}$}{$w_1,b_1,w_2,b_2$}
-\modelpipelinefocus{0}{非线性激活}
 
 一个可调的线性函数只能画直线。目标关系如果带折角或弯曲，
 把两层线性函数叠起来会不会更灵活？先算一遍再看问题在哪里。
@@ -116,15 +114,13 @@ $a_{t+1}=(a_t+1)/2$、$c_{t+1}=(c_t+1)/2$ 更新：
 如果每个参数都从头展开所有公式会很繁琐；
 下一章将沿这条计算链复用局部变化率。
 
-\chapterchecktasks{07-functions-relu}{正文基础三题}{
+\chapterchecktasks{07-functions-relu}{理解与复算}{
 \item \textbf{比较：}为什么两次无激活的仿射变换可以合并成一次？给出一维形式 $(ax+b)c+d$。\chapterinlinehint{展开括号，按输入项与常数项合并。}
 \item \textbf{手算：}$f(x)=\relu(2x-1)$。分别算 $x=0$ 与 $x=1$ 的输出。\chapterinlinehint{先算括号内的值，再与零比较。}
 \item \textbf{预测：}当 $2x-1$ 从负值跨到正值时，函数局部斜率如何改变？这个折角为什么有助于拟合分段规律？\chapterinlinehint{分别检查折角两侧的一元导数。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 两个 ReLU 单元能拟合绝对值的三个点，打破任何直线的 $2/9$ 损失下界。
 下一章要解决如何让最终误差高效传回最前面的参数。
-\end{conclusion}

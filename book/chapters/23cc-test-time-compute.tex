@@ -1,13 +1,11 @@
-\chapterrule
-\section{推理时多算几次，怎样提高解题成功率？}
-\label{intro:23cc-test-time-compute}
-\chaptercompass{额外计算怎样换取更可靠的答案？}{先采样候选，再用独立验证器筛选；同时计入预算。}{$n$ 份候选 $\to$ 验证 $\to$ 选答或报告未解出}{本章冻结参数，采样与验证改变运行状态}
+
+
 \subsection{冻结参数，把预算分给多次尝试}
 \phantomsection\label{concept:test-time-compute}
 
 \textbf{把计算预算分给更多尝试，再用验证器筛选。}
-它对应\hyperref[sec:training-inference-roles]{后训练章分工表}中的“推理时搜索／验证”一行：
-后训练可以让模型学会分解、检查或修正步骤；本章冻结参数，只分配本次请求的计算预算。
+前面的奖励进入优化器，改变未来请求使用的参数；现在冻结参数，
+把同一个验证器用于本次候选的筛选。采样与验证只改变运行状态。
 
 沿用 RLVR 的 $17+25$ 算例，验证器直接执行加法，正确答案是 $42$。
 现在\textbf{冻结参数}，让模型生成 $n$ 份完整候选，再对每份运行验证器，
@@ -69,12 +67,62 @@ RLVR 把验证奖励用于\textbf{更新参数}；这里的 Best-of-$n$ 用验�
 脚本枚举小样本空间，分别核对独立采样、完全相关采样与错误验证器的结果。
 
 
-\chapterchecktasks{23cc-test-time-compute}{解释、估算与复现}{
-\item \textbf{解释：}向同学解释 RLVR 与 Best-of-$n$ 各把验证结果用在何处。\chapterinlinehint{检查本次是否更新模型权重。}
-\item \textbf{估算：}若每份候选独立答对概率为 $1/2$，完美验证器检查四份，最终成功率是多少？\chapterinlinehint{先求所有候选都失败的概率。}
-\item \textbf{复现：}写十行以内 Python，比较四份独立候选与四份完全相同候选的成功率。解释两者为什么不同。\chapterinlinehint{分别枚举独立样本空间与共享随机变量。}
+\subsection{“让模型写步骤”与“训练模型推理”不是一回事}
+\phantomsection\label{concept:cot-prompt}
+
+\textbf{写出中间步骤，为后续 Token 提供一个可读取的工作区。}
+思维链提示（Chain-of-Thought, CoT）让模型先写计算过程，再给结果。
+每个新 Token 都经过一次模型前向计算，后续生成又能读取此前写出的步骤，
+于是多步任务得到更多串行计算与中间记录。
+
+CoT 提示只改变输入，训练才修改参数，推理时搜索则额外花费计算；
+三者的分工集中列在本章末的\hyperref[sec:training-inference-roles]{分工表}中。
+
+\begin{boundarybox}
+步骤写得完整仍需逐项核对；它们是生成文本，无法直接证明模型内部采用了同一推理过程。
+错误步骤会向后传播，额外生成也会增加 Token 与延迟成本。
+训练后的收益用独立任务测试和失败案例衡量。
+\end{boundarybox}
+
+\paragraph{回到季度报告任务}
+Few-shot 给格式示例，SFT 用核对过的示范训练格式与缺证据时的回应，偏好反馈比较来源与单位是否清楚，
+可验证奖励检查数值、公式与出处。读取报告的权限与原表证据仍由应用提供；
+\hyperref[intro:23d-agent-systems]{检索与任务系统}一章将接着说明证据怎样进入上下文。
+
+
+\subsection{不同训练与推理策略的分工}
+\phantomsection\label{sec:training-inference-roles}
+提示、训练与推理时计算的区别全书只在这里列一次：
+提示策略改变输入而不修改参数；SFT、偏好与奖励信号修改参数；
+推理时采样、验证或搜索在固定参数下多花计算，换取一定条件下更高的成功率。
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{30mm}X@{}}
+\toprule
+阶段/方法 & 主要改变什么\\
+\midrule
+预训练 & 大规模数据中学习一般 Token 预测模式\\
+SFT & 利用示范答案塑造特定任务与回应方式\\
+RLHF/DPO 等偏好优化 & 根据比较或反馈优化回答偏好；通常约束新策略不远离参考策略\\
+RLVR & 利用可程序化检查的奖励训练某些任务能力\\
+CoT 提示 & 改变输入组织方式，不必修改模型权重\\
+推理时搜索/验证 & 使用额外计算与外部规则筛选候选结果\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\chapterchecktasks{23c-post-training}{理解、手算与判断}{
+\label{check:23cc-test-time-compute}
+\item\textbf{比较：}SFT、成对偏好学习与可验证奖励的反馈信号有何不同？各举一个适合的任务。\chapterinlinehint{先列出三种方法各自实际收到的反馈。}
+\item\textbf{手算：}SFT 目标 Token 的概率为 $0.25$，求单位置交叉熵；若四个组内奖励是 $(1,0,1,0)$，按总体标准差标准化得到哪些相对优势？\chapterinlinehint{先算负对数，再用奖励减均值并除标准差。}
+\item\textbf{{\symboliconfont ★} 找错：}同学把这四个相对优势直接当成完整 GRPO 更新，遗漏了什么策略目标与数值边界？\chapterinlinehint{在相对优势之后继续写策略目标，并检查零方差。}
+\item\textbf{解释：}向同学解释 RLVR 与 Best-of-$n$ 各把验证结果用在何处。\chapterinlinehint{检查本次是否更新模型权重。}
+\item\textbf{估算：}若每份候选独立答对概率为 $1/2$，完美验证器检查四份，最终成功率是多少？\chapterinlinehint{先求所有候选都失败的概率。}
+\item\textbf{复现：}写十行以内 Python，比较四份独立候选与四份完全相同候选的成功率。解释两者为什么不同。\chapterinlinehint{分别枚举独立样本空间与共享随机变量。}
 }
-\begin{conclusion}
+\par\smallskip
 训练改变参数；测试时计算把固定模型的预算分给生成、搜索和验证。
 先报告单次成功率，再报告候选相关性、验证质量与总成本，才能判断多算是否值得。
-\end{conclusion}

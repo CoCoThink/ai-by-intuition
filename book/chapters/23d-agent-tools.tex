@@ -2,8 +2,6 @@
 \chapterrule
 \section{工具调用与 Agent 循环：从请求到执行}
 \label{intro:23d-agent-tools}
-\chaptercompass{模型能自己执行请求吗？}{模型产生结构化动作建议，应用负责授权、调用、结果与终止条件。}{请求 $\to$ 权限检查 $\to$ 工具结果 $\to$ 继续生成}{工具历史是应用状态，不是自动训练权重}
-\modelpipelinefocus{8}{工具与 Agent 循环}
 
 \subsection{一次工具调用实际发生了什么？}
 \phantomsection\label{concept:tool-calling}
@@ -259,12 +257,11 @@ Agent & 动态选工具和步骤；需要权限、预算与终止条件\\
 字段依据\href{https://platform.claude.com/docs/en/api/messages/create}{官方 Messages API 文档}，
 本书未将离线检查写成在线推理实测。
 
-\chapterchecktasks{23d-agent-tools}{正文基础三题}{
+\chapterchecktasks{23d-agent-tools}{理解与复算}{
 \item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？\chapterinlinehint{追踪请求从模型交到执行器之前的检查环节。}
 \item \textbf{计算：}沿用本章消息长度：系统与用户消息 $80$ Token，每条工具请求 $20$、每条结果 $40$。若要逐份读取 Q1--Q4 四份报表再答复，模型共被调用几次？累计输入多少 Token？\chapterinlinehint{第 $j$ 次调用读入 $80+60(j-1)$ 个 Token，再逐次相加。}
 \item \textbf{找错：}工具拒绝读取 Q2 时，Agent 自行补上 $120$ 并写“已核实”。哪一步失实？\chapterinlinehint{把“已核实”的声明与工具实际返回状态对照。}
 }
-\begin{conclusion}
+\par\smallskip
 Agent 循环由应用控制：授权、预算、错误返回和输出检查都是显式步骤。
 下一章解决工具接入与跨 Agent 协作的接口问题。
-\end{conclusion}

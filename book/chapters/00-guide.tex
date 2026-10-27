@@ -70,17 +70,15 @@ left=5mm,right=5mm,top=3mm,bottom=3mm]
 编号为 $[2,4,5,3]$，另留编号 $1$ 表示“其他”。
 全书的手算数据沿用这份约定：数字由我们设定，用来观察运算过程，模型中的参数则需要通过训练学习。
 
-\chapterchecktasks{00-guide}{正文基础三题}{
+\chapterchecktasks{00-guide}{理解与复算}{
 \item \textbf{练习题：}把“春天 花 开了 。”当作训练文本，写出每一步给模型看的前文和要预测的下一个 Token。一共有几道题？\chapterinlinehint{从第一个 Token 开始，每次多看一个 Token。}
 \item \textbf{编号：}按序章的简化词表，把“花 开了 。”写成 ID 序列；编号 $1$ 留给什么？\chapterinlinehint{对照“春天、花、开了、。”的编号 $[2,4,5,3]$。}
 \item \textbf{找错：}有人说：“只要模型逐 Token 生成得通顺，它提供的日期、来源和报价就必然真实。”解释逻辑漏洞。\chapterinlinehint{区分续写概率与外部证据的来源。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 真正的出发点是“计算机怎样学会生成有用的语言回答”。
 下一 Token 预测是贯穿全书的具体训练任务。
 现在要研究的第一步很朴素：
 如果规则不能全靠人手写，机器能不能从例子中学出一个可调整的计算函数？
-\end{conclusion}

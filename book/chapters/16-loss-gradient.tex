@@ -1,14 +1,10 @@
-\chapterrule
-\section{怎样量“猜得多差”？用损失比较预测}
-\label{intro:16-loss-gradient}
-\chaptercompass{各有对错的预测，怎样比较整体表现？}{把残差平方后取平均，用同一把尺子比较候选参数。}{三组样本与一组 $w,b$ $\to$ 一个损失值 $L$}{$w,b$ 在比较时固定，待后续优化}
-\modelpipelinefocus{0}{损失与候选比较}
+
 
 \subsection{正负残差相抵，就算猜对了吗？}
 \phantomsection\label{concept:loss}
 
 沿用三个样本 $(-1,-1),(0,2),(1,2)$ 与模型 $\widehat{y}=wx+b$。
-上一章的候选 B 取 $w=1,b=1$，预测为 $(0,1,2)$。
+图~\ref{fig:first-line-fit} 中的候选 B 取 $w=1,b=1$，预测为 $(0,1,2)$。
 每个样本的\textbf{残差}是预测减真实：$\widehat{y}-y$，三项分别为
 \[
 0-(-1)=1,\qquad 1-2=-1,\qquad 2-2=0.
@@ -41,7 +37,7 @@
 \[
 L(1,0)=\frac{0^2+(-2)^2+(-1)^2}{3}=\boxed{\frac53}.
 \]
-同样计算上一章的三条候选直线：
+把三条候选直线放在同一张表中：
 \begin{center}
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabular}{lcccc}
@@ -71,22 +67,23 @@ L(w,b)=\frac{(-w+b+1)^2+(b-2)^2+(w+b-2)^2}{3}.
 三个平方项按顺序对应 $x=-1,0,1$ 的样本。
 给定一组参数，我们已经能计算它的分数；接下来要让当前误差帮助我们决定怎样调整参数。
 
-\chapterchecktasks{16-loss-analytic}{正文基础三题}{
-\item \textbf{解释：}候选 B 的残差为 $(1,-1,0)$，相加为零。为什么均方误差仍大于零？\chapterinlinehint{先分别判断前两个样本是否预测正确，再平方取平均。}
-\item \textbf{手算：}沿用本章三个样本，取另一组参数 $w=2,b=1$。求三项预测、残差与均方误差，并与候选 B 比较。\chapterinlinehint{按 $x=-1,0,1$ 的顺序计算，不只看猜对了几个点。}
-\item \textbf{找错：}有人说“B 的损失比 A、C 都小，所以 B 一定是所有直线中的最优解”。这个判断缺少什么依据？\chapterinlinehint{区分三个候选中的最小值与全部参数中的最小值。}
+\chapterchecktasks{00-functions}{理解、手算与判断}{
+\label{check:16-loss-analytic}
+\item\textbf{预测：}取 $y=wx+b$，固定 $x=3$、$b=1$，把 $w$ 从 $2$ 增到 $3$，输出怎样变化？先写变化量，再算新输出。\chapterinlinehint{固定输入，先算权重增量乘以输入。}
+\item\textbf{找错：}同学说“推理时输入变了，训练好的 $w,b$ 也会自动再训练一遍”。请分别指出训练与推理究竟改变什么。\chapterinlinehint{分别列出训练阶段和推理阶段的可变量。}
+\item\textbf{解释：}候选 B 的残差为 $(1,-1,0)$，相加为零。为什么均方误差仍大于零？\chapterinlinehint{先分别判断前两个样本是否预测正确，再平方取平均。}
+\item\textbf{手算：}沿用本章三个样本，取另一组参数 $w=2,b=1$。求三项预测、残差与均方误差，并与候选 B 比较。\chapterinlinehint{按 $x=-1,0,1$ 的顺序计算，不只看猜对了几个点。}
+\item\textbf{找错：}有人说“B 的损失比 A、C 都小，所以 B 一定是所有直线中的最优解”。这个判断缺少什么依据？\chapterinlinehint{区分三个候选中的最小值与全部参数中的最小值。}
 }
 
-\begin{conclusion}
+\par\smallskip
 损失给整组预测一个可比较的分数，均方误差把各个样本的残差平方后取平均。
 下一章从当前参数出发，用损失的变化方向寻找更好的参数。
-\end{conclusion}
+
 
 \chapterrule
 \section{怎样让损失变小？梯度下降调参数}
 \label{intro:16a-gradient-descent}
-\chaptercompass{有了损失，下一步该怎样调整参数？}{先求出本例的最优解，再核验沿负梯度逐步更新的过程。}{当前 $w,b$、两个偏导数与学习率 $\eta$ $\to$ 新的 $w,b$}{$w,b$ 同步更新}
-\modelpipelinefocus{0}{梯度下降与参数更新}
 
 上一章比较了几组参数，却还没有找到最佳直线。
 这个三点直线拟合问题可以直接求出最优参数；如果只要这两个数，直接解更简便。

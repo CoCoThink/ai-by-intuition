@@ -3,8 +3,6 @@
 \label{intro:22b-token-to-output}
 \chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to \Pi:3\times5$}{本章只做前向；参数取自统一三维例子}
 手算入口：先做\hyperref[app:rational-mini]{附录 B 的二维分数迷你版（第~\pageref*{app:rational-mini}~页）}，再用本章四位小数核对脚本。
-\modelpipelinefocus{5}{输出头}
-
 现在\textbf{只用同一组三维参数}，把 Embedding、因果 Mask、Q/K/V、Norm、残差、
 FFN 与输出头串成一次前向计算。
 所有数值由 \texttt{scripts/teaching\_reference.py} 计算；
@@ -178,15 +176,13 @@ $(0,-0.4279,0.9325,-0.6140,0.7915)$，
 这说明最后位置\textbf{受前文影响}，而不是重新训练过一遍。
 全部结果可用附录 B 的三维主例参数与脚本复算。
 
-\chapterchecktasks{22b-token-to-output}{正文基础三题}{
+\chapterchecktasks{22b-token-to-output}{理解与复算}{
 \item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\Pi$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。\chapterinlinehint{沿计算路线表逐项核对序列轴、隐藏轴和词表轴。}
 \item \textbf{预测：}沿用初始正确类概率和贪心预测结果。三个位置中哪两个最初答错？只改第一个 Token 的 ID 后，为什么第三行的分数可能改变？\chapterinlinehint{先比较预测 ID 与目标，再追踪因果依赖。}
 \item \textbf{找错：}某人说“FFN 对每一行使用同样的权重，所以 FFN 会在不同 Token 之间交换信息，而 Attention 只在每一行内部运算”。改正两处角色混淆。\chapterinlinehint{分别检查逐行 FFN 与跨位置读取的公式。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 从 Token ID 到每位置五类概率的形状、权重与数值链已连通。
 下一章研究三个位置如何共同反传梯度更新同一套参数。
-\end{conclusion}

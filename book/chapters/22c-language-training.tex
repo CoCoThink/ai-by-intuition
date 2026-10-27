@@ -2,9 +2,6 @@
 \section{三个位置一起训练：从交叉熵到共享参数更新}
 \label{intro:22c-language-training}
 \chaptercompass{三个位置怎样联合训练同一套参数？}{按三位置平均损失，沿完整计算图反传并统一更新。}{$\Pi:3\times5\to L\to\nabla_\theta L$}{Embedding、位置、Q/K/V、FFN、输出头共同更新}
-\modelpipelinefocus{0}{联合训练与反向传播}
-
-
 上一章已经用\textbf{同一组初始参数}得到三个位置的词表概率。
 我们不再只挑最后一行、冻结所有前层参数反复调输出头；
 现在要让整段数据在\textbf{一次前向和一次反向传播}中共同训练完整网络。
@@ -422,17 +419,15 @@ z=wc+b,\quad p(+1)=\frac{1}{1+e^{-z}}.
 CI 核对均值不可区分、两种查询的权重、恢复均匀后的退化、
 交换记录顺序及全部 $10$ 个可训练标量的有限差分梯度。
 
-\chapterchecktasks{22c-language-training}{正文基础三题}{
+\chapterchecktasks{22c-language-training}{理解与复算}{
 \item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果 Mask 与损失 Mask。\chapterinlinehint{先错位对齐目标，再分别追踪可见性和计损位置。}
 \item \textbf{手算：}三个位置平均交叉熵；某位置正确类概率为 $0.3$，该类 logit 的梯度是多少？若只计两位置呢？\chapterinlinehint{先求单位置 $p-y$，再除以有效位置数。}
 \item \textbf{找错：}同学为更新输出头先改了 $W_{\rm out}$，再拿新权重反传得到 $W_Q$ 梯度，称为“同一次同步更新”。问题在哪里？\chapterinlinehint{给计算图中的全部权重标记本次使用的快照。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 三个位置同时提供训练信号，所有共享参数沿完整图累积梯度，
 在同一旧参数状态下统一更新。
 现在整条“ID $\to$ 概率 $\to$ 损失 $\to$ 梯度 $\to$ 再预测”已可复算。
 下一章研究：没有给出未来标准答案时，模型如何自回归地产生文字？
-\end{conclusion}

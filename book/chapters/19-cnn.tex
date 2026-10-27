@@ -1,8 +1,6 @@
 \chapterrule
 \section{为什么图片不能只靠大矩阵？从局部特征到 CNN}
 \label{intro:19-cnn}
-\chaptercompass{如何利用图像的局部空间结构？}{卷积核在不同位置共享权重，逐窗提取局部特征。}{图像（高$\times$宽$\times$通道）$\to$ 多通道特征图}{卷积核和偏置可学习，滑动位置共享参数}
-\modelpipelinefocus{2}{视觉局部特征}
 
 文本有顺序，图片则同时具有宽度、高度和局部空间关系。
 CNN 利用这种结构，让同一组特征检测规则在图像不同位置重复工作。
@@ -89,14 +87,12 @@ $2\times2$ 的核只有\textbf{4 个可学习数字}，但可以在所有位置\
 \]
 CNN 的关键是局部连接与权重共享：同一组参数可以检测不同位置的相似图案。
 
-\chapterchecktasks{19-cnn}{正文基础三题}{
+\chapterchecktasks{19-cnn}{理解与复算}{
 \item \textbf{比较：}同一卷积核在多个空间位置共享参数，与把整张图片展平成向量后使用全连接层相比，节省了什么？\chapterinlinehint{比较空间位置增多时，独立权重组数如何变化。}
 \item \textbf{手算：}$3\times3$ 卷积核、输入 $3$ 通道、输出 $8$ 通道，不计偏置共有多少权重？\chapterinlinehint{按核面积、输入通道、输出通道三项相乘。}
 \item \textbf{预测：}保持核宽、通道数和步长不变，输入图像宽高各增大一倍，卷积参数量与输出位置数分别怎样变化？\chapterinlinehint{分别追踪权重形状与输出网格面积。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 图片有空间结构，直接展平会浪费这种结构。CNN 利用小核扫描、跨位置权重共享和分层特征提取，让模型更有效地识别局部模式。下一章换一条路线：把一张 $4\times4$ 小图切成 Patch，使图像也能输入 Transformer；为了看清切块顺序，那里会换一张每块内容都不同的小图。
-\end{conclusion}

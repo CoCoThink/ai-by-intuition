@@ -1,8 +1,7 @@
 \chapterrule
 \section{面对新模型与新缩写，怎么判断它值不值得学？}
 \label{intro:23e-tech-judgement}
-\chaptercompass{新技术好不好，要用什么证据判断？}{核对目标瓶颈、基线、质量指标、预算与失败条件。}{同一任务／相同约束 $\to$ 可对照的指标}{技术选型比较结构、训练与系统各层的方案}
-\modelpipelinefocus{8}{技术判断与系统约束}
+
 \asof{2026-10-25}{保留集、可比较的指标与对照实验}
 
 
@@ -167,7 +166,7 @@ Agent 还需记录工具成功率、越权率、延迟、成本和失败恢复�
 这些偏差在\href{https://arxiv.org/abs/2306.05685}{Zheng 等（2023）的 LLM-as-a-Judge 研究}中有实证讨论。
 
 % Keep this closing block with the self-check so the part-end page is not a sparse tail.
-\Needspace{12\baselineskip}
+\Needspace{22\baselineskip}
 \textbf{每次选型都留下五项记录：}旧方法的瓶颈，新方法的输入与输出，
 可复算证据，被转移的成本或风险，以及退回简单方法的条件。
 
@@ -176,16 +175,8 @@ Agent 还需记录工具成功率、越权率、延迟、成本和失败恢复�
 缩放趋势与研究观点各有实验范围。证据缺项时保留该项为待测，不把局部收益外推到所有任务。
 \end{boundarybox}
 
-\chapterchecktasks{23e-tech-judgement}{正文基础三题}{
+\chapterchecktasks{23e-tech-judgement}{理解与复算}{
 \item \textbf{分类：}某产品宣布“更聪明又更便宜”，至少指出三种不同层级的改动来源。\chapterinlinehint{沿模型到产品的各层逐项列出可改动因素。}
 \item \textbf{手算：}缓存元素由 $100$ 降到 $50$，降幅多少？能据此推出准确率或首 Token 延迟吗？\chapterinlinehint{先用减少量除以原量，再核对该指标的含义。}
 \item \textbf{找错：}A 用长输入、旧硬件，B 用短输入、新硬件。为何不能把差距全归因于架构？\chapterinlinehint{列出两次测试中同时发生变化的条件。}
 }
-
-
-
-\begin{conclusion}
-评估新技术，先确认\textbf{它修改哪一层、解决什么问题}，
-再核对可复算的证据、成本与失败条件。
-明确需求后，才决定是否深入研究它的实现。
-\end{conclusion}

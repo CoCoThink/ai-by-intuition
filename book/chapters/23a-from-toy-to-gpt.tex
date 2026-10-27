@@ -1,9 +1,6 @@
 \chapterrule
 \section{从三维到真实模型：规模、配置与分词}
 \label{intro:23a-from-toy-to-gpt}
-\chaptercompass{三维模型与 GPT-2 的差别是什么？}{训练任务相似，对照真实模型的规模、Tokenizer 与参数细节；数据工程见训练系统章。}{$\mathrm{IDs}:1\times T\to Z:T\times|\mathcal V|$}{GPT-2 的 Embedding、投影、Norm 等参数；本书三维主例只有 99 个训练元素}
-\modelpipelinefocus{7}{真实模型续写推理}
-
 
 上一章会用训练好的模型一步步生成 Token。
 但我们手算的网络只有一层、一个头、三个隐藏特征和五项词表。
@@ -231,17 +228,8 @@ python3 scripts/chinese_tokenizer_demo.py --real
 训练资料的来源、去重与配比则转到第~\ref*{intro:23b-deployment-and-ecosystem}~章的
 \sectionentry{sec:data-engineering}，分别检查模型与数据两条链。
 
-\chapterchecktasks{23a-from-toy-to-gpt}{正文基础三题}{
+\chapterchecktasks{23a-from-toy-to-gpt}{理解与复算}{
 \item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？\chapterinlinehint{用隐藏宽度除以头数，再单独检查层数配置。}
 \item \textbf{估算：}忽略偏置，令每层 Attention 投影参数约 $4d^2$、FFN 参数约 $8d^2$。代入 $d=768$，哪个组件占更多层内参数？\chapterinlinehint{先比较两个参数公式的系数。}
 \item \textbf{找错：}同学在三维玩具任务上降低了损失，便声称它已具备大型模型的能力。还缺哪两类独立证据？\chapterinlinehint{分别列出未见任务评测与事实核验所需证据。}
 }
-
-
-
-
-
-\begin{conclusion}
-从三维模型到真实预训练，计算链相通；规模、数据质量与独立评测共同决定效果。
-下一部分把模型接到证据、工具与授权边界；图像输入作为扩展路径，放在\hyperref[part:vision]{视觉部分}。
-\end{conclusion}

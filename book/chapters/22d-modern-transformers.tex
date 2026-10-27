@@ -2,7 +2,6 @@
 \section{现代 Transformer 为什么看起来越来越不像原版？}
 \label{intro:22d-modern-transformers}
 \chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_k,\quad KV:T\times H_{KV}\times d_k$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
-\modelpipelinefocus{3}{现代注意力与架构}
 \asof{2026-10-25}{相对位置、归一化与缓存预算}
 
 
@@ -527,16 +526,14 @@ $8\times(3+2)=\answerresult{40}$。
 计数节省先解释瓶颈，实际收益由实现与负载决定。
 \end{boundarybox}
 
-\chapterchecktasks{22d-modern-transformers}{正文基础三题}{
+\chapterchecktasks{22d-modern-transformers}{理解与复算}{
 \item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}
 \item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
 \item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 现代 Transformer 在位置表示、数值尺度、参数使用方式和上下文访问方式上提供了不同选择。
 判断一项技术，先问它解决了什么已知问题，在哪种计算或数据条件下有收益，付出了什么代价。
 下一章从这些具体选择中抽离出来，讨论怎样用实验、来源与适用条件评价任何新的模型架构或 Agent 技术。
-\end{conclusion}

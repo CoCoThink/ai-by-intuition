@@ -1,9 +1,7 @@
 \chapterrule
-\section{会接龙，还要怎样学会对话与解决任务？}
+\section{怎样改进回答：训练反馈与推理时计算}
 \label{intro:23c-post-training}
-\chaptercompass{续写能力怎样进一步对齐任务要求？}{区分 SFT、偏好信号、可验证奖励与推理时计算。}{示范／奖励／候选 $\to$ 不同训练或验证路径}{SFT、奖励学习会更新参数；CoT 提示只改变上下文}
-\modelpipelinefocus{0}{后训练目标与反馈}
-
+\label{intro:23cc-test-time-compute}
 
 \begin{idea}
 \noindent\emph{任务目标改变，训练信号也需要改变}\par
@@ -79,7 +77,7 @@ P(A\succ B)=\sigma(r_A-r_B)
 \]
 这是成对偏好建模的一种损失。进入策略优化时，还要按所选算法组织采样、优势估计与约束。
 
-\subsubsection*{DPO：让对数概率比充当隐式奖励}
+\subsubsection*{\texorpdfstring{{\symboliconfont ★}}{★} 选读 DPO：让对数概率比充当隐式奖励}
 \phantomsection\label{concept:dpo}
 \textbf{直接偏好优化（Direct Preference Optimization, DPO）}把同一个成对损失直接写到语言模型上。
 对偏好回答 $y_w$ 与较差回答 $y_l$，各算一次当前策略相对参考策略的对数概率比
@@ -131,7 +129,7 @@ $r(x,y)=\beta\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{只依赖 
 (\mathcal A_1,\mathcal A_2,\mathcal A_3,\mathcal A_4)=\boxed{(+1,-1,+1,-1)}.
 \]
 奖励高低对应正负优势；若整组奖励相同，需加稳定项处理 $\sigma_r=0$。
-归一化口径因实现而异：改用样本标准差（分母为 $3$）时 $\sigma_r=\sqrt{1/3}\approx0.577$，
+\textbf{{\symboliconfont ★} 实现口径（选读）：}归一化口径因实现而异：改用样本标准差（分母为 $3$）时 $\sigma_r=\sqrt{1/3}\approx0.577$，
 优势约为 $\pm0.866$；Dr.~GRPO 等变体只减组均值、不除以标准差，得到 $\pm0.5$。
 比较报告时要写明所用口径。
 \textbf{注意：}此处只算组内优势；完整 GRPO 还涉及策略概率比、裁剪和正则化。
@@ -140,7 +138,7 @@ $r(x,y)=\beta\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{只依赖 
 不除标准差的分析见 \href{https://arxiv.org/abs/2503.20783}{Liu 等（2025）}。
 \end{example}
 
-\subsubsection*{再走一步：优势怎样推高或压低一个 logit？}
+\subsubsection*{\texorpdfstring{{\symboliconfont ★}}{★} 选读：优势怎样推高或压低一个 logit？}
 把已采样答案与优势固定，先忽略裁剪和正则化，单个样本的策略损失写成
 \[
 \ell_i=-\mathcal A_i\ln p_\theta(y_i),\qquad
@@ -170,85 +168,3 @@ SFT 的示范来自数据集，策略学习的动作来自采样、反馈来自�
 脚本 \texttt{icl\_policy\_demo.py} 还用有限差分核对这三个导数。
 
 把自动验证用在更复杂的任务上，还需要检查答案格式、代码测试结果、奖励漏洞以及验证器本身的错误。
-
-\subsection{“让模型写步骤”与“训练模型推理”不是一回事}
-\phantomsection\label{concept:cot-prompt}
-
-\textbf{写出中间步骤，为后续 Token 提供一个可读取的工作区。}
-思维链提示（Chain-of-Thought, CoT）让模型先写计算过程，再给结果。
-每个新 Token 都经过一次模型前向计算，后续生成又能读取此前写出的步骤，
-于是多步任务得到更多串行计算与中间记录。
-
-CoT 提示只改变输入，训练才修改参数，推理时搜索则额外花费计算；
-三者的分工集中列在本章末的\hyperref[sec:training-inference-roles]{分工表}中。
-
-\begin{boundarybox}
-步骤写得完整仍需逐项核对；它们是生成文本，无法直接证明模型内部采用了同一推理过程。
-错误步骤会向后传播，额外生成也会增加 Token 与延迟成本。
-训练后的收益用独立任务测试和失败案例衡量。
-\end{boundarybox}
-
-\subsection{同一份季度报告任务：哪些改进需要训练？}
-
-假设应用希望模型从\textbf{被授权的季度运营报告}中
-逐一提取“营业收入、季度、币种和原表出处”，
-最终做出不遗漏来源的比较。
-我们可以区分以下改进方式：
-
-\begin{itemize}
-\item \textbf{只改 Prompt/Few-shot：}给两条“数值+单位+来源”示例，
-让预训练模型模仿格式；每次请求可改变提示，但不会更新权重。
-\item \textbf{使用 SFT：}收集经过人工核对的示范输出，
-让模型经交叉熵学习遵守格式、在缺证据时拒绝臆测；
-改变的是可训练参数；报告原文由检索或文件工具提供。
-\item \textbf{偏好反馈：}在两条内容相近的回答中，
-偏好明确列出原表来源、单位一致、承认缺失证据的一条。
-偏好信号训练回答的选择，财务数值则交给原表核验。
-\item \textbf{可验证奖励：}针对提取出的数值，用程序比较单位、
-检查可验证的计算公式与来源格式；
-验证器同时核对格式、数值与出处。
-\end{itemize}
-
-训练调整回答行为。读取私有文件的权限与原表证据由应用提供，
-\hyperref[intro:23d-agent-systems]{检索与任务系统}一章将说明怎样提供这些证据。
-
-
-\subsection{不同训练与推理策略的分工}
-\phantomsection\label{sec:training-inference-roles}
-提示、训练与推理时计算的区别全书只在这里列一次：
-提示策略改变输入而不修改参数；SFT、偏好与奖励信号修改参数；
-推理时采样、验证或搜索在固定参数下多花计算，换取一定条件下更高的成功率。
-
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.3}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{30mm}X@{}}
-\toprule
-阶段/方法 & 主要改变什么\\
-\midrule
-预训练 & 大规模数据中学习一般 Token 预测模式\\
-SFT & 利用示范答案塑造特定任务与回应方式\\
-RLHF/DPO 等偏好优化 & 根据比较或反馈优化回答偏好；通常约束新策略不远离参考策略\\
-RLVR & 利用可程序化检查的奖励训练某些任务能力\\
-CoT 提示 & 改变输入组织方式，不必修改模型权重\\
-推理时搜索/验证 & 使用额外计算与外部规则筛选候选结果\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-\chapterchecktasks{23c-post-training}{正文基础三题}{
-\item \textbf{比较：}SFT、成对偏好学习与可验证奖励的反馈信号有何不同？各举一个适合的任务。\chapterinlinehint{先列出三种方法各自实际收到的反馈。}
-\item \textbf{手算：}SFT 目标 Token 的概率为 $0.25$，求单位置交叉熵；若四个组内奖励是 $(1,0,1,0)$，按总体标准差标准化得到哪些相对优势？\chapterinlinehint{先算负对数，再用奖励减均值并除标准差。}
-\item \textbf{找错：}同学把这四个相对优势直接当成完整 GRPO 更新，遗漏了什么策略目标与数值边界？\chapterinlinehint{在相对优势之后继续写策略目标，并检查零方差。}
-}
-
-
-
-\begin{conclusion}
-理解一种模型改进方法，要看它使用什么目标和反馈、是否更新参数，以及如何评价结果。
-从预训练到后训练，模型仍在利用可微计算与优化，
-但训练数据和任务定义已经发生变化。
-训练完成后，在固定参数下增加采样与核验计算，还能怎样改变解题成功率？
-下一章\hyperref[intro:23cc-test-time-compute]{推理时计算}研究这个问题。
-\end{conclusion}

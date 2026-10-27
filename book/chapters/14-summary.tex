@@ -31,20 +31,15 @@ Softmax 对每条查询重新归一化，所以它的读出随上下文逐条计
 本部分则从外积记忆的角度把它重新拆开。
 
 % This chapter spans the stacked K/V, nonlinearity and unified-view files; its self-check closes the last one.
-\chapterchecktasks{09-nonlinearity-and-memory}{基础与贯通复习}{
-\item \textbf{手算：}本章 $xK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
-\item \textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留原负权重重算，再对照中间匹配向量。}
-\item \textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？\chapterinlinehint{分别观察单位区间内部与端点的幂。}
 
-\item \textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。先算 $0.5^2$ 与 $(-0.5)^2$，再指出问题。\chapterinlinehint{把负相似度代入，比较符号与绝对值。}
-\item \textbf{手算：}两条 Value 是 $(1,0),(0,1)$，读取权重为 $(0.25,0.75)$，输出是什么？\chapterinlinehint{把每条 Value 乘权重，再逐分量相加。}
-\item \textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。\chapterinlinehint{分别检查分母、写入规则与容量假设。}
-}
+% Keep this closing subsection with the self-check so the part-end page is not a sparse tail.
 
+\subsubsection{线性注意力的状态，就是累加的外积记忆}
 
+\hyperref[sec:modern-delta-rule]{现代架构章的线性状态}$\mathcal{M}_t=\sum_{i\le t}k_i^\top v_i$
+正是本部分的外积记忆按因果前缀逐步写入；下节将在理想随机条件下估计这种未归一化状态的干扰。
+实际线性 Attention 还需特征映射或归一化，Gated DeltaNet 另加误差修正和门控，
+干扰项要按各自的更新公式重新估计。
 
-\begin{conclusion}
-非线性 MLP、线性外积记忆与 Softmax Attention 都可以从匹配和读取来理解；
-它们的归一化方式、参数来源和写入机制各不相同。
-这种视角帮助我们追踪计算，事实是否被可靠保存仍要靠评测与来源核对。
-\end{conclusion}
+\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
+可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。

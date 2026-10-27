@@ -246,6 +246,20 @@ def check_pdf(path, aux, used):
         while start<len(args) and args[start]=='{':
             value,start=argument(args,start);fields.append(value)
         if len(fields)>=4:labels[match[1]]=fields
+    for primary,legacy in (
+        ('intro:00-functions','intro:16-loss-gradient'),
+        ('intro:21c-naive-attention','intro:21b-why-attention'),
+        ('intro:23c-post-training','intro:23cc-test-time-compute'),
+        ('intro:04-key-value-outer-product','intro:06-better-linear-memory'),
+        ('intro:09-nonlinearity-and-memory','intro:13-capacity'),
+        ('check:00-functions','check:16-loss-analytic'),
+        ('check:21c-naive-attention','check:21b-why-attention'),
+        ('check:23c-post-training','check:23cc-test-time-compute'),
+        ('check:04-key-value-outer-product','check:06-better-linear-memory'),
+        ('check:09-nonlinearity-and-memory','check:13-capacity'),
+    ):
+        if primary not in labels or legacy not in labels or labels[primary][3]!=labels[legacy][3]:
+            failures.append(f'Merged compatibility link resolves to a different destination: {primary}/{legacy}')
     check_toc_folios(reader,aux,labels)
     failures.extend(contour_label_errors(reader,path,labels))
     failures.extend(check_iteration_legend(reader,path,labels))

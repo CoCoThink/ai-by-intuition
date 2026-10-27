@@ -2,11 +2,6 @@
 \chapterrule
 \section{检索与证据：RAG 怎样回答有来源的问题？}
 \label{intro:23d-agent-systems}
-\chaptercompass{三季度报告都找到了吗？}{RAG 先定位有出处的材料，再核对证据覆盖与计算所需的输入。}{查询／文档块 $\to$ 相似度排序 $\to$ 可核对证据}{检索和外部状态不自动更新模型权重}
-\modelpipelinefocus{8}{RAG 与证据覆盖}
-
-
-
 
 \subsection{先确定证据覆盖，再做计算}
 任务是从三份季度报表提取收入、单位与原表出处，再计算 Q2、Q3 环比。
@@ -166,12 +161,11 @@ $(132-120)/120=\boxed{10\%}$。
 分类校准的基础定义见\href{https://proceedings.mlr.press/v70/guo17a.html}{Guo 等（2017）}；
 应用到生成任务时，先定义主张与判定标准，再估计其正确频率。
 
-\chapterchecktasks{23d-agent-rag}{正文基础三题}{
+\chapterchecktasks{23d-agent-rag}{理解与复算}{
 \item \textbf{证据：}要比较 Q1--Q3，Top-2 只返回 Q3 和 Q1。先不计算增长率，指出缺哪份证据，以及系统下一步该怎样办。\chapterinlinehint{把任务所需季度与已返回季度做集合对照。}
 \item \textbf{手算：}任务需要 Q1--Q4 四份报表，Top-3 返回 Q4、Q2、去年 Q4（不在任务范围内）。求必需证据的 recall@3；若改取 Top-5 后又命中 Q1、Q3，recall@5 是多少？\chapterinlinehint{先写出必需集合，再数前 $k$ 个结果中命中的必需文档。}
 \item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？\chapterinlinehint{分别检查相关性排名、出处、单位与原表口径。}
 }
-\begin{conclusion}
+\par\smallskip
 检索找到候选证据，应用仍需核对覆盖、来源和计算条件。
 接下来让工具读取授权资源并执行可复算的计算。
-\end{conclusion}

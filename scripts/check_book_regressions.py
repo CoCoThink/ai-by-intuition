@@ -246,10 +246,13 @@ def validate_existing_regressions(main, sources):
     # These numbered chapters span two or more .tex files. Source checks and
     # recaps belong after their final subsection in every merged chapter.
     for early, late, check_id in (
-        ("04-key-value-outer-product", "05-memory-interference", "04-key-value-outer-product"),
+        ("00-functions", "16-loss-gradient", "00-functions"),
+        ("21c-naive-attention", "21b-why-attention", "21c-naive-attention"),
+        ("23c-post-training", "23cc-test-time-compute", "23c-post-training"),
+        ("04-key-value-outer-product", "06-better-linear-memory", "04-key-value-outer-product"),
         ("17-backpropagation", "18b-end-to-end-learning", "17-backpropagation"),
-        ("08-stacking-key-value", "14-summary", "09-nonlinearity-and-memory"),
-        ("09-nonlinearity-and-memory", "14-summary", "09-nonlinearity-and-memory"),
+        ("08-stacking-key-value", "13-capacity", "09-nonlinearity-and-memory"),
+        ("09-nonlinearity-and-memory", "13-capacity", "09-nonlinearity-and-memory"),
     ):
         marker = r"\chapterchecktasks{" + check_id + "}"
         if marker in sources[early] or marker not in sources[late]:

@@ -1,14 +1,10 @@
-\Needspace{13\baselineskip}
-\chapterrule
-\section{\texorpdfstring{{\symboliconfont ★}}{★} 选读：高维空间与记忆容量}
-\phantomsection\label{intro:13-capacity}
-\chaptercompass{提高维度和匹配选择性，会改变哪些干扰尺度？}{从随机 Key 的点积和 Value 的符号抵消估计容量。}{$|k_i k_j^\top|\approx1/\sqrt{d_k}$}{本章分析理想随机状态，不估计实际模型可靠知识量}
-\modelpipelinefocus{3}{高维记忆容量}
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：高维空间与记忆容量}\label{sec:memory-capacity}
 
 
 在随机 Key 近似独立的理想模型中，提高维度能减小交叉点积。下面估算这一变化怎样影响干扰和容量。
+这里估计的是随机状态的干扰尺度；真实模型能可靠保存多少知识，还要核对实际 Key/Value 分布与召回错误率。
 
-\subsection{随机高维向量往往近似正交}
+\subsubsection{随机高维向量往往近似正交}
 如果两个独立随机单位向量在 $d_k$ 维空间中，那么它们点积的典型尺度为：
 \begin{equation}
 |\vect{k}_i\vect{k}_j^\top|\approx\frac{1}{\sqrt{d_k}},\qquad i\ne j.
@@ -17,7 +13,7 @@
 
 例如 $d_k=64$ 时为 $1/8=0.125$；维度越高，随机无关 Key 越接近垂直。
 
-\subsection{为什么有 \texorpdfstring{$\sqrt{T_k}$}{记忆条数的平方根}？}
+\subsubsection{为什么有 \texorpdfstring{$\sqrt{T_k}$}{记忆条数的平方根}？}
 随机向左或向右各走一步，$100$ 步的典型位移是 $\sqrt{100}=10$。
 同样，独立随机干扰的波动按 $\sqrt{T_k}$ 累积；结合单条匹配的尺度：
 \begin{equation}
@@ -26,7 +22,7 @@
 \end{equation}
 因此在这个\textbf{随机 Key/Value、简单外积求和}的模型里，容量的标度大约是维度 $d_k$。
 
-\subsection{平方激活为何带来平方量级？}
+\subsubsection{平方激活为何带来平方量级？}
 不相关 Key 的相似度量级从 $1/\sqrt{d_k}$ 平方成 $1/d_k$。
 $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
 若 Value 全同号，干扰会随 $T_k$ 累加。满足随机抵消假设时：
@@ -36,31 +32,13 @@ $\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $T_k\approx d_k^p$ 这一类标度。
 
-% Keep this closing subsection with the self-check so the part-end page is not a sparse tail.
-\Needspace{10\baselineskip}
-\subsection{线性注意力的状态，就是累加的外积记忆}
-
-\hyperref[sec:modern-delta-rule]{现代架构章的线性状态}$\mathcal{M}_t=\sum_{i\le t}k_i^\top v_i$
-正是本部分的外积记忆按因果前缀逐步写入；本章的容量估计因此也适用于这种未归一化状态。
-实际线性 Attention 还需特征映射或归一化，Gated DeltaNet 另加误差修正和门控，
-干扰项要按各自的更新公式重新估计。
-
-\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
-可用 \texttt{python3 scripts/memory\_demo.py} 验证前缀外积累计与读取。
-
-
-\chapterchecktasks{13-capacity}{正文基础三题}{
-\item \textbf{预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？\chapterinlinehint{比较典型尺度中的维度项。}
-\item \textbf{手算：}计算 $(1,0)\cdot(0,1)$ 与 $(1,0)\cdot(0.6,0.8)$。\chapterinlinehint{逐项相乘后求和。}
-\item \textbf{找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？\chapterinlinehint{先检查平方项的符号，再回看容量假设。}
+\chapterchecktasks{09-nonlinearity-and-memory}{理解、手算与判断}{
+\label{check:13-capacity}
+\item\textbf{手算：}本章 $xK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
+\item\textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留原负权重重算，再对照中间匹配向量。}
+\item\textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？\chapterinlinehint{分别观察单位区间内部与端点的幂。}
+\item\textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。先算 $0.5^2$ 与 $(-0.5)^2$，再指出问题。\chapterinlinehint{把负相似度代入，比较符号与绝对值。}
+\item\textbf{找错：}某人看到外积读出与 Attention 都可写成权重乘 Value，就宣布它们的权重归一化、容量与更新过程完全相同。至少指出两项差异。\chapterinlinehint{分别检查分母、写入规则与容量假设。}
+\item\textbf{{\symboliconfont ★} 预测：}独立随机单位 Key 维度增大时，典型交叉点积和串扰怎样变化？\chapterinlinehint{比较典型尺度中的维度项。}
+\item\textbf{{\symboliconfont ★} 找错：}“平方激活让干扰正负抵消、容量无限”。错在何处？\chapterinlinehint{先检查平方项的符号，再回看容量假设。}
 }
-
-
-
-\begin{conclusion}
-\textbf{选读收束：联想记忆的关键结论。}
-点积匹配，外积写入；线性读取会串扰，非线性与 Softmax 提高选择性。
-行向量约定为 $\mathcal{M}=\sum_i k_i^\top v_i$、$x\mathcal{M}=\sum_i(xk_i^\top)v_i$。
-沿着这条\textbf{匹配与读取}主线，回看 Attention 与 FFN 的分工。
-\end{conclusion}
-

@@ -2,8 +2,6 @@
 \section{反向传播究竟在传什么？}
 \phantomsection\label{concept:backprop}
 \label{intro:17-backpropagation}
-\chaptercompass{多层网络怎样高效求所有梯度？}{沿计算图反向复用局部导数，而不是为每个参数重算。}{$x\to h\to\widehat{y}\to L$，反向得到梯度}{$w_1,w_2$ 等层参数}
-\modelpipelinefocus{0}{反向传播}
 
 多层网络的参数通过后续计算逐步影响最终损失。
 若为每个参数都重新展开整条计算链，会做许多重复运算。
@@ -151,5 +149,3 @@ $z=w_1x+b_1$、$h=\relu(z)$、$\widehat{y}=w_2h+b_2$。
 每个训练步都用同一组旧参数完成前向与反向传播，算出全部梯度，再由优化器统一更新所有参数。
 不要反传到某一层就立刻修改那一层，否则同一步会混用新旧权重。
 \end{warningbox}
-
-

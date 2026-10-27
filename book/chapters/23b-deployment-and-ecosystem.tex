@@ -2,8 +2,7 @@
 \chapterrule
 \section{数据、训练系统与部署：资源怎样分配？}
 \label{intro:23b-deployment-and-ecosystem}
-\chaptercompass{从训练资料到在线服务，资源怎样分配？}{沿数据整理、训练执行、推理服务三段，核对质量与资源预算。}{原始资料 $\to$ 训练 Token $\to$ 模型权重 $\to$ 服务输出}{训练更新参数；推理固定权重，缓存与运行状态变化}
-\modelpipelinefocus{8}{部署、缓存与系统}
+
 \asof{2026-10-25}{数据隔离、存储预算与计算通信代价}
 
 
@@ -218,16 +217,8 @@ $V_{\rm lr}:8\times1000$，则需要
 \href{https://docs.vllm.ai/}{vLLM}。
 软件版本、设备兼容与许可证以项目文档为准。
 
-\chapterchecktasks{23b-deployment-and-ecosystem}{正文基础三题}{
+\chapterchecktasks{23b-deployment-and-ecosystem}{理解与复算}{
 \item \textbf{区分：}训练代码、模型权重、推理引擎和对外 API 在一个产品里承担什么不同职责？\chapterinlinehint{按训练、存储、执行和服务四个环节追踪职责。}
 \item \textbf{估算：}$10^9$ 个参数各占 $2$ 字节，不计运行开销仅权重需要多少十进制 GB？若另有 $0.5$ GB 缓存，合计至少多少？\chapterinlinehint{先算参数个数乘单个字节数，再统一 GB 单位。}
 \item \textbf{找错：}有人认为把参数量化到更少位数，模型质量、吞吐与延迟都会按字节比例等幅改善。请指出两处需要实测的地方。\chapterinlinehint{分别设计质量对照与同负载的速度测试。}
 }
-
-
-
-\begin{conclusion}
-数据整理决定训练材料，训练系统产出权重，推理引擎把权重交付为服务。
-三段分别核对质量、计算、权重与缓存预算；安全措施贯穿资料与工具的使用。
-下一部分回到模型本身，看现代架构怎样改进计算与存储。
-\end{conclusion}

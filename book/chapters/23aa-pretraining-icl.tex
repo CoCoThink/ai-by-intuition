@@ -1,8 +1,7 @@
 \chapterrule
 \section{预训练已经学会续写，为什么还能临时学会新任务？}
 \label{intro:23aa-pretraining-icl}
-\chaptercompass{新任务能否不更新权重就学会格式？}{把任务说明、示例和新输入放入同一段可见上下文。}{上下文 Token $\to$ 下一 Token 概率}{ICL 保持 $\theta$ 不变；SFT 才使用梯度调整参数}
-\modelpipelinefocus{8}{上下文任务与 ICL}
+
 \phantomsection\label{concept:pretraining}
 \phantomsection\label{concept:in-context-learning}
 
@@ -64,7 +63,7 @@ p_\theta(y\mid\underbrace{\text{任务说明、示例、新输入}}_{\text{上�
 \]
 模型按上下文示例生成同类格式，应用逐项核对单位与原文出处。
 
-\subsection{动手算：固定参数怎样从示例中读出新映射？}
+\subsubsection{动手算：固定参数怎样从示例中读出新映射？}
 \label{sec:icl-induction}
 \localfixture{二维双记录读取；展示一个前缀匹配与复制的机制}
 考虑序列 $[A][B][C][D][A]$：已完成的示例是 $A\to B$、$C\to D$，
@@ -81,7 +80,7 @@ V=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
 q_A=(\sqrt2\ln9,0).
 \]
 $K$ 两行分别表示前驱 $A,C$；$V$ 两行在 $B,D$ 坐标上编码后继。
-沿用第~\ref*{intro:21b-why-attention}~章的缩放点积 Attention 计算：
+沿用第~\ref*{intro:22a-position-multihead}~章的缩放点积 Attention 计算：
 \[
 s=\frac{q_AK^\top}{\sqrt2}=(\ln9,0),\qquad
 \alpha=\softmax(s)=(0.9,0.1),\qquad c=\alpha V=(0.9,0.1).
@@ -104,7 +103,6 @@ $\Pr(B)=e^{4.5}/(e^{4.5}+e^{0.5})\approx\boxed{0.982014}$。
 RAG 则从系统允许的数据中检索片段放进上下文，同样在固定权重下工作，来源与准确性由应用核验。
 提示、训练与推理时计算的完整分工见下一章的\hyperref[sec:training-inference-roles]{分工表}。
 
-\subsection{为什么大规模预训练也不是万能钥匙？}
 
 例如训练文本大多只讨论到某一日期，
 模型参数里没有自动更新的未来报表。
@@ -116,16 +114,14 @@ Few-shot 能让某些任务在不更新参数的情况下改善表现，
 \href{https://arxiv.org/abs/2005.14165}{Language Models are Few-Shot Learners}；
 其中的实验结论有其模型、数据和评测范围。
 
-\chapterchecktasks{23aa-pretraining-icl}{正文基础三题}{
+\chapterchecktasks{23aa-pretraining-icl}{理解与复算}{
 \item \textbf{比较：}预训练、SFT、Few-shot ICL 中哪些需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{分别检查是否有反传、更新与仅改变输入。}
 \item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？\chapterinlinehint{先数本次任务记录，再列出新会话实际携带的消息。}
 \item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。\chapterinlinehint{比较提示输入与优化器更新，并追踪资料来源。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 预训练用海量预测题改变权重；ICL 利用已训练模型与当前上下文，
 权重保持固定。下一道缺口：
 即使模型能模仿任务格式，我们又怎样让它更稳定地遵守指令与评价标准？
-\end{conclusion}

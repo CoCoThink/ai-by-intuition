@@ -2,8 +2,7 @@
 \section{从单 Query 到批量 Self-Attention}
 % This chapter continues the local 2D QKV illustration, not the 5x3 fixture.
 \label{intro:11-softmax-memory}
-\chaptercompass{如何同时处理整句的 Query，而不逐个重复手算？}{将每行匹配合成 $QK^\top$，逐行 Softmax 后一次读取 $AV$。}{$Q:T\times d_k,\ K:T\times d_k,\ V:T\times d_v\to Y:T\times d_v$}{$W_Q,W_K,W_V$ 可学习；示例仅 $W_Q,W_V$ 为单位投影}
-\modelpipelinefocus{3}{批量 Self-Attention}
+
 \phantomsection\label{intro:12-self-attention-matrices}
 \phantomsection\label{concept:self-attention}
 
@@ -172,7 +171,6 @@ Y_{\rm causal}=A_{\rm causal}V
 若别的 Mask（如填充位置）把某一行全部遮住，分母为零，需要实现另行处理。
 
 
-
 \subsection{缩放点积 Attention 的通用式}
 \begin{equation}
 \boxed{\operatorname{Attention}(Q,K,V)
@@ -196,16 +194,14 @@ $\sigma(XW_1)W_2$ 对每个 Token 行再施加非线性；
 $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 语言模型中的这次跨行读取还要配合上面的因果 Mask，只读当前位置及以前的行。
 
-\chapterchecktasks{11-softmax-memory}{正文基础三题}{
+\chapterchecktasks{11-softmax-memory}{理解与复算}{
 \item \textbf{形状：}输入 $Q:3\times2,K:4\times2,V:4\times3$。写出分数矩阵 $QK^\top$、逐行 Softmax 和最终输出的形状。\chapterinlinehint{依次核对转置、逐行归一化与乘 Value。}
 \item \textbf{手算：}仅两条 Key，匹配分数相同，Softmax 权重分别是多少？若 Value 是 $(1,0)$ 与 $(0,1)$，输出是什么？\chapterinlinehint{先利用分数相等的对称性，再加权求和。}
 \item \textbf{预测：}只把同一行中的第一个匹配分数增大，保持第二个不变，Softmax 第一权重变化方向是什么？两者都加同一个常数呢？\chapterinlinehint{比较指数比值，并检查共同平移能否约去。}
 }
 
 
-
-\begin{conclusion}
+\par\smallskip
 现在你能从单次 Query 的点积与加权求和，直接写出
 $QK^\top\to\softmax\to AV$，并核对 $T_q,T_k,d_k,d_v$ 的形状；
 加上因果 Mask 后，位置 $i$ 只读位置 $1$ 到 $i$。
-\end{conclusion}

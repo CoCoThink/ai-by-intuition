@@ -1,8 +1,6 @@
 \chapterrule
 \section{位置编码、缩放与多头注意力的手算}
 \label{intro:22a-position-multihead}
-\chaptercompass{交换 Token 时，模型怎么知道位置？}{对照位置向量、缩放点积和两个注意力头的独立读取。}{$X:T\times d\to QK^\top:T\times T\to Y:T\times d$}{位置表可学习；Q/K/V 与输出投影由训练确定}
-\modelpipelinefocus{3}{位置与多头注意力}
 
 % Keep this matrix-heavy calculation continuous without a separate exercise tail.
 \begingroup
@@ -103,16 +101,11 @@ W_O=\begin{bmatrix}1&0&1&0\\0&1&0&1\end{bmatrix}^{\top},
 \textbf{多头拼接各头读出的特征，再投影到目标宽度。}
 这里用 $4\times2$ 演示投影；完整四维残差 Block 的输出投影则应为 $4\times4$。
 
-\chapterchecktasks{22a-position-multihead}{正文基础三题}{
+\chapterchecktasks{22a-position-multihead}{理解与复算}{
 \item \textbf{手算：}把本章头 2 的 Query 改成与头 1 相同的 $(0,1)$，Key 与 Value 不变。头 2 的权重和读出变成多少？两个头还在重点读取不同位置吗？\chapterinlinehint{先算缩放分数的 Softmax，再看最大权重落在哪个位置。}
 \item \textbf{形状：}两个头各输出 $3\times2$，按特征轴拼接后得什么形状？再用 $W_O:4\times6$ 投影得到什么形状？\chapterinlinehint{先累加拼接宽度，再与输出投影核对内侧维度。}
 \item \textbf{找错：}同学认为“Attention 分数除以 $\sqrt{d_k}$ 后，所有相似度都必须小于 $1$”。错在哪里？\chapterinlinehint{比较尺度变换与区间裁剪的定义。}
 }
 
 
-
-\begin{conclusion}
-\textbf{位置表示}标记顺序，\textbf{多头}在不同子空间读取。
-下一章用 Norm、残差与 FFN 把它们接进完整 Block。
-\end{conclusion}
 \endgroup
