@@ -76,7 +76,7 @@ RLVR 把验证奖励用于\textbf{更新参数}；这里的 Best-of-$n$ 用验�
 于是多步任务得到更多串行计算与中间记录。
 
 CoT 提示只改变输入，训练才修改参数，推理时搜索则额外花费计算；
-三者的分工集中列在本章末的\hyperref[sec:training-inference-roles]{分工表}中。
+三者的分工见本章开头的\hyperref[sec:training-inference-roles]{分工表}。
 
 \begin{boundarybox}
 步骤写得完整仍需逐项核对；它们是生成文本，无法直接证明模型内部采用了同一推理过程。
@@ -90,30 +90,6 @@ Few-shot 给格式示例，SFT 用核对过的示范训练格式与缺证据时�
 \hyperref[intro:23d-agent-systems]{检索与任务系统}一章将接着说明证据怎样进入上下文。
 
 
-\subsection{不同训练与推理策略的分工}
-\phantomsection\label{sec:training-inference-roles}
-提示、训练与推理时计算的区别全书只在这里列一次：
-提示策略改变输入而不修改参数；SFT、偏好与奖励信号修改参数；
-推理时采样、验证或搜索在固定参数下多花计算，换取一定条件下更高的成功率。
-
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.3}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{30mm}X@{}}
-\toprule
-阶段/方法 & 主要改变什么\\
-\midrule
-预训练 & 大规模数据中学习一般 Token 预测模式\\
-SFT & 利用示范答案塑造特定任务与回应方式\\
-RLHF/DPO 等偏好优化 & 根据比较或反馈优化回答偏好；通常约束新策略不远离参考策略\\
-RLVR & 利用可程序化检查的奖励训练某些任务能力\\
-CoT 提示 & 改变输入组织方式，不必修改模型权重\\
-推理时搜索/验证 & 使用额外计算与外部规则筛选候选结果\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
 \chapterchecktasks{23c-post-training}{理解、手算与判断}{
 \label{check:23cc-test-time-compute}
 \item\textbf{比较：}SFT、成对偏好学习与可验证奖励的反馈信号有何不同？各举一个适合的任务。\chapterinlinehint{先列出三种方法各自实际收到的反馈。}
@@ -125,4 +101,4 @@ CoT 提示 & 改变输入组织方式，不必修改模型权重\\
 }
 \par\smallskip
 训练改变参数；测试时计算把固定模型的预算分给生成、搜索和验证。
-先报告单次成功率，再报告候选相关性、验证质量与总成本，才能判断多算是否值得。
+判断方法是否值得采用时，还要同时报告单次成功率、候选相关性、验证质量与总成本。

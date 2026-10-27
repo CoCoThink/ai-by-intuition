@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'New immutable release tag, e.g. v0.2.0'
+        description: 'New immutable release tag, e.g. v1.0.0'
         required: true
         type: string
       build_run_id:

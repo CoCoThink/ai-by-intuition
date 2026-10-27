@@ -27,7 +27,7 @@ def validate_existing_regressions(main, sources):
         includes(workflow, "ai-by-intuition-book", "matching build/release artifact")
         includes(workflow, "AI-by-Intuition-Book.pdf", "matching build/release PDF filename")
     if 'summary["pages"] == 99' in release or "1,472/1,472" in release:
-        fail("Release gate still hard-codes historical v0.1.0 PDF statistics")
+        fail("Release gate still hard-codes obsolete PDF statistics")
     includes(release, 'summary["pages"] == actual_pages', "PDF page and audit reconciliation")
     includes(release, "failedRules", "PDF/UA-2 release audit enforcement")
     # Regression gate: each build must check the *last* latexmk log and

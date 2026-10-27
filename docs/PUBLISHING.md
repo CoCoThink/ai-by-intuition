@@ -1,6 +1,6 @@
 # 正式发布流程
 
-CI 成功不等于发布。主分支的构建只产生草稿工件；正式版本由维护者签核后手动运行发布工作流，生成不可覆盖的 Release。已发布的 [v0.1.0](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0) 保持原样，修订一律用新版本号。
+CI 成功不等于发布。主分支的构建只产生草稿工件；正式版本由维护者签核后手动运行发布工作流，创建新的 Release。版本号必须对应尚不存在的 Git 标签；修订已发布内容时使用新版本号。
 
 ## 发布前签核
 
@@ -20,7 +20,7 @@ CI 成功不等于发布。主分支的构建只产生草稿工件；正式版�
 
 在 GitHub Actions 中选择 [Publish validated book](../.github/workflows/publish-release.yml)，从 `main` 手动运行，填写：
 
-- `version`：尚不存在的新版本号，如 `v0.2.0`；
+- `version`：尚不存在的新版本号，如 `vMAJOR.MINOR.PATCH`；
 - `build_run_id`：第 1 步选定的成功运行编号。
 
 工作流会拒绝：已存在的标签或 Release；不属于本仓库、未成功或不在 `main` 上的构建；构建提交之后 `main` 又改动了 `book/`、`scripts/` 或构建工作流却没有重新构建的情况。
@@ -31,4 +31,4 @@ CI 成功不等于发布。主分支的构建只产生草稿工件；正式版�
 - `SHA256SUMS`
 - `build-audit.zip`
 
-Release 说明会标明源码提交和原始构建。发布后在 [CHANGELOG](../CHANGELOG.md) 中把草稿条目改为正式版本号与日期。
+Release 说明会标明版本号、发布日期、源码提交和原始构建。发布后同步更新 README 与勘误页中的版本信息。

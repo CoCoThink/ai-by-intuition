@@ -68,6 +68,40 @@ def caption_errors(figures):
             for alt,pages in figures if len(pages)!=1]
 
 
+def caption_structure_errors(root, roles=None):
+    """Check actual caption ownership, including transparent layout wrappers.
+
+    Custom unbreakable tcolorboxes once leaked their titles into the enclosing
+    section through a Div. Same-page figure checks could not detect that error.
+    """
+    roles=roles or {}
+    def resolve(obj):
+        return obj.get_object() if hasattr(obj,'get_object') else obj
+    def children(obj):
+        kids=resolve(obj.get('/K',[]))
+        if not isinstance(kids,list):kids=[kids]
+        for child in kids:
+            child=resolve(child)
+            if not isinstance(child,dict) or '/S' not in child:continue
+            role=str(roles.get(child['/S'],child['/S']))
+            if role in ('/Div','/NonStruct'):yield from children(child)
+            else:yield child
+    errors=[]
+    def walk(obj):
+        obj=resolve(obj)
+        if isinstance(obj,list):
+            for child in obj:walk(child)
+        elif isinstance(obj,dict):
+            kids=list(children(obj))
+            for i,child in enumerate(kids):
+                role=str(roles.get(child['/S'],child['/S']))
+                if role=='/Caption' and i not in (0,len(kids)-1):
+                    errors.append(f'Caption must be the first or last semantic child of {obj.get("/S")}; found child {i+1}/{len(kids)}')
+            walk(obj.get('/K',[]))
+    walk(root)
+    return errors
+
+
 def agent_intro_errors(pages):
     """Reject the concrete orphaned lead-in above the Agent pseudocode.
 
@@ -234,6 +268,8 @@ def check_pdf(path, aux, used):
     from pypdf import PdfReader
     reader=PdfReader(path)
     failures=caption_errors(figure_page_sets(reader))
+    root=reader.trailer['/Root']['/StructTreeRoot']
+    failures.extend(caption_structure_errors(root,root.get('/RoleMap',{})))
     raw_text=subprocess.check_output(['pdftotext',str(path),'-'],text=True)
     failures.extend(agent_intro_errors(raw_text.split('\f')))
     text=re.sub(r'\s+','',raw_text)
@@ -289,6 +325,11 @@ def self_test():
     assert source_errors('见第 65 页',targets)
     assert not caption_errors([('kept together',{50})])
     assert caption_errors([('old RNN diagram regression',{50,51})])
+    leaked={'/S':'/Sect','/K':[{'/S':'/H2'},{'/S':'/Div','/K':[{'/S':'/Caption'}]},{'/S':'/P'}]}
+    assert caption_structure_errors(leaked)
+    owned={'/S':'/Sect','/K':[{'/S':'/H2'},{'/S':'/Sect','/K':[{'/S':'/Caption'},{'/S':'/P'}]},{'/S':'/P'}]}
+    assert not caption_structure_errors(owned)
+    assert not caption_structure_errors({'/S':'/Figure','/K':[{'/S':'/P'},{'/S':'/Caption'}]})
     intro='前面的工具例子只展示了一次调用。'
     code='1 messages = [system_message, user_message]'
     assert not agent_intro_errors([intro+'\n'+code])

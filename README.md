@@ -8,8 +8,7 @@
 
 ## 获取 PDF
 
-- **正式版：**[v0.1.0 Release](https://github.com/CoCoThink/ai-by-intuition/releases/tag/v0.1.0)，附 PDF、`SHA256SUMS` 和机器审计。
-- **主分支草稿（v0.2.0-draft，未发布）：**从 [Build one PDF book](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 中对应提交的成功运行下载 `ai-by-intuition-book` 工件。草稿相对 v0.1.0 的变化见 [CHANGELOG](CHANGELOG.md)。
+当前维护的是**主分支草稿，尚未发布正式 Release**。从 [Build one PDF book](https://github.com/CoCoThink/ai-by-intuition/actions/workflows/build-latex.yml) 中对应提交的成功运行下载 `ai-by-intuition-book` 工件；同次运行的 `pdfua2-machine-audit` 工件提供机器审计。
 
 仓库不提交编译后的 PDF。
 
@@ -51,7 +50,6 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 写作原则、修改流程与提交前检查 |
 | [AGENTS.md](AGENTS.md) | 编辑约定、生成内容的维护入口、构建与 CI 规则（人和编码助手共用） |
 | [book/README.md](book/README.md) | 部分与章节源码对照、生成文件一览 |
-| [CHANGELOG.md](CHANGELOG.md) | 版本变化 |
 | [docs/ERRATA.md](docs/ERRATA.md) | 勘误与反馈方式 |
 | [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | CI 门禁、依赖固定、无障碍机器验收、来源复核 |
 | [docs/PART_BOOKENDS.md](docs/PART_BOOKENDS.md) | 部分开篇与收尾的设计规则和维护入口 |
@@ -62,13 +60,13 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 ## 开放许可证与转载
 
-**教材与阅读材料：** 本仓库的原创 `book/` 教材正文、LaTeX 排版源码、TikZ 教学图、仓库说明文档及正式发布的 **AI by Intuition** PDF（包括 v0.1.0）以 [Creative Commons Attribution 4.0 International（CC BY 4.0）](LICENSE) 授权。允许复制、修改、翻译及商业使用，须按许可要求署名、提供许可证链接并标明修改；本许可不要求衍生作品沿用相同许可证。
+**教材与阅读材料：** 本仓库的原创 `book/` 教材正文、LaTeX 排版源码、TikZ 教学图、仓库说明文档及由这些源码构建的 **AI by Intuition** PDF，以 [Creative Commons Attribution 4.0 International（CC BY 4.0）](LICENSE) 授权。允许复制、修改、翻译及商业使用，须按许可要求署名、提供许可证链接并标明修改；本许可不要求衍生作品沿用相同许可证。
 
 **软件与自动化：** `scripts/` 下的 Python 工具及 `.github/workflows/` 下的 GitHub Actions 工作流，以 [MIT License](scripts/LICENSE) 授权。复用代码时应保留 MIT 版权与许可声明。
 
 **建议署名：** AI by Intuition · CoCoThink and contributors；项目地址：<https://github.com/CoCoThink/ai-by-intuition>；许可：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。改编或翻译时请注明变更。以上许可只覆盖项目权利人拥有或有权授权的原创部分；引用的第三方文本、图像、品牌及依赖库仍受各自权利或许可约束。
 
-v0.1.0 发布于加入许可证之前，其 Release 资产保留原样；本授权同样覆盖该版本中项目有权授权的内容。
+本授权同样覆盖本仓库历史版本中项目有权授权的内容。
 
 ## 启发与参考
 

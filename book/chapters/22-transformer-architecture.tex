@@ -91,15 +91,18 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 另一种常见排列是 \textbf{Post-Norm}：先计算子层并与残差相加，再做归一化。
 这里采用的是 Pre-Norm。
 
-\subsection{生成时怎样禁止偷看未来？}
+\subsection{训练时怎样防止目标泄漏？}
 
-在\textbf{生成下一个 Token} 的解码器里，第 $i$ 个位置不应该偷看第 $i+1$ 个及更后面的目标 Token。因果掩码把这些位置的注意力分数设成非常小的值（实现中常为 $-\infty$），经 Softmax 后权重变成零；三行的因果权重已在\conceptlink{causal-mask}{第~\ref*{intro:11-softmax-memory}~章}手算过。
+训练时，真实序列中的多个位置可以同时送入模型。第 $i$ 个位置只能读取输入中的第 $1$ 到第 $i$ 个 Token，不能读取自己的目标，也不能读取更后面的输入；否则模型会直接看到答案，损失就失去了“预测下一 Token”的意义。
+因果掩码把这些不可见位置的注意力分数设成非常小的值（实现中常为 $-\infty$），经 Softmax 后权重变成零；三行的因果权重已在\conceptlink{causal-mask}{第~\ref*{intro:11-softmax-memory}~章}手算过。
 
 例如 3 个 Token 的可见性（行是 Query，列是 Key）：
 
 \input{figures/causal-mask-heatmap}
 
-这能使\textbf{训练时的并行计算}保持“只能利用当前位置之前内容”的条件。
+这能使\textbf{训练时的并行计算}保持“只能利用当前位置及之前内容”的条件。
+生成时未来 Token 尚未输入，因此不存在一份可直接偷看的未来答案；
+生成仍沿用同一套因果可见性规则，使训练和生成遵守相同的信息方向。
 
 \subsection{原始 Transformer 与现代 Decoder-only LLM}
 \phantomsection\label{concept:cross-attention}

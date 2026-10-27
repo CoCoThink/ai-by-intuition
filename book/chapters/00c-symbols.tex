@@ -42,7 +42,7 @@ $S,A$ & 注意力匹配分数、逐行 Softmax 后的读取权重\\
 $\mathcal{M}$ & 外积记忆／线性注意力的状态，与分数 $S$ 区分\\
 $F^{(\ell)},F_{\rm mid}$ & MLP 的第 $\ell$ 层激活、FFN 中间表示\\
 $\mathcal A_i$ & 奖励归一化后的相对优势，与注意力权重 $A$ 区分\\
-$\beta,\beta_1,\beta_2$ & $\beta=1/\tau$ 为逆温度；$\beta_1,\beta_2$ 为 Adam 的历史平均系数。LayerNorm 公式中的 $\beta$ 单独表示可学习偏移，按所在公式区分\\
+$\beta,\beta_{\rm DPO},\beta_1,\beta_2$ & $\beta=1/\tau$ 为采样逆温度；$\beta_{\rm DPO}$ 为 DPO 的偏好约束系数；$\beta_1,\beta_2$ 为 Adam 的历史平均系数。LayerNorm 公式中的 $\beta$ 单独表示可学习偏移，按所在公式区分\\
 \bottomrule\end{tabularx}
 \end{center}
 脚本为保持接口简短，使用 \texttt{P} 对应 $P_{\rm pos}$、

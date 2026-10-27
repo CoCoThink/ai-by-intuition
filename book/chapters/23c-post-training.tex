@@ -13,6 +13,30 @@
 如何分别改变模型或生成过程。
 \end{idea}
 
+\subsection{先看训练与推理策略怎样分工}
+\phantomsection\label{sec:training-inference-roles}
+
+先只问三个问题：反馈来自哪里，是否更新模型参数，额外计算发生在训练还是当前请求？
+后面的各节按这张表展开：
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.25}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{29mm}p{36mm}p{19mm}X@{}}\toprule
+方法 & 反馈或输入信号 & 更新参数？ & 主要改变什么\\\midrule
+预训练 & 文本中的后续 Token & 是 & 学习一般的语言模式\\
+SFT & 人工示范答案 & 是 & 学习特定任务的回答方式\\
+RLHF／DPO & 回答之间的偏好比较 & 是 & 调整回答偏好，并通常约束策略偏离参考模型\\
+RLVR／GRPO & 程序验证器给出的奖励 & 是 & 强化可自动核验的任务行为\\
+CoT 提示 & 当前 Prompt 中的步骤示例 & 否 & 改变本次输入的组织方式\\
+Best-of-$n$／搜索 & 当前请求中的采样与验证 & 否 & 把更多计算用于筛选本次候选\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+因此，本章会先讲训练怎样改变参数，再讲固定参数时怎样把更多预算用在一次回答上。
+
 \subsection{预训练与监督微调：看起来都是预测 Token，但哪一项变了？}
 \phantomsection\label{concept:sft}
 
@@ -98,17 +122,18 @@ P(A\succ B)=\sigma(r_A-r_B)
 \[
 \Delta_w=\ln\frac{\pi_\theta(y_w\mid x)}{\pi_{\rm ref}(y_w\mid x)},\qquad
 \Delta_l=\ln\frac{\pi_\theta(y_l\mid x)}{\pi_{\rm ref}(y_l\mid x)},\qquad
-\ell_{\rm DPO}=-\ln\sigma\bigl(\beta(\Delta_w-\Delta_l)\bigr).
+\ell_{\rm DPO}=-\ln\sigma\bigl(\beta_{\rm DPO}(\Delta_w-\Delta_l)\bigr).
 \]
-$\beta\Delta$ 扮演\textbf{隐式奖励}：在带 KL 约束的 RLHF 目标下，最优策略满足
-$r(x,y)=\beta\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{只依赖 }x\text{ 的常数}$，
+为避免与采样章的逆温度 $\beta=1/\tau$ 混淆，本节把 DPO 的系数记为 $\beta_{\rm DPO}$。
+$\beta_{\rm DPO}\Delta$ 扮演\textbf{隐式奖励}：在带 KL 约束的 RLHF 目标下，最优策略满足
+$r(x,y)=\beta_{\rm DPO}\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{只依赖 }x\text{ 的常数}$，
 成对相减时常数抵消。所以 DPO 不必另训奖励模型，训练时也不必从模型采样。
-取 $\beta=1$，若当前策略相对参考策略把 $y_w$ 的对数概率提高 $0.5$、把 $y_l$ 的降低 $0.5$，
+取 $\beta_{\rm DPO}=1$，若当前策略相对参考策略把 $y_w$ 的对数概率提高 $0.5$、把 $y_l$ 的降低 $0.5$，
 则 $\Delta_w-\Delta_l=1$，
 \[
 \ell_{\rm DPO}=-\ln\sigma(1)\approx\boxed{0.313},
 \]
-与上面 $r_A-r_B=1$ 的成对损失相同。继续训练会增大这个差，$\beta$ 越大，同样的概率比变化被放大得越多。
+与上面 $r_A-r_B=1$ 的成对损失相同。继续训练会增大这个差，$\beta_{\rm DPO}$ 越大，同样的概率比变化被放大得越多。
 公式见 \href{https://arxiv.org/abs/2305.18290}{Rafailov 等（2023）的 DPO 论文}。
 
 \subsection{可验证奖励：让模型在能自动检查的任务中尝试改进}
