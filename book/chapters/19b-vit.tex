@@ -122,11 +122,14 @@ Softmax 后仍是 $4\times4$，
 输出 $AV$ 为 $4\times3$。
 这里使用\textbf{双向可见性}，因为整张图片已经可用。
 
-图像分类 ViT 可以在 Patch 前加可训练的\textbf{分类 Token}
+现在有四行 Patch 输出；如果任务是判断\textbf{整张图}属于哪一类，怎样汇总成一个向量？
+一种办法是把四行逐特征取平均，也就是池化。
+另一种办法是先放入一行专门收集整图信息的向量，让它通过 Attention 读取各块。
+图像分类 ViT 可以在 Patch 前加这样的可训练\textbf{分类 Token}
 \texttt{[CLS]}，让输入由 $4\times3$ 变成 $5\times3$，
 Attention 分数由 $4\times4$ 变成 $5\times5$。
-分类头可使用 CLS 输出，也能使用池化。
-池化路线可直接汇总 Patch 输出。
+训练时用 CLS 的输出接分类头，分类误差会反传到这条汇总路径及其参数。
+采用池化的路线则直接汇总 Patch 输出。
 
 \subsection{第五步：视觉编码器输出怎样进入语言模型？}
 

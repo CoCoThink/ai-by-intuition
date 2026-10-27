@@ -47,7 +47,11 @@ $w=(2.5-(-1.5))/2=2$，恰好还是 $\widehat{y}=2x+1$；
 \phantomsection\label{concept:training-set}
 \phantomsection\label{concept:validation-set}
 \phantomsection\label{concept:test-set}
-\phantomsection\label{concept:hyperparameter}
+
+前面的验证点帮助我们比较直线与曲线；学习率取多大、每批用几条样本，也需要选择。
+\phantomsection\label{concept:hyperparameter}%
+这些由我们设定、用来控制训练或模型结构的量，叫作\textbf{超参数}。
+它们与训练中通过梯度更新的权重参数不同。为选择方案而反复查看的数据，与最后评估的数据应当分开：
 
 \begin{center}
 \small
@@ -72,8 +76,24 @@ $w=(2.5-(-1.5))/2=2$，恰好还是 $\widehat{y}=2x+1$；
 \textbf{二是控制模型复杂度。}
 用简单模型作基线，再按验证表现调整容量。
 
-\textbf{三是正则化。}
-一种做法是把\textbf{参数大小的惩罚}加到原来的任务损失：
+\textbf{三是在评分时，也约束拟合方式。}
+前面的曲线为了穿过带噪声的训练点，弯折后在新题上偏离很远。
+能否让训练在减小误差的同时，也为这种弯折付出代价？
+沿用二次模型 $\widehat{y}=a_2x^2+a_1x+a_0$，直线就是 $a_2=0$ 的情形。
+先只给控制弯折的系数加上惩罚 $\tfrac14a_2^2$：
+\[
+\begin{aligned}
+\text{直线的总分}&=0.5+\tfrac14\times0^2=0.5,\\
+\text{原曲线的总分}&=0+\tfrac14\times(-1.5)^2=0.5625.
+\end{aligned}
+\]
+这两个既有候选的排序因此改变；真正训练时，要按新总分重新寻找参数。
+这里表达的是一种选择偏好：愿意保留一点训练误差，换取较少的弯折。
+是否改善新题表现，仍要用验证集判断。
+
+把这种约束加入训练目标，叫作\textbf{正则化}。
+上例用参数的平方作为惩罚；对选定的一组参数 $w_1,\ldots,w_n$，
+常见的两种写法是绝对值之和（L1）与平方之和（平方 L2 惩罚）：
 \begin{equation}
 \begin{aligned}
 L_{\rm total}(w_1,\ldots,w_n)
@@ -84,7 +104,8 @@ L_{\rm total}(w_1,\ldots,w_n)
 +\lambda\sum_iw_i^2 &&\text{（平方 L2 惩罚）}.
 \end{aligned}
 \end{equation}
-$\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}。数值越大，模型越倾向较小的参数，过强时会压低拟合能力。
+$\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}，也是需要选择的超参数；上例取 $\lambda=1/4$。
+数值越大，模型越倾向让被惩罚的参数更小，过强时会压低拟合能力。
 
 \textbf{四是提前停止（early stopping）。}
 训练损失下降而验证损失变差时，可以保留验证表现最好的检查点。

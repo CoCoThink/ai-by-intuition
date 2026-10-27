@@ -25,17 +25,21 @@
 \subsection{Softmax：把分数变成一份概率}
 \phantomsection\label{concept:softmax}
 
-对每个类别 $j$ 计算
+分数可以为负，也不要求加起来等于 $1$；概率则必须非负、总和为 $1$。
+直接除以分数总和可行吗？另取分数 $(2,-1,0)$，总和为 $1$，相除后仍有负数。
+我们需要先把每项变成正数，再分配总共为 $1$ 的概率。
+
+回到本章的 $(0,\ln2,0)$。先逐项取指数，得到 $(1,2,1)$：
+每项都为正，而且原来分数较大的项仍较大。
+再除以总和 $1+2+1=4$，得到 $(1/4,1/2,1/4)$。
+这套“取指数，再除以总和”的运算叫作\textbf{Softmax}。
+对每个类别 $j$，一般写成
 \begin{equation}
 \boxed{p_j=\frac{e^{z_j}}{\sum_{k=1}^{C}e^{z_k}}}\qquad
 (C=\text{类别数}).
 \label{eq:early-class-softmax}
 \end{equation}
-在三分类例子中，指数为 $(1,2,1)$，因此
-\[
-\vect p=(1/4,1/2,1/4),\qquad
-\sum_jp_j=1.
-\]
+这种运算对分数可微，后面可以通过它反传梯度。
 \input{figures/softmax-prob-bars}
 
 Softmax 只在\textbf{类别维度}上归一化；后面 Attention
@@ -43,48 +47,31 @@ Softmax 只在\textbf{类别维度}上归一化；后面 Attention
 不是词表候选类别。
 
 
-\begin{example}[breakable=false]
-\noindent\emph{数值稳定的 Softmax：先减最大 logit}\par
-面对 logits $(1000,1001)$，直接计算 $e^{1000}$ 容易溢出。
-令 $m=\max_jz_j=1001$，统一减去 $m$：
-\[
-\frac{(e^{1000-1001},e^{1001-1001})}
-{e^{1000-1001}+e^{1001-1001}}
-=\frac{(e^{-1},1)}{e^{-1}+1}
-\approx(0.2689,0.7311).
-\]
-分子分母同时除以 $e^m$ 不改变概率，
-却避免计算巨大的指数。这也是 Attention 每一行 Softmax 的基础技巧。
-一般写成
-\[
-p_j=\frac{e^{z_j-m}}{\sum_k e^{z_k-m}},\qquad m=\max_k z_k.
-\]
-每个指数的输入都不大于零，且至少有一项指数为 $1$。
-\textbf{现在动手：}把两项都再加 $5000$，最大值也增加 $5000$，
-相减后仍是 $(-1,0)$，概率保持不变。
-\end{example}
-
 \subsection{交叉熵：正确类的概率越小，惩罚越大}
 \phantomsection\label{concept:cross-entropy}
 
-若真实标签为第二类，用 One-hot 向量
-$\vect y=(0,1,0)$ 表示，则单样本\textbf{交叉熵}为
+得到概率后，怎样评价这次预测？只看概率最大的类别，会漏掉置信程度的变化：
+即使选出的类别相同，给正确答案 $0.9$ 与 $0.4$ 的概率，也应得到不同的分数。
+我们希望正确答案概率为 $1$ 时不扣分，概率越低扣分越多。
+一种办法是用 $-\ln p_{\rm correct}$ 计分：
+\[
+p_{\rm correct}=1,\ 1/2,\ 1/4
+\quad\longrightarrow\quad
+0,\ \ln2,\ \ln4.
+\]
+前面给连续数值预测用过均方误差；这里选择直接评价正确类概率的\textbf{交叉熵}。
+选择对数还因为它能把多次预测的代价相加：若连续两次都给正确答案 $1/2$ 的条件概率，
+两次都对的概率是 $1/2\times1/2=1/4$，而 $-\ln(1/4)=\ln2+\ln2$。
+下面先写单次预测的损失，下一节再把这个性质用于一串 Token。
+
+本例真实标签为第二类，概率为 $1/2$，损失就是 $\ln2\approx0.6931$。
+把“第二类正确”写成只有第二项为 $1$、其余为 $0$ 的 One-hot 向量
+$\vect y=(0,1,0)$，就能用求和统一表示这项损失：
 \begin{equation}
 \boxed{L=-\sum_{j=1}^{C}y_j\ln p_j=-\ln p_{\rm correct}.}
 \label{eq:early-class-cross-entropy}
 \end{equation}
-本例 $L=-\ln(1/2)=\ln2\approx0.6931$。
-假如正确类概率只有 $1/4$，损失就会上升为
-$\ln4\approx1.3863$。
-这里用自然对数，$p_j>0$ 由 Softmax 保证；
-实现时直接使用稳定的 logits 交叉熵运算，
-以避免先求极小概率再取对数的数值误差。
-例如正确类是 $(1000,1001)$ 中的第一类，直接从 logits 算：
-\[
-L=(m-z_{\rm correct})+\ln\sum_k e^{z_k-m}
-=1+\ln(1+e^{-1})\approx1.3133.
-\]
-这个 LogSumExp 写法连极小概率下溢成零的问题也一并避开。
+求和中的 $y_j$ 只选中正确类别；这里的 $\ln$ 是自然对数。
 
 \subsection{为什么取对数：把一串概率变成可以相加的惊讶度}
 正确答案的概率越小，看到它时越“意外”。用 $-\ln p$ 表示这份惊讶：
@@ -104,6 +91,26 @@ p_\theta(y_1,\ldots,y_T)=\prod_{t=1}^T p_\theta(y_t\mid y_{<t}).
 平均惊讶度为 $L$ 时，$\exp(L)$ 就是\textbf{困惑度}：
 模型像是在每步从这么多个等概率候选中选择。
 第~\ref*{intro:23e-tech-judgement}~章会用它评价同一分词口径下的预测。
+
+\begin{example}
+\noindent\emph{{\symboliconfont ★} 选读：计算机怎样避免指数溢出？}\par
+面对 logits $(1000,1001)$，直接计算 $e^{1000}$ 容易溢出。
+令 $m=\max_jz_j=1001$，统一减去 $m$ 后计算 Softmax：
+\[
+\frac{(e^{-1},1)}{e^{-1}+1}\approx(0.2689,0.7311),\qquad
+p_j=\frac{e^{z_j-m}}{\sum_k e^{z_k-m}}.
+\]
+分子分母同时除以 $e^m$ 不改变概率，每个指数的输入都不大于零，且至少有一项指数为 $1$。
+把两项都再加 $5000$，最大值也增加 $5000$，相减后仍是 $(-1,0)$。
+
+若正确类是第一类，实现还可直接从 logits 计算交叉熵：
+\[
+L=(m-z_{\rm correct})+\ln\sum_k e^{z_k-m}
+=1+\ln(1+e^{-1})\approx1.3133.
+\]
+这种 LogSumExp 写法避免先求极小概率再取对数，减少概率下溢成零的问题。
+Attention 的逐行 Softmax 也使用同样的减最大值技巧。
+\end{example}
 
 \subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}
 \phantomsection\label{concept:logit-gradient}

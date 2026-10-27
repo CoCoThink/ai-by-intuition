@@ -1,6 +1,5 @@
 \subsection{参考与延伸阅读}
-条目下未注日期的链接，均于 \textbf{2026-10-24（UTC）} 检查可以访问（本版末尾新增的三条于 2026-10-25 检查）；
-注明日期的条目是访问受限，或另做了内容核验（多在 2026-10-25（UTC）），并写出核验范围。
+各条目注明访问检查或内容核验的日期（UTC），并写出核验范围。
 链接能打开与主张成立是两项不同检查；完整 URL 与逐条记录见仓库
 \texttt{docs/REFERENCES.md}（扫描下方二维码）。
 \sourceqr
@@ -90,6 +89,9 @@ Distill (2016)：
 \item Model Context Protocol：
 \sourceurl{https://modelcontextprotocol.io/specification}
 \sourcecheck{2026-10-25}{已核对当前入口指向 2026-07-28 版}
+\item MCP 官方入门说明（2026-07-28 版）：
+\sourceurl{https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro}
+\sourcecheck{2026-10-27}{已核对统一应用与外部工具连接接口的动机}
 \item Agent2Agent (A2A) Protocol：
 \sourceurl{https://a2a-protocol.org/latest/}
 \sourcecheck{2026-10-24}{链接可访问}
@@ -144,6 +146,14 @@ Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
 
 \subsubsection*{现代架构与后训练的扩展阅读}
 \begin{itemize}
+\item \phantomsection\label{source:rmsnorm}Zhang and Sennrich,
+\emph{Root Mean Square Layer Normalization}（2019，固定 v1）：
+\sourceurl{https://arxiv.org/abs/1910.07467v1}
+\sourcecheck{2026-10-27}{已核对省去中心化、保留尺度控制与简化计算的设计动机}
+\item \phantomsection\label{source:lora}Hu et al.,
+\emph{LoRA: Low-Rank Adaptation of Large Language Models}（2021，固定 v2）：
+\sourceurl{https://arxiv.org/abs/2106.09685v2}
+\sourcecheck{2026-10-27}{已核对方法部分冻结原权重、训练低秩增量及相加的计算路径}
 \item Su et al., \emph{RoFormer: Rotary Position Embedding}:
 \sourceurl{https://arxiv.org/abs/2104.09864}
 \sourcecheck{2026-10-24}{链接可访问}

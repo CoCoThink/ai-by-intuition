@@ -13,46 +13,29 @@
 \phantomsection\label{concept:rope}
 
 经典 Transformer 可以把位置向量 $P_{\rm pos}$ 加在 Token 嵌入上：
-$X_0=X_{\rm token}+P_{\rm pos}$。另一些模型使用\textbf{旋转位置表示（RoPE）}：
-它对 Query 和 Key 的部分二维分量施加\textbf{与位置相关的旋转}。
+$X_0=X_{\rm token}+P_{\rm pos}$。现在进一步问：同样的两个词整体后移，
+它们之间仍只隔一位，能否让注意力中的位置作用保持相同？
+我们希望匹配能利用\textbf{相对距离}，而不只接收两个绝对位置编号。
 
-先用\textbf{两个整数位置}和二维旋转矩阵算一遍：
-\[
-R(\phi)=
-\begin{bmatrix}\cos\phi&-\sin\phi\\
-\sin\phi&\cos\phi\end{bmatrix},
-\quad
-(1,0)R(\phi)^\top
-=(\cos\phi,\sin\phi).
-\]
-假如 Query 位置是 $m$，Key 位置是 $n$，分别旋转
-$m\theta$ 和 $n\theta$，则
-\begin{equation}
-(\vect q^\top R(m\theta)^\top)
-(\vect k^\top R(n\theta)^\top)^\top
-=\vect q^\top R((n-m)\theta)\vect k.
-\label{eq:rope-relative}
-\end{equation}
-\textbf{右边出现了相对位置差 $n-m$。}
-这让注意力分数有机会利用两位置之间的距离和方向。
-高维 RoPE 对多个特征对使用不同角频率，把多种距离尺度一起带入匹配。
+一种办法是让位置决定向量的旋转角度：两个位置一起平移时，两向量多转相同角度，夹角不变。
+这就是\textbf{旋转位置表示（RoPE）}的切入点。
+先只看相同内容向量 $(1,0)$，它旋转 $\phi$ 后为 $(\cos\phi,\sin\phi)$。
 
 \begin{example}
 \noindent\emph{平移两个位置，分数不变}\par
 
 取 $\vect q^\top=\vect k^\top=(1,0)$，角频率 $\theta=\pi/3$。
-沿用全书的行向量约定，在右侧乘旋转矩阵的转置，
-$(1,0)R(\phi)^\top=(\cos\phi,\sin\phi)$。
-先放 Query 于 $m=0$、Key 于 $n=1$：
+位置从 $1$ 起计，先放 Query 于 $m=1$、Key 于 $n=2$，分别旋转 $60^\circ$ 和 $120^\circ$：
 \[
-(1,0)\cdot\bigl(\tfrac12,\tfrac{\sqrt3}2\bigr)=\boxed{\tfrac12}.
+\bigl(\tfrac12,\tfrac{\sqrt3}2\bigr)\cdot
+\bigl(-\tfrac12,\tfrac{\sqrt3}2\bigr)=-\tfrac14+\tfrac34=\boxed{\tfrac12}.
 \]
-再把两者整体后移两位，$m=2$、$n=3$：
+再把两者整体后移两位，$m=3$、$n=4$，分别旋转 $180^\circ$ 和 $240^\circ$：
 \[
-\bigl(-\tfrac12,\tfrac{\sqrt3}2\bigr)\cdot(-1,0)=\boxed{\tfrac12}.
+(-1,0)\cdot\bigl(-\tfrac12,-\tfrac{\sqrt3}2\bigr)=\boxed{\tfrac12}.
 \]
 绝对位置变了，分数相同，因为两者都等于 $\cos\bigl((n-m)\theta\bigr)=\cos(\pi/3)$。
-距离改成 $2$（如 $m=0,n=2$）时分数变为 $\cos(2\pi/3)=-\tfrac12$：
+距离改成 $2$（如 $m=1,n=3$）时分数变为 $\cos(2\pi/3)=-\tfrac12$：
 \textbf{分数只随相对距离变化}，而加在输入上的绝对位置向量一般不具备这种平移不变性。
 \end{example}
 
@@ -60,11 +43,26 @@ $(1,0)R(\phi)^\top=(\cos\phi,\sin\phi)$。
 内容向量、角频率与位置取值相同，两次点积都为 $1/2$。
 \input{figures/rope-relative-rotation}
 
+对一般内容向量，用二维旋转矩阵把刚才的操作写全：
+\[
+R(\phi)=\begin{bmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{bmatrix}.
+\]
+沿用行向量约定，在右侧乘旋转矩阵的转置。Query 与 Key 分别旋转 $m\theta$ 和 $n\theta$，则
+\begin{equation}
+(\vect q^\top R(m\theta)^\top)
+(\vect k^\top R(n\theta)^\top)^\top
+=\vect q^\top R((n-m)\theta)\vect k.
+\label{eq:rope-relative}
+\end{equation}
+右边的位置项只含相对位置差 $n-m$；内容仍由 $q,k$ 决定。
+高维 RoPE 对多个特征对使用不同角频率，把多种距离尺度一起带入匹配。
+
 \subsection{必读 2：RMSNorm 为什么不减均值？}
 \phantomsection\label{concept:rmsnorm}
 
-\textbf{LayerNorm} 先减去特征均值，再按方差缩放（还可以学习仿射参数）。
-\textbf{RMSNorm} 侧重通过均方根控制大小，不执行相同的均值中心化。
+\textbf{LayerNorm} 做了两件事：减均值，把中心移到零；再除以标准差，调整尺度。
+如果我们主要想控制数值大小，是否一定要先把中心移到零？
+可以直接用一行数的\textbf{均方根（RMS）}作为尺度：先逐项平方、取平均，再开平方。
 
 只看一条二维向量 $\vect x=(3,4)$：
 \[
@@ -72,7 +70,15 @@ $(1,0)R(\phi)^\top=(\cos\phi,\sin\phi)$。
 =\sqrt{\frac{3^2+4^2}{2}}=\sqrt{12.5}.
 \]
 忽略可学习缩放参数与小正数 $\varepsilon$，
-RMS 归一化后的数字约为 $(0.849,1.131)$。
+相除后约为 $(0.849,1.131)$。若输入整体放大十倍为 $(30,40)$，
+均方根也放大十倍，变成 $\sqrt{1250}$，相除仍得到 $(0.849,1.131)$。
+因此，\textbf{直接除以均方根就能消去正的整体倍数，无需先减均值}。
+这种归一化叫作\textbf{RMSNorm}，实际仍使用小正数 $\varepsilon$ 和可学习的逐特征缩放。
+
+两种归一化保留的信息不同：对 $(3,4)$，忽略上述附加项的 LayerNorm 得到 $(-1,1)$，
+RMSNorm 的两项则仍为正。RMSNorm 省去中心化、简化计算；
+选择它的设计思路，是保留尺度控制，同时检验是否需要中心化。
+具体模型的训练效果和运行成本要通过对照实验判断，原论文见\hyperref[source:rmsnorm]{附录来源}。
 
 
 \textbf{Pre-Norm 与 Post-Norm} 的差别是归一化位于子层之前还是之后。
@@ -252,7 +258,12 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 \phantomsection\label{concept:moe}
 
 常规 \conceptlink{ffn}{FFN} 使用两次矩阵投影夹一个激活函数。
-现代网络还常使用\textbf{门控 FFN}，例如 SwiGLU 形式：
+除了对特征做非线性变换，能否还根据当前输入，分别调节各项特征的传递强度？
+例如一条分支给出内容 $(2,3)$，另一条给出调节系数 $(0.5,2)$，
+对应位置相乘便得到 $(1,6)$：第一项减弱，第二项增强。
+这种由另一条分支调节内容的做法叫作\textbf{门控}，两个分支都由输入和可训练权重产生。
+
+SwiGLU 是一种门控 FFN：门分支使用 SiLU 激活，内容分支使用线性投影，相乘后再降回输出宽度：
 \begin{equation}
 \operatorname{FFN}(\vect x)
 =\left[
@@ -262,11 +273,12 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 \end{equation}
 其中 $\odot$ 是\textbf{对应位置逐元素相乘}，
 $\operatorname{SiLU}(z)=z/(1+e^{-z})$。
-两个分支分别计算“门”和“内容”，然后逐元素组合。
+其中 $W_g,W_u$ 将特征扩到同一中间宽度，$W_{\rm down}$ 再缩回。
+门值是调节系数，可以大于 $1$ 或为负，并非只能开或关的 $0/1$ 开关。
 
-还有一种\textbf{混合专家（MoE）}思路：
-不是让每个 Token 都经过同一个巨大的 FFN，
-而是使用\textbf{路由器}挑选部分专家处理它。
+另一个问题是：希望增加 FFN 的总容量，却又希望控制每个 Token 的计算量，怎么办？
+可以准备多套分别带参数的 FFN，每套叫一个\textbf{专家}；每次只选其中一部分处理当前 Token。
+这种组织方式叫作\textbf{混合专家（MoE）}，负责根据输入打分、挑选专家的模块叫\textbf{路由器}。
 
 一个最简单的路由示例：三个专家的得分是 $(2,1,0)$，
 如果只选择最高的一个专家，本次仅计算专家 1，

@@ -26,6 +26,39 @@ from check_agent_loop import run_checks as check_agent_loop
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def check_motivation_examples():
+    """Recompute the added bridges using their actual data and matrix shapes."""
+    general=(ROOT/'book/chapters/18-generalization.tex').read_text()
+    x=np.array([-1.,0.,1.]);y=np.array([-1.5,2.,2.5])
+    linear=np.column_stack([x,np.ones(3)])
+    quadratic=np.column_stack([x*x,x,np.ones(3)])
+    line=np.linalg.lstsq(linear,y,rcond=None)[0]
+    curve=np.linalg.solve(quadratic,y)
+    scores=[np.mean((linear@line-y)**2),
+            np.mean((quadratic@curve-y)**2)+.25*curve[0]**2]
+    assert np.allclose(scores,[.5,.5625]) and scores[0]<scores[1]
+    assert all(f'{score:g}' in general for score in scores)
+    post=(ROOT/'book/chapters/23c-post-training.tex').read_text()
+    new=np.array([.7,.3]);reference=np.array([.5,.5])
+    kl=np.sum(new*np.log(new/reference))
+    assert f'{kl:.4f}' in post
+    modern=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text()
+    vector=np.array([3.,4.])
+    rms=vector/np.sqrt(np.mean(vector**2))
+    assert np.allclose(rms,10*vector/np.sqrt(np.mean((10*vector)**2)))
+    assert all(f'{value:.3f}' in modern for value in rms)
+    assert np.allclose((vector-vector.mean())/vector.std(),[-1,1])
+    assert np.allclose(np.array([2,3])*[.5,2],[1,6]) and '(1,6)' in modern
+    deployment=(ROOT/'book/chapters/23b-deployment-and-ecosystem.tex').read_text()
+    row=np.array([1,2]);weight=np.eye(2)
+    up=np.array([[1],[0]]);down=np.array([[0,1]])
+    assert up.shape==(2,1) and down.shape==(1,2)
+    assert np.array_equal(row@up@down,[0,1])
+    assert np.array_equal(row@(weight+up@down),[1,3]) and '(1,3)' in deployment
+    assert 1000*8+8*1000==16000 and 16000/1000**2==.016
+    print('Motivation examples QA: regularized candidate ranking, KL, RMS scaling, gates and additive LoRA path passed')
+
+
 def check_new_supplements():
     pair_probability=np.exp(2)/(np.exp(2)+1)
     pair_loss=-np.log(pair_probability)
@@ -99,6 +132,7 @@ def check_printed_mini(c, gradients):
 
 
 def main():
+    check_motivation_examples()
     check_agent_loop()
     data=json.loads((ROOT/'book/exercises.json').read_text())
     by_legacy={r['legacy_id']:r for r in data if r['legacy_id']}

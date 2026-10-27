@@ -1,9 +1,9 @@
 % Same unit vectors, angular frequency and position pairs as the preceding prose.
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={沿用正文的二维 RoPE 算例，内容向量均为一、零，角频率为三分之派。左图 Query 在位置零，旋转后为一、零；Key 在位置一，旋转后为二分之一、二分之根号三。右图两位置同时后移两位，Query 在位置二，旋转后为负二分之一、二分之根号三；Key 在位置三，旋转后为负一、零。两图的相对夹角均为六十度，相对位置差均为一，点积均为二分之一。}}
+\tagstructbegin{tag=Figure,alttext={沿用正文的二维 RoPE 算例，内容向量均为一、零，角频率为三分之派。左图 Query 在位置一，旋转后为二分之一、二分之根号三；Key 在位置二，旋转后为负二分之一、二分之根号三。右图两位置同时后移两位，Query 在位置三，旋转后为负一、零；Key 在位置四，旋转后为负二分之一、负二分之根号三。两图的相对夹角均为六十度，相对位置差均为一，点积均为二分之一。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,x=14mm,y=14mm]
-\foreach \shift/\title in {0/{位置 $m=0,\ n=1$},8.5/{位置 $m=2,\ n=3$}}{
+\foreach \shift/\title in {0/{位置 $m=1,\ n=2$},8.5/{位置 $m=3,\ n=4$}}{
  \begin{scope}[xshift=\shift cm]
  \draw[->,linegray] (-1.5,0)--(1.65,0);
  \draw[->,linegray] (0,-1.2)--(0,1.7);
@@ -13,21 +13,21 @@
  \end{scope}
 }
 \begin{scope}
- \draw[->,very thick,blue] (0,0)--(0:1) node[below right,font=\small] {Q $(1,0)$};
- \draw[->,very thick,teal] (0,0)--(60:1) node[above,font=\small] {K $(\tfrac12,\tfrac{\sqrt3}2)$};
- \draw[->,flowcolor,thick] (.4,0) arc (0:60:.4);
- \node[font=\small] at (.65,.3) {$60^\circ$};
+ \draw[->,very thick,blue] (0,0)--(60:1) node[above right,font=\small] {Q $(\tfrac12,\tfrac{\sqrt3}2)$};
+ \draw[->,very thick,teal] (0,0)--(120:1) node[above left,font=\small] {K $(-\tfrac12,\tfrac{\sqrt3}2)$};
+ \draw[->,flowcolor,thick] (60:.4) arc (60:120:.4);
+ \node[font=\small] at (0,.65) {$60^\circ$};
 \end{scope}
 \begin{scope}[xshift=8.5cm]
- \draw[->,very thick,blue] (0,0)--(120:1) node[above,font=\small] {Q $(-\tfrac12,\tfrac{\sqrt3}2)$};
- \draw[->,very thick,teal] (0,0)--(180:1) node[below left,font=\small] {K $(-1,0)$};
- \draw[->,flowcolor,thick] (120:.4) arc (120:180:.4);
- \node[font=\small] at (-.65,.3) {$60^\circ$};
+ \draw[->,very thick,blue] (0,0)--(180:1) node[above left,font=\small] {Q $(-1,0)$};
+ \draw[->,very thick,teal] (0,0)--(240:1) node[below left,font=\small] {K $(-\tfrac12,-\tfrac{\sqrt3}2)$};
+ \draw[->,flowcolor,thick] (180:.4) arc (180:240:.4);
+ \node[font=\small] at (-.65,-.35) {$60^\circ$};
 \end{scope}
 \node[font=\small,text=muted] at (3.0357,-2.35)
  {共同后移两位：两向量都多转 $120^\circ$，相对夹角仍为 $60^\circ$};
 \end{tikzpicture}
-\captionof{figure}{沿用正文的 $\theta=\pi/3$：$(m,n)$ 从 $(0,1)$ 平移到 $(2,3)$，点积仍为 $1/2$}
+\captionof{figure}{沿用正文的 $\theta=\pi/3$：$(m,n)$ 从 $(1,2)$ 平移到 $(3,4)$，点积仍为 $1/2$}
 \label{fig:rope-relative-rotation}
 \end{center}
 \tagstructend

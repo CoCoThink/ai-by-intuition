@@ -676,6 +676,17 @@ def validate_pdf(path: Path) -> None:
         number=chapter_checks[slug]
         candidates=[page for page in question_pages if
                     numbered_pages[number]<=page<numbered_pages[number+1]]
+        # A chapter-end box may share its physical page with the next
+        # chapter's opening.  The page-range test above then also sees the
+        # preceding chapter's self-check.  Use the running header to attach
+        # each candidate to the chapter whose box it contains; a genuine
+        # breakable self-check still leaves multiple pages with the same
+        # header and therefore still fails the one-page requirement below.
+        chapter_header = re.compile(rf"第\s*{number}\s*章")
+        header_candidates = [page for page in candidates
+                             if chapter_header.search(pages[page])]
+        if header_candidates:
+            candidates = header_candidates
         if len(candidates)!=1:
             fail(f"R01 {slug}: expected one self-check page, found {candidates}")
         check_page=candidates[0]

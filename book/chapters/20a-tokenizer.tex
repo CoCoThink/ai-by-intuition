@@ -29,12 +29,8 @@
 \subsection{子词与 BPE：为什么不一定按汉字切？}
 \phantomsection\label{concept:bpe}
 
-\textbf{BPE（Byte Pair Encoding，字节对编码）是一种自动造词表的方法}：
-从最小的片段出发，在大量语料里反复找出\textbf{最常紧挨在一起的两个片段}，
-把它们粘成一个新 Token 加入词表，直到词表达到预定大小。
-于是常见的字串变成整块 Token，少见的词仍能拆回小片段来表示。
-
-为什么要这样折中？先比较三种切分单位：
+前面的“春天 / 花 / 开了”是教学切分。真实文本很多，应该按字切，还是为每个整词准备一个 ID？
+先比较不同切分单位带来的代价：
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabularx}{\linewidth}{@{}p{24mm}p{30mm}p{18mm}X@{}}
@@ -46,6 +42,11 @@
 \bottomrule
 \end{tabularx}
 \end{center}
+
+我们希望常见字串能合成整块，同时让少见词能退回小片段。
+\textbf{BPE（Byte Pair Encoding，字节对编码）是一种自动造词表的方法}：
+从最小的片段出发，在大量语料里反复找出\textbf{最常紧挨在一起的两个片段}，
+把它们粘成一个新 Token 加入词表，直到词表达到预定大小。
 
 \Needspace{8\baselineskip}
 BPE 的工作分两个阶段：

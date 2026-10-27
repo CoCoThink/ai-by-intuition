@@ -29,11 +29,49 @@ S=\frac{QK^\top}{\sqrt{d_k}}\in\R^{3\times3},
 第 $i$ 行记录第 $i$ 个 Token 对三个 Key 的匹配程度；每行 \conceptlink{softmax}{Softmax} 后和 $V$ 相乘，得到三个\textbf{带上下文信息}的新向量。
 
 \subsection{Pre-Norm Block 中的两条残差连接}
-\phantomsection\label{concept:pre-norm}
-\phantomsection\label{concept:residual}
 
-在这里选择\textbf{Pre-Norm（先归一化）}，每个子层都是
-先 Norm、再计算、最后把尚未经过子层的输入加回来：
+把许多层接起来时，后层既需要已有特征，也需要本层提供的新信息。
+能否保留原输入，让子层只补上一份修正？
+例如输入为 $2$、子层给出修正 $0.3$，相加后得到 $2.3$。
+\phantomsection\label{concept:residual}%
+这条把输入直接送到加号的旁路叫作\textbf{残差连接}。
+用一维函数表示，就是
+\[
+y=x+f(x)\quad\Longrightarrow\quad
+\frac{\mathrm dy}{\mathrm dx}=1+f'(x).
+\]
+若只有 $y=f(x)$，梯度必须经过 $f'(x)$；相加后还多出一条导数为 $1$ 的旁路。
+这个 $1$ 是不依赖子层导数的\textbf{恒等梯度通路}，
+所以残差能改善深层网络的信息与梯度传播；
+实际反传还要汇总各路径的梯度，并检查数值尺度。
+还有一个问题：隐藏值经过层内运算，数值尺度可能越变越大或越变越小，增加训练的不稳定性。
+能否先把送入子层的数值调整到较稳定的尺度，再做变换？
+下面对\textbf{一个 Token 内的特征}操作，所有位置各自处理。
+
+\Needspace{17\baselineskip}
+\begin{example}[breakable=false]
+\noindent\emph{LayerNorm：一个 Token 的两个特征怎么算？}\par
+
+希望 $(2,4)$ 与整体放大十倍的 $(20,40)$ 都能先调整到可比较的尺度。
+一种做法是\textbf{逐项减去本行均值，再除以本行标准差}，称为\textbf{层归一化（LayerNorm）}。
+先忽略数值稳定项 $\varepsilon$、可学习缩放和平移。
+对输入行向量 $(2,4)$，均值 $\mu=3$，
+总体方差为 $\bigl((2-3)^2+(4-3)^2\bigr)/2=1$，
+标准差为 $1$，得到
+\[
+\operatorname{LayerNorm}(2,4)
+=\left(\frac{2-3}{1},\frac{4-3}{1}\right)=\boxed{(-1,1)}.
+\]
+对 $(20,40)$，均值为 $30$、标准差为 $10$，同样得到 $(-1,1)$。
+这展示了它怎样消除整体放大带来的尺度差异。
+实际实现加小正数 $\varepsilon$ 避免除零，还可学习逐特征的缩放与平移，调整归一化后的表示。
+归一化在\textbf{该 Token 的特征维度}进行，
+不是把全部 Token 的行平均掉。
+\end{example}
+
+把两种操作组合起来：旁路保留原输入，子层接收归一化后的输入。
+\phantomsection\label{concept:pre-norm}%
+这里选择\textbf{Pre-Norm（先归一化）}，每个子层都先 Norm、再计算、最后与旁路相加：
 \begin{equation}
 \label{eq:pre-norm-att}
 X_{\rm att}=X+\operatorname{MHA}(\operatorname{Norm}(X)).
@@ -42,43 +80,13 @@ X_{\rm att}=X+\operatorname{MHA}(\operatorname{Norm}(X)).
 \label{eq:pre-norm-ffn}
 X_{\rm block}=X_{\rm att}+\operatorname{FFN}(\operatorname{Norm}(X_{\rm att})).
 \end{equation}
-$X_{\rm att}$ 表示第一次残差后的隐藏状态；
-$X_{\rm block}$ 是第二次残差后的输出。
-两个残差相加各有自己的输入旁路，保留特征宽度
-$T\times d_{\rm model}$；因此输出仍可以继续进入下一层。
-用一维函数看梯度：
-\[
-y=x+f(x)\quad\Longrightarrow\quad
-\frac{\mathrm dy}{\mathrm dx}=1+f'(x).
-\]
-其中 $1$ 是不依赖子层导数的\textbf{恒等梯度通路}，
-所以残差能改善深层网络的信息与梯度传播；
-实际反传还要汇总各路径的梯度，并检查数值尺度。
-Block 有 Attention 与 FFN 两个子层，因此分别为这两次变换设置捷径。
+这里 $\operatorname{MHA}$ 是多头注意力，$\operatorname{FFN}$ 是逐位置的前馈网络。
+$X_{\rm att}$ 为第一次残差后的状态，$X_{\rm block}$ 为第二次残差后的输出；
+两次相加各有自己的输入旁路，形状都保持 $T\times d_{\rm model}$。
 FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 
-\textbf{观察紫色残差捷径：}它们跳过模块直接到加号，
-而不是在模块里偷偷执行“残差”。
+\textbf{观察紫色残差捷径：}它们跳过模块直接到加号。
 \input{figures/pre-norm-block}
-
-\Needspace{17\baselineskip}
-\begin{example}[breakable=false]
-\noindent\emph{LayerNorm：一个 Token 的两个特征怎么算？}\par
-
-忽略数值稳定项 $\varepsilon$、可学习缩放和平移。
-输入行向量 $(2,4)$，均值 $\mu=3$，
-总体方差为 $\bigl((2-3)^2+(4-3)^2\bigr)/2=1$，
-标准差为 $1$，得到
-\[
-\operatorname{LayerNorm}(2,4)
-=\left(\frac{2-3}{1},\frac{4-3}{1}\right)=\boxed{(-1,1)}.
-\]
-为什么要归一化？隐藏值的尺度会随层内计算变化，
-导致训练的数值不稳定。LayerNorm 对单个 Token 的特征中心化并缩放，
-帮助控制输入子层的尺度；它仍配合可学习的缩放、平移参数。
-归一化在\textbf{该 Token 的特征维度}进行，
-不是把全部 Token 的行平均掉。
-\end{example}
 
 另一种常见排列是 \textbf{Post-Norm}：先计算子层并与残差相加，再做归一化。
 这里采用的是 Pre-Norm。

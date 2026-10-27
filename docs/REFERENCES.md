@@ -56,3 +56,6 @@
 | [jmlr.org/papers/v15/srivastava14a.html](https://jmlr.org/papers/v15/srivastava14a.html) | 2026-10-27 | 已核对随机屏蔽与减少固定组合依赖的动机 |
 | [docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html) | 2026-10-27 | 已核对独立随机置零、训练时缩放与评估时直接传递 |
 | [docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html) | 2026-10-27 | 已核对 eval 切换评估模式的作用 |
+| [arxiv.org/abs/1910.07467v1](https://arxiv.org/abs/1910.07467v1) | 2026-10-27 | 已核对省去中心化、保留尺度控制与简化计算的设计动机 |
+| [arxiv.org/abs/2106.09685v2](https://arxiv.org/abs/2106.09685v2) | 2026-10-27 | 已核对第 4.1 节冻结原权重、训练低秩增量及相加的计算路径 |
+| [modelcontextprotocol.io/docs/2026-07-28/getting-started/intro](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro) | 2026-10-27 | 已核对统一应用与外部工具连接接口的动机 |

@@ -55,10 +55,21 @@ $J(A,C)=|S_A\cap S_C|/|S_A\cup S_C|=3/6=0.5$。
 
 权重只是训练显存的一部分。还要保存梯度、优化器状态和
 反向传播需要的激活。以十亿参数为教学估算：
-仅 FP32 主权重、梯度与 Adam 的两份状态，
-理论上就需要大约 $4\times4=16$ GB，
+FP32 表示每个数用 $32$ bit，也就是 $4$ 字节保存。
+仅主权重、梯度与 Adam 为更新参数保存的两份历史状态，共四份十亿个数，
+理论上就需要 $10^9\times4\times4=16\times10^9$ 字节，即约 $16$ GB，
 激活、临时缓冲和额外权重副本需另计。
-显存不足时需要\textbf{分布式训练}与分片。
+多张设备共同完成训练，叫作\textbf{分布式训练}。怎样分，要先看遇到哪个瓶颈。
+
+\textbf{单卡装不下，就拆模型或训练状态。}
+例如一层矩阵的两半分放两张卡，各算一部分再合并结果，这叫\textbf{张量并行}；
+前几层放一张卡、后几层放另一张卡，依次传递中间结果，这叫\textbf{流水线并行}。
+也可以把优化器状态、梯度乃至权重分给不同设备保存，计算时再按需交换，这叫\textbf{状态分片}。
+
+\textbf{模型装得下，但样本处理慢，就分担数据。}
+让两张卡各保存一份模型，一张处理本批前半样本，另一张处理后半样本，再汇总梯度共同更新，
+这叫\textbf{数据并行}。它分担样本计算；朴素方案每卡仍需放得下一份完整模型。
+因此它与解决单卡存储不足的分片方案可以组合。下面把几种分法放在一起比较：
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
@@ -74,13 +85,18 @@ $J(A,C)=|S_A\cap S_C|/|S_A\cup S_C|=3/6=0.5$。
 \end{center}
 
 \phantomsection\label{concept:mixed-precision}
-\textbf{混合精度训练（Mixed Precision）}用如 BF16 的较短浮点表示
-执行适合的矩阵计算，并对某些归约、统计或状态保留较高精度。
+\textbf{一个数占多少空间，也可以调整。}
+若某项数据从每数 $32$ bit 改为 $16$ bit，该项存储就从每数 $4$ 字节减为 $2$ 字节。
+\textbf{混合精度训练（Mixed Precision）}对适合的矩阵计算使用如 BF16 的较短浮点表示，
+对某些归约、统计或状态保留较高精度，以兼顾计算成本和数值稳定性。
+浮点数用“有效数字乘以二的某次幂”表示数值：指数位关系到能表示多大或多小，尾数位关系到数值有多精细。
 BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
 但尾数精度更低；采用哪种精度取决于硬件及数值稳定性。
-\textbf{FlashAttention} 则通过分块、在线 Softmax 和减少高带宽显存读写
-提高标准 Attention 的计算效率；它在适用条件下
-\textbf{保持相同的注意力数学目标}，不是一种新的注意力训练损失。
+
+\textbf{还有一种慢，来自计算与显存之间反复搬运数据。}
+标准 Attention 若把整张分数和权重矩阵写入显存再读出，会产生大量中间数据读写。
+\textbf{FlashAttention} 通过分块和逐块累积的 Softmax 计算，减少这类读写与中间存储，
+提高执行效率；它在适用条件下\textbf{保持相同的注意力数学目标}。
 工程选型要同时测量吞吐、显存、通信、数值误差与最终模型质量。
 
 \subsection{推理部署：权重、缓存、精度与服务}
@@ -143,25 +159,12 @@ $(-1,-0.197,0.197,1)$。
 
 代价是近似误差：相近权重会落入同一个量化格。模型效果是否受影响，取决于量化方案、模型分布和任务，并不是位数越少越好。
 
-\phantomsection\label{concept:distillation}\label{concept:pruning}
-\subsubsection*{蒸馏、剪枝、LoRA 不是同一种事}
-\phantomsection\label{concept:lora}
+\subsubsection*{部署装不下、微调太贵，分别怎样处理？}
 
-\begin{center}
-\small
-\renewcommand{\arraystretch}{1.23}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{38mm}X@{}}
-\toprule
-技术 & 核心目的\\
-\midrule
-量化（Quantization） & 用低精度数值减少模型存储或计算成本\\
-蒸馏（Distillation） & 利用较大或较强模型的输出作为训练信号，帮助学生模型学习\\
-剪枝（Pruning） & 去除或稀疏化较不重要的权重、连接或结构\\
-LoRA & 在微调阶段用低秩增量参数，减少需要训练的参数量\\
-\bottomrule
-\end{tabularx}
-\end{center}
+如果希望训练一个较小模型承担任务，可以让较强模型提供学习信号。
+\phantomsection\label{concept:distillation}%
+这种利用教师模型指导学生模型的办法叫作\textbf{蒸馏}。
+教师除了给出答案，还能给出各候选的概率：
 
 \begin{example}
 \noindent\emph{硬标签与软标签怎样不同？}\par
@@ -181,9 +184,24 @@ $-\ln0.6\approx0.511$，
 \begin{example}
 \noindent\emph{LoRA 的参数量真正省在哪里？}\par
 
+另一种处境是：已有模型能运行，但为了适应任务而更新全部大矩阵，训练开销太大。
+能否保留原权重，只学习一份较小的修正？
+\phantomsection\label{concept:lora}%
+\textbf{LoRA（低秩适配）}冻结原矩阵 $W$，用两个窄矩阵的乘积表示修正 $\Delta W$，
+使新的计算成为 $x(W+\Delta W)=xW+x\Delta W$；训练只更新修正分支的参数。
+
+先用独立的二维例看输出怎样改变，暂把缩放系数取为 $1$：
+\[
+x=(1,2),\quad W=I_2,\quad
+U_{\rm lr}=\begin{bmatrix}1\\0\end{bmatrix},\quad V_{\rm lr}=(0,1),\quad
+\Delta W=U_{\rm lr}V_{\rm lr}=\begin{bmatrix}0&1\\0&0\end{bmatrix}.
+\]
+原来 $xW=(1,2)$，修正分支给出 $x\Delta W=(0,1)$，相加后为 $(1,3)$。
+原矩阵虽冻结，预测仍能随修正分支改变。这个最小例只演示计算路径；大矩阵才能展示明显的参数节省。
+
 对一个 $1000\times1000$ 的方阵，完整训练它需要
 $1000^2=1{,}000{,}000$ 个可学习权重。
-LoRA 若冻结原矩阵，用秩 $r=8$ 的增量
+LoRA 若冻结原矩阵，用中间宽度 $r=8$ 的两个窄矩阵表示增量
 $\Delta W=U_{\rm lr}V_{\rm lr}$，$U_{\rm lr}:1000\times8$，
 $V_{\rm lr}:8\times1000$，则需要
 \[
@@ -191,11 +209,31 @@ $V_{\rm lr}:8\times1000$，则需要
 =\boxed{16{,}000}
 \]
 个可学习参数，约为完整权重的 $1.6\%$。
+$r$ 限制修正能独立组合的方向数量，是增量矩阵的\textbf{秩上限}；这里称为低秩，是相对于原矩阵的宽度 $1000$。
+这也限制了修正的自由度，效果要随任务与 $r$ 的选择验证。
 这指的是该矩阵新训练的增量参数数目，
 不是整套模型参数或部署占用必然缩小到 $1.6\%$。
+冻结与增量相加的机制见\hyperref[source:lora]{LoRA 原论文}。
 \end{example}
 
-这些技术解决的成本不同：量化和剪枝常用于减小部署开销，LoRA 主要减少微调时需要更新的参数。
+\phantomsection\label{concept:pruning}%
+若希望直接减少原模型中的权重、连接或结构，还可以评估删去哪些部分，这叫作\textbf{剪枝}。
+将几种方法按它们改动的对象归纳如下：
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.23}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{38mm}X@{}}
+\toprule
+技术 & 核心目的\\
+\midrule
+量化（Quantization） & 用低精度数值减少模型存储或计算成本\\
+蒸馏（Distillation） & 利用较大或较强模型的输出作为训练信号，帮助学生模型学习\\
+剪枝（Pruning） & 去除或稀疏化较不重要的权重、连接或结构\\
+LoRA & 在微调阶段用低秩增量参数，减少需要训练的参数量\\
+\bottomrule
+\end{tabularx}
+\end{center}
 
 % Keep this closing block with the self-check so the part-end page is not a sparse tail.
 \Needspace{15\baselineskip}

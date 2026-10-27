@@ -55,10 +55,10 @@ def main():
     check_rope_figure((ROOT/'book/chapters/22d-modern-transformers.tex').read_text(),
                       (ROOT/'book/figures/rope-relative-rotation.tex').read_text())
     theta = pi / 3
-    assert isclose(rope_score(0, 1, theta), .5) and isclose(rope_score(2, 3, theta), .5)
-    assert isclose(rope_score(0, 2, theta), -.5)
-    print("RoPE scores (0,1), (2,3), (0,2):",
-          [round(rope_score(m, n, theta), 6) for m, n in ((0, 1), (2, 3), (0, 2))])
+    assert isclose(rope_score(1, 2, theta), .5) and isclose(rope_score(3, 4, theta), .5)
+    assert isclose(rope_score(1, 3, theta), -.5)
+    print("RoPE scores (1,2), (3,4), (1,3):",
+          [round(rope_score(m, n, theta), 6) for m, n in ((1, 2), (3, 4), (1, 3))])
 
     scores = (2, 1, 0)
     top2 = sorted(range(3), key=lambda i: -scores[i])[:2]

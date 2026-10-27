@@ -386,5 +386,29 @@
     "checked_utc": "2026-10-27",
     "method": "Read versioned PyTorch 2.14 Module.eval documentation: evaluation-mode switch, equivalent to train(False); no runtime PyTorch test",
     "result": "已核对 eval 切换评估模式的作用"
+  },
+  {
+    "url": "https://arxiv.org/abs/1910.07467v1",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1910.07467v1",
+    "checked_utc": "2026-10-27",
+    "method": "Primary source abstract content review; RMSNorm motivation and re-scaling invariance",
+    "result": "已核对省去中心化、保留尺度控制与简化计算的设计动机"
+  },
+  {
+    "url": "https://arxiv.org/abs/2106.09685v2",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2106.09685v2",
+    "checked_utc": "2026-10-27",
+    "method": "Primary source content review of Section 4.1 at https://arxiv.org/html/2106.09685v2",
+    "result": "已核对第 4.1 节冻结原权重、训练低秩增量及相加的计算路径"
+  },
+  {
+    "url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro",
+    "status": 200,
+    "final_url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro",
+    "checked_utc": "2026-10-27",
+    "method": "Official introduction content review; standard application-to-tool interfaces",
+    "result": "已核对统一应用与外部工具连接接口的动机"
   }
 ]
