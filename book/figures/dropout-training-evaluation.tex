@@ -1,0 +1,37 @@
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={固定屏蔽前的同一组隐藏层输出二、一、三、四。左栏是一种训练时的随机结果：保留第一、三项，仅屏蔽后为二、零、三、零，再除以保留概率零点五，传给下一层的是四、零、六、零。中栏是另一种可能结果：保留第二、四项，屏蔽后为零、一、零、四，缩放后为零、二、零、八。右栏为评估或预测：关闭随机屏蔽，直接将二、一、三、四传给下一层。两个训练栏仅展示两种可能的屏蔽结果，每项独立决定是否保留。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
+ textnode/.style={font=\footnotesize,align=center},
+ panel/.style={draw=linegray,fill=paper,rounded corners=2pt,minimum width=46mm,minimum height=44mm}]
+\node[font=\small] (input) at (53,34) {固定屏蔽前的输出：$(2,1,3,4)$};
+\node[panel] (left) at (0,-2) {};
+\node[panel] (middle) at (53,-2) {};
+\node[panel] (right) at (106,-2) {};
+\draw[->,flowcolor,thick] (input.south)--(53,26)-|(left.north);
+\draw[->,flowcolor,thick] (53,26)--(middle.north);
+\draw[->,flowcolor,thick] (53,26)-|(right.north);
+\node[textnode] at (0,16) {训练：一种可能结果};
+\node[textnode] at (53,16) {训练：另一种可能结果};
+\node[textnode] at (106,16) {评估／预测};
+\node[textnode] at (0,9) {保留第 $1$、$3$ 项};
+\node[textnode] at (53,9) {保留第 $2$、$4$ 项};
+\node[textnode] at (106,9) {关闭随机屏蔽};
+\node[textnode] at (0,2) {$(2,0,3,0)$};
+\node[textnode] at (53,2) {$(0,1,0,4)$};
+\node[textnode] at (106,2) {$(2,1,3,4)$};
+\draw[->,flowcolor,thick] (0,-1)--node[right,font=\footnotesize] {除以 $0.5$} (0,-9);
+\draw[->,flowcolor,thick] (53,-1)--node[right,font=\footnotesize] {除以 $0.5$} (53,-9);
+\draw[->,flowcolor,thick] (106,-1)--node[right,font=\footnotesize] {直接传递} (106,-9);
+\node[textnode] at (0,-13) {$(4,0,6,0)$};
+\node[textnode] at (53,-13) {$(0,2,0,8)$};
+\node[textnode] at (106,-13) {$(2,1,3,4)$};
+\node[textnode] at (0,-20) {传给下一层};
+\node[textnode] at (53,-20) {传给下一层};
+\node[textnode] at (106,-20) {传给下一层};
+\end{tikzpicture}
+\captionof{figure}{同一组激活值：训练时随机屏蔽并缩放，评估时直接传递}
+\label{fig:dropout-training-evaluation}
+\end{center}
+\tagstructend
+\end{minipage}\par

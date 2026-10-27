@@ -7,6 +7,7 @@ NumPy install in CI; source gates deliberately require only the standard library
 from __future__ import annotations
 import json
 from fractions import Fraction
+from itertools import product
 from pathlib import Path
 import re
 import numpy as np
@@ -36,6 +37,29 @@ def check_new_supplements():
     calibration=(ROOT/'book/chapters/23d-agent-systems.tex').read_text()
     assert '6/10=0.6' in calibration and abs(.8-6/10-.2)<1e-12
     print('Supplement QA: paired/incorrect CLIP toy losses and confidence-bin calibration arithmetic match prose')
+
+
+def check_dropout():
+    source=(ROOT/'book/chapters/18-generalization.tex').read_text()
+    figure=(ROOT/'book/figures/dropout-training-evaluation.tex').read_text()
+    values=(2,1,3,4);keep=Fraction(1,2)
+    def tex_tuple(row):return '('+','.join(str(int(value)) for value in row)+')'
+    assert tex_tuple(values) in source and tex_tuple(values) in figure
+    for mask in ((1,0,1,0),(0,1,0,1)):
+        masked=tuple(x*m for x,m in zip(values,mask))
+        scaled=tuple(x/keep for x in masked)
+        assert tex_tuple(masked) in figure and tex_tuple(scaled) in figure
+        if mask==(1,0,1,0):
+            assert tex_tuple(masked) in source and tex_tuple(scaled) in source
+    # All sixteen independent masks are equiprobable, including zero/four kept entries.
+    masks=list(product((0,1),repeat=len(values)))
+    assert {sum(mask) for mask in masks}==set(range(5))
+    means=tuple(sum(Fraction(x)*mask[j]/keep for mask in masks)/len(masks)
+                for j,x in enumerate(values))
+    assert means==values
+    assert '0.5\\times2+0.5\\times0=1' in source
+    assert '0.5\\times4+0.5\\times0=2' in source
+    print('Dropout QA: both printed masks/scaled outputs, unscaled mean and exact mean over all sixteen masks passed')
 
 
 def check_simplified_gradient(item):
@@ -84,7 +108,7 @@ def main():
     modern=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text().replace('{,}', '')
     assert all(str(value) in modern for value in cache), 'Printed real KV budget differs from pinned configuration'
     c,gradients=check_mini();check_printed_mini(c,gradients)
-    check_new_supplements();check_beginner();check_function_call();check_data();check_simplified_gradient(by_legacy['C2-13'])
+    check_new_supplements();check_dropout();check_beginner();check_function_call();check_data();check_simplified_gradient(by_legacy['C2-13'])
     local,context=check_context()
     training=(ROOT/'book/chapters/22c-language-training.tex').read_text()
     assert f'{local:.6f}' in training and f'{context:.6f}' in training

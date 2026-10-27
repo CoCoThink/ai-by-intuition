@@ -27,6 +27,7 @@ Qwen2.5-0.5B：24 层、14 个 Query 头、2 个 KV 头、头宽 64（\hyperref[
 真实 Qwen 分词器对“春天花开了。”的切分与 ID（\hyperref[experiment:real-chinese-tokenizer]{第~\pageref*{experiment:real-chinese-tokenizer}~页}） & 060db64\newline 2026-10-25 & \href{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json}{固定分词器}。已运行固定分词器；只复算分词，不加载该模型权重。\\
 DeepSeek-V4.1-Flash 的因果编码器—解码器：40 层分为 20+20，输入／输出每 Token 激活 8B／16B（\hyperref[elective:causal-encoder-decoder]{第~\pageref*{elective:causal-encoder-decoder}~页}） & 2026-09-10 公告／模型卡\newline 2026-10-25 & \href{https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash}{DeepSeek 模型卡}、\href{https://www.deepseek.com/en/news/deepseek-v4-1-flash/}{DeepSeek 公告}。已核对公开结构描述；不将厂商公布的速度或基准成绩当成本书独立复测。\\
 LLM 评审存在位置、冗长与自我偏好等偏差（\hyperref[concept:llm-judge]{第~\pageref*{concept:llm-judge}~页}） & 2023 论文\newline 2026-10-25 & \href{https://arxiv.org/abs/2306.05685}{原论文}。已核对论文所列偏差；正文要求交换答案顺序并以人工样本校验。\\
+PyTorch nn.Dropout：训练时独立置零并缩放，评估时直接传递（\hyperref[concept:dropout]{第~\pageref*{concept:dropout}~页}） & 2.14 文档\newline 2026-10-27 & \href{https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html}{Dropout}、\href{https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html}{评估模式}。已核对该版官方文档并复算缩放例子；未运行该版 PyTorch。\\
 \end{longtable}\endgroup
 % END GENERATED DATED CLAIMS
 

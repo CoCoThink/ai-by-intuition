@@ -53,3 +53,6 @@
 | [platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools) | 2026-10-25 | 已核对名称、描述与输入模式的作用 |
 | [platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls](https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls) | 2026-10-25 | 已核对多轮调用与工具结果对应规则 |
 | [platform.claude.com/docs/en/api/overview](https://platform.claude.com/docs/en/api/overview) | 2026-10-25 | 已核对认证、工作区与请求头要求 |
+| [jmlr.org/papers/v15/srivastava14a.html](https://jmlr.org/papers/v15/srivastava14a.html) | 2026-10-27 | 已核对随机屏蔽与减少固定组合依赖的动机 |
+| [docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html) | 2026-10-27 | 已核对独立随机置零、训练时缩放与评估时直接传递 |
+| [docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html) | 2026-10-27 | 已核对 eval 切换评估模式的作用 |

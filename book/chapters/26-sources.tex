@@ -44,6 +44,16 @@ Distill (2016)：
 \item Goodfellow, Bengio and Courville, \emph{Deep Learning}：
 \sourceurl{https://www.deeplearningbook.org/}
 \sourcecheck{2026-10-24}{链接可访问}
+\item \phantomsection\label{source:dropout}Srivastava et al.,
+\emph{Dropout: A Simple Way to Prevent Neural Networks from Overfitting}（2014）：
+\sourceurl{https://jmlr.org/papers/v15/srivastava14a.html}
+\sourcecheck{2026-10-27}{已核对随机屏蔽与减少固定组合依赖的动机}
+\item \phantomsection\label{source:pytorch-dropout}PyTorch 2.14，\texttt{nn.Dropout}：
+\sourceurl{https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html}
+\sourcecheck{2026-10-27}{已核对独立随机置零、训练时缩放与评估时直接传递}
+\item PyTorch 2.14，\texttt{nn.Module.eval()}：
+\sourceurl{https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html}
+\sourcecheck{2026-10-27}{已核对 eval 切换评估模式的作用}
 \end{itemize}
 
 联想记忆提供了理解 Key--Value 与注意力权重的另一条数学路径，相关推导见\hyperref[intro:04-key-value-outer-product]{联想记忆部分}。
