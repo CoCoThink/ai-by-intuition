@@ -209,11 +209,12 @@ def run_checks():
             gw, gb = gradient(w, b)
             w, b = w-rate*gw, b-rate*gb
         assert (abs(rw)<1 and abs(rb)<1) == (0<rate<1)
-    # Recompute the printed divergence phenomenon before using the multiplier formula.
+    # Recompute the printed parameter, signed deviation and distance from sample gradients.
     b=F(0)
     for step in range(4):
         printed_b=f'${float(b):g}$' if b<0 else f'{float(b):g}'
-        row=f'{step} & {printed_b} & {float(abs(b-1)):g}'
+        printed_deviation=f'${float(b-1):g}$' if b<1 else f'{float(b-1):g}'
+        row=f'{step} & {printed_b} & {printed_deviation} & {float(abs(b-1)):g}'
         assert row in source, ('Published divergent b sequence differs',row)
         b=b-F(6,5)*gradient(F(1),b)[1]
     # Independent finite differences of the sample-wise MSE.
