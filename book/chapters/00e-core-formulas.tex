@@ -23,8 +23,8 @@ X=E[\mathrm{IDs}]+P_{\rm pos}.
 这里 $T$ 表示输入 Token 数，$d$ 是隐藏宽度，
 $h$ 是投影输出宽度。
 \hyperref[intro:04-key-value-outer-product]{联想记忆部分}同样使用行向量，
-写入为 $\mathcal{M}=\sum_i k_i^\top v_i$，
-读取为 $x\mathcal{M}$；无需另外切换方向。
+写入为 $\mathcal{M}=\sum_i \vect{k}_i\vect{v}_i^\top$，
+读取为 $\vect{x}^\top\mathcal{M}$；无需另外切换方向。
 
 \noindent\textbf{三、上下文读取：因果掩码不能泄露未来。}
 \[
@@ -33,7 +33,7 @@ A=\operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}+C\right),
 \quad R_{\rm raw}=AV.
 \]
 其中 $U=\operatorname{LN}(X)$ 是 Pre-Norm 之后的输入（与第四组公式相同）。
-对 Decoder-only 语言模型，因果 Mask $C$ 阻止读取未来位置；
+对 Decoder-only 语言模型，因果掩码 $C$ 阻止读取未来位置；
 Softmax 对\textbf{每一行}的可见 Key 分数归一化。
 
 \noindent\textbf{四、完整 Block 与联合目标。}

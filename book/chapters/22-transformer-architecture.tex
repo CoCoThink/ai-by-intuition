@@ -71,7 +71,8 @@ y=x+f(x)\quad\Longrightarrow\quad
 
 把两种操作组合起来：旁路保留原输入，子层接收归一化后的输入。
 \phantomsection\label{concept:pre-norm}%
-这里选择\textbf{Pre-Norm（先归一化）}，每个子层都先 Norm、再计算、最后与旁路相加：
+这里选择\textbf{Pre-Norm（先归一化）}，本书数值主例的 Norm 取 LayerNorm。
+每个子层都先 Norm、再计算、最后与旁路相加：
 \begin{equation}
 \label{eq:pre-norm-att}
 X_{\rm att}=X+\operatorname{MHA}(\operatorname{Norm}(X)).
@@ -85,7 +86,7 @@ $X_{\rm att}$ 为第一次残差后的状态，$X_{\rm block}$ 为第二次残�
 两次相加各有自己的输入旁路，形状都保持 $T\times d_{\rm model}$。
 FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 
-\textbf{观察紫色残差捷径：}它们跳过模块直接到加号。
+\textbf{观察两条标有“残差捷径”的旁路：}它们跳过模块直接到加号。
 \input{figures/pre-norm-block}
 
 另一种常见排列是 \textbf{Post-Norm}：先计算子层并与残差相加，再做归一化。
@@ -133,7 +134,7 @@ FFN 的中间表示记为 $F_{\rm mid}$，与整个 Block 的输出相区分。
 \item \textbf{查表并加位置}：Embedding 与位置表示得到 $X:T\times d$（第~\ref*{intro:20-embeddings}~章及第~\ref*{intro:22a-position-multihead}~章）。
 \item \textbf{归一化输入}：每行做 Pre-Norm，为注意力子层准备特征（第~\ref*{intro:22-transformer-architecture}~章）。
 \item \textbf{投影三种角色}：从每行得到 Query、Key、Value（第~\ref*{intro:21b-why-attention}~章）。
-\item \textbf{匹配并遮挡未来}：计算 $QK^\top/\sqrt{d_k}$，对未来位置使用因果 Mask（第~\ref*{intro:22-transformer-architecture}~章）。
+\item \textbf{匹配并遮挡未来}：计算 $QK^\top/\sqrt{d_k}$，对未来位置使用因果掩码（第~\ref*{intro:22-transformer-architecture}~章）。
 \item \textbf{分配并读取}：逐行 Softmax 后乘 $V$；多头则拼接并做输出投影（第~\ref*{intro:11-softmax-memory}~章及第~\ref*{intro:22a-position-multihead}~章）。
 \item \textbf{做第一次残差}：把注意力结果加回输入，形状仍为 $T\times d$（第~\ref*{intro:22-transformer-architecture}~章）。
 \item \textbf{经过 FFN 和第二次残差}：再次归一化、逐行非线性变换，再与旁路相加（第~\ref*{intro:10b-ffn-output-head}~章）。
@@ -168,7 +169,7 @@ Query、Key、Value 都来自源语句；可双向读取 &
 为源语句建立上下文表示，本书的 Decoder-only 主链没有独立源 Encoder\\
 Masked Decoder Self-Attention &
 Q/K/V 来自目标前缀；屏蔽未来目标 &
-对应本书的因果 Mask 与自回归计算\\
+对应本书的因果掩码与自回归计算\\
 Encoder--Decoder Attention &
 Query 来自 Decoder，Key/Value 来自 Encoder 输出 &
 这是\textbf{交叉注意力}，不是把 Decoder 的 Q/K/V 都取自同一序列\\

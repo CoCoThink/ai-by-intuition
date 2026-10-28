@@ -21,7 +21,7 @@ def run_checks():
     assert kv_bytes(2,2,8,10,2)==1280
     assert kv_bytes(2,2,8,10,1)==640  # the earlier erroneous byte answer was an element count
     assert kv_bytes(24,2,64,32768,2,batch=3)==3*full
-    print(f'KV bytes: C4-41=1280; Qwen/token={per_token}; 32K={full}; MHA={mha} (7x)')
+    print(f'KV bytes: 缓存预算例=1280; Qwen/token={per_token}; 32K={full}; MHA={mha} (7x)')
     return per_token,full,mha
 
 

@@ -7,7 +7,7 @@
 \subsubsection{随机高维向量往往近似正交}
 如果两个独立随机单位向量在 $d_k$ 维空间中，那么它们点积的典型尺度为：
 \begin{equation}
-|\vect{k}_i\vect{k}_j^\top|\approx\frac{1}{\sqrt{d_k}},\qquad i\ne j.
+|\vect{k}_i^\top\vect{k}_j|\approx\frac{1}{\sqrt{d_k}},\qquad i\ne j.
 \end{equation}
 这里的 $\approx$ 表示随机情况下的\textbf{典型尺度}。
 
@@ -24,17 +24,22 @@
 
 \subsubsection{平方激活为何带来平方量级？}
 不相关 Key 的相似度量级从 $1/\sqrt{d_k}$ 平方成 $1/d_k$。
-$\relu(s)^2\ge0$，抵消来自随机、独立、均值为零的 Value 分量；
-若 Value 全同号，干扰会随 $T_k$ 累加。满足随机抵消假设时：
+这里每个匹配权重 $\relu(s)^2$ 都非负，权重本身不会正负抵消。
+但一个干扰项是“权重乘 Value 分量”：Value 分量若随机、独立且均值为零，
+就有正有负，带权求和时才可能发生统计抵消。
+若 Value 全同号，干扰会随 $T_k$ 累加。满足上述随机抵消假设时：
 \begin{equation}
 \frac{\text{干扰}}{\text{信号}}\approx\frac{\sqrt{T_k}}{d_k},\qquad
 \frac{\sqrt{T_k}}{d_k}\approx1\ \Rightarrow\ T_k\approx d_k^2.
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $T_k\approx d_k^p$ 这一类标度。
 
+% Start the complete self-check on the closing page, rather than leaving only
+% its final question above the part exit on a sparse continuation page.
+\Needspace{18\baselineskip}
 \chapterchecktasks{09-nonlinearity-and-memory}{理解、手算与判断}{
 \label{check:13-capacity}
-\item\textbf{手算：}本章 $xK^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
+\item\textbf{手算：}本章 $\vect{x}^\top K^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
 \item\textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留原负权重重算，再对照中间匹配向量。}
 \item\textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？\chapterinlinehint{分别观察单位区间内部与端点的幂。}
 \item\textbf{找错：}同学说“平方任何相似度都只会压小错误匹配，包括负值”。先算 $0.5^2$ 与 $(-0.5)^2$，再指出问题。\chapterinlinehint{把负相似度代入，比较符号与绝对值。}

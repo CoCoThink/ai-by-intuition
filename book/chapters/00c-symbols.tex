@@ -4,7 +4,7 @@
 单条输入写作 $\vect x^\top$，整段输入为 $X$；
 投影写作 $\vect x^\top W$ 或 $XW$。
 仅在点积、求梯度或显式说明转置时，用 $\vect x$ 表示同一向量的列形式。
-\hyperref[intro:04-key-value-outer-product]{联想记忆专题}也使用行向量：写入 $\mathcal{M}=\sum_i k_i^\top v_i$，读出 $x\mathcal{M}$。
+\hyperref[intro:04-key-value-outer-product]{联想记忆专题}也使用行向量：写入 $\mathcal{M}=\sum_i \vect{k}_i\vect{v}_i^\top$，读出 $\vect{x}^\top\mathcal{M}$。
 
 \begin{center}\small
 \renewcommand{\arraystretch}{1.25}
@@ -38,6 +38,10 @@ $W_{\rm out},b_{\rm out}$ & 词表输出头；$W_O$ 专指多头 Attention 的�
 $Z,\vect z$ & logits；$L$ 专指损失，层数写 $N_{\rm layer}$\\
 $P_{\rm pos}$ & 位置向量表；第 $i$ 行写 ${P_{\rm pos}}_{i,:}$\\
 $\Pi,p_j$ & 整张词表概率矩阵、单行中的第 $j$ 类概率\\
+$C$ & 因果掩码：可见位置为 $0$，未来位置为 $-\infty$；$T\times T$\\
+$\phi$ & 一般逐元素激活函数，具体取值由算例指定\\
+$\operatorname{sigmoid}$ & $\operatorname{sigmoid}(u)=1/(1+e^{-u})$\\
+$\sigma_r$ & 一组奖励的标准差，与激活函数区分\\
 $S,A$ & 注意力匹配分数、逐行 Softmax 后的读取权重\\
 $\mathcal{M}$ & 外积记忆／线性注意力的状态，与分数 $S$ 区分\\
 $F^{(\ell)},F_{\rm mid}$ & MLP 的第 $\ell$ 层激活、FFN 中间表示\\

@@ -17,7 +17,7 @@ X=\begin{bmatrix}1.2&0&-0.2\\-0.3&1.1&0.2\end{bmatrix}
 \in\R^{2\times3},\qquad
 X'=\begin{bmatrix}-0.3&1.1&0.2\\1.2&0&-0.2\end{bmatrix}.
 \]
-固定主例的 $W_Q,W_K,W_V$，暂不加位置、因果 Mask、Norm 与残差：
+固定主例的 $W_Q,W_K,W_V$，暂不加位置、因果掩码、Norm 与残差：
 \[
 W_Q=\begin{bmatrix}.8&.2&-.1\\.1&.9&.25\\-.1&.15&.8\end{bmatrix},\quad
 W_K=\begin{bmatrix}.85&0&.2\\-.1&.9&0\\.15&.2&.75\end{bmatrix},\quad
@@ -26,10 +26,10 @@ W_V=\begin{bmatrix}1&.2&0\\0&.9&.15\\.1&-.2&.85\end{bmatrix}.
 这些仍是三维主线的初始参数，仅在本次对照中固定不更新。
 先展开第一行的 Query 投影：
 \[
-q_1=(1.2,0,-0.2)W_Q=(0.98,0.21,-0.28),
+Q_{1,:}=(1.2,0,-0.2)W_Q=(0.98,0.21,-0.28),
 \]
 例如首项为 $1.2\times0.8+0\times0.1+(-0.2)\times(-0.1)=0.98$。
-同法算得 $k_1=(0.99,-0.04,0.09)$、$k_2=(-0.335,1.03,0.09)$，
+同法算得 $K_{1,:}=(0.99,-0.04,0.09)$、$K_{2,:}=(-0.335,1.03,0.09)$，
 所以第一行缩放分数约为 $(0.5407,-0.0792)$，
 Softmax 权重约为 $(0.6502,0.3498)$。
 两行 Value 为 $(1.18,0.28,-0.17)$、$(-0.28,0.89,0.335)$；
@@ -43,7 +43,7 @@ O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
 \end{bmatrix}.
 \]
 交换输入两行，输出也只换行：这就是行置换的\textbf{等变性}，未加 Mask 时没有额外的顺序信号。
-加上因果 Mask 后，位置 $i$ 只能看到前 $i$ 个 Token，各位置可见前缀长短不同，
+加上因果掩码后，位置 $i$ 只能看到前 $i$ 个 Token，各位置可见前缀长短不同，
 这带来一点隐含的顺序线索；显式的位置向量则直接把“第几位”写进每一行。
 现代模型常用的旋转位置表示（RoPE）见第~\ref*{intro:22d-modern-transformers}~章。
 
@@ -68,16 +68,17 @@ O(X'_+)\approx\begin{bmatrix}
 \label{eq:pos-swap-d3}
 \end{equation}
 第一坐标 $0.2812\ne0.2324$：输出不再只是换行。位置表提供了独立于内容的顺序信号。
-完整自回归 Block 还会接回因果 Mask、Norm 与残差。
+完整自回归 Block 还会接回因果掩码、Norm 与残差。
 
 \subsection{\texorpdfstring{为什么点积要除以 $\sqrt{d_k}$？算一次波动尺度}{为什么点积要除以 Key 维度平方根？}}
-\phantomsection\label{concept:scaled-dot-product}
+\label{concept:scaled-dot-product}
 
 Q/K 各维独立、等概率取 $\pm1$ 时，点积均值为 $0$、方差为 $d_k$，
 标准差为 $\sqrt{d_k}$（见\hyperref[app:variance-scaling]{数学速查中的四结果算例}）。
 分数 $(8,0)$ 的第一项概率为 $e^8/(e^8+1)\approx0.9997$；
-当 $d_k=64$，除以 $8$ 后分数变成 $(1,0)$，概率为 $e/(e+1)\approx0.731$。
-缩放控制典型量级，Softmax 仍可饱和。
+当 $d_k=64$，$\sqrt{64}=8$，除以 $8$ 后分数变成 $(1,0)$，概率为 $e/(e+1)\approx0.731$。
+缩放控制的是典型分数的量级，并未规定分数的上限。
+若分数差仍很大，权重仍会接近 $0/1$，此时对分数的小变化不敏感（称为饱和）。
 
 \subsection{两个头各算二维，再拼接：数字完整走一遍}
 \phantomsection\label{concept:multihead}

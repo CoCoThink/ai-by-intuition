@@ -135,6 +135,18 @@ $(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
 不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），交换后还须重新检查 $BA$ 的形状；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。
 \end{warningbox}
 
+\subsection{一次比较许多候选：把点积排成一行}
+
+设查询为 $\vect q^\top:1\times d$，候选为 $\vect k_i^\top:1\times d$。
+一个匹配分数是 $s_i=\vect q^\top\vect k_i$：左边一行与右边一列做点积。
+把候选按行叠成 $K:T_k\times d$，转置后每一列就是一条候选，因而
+\[
+\underbrace{\vect q^\top}_{1\times d}\underbrace{K^\top}_{d\times T_k}
+=(s_1,\ldots,s_{T_k}).
+\]
+例如查询 $(1,2)$ 与候选 $(1,0),(0,1)$ 比较，结果是 $(1,2)$。
+以后学习 Attention 时，这就是一次查询同时匹配多个位置的计算。
+
 \chapterchecktasks{03-matrix-multiplication}{理解与复算}{
 \item \textbf{形状：}若 $A:2\times3$、$B:3\times4$，说明为什么 $AB$ 合法，并给出输出形状。若 $B$ 换为 $4\times3$ 呢？\chapterinlinehint{先核对内侧维度，再保留外侧维度。}
 \item \textbf{手算：}行向量 $x=(2,1)$，$W=\begin{bmatrix}1&3\\2&-1\end{bmatrix}$，计算 $xW$，并标出行与列。\chapterinlinehint{让输入行分别与权重的两列做点积。}

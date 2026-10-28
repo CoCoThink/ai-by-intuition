@@ -8,8 +8,10 @@
 卷积核在图片上\textbf{重复扫描局部窗口}；
 但 Transformer 用 Attention 就能让序列里的位置交换信息。
 那么，\textbf{能否将图片也变成一串向量}？
+把图像切成局部像素块（Patch），各自投影成 Token，再交给 Transformer 组合信息，
+这条路线称为\textbf{视觉 Transformer（Vision Transformer，ViT）}。
 
-\subsection{第一步：把一张图片切成 Patch}
+\subsection{第一步：把一张图片切成 Patch}\phantomsection\label{concept:patch}
 
 先用一张只有一个通道的 $4\times4$ 小图，
 不涉及颜色，也不用真实照片。
@@ -211,7 +213,7 @@ Z_{\rm pair}=2I_2,\qquad
 第一张图的正确说明概率为 $0.881$，损失为
 $-\ln0.881\approx0.127$；若交换两段文字而不改匹配标签，损失就约为 $2.127$。
 训练在一批图片和文字之间反复做这种选择，并可同时计算文字到图片的对称损失。
-这解释了\href{https://arxiv.org/abs/2103.00020}{CLIP} 的配对学习思路。
+\phantomsection\label{concept:clip}这解释了\href{https://arxiv.org/abs/2103.00020}{CLIP} 的配对学习思路。
 
 另一条生成路线把视觉前缀与问题送入语言模型，对正确回答做下一 Token 交叉熵；
 \href{https://arxiv.org/abs/2304.08485}{LLaVA 的视觉指令微调}是一个实例。

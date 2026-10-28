@@ -4,22 +4,22 @@
 \phantomsection\label{partq:memory}
 对 $T_k$ 条行向量 Key--Value 配对，最直接的写入是外积累加：
 \begin{equation}
-\boxed{\mathcal{M}=\sum_{i=1}^{T_k}k_i^\top v_i},
+\boxed{\mathcal{M}=\sum_{i=1}^{T_k}\vect{k}_i \vect{v}_i^\top},
 \qquad
-\boxed{x\mathcal{M}=\sum_{i=1}^{T_k}(xk_i^\top)v_i}.
+\boxed{\vect{x}^\top\mathcal{M}=\sum_{i=1}^{T_k}(\vect{x}^\top\vect{k}_i)\vect{v}_i^\top}.
 \end{equation}
-这里 $\mathcal{M}:d_k\times d_v$，$x:1\times d_k$，读取输出仍是一行。
+这里 $\mathcal{M}:d_k\times d_v$，$\vect{x}^\top:1\times d_k$，读取输出仍是一行。
 
 \subsubsection{两条记忆的二维例子}
 \[
-k_A=(1,0),\quad v_A=(1,0),\qquad
-k_B=(0.6,0.8),\quad v_B=(0,1).
+\vect{k}_A^\top=(1,0),\quad \vect{v}_A^\top=(1,0),\qquad
+\vect{k}_B^\top=(0.6,0.8),\quad \vect{v}_B^\top=(0,1).
 \]
 写入矩阵分别是
 \[
-k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix},
+\vect{k}_A \vect{v}_A^\top=\begin{bmatrix}1&0\\0&0\end{bmatrix},
 \qquad
-k_B^\top v_B=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}.
+\vect{k}_B \vect{v}_B^\top=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}.
 \]
 因此
 \[
@@ -27,17 +27,17 @@ k_B^\top v_B=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}.
 \]
 查询 A：
 \[
-k_A \mathcal{M}_{\rm simple}
+\vect{k}_A^\top \mathcal{M}_{\rm simple}
 =(1,0)\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}
 =\boxed{(1,0.6)}
 =\underbrace{(1,0)}_{\text{正确信号}}
 +\underbrace{(0,0.6)}_{\text{来自 B 的串扰}}.
 \]
-B 被激活，是因为 $k_Ak_B^\top=0.6$ 不为零；
+B 被激活，是因为 $\vect{k}_A^\top\vect{k}_B=0.6$ 不为零；
 两条 Key 虽然都是单位长度，却不垂直。
 
-对单位行向量 Key $k_j$（$k_jk_j^\top=1$），恒有
+对单位行向量 Key $\vect{k}_j^\top$（$\vect{k}_j^\top\vect{k}_j=1$），恒有
 \[
-k_j\mathcal{M}=v_j+\sum_{i\ne j}(k_jk_i^\top)v_i.
+\vect{k}_j^\top\mathcal{M}=\vect{v}_j^\top+\sum_{i\ne j}(\vect{k}_j^\top\vect{k}_i)\vect{v}_i^\top.
 \]
 其他 Key 的匹配分数不为零时，就会产生干扰。

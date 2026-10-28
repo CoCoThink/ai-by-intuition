@@ -16,40 +16,40 @@ Transformer 主线里每个 Token 占一行。现在换一种视角理解线性�
 和前面一样，Key、Query 与 Value 都以\textbf{一条记录占一行}来表示。
 
 \subsection{先问输入、输出和形状}
-单次 Query 是 $x:1\times d_k$，Key 为 $k:1\times d_k$，
-Value 为 $v:1\times d_v$。我们希望读出一行 $1\times d_v$ 的结果。
+单次 Query 是 $\vect{x}^\top:1\times d_k$，Key 为 $\vect{k}^\top:1\times d_k$，
+Value 为 $\vect{v}^\top:1\times d_v$。我们希望读出一行 $1\times d_v$ 的结果。
 \[
-\underbrace{x}_{1\times d_k}
-\underbrace{k^\top}_{d_k\times1}
-\underbrace{v}_{1\times d_v}
-=(xk^\top)v.
+\underbrace{\vect{x}^\top}_{1\times d_k}
+\underbrace{\vect{k}}_{d_k\times1}
+\underbrace{\vect{v}^\top}_{1\times d_v}
+=(\vect{x}^\top\vect{k})\vect{v}^\top.
 \]
 先用点积得到匹配分数，再乘 Value；不能直接把 Key 和 Value 的维度混同。
 
 \subsection{亲手写入一条二维记忆}
 \localfixture{独立二维行向量例}
-先写 A：令 $k_A=(1,0)$，$v_A=(1,0)$，查询 $x=k_A$。
-下面先记作 $k=k_A,v=v_A$；后续加入 B 时继续使用这条 A。
+先写 A：令 $\vect{k}_A^\top=(1,0)$，$\vect{v}_A^\top=(1,0)$，查询 $\vect{x}^\top=\vect{k}_A^\top$。
+下面先记作 $\vect{k}^\top=\vect{k}_A^\top,\vect{v}^\top=\vect{v}_A^\top$；后续加入 B 时继续使用这条 A。
 两条向量的外积矩阵是
 \[
-\mathcal{M}=k^\top v
+\mathcal{M}=\vect{k} \vect{v}^\top
 =\begin{bmatrix}1\\0\end{bmatrix}
 \begin{bmatrix}1&0\end{bmatrix}
 =\boxed{\begin{bmatrix}1&0\\0&0\end{bmatrix}}.
 \]
 读取时从左边乘一条\textbf{行向量}：
 \begin{equation}
-\boxed{x\mathcal{M}=(1,0)\mathcal{M}=(1,0).}
+\boxed{\vect{x}^\top\mathcal{M}=(1,0)\mathcal{M}=(1,0).}
 \end{equation}
-因为 $kk^\top=1$，所以 $k\mathcal{M}=(kk^\top)v=v$；
-若 Key 并非单位向量，结果一般会乘上 $\|k\|^2$。
+因为 $\vect{k}^\top\vect{k}=1$，所以 $\vect{k}^\top\mathcal{M}=(\vect{k}^\top\vect{k})\vect{v}^\top=\vect{v}^\top$；
+若 Key 并非单位向量，结果一般会乘上 $\|\vect{k}^\top\|^2$。
 外积得到一个矩阵，点积得到一个数；二者不要混淆。
 
 \begin{idea}
-这就是同一计算的两种写法：$x(k^\top v)=(xk^\top)v$。
+这就是同一计算的两种写法：$\vect{x}^\top(\vect{k} \vect{v}^\top)=(\vect{x}^\top\vect{k})\vect{v}^\top$。
 如果有 $T_k$ 条记忆，Key 和 Value 分别\textbf{按行}存进
 $K:T_k\times d_k$、$V:T_k\times d_v$，
-匹配权重为 $\vect a^\top:1\times T_k$，
-则最后读出为 $\vect a^\top V:1\times d_v$。
+匹配权重为 $\vect{a}^\top:1\times T_k$，
+则最后读出为 $\vect{a}^\top V:1\times d_v$。
 形式直接对齐主线 Attention 的“权重乘 Value”。
 \end{idea}

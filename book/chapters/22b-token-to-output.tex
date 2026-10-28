@@ -4,30 +4,14 @@
 \chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to \Pi:3\times5$}{本章只做前向；参数取自统一三维例子}
 手算入口：\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini} 的二维分数迷你版}提供更短的分数练习；
 本章沿第二个位置逐步算完三维前向，它能读取两个位置，便于看清加权读取。
-现在\textbf{只用同一组三维参数}，把 Embedding、因果 Mask、Q/K/V、Norm、残差、
+现在\textbf{只用同一组三维参数}，把 Embedding、因果掩码、Q/K/V、Norm、残差、
 FFN 与输出头串成一次前向计算。
 
 所有数值由 \path{scripts/teaching_reference.py} 计算；
 完整参数与中间量见\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates} 的逐层数值核对表}。
 下列中间量显示四位小数；最终结果使用未舍入数值计算，手算可能有末位差异。
 \par\smallskip
-\Needspace{14\baselineskip}
-\noindent\textbf{本章运算路线：}
-\begin{center}
-\small\renewcommand{\arraystretch}{1.16}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{37mm}p{37mm}X@{}}
-\toprule
-环节 & 输入 $\to$ 输出 & 抓住一个代表数字\\\midrule
-查表与位置 & $3$ ID $\to X:3\times3$ & 第 2 行首项 $-0.30$\\
-Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{2,1}\approx-0.8198$\\
-因果 Attention & $QK^\top\to A:3\times3$ & $A_{2,1}\approx0.1244$\\
-残差与 FFN & $A V\to H:3\times3$ & 每步保留三个位置\\
-输出头与 Softmax & $H\to Z,\Pi:3\times5$ & 每行五个候选概率\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
+\input{figures/three-position-shapes}
 
 \subsection{第一步：Token ID、位置向量与输入形状}
 
@@ -42,7 +26,7 @@ X=E_{[2,4,5]}+P_{\rm pos}\in\R^{3\times3},
 \label{eq:running-three-token-x}
 \end{equation}
 一个位置占一行，三个特征占三列；
-位置向量影响输入数值，而因果 Mask 控制哪些位置可以被读取。
+位置向量影响输入数值，而因果掩码 控制哪些位置可以被读取。
 
 \subsection{第二步：先 Norm，再投影 Q/K/V}
 
@@ -54,7 +38,13 @@ X=E_{[2,4,5]}+P_{\rm pos}\in\R^{3\times3},
 \[
 U_{2,:}\approx(-1.1901,1.2566,-0.0665).
 \]
-随后使用第~\ref*{intro:22a-position-multihead}~章列出的三组主线投影权重：
+为便于当页复算，再列一次三组初始投影权重（与前章相同，均可训练）：
+\[
+W_Q=\begin{bmatrix}.8&.2&-.1\\.1&.9&.25\\-.1&.15&.8\end{bmatrix},\quad
+W_K=\begin{bmatrix}.85&0&.2\\-.1&.9&0\\.15&.2&.75\end{bmatrix},\quad
+W_V=\begin{bmatrix}1&.2&0\\0&.9&.15\\.1&-.2&.85\end{bmatrix}.
+\]
+用它们计算
 \[
 Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 \]
@@ -64,7 +54,7 @@ Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 Q_{2,1}=U_{2,1}\times0.8+U_{2,2}\times0.1+U_{2,3}\times(-0.1)
 \approx-0.8198.
 \]
-完整 Query 为 $q_2\approx(-0.8198,0.8829,0.3800)$。
+完整 Query 为 $Q_{2,:}\approx(-0.8198,0.8829,0.3800)$。
 第二位置可读取的前两行 Key 与 Value 也由同一批 $U$ 投影得到：
 \[
 K_{1:2,:}\approx\begin{bmatrix}1.0775&-0.5824&-0.4332\\-1.1473&1.1176&-0.2879\end{bmatrix},
@@ -76,13 +66,13 @@ V_{1:2,:}\approx\begin{bmatrix}1.2886&0.0728&-0.8700\\-1.1968&0.9062&0.1320\end{
 \subsection{第三步：用因果权重读取 Value}
 
 对 $d_k=3$，匹配分数为 $QK^\top/\sqrt3$。
-未来位置的分数设为 $-\infty$，
-所以它们在 Softmax 后获得零权重：
+定义因果掩码 $C:3\times3$：$C_{ij}=0$（$j\le i$），$C_{ij}=-\infty$（$j>i$）。
+给未来位置加上 $-\infty$，使它们在 Softmax 后获得零权重：
 \begin{equation}
 S=QK^\top/\sqrt3+C,\qquad A=\operatorname{softmax}(S).
 \label{eq:two-token-scores}
 \end{equation}
-第二行的两个可见分数，分别用 $q_2$ 点乘 $k_1,k_2$ 后除以 $\sqrt3$：
+第二行的两个可见分数，分别用 $Q_{2,:}$ 点乘 $K_{1,:},K_{2,:}$ 后除以 $\sqrt3$：
 \[
 S_{2,1}\approx\frac{(-0.8198)(1.0775)+(0.8829)(-0.5824)+(0.3800)(-0.4332)}{\sqrt3}
 \approx-0.9019,
@@ -92,7 +82,7 @@ S_{2,2}\approx1.0496,\qquad
 A_{2,:}=\frac{(e^{S_{2,1}},e^{S_{2,2}},0)}{e^{S_{2,1}}+e^{S_{2,2}}}
 \approx(0.1244,0.8756,0).
 \]
-第三项为零，是因为第三位置被因果 Mask 遮蔽。
+第三项为零，是因为第三位置被因果掩码 遮蔽。
 
 得到的 $A:3\times3$ 画在图~\ref{fig:attention-a-weights}。
 \textbf{每一行的权重在可见 Key 上求和为 $1$}：
@@ -189,7 +179,7 @@ GPT-2 等 Pre-Norm 模型在最后一个 Block 与输出头之间还有一次最
 
 第一位置最大概率对应 ID 2“春天”，目标却是 ID 4“花”；
 第二位置最大概率对应 ID 4“花”，目标却是 ID 5“开了”；
-第三位置预测 ID 3“。”，与目标相同。
+第三位置按最高概率选类时命中 ID 3“。”，目标概率约 $0.3418$。
 这组初值下，\textbf{训练前两题错、一题对}。
 
 \subsection*{四张最小矩阵：不用翻附录就能核对}
@@ -241,7 +231,7 @@ $(0,-0.3064,0.8002,-0.2620,0.5776)$
 $(0,-0.4279,0.9325,-0.6140,0.7915)$，
 最大分数差约 $0.3520$。
 这说明最后位置\textbf{受前文影响}，而不是重新训练过一遍。
-全部结果可用附录 B 的三维主例参数与脚本复算。
+全部结果可用\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} 的三维主例参数与脚本复算。
 
 \chapterchecktasks{22b-token-to-output}{理解与复算}{
 \item \textbf{定位：}输入为三个 Token，每行隐藏宽度为 $3$，词表大小为 $5$。列出 $X$、$A$、$H$、$Z$、$\Pi$ 的形状，并指出哪一步从三维隐藏特征变成五类分数。\chapterinlinehint{沿计算路线表逐项核对序列轴、隐藏轴和词表轴。}

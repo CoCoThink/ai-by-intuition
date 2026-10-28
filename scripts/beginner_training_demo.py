@@ -229,7 +229,7 @@ def run_checks():
         gw, gb = gradient(w, b); eps=1e-5
         assert math.isclose((loss(w+eps,b)-loss(w-eps,b))/(2*eps),gw,abs_tol=1e-9)
         assert math.isclose((loss(w,b+eps)-loss(w,b-eps))/(2*eps),gb,abs_tol=1e-9)
-    # C-006 uses a different initial point with the same data and update rule.
+    # C-007 uses a different initial point with the same data and update rule.
     gw, gb = gradient(F(0), F(3))
     assert (gw, gb) == (-2, 4)
     assert loss(F(0), F(3)) == 6

@@ -94,7 +94,7 @@ def check_published_forward():
     for printed,expected in zip(projections,[w['E'][[1,3]],w['E'][[3,1]],w['Wq'],w['Wk'],w['Wv']]):
         assert np.array_equal(printed,expected)
     source=(ROOT/'book/chapters/22b-token-to-output.tex').read_text()
-    expected=[state['k'][:2],state['v'][:2],w['Wo'],w['Wup'],w['Wdown'],w['Wout'],
+    expected=[w['Wq'],w['Wk'],w['Wv'],state['k'][:2],state['v'][:2],w['Wo'],w['Wup'],w['Wdown'],w['Wout'],
               state['x'],state['a'],state['h'],state['probs']]
     printed=numeric_matrices(source)
     assert len(printed)==len(expected)
@@ -103,14 +103,14 @@ def check_published_forward():
     # A quick-reference definition omitting nonidentity Wo silently changes the model.
     card=(ROOT/'book/chapters/00e-core-formulas.tex').read_text()
     assert r'R_{\rm raw}=AV' in card and r'X_{\rm att}=X+R_{\rm raw}W_O' in card
-    assert np.allclose(state['r'],state['x']+state['a']@state['v']@printed[2])
+    assert np.allclose(state['r'],state['x']+state['a']@state['v']@printed[5])
     assert not np.allclose(state['r'],state['x']+state['a']@state['v'])
     # Verify each newly printed second-position result at its own stage.
     for key,section in [('q','第二步'),('raw','第三步'),('r','第三步'),('b','第四步'),
                         ('pre','第四步'),('h','第四步'),('logits','第五步')]:
         stage=source.split(r'\subsection{'+section,1)[1].split(r'\subsection{',1)[0]
         assert all(value==0 or f'{value:.4f}' in stage for value in state[key][1]),(key,state[key][1])
-    print('Published forward QA: projection/FFN/output weights, ten matrices, second-position trace and Wo residual match canonical computation')
+    print('Published forward QA: projection/FFN/output weights, thirteen matrices, second-position trace and Wo residual match canonical computation')
 
 
 def check_new_supplements():

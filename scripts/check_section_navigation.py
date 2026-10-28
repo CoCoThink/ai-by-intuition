@@ -297,6 +297,77 @@ def check_forward_appendix_link(reader, path, labels):
     return []
 
 
+def printed_exercise_errors(found, expected):
+    return [] if found==expected else [f'Printed exercise sequence differs: {found[:8]} ... (expected {len(expected)} entries, found {len(found)})']
+
+
+def check_exercise_destinations(reader,path,labels):
+    from generate_exercise_bank import load_exercises,printed_regular
+    data,_,titles=load_exercises()
+    rows=printed_regular(data,titles)
+    failures=[]
+    pages=subprocess.check_output(['pdftotext','-layout',str(path),'-'],text=True).split('\f')
+    for prefix in ('exercise:','solution:'):
+        first=reader.get_destination_page_number(reader.named_destinations[labels[prefix+rows[0]['id']][3]])
+        last=reader.get_destination_page_number(reader.named_destinations[labels[prefix+rows[-1]['id']][3]])
+        found=re.findall(r'(?m)^\s*(C-\d{3})\.', '\n'.join(pages[first:last+1]))
+        failures.extend(printed_exercise_errors(found,[r['id'] for r in rows]))
+        # Check the actual destination page for each question/answer, not only the labels' existence.
+        for row in rows:
+            key=prefix+row['id'];fields=labels[key]
+            page=reader.get_destination_page_number(reader.named_destinations[fields[3]])
+            if page+1!=int(fields[1]) or not re.search(r'(?m)^\s*'+re.escape(row['id'])+r'\.',pages[page]):
+                failures.append(f'{key}: destination does not show the matching printed exercise')
+    if not failures:print(f'Printed exercise QA: {len(rows)} continuous C numbers and matching actual question/answer destinations')
+    return failures
+
+
+def check_reproduction_and_definitions(reader,labels):
+    """Verify actual page contents and the executable-code link, beyond valid labels."""
+    failures=[]
+    expected={
+        'concept:vit':('ViT','Transformer'),
+        'concept:patch':('Patch','局部'),
+        'concept:clip':('CLIP','配对'),
+        'concept:test-time-compute':('冻结参数','验证器'),
+        'concept:mamba':('Mamba','状态空间'),
+        'concept:yarn':('YaRN','RoPE'),
+        'concept:qk-norm':('QK-Norm','尺度'),
+        'concept:cross-correlation':('互相关','翻转'),
+        'concept:gqa':('GQA','共享一组'),
+    }
+    for label,words in expected.items():
+        dest=reader.named_destinations[labels[label][3]]
+        page=reader.get_destination_page_number(dest)
+        text=re.sub(r'\s+','',reader.pages[page].extract_text())
+        if any(word not in text for word in words):
+            failures.append(f'{label}: definition words {words} absent at actual destination page {page+1}')
+    code_targets={
+        'https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/':'notebooks/pytorch_starter.ipynb',
+        'https://github.com/CoCoThink/ai-by-intuition/blob/':'scripts/pytorch_starter.py',
+    }
+    links={suffix:[] for suffix in code_targets.values()}
+    for page in reader.pages:
+        for ref in page.get('/Annots',[]):
+            action=ref.get_object().get('/A')
+            if action is not None:
+                uri=str(action.get_object().get('/URI',''))
+                for prefix,suffix in code_targets.items():
+                    if uri.startswith(prefix) and uri.endswith('/'+suffix):
+                        links[suffix].append(uri[len(prefix):-(len(suffix)+1)])
+    copyright_text=re.sub(r'\s+','',reader.pages[1].extract_text())
+    for suffix,revisions in links.items():
+        if revisions:
+            if len(revisions)!=1:failures.append(f'Expected one versioned code destination: {suffix}')
+            for sha in revisions:
+                if not re.fullmatch(r'[0-9a-f]{40}',sha) or sha[:12] not in copyright_text:
+                    failures.append(f'Code revision differs from PDF copyright source: {suffix}: {sha}')
+        elif '编译来源为Git提交' in copyright_text:
+            failures.append(f'PDF has Git provenance but lacks a matching versioned code link: {suffix}')
+    if not failures:print('Reproduction/lookup QA: Notebook/script SHAs match copyright; nine actual destinations contain their definitions')
+    return failures
+
+
 def check_pdf(path, aux, used):
     from pypdf import PdfReader
     reader=PdfReader(path)
@@ -329,6 +400,8 @@ def check_pdf(path, aux, used):
     ):
         if primary not in labels or legacy not in labels or labels[primary][3]!=labels[legacy][3]:
             failures.append(f'Merged compatibility link resolves to a different destination: {primary}/{legacy}')
+    failures.extend(check_exercise_destinations(reader,path,labels))
+    failures.extend(check_reproduction_and_definitions(reader,labels))
     check_toc_folios(reader,aux,labels)
     failures.extend(check_forward_appendix_link(reader,path,labels))
     failures.extend(contour_label_errors(reader,path,labels))
@@ -350,6 +423,8 @@ def check_pdf(path, aux, used):
 
 
 def self_test():
+    assert not printed_exercise_errors(['C-001','C-002'],['C-001','C-002'])
+    assert printed_exercise_errors(['C-001','C-120','C-002'],['C-001','C-002','C-003'])
     source=r'\subsection{Elective}\label{elective:test}\begin{center}\captionof{figure}{Image}\label{fig:test}'
     targets=section_targets({'demo':source})
     assert targets=={'elective:test'}

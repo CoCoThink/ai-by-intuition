@@ -8,12 +8,12 @@
 
 \subsection{把 Key 和 Value 堆成矩阵：从匹配到读出}
 \phantomsection\label{intro:08-stacking-key-value}
-设 Query $x:1\times d_k$，$T_k$ 条 Key 按行排成
+设 Query $\vect{x}^\top:1\times d_k$，$T_k$ 条 Key 按行排成
 $K:T_k\times d_k$，Value 按行排成 $V:T_k\times d_v$。
 一次查询经过三步：
 \begin{equation}
-\boxed{\underbrace{y}_{1\times d_v}
-=\underbrace{\sigma(xK^\top)}_{1\times T_k}
+\boxed{\underbrace{\vect{y}^\top}_{1\times d_v}
+=\underbrace{\phi(\vect{x}^\top K^\top)}_{1\times T_k}
 \underbrace{V}_{T_k\times d_v}.}
 \end{equation}
 这与前面 $\softmax(QK^\top)V$ 采用同一个行向量约定。
@@ -21,21 +21,21 @@ $K:T_k\times d_k$，Value 按行排成 $V:T_k\times d_v$。
 \subsubsection{两条二维记忆，手算一次}
 \localfixture{二维例；Key 沿用上一章，Value 改为 $(2,1),(0,3)$；与三维主例无关}
 \[
-x=(1,-1),\quad
+\vect{x}^\top=(1,-1),\quad
 K=\begin{bmatrix}1&0\\0.6&0.8\end{bmatrix},\quad
 V=\begin{bmatrix}2&1\\0&3\end{bmatrix}.
 \]
 两次点积分别是 $1$ 和 $-0.2$，
 合并成一行：
 \[
-xK^\top=(1,-1)\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}
+\vect{x}^\top K^\top=(1,-1)\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}
 =\boxed{(1,-0.2)}.
 \]
 先逐元素 ReLU，再按行混合 Value：
 \begin{example}
 \[
-a=\relu(xK^\top)=(1,0),\qquad
-aV=(1,0)\begin{bmatrix}2&1\\0&3\end{bmatrix}
+\vect{a}^\top=\relu(\vect{x}^\top K^\top)=(1,0),\qquad
+\vect{a}^\top V=(1,0)\begin{bmatrix}2&1\\0&3\end{bmatrix}
 =\boxed{(2,1)}.
 \]
 第二条记忆的负匹配被筛掉，因此未参与输出。
@@ -54,14 +54,14 @@ $T_k$ 是记忆条数，$d_k$ 是每条 Key 的宽度，$d_v$ 是 Value 的宽�
 \subsubsection{插入非线性究竟改变了什么？}
 如果不插入 ReLU，则
 \[
-\mathcal{M}=K^\top V=\sum_i k_i^\top v_i,
-\qquad x\mathcal{M}=(xK^\top)V.
+\mathcal{M}=K^\top V=\sum_i \vect{k}_i \vect{v}_i^\top,
+\qquad \vect{x}^\top\mathcal{M}=(\vect{x}^\top K^\top)V.
 \]
 这次例子的线性读出是
 \[
-x\mathcal{M}=(1,-0.2)V=\boxed{(2,0.4)},
+\vect{x}^\top\mathcal{M}=(1,-0.2)V=\boxed{(2,0.4)},
 \]
-而非线性读出为 $\relu(xK^\top)V=(2,1)$。
+而非线性读出为 $\relu(\vect{x}^\top K^\top)V=(2,1)$。
 \textbf{不插 ReLU 时，两步可预先合并成固定状态 $\mathcal{M}=K^\top V$；
 插入 ReLU 后，每条匹配先按正负筛选，读出只能逐条匹配后再组合。}
 Softmax Attention 也先逐条匹配、归一化再读出，属于后一类。
@@ -71,6 +71,6 @@ Softmax Attention 也先逐条匹配、归一化再读出，属于后一类。
 检查两种读出结果、存储形状与串扰。
 
 \begin{idea}
-统一记住一条式子：$\sigma(xK^\top)V$。
+统一记住一条式子：$\phi(\vect{x}^\top K^\top)V$。
 先匹配所有 Key，再把这些分数当作读取各行 Value 的权重。
 \end{idea}

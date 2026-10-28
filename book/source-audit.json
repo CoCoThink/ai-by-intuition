@@ -418,5 +418,12 @@
     "checked_utc": "2026-10-28",
     "method": "Primary source content review of sections 4.1.1–4.1.3 (GRPO and outcome/process reward models)",
     "result": "已核对组相对优势，以及结果／过程监督使用奖励模型的例子"
+  },
+  {
+    "url": "https://modelcontextprotocol.io/specification/2026-07-28/architecture/index",
+    "status": 200,
+    "final_url": "https://modelcontextprotocol.io/specification/2026-07-28/architecture/index",
+    "checked_utc": "2026-10-28",
+    "method": "Content review: host creates clients; each client communicates with one server; host permissions and server capabilities"
   }
 ]

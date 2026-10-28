@@ -15,12 +15,12 @@
 
 在点积 Attention 中，三者分工明确：
 \begin{itemize}
-\item \textbf{Query（查询，记作 $\vect q$）：}
+\item \textbf{Query（查询，记作 $\vect q^\top$）：}
 当前这个位置\textbf{拿什么条件来查}？它用于发起匹配。
-\item \textbf{Key（键，记作 $\vect k_i$）：}
+\item \textbf{Key（键，记作 $\vect k_i^\top$）：}
 第 $i$ 个位置\textbf{凭什么被找到}？它与 Query 比较，
 产生一个\textbf{匹配分数}。
-\item \textbf{Value（值，记作 $\vect v_i$）：}
+\item \textbf{Value（值，记作 $\vect v_i^\top$）：}
 第 $i$ 个位置\textbf{被找到后交出什么内容}？
 它不是匹配分数，而是最终\textbf{被加权相加}的向量。
 \end{itemize}
@@ -41,9 +41,7 @@ Query 和 Key 用来计算权重，Value 则是按权重组合的内容。
 \vect v_i^\top=\vect x_i^\top W_V.
 \]
 这里约定每个 Token 的输入 $\vect x_i^\top$ 是\textbf{行向量}，
-$W_Q:d_{\rm model}\times d_k$。若改写为列向量，
-必须把权重也转置：$\vect q_i=W_Q^\top\vect x_i$，
-而不是仍写 $W_Q\vect x_i$。
+$W_Q:d_{\rm model}\times d_k$；行列写法的对应关系见\sectionentry{sec:layout-matrix-card}。
 三组投影参数都可以通过训练学习。
 
 为什么区分这三种向量？因为\textbf{用于判断相关性的特征}与\textbf{希望读出的内容}可以不同，
@@ -58,7 +56,7 @@ Value 的维度也不必等于 Key 的维度。
 
 \subsection{匹配：独立投影让分数不再对称}
 
-\localfixture{二维 Q/K/V；沿用前面的三条二维输入 $\vect x_1^\top,\vect x_2^\top,\vect x_3^\top$（与主线 $E$ 无关）；未缩放、未加因果 Mask}
+\localfixture{二维 Q/K/V；沿用前面的三条二维输入 $\vect x_1^\top,\vect x_2^\top,\vect x_3^\top$（与主线 $E$ 无关）；未缩放、未加因果掩码}
 沿用前面三条二维输入组成的 $X$，每行一个位置：
 \[
 X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\qquad
@@ -85,6 +83,9 @@ S=QK^\top
 这正是\textbf{拆开 Query 和 Key 的新增表达能力}。
 判断匹配是否对称要看原始分数 $S$：逐行 Softmax 各用自己的分母，
 权重矩阵是否对称反映不了 $S$ 是否对称。
+例如回到零参数版本，$S_{13}=S_{31}=1$，但
+$A_{13}=e/(2e+1)\approx0.4223$，$A_{31}=e/(2e+e^2)\approx0.2119$。
+两行分母不同，同样的原始分数也会得到不同权重。
 
 \subsection{分配：以第三个位置为 Query 计算权重}
 
@@ -95,11 +96,11 @@ S=QK^\top
 =\frac{(e,e^2,e^3)}{e+e^2+e^3}
 \approx\boxed{(0.090,0.245,0.665)}.
 \]
-若是 Decoder-only 模型的第三个位置，三个 Key 均在可见前缀；
-第一、二位置还要用因果 Mask 排除各自的未来位置，
+预测下一 Token 时，当前位置只读自己和前面的 Token。
+第三个位置的三个 Key 均可见；第一、二位置还要排除各自的未来位置，
 \hyperref[concept:causal-mask]{下一章}会算出这两行的因果版本。
 本节使用\textbf{未缩放}的原始点积以便比较投影；
-标准缩放点积还会除以 $\sqrt{d_k}$。
+缩放的目的与算法在\sectionentry{concept:scaled-dot-product}中再解释。
 
 \subsection{读出：Value 与 Key 分开设计}
 
@@ -142,10 +143,10 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 \end{tabularx}
 \end{center}
 
-回到主线，还需要把两条规则放进模型：\textbf{因果 Mask}
+回到主线，还需要把两条规则放进模型：\textbf{因果掩码}
 让当前位置只读取已经可见的 Token；序列变长时，
 注意力的匹配与缓存也要支付相应成本。
-本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算，并加上因果 Mask。
+本章先算一个 Query，下章把所有行的 Softmax 和 Value 读取合成矩阵运算，并加上因果掩码。
 
 \subsection{训练后的 Q/K 会选中所需的记录吗？}
 
@@ -176,4 +177,4 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 
 \par\smallskip
 同一组输入在拆分职责后读出不同结果；可训练投影使匹配方式也能由任务反馈调整。
-下一章把读取组织成矩阵，一次算完所有位置，并加入因果 Mask。
+下一章把读取组织成矩阵，一次算完所有位置，并加入因果掩码。

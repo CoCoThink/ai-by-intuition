@@ -20,18 +20,26 @@ $E$ 的梯度要把查表与输出头两条路径相加，不能只在总数里�
 \texttt{teaching\_reference.parameters()} 读取数值，
 再用 PyTorch 的自动求导实现与 NumPy 手工反传相同的运算。
 
-\textbf{运行环境：}Python 3.10+、NumPy、PyTorch（在本地安装所选兼容版本）。
+\textbf{运行环境：}使用 \path{requirements-teaching.txt} 中经复算的固定版本：
+NumPy 2.5.0、PyTorch 2.14.0；本次验证使用 Python 3.14.6、CPU、float64。
 在仓库根目录执行：
 \begin{verbatim}
-python3 -m pip install numpy torch
+python3 -m pip install -r requirements-teaching.txt
 python3 scripts/pytorch_starter.py
 \end{verbatim}
-不方便在本地安装时，可以打开固定到提交 \texttt{07841c1} 的在线 Colab 教学 Notebook：\par
-{\footnotesize\noindent\url{https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/07841c1cbb59d09b7b116f1cb993d385e97473d1/notebooks/pytorch_starter.ipynb}\par}
-\noindent Notebook 会克隆公开仓库并运行同一套脚本，不需要连接任何私有数据；
-它克隆的是仓库最新代码，若要与本 PDF 逐位一致，克隆后先切换到版权页所列提交。
+\ifdefempty{\bookbuildfullsha}{
+本次来源没有完整 Git 提交号，因此省略固定版本的 Colab 入口；本地仍可运行上述脚本。
+}{
+\href{https://colab.research.google.com/github/CoCoThink/ai-by-intuition/blob/\bookbuildfullsha/notebooks/pytorch_starter.ipynb}{在 Colab 打开与本 PDF 编译来源同一提交的 Notebook}。
+}
+\noindent 打开页面后，把版权页的提交号填入第一个代码格的 \texttt{BOOK\_COMMIT}。
+Notebook 会获取仓库历史，将缩略提交号解析为完整 SHA，并打印实际运行代码的 SHA 和依赖版本。
+页面版本决定你看到哪份 Notebook，\texttt{BOOK\_COMMIT} 决定脚本实际来自哪次提交，两者分别核对。
+缺失或无效提交号会停止运行，不会改用最新代码；已有目录若含未提交修改，也会停止以便保留实验。
+教学实验不下载模型权重，也不调用付费 API。
+数值比较使用 $10^{-8}$ 的容差，目标是在同数据、同代码和经验证环境下复现到教材显示精度。
 
-\textbf{预期标准输出：}
+\textbf{主要输出：}
 \begin{verbatim}
 Loss: 1.798430 -> 1.611377
 Shape: (3, 5) Parameters: 99
@@ -49,7 +57,8 @@ loss_after, z_after = forward()
 \end{verbatim}
 这里展示梯度的收集与同步更新；模型初始化、因果 Attention、
 两次 LayerNorm、FFN 和断言保留在
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/main/scripts/pytorch_starter.py}{仓库完整可运行脚本}，避免纸质版印出数十行维护性代码。
+\ifdefempty{\bookbuildfullsha}{\path{scripts/pytorch_starter.py}}{%
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/\bookbuildfullsha/scripts/pytorch_starter.py}{同一提交的完整可运行脚本}}，避免纸质版印出数十行维护性代码。
 
 脚本采用双精度以便与 NumPy 手算基线按容差对齐。观察代码时请检查：
 \texttt{E[ids - 1]} 是三行查表，
@@ -131,7 +140,7 @@ $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 \ref*{intro:16-loss-gradient}--\ref*{intro:07-functions-relu} & \path{beginner_training_demo.py} & 标准库 & 双参数迭代、步长、ReLU 拟合 & 直线下界 2/9\\
 \ref*{intro:20b-task-contract}、\ref*{intro:22b-token-to-output}--\ref*{intro:22c-language-training} & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
 \ref*{intro:22c-language-training}、\ref*{intro:23-llm-systems} & \path{teaching_trace.py} & NumPy & 0--20 步；\texttt{-{}-attention} 看权重，\texttt{-{}-freeze}/\texttt{-{}-only} 冻结参数，\texttt{-{}-lr}、\texttt{-{}-ids} 换学习率或句子，\texttt{-{}-generate} 贪心生成 & 末步 0.483173\\
-\ref*{intro:22c-language-training}、附录 B & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
+\ref*{intro:22c-language-training}、\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
 \ref*{intro:20a-tokenizer} & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
 \ref*{intro:20a-tokenizer} & \path{chinese_tokenizer_demo.py} \texttt{-{}-real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\
 \ref*{intro:21a-context-gap}、\ref*{intro:22c-language-training} & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 ln 2\\
@@ -147,7 +156,7 @@ $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 \ref*{intro:22d-modern-transformers} & \path{cache_budget_demo.py} & 标准库 & 真实 KV 预算与练习 & 12,288 字节/Token\\
 \ref*{intro:22d-modern-transformers}、\ref*{intro:19b-vit} & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
 \ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity} & \path{memory_demo.py} & 标准库 & 外积与 Delta 残差 & 记忆断言通过\\
-附录 B & \path{mini_transformer_demo.py} & NumPy & 分数参数前向与反传 & 24 个导数一致\\
+\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & \path{mini_transformer_demo.py} & NumPy & 分数参数前向与反传 & 24 个导数一致\\
 附录 C & \path{review_exercises_demo.py} & 标准库 & 综合练习中间数值 & 习题断言通过\\
 \end{longtable}\endgroup
 真实 GPT-2 权重实验（\path{gpt2_demo.py}）的运行方式与存档结果见\hyperref[app:revision-notes]{附录~\ref*{app:revision-notes}}。

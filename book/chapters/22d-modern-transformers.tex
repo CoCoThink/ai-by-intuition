@@ -64,9 +64,9 @@ R(\phi)=\begin{bmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{bmatrix}.
 如果我们主要想控制数值大小，是否一定要先把中心移到零？
 可以直接用一行数的\textbf{均方根（RMS）}作为尺度：先逐项平方、取平均，再开平方。
 
-只看一条二维向量 $\vect x=(3,4)$：
+只看一条二维向量 $\vect x^\top=(3,4)$：
 \[
-\operatorname{RMS}(\vect x)
+\operatorname{RMS}(\vect x^\top)
 =\sqrt{\frac{3^2+4^2}{2}}=\sqrt{12.5}.
 \]
 忽略可学习缩放参数与小正数 $\varepsilon$，
@@ -81,13 +81,14 @@ RMSNorm 的两项则仍为正。RMSNorm 省去中心化、简化计算；
 具体模型的训练效果和运行成本要通过对照实验判断，原论文见\hyperref[source:rmsnorm]{附录来源}。
 
 
-\textbf{Pre-Norm 与 Post-Norm} 的差别是归一化位于子层之前还是之后。
-它改变残差与梯度路径，训练中的梯度因而经过不同的归一化位置。
+“归一化怎么算”与“放在子层前还是后”是两项选择。
+LayerNorm/RMSNorm 回答前一个问题；Pre-Norm/Post-Norm 回答后一个问题，
+位置与残差路径见\hyperref[intro:22-transformer-architecture]{Block 章}。
 
 \subsection{必读 3：GQA 怎样减少 KV 缓存？}
 \phantomsection\label{concept:mla}
 \phantomsection\label{concept:mqa}
-\phantomsection\label{concept:gqa}
+\phantomsection\label{example:gqa-budget}
 \phantomsection\label{partq:architecture}
 
 标准 \conceptlink{multihead}{多头注意力}（MHA）可以为每个 Query 头保存自己的 Key/Value 头。
@@ -265,7 +266,7 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 
 SwiGLU 是一种门控 FFN：门分支使用 SiLU 激活，内容分支使用线性投影，相乘后再降回输出宽度：
 \begin{equation}
-\operatorname{FFN}(\vect x)
+\operatorname{FFN}(\vect x^\top)
 =\left[
 \operatorname{SiLU}(\vect x^\top W_g)
 \odot(\vect x^\top W_u)\right]W_{\rm down},
@@ -287,7 +288,7 @@ $\operatorname{SiLU}(z)=z/(1+e^{-z})$。
 \[
 w_1=\frac{e^2}{e^2+e^1}\approx\boxed{0.731},\qquad
 w_2=\frac{e^1}{e^2+e^1}\approx\boxed{0.269},\qquad
-\text{输出}=0.731\,f_1(\vect x)+0.269\,f_2(\vect x).
+\text{输出}=0.731\,f_1(\vect x^\top)+0.269\,f_2(\vect x^\top).
 \]
 先对三个分数做 Softmax 得 $(0.665,0.245,0.090)$，再把前两项除以它们的和 $0.910$，结果相同。
 实际系统还需要处理负载均衡、通信与容量限制。
@@ -384,46 +385,48 @@ MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：线性 Attention 与 Delta 规则}
 
 \textbf{将历史压入固定形状的状态，就能逐步写入与读取。}
-沿用行向量约定，每来一对 Key--Value，就把外积 $k_i^\top v_i$（$d_k\times d_v$）加进状态：
+沿用行向量约定，$\vect{k}_i^\top:1\times d_k$、$\vect{v}_i^\top:1\times d_v$。
+每来一对 Key--Value，就把外积 $\vect{k}_i \vect{v}_i^\top$（$d_k\times d_v$）加进状态：
 \[
 \underbrace{\mathcal{M}_t}_{d_k\times d_v}
-=\sum_{i\le t}k_i^\top v_i,\qquad
-\underbrace{y_t}_{1\times d_v}=q_t\mathcal{M}_t.
+=\sum_{i\le t}\vect{k}_i \vect{v}_i^\top,\qquad
+\underbrace{\vect{y}_t^\top}_{1\times d_v}=\vect{q}_t^\top\mathcal{M}_t.
 \]
 查询时只读这个固定大小的状态，长度增加也不必保存每个位置的 K/V。
 
 \begin{example}
 \noindent\emph{两条关联如何汇成一个状态}\par
 \localfixture{二维行向量状态，独立于三维 Transformer 贯通参数}
-若 $k_1=(1,0)$、$v_1=(2,0)$，
-$k_2=(0,1)$、$v_2=(0,3)$，
+若 $\vect{k}_1^\top=(1,0)$、$\vect{v}_1^\top=(2,0)$，
+$\vect{k}_2^\top=(0,1)$、$\vect{v}_2^\top=(0,3)$，
 则外积相加得到 $\mathcal{M}_2=\begin{bmatrix}2&0\\0&3\end{bmatrix}$。
-用 $q_2=(1,1)$ 查询，$q_2\mathcal{M}_2=(2,3)$；
+用 $\vect{q}_2^\top=(1,1)$ 查询，$\vect{q}_2^\top\mathcal{M}_2=(2,3)$；
 两条 Value 的贡献直接相加，保留了累计幅度。
 \end{example}
 
 \phantomsection\label{sec:modern-delta-rule}
 \textbf{Key 不正交时，直接相加会串扰。}
-先写入 $k_A=(1,0)$、$v_A=(1,0)$，得 $\mathcal{M}_1=k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix}$。
-再来 $k_B=(0.6,0.8)$、$v_B=(0,1)$：若直接加上 $k_B^\top v_B$，
+先写入 $\vect{k}_A^\top=(1,0)$、$\vect{v}_A^\top=(1,0)$，得 $\mathcal{M}_1=\vect{k}_A \vect{v}_A^\top=\begin{bmatrix}1&0\\0&0\end{bmatrix}$。
+再来 $\vect{k}_B^\top=(0.6,0.8)$、$\vect{v}_B^\top=(0,1)$：若直接加上 $\vect{k}_B \vect{v}_B^\top$，
 \[
 \mathcal{M}_2^{\rm add}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix},\qquad
-k_B\mathcal{M}_2^{\rm add}=(0.6,\,1),
+\vect{k}_B^\top\mathcal{M}_2^{\rm add}=(0.6,\,1),
 \]
-多出的 $0.6$ 来自旧记忆 A，因为 $k_Bk_A^\top=0.6\ne0$。
+多出的 $0.6$ 来自旧记忆 A，因为 $\vect{k}_B^\top\vect{k}_A=0.6\ne0$。
 \textbf{Delta 规则}先读旧状态，只写入还没记住的残差：
 \[
-r_t=v_t-k_t\mathcal{M}_{t-1},\qquad
-\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta\, k_t^\top r_t}.
+\vect{r}_t^\top=\vect{v}_t^\top-\vect{k}_t^\top\mathcal{M}_{t-1},\qquad
+\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta\, \vect{k}_t \vect{r}_t^\top}.
 \]
-取 $\eta=1$：$r_B=(0,1)-(0.6,0)=(-0.6,1)$，
+取 $\eta=1$：$\vect{r}_B^\top=(0,1)-(0.6,0)=(-0.6,1)$，
 \[
-\mathcal{M}_2=\mathcal{M}_1+\begin{bmatrix}0.6\\0.8\end{bmatrix}(-0.6,1)
-=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix},\qquad
-k_B\mathcal{M}_2=\boxed{(0,1)}.
+\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix},\qquad
+\vect{k}_B^\top\mathcal{M}_2=\boxed{(0,1)}.
 \]
-B 的读出被精确修正。Gated DeltaNet 把这种残差写入与遗忘门控结合，用于高效序列建模。
-写入 B 对旧 Key A 有什么影响、反复写入会收敛到哪里，
+B 的读出被精确修正，但旧 A 的读出变成 $\vect{k}_A^\top\mathcal{M}_2=(0.64,0.6)$，误差约 $0.700$。
+作为对照，从同一个“只写好 A”的 $\mathcal{M}_1$ 出发，直接相加写入 B 时 A 的误差为 $0.600$。
+修正当前 Key 并不等于保住所有旧记忆。Gated DeltaNet 把残差写入与遗忘门控结合。
+完整外积展开与反复重访的收敛过程，
 \hyperref[part:memory]{联想记忆部分}用外积视角再算一遍（可选延伸）。
 
 
@@ -456,10 +459,10 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 \end{tabularx}
 \end{center}
 
-这里 \textbf{YaRN} 是基于 RoPE 的长上下文扩展方向，
+\phantomsection\label{concept:yarn}这里 \textbf{YaRN} 是基于 RoPE 的长上下文扩展方向，
 \textbf{NoPE} 表示某些设计不在该层显式加入位置编码，
 顺序还可通过因果可见性等结构进入计算。
-\textbf{QK-Norm} 尝试控制 Q/K 的尺度与分数饱和；
+\phantomsection\label{concept:qk-norm}\textbf{QK-Norm} 尝试控制 Q/K 的尺度与分数饱和；
 \textbf{超连接（Hyper-Connections, HC）}用多条可学习的残差通路替代单一残差旁路，
 \textbf{mHC（Manifold-Constrained Hyper-Connections）}再约束这些通路的混合矩阵以恢复恒等映射性质；
 这些设计要连同连接路径与约束一起理解。
@@ -468,7 +471,7 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 \href{https://aclanthology.org/2020.findings-emnlp.379/}{QK-Norm}、
 \href{https://arxiv.org/abs/2409.19606}{HC}
 与 \href{https://arxiv.org/abs/2512.24880}{mHC} 的原始论文。
-\textbf{Mamba} 是选择性状态空间模型的一类路线，
+\phantomsection\label{concept:mamba}\textbf{Mamba} 是选择性状态空间模型的一类路线，
 \textbf{Gated DeltaNet} 采用门控 Delta 状态更新的高效序列建模路线；
 两者按各自的状态更新公式建立比较。
 参见 \href{https://arxiv.org/abs/2312.00752}{Mamba} 和
@@ -518,7 +521,7 @@ $8\times(3+2)=\answerresult{40}$。
 \]
 最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
 窗口掩码有 $1+2+3+3+3=\answerresult{12}$ 个可见位置对，
-全量因果 Mask 则有 $15$ 个。
+全量因果掩码 则有 $15$ 个。
 \begin{boundarybox}
 \textbf{计算口径：}以上 $128/64/40$ 是\textbf{示例结构的缓存元素数}；
 实际 MLA 还涉及位置分支、张量布局、投影与解码重建。

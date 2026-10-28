@@ -3,7 +3,7 @@
 \section{协议、Skill 与多 Agent：怎样在边界内协作？}
 \label{intro:23d-agent-protocols}
 
-\asof{2026-10-25}{信任分层、授权与消息关联}
+\asof{2026-10-28}{信任分层、授权与消息关联}
 
 \subsection{MCP 为什么是协议，不是更聪明的模型？}
 \phantomsection\label{concept:mcp}
@@ -17,7 +17,20 @@
 共同接口让接入方式能够复用，模型仍负责根据任务提出请求。
 数据可靠性和操作权限由应用负责校验。
 
-\noindent\textbf{最小 MCP 消息：}以下按 MCP 2026-07-28 版展示一次工具调用的 JSON-RPC 消息体。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{30mm}X@{}}\toprule
+角色 & 在报告任务中的职责\\\midrule
+宿主应用（Host） & 组织模型与上下文，管理客户端及用户授权\\
+客户端（Client） & 由宿主创建，每个客户端与一个服务端交换协议消息\\
+服务端（Server） & 按协议提供报告资源和读取工具，执行自身权限检查\\
+模型 & 根据任务与已有结果提出读取请求、组织回答；由应用把请求转为协议调用\\\bottomrule
+\end{tabularx}
+\end{center}
+角色划分见\href{https://modelcontextprotocol.io/specification/2026-07-28/architecture/index}{MCP 架构规范}。
+
+\subsubsection*{\texorpdfstring{{\symboliconfont ★}}{★} 进阶阅读：最小 MCP 消息}
+以下按 MCP 2026-07-28 版展示一次工具调用的 JSON-RPC 消息体。
 新版把版本与能力放进每个请求，移除了 \texttt{initialize} 握手和协议级会话。
 客户端可先用 \texttt{server/discover} 查询支持的版本，再用 \texttt{tools/list} 发现工具；
 这两步的请求也各自携带元数据。

@@ -1,6 +1,6 @@
 \subsection{线性层、MLP 与 Attention 的统一检索视角}
 \phantomsection\label{intro:14-summary}
-采用行向量 $x:1\times d_k$，
+采用行向量 $\vect{x}^\top:1\times d_k$，
 以及逐行堆叠的 $K:T_k\times d_k$、$V:T_k\times d_v$：
 
 \begin{center}\small
@@ -8,16 +8,15 @@
 \begin{tabularx}{\linewidth}{@{}p{23mm}p{57mm}X@{}}
 \toprule
 计算 & 一次读取的行向量写法 & 关键区别\\\midrule
-Linear & $x(K^\top V)=x\mathcal{M}$ & 线性匹配，外积可相加\\
-MLP & $\sigma(xK^\top)V$ & 非线性筛选，权重不必归一化\\
-Attention & $\softmax(\beta xK^\top)V$ & 每条查询归一化权重，Mask 限制可见范围\\
+Linear & $\vect{x}^\top(K^\top V)=\vect{x}^\top\mathcal{M}$ & 线性匹配，外积可相加\\
+MLP & $\phi(\vect{x}^\top K^\top)V$ & 非线性筛选，权重不必归一化\\
+Attention & $\softmax(\vect{x}^\top K^\top/\sqrt{d_k})V$ & 每条查询归一化权重，掩码限制可见范围\\
 \bottomrule
 \end{tabularx}
 \end{center}
-缩放系数 $\beta$ 在标准缩放点积注意力里取
-$1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
+这里直接写出标准缩放因子 $1/\sqrt{d_k}$。三者都可以写成加权读出的形式：
 \[
-\text{输出}=\sum_i \text{匹配权重}_i\,v_i.
+\text{输出}=\sum_i \text{匹配权重}_i\,\vect{v}_i^\top.
 \]
 \textbf{三者共享“匹配 $\to$ 加权读出”的形式，区别在于权重是否归一化、K/V 来自参数还是上下文}；
 计算量、容量与训练行为也随之不同。
@@ -36,7 +35,7 @@ Softmax 对每条查询重新归一化，所以它的读出随上下文逐条计
 
 \subsubsection{线性注意力的状态，就是累加的外积记忆}
 
-\hyperref[sec:modern-delta-rule]{现代架构章的线性状态}$\mathcal{M}_t=\sum_{i\le t}k_i^\top v_i$
+\hyperref[sec:modern-delta-rule]{现代架构章的线性状态}$\mathcal{M}_t=\sum_{i\le t}\vect{k}_i \vect{v}_i^\top$
 正是本部分的外积记忆按因果前缀逐步写入；下节将在理想随机条件下估计这种未归一化状态的干扰。
 实际线性 Attention 还需特征映射或归一化，Gated DeltaNet 另加误差修正和门控，
 干扰项要按各自的更新公式重新估计。

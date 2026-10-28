@@ -68,10 +68,10 @@ $1\times3$ 和 $1\times2$。
 \subsection{加上偏置后，一般公式是什么？}
 \begin{equation}
 \boxed{\widehat{\vect y}^\top
-=\sigma(\vect x^\top W_1+\vect b_1^\top)W_2+\vect b_2^\top,}
+=\phi(\vect x^\top W_1+\vect b_1^\top)W_2+\vect b_2^\top,}
 \label{eq:mlp-standard}
 \end{equation}
-其中 $\sigma$ 表示任一\textbf{逐元素}作用的激活函数，本章取 ReLU，不是 Sigmoid；
+其中 $\phi$ 表示任一\textbf{逐元素}作用的激活函数，本章取 ReLU；
 $W_1:d_0\times d_1$，$W_2:d_1\times d_2$，偏置在相应层的行上相加。
 上例 $d_0=2,d_1=3,d_2=2$；Transformer 的 FFN 中常把隐藏宽度 $d_1$ 记作 $d_{\rm ff}$。
 多 Token 情况下，逐行使用\textbf{同一组参数}。
@@ -83,7 +83,7 @@ $W_1:d_0\times d_1$，$W_2:d_1\times d_2$，偏置在相应层的行上相加。
 令 $F^{(0)}=X\in\R^{N\times d_0}$，对第 $\ell$ 层：
 \begin{equation}
 \boxed{F^{(\ell)}
-=\sigma_\ell\!\left(F^{(\ell-1)}W_\ell+
+=\phi_\ell\!\left(F^{(\ell-1)}W_\ell+
 \mathbf1_N\vect b_\ell^\top\right),\quad \ell=1,\ldots,N_{\rm layer}.}
 \label{eq:mlp-l-layer-row}
 \end{equation}
@@ -93,7 +93,7 @@ $F^{(\ell)}:N\times d_\ell$；$\mathbf1_N$ 的作用
 只是给 $N$ 行广播同一个偏置。输出层可以按任务选择
 恒等激活（产生 logits）、Sigmoid 或其他映射。
 若改用列向量，等价式可写成
-$\vect f^{(\ell)}=\sigma_\ell(W_\ell^\top\vect f^{(\ell-1)}+\vect b_\ell)$；
+$\vect f^{(\ell)}=\phi_\ell(W_\ell^\top\vect f^{(\ell-1)}+\vect b_\ell)$；
 这里权重转置不能省略。
 
 \subsection{矩阵形式的反向传播：一个最小例子}

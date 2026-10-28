@@ -644,16 +644,20 @@ def validate_pdf(path: Path) -> None:
     if len(answer_heading_targets) != CHECK_COUNT:
         fail("Expected one self-check per chapter and prelude: rendered answer chapter headings with links back to questions")
     print("Answer heading pagination QA: all answer titles leave room for their first answer")
-    # Page-bottom regression: the "shape-first route" introduction may not be
-    # stranded on a separate page from the first row of its table.
+    # Page-bottom regression: the former route table is now a shape diagram.
+    # Check the rendered operations and training branch with their caption,
+    # rather than merely finding a valid figure destination elsewhere.
     route_pages = [i for i, page_text in enumerate(pages, 1)
-                   if "本章运算路线" in page_text]
+                   if "同一组三维参数的形状全景" in page_text]
     if len(route_pages) != 1:
         fail(f"Expected one forward-pass route caption, found pages {route_pages}")
     route_page = route_pages[0]
-    if "查表与位置" not in pages[route_page - 1]:
-        fail(f"Forward-pass route heading stranded on PDF page {route_page}; "
-             "the route table must start on the same page")
+    route_text = re.sub(r"\s+", "", pages[route_page - 1])
+    route_markers = ("LayerNorm", "FFN", "Softmax", "因果掩码", "目标", "损失", "下一章加入训练")
+    missing = [marker for marker in route_markers if marker not in route_text]
+    if missing or route_text.count("残差捷径") != 2:
+        fail(f"Incomplete forward-pass shape diagram on PDF page {route_page}: "
+             f"missing {missing}, residual paths {route_text.count('残差捷径')} (expected 2)")
 
     # R01: inspect the original MLP/task destinations after chapter reordering.
     # Their ending must keep the self-check and its answer navigation on a

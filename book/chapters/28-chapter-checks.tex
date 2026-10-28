@@ -136,14 +136,14 @@
 \par\answerpiece{3}{找错}{先在公式里找跨行读取发生在哪一步。}说反了：Attention 跨 Token 位置读取；FFN 使用共享权重逐行做非线性变换，不交换 Token 信息。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 20 章}] \phantomsection\label{answer:22c-language-training}\textbf{\hyperref[check:22c-language-training]{三个位置一起训练：从交叉熵到共享参数更新}}\answercheckpage{22c-language-training}\par\nobreak
-\answerpiece{1}{对齐}{将输入与右移一位的目标逐行配对。}三位置目标为 $\answerresult{[4,5,3]}$；因果 Mask 限制 Attention 可见位置，损失 Mask 选择参与计分的位置。
+\answerpiece{1}{对齐}{将输入与右移一位的目标逐行配对。}三位置目标为 $\answerresult{[4,5,3]}$；因果掩码 限制 Attention 可见位置，损失掩码 选择参与计分的位置。
 \par\answerpiece{2}{手算}{先写出 $(p-y)/N$。}$(0.3-1)/3=\answerresult{-0.2333}$；若仅两位置参与，$(0.3-1)/2=\answerresult{-0.35}$。
 \par\answerpiece{3}{找错}{先给每份参数标上更新步号。}同一训练步必须在一套旧参数上算全部梯度，再一起更新；混用更新后的输出头计算前层梯度不属于同一次同步更新。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 21 章}] \phantomsection\label{answer:23-llm-systems}\textbf{\hyperref[check:23-llm-systems]{训练好了，模型怎样逐词生成文字？}}\answercheckpage{23-llm-systems}\par\nobreak
  \answerpiece{1}{预测}{先看除以更小温度后分数差如何变化。}C 从 $\tau=1$ 时约 $0.090$ 降至 $\tau=0.5$ 时约 $\answerresult{0.016}$；$\tau$ 趋于无穷时三个概率均趋 $1/3$。
 \par\answerpiece{2}{手算}{按概率降序累加到阈值，再重新归一化。}Top-$p=0.8$ 累计 $0.5+0.3=0.8$，按大于等于阈值保留 A、B，归一化为 $\answerresult{(0.625,0.375)}$。Top-$k=3$ 保留前三，总和 $0.95$，归一化约 $\answerresult{(0.526,0.316,0.158)}$；保留集合不同。
-\par\answerpiece{3}{找错}{先区分已知训练前缀与尚未生成的新 Token。}训练时真实前缀全部已知，因果 Mask 允许不同位置同一轮前向预测；生成时新输入由上一步选出的未知 Token 决定，必须顺序生成。
+\par\answerpiece{3}{找错}{先区分已知训练前缀与尚未生成的新 Token。}训练时真实前缀全部已知，因果掩码允许不同位置同一轮前向预测；生成时新输入由上一步选出的未知 Token 决定，必须顺序生成。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 22 章}] \phantomsection\label{answer:23a-from-toy-to-gpt}\textbf{\hyperref[check:23a-from-toy-to-gpt]{从三维到真实模型：规模、配置与分词}}\answercheckpage{23a-from-toy-to-gpt}\par\nobreak
 \answerpiece{1}{形状}{用模型宽度除以头数。}$768/12=\answerresult{64}$；每头宽度不直接给出层数。
@@ -206,12 +206,12 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 33 章}] \phantomsection\label{answer:04-key-value-outer-product}\textbf{\hyperref[check:04-key-value-outer-product]{线性联想记忆：写入、串扰与误差修正}}\answercheckpage{04-key-value-outer-product}\par\nobreak
 \phantomsection\label{answer:06-better-linear-memory}
-\answerpiece{1}{形状}{先把 Key 转成列，再与 Value 行相乘。}$\mathcal{M}:2\times3$，$q\mathcal{M}:1\times3$。
+\answerpiece{1}{形状}{先把 Key 转成列，再与 Value 行相乘。}$\mathcal{M}:2\times3$，$\vect{q}^\top\mathcal{M}:1\times3$。
 \answerpiece{2}{预测}{把 Key 的缩放分别带入写入和查询。}写入与查询都缩为原 Key 的一半，幅度乘 $(0.5)^2=\answerresult{1/4}$，输出为原 Value 的四分之一。
-\answerpiece{3}{手算}{先算自身点积，再算交叉点积。}$k_Ak_A^\top=1$、$k_Ak_B^\top=0.6$，读出 $\answerresult{(1,0.6)}$。
+\answerpiece{3}{手算}{先算自身点积，再算交叉点积。}$\vect{k}_A^\top\vect{k}_A=1$、$\vect{k}_A^\top\vect{k}_B=0.6$，读出 $\answerresult{(1,0.6)}$。
 \answerpiece{4}{预测}{先把交叉点积替换为零。}两 Key 正交后交叉点积为零，查询结果回到 $\answerresult{(1,0)}$。
-\answerpiece{5}{定位}{先计算当前状态对新 Key 的读出。}先算已有预测 $k\mathcal{M}$，残差 $v-k\mathcal{M}$ 表示还没存好的部分，只写入误差而非原值全量。
-\answerpiece{6}{手算}{按两次写入的顺序更新状态。}读出 $\answerresult{(0.64,0.6)}$；按 Delta 规则的残差 $v_A-k_A\mathcal{M}_2=\answerresult{(0.36,-0.6)}$，误差长度约 $0.700$。
+\answerpiece{5}{定位}{先计算当前状态对新 Key 的读出。}先算已有预测 $\vect{k}^\top\mathcal{M}$，残差 $\vect{v}^\top-\vect{k}^\top\mathcal{M}$ 表示还没存好的部分，只写入误差而非原值全量。
+\answerpiece{6}{手算}{按两次写入的顺序更新状态。}读出 $\answerresult{(0.64,0.6)}$；按 Delta 规则的残差 $\vect{v}_A^\top-\vect{k}_A^\top\mathcal{M}_2=\answerresult{(0.36,-0.6)}$，误差长度约 $0.700$。
 \answerpiece{7}{找错}{先计算修改 B 的状态会怎样作用于 A。}非正交 Key 之间存在交叉影响；修正 B 会沿共享状态改变 A 的读出。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 34 章}] \phantomsection\label{answer:09-nonlinearity-and-memory}\textbf{\hyperref[check:09-nonlinearity-and-memory]{非线性检索：从 MLP 视角到记忆容量}}\answercheckpage{09-nonlinearity-and-memory}\par\nobreak

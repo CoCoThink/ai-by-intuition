@@ -99,7 +99,7 @@ $3$ & $[2,4,5]$ & $3$“。” & $0.5829$\\\bottomrule
 三步依次接出“花”“开了”“。”，复现了训练句子。
 第 $3$ 步最后一个 Query 的读取权重为 $(0.1188,0.3256,0.5556)$，
 与第~\ref*{intro:22c-language-training}~章 Attention 表中第 $20$ 步的第三行相同：
-因果 Mask 让第 $t$ 行只依赖前 $t$ 个 Token，
+因果掩码让第 $t$ 行只依赖前 $t$ 个 Token，
 所以训练时并行算出的各行，正是逐词生成时每一步的最后一行。
 区别在于训练的输入来自数据，生成的输入来自上一步的选择。
 运行 \texttt{python3 scripts/teaching\_trace.py --generate} 复算本表。
@@ -145,12 +145,12 @@ $3$ & $[2,4,5]$ & $3$“。” & $0.5829$\\\bottomrule
 缓存越长，存储这些 K/V 需要的内存也越多。
 影响大小的量包括层数、序列长度、K/V 头数、
 每头维度和数值精度。
-因此，后面讲现代架构时再遇到 MQA、GQA，
-你就能理解它们为什么关注\textbf{减少 K/V 头数}。
+后面还会看到让多个查询头共享 K/V 的办法，
+目的之一就是\textbf{减少 K/V 头数}。
 
 \subsection{同一次生成的两阶段：Prefill 与 Decode}
 \phantomsection\label{concept:prefill-decode}
-\textbf{Prefill} 一次处理已知 Prompt 的所有位置，带因果 Mask 计算各层 K/V 并填入缓存，
+\textbf{Prefill} 一次处理已知 Prompt 的所有位置，带因果掩码 计算各层 K/V 并填入缓存，
 最后一个位置的输出用于选择第一个新 Token。
 \textbf{Decode} 再逐步处理新选出的 Token：每层只新增当前 K/V，
 当前 Query 读取缓存中的可见历史，最后继续选取下一 Token。
@@ -164,7 +164,9 @@ Prompt 的多个位置可组成较大的矩阵乘法；单请求逐 Token Decode
 在小批量、缓存较长等场景，搬运这些字节所需的时间会主导延迟，
 即\textbf{受显存带宽限制}：算力尚有余量，数据还没送到计算单元。
 增大批量会提高权重重用，瓶颈也会随模型、长度和内核改变。
-GQA 减少独立 K/V 头，既节省缓存容量，也减少解码时读取 K/V 的数据量。
+\phantomsection\label{concept:gqa}
+分组查询注意力（GQA）让一组 Query 头共享一组 K/V 头。
+需要保存的 K/V 头更少，既节省缓存容量，也减少解码时读取 K/V 的数据量。
 第~\ref*{intro:22d-modern-transformers}~章把这种动机换成真实配置的字节估算。
 
 \subsection{上下文窗口保存本次计算可见的信息}
@@ -183,7 +185,7 @@ $P_{\rm pos}$ 没有这一行，前向计算无法进行；
 \chapterchecktasks{23-llm-systems}{理解与复算}{
 \item \textbf{预测（先不计算）：}沿用本章 logits $(2,1,0)$。温度从 $\tau=1$ 降到 $0.5$，最小候选 C 的概率变大还是变小？温度趋于很大时，三个候选分别趋于多少？\chapterinlinehint{比较除以温度后的分数差，再看极限分布。}
 \item \textbf{手算：}四候选概率为 $(0.5,0.3,0.15,0.05)$。（a）Top-$p$ 阈值为 $0.8$，保留哪几个、归一化后各多少？（b）Top-$k$ 取 $k=3$，归一化后各多少？两组保留集合相同吗？\chapterinlinehint{先求两种保留集合，再分别除以保留概率和。}
-\item \textbf{找错：}同学说：“训练一次能并行预测三个位置，生成时也能一次把未知的整句话并行写出来。”指出漏洞，说明因果 Mask 和已知输入在训练／生成中的不同作用。\chapterinlinehint{区分已知训练序列与尚未生成的前缀。}
+\item \textbf{找错：}同学说：“训练一次能并行预测三个位置，生成时也能一次把未知的整句话并行写出来。”指出漏洞，说明因果掩码 和已知输入在训练／生成中的不同作用。\chapterinlinehint{区分已知训练序列与尚未生成的前缀。}
 }
 
 

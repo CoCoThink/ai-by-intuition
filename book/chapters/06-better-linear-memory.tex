@@ -2,7 +2,7 @@
 直接累加外积时，每条新记忆可能改变旧 Key 的输出。
 可以让矩阵同时拟合全部输入与目标：
 \[
-\boxed{\min_{\mathcal{M}}\sum_{i=1}^{T_k}\|k_i\mathcal{M}-v_i\|^2}.
+\boxed{\min_{\mathcal{M}}\sum_{i=1}^{T_k}\|\vect{k}_i^\top\mathcal{M}-\vect{v}_i^\top\|^2}.
 \]
 这叫最小二乘：让同一个状态同时满足各条关联。
 
@@ -10,10 +10,10 @@
 \[
 \mathcal{M}_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}.
 \]
-要同时读对 A、B，可以直接联立求解。设矩阵的两行为 $m_1,m_2$。
-A 要求 $m_1=(1,0)$；B 要求 $0.6m_1+0.8m_2=(0,1)$，所以
+要同时读对 A、B，可以直接联立求解。设矩阵的两行为 $\vect{m}_1^\top,\vect{m}_2^\top$。
+A 要求 $\vect{m}_1^\top=(1,0)$；B 要求 $0.6\vect{m}_1^\top+0.8\vect{m}_2^\top=(0,1)$，所以
 \[
-m_2=\frac{(0,1)-0.6(1,0)}{0.8}=(-0.75,1.25).
+\vect{m}_2^\top=\frac{(0,1)-0.6(1,0)}{0.8}=(-0.75,1.25).
 \]
 于是
 \[
@@ -32,48 +32,49 @@ m_2=\frac{(0,1)-0.6(1,0)}{0.8}=(-0.75,1.25).
 比无条件相加外积更进一步：写入新配对之前，先看旧状态
 $\mathcal{M}_{t-1}$ 已经读出什么，只写入尚未记住的残差：
 \[
-r_t=v_t-k_t\mathcal{M}_{t-1},\qquad
-\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta k_t^\top r_t}.
+\vect{r}_t^\top=\vect{v}_t^\top-\vect{k}_t^\top\mathcal{M}_{t-1},\qquad
+\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta \vect{k}_t \vect{r}_t^\top}.
 \]
-这里 $k_t:1\times d_k$、$r_t:1\times d_v$；
-若 $k_t$ 归一化且 $\eta=1$，可以在该 Key 方向消除\textbf{当次}读出误差。
+这里 $\vect{k}_t^\top:1\times d_k$、$\vect{r}_t^\top:1\times d_v$；
+若 $\vect{k}_t^\top$ 归一化且 $\eta=1$，可以在该 Key 方向消除\textbf{当次}读出误差。
 但这未必保护此前已学会的 Key。
 
 \subsection{［复算］写好 B 时，A 会不会再次出错？}
 
 仍用两条单位 Key 和 Value：
 \[
-k_A=(1,0),\ v_A=(1,0),\qquad
-k_B=(0.6,0.8),\ v_B=(0,1).
+\vect{k}_A^\top=(1,0),\ \vect{v}_A^\top=(1,0),\qquad
+\vect{k}_B^\top=(0.6,0.8),\ \vect{v}_B^\top=(0,1).
 \]
 从 $\mathcal{M}_0=0$、$\eta=1$ 开始，先写 A：
 \[
-\mathcal{M}_1=k_A^\top v_A=\begin{bmatrix}1&0\\0&0\end{bmatrix}.
+\mathcal{M}_1=\vect{k}_A \vect{v}_A^\top=\begin{bmatrix}1&0\\0&0\end{bmatrix}.
 \]
-写 B 前，旧状态的读取为 $k_B\mathcal{M}_1=(0.6,0)$，
-所以不是直接追加 $k_B^\top v_B$，而是计算残差：
+写 B 前，旧状态的读取为 $\vect{k}_B^\top\mathcal{M}_1=(0.6,0)$，
+所以不是直接追加 $\vect{k}_B \vect{v}_B^\top$，而是计算残差：
 \[
-r_B=v_B-k_B\mathcal{M}_1=(-0.6,1).
+\vect{r}_B^\top=\vect{v}_B^\top-\vect{k}_B^\top\mathcal{M}_1=(-0.6,1).
 \]
 下一步得到
 \begin{equation}
 \begin{aligned}
-\mathcal{M}_2&=\mathcal{M}_1+k_B^\top r_B\\
+\mathcal{M}_2&=\mathcal{M}_1+\vect{k}_B \vect{r}_B^\top\\
 &=\begin{bmatrix}1&0\\0&0\end{bmatrix}
 +\begin{bmatrix}0.6\\0.8\end{bmatrix}(-0.6,1)
 =\boxed{\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}}.
 \end{aligned}
 \label{eq:delta-overwrites-key-a}
 \end{equation}
-立即查询 B 得到\textbf{正确的} $k_B\mathcal{M}_2=(0,1)$；
+立即查询 B 得到\textbf{正确的} $\vect{k}_B^\top\mathcal{M}_2=(0,1)$；
 反过来，旧的 A 查询却变成
-$k_A\mathcal{M}_2=(0.64,0.6)$，不再等于 $(1,0)$。
+$\vect{k}_A^\top\mathcal{M}_2=(0.64,0.6)$，不再等于 $(1,0)$。
 A 的误差范数为
 \[
-\|k_A\mathcal{M}_2-v_A\|_2=\sqrt{(-0.36)^2+0.6^2}
+\|\vect{k}_A^\top\mathcal{M}_2-\vect{v}_A^\top\|_2=\sqrt{(-0.36)^2+0.6^2}
 \approx\boxed{0.700}.
 \]
-若直接相加外积，A 的误差为 $0.600$。
+两种方法都从同一个“只写好 A”的 $\mathcal{M}_1$ 出发。
+若采用直接相加外积来写 B，A 的误差为 $0.600$。
 \textbf{在这个明确例子里，单步 Delta 对旧记忆的扰动反而更大。}
 
 \begin{boundarybox}
@@ -88,21 +89,21 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。
 两者都在减少干扰：前者一次求联立解，后者逐条修正当前读出。
-\hyperref[sec:modern-delta-rule]{现代架构章}用同一对 Key 看到 B 被精确修正；
-这里补上另一半：旧 Key A 随之被扰动；Gated DeltaNet 的遗忘门控就在调节旧记忆保留多少。
+\hyperref[sec:modern-delta-rule]{现代架构章}已经展示 B 被修正、旧 Key A 受扰动；
+这里完整展开两种写入，并说明反复重访的作用；Gated DeltaNet 的遗忘门控就在调节旧记忆保留多少。
 \end{idea}
 
-\noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{附录 C 的 C-107}
+\noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{交换写入次序的迁移题}
 交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
 
 \chapterchecktasks{04-key-value-outer-product}{理解、手算与判断}{
 \label{check:06-better-linear-memory}
-\item\textbf{形状：}行向量 Key $k:1\times2$、Value $v:1\times3$。外积写入 $\mathcal{M}=k^\top v$ 的形状是什么？查询 $q:1\times2$ 后 $q\mathcal{M}$ 又是什么形状？\chapterinlinehint{先写转置 Key 的形状，再核对内侧维度。}
-\item\textbf{预测：}同一条记忆若把 Key 写入时改为 $k'=(0.5,0)$，再以 $q=k'$ 读取，恢复的 Value 是多少倍？\chapterinlinehint{把写入和读取两次出现的 Key 缩放都算上。}
-\item\textbf{手算：}$k_A=(1,0),k_B=(0.6,0.8)$；$v_A=(1,0),v_B=(0,1)$。把两条外积相加，用 $k_A$ 查询得到什么？\chapterinlinehint{分别求两条外积，再相加并用查询读取。}
-\item\textbf{预测：}若把 $k_B$ 改为 $(0,1)$，保持其他项不变，$k_A$ 查询时串扰如何变化？\chapterinlinehint{先比较修改前后的交叉点积。}
+\item\textbf{形状：}行向量 Key $\vect{k}^\top:1\times2$、Value $\vect{v}^\top:1\times3$。外积写入 $\mathcal{M}=\vect{k} \vect{v}^\top$ 的形状是什么？查询 $\vect{q}^\top:1\times2$ 后 $\vect{q}^\top\mathcal{M}$ 又是什么形状？\chapterinlinehint{先写转置 Key 的形状，再核对内侧维度。}
+\item\textbf{预测：}同一条记忆若把 Key 写入时改为 $\vect{k}'^\top=(0.5,0)$，再以 $\vect{q}^\top=\vect{k}'^\top$ 读取，恢复的 Value 是多少倍？\chapterinlinehint{把写入和读取两次出现的 Key 缩放都算上。}
+\item\textbf{手算：}$\vect{k}_A^\top=(1,0),\vect{k}_B^\top=(0.6,0.8)$；$\vect{v}_A^\top=(1,0),\vect{v}_B^\top=(0,1)$。把两条外积相加，用 $\vect{k}_A^\top$ 查询得到什么？\chapterinlinehint{分别求两条外积，再相加并用查询读取。}
+\item\textbf{预测：}若把 $\vect{k}_B^\top$ 改为 $(0,1)$，保持其他项不变，$\vect{k}_A^\top$ 查询时串扰如何变化？\chapterinlinehint{先比较修改前后的交叉点积。}
 \item\textbf{定位：}Delta 写入为什么先用当前状态读取一次？“期望 Value 减去已有读出”代表什么量？\chapterinlinehint{先写目标读出与当前读出的差。}
-\item\textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $k_A=(1,0)$ 读出什么？与目标 $v_A=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
+\item\textbf{手算：}写入 B 后 $\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}$；用 $\vect{k}_A^\top=(1,0)$ 读出什么？与目标 $\vect{v}_A^\top=(1,0)$ 相差多少？\chapterinlinehint{先用查询选出对应行，再减去目标向量。}
 \item\textbf{找错：}同学说“B 的残差为零后，原先的 A 也必定被完全修复”。指出更新为何可能影响其他查询。\chapterinlinehint{考察新增外积与另一条 Key 的点积。}
 }
 

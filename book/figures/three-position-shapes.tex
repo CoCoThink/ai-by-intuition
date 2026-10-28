@@ -1,0 +1,32 @@
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={三位置前向形状图：三个 ID 查词表并加位置得到三乘三的 X。逐行 LayerNorm 后投影得到三乘三的 Q、K、V。Q 与 K 形成三乘三的分数，加因果掩码再逐行 Softmax；权重乘 V 并经输出投影，与旁路 X 相加。第二次 LayerNorm 后 FFN 升至三乘四再降至三乘三，与第二条旁路相加得到 H。输出头给出三乘五的 logits 和概率。虚线训练分支把概率与目标四、五、三送入损失，留待下一章。}}
+\begin{center}
+\begin{tikzpicture}[>=Latex,x=1cm,y=1cm,
+ b/.style={draw=linegray,rounded corners=2pt,fill=paper,align=center,font=\small,minimum width=58mm,minimum height=8mm},
+ f/.style={->,thick,flowcolor},r/.style={->,thick,residualcolor},
+ lab/.style={font=\footnotesize,align=center,fill=white,inner sep=2pt}]
+\node[b] (ids) at (5.5,0) {ID $[2,4,5]$；查 $E$，加 $P_{\rm pos}$};
+\node[b] (x) at (5.5,-1.05) {$X:3\times3$};
+\node[b] (qkv) at (5.5,-2.2) {逐行 LayerNorm $\to U:3\times3$\\$Q,K,V:3\times3$（各乘自己的权重）};
+\node[b] (scores) at (5.5,-3.65) {因果掩码 $C$：可见 $0$，未来 $-\infty$\\$S=QK^\top/\sqrt3+C:3\times3$\\逐行 Softmax $\to A:3\times3$};
+\node[b] (read) at (5.5,-5) {$AV:3\times3$，再乘 $W_O:3\times3$};
+\node[circle,draw=linegray,minimum size=6mm] (a1) at (5.5,-6.05) {$+$};
+\node[b] (ffn) at (5.5,-7.4) {$X_{\rm att}:3\times3\to$ LayerNorm\\FFN：$3\times4\to$ ReLU $\to3\times3$};
+\node[circle,draw=linegray,minimum size=6mm] (a2) at (5.5,-8.8) {$+$};
+\node[b] (out) at (5.5,-10.1) {$H:3\times3\xrightarrow{W_{\rm out}:3\times5}Z:3\times5$\\词表 Softmax $\to\Pi:3\times5$};
+\foreach \a/\b in {ids/x,x/qkv,qkv/scores,scores/read,read/a1,a1/ffn,ffn/a2,a2/out}{\draw[f] (\a)--(\b);}
+\draw[f] (qkv.east)--(9.3,-2.2)--(9.3,-5)--(read.east) node[pos=.4,lab] {$V$};
+\draw[r] (x.west)--(1.1,-1.05)--(1.1,-6.05)--(a1.west);
+\node[lab] at (1.1,-3.8) {残差捷径\\$X:3\times3$};
+\draw[r] (5.5,-6.65)--(1.1,-6.65)--(1.1,-8.8)--(a2.west);
+\node[lab] at (1.1,-7.8) {残差捷径\\$X_{\rm att}:3\times3$};
+\node[b,minimum width=28mm,font=\footnotesize] (target) at (11.4,-8.65) {目标 $[4,5,3]$};
+\node[b,minimum width=28mm,font=\footnotesize] (loss) at (11.4,-10.1) {损失 $L$\\下一章加入训练};
+\draw[f,dashed] (out.east)--(loss.west);
+\draw[f,dashed] (target)--(loss);
+\end{tikzpicture}
+\captionof{figure}{同一组三维参数的形状全景：两条残差保持宽度，训练支路接在概率之后}
+\label{fig:three-position-shapes}
+\end{center}
+\tagstructend
+\end{minipage}\par

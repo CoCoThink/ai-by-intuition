@@ -25,7 +25,7 @@
 \draw[link,flowcolor] (ffn)--(soft);
 \draw[link,muted,dashed] (memory.east)--node[above,font=\scriptsize]{源 K/V} (cross.west);
 \end{tikzpicture}
-\par\smallskip{\sffamily\footnotesize\color{muted}灰色虚线：Decoder-only 中不用的独立 Encoder 与 Cross-Attention；蓝灰实线：保留的因果 Self-Attention 到 FFN 路径。参见第~\ref*{intro:20-embeddings}~章（Embedding）与第~\ref*{intro:22-transformer-architecture}~章（因果 Mask）。}
+\par\smallskip{\sffamily\footnotesize\color{muted}灰色虚线：Decoder-only 中不用的独立 Encoder 与 Cross-Attention；蓝灰实线：保留的因果 Self-Attention 到 FFN 路径。参见第~\ref*{intro:20-embeddings}~章（Embedding）与第~\ref*{intro:22-transformer-architecture}~章（因果掩码）。}
 \end{center}
 \begin{center}
 \captionof{figure}{原论文的 Encoder--Decoder 路径对照：Decoder-only 主线保留因果自注意力、FFN 和输出头，灰色虚线表示从 Decoder-only 中移除的 Encoder 与 Cross-Attention}

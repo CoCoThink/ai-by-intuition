@@ -1,7 +1,7 @@
 \subsection{现代架构与 Agent 术语补充索引}
 \label{intro:24b-modern-lexicon}
 
-这 36 个词条仅补充基础 100 词未覆盖的架构与系统接口，
+以下词条补充基础 100 词未覆盖的架构与系统接口，
 按\textbf{解决的问题}分组，链接回正文。
 例如 RLHF 与 MCP 已在基础词条定义，\textbf{这里不重复列词条}；
 英文 A--Z 别名页可反向查找，完整解释按章页编号查阅相应正文。
@@ -73,6 +73,18 @@
 \item \textbf{幻觉与校准}：区分无依据的主张与置信分数的正确频率；在保留集逐项核验。 \termref{concept:hallucination-calibration}
 \item \textbf{模型评审}：用 LLM 按评分规则评价回答，并用换序与人工抽查复核裁判。 \termref{concept:llm-judge}
 \item \textbf{图文对齐}：通过配对或回答训练，让视觉和文字表示对应同一内容。 \termref{concept:vision-language-alignment}
+\end{itemize}
+
+\subsubsection*{视觉与扩展架构查阅}
+\begin{itemize}
+\item \textbf{ViT}：把图像块表示成 Token 序列，再用 Transformer 组合视觉信息。 \termref{concept:vit}
+\item \textbf{Patch}：从图像切出的局部像素块，展平并投影后成为视觉 Token 的输入。 \termref{concept:patch}
+\item \textbf{CLIP}：通过配对图像与文字的对比训练，让对应内容的表示更匹配。 \termref{concept:clip}
+\item \textbf{测试时计算}：固定模型权重，把本次预算用于多次生成、搜索或验证。 \termref{concept:test-time-compute}
+\item \textbf{Mamba}：用依赖输入的选择性状态空间更新传递或遗忘序列信息。 \termref{concept:mamba}
+\item \textbf{YaRN}：基于 RoPE 的长上下文扩展方法，效果需按实际长度与任务验证。 \termref{concept:yarn}
+\item \textbf{QK-Norm}：在匹配前归一化 Query/Key 并控制分数尺度的一类设计。 \termref{concept:qk-norm}
+\item \textbf{互相关}：卷积核不翻转，直接与局部窗口逐项相乘再求和。 \termref{concept:cross-correlation}
 \end{itemize}
 
 \par\smallskip

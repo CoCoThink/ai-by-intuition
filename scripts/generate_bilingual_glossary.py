@@ -24,7 +24,7 @@ EXTRA_REFERENCES = {
     "Token": ("experiment:real-chinese-tokenizer",),
     "Tokenizer": ("experiment:real-chinese-tokenizer",),
     "Query": ("experiment:attention-selection",),
-    "KV Cache": ("concept:prefill-decode", "concept:gqa"),
+    "KV Cache": ("concept:prefill-decode", "example:gqa-budget"),
     "Tool Calling": ("elective:real-function-call", "sec:agent-safety"),
     "提示注入": ("sec:agent-safety",),
     "评测污染": ("concept:evaluation-contamination-benchmark",),
@@ -105,7 +105,15 @@ Delta 更新规则 | Delta rule
 预填充与解码 | Prefill and decode
 幻觉与校准 | Hallucination and calibration
 模型评审 | LLM-as-a-judge
-图文对齐 | Vision-language alignment""".strip().splitlines()
+图文对齐 | Vision-language alignment
+视觉 Transformer | Vision Transformer (ViT)
+图像块 | Patch
+图文对比学习 | Contrastive Language-Image Pretraining (CLIP)
+测试时计算 | Test-time compute
+选择性状态空间模型 | Mamba
+RoPE 长上下文扩展 | YaRN
+查询键归一化 | Query-Key Normalization (QK-Norm)
+互相关 | Cross-correlation""".strip().splitlines()
 OVERRIDES = """Dropout=随机失活
 Mini-batch=小批次
 Epoch=训练轮次

@@ -9,8 +9,18 @@
 \subsubsection{同一组数据，全量梯度与单样本梯度有何不同？}
 \phantomsection\label{experiment:sample-gradient}
 
-仍在 $(w,b)=(1,0)$ 处，对每个样本自己的平方误差求梯度。
-例如样本 $(0,2)$ 的平方误差为 $(b-2)^2$，在这里的梯度是 $(0,-4)$。
+仍在 $(w,b)=(1,0)$ 处。先区分一条样本的损失与全量平均：
+\[
+\ell_i(w,b)=(wx_i+b-y_i)^2,\qquad L=\frac{\ell_1+\ell_2+\ell_3}{3}.
+\]
+例如样本 $(1,2)$ 有 $\ell=(w+b-2)^2$。一次只改 $w$ 或只改 $b$，
+括号内的数值都会随它等幅变化。因此在当前参数处
+\[
+\frac{\partial\ell}{\partial w}=2(w+b-2)\cdot1=-2,\qquad
+\frac{\partial\ell}{\partial b}=2(w+b-2)\cdot1=-2.
+\]
+单样本梯度不除以 $3$；将三条梯度取平均时才除以 $3$。
+样本 $(0,2)$ 则有 $\ell=(b-2)^2$，梯度为 $(0,-4)$。
 下表四行都在\textbf{同一组参数}处独立计算，用来比较不同的数据选择。
 \begin{center}
 \tagpdfsetup{table/header-rows={1}}

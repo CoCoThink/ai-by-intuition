@@ -60,3 +60,4 @@
 | [arxiv.org/abs/2106.09685v2](https://arxiv.org/abs/2106.09685v2) | 2026-10-27 | 已核对第 4.1 节冻结原权重、训练低秩增量及相加的计算路径 |
 | [modelcontextprotocol.io/docs/2026-07-28/getting-started/intro](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro) | 2026-10-27 | 已核对统一应用与外部工具连接接口的动机 |
 | [arxiv.org/html/2402.03300v3](https://arxiv.org/html/2402.03300v3) | 2026-10-28 | 已核对组相对优势，以及结果／过程监督使用奖励模型的例子 |
+| [modelcontextprotocol.io/specification/2026-07-28/architecture/index](https://modelcontextprotocol.io/specification/2026-07-28/architecture/index) | 2026-10-28 | 链接可访问 |

@@ -52,9 +52,11 @@ z=w_1x+b_1,\qquad h=\relu(z),\qquad
 
 沿用均方误差，把三个平方展开并配方：
 \[
-L_{\rm line}(w,b)
-=\frac{(b-w-1)^2+b^2+(w+b-1)^2}{3}
-=\frac23w^2+\left(b-\frac23\right)^2+\frac29.
+\begin{aligned}
+L_{\rm line}(w,b)&=\frac{(b-w-1)^2+b^2+(w+b-1)^2}{3}\\
+&=\frac23w^2+b^2-\frac43b+\frac23\\
+&=\frac23w^2+\left(b-\frac23\right)^2+\frac29.
+\end{aligned}
 \]
 最佳直线为 $w=0,b=2/3$，最低损失仍有 $2/9$。
 增加无激活的线性层，仍只能得到一条直线，也跨不过这个下界。
@@ -89,8 +91,12 @@ L_{\rm ReLU}(a,c)=\frac{(a-1)^2+(c-1)^2}{3},\qquad
 \frac{\partial L}{\partial a}=\frac23(a-1),\quad
 \frac{\partial L}{\partial c}=\frac23(c-1).
 \]
-从 $a=c=0$ 开始，取 $\eta=3/4$，两个参数都按
-$a_{t+1}=(a_t+1)/2$、$c_{t+1}=(c_t+1)/2$ 更新：
+从 $a=c=0$ 开始。为让参数与目标 $1$ 的差每步减半，教学例取 $\eta=3/4$：
+\[
+a_{t+1}=a_t-\frac34\cdot\frac23(a_t-1)=\frac{a_t+1}{2},\qquad
+c_{t+1}=\frac{c_t+1}{2}.
+\]
+第二式按同样方式得到。代入可列出：
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
 \begin{tabular}{rrrr}

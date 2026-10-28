@@ -17,12 +17,12 @@
 \node[b] (find) at (-3.15,.6) {先决定读谁、读多少};
 \node[b] (read) at (3.15,.6) {再决定实际取回什么};
 \node[b] (match) at (-3.15,-.85)
-  {\textcolor{blue}{Query} $\vect q_3$ 与 \textcolor{teal}{Key} $\vect k_i$\\点积得到分数 $s_i$};
+  {\textcolor{blue}{Query} $\vect q_3^\top$ 与 \textcolor{teal}{Key} $\vect k_i^\top$\\点积得到分数 $s_i$};
 \node[b] (value) at (3.15,-.85)
-  {每个位置提供 \textcolor{orange}{Value} $\vect v_i$\\它是被读取的内容};
+  {每个位置提供 \textcolor{orange}{Value} $\vect v_i^\top$\\它是被读取的内容};
 \node[b] (weight) at (-3.15,-2.35) {Softmax：分数 $\to$ 权重 $a_i$};
 \node[end] (out) at (0,-3.85)
-  {结果：$\displaystyle\vect y_3=\sum_{i=1}^{3}a_i\vect v_i$};
+  {结果：$\displaystyle\vect y_3^\top=\sum_{i=1}^{3}a_i\vect v_i^\top$};
 % A single stem forks into two lanes above the boxes.
 % Avoid Bezier paths that curl back across the box boundaries.
 \coordinate (qkv-split) at (0,1.49);

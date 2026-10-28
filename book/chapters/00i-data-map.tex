@@ -1,7 +1,7 @@
 \subsection{算例数据地图：现在用的是哪一套参数？}
 \label{app:data-map}
 读到“独立例”时，从这张表确认输入和参数；同一行中的章节共享设定。
-只有三维贯通例使用附录 B 的完整参数，其他行各自闭合。
+只有三维贯通例使用\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} 的完整参数，其他行各自闭合。
 
 \begin{center}\small
 \renewcommand{\arraystretch}{1.3}
@@ -12,12 +12,12 @@
 标量与两层网络 & $x,w,b$；再到 $xW_1,W_2$ & 函数、损失与反传；第~\ref*{intro:00-functions}--\ref*{intro:10-mlp}~章\\
 二维 Q/K/V & 手设向量与投影；各节写出 $X,W_Q,W_K,W_V$ & 逐项核对点积、读取与形状；第~\ref*{intro:21c-naive-attention}--\ref*{intro:11-softmax-memory}~章\\
 四维双头 & 两个位置、每行四维；拆为两个二维头 & 拼接和输出投影；第~\ref*{intro:22a-position-multihead}~章\\
-三维贯通例 & $X=E_{[2,4,5]}+P_{\rm pos}$；参数见附录 B & 前向、联合训练、生成；第~\ref*{intro:20b-task-contract}、\ref*{intro:22-transformer-architecture}--\ref*{intro:23a-from-toy-to-gpt}~章\\
+三维贯通例 & $X=E_{[2,4,5]}+P_{\rm pos}$；参数见\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & 前向、联合训练、生成；第~\ref*{intro:20b-task-contract}、\ref*{intro:22-transformer-architecture}--\ref*{intro:23a-from-toy-to-gpt}~章\\
 上下文与选择消融 & 相同末 Token／相同均值；冻结或训练 Q/K & 区分读取前文与选择记录；第~\ref*{intro:22c-language-training}~章（第~\pageref*{experiment:attention-selection}~页）\\
 ICL 前驱与后继记录 & 四维记录投影为二维 $K,V$；从序列生成 & 示例改变、权重固定；第~\ref*{sec:icl-induction}~节\\
 三分类奖励 & logits 三维；四个采样动作与固定优势 & 优势如何改变 logits；第~\ref*{concept:rlvr}~节\\
 二维 RAG & $q=(1,0.5)$；三行文档矩阵 $D$ & 检索排序与证据覆盖；第~\ref*{intro:23d-agent-systems}~章\\
-二维分数迷你版 & 两位置、两维；参数见\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini}} & 20 分钟前向与反向；附录 B\\
+二维分数迷你版 & 两位置、两维；参数见\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini}} & 20 分钟前向与反向；\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini}}\\
 联想记忆 & 各节给出 Key/Value，写入 $\mathcal M$ & 外积、串扰、Delta 与非线性；第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章\\
 \bottomrule
 \end{tabularx}

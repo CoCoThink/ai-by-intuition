@@ -212,10 +212,14 @@
 % The shared build script supplies the source SHA, including inside the CI container.
 % A source archive without provenance omits the complete sentence.
 \newcommand{\bookbuildsha}{}
+\newcommand{\bookbuildfullsha}{}
 \directlua{
   local sha = os.getenv("BOOK_BUILD_SHA") or os.getenv("GITHUB_SHA") or ""
   if sha:match("^[0-9a-fA-F]+$") and string.len(sha) >= 7 then
     token.set_macro("bookbuildsha", string.sub(sha,1,12), "global")
+    if string.len(sha) == 40 then
+      token.set_macro("bookbuildfullsha", sha, "global")
+    end
   end
 }
 \newcommand{\bookbuildsource}{\ifdefempty{\bookbuildsha}{}{本次 PDF 的编译来源为 Git 提交 \texttt{\bookbuildsha}。}}
@@ -470,7 +474,7 @@
 % E.1 pinyin glossary with definitions; E.3 compact English lookup without definitions.
 \input{chapters/24e-bilingual-glossary}
 \input{chapters/24c-concept-map}
-\input{chapters/24f-chinese-index}
+\input{chapters/24f-english-index}
 
 \clearpage
 \section{来源与延伸阅读}

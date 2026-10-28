@@ -10,6 +10,8 @@ on:
       - 'scripts/**/*.py'
       - 'scripts/**/*.json'
       - 'scripts/build_book.sh'
+      - 'notebooks/pytorch_starter.ipynb'
+      - 'requirements-teaching.txt'
       - '.github/workflows/build-latex.yml'
   pull_request:
     paths:
@@ -18,6 +20,8 @@ on:
       - 'scripts/**/*.py'
       - 'scripts/**/*.json'
       - 'scripts/build_book.sh'
+      - 'notebooks/pytorch_starter.ipynb'
+      - 'requirements-teaching.txt'
       - '.github/workflows/build-latex.yml'
   workflow_dispatch:
 
@@ -30,11 +34,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - name: Generate Chinese pinyin index
+      - name: Check generated English lookup
         run: |
           python3 -m pip install --disable-pip-version-check pypinyin==0.55.0
-          python3 scripts/generate_chinese_index.py
-          git diff --exit-code -- book/chapters/24f-chinese-index.tex
+          python3 scripts/generate_english_index.py
+          git diff --exit-code -- book/chapters/24f-english-index.tex
       - name: Check generated chapter practice links and answer titles
         run: |
           python3 scripts/generate_exercise_bank.py --check
@@ -43,6 +47,7 @@ jobs:
       - name: Check chapter structure before compilation
         run: |
           python3 scripts/check_book_contract.py --self-test
+          python3 scripts/check_notebook.py
           python3 scripts/validate_book.py
           python3 scripts/check_source_hygiene.py --self-test
           python3 scripts/check_attention_backward_demo.py

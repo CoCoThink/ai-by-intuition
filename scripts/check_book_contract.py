@@ -273,8 +273,8 @@ def validate_contract():
         require(fragment in sources['00c-symbols'],f'Symbol table missing {fragment}')
     for fragment in ('T_q','T_k','Best-of-$n$',r'\beta_1,\beta_2','LayerNorm',r'\texttt{loss}',r'\texttt{logits}'):
         require(fragment in sources['00c-symbols'],f'Symbol/code table missing {fragment}')
-    require('学' in sources['21a-context-gap'] and 'Q/K' in sources['21a-context-gap'] and
-            '固定窗口 MLP 或 RNN' in sources['21a-context-gap'],'Context motivation must preview selection and alternatives')
+    require(r'\ln[p(1-p)]' in sources['21a-context-gap'] and
+            '固定窗口 MLP 或 RNN' in sources['21a-context-gap'],'Context motivation must connect the loss bound to missing history and explain alternatives')
     require('experiment:attention-selection' in sources['22c-language-training'] and
             'figures/learned-attention-selection' in sources['22c-language-training'],
             'Context training must show learned Q/K selection')
@@ -342,14 +342,14 @@ def validate_contract():
             if ' & ' not in line or r'\hyperref[' not in line:
                 continue
             cells=line.rstrip().removesuffix('\\\\').split(' & ')
-            if name=='24f-chinese-index':
+            if name=='24f-english-index':
                 # A group's first entry is prefixed by its printed initial.
                 cells=[re.sub(r'^\{\\sffamily\\bfseries\\color\{blue\}[A-Z]\}\\enspace ','',c) for c in cells]
                 found += [cells[i:i+3] for i in range(0,len(cells),3) if cells[i].strip()]
             else:
                 found.append(cells)
         return found
-    for name in ('24e-bilingual-glossary','24f-chinese-index'):
+    for name in ('24e-bilingual-glossary','24f-english-index'):
         rows=lookup_entries(name)
         require(len(rows)==total,f'{name}: glossary row count mismatch')
         require(all(r'\hyperref[' in ' & '.join(row) for row in rows),f'{name}: glossary entry without a link')
@@ -357,7 +357,7 @@ def validate_contract():
         for target in ('concept:evaluation-contamination','concept:evaluation-contamination-benchmark','concept:autoregressive'):
             require(r'\hyperref['+target+']' in sources[name],f'{name}: missing lookup destination {target}')
     index_rows=[]
-    for name in ('24e-bilingual-glossary','24f-chinese-index'):
+    for name in ('24e-bilingual-glossary','24f-english-index'):
         index_rows.append({tuple(sorted(row[:2])): tuple(re.findall(r'\\hyperref\[([^]]+)\]',' & '.join(row)))
                            for row in lookup_entries(name)})
     require(index_rows[0]==index_rows[1],'English and pinyin lookup destinations differ')
@@ -407,6 +407,12 @@ def validate_contract():
 
 
 def self_test():
+    from generate_exercise_bank import printed_regular
+    rows=[dict(id='C-001',slug='first'),dict(id='C-002',slug='second')]
+    assert [r['id'] for r in printed_regular(rows,{'first':'A','second':'B'})]==['C-001','C-002']
+    try:printed_regular(rows,{'second':'B','first':'A'})
+    except ValueError:pass
+    else:raise AssertionError('Storage-contiguous IDs must not hide noncontiguous printed chapter order')
     good=r'\item \textbf{选择训练或生成}：训练见第~\ref*{intro:22c-language-training}~章；生成见第~\ref*{intro:23-llm-systems}~章。\end{enumerate}'
     assert not ten_step_errors(good)
     # Regression: every target exists, yet the roles are wrong (the old CI miss).
@@ -428,7 +434,7 @@ def self_test():
     assert not fitting_color_errors(fitting)
     assert fitting_color_errors(fitting.replace('黑点','橙点'))
     assert fitting_color_errors(fitting.replace('noisecolor','orange'))
-    assert not visible_exercise_errors(r'\label{exercise:C2-21}\hyperref[exercise:C2-21]{C-044}', {'C-044'})
+    assert not visible_exercise_errors(r'\label{exercise:C2-21}\hyperref[exercise:C2-21]{C-045}', {'C-045'})
     for old in ('C2-21','C3-12','C1-17、C1-18','做C2-21题'):
         assert visible_exercise_errors(r'\hyperref[exercise:valid]{附录 C 的 '+old+'}')
     assert visible_exercise_errors('C-999', {'C-001'})

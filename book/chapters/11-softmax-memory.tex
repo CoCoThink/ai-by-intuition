@@ -7,7 +7,7 @@
 \phantomsection\label{concept:self-attention}
 
 
-\localfixture{二维 Q/K/V；承接上一章的独立投影，未缩放、未加因果 Mask}
+\localfixture{二维 Q/K/V；承接上一章的独立投影，未缩放、未加因果掩码}
 上一章使用 $W_Q=I_2$、$W_K=\begin{bmatrix}1&0\\1&1\end{bmatrix}$、
 $W_V=I_2$ 得到了\textbf{不对称}的匹配分数。
 这里保持同一套投影与输入，先复核最后一条 Query，
@@ -53,8 +53,7 @@ W_V:d_{\rm model}\times d_v.
 例如 $\vect x^\top=(2,3)$，
 $W_Q=\begin{bmatrix}1&1\\0&2\end{bmatrix}$，
 则 $\vect q^\top=\vect x^\top W_Q=(2,8)$。
-如果用列向量写同一映射，必须写
-$\vect q=W_Q^\top\vect x$；输入与权重需要一起转置。
+这里沿用\sectionentry{sec:layout-matrix-card}的行向量约定。
 
 若一次有 $T_q$ 个 Query 和 $T_k$ 个 Key，
 $Q:T_q\times d_k$、$K:T_k\times d_k$、
@@ -79,7 +78,7 @@ QK^\top=S.
 \subsection{\texorpdfstring{完整三行复算：$S\to A\to Y$}{完整三行复算：S 到 A 到 Y}}
 \localfixture{承接上一章的三位置非对称 Q/K/V 数值例}
 继续使用 $Q=X$、$K=XW_K$、$V=X$，
-上一章得到的原始分数为（\textbf{未缩放、未加因果 Mask}）
+上一章得到的原始分数为（\textbf{未缩放、未加因果掩码}）
 \[
 S=QK^\top=\begin{bmatrix}
 1&1&2\\
@@ -117,16 +116,16 @@ Y=AV=
 输出以\textbf{未舍入的权重}求和后保留三位小数；
 直接相加表里舍入后的数字会出现约 $0.001$ 的误差。
 第三行 $(0.755,0.910)$ 与上一章单 Query 的结果一致。
-可在\hyperref[exercise:batch-attention-new]{附录 C 的 C-048}（第~\pageref*{exercise:batch-attention-new}~页）更换分数矩阵，
+可在\hyperref[exercise:batch-attention-new]{附录 C 的 C-049}（第~\pageref*{exercise:batch-attention-new}~页）更换分数矩阵，
 独立复算三行 $A'$ 和 $Y'$。
 
 \subsection{\texorpdfstring{因果 Self-Attention：位置 $i$ 只读位置 $1$ 到 $i$}{因果 Self-Attention：位置 i 只读位置 1 到 i}}
 \phantomsection\label{concept:causal-mask}
 
-\localfixture{同一组 $S$ 与 $V$；加因果 Mask，仍未缩放}
+\localfixture{同一组 $S$ 与 $V$；加因果掩码，仍未缩放}
 \textbf{结论先行：}语言模型训练时，三个位置在同一次前向中一起计算，
 而位置 $i$ 要预测的是第 $i+1$ 个 Token。
-\textbf{因果 Mask} 让第 $i$ 行只读第 $1$ 到 $i$ 列，
+\textbf{因果掩码（Causal Mask）}让第 $i$ 行只读第 $1$ 到 $i$ 列，
 每个位置只用自己及以前的内容。
 
 做法是在 Softmax 之前，把 $S$ 中 $j>i$ 的项（对角线以上）换成 $-\infty$：
@@ -157,7 +156,7 @@ Y_{\rm causal}=A_{\rm causal}V
 \]
 逐行核对：第一行只剩自己，读出就是 $\vect v_1^\top=(1,0)$；
 第二行在前两项 $(0,1)$ 上归一化，$1/(1+e)\approx0.269$、$e/(1+e)\approx0.731$；
-第三行三项都可见，与未加 Mask 时相同，仍读出 $(0.755,0.910)$。
+第三行三项都可见，与未加掩码 时相同，仍读出 $(0.755,0.910)$。
 对照上一节，前两行的读出从 $(0.788,0.788)$、$(0.578,0.845)$
 变成了只含前缀信息的结果。
 
@@ -165,10 +164,10 @@ Y_{\rm causal}=A_{\rm causal}V
 输入 $[2,4,5]$、目标 $[4,5,3]$，位置 1 的目标“花”正是位置 2 的输入。
 第一行若能读到第二列，就能直接抄到答案，训练损失下降却没有学会预测；
 生成时也没有未来 Token 可读。
-因果 Mask 让一次前向同时为全部位置计分，又让每行只用前缀。
+因果掩码让一次前向同时为全部位置计分，又让每行只用前缀。
 每行至少保留对角线上的自身，所以每行 Softmax 的分母都大于零，
 稳定实现照常只对\textbf{每行可见的分数}减去最大值。
-若别的 Mask（如填充位置）把某一行全部遮住，分母为零，需要实现另行处理。
+若别的掩码（如填充位置）把某一行全部遮住，分母为零，需要实现另行处理。
 
 
 \subsection{缩放点积 Attention 的通用式}
@@ -190,9 +189,9 @@ $(0.75,0.25)\begin{bmatrix}2&0\\0&4\end{bmatrix}=(1.5,1)$。
 
 \subsection{FFN 与 Attention 分别处理什么？}
 $XW$ 对每个 Token 行做固定特征组合，
-$\sigma(XW_1)W_2$ 对每个 Token 行再施加非线性；
+$\phi(XW_1)W_2$ 对每个 Token 行再施加非线性；
 $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
-语言模型中的这次跨行读取还要配合上面的因果 Mask，只读当前位置及以前的行。
+语言模型中的这次跨行读取还要配合上面的因果掩码，只读当前位置及以前的行。
 
 \chapterchecktasks{11-softmax-memory}{理解与复算}{
 \item \textbf{形状：}输入 $Q:3\times2,K:4\times2,V:4\times3$。写出分数矩阵 $QK^\top$、逐行 Softmax 和最终输出的形状。\chapterinlinehint{依次核对转置、逐行归一化与乘 Value。}
@@ -204,4 +203,4 @@ $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 \par\smallskip
 现在你能从单次 Query 的点积与加权求和，直接写出
 $QK^\top\to\softmax\to AV$，并核对 $T_q,T_k,d_k,d_v$ 的形状；
-加上因果 Mask 后，位置 $i$ 只读位置 $1$ 到 $i$。
+加上因果掩码后，位置 $i$ 只读位置 $1$ 到 $i$。

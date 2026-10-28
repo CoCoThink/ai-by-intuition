@@ -62,15 +62,7 @@ FP32 表示每个数用 $32$ bit，也就是 $4$ 字节保存。
 激活、临时缓冲和额外权重副本需另计。
 多张设备共同完成训练，叫作\textbf{分布式训练}。怎样分，要先看遇到哪个瓶颈。
 
-\textbf{单卡装不下，就拆模型或训练状态。}
-例如一层矩阵的两半分放两张卡，各算一部分再合并结果，这叫\textbf{张量并行}；
-前几层放一张卡、后几层放另一张卡，依次传递中间结果，这叫\textbf{流水线并行}。
-也可以把优化器状态、梯度乃至权重分给不同设备保存，计算时再按需交换，这叫\textbf{状态分片}。
-
-\textbf{模型装得下，但样本处理慢，就分担数据。}
-让两张卡各保存一份模型，一张处理本批前半样本，另一张处理后半样本，再汇总梯度共同更新，
-这叫\textbf{数据并行}。它分担样本计算；朴素方案每卡仍需放得下一份完整模型。
-因此它与解决单卡存储不足的分片方案可以组合。下面把几种分法放在一起比较：
+先判断瓶颈是单卡存储，还是样本计算，再按表选择分摊对象；这些方法也可以组合使用。
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
@@ -160,7 +152,7 @@ $(-1,-0.197,0.197,1)$。
 
 代价是近似误差：相近权重会落入同一个量化格。模型效果是否受影响，取决于量化方案、模型分布和任务，并不是位数越少越好。
 
-\subsubsection*{部署装不下、微调太贵，分别怎样处理？}
+\subsubsection*{\texorpdfstring{{\symboliconfont ★}}{★} 进一步阅读：蒸馏与 LoRA}
 
 如果希望训练一个较小模型承担任务，可以让较强模型提供学习信号。
 \phantomsection\label{concept:distillation}%
@@ -245,15 +237,16 @@ LoRA & 在微调阶段用低秩增量参数，减少需要训练的参数量\\
 \textbf{接口和协议}约定 \conceptlink{agent}{Agent} 怎样请求模型、通过 \conceptlink{mcp}{MCP} 接入工具。
 本书的推理过程固定模型参数。
 
-按这条链定位具体工具：硬件计算平台（如 CUDA）与张量框架（如 PyTorch）负责训练和执行矩阵运算，
-权重仓库（如 Hugging Face Hub）保存模型与说明，本地运行工具或服务型推理引擎（如 Ollama、vLLM）负责加载权重、批处理与缓存。
-比较两套推理工具时，固定权重、硬件、输入长度、并发数与量化方案。
-\textbf{查询入口：}
-\href{https://docs.nvidia.com/cuda/cuda-programming-guide/index.html}{CUDA}、
-\href{https://docs.pytorch.org/docs/stable/index.html}{PyTorch}、
-\href{https://huggingface.co/docs/hub/index}{Hugging Face Hub}、
-\href{https://docs.ollama.com/}{Ollama}、
-\href{https://docs.vllm.ai/}{vLLM}。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{35mm}X@{}}\toprule
+按需求查阅 & 所处环节\\\midrule
+\href{https://docs.nvidia.com/cuda/cuda-programming-guide/index.html}{CUDA}、\href{https://docs.pytorch.org/docs/stable/index.html}{PyTorch} & 硬件计算平台与张量框架，执行训练及矩阵运算\\
+\href{https://huggingface.co/docs/hub/index}{Hugging Face Hub} & 保存模型权重与说明\\
+\href{https://docs.ollama.com/}{Ollama}、\href{https://docs.vllm.ai/}{vLLM} & 本地运行或服务型推理工具；加载权重，管理执行、批处理或缓存\\\bottomrule
+\end{tabularx}
+\end{center}
+比较推理工具时固定权重、硬件、输入长度、并发数与量化方案。
 软件版本、设备兼容与许可证以项目文档为准。
 
 \chapterchecktasks{23b-deployment-and-ecosystem}{理解与复算}{

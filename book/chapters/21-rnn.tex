@@ -14,17 +14,10 @@ RNN（循环神经网络）是一种按顺序处理输入的网络：
 
 \subsection{怎样把缺少的前文送进当前位置？}
 
-上面发现，只看当前 Token 的独立 MLP 不会凭空得到前文。
-回到“春天、花、开了”这句话：
-\[
-\text{“春天”}\ \to\ \text{“花”}\ \to\ \text{“开了”}
-\]
-假设模型正在读第三个 Token“开了”，并尝试预测接下来是什么。
-如果只让一个 \conceptlink{mlp}{MLP} 看到“开了”的 \conceptlink{embedding}{Embedding}，
-它无法直接区分前文是“春天，花”还是完全不同的句子。
-
-我们真正想要的是：读到第三个词时，已经保留一些前两个词的信息。
-一种最直观的方案，就是让模型\textbf{依次阅读}，每次带着上一份笔记。
+前面已经看到，预测若依赖前文，就要把前文的信息送进输入；
+独立逐行处理的 \conceptlink{mlp}{MLP} 只接收当前位置的 \conceptlink{embedding}{Embedding}。
+RNN 的做法是依次阅读“春天、花、开了”，每次带着上一份状态；
+读到第三个词时，就能利用前两个词留下的信息。
 
 \subsection{用上一时刻的状态处理新输入}
 \phantomsection\label{concept:hidden-state}

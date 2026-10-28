@@ -44,6 +44,7 @@ python3 scripts/generate_exercise_bank.py --check
 python3 scripts/generate_chapter_navigation.py --check
 python3 scripts/generate_bilingual_glossary.py --check
 python3 scripts/check_book_contract.py --self-test
+python3 scripts/check_notebook.py
 python3 scripts/check_source_hygiene.py --self-test
 python3 scripts/validate_book.py
 python3 scripts/check_teaching_claims.py
@@ -106,7 +107,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | A 公式、数学与符号速查 | [00e](book/chapters/00e-core-formulas.tex)、[00b](book/chapters/00b-math-tools.tex)、[00c 符号表](book/chapters/00c-symbols.tex)、[30 优化器](book/chapters/30-optimizer-appendix.tex)、[00i 数据地图](book/chapters/00i-data-map.tex) |
 | B 三维实验、复算与脚本 | [00f 中间量](book/chapters/00f-transformer-intermediates.tex)、[24e PyTorch 与脚本总表](book/chapters/24e-pytorch-lab.tex) |
 | C 题库 · D 答案 | 由 [exercises.json](book/exercises.json) 生成 [25](book/chapters/25-exercise-bank.tex)、[27](book/chapters/27-answer-key.tex)；随堂自测答案 [28](book/chapters/28-chapter-checks.tex) 手写 |
-| E 术语表与索引 | 源：[24-lexicon](book/chapters/24-lexicon.tex)、[24b](book/chapters/24b-modern-lexicon.tex)、[24d 英文映射](book/chapters/24d-english-index.tex)；生成：[24e 拼音主表](book/chapters/24e-bilingual-glossary.tex)、[24f 英文简表](book/chapters/24f-chinese-index.tex)；手写：[24c 概念图](book/chapters/24c-concept-map.tex) |
+| E 术语表与索引 | 源：[24-lexicon](book/chapters/24-lexicon.tex)、[24b](book/chapters/24b-modern-lexicon.tex)、[24d 英文映射](book/chapters/24d-english-index.tex)；生成：[24e 拼音主表](book/chapters/24e-bilingual-glossary.tex)、[24f 英文简表](book/chapters/24f-english-index.tex)；手写：[24c 概念图](book/chapters/24c-concept-map.tex) |
 | F 来源 | [26-sources](book/chapters/26-sources.tex)，链接记录 [source-audit.json](book/source-audit.json) |
 | G 版本与带日期断言 | [29-revision-notes](book/chapters/29-revision-notes.tex)，断言表由 [dated-claims.json](book/dated-claims.json) 生成 |
 
@@ -121,7 +122,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 下列文件不要手改；修改维护来源，并在正文修改完成后运行对应生成器：
 
 - `book/chapters/25-exercise-bank.tex`、`book/chapters/27-answer-key.tex`、`book/part-reviews.tex`、`book/chapter-practice.tex`
-- `book/chapters/24e-bilingual-glossary.tex`、`book/chapters/24f-chinese-index.tex`、`docs/TERM_OCCURRENCES.md`
+- `book/chapters/24e-bilingual-glossary.tex`、`book/chapters/24f-english-index.tex`、`docs/TERM_OCCURRENCES.md`
 - `book/figures/reference-qr.tex`、`docs/REFERENCES.md`
 - `book/chapters/29-revision-notes.tex` 中的断言表
 
@@ -130,7 +131,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | 题库、D.1 解答、部分复习 | [exercises.json](book/exercises.json) | `python3 scripts/generate_exercise_bank.py` |
 | 各章练习指针与答案导航 | 题库、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
 | 拼音术语主表与[出现章节表](docs/TERM_OCCURRENCES.md) | [基础词条](book/chapters/24-lexicon.tex)、[现代词条](book/chapters/24b-modern-lexicon.tex)、[英文映射](book/chapters/24d-english-index.tex)及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
-| 英文简表 | 已生成的术语主表 | `python3 scripts/generate_chinese_index.py` |
+| 英文简表 | 已生成的术语主表 | `python3 scripts/generate_english_index.py` |
 | 二维码与[网页参考清单](docs/REFERENCES.md) | [source-audit.json](book/source-audit.json) | `python3 scripts/generate_reference_assets.py` |
 | 带日期断言表 | [dated-claims.json](book/dated-claims.json) | `python3 scripts/check_dated_claims.py --write` |
 
@@ -315,3 +316,5 @@ C 题和 R 题按印刷顺序连续编号，由 `generate_exercise_bank.py` 校�
 ## 贡献与许可
 
 教材正文、LaTeX/TikZ、文档及正式 PDF 采用 [CC BY 4.0](LICENSE)；`scripts/` 与 `.github/workflows/` 采用 [MIT](scripts/LICENSE)，范围和建议署名见 [README](README.md#开放许可证与转载)。提交前请确认你有权按对应许可证贡献这些内容；引用第三方材料时标明来源和原始许可，未经授权的内容不要并入仓库。
+
+教学 Notebook 与本 PDF 的代码版本分别核对，运行前填写版权页提交号；固定依赖见 [requirements-teaching.txt](requirements-teaching.txt)。本地复算仍使用已有 Python 环境，以该环境解释器执行 `-m pip install -r requirements-teaching.txt`。

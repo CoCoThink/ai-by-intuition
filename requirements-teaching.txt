@@ -1,0 +1,3 @@
+# Verified with CPU float64 teaching examples; Python 3.12+ (tested 3.14.6).
+numpy==2.5.0
+torch==2.14.0

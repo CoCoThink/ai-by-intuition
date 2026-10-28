@@ -28,6 +28,26 @@
     ]
   },
   {
+    "id": "mcp-roles",
+    "target": "concept:mcp",
+    "claim": "MCP 宿主管理客户端；每个客户端与一个服务端通信",
+    "version": "2026-07-28",
+    "checked_utc": "2026-10-28",
+    "sources": [
+      {
+        "name": "架构规范",
+        "url": "https://modelcontextprotocol.io/specification/2026-07-28/architecture/index"
+      }
+    ],
+    "scope": "已核对宿主授权与编排、客户端一对一通信和服务端能力；模型请求由应用转成协议消息。",
+    "review_interval_days": 90,
+    "review_on_new_revision": true,
+    "evidence": [
+      "每个客户端与一个服务端交换协议消息",
+      "管理客户端及用户授权"
+    ]
+  },
+  {
     "id": "claude-tools",
     "target": "elective:real-function-call",
     "claim": "Claude 工具定义含名称、描述、输入模式；按停止原因继续工具循环",
@@ -102,7 +122,7 @@
   },
   {
     "id": "qwen-config",
-    "target": "concept:gqa",
+    "target": "example:gqa-budget",
     "claim": "Qwen2.5-0.5B：24 层、14 个 Query 头、2 个 KV 头、头宽 64",
     "version": "060db64",
     "checked_utc": "2026-10-25",

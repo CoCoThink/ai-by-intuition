@@ -42,12 +42,9 @@
 模型输出的是工具请求；文件修改、搜索和网络请求由外部程序执行，
 并受工具配置、授权与安全策略约束。
 
-同理，若用户询问前文“春天花开了”在\textbf{某日某地}是否属实，
-模型可提出 \texttt{read\_observations} 请求（参数为日期与地点）；
-应用（宿主）验证访问范围、日期与地点，再读带时间戳的数据。
+应用（也称宿主）验证报表访问范围与请求参数，再执行读取。
 后文把执行这些检查的程序统称为\textbf{应用}。
-返回“未找到记录”是有效工具结果，\textbf{不是可以让模型编造“已开花”的许可}。
-这和季度报告先查来源再算数字，属于同一套核证流程。
+返回“未找到 Q3 报告”是有效工具结果；应用应明确缺失哪些证据，停止计算依赖 Q3 的环比。
 
 \subsection{请求和返回值长什么样？}
 
@@ -159,23 +156,8 @@ return app_finish("step_budget_exceeded", messages)
 \par\smallskip\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}\enspace
 运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹，并复算下文每次模型调用的输入 Token。
 
-\subsection*{再回到“春天 花 开了 。”：查证今天的花期}
-仍以\hyperref[intro:23d-agent-systems]{前章那句“春天花开了”}为例。
-用户问“今天甲园的花开了吗？”，这里需要核实的是\textbf{某一天、某个地点的观测}，
-而不是计算续写“开了”的概率。按下面的工具记录逐步核查：
-\begin{enumerate}[leftmargin=2em,itemsep=2pt]
-\item \textbf{提出请求：}模型建议调用
-\texttt{read\_observations(park="A", date="2026-04-06")}；
-\item \textbf{检查权限：}应用核对用户允许的园区资料范围，才执行检索；
-\item \textbf{返回证据：}工具找到“4 月 1 日盛开”和“4 月 5 日花期结束”
-两份带日期的记录，却没有 2026 年 4 月 6 日的现场观测；
-\item \textbf{交付结论：}系统可说明“4 月 5 日记录为花期结束，
-4 月 6 日尚无直接观测”，并链接来源；4 月 1 日的照片只证明当日的花期。
-\end{enumerate}
-这段教学记录与季度收入例子共享同一组关口：
-\textbf{明确任务 $\to$ 获得授权 $\to$ 返回有时效的证据
-$\to$ 核查缺口 $\to$ 给出带来源的答案}。
-既能复用最初的四个 Token，也展示了工具失败或证据不全时的正确处理。
+若 Q3 返回的只是旧报告修订前的摘要，而原表尚未取得，应用应保留日期与来源，
+说明 Q3 环比仍缺正式证据；旧摘要不能自动代替本次获授权的原表。
 
 \subsection{什么时候用固定工作流，什么时候用 Agent？}
 \phantomsection\label{concept:workflow}
