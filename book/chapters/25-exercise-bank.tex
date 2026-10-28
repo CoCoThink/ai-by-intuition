@@ -74,30 +74,30 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-026.}] \phantomsection\label{exercise:C-026}\label{exercise:C4-14}\exercisemeta{标准}{5}{\hyperref[solution:C-026]{解答第~\pageref*{solution:C-026}~页}}\textbf{权衡：}一个更细的 Tokenizer 把同一段文本切成 $T$ 的两倍；若使用全序列 $T\times T$ 自注意力分数矩阵，元素数变成多少倍？这能否直接推出总推理时间也变为同样倍数？
 \end{enumerate}
 \Needspace{6\baselineskip}
+\subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20b-task-contract}~页）}}
+\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
+\item[\textbf{C-027.}] \phantomsection\label{exercise:C-027}\label{exercise:C2-1}\exercisemeta{基础}{3}{\hyperref[solution:C-027]{解答第~\pageref*{solution:C-027}~页}}\phantomsection\label{exercise:linked-20b-task-contract}  \textbf{【手算】} 词表有 $10$ 个 Token，编号从 $1$ 到 $10$。
+一个序列的 Token ID 是 $(2,4,1,8)$。
+采用“错开一格”的语言建模目标，写出长度为 $3$ 的输入与标签。
+\item[\textbf{C-028.}] \phantomsection\label{exercise:C-028}\label{exercise:C2-9}\exercisemeta{基础}{5}{\hyperref[solution:C-028]{解答第~\pageref*{solution:C-028}~页}}\textbf{【回忆】} 输入 Token ID 为 $[2,4,5]$，对应目标为 $[4,5,3]$。
+分别列出三个预测位置允许读取的输入位置编号，并说明第三个位置的目标 ID $3$ 在哪里参与训练计算。
+\item[\textbf{C-029.}] \phantomsection\label{exercise:C-029}\label{exercise:C4-17}\exercisemeta{标准}{5}{\hyperref[solution:C-029]{解答第~\pageref*{solution:C-029}~页}}\textbf{辨析：}用“春天 花 开了 。”训练下一 Token 预测时，三个位置的目标从哪里来？
+若生成时只给“春天”作为开头，下一轮追加到输入中的 Token 又从哪里来？用这个例子说明两种数据来源的区别。
+\end{enumerate}
+\Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20c-classification-loss}~章 · 分类损失：预测错了哪一类，怎样调整分数？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20c-classification-loss}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-027.}] \phantomsection\label{exercise:C-027}\label{exercise:C1-11}\exercisemeta{基础}{3}{\hyperref[solution:C-027]{解答第~\pageref*{solution:C-027}~页}}\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\ln p$ 约为多少？
-\item[\textbf{C-028.}] \phantomsection\label{exercise:C-028}\label{exercise:C2-19}\exercisemeta{标准}{5}{\hyperref[solution:C-028]{解答第~\pageref*{solution:C-028}~页}}\textbf{【手算】} 三类 logits 经 Softmax 得 $p=(0.2,0.5,0.3)$，真实类别是第 1 类（从 1 起编号）。写出 One-hot 目标 $y$、梯度 $\partial L/\partial z=p-y$，并判断一次梯度下降后三个 logit 分别升高还是降低。
-\item[\textbf{C-029.}] \phantomsection\label{exercise:C-029}\label{exercise:C2-5}\exercisemeta{基础}{4}{\hyperref[solution:C-029]{解答第~\pageref*{solution:C-029}~页}}\phantomsection\label{exercise:linked-20c-classification-loss}  \textbf{【比较】} 两个模型为同一位置的正确 Token 分别分配概率 $0.2$ 和 $0.8$。求两者的交叉熵 $L=-\ln p_{\rm true}$ 与损失差；这个差等于哪个概率比的对数？
-\item[\textbf{C-030.}] \phantomsection\label{exercise:C-030}\label{exercise:C4-15}\exercisemeta{标准}{8}{\hyperref[solution:C-030]{解答第~\pageref*{solution:C-030}~页}}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？
+\item[\textbf{C-030.}] \phantomsection\label{exercise:C-030}\label{exercise:C1-11}\exercisemeta{基础}{3}{\hyperref[solution:C-030]{解答第~\pageref*{solution:C-030}~页}}\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\ln p$ 约为多少？
+\item[\textbf{C-031.}] \phantomsection\label{exercise:C-031}\label{exercise:C2-19}\exercisemeta{标准}{5}{\hyperref[solution:C-031]{解答第~\pageref*{solution:C-031}~页}}\textbf{【手算】} 三类 logits 经 Softmax 得 $p=(0.2,0.5,0.3)$，真实类别是第 1 类（从 1 起编号）。写出 One-hot 目标 $y$、梯度 $\partial L/\partial z=p-y$，并判断一次梯度下降后三个 logit 分别升高还是降低。
+\item[\textbf{C-032.}] \phantomsection\label{exercise:C-032}\label{exercise:C2-5}\exercisemeta{基础}{4}{\hyperref[solution:C-032]{解答第~\pageref*{solution:C-032}~页}}\phantomsection\label{exercise:linked-20c-classification-loss}  \textbf{【比较】} 两个模型为同一位置的正确 Token 分别分配概率 $0.2$ 和 $0.8$。求两者的交叉熵 $L=-\ln p_{\rm true}$ 与损失差；这个差等于哪个概率比的对数？
+\item[\textbf{C-033.}] \phantomsection\label{exercise:C-033}\label{exercise:C4-15}\exercisemeta{标准}{8}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20-embeddings}~章 · Embedding：让 Token ID 变成可训练的向量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20-embeddings}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-031.}] \phantomsection\label{exercise:C-031}\label{exercise:C1-14}\exercisemeta{标准}{6}{\hyperref[solution:C-031]{解答第~\pageref*{solution:C-031}~页}}\textbf{【迁移】}沿用正文的 $5\times3$ Embedding 表，保持参数不变，把输入 $[2,4,5]$ 改为 $[5,4,5]$。已知 $E[4]=(-0.3,1.1,0.2)$、$E[5]=(0.15,-0.2,1.25)$，写出新的三行查表结果。与原输入相比，哪一行查表结果变了？这一步是否更新了 Embedding 参数？
-\item[\textbf{C-032.}] \phantomsection\label{exercise:C-032}\label{exercise:C1-7}\exercisemeta{基础}{3}{\hyperref[solution:C-032]{解答第~\pageref*{solution:C-032}~页}}\phantomsection\label{exercise:linked-20-embeddings}  \textbf{【回忆】} 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
-\item[\textbf{C-033.}] \phantomsection\label{exercise:C-033}\label{exercise:C4-16}\exercisemeta{标准}{5}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。沿负梯度更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20b-task-contract}~页）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-034.}] \phantomsection\label{exercise:C-034}\label{exercise:C2-1}\exercisemeta{基础}{3}{\hyperref[solution:C-034]{解答第~\pageref*{solution:C-034}~页}}\phantomsection\label{exercise:linked-20b-task-contract}  \textbf{【手算】} 词表有 $10$ 个 Token，编号从 $1$ 到 $10$。
-一个序列的 Token ID 是 $(2,4,1,8)$。
-采用“错开一格”的语言建模目标，写出长度为 $3$ 的输入与标签。
-\item[\textbf{C-035.}] \phantomsection\label{exercise:C-035}\label{exercise:C2-9}\exercisemeta{基础}{5}{\hyperref[solution:C-035]{解答第~\pageref*{solution:C-035}~页}}\textbf{【回忆】} 输入 Token ID 为 $[2,4,5]$，对应目标为 $[4,5,3]$。
-分别列出三个预测位置允许读取的输入位置编号，并说明第三个位置的目标 ID $3$ 在哪里参与训练计算。
-\item[\textbf{C-036.}] \phantomsection\label{exercise:C-036}\label{exercise:C4-17}\exercisemeta{标准}{5}{\hyperref[solution:C-036]{解答第~\pageref*{solution:C-036}~页}}\textbf{辨析：}用“春天 花 开了 。”训练下一 Token 预测时，三个位置的目标从哪里来？
-若生成时只给“春天”作为开头，下一轮追加到输入中的 Token 又从哪里来？用这个例子说明两种数据来源的区别。
+\item[\textbf{C-034.}] \phantomsection\label{exercise:C-034}\label{exercise:C1-14}\exercisemeta{标准}{6}{\hyperref[solution:C-034]{解答第~\pageref*{solution:C-034}~页}}\textbf{【迁移】}沿用正文的 $5\times3$ Embedding 表，保持参数不变，把输入 $[2,4,5]$ 改为 $[5,4,5]$。已知 $E[4]=(-0.3,1.1,0.2)$、$E[5]=(0.15,-0.2,1.25)$，写出新的三行查表结果。与原输入相比，哪一行查表结果变了？这一步是否更新了 Embedding 参数？
+\item[\textbf{C-035.}] \phantomsection\label{exercise:C-035}\label{exercise:C1-7}\exercisemeta{基础}{3}{\hyperref[solution:C-035]{解答第~\pageref*{solution:C-035}~页}}\phantomsection\label{exercise:linked-20-embeddings}  \textbf{【回忆】} 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
+\item[\textbf{C-036.}] \phantomsection\label{exercise:C-036}\label{exercise:C4-16}\exercisemeta{标准}{5}{\hyperref[solution:C-036]{解答第~\pageref*{solution:C-036}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。沿负梯度更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:21a-context-gap}~章 · 前文怎样传到当前词？从逐行处理到 RNN\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:21a-context-gap}~页）}}

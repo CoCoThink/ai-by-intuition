@@ -92,7 +92,7 @@ Few-shot 给格式示例，SFT 用核对过的示范训练格式与缺证据时�
 
 \chapterchecktasks{23c-post-training}{理解、手算与判断}{
 \label{check:23cc-test-time-compute}
-\item\textbf{比较：}SFT、成对偏好学习与可验证奖励的反馈信号有何不同？各举一个适合的任务。\chapterinlinehint{先列出三种方法各自实际收到的反馈。}
+\item\textbf{比较：}预训练、SFT 与 Few-shot ICL 中哪些更新参数？再比较 SFT、成对偏好学习与可验证奖励各收到什么反馈。\chapterinlinehint{先检查是否反传更新，再列示范、比较与核验结果。}
 \item\textbf{手算：}SFT 目标 Token 的概率为 $0.25$，求单位置交叉熵；若四个组内奖励是 $(1,0,1,0)$，按总体标准差标准化得到哪些相对优势？\chapterinlinehint{先算负对数，再用奖励减均值并除标准差。}
 \item\textbf{{\symboliconfont ★} 找错：}同学把这四个相对优势直接当成完整 GRPO 更新，遗漏了什么策略目标与数值边界？\chapterinlinehint{在相对优势之后继续写策略目标，并检查零方差。}
 \item\textbf{解释：}向同学解释 RLVR 与 Best-of-$n$ 各把验证结果用在何处。\chapterinlinehint{检查本次是否更新模型权重。}

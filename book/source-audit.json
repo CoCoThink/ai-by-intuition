@@ -410,5 +410,13 @@
     "checked_utc": "2026-10-27",
     "method": "Official introduction content review; standard application-to-tool interfaces",
     "result": "已核对统一应用与外部工具连接接口的动机"
+  },
+  {
+    "url": "https://arxiv.org/html/2402.03300v3",
+    "status": 200,
+    "final_url": "https://arxiv.org/html/2402.03300v3",
+    "checked_utc": "2026-10-28",
+    "method": "Primary source content review of sections 4.1.1–4.1.3 (GRPO and outcome/process reward models)",
+    "result": "已核对组相对优势，以及结果／过程监督使用奖励模型的例子"
   }
 ]

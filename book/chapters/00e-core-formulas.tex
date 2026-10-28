@@ -30,7 +30,7 @@ $h$ 是投影输出宽度。
 \[
 Q=UW_Q,\quad K=UW_K,\quad V=UW_V,\qquad
 A=\operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}+C\right),
-\quad R=AV.
+\quad R_{\rm raw}=AV.
 \]
 其中 $U=\operatorname{LN}(X)$ 是 Pre-Norm 之后的输入（与第四组公式相同）。
 对 Decoder-only 语言模型，因果 Mask $C$ 阻止读取未来位置；
@@ -38,10 +38,12 @@ Softmax 对\textbf{每一行}的可见 Key 分数归一化。
 
 \noindent\textbf{四、完整 Block 与联合目标。}
 \[
-X_{\rm att}=X+\operatorname{Attention}(\operatorname{LN}(X)),
+X_{\rm att}=X+R_{\rm raw}W_O,
 \quad
 H=X_{\rm att}+\operatorname{FFN}(\operatorname{LN}(X_{\rm att})).
 \]
+这里列出单头主例；$W_O$ 把读取结果投影回残差宽度。
+多头时先沿特征列拼接各头读出，再乘输出投影。
 \[
 Z=HW_{\rm out}\in\R^{T\times|\mathcal V|},
 \qquad

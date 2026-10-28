@@ -3,8 +3,7 @@
 \label{intro:22c-language-training}
 \chaptercompass{三个位置怎样联合训练同一套参数？}{按三位置平均损失，沿完整计算图反传并统一更新。}{$\Pi:3\times5\to L\to\nabla_\theta L$}{Embedding、位置、Q/K/V、FFN、输出头共同更新}
 上一章已经用\textbf{同一组初始参数}得到三个位置的词表概率。
-我们不再只挑最后一行、冻结所有前层参数反复调输出头；
-现在要让整段数据在\textbf{一次前向和一次反向传播}中共同训练完整网络。
+本章从这三个位置的预测误差出发，在\textbf{一次前向和一次反向传播}中共同训练完整网络。
 
 \subsection{错开一个位置：为什么能从文本自己得到标签？}
 \phantomsection\label{concept:shifted-targets}
@@ -241,6 +240,28 @@ Q/K 的梯度本身非零（\sectionentry{sec:gradient-paths}）；
 Q/K 能否学会按需选择，由\sectionentry{experiment:context-training}的第二级干扰项实验回答。
 运行 \texttt{python3 scripts/teaching\_trace.py --attention} 复核两张矩阵；
 加 \texttt{--freeze Wq,Wk}、\texttt{--only Wq,Wk} 或 \texttt{--freeze E,P} 复核三组对照。
+
+\phantomsection\label{sec:embedding-training-snapshot}
+这时对应的三行 Embedding 变为：
+\[
+\begin{aligned}
+E_{20}[2]&\approx(1.2145,\,0.1364,\,-0.2272),\\
+E_{20}[4]&\approx(-0.4298,\,0.8810,\,0.3345),\\
+E_{20}[5]&\approx(0.1734,\,-0.2188,\,1.3136).
+\end{aligned}
+\]
+这份结果可由 \texttt{python3 scripts/teaching\_reference.py --json}
+复现。\textbf{这次训练确实改变了输入向量，并降低了同一样本的预测损失。}
+
+\par\medskip
+\Needspace{74mm} % keep all nine coordinate bars with their caption
+\input{figures/embedding-training-projection}
+
+图中逐项画的是 $E_{20}-E_0$，\textbf{三维坐标一个也没有省略}：
+横向右侧表示该坐标增加，左侧表示减少，柱长代表变化幅度。
+“花”的第二坐标变化最大（约 $-0.2190$），
+这些坐标记录了梯度怎样推动输入向量。
+
 
 \subsection{怎样独立检查数值不是手工凑的？}
 

@@ -65,21 +65,45 @@ p_\theta(y\mid\underbrace{\text{任务说明、示例、新输入}}_{\text{上�
 
 \subsubsection{动手算：固定参数怎样从示例中读出新映射？}
 \label{sec:icl-induction}
-\localfixture{二维双记录读取；展示一个前缀匹配与复制的机制}
+\localfixture{四维记录、二维 Key/Value；展示固定参数下的前驱读取与后继匹配}
 考虑序列 $[A][B][C][D][A]$：已完成的示例是 $A\to B$、$C\to D$，
-末尾的新 $A$ 后该接什么？关键是把\textbf{“谁跟在谁后面”}写进上下文表示。
-第一阶段把前一 Token 的特征复制到后一位置：$B$ 所在行记住前驱 $A$，
-$D$ 所在行记住前驱 $C$。第二阶段用当前 $A$ 查询这些\textbf{前驱 Key}，读取该行的\textbf{后继 Value}。
-这解释了为什么要找 $B$ 所在行，而不是只读前一个 $A$ 自己。
+末尾的新 $A$ 后该接什么？先把“谁跟在谁后面”变成可供读取的记录。
 
-为便于手算，以下只保留两个已完成示例的记录行；读取 Mask 遮蔽其余位置。
-它展示两阶段归纳电路的读取部分，前驱复制已作为输入给定：
+给 $A,C$ 分别安排二维前驱特征 $(1,0),(0,1)$，
+给 $B,D$ 分别安排二维后继特征 $(1,0),(0,1)$。
+用不同的两组坐标保存它们，初始四维表示为
 \[
-K=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
-V=\begin{bmatrix}1&0\\0&1\end{bmatrix},\quad
-q_A=(\sqrt2\ln9,0).
+x_A=(1,0,0,0),\quad x_C=(0,1,0,0),\quad
+x_B=(0,0,1,0),\quad x_D=(0,0,0,1).
 \]
-$K$ 两行分别表示前驱 $A,C$；$V$ 两行在 $B,D$ 坐标上编码后继。
+前两项表示查询来源，后两项表示后继答案。
+第一阶段用\textbf{演示用的固定前驱读取规则}：位置 $i>1$ 只读取位置 $i-1$ 的前两项，
+把读出的两项加到当前位置的前两项，后两项原样保留；首位置没有前驱，保留原表示。
+这可以用每行只允许读取前一个位置的 Mask 实现；唯一可见位置的 Softmax 权重为 $1$。
+例如 $B$ 所在位置读入 $A$ 的 $(1,0)$，形成 $(1,0,1,0)$。
+
+第二阶段只保留两个已完成示例的位置作为候选记录：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{cccc}
+\toprule
+记录位置 & 当前 Token & 读入的前驱 & 四维记录\\\midrule
+$2$ & $B$ & $A$ & $(1,0,1,0)$\\
+$4$ & $D$ & $C$ & $(0,1,0,1)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+固定的 Key 投影选取前两列，Value 投影选取后两列，得到
+\[
+K=\begin{bmatrix}1&0\\0&1\end{bmatrix},\qquad
+V=\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\]
+$K$ 的两行表示前驱 $A,C$，$V$ 的两行表示同一记录中的后继 $B,D$。
+它们是从本次序列算出的中间结果；预先设定的投影权重在本次请求中固定。
+\par\Needspace{5\baselineskip}
+末尾 $A$ 的前两项经过固定的 $\sqrt2\ln9$ 倍缩放，形成查询
+$q_A=(\sqrt2\ln9,0)$。
+现在用这个查询匹配前驱，再读出对应的后继：
 沿用第~\ref*{intro:22a-position-multihead}~章的缩放点积 Attention 计算：
 \[
 s=\frac{q_AK^\top}{\sqrt2}=(\ln9,0),\qquad
@@ -88,12 +112,14 @@ s=\frac{q_AK^\top}{\sqrt2}=(\ln9,0),\qquad
 再取固定输出头 $W_{\rm out}=5I_2$，得到 $Z=(4.5,0.5)$，
 $\Pr(B)=e^{4.5}/(e^{4.5}+e^{0.5})\approx\boxed{0.982014}$。
 \textbf{参数一项没改，改变的是读入的示例。}
-把示例换成 $A\to D,C\to B$，仅交换 $V$ 的两行，输出就转向 $D$。
+把序列换成 $[A][D][C][B][A]$，再运行同一套固定读取与投影，
+前驱仍为 $A,C$，后继变成 $D,B$，因此 $K$ 不变而 $V$ 两行交换，输出转向 $D$。
 均匀平均只能得到 $(0.5,0.5)$；匹配 Key 才能随当前查询选择对应映射。
 
 归纳头（Induction Head）的前缀匹配与复制机制见
 \href{https://arxiv.org/abs/2209.11895}{Olsson 等（2022）}，来源见附录 F。
-这是 ICL 的一条具体机制；更一般的规则推断、语义迁移还会用到别的计算电路。
+本例用固定规则隔离演示前驱复制与后继匹配；真实网络中的相关读取模式由训练形成。
+更一般的规则推断、语义迁移还会用到别的计算电路。
 运行 \texttt{python3 scripts/icl\_policy\_demo.py} 可交换查询或示例核对结果。
 
 \subsection{一条清楚的边界：上下文 vs 权重 vs 外部资料}
@@ -115,7 +141,7 @@ Few-shot 能让某些任务在不更新参数的情况下改善表现，
 其中的实验结论有其模型、数据和评测范围。
 
 \chapterchecktasks{23aa-pretraining-icl}{理解与复算}{
-\item \textbf{比较：}预训练、SFT、Few-shot ICL 中哪些需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{分别检查是否有反传、更新与仅改变输入。}
+\item \textbf{比较：}预训练与 Few-shot ICL 中哪个需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{分别检查是否有反传、更新与仅改变输入。}
 \item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？\chapterinlinehint{先数本次任务记录，再列出新会话实际携带的消息。}
 \item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。\chapterinlinehint{比较提示输入与优化器更新，并追踪资料来源。}
 }

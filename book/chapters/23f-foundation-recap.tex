@@ -14,7 +14,7 @@
 \toprule
 同一句话走到哪里 & 你现在能解释的动作 & 回看章节／页\\\midrule
 文字变成 ID & 教学词表得到 $[2,4,5,3]$；真实分词器可产生另一种切分 & 第~\ref*{intro:20a-tokenizer}~章／\pageref*{intro:20a-tokenizer}\\
-ID 变成行向量 & 查 Embedding 行，加入位置向量，核对 $X$ 的形状 & 第~\ref*{intro:20-embeddings}--\ref*{intro:20b-task-contract}~章／\pageref*{intro:20-embeddings}\\
+ID 变成行向量 & 查 Embedding 行，加入位置向量，核对 $X$ 的形状 & 第~\ref*{intro:20-embeddings}、\ref*{intro:22a-position-multihead}~章／\pageref*{intro:20-embeddings}\\
 “开了”读取前文 & Query 匹配 Key，把 Value 加权汇总；训练让读取具有选择性 & 第~\ref*{intro:21b-why-attention}--\ref*{intro:11-softmax-memory}~章／\pageref*{intro:21b-why-attention}\\
 向量变成下一词概率 & 残差、Norm 与 FFN 组装计算链，输出头得到 logits，Softmax 得到概率 & 第~\ref*{intro:22-transformer-architecture}--\ref*{intro:22b-token-to-output}~章／\pageref*{intro:22-transformer-architecture}\\
 错误变成参数更新 & 用目标“花／开了／。”计算平均损失，反传到每份共享参数 & 第~\ref*{intro:22c-language-training}~章／\pageref*{intro:22c-language-training}\\

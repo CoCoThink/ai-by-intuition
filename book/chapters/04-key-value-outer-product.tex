@@ -6,8 +6,9 @@
 \phantomsection\label{concept:outer-product}
 
 \noindent\textbf{{\symboliconfont ★} 扩展路径：从存入与取出的角度重看 Attention。}
-主线已经讲完 Attention、FFN，以及\hyperref[sec:modern-delta-rule]{现代架构章的线性状态与 Delta 规则}；
+从主线已经学过的点积、Attention 与 FFN 出发，
 本部分把同样的计算拆成外积写入、串扰、误差修正与非线性检索逐步复算。
+若读过\hyperref[sec:modern-delta-rule]{现代架构章的选读 Delta 规则}，也可以在这里核对它的写入过程。
 这里改写的是外部状态 $\mathcal{M}$；它与训练神经网络权重是两种更新。
 
 Transformer 主线里每个 Token 占一行。现在换一种视角理解线性层：

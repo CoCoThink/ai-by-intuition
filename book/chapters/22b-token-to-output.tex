@@ -2,11 +2,14 @@
 \section{三维贯通实验：从 Token ID 到三个位置的输出概率}
 \label{intro:22b-token-to-output}
 \chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to \Pi:3\times5$}{本章只做前向；参数取自统一三维例子}
-手算入口：先做\hyperref[app:rational-mini]{附录 B 的二维分数迷你版（第~\pageref*{app:rational-mini}~页）}，再用本章四位小数核对脚本。
+手算入口：\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini} 的二维分数迷你版}提供更短的分数练习；
+本章沿第二个位置逐步算完三维前向，它能读取两个位置，便于看清加权读取。
 现在\textbf{只用同一组三维参数}，把 Embedding、因果 Mask、Q/K/V、Norm、残差、
 FFN 与输出头串成一次前向计算。
-所有数值由 \texttt{scripts/teaching\_reference.py} 计算；
-较长的投影与中间量放在\hyperref[app:transformer-intermediates]{附录 B.1 的逐层数值核对表}。
+
+所有数值由 \path{scripts/teaching_reference.py} 计算；
+完整参数与中间量见\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates} 的逐层数值核对表}。
+下列中间量显示四位小数；最终结果使用未舍入数值计算，手算可能有末位差异。
 \par\smallskip
 \Needspace{14\baselineskip}
 \noindent\textbf{本章运算路线：}
@@ -16,8 +19,8 @@ FFN 与输出头串成一次前向计算。
 \begin{tabularx}{\linewidth}{@{}p{37mm}p{37mm}X@{}}
 \toprule
 环节 & 输入 $\to$ 输出 & 抓住一个代表数字\\\midrule
-查表与位置 & $3$ ID $\to X:3\times3$ & 第 1 行首项 $1.30$\\
-Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
+查表与位置 & $3$ ID $\to X:3\times3$ & 第 2 行首项 $-0.30$\\
+Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{2,1}\approx-0.8198$\\
 因果 Attention & $QK^\top\to A:3\times3$ & $A_{2,1}\approx0.1244$\\
 残差与 FFN & $A V\to H:3\times3$ & 每步保留三个位置\\
 输出头与 Softmax & $H\to Z,\Pi:3\times5$ & 每行五个候选概率\\
@@ -35,7 +38,7 @@ Norm + Q/K/V & $X\to Q,K,V:3\times3$ & $Q_{1,1}\approx1.1576$\\
 Block 输入 $X=E_{[2,4,5]}+P_{\rm pos}$ 有三行：
 \begin{equation}
 X=E_{[2,4,5]}+P_{\rm pos}\in\R^{3\times3},
-\qquad X_{1,:}=(1.30,\ 0.05,\ -0.30).
+\qquad X_{2,:}=(-0.30,\ 1.05,\ 0.32).
 \label{eq:running-three-token-x}
 \end{equation}
 一个位置占一行，三个特征占三列；
@@ -46,16 +49,29 @@ X=E_{[2,4,5]}+P_{\rm pos}\in\R^{3\times3},
 逐行 LayerNorm 得到 $U=\operatorname{LN}(X)$。
 它对每行减均值并除以标准差（本例 $\varepsilon=10^{-5}$），
 固定仿射参数 $\gamma=1,\beta=0$。
-第一行从 $(1.30,0.05,-0.30)$ 变为
-约 $(1.3833,-0.4368,-0.9464)$。
-随后用\textbf{三组不同}的权重计算
+例如第二行的均值为 $(-0.30+1.05+0.32)/3\approx0.3567$，
+每项减去这个均值，再除以含 $\varepsilon$ 的标准差，得到
+\[
+U_{2,:}\approx(-1.1901,1.2566,-0.0665).
+\]
+随后使用第~\ref*{intro:22a-position-multihead}~章列出的三组主线投影权重：
 \[
 Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 \]
 每个投影的形状均为 $(3\times3)(3\times3)\to3\times3$。
-例如第一行 Query 约为 $(1.1576,-0.2584,-1.0047)$。
-因此这里没有使用 $Q=K=V=X$ 的简化假设；
-全部初始投影权重和计算结果见附录核对表。
+例如第二行 Query 的首项是
+\[
+Q_{2,1}=U_{2,1}\times0.8+U_{2,2}\times0.1+U_{2,3}\times(-0.1)
+\approx-0.8198.
+\]
+完整 Query 为 $q_2\approx(-0.8198,0.8829,0.3800)$。
+第二位置可读取的前两行 Key 与 Value 也由同一批 $U$ 投影得到：
+\[
+K_{1:2,:}\approx\begin{bmatrix}1.0775&-0.5824&-0.4332\\-1.1473&1.1176&-0.2879\end{bmatrix},
+\quad
+V_{1:2,:}\approx\begin{bmatrix}1.2886&0.0728&-0.8700\\-1.1968&0.9062&0.1320\end{bmatrix}.
+\]
+因此本例的 Q、K、V 是不同投影的结果。
 
 \subsection{第三步：用因果权重读取 Value}
 
@@ -66,6 +82,18 @@ Q=UW_Q,\qquad K=UW_K,\qquad V=UW_V.
 S=QK^\top/\sqrt3+C,\qquad A=\operatorname{softmax}(S).
 \label{eq:two-token-scores}
 \end{equation}
+第二行的两个可见分数，分别用 $q_2$ 点乘 $k_1,k_2$ 后除以 $\sqrt3$：
+\[
+S_{2,1}\approx\frac{(-0.8198)(1.0775)+(0.8829)(-0.5824)+(0.3800)(-0.4332)}{\sqrt3}
+\approx-0.9019,
+\]
+\[
+S_{2,2}\approx1.0496,\qquad
+A_{2,:}=\frac{(e^{S_{2,1}},e^{S_{2,2}},0)}{e^{S_{2,1}}+e^{S_{2,2}}}
+\approx(0.1244,0.8756,0).
+\]
+第三项为零，是因为第三位置被因果 Mask 遮蔽。
+
 得到的 $A:3\times3$ 画在图~\ref{fig:attention-a-weights}。
 \textbf{每一行的权重在可见 Key 上求和为 $1$}：
 第二位置无法读取第三位置；
@@ -79,8 +107,20 @@ S=QK^\top/\sqrt3+C,\qquad A=\operatorname{softmax}(S).
 \[
 X_{\rm att}=X+R_{\rm raw}W_O.
 \]
-每次读取和残差相加都保持 $3\times3$，
-但每行已经结合此前可见位置的内容。
+把刚才的权重用于两行 Value，第二行读出约为
+\[
+R_{{\rm raw},2,:}=A_{2,1}V_{1,:}+A_{2,2}V_{2,:}
+\approx(-0.8876,0.8025,0.0074).
+\]
+例如首项约为 $0.1244\times1.2886+0.8756\times(-1.1968)\approx-0.8876$。
+再使用主线输出投影
+\[
+W_O=\begin{bmatrix}.9&0&.1\\.1&.85&0\\0&.15&.95\end{bmatrix},\qquad
+X_{{\rm att},2,:}\approx(-1.0186,1.7333,0.2382).
+\]
+它的首项由输入与投影结果相加：
+$-0.30+(-0.8876)\times0.9+0.8025\times0.1\approx-1.0186$。
+读取和残差相加保持 $3\times3$，第二行已经结合两个可见位置的内容。
 
 \subsection{第四步：第二次 Norm 与逐位置 FFN}
 
@@ -90,22 +130,49 @@ F_{\rm mid}=\operatorname{ReLU}(BW_{\rm up})\in\R^{3\times4},
 \qquad
 H=X_{\rm att}+F_{\rm mid}W_{\rm down},
 \]
-其中 $W_{\rm up}:3\times4$、$W_{\rm down}:4\times3$。
-FFN 对每个 Token 行分别使用\textbf{同一组矩阵}；
-跨 Token 的读取来自此前 Attention，FFN 本身不改变位置数。
-第二条残差后的隐藏状态只用形状与一个代表元素核验：
+这里的两张权重表为
+\[
+W_{\rm up}=\begin{bmatrix}.4&.2&-.3&.1\\-.1&.5&.15&-.25\\.2&.1&.45&.3\end{bmatrix},\quad
+W_{\rm down}=\begin{bmatrix}.25&-.1&.15\\-.05&.2&.1\\.1&.15&.15\\.1&-.12&.18\end{bmatrix}.
+\]
+第二次 Norm 得到 $B_{2,:}\approx(-1.1879,1.2585,-0.0706)$。
+乘升维矩阵，再逐项使用 ReLU：
+\[
+(BW_{\rm up})_{2,:}\approx(-0.6151,0.3846,0.5134,-0.4546)
+\longrightarrow F_{{\rm mid},2,:}\approx(0,0.3846,0.5134,0).
+\]
+乘回 $W_{\rm down}$ 后加上残差，例如首项为
+$-1.0186+0.3846\times(-0.05)+0.5134\times0.1\approx-0.9865$。
+得到
 \begin{equation}
 H=X_{\rm att}+F_{\rm mid}W_{\rm down}\in\R^{3\times3},
-\quad H_{1,1}\approx2.5609.
+\quad H_{2,:}\approx(-0.9865,1.8872,0.3537).
 \label{eq:three-token-block-output}
 \end{equation}
+FFN 对每个 Token 行分别使用\textbf{同一组矩阵}；
+跨 Token 的读取来自此前 Attention，FFN 本身不改变位置数。
 
 \subsection{第五步：同一个输出头预测五个类别}
 \phantomsection\label{partq:transformer}
 
 令共享的词表输出头 $W_{\rm out}:3\times5$，
-则 $Z=HW_{\rm out}\in\R^{3\times5}$；
-对每行 logits 执行 Softmax，正文保留正确类概率。
+本例的固定初始值为
+\[
+W_{\rm out}=\begin{bmatrix}0&.2&0&.2&-.2\\0&.2&0&1.2&-.4\\0&-.1&.4&.1&.2\end{bmatrix}.
+\]
+$Z=HW_{\rm out}\in\R^{3\times5}$，第二行得到
+\[
+Z_{2,:}\approx(0,0.1448,0.1415,2.1027,-0.4868).
+\]
+例如目标 ID 5 的分数为
+$(-0.9865)(-0.2)+1.8872(-0.4)+0.3537(0.2)\approx-0.4868$。
+逐行 Softmax 后，第二位置正确答案“开了”的概率为
+\[
+\Pi_{2,5}=\frac{e^{Z_{2,5}}}{\sum_{j=1}^{5}e^{Z_{2,j}}}
+\approx\frac{e^{-0.4868}}{1+e^{0.1448}+e^{0.1415}+e^{2.1027}+e^{-0.4868}}
+\approx0.0507.
+\]
+同样计算其他两行，就得到三个位置的输出概率。
 GPT-2 等 Pre-Norm 模型在最后一个 Block 与输出头之间还有一次最终 LayerNorm
 （GPT-2 中名为 \texttt{ln\_f}），即 $Z=\operatorname{LN}_f(H)W_{\rm out}$；
 本书单 Block 主例省略这一步，直接用 $H$：

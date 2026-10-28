@@ -27,8 +27,8 @@
 方法 & 反馈或输入信号 & 更新参数？ & 主要改变什么\\\midrule
 预训练 & 文本中的后续 Token & 是 & 学习一般的语言模式\\
 SFT & 人工示范答案 & 是 & 学习特定任务的回答方式\\
-RLHF／DPO & 回答之间的偏好比较 & 是 & 调整回答偏好，并通常约束策略偏离参考模型\\
-RLVR／GRPO & 程序验证器给出的奖励 & 是 & 强化可自动核验的任务行为\\
+偏好学习 & 回答之间的偏好比较 & 是 & 用 RLHF、DPO 等流程调整回答偏好\\
+可验证奖励（RLVR） & 程序验证器给出的奖励 & 是 & 按奖励改进策略，可采用 GRPO 等算法\\
 CoT 提示 & 当前 Prompt 中的步骤示例 & 否 & 改变本次输入的组织方式\\
 Best-of-$n$／搜索 & 当前请求中的采样与验证 & 否 & 把更多计算用于筛选本次候选\\
 \bottomrule
@@ -137,13 +137,13 @@ $r(x,y)=\beta_{\rm DPO}\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{
 公式见 \href{https://arxiv.org/abs/2305.18290}{Rafailov 等（2023）的 DPO 论文}。
 
 \subsection{可验证奖励：让模型在能自动检查的任务中尝试改进}
-\phantomsection\label{concept:grpo}
 \phantomsection\label{concept:rlvr}
 
 对于一部分题目，我们可以编写\textbf{自动核验结果}的程序。
 例如问题是计算 $17+25$，提交答案 $42$ 可以得奖励 $1$，
 提交其他答案得 $0$。
 这类信号可以用于基于可验证奖励的强化学习（常见缩写 RLVR）。
+RLVR 说明奖励来自可核验结果；下一步还要选算法，把奖励变成参数更新。
 
 \begin{center}
 \begin{tikzpicture}[>=Latex,node distance=5mm,
@@ -164,6 +164,12 @@ $r(x,y)=\beta_{\rm DPO}\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{
 答对的偏差为 $1-0.5=+0.5$，答错的为 $0-0.5=-0.5$。
 这样正号表示比同组平均好，负号表示比同组平均差。
 
+\phantomsection\label{concept:grpo}
+\textbf{组相对策略优化（GRPO）}使用同一问题的一组候选奖励构造相对优势，
+再据此优化策略。这里先计算它所需的优势信号。
+GRPO 指更新算法，奖励既可以来自程序验证器，也可以来自奖励模型；
+本例选择程序核验 $42$ 是否正确。
+
 还可以把这些偏差除以本组奖励的标准差，统一比较尺度。
 先算四个样本的总体标准差（分母为 $4$），再定义\textbf{组内相对优势} $\mathcal A_i$：
 \[
@@ -180,7 +186,7 @@ $r(x,y)=\beta_{\rm DPO}\ln\bigl(\pi(y\mid x)/\pi_{\rm ref}(y\mid x)\bigr)+\text{
 优势约为 $\pm0.866$；Dr.~GRPO 等变体只减组均值、不除以标准差，得到 $\pm0.5$。
 比较报告时要写明所用口径。
 \textbf{注意：}此处只算组内优势；完整 GRPO 还涉及策略概率比、裁剪和正则化。
-可参见 \href{https://arxiv.org/abs/2402.03300}{DeepSeekMath}
+可参见 \href{https://arxiv.org/html/2402.03300v3}{DeepSeekMath}
 与 \href{https://arxiv.org/abs/2501.12948}{DeepSeek-R1}；
 不除标准差的分析见 \href{https://arxiv.org/abs/2503.20783}{Liu 等（2025）}。
 \end{example}

@@ -38,6 +38,27 @@ def check_motivation_examples():
             np.mean((quadratic@curve-y)**2)+.25*curve[0]**2]
     assert np.allclose(scores,[.5,.5625]) and scores[0]<scores[1]
     assert all(f'{score:g}' in general for score in scores)
+    # The original generic drawing had six unrelated points; the prose had three.
+    # Compare actual plotted coordinates and functions with the fitted models.
+    figure=(ROOT/'book/figures/generalization-three-fits.tex').read_text()
+    point_sets=re.findall(r'\\foreach \\px/\\py in \{([^}]+)\}',figure)
+    plotted=[np.array([[float(Fraction(v)) for v in pair.split('/')]
+                       for pair in group.split(',')]) for group in point_sets]
+    validation_x=np.array([-.5,.5]);validation_y=np.array([1/8,17/8])
+    assert len(plotted)==2
+    assert np.array_equal(plotted[0],np.column_stack([x,y]))
+    assert np.array_equal(plotted[1],np.column_stack([validation_x,validation_y]))
+    assert all(x.min()<value<x.max() for value in validation_x)
+    predictions=[np.column_stack([validation_x,np.ones(2)])@line,
+                 np.column_stack([validation_x**2,validation_x,np.ones(2)])@curve]
+    mse=[np.mean((pred-validation_y)**2) for pred in predictions]
+    assert np.allclose(mse,[1/64,1/4]) and '$1/64$' in general and '$1/4$' in general
+    expressions=re.findall(r'\(\\x,\{([^}]+)\}\)',figure)
+    assert len(expressions)==2
+    for expression,expected in zip(expressions,predictions):
+        expression=expression.replace(r'\x','x')
+        assert re.fullmatch(r'[x0-9.*+ /()-]+',expression)
+        assert np.allclose(eval(expression,{'__builtins__':{}},{'x':validation_x}),expected)
     post=(ROOT/'book/chapters/23c-post-training.tex').read_text()
     new=np.array([.7,.3]);reference=np.array([.5,.5])
     kl=np.sum(new*np.log(new/reference))
@@ -57,6 +78,39 @@ def check_motivation_examples():
     assert np.array_equal(row@(weight+up@down),[1,3]) and '(1,3)' in deployment
     assert 1000*8+8*1000==16000 and 16000/1000**2==.016
     print('Motivation examples QA: regularized candidate ranking, KL, RMS scaling, gates and additive LoRA path passed')
+
+
+def numeric_matrices(source):
+    return [np.array([[float(Fraction(cell.strip())) for cell in row.split('&')]
+                      for row in body.split(r'\\')])
+            for body in re.findall(r'\\begin\{bmatrix\}(.*?)\\end\{bmatrix\}',source,re.S)]
+
+
+def check_published_forward():
+    """Check printed parameters and real intermediate matrices, not label presence."""
+    w=parameters();state=forward(w)
+    position=(ROOT/'book/chapters/22a-position-multihead.tex').read_text()
+    projections=numeric_matrices(position)[:5]
+    for printed,expected in zip(projections,[w['E'][[1,3]],w['E'][[3,1]],w['Wq'],w['Wk'],w['Wv']]):
+        assert np.array_equal(printed,expected)
+    source=(ROOT/'book/chapters/22b-token-to-output.tex').read_text()
+    expected=[state['k'][:2],state['v'][:2],w['Wo'],w['Wup'],w['Wdown'],w['Wout'],
+              state['x'],state['a'],state['h'],state['probs']]
+    printed=numeric_matrices(source)
+    assert len(printed)==len(expected)
+    for actual,wanted in zip(printed,expected):
+        assert actual.shape==wanted.shape and np.allclose(actual,wanted,atol=5.1e-5,rtol=0),(actual,wanted)
+    # A quick-reference definition omitting nonidentity Wo silently changes the model.
+    card=(ROOT/'book/chapters/00e-core-formulas.tex').read_text()
+    assert r'R_{\rm raw}=AV' in card and r'X_{\rm att}=X+R_{\rm raw}W_O' in card
+    assert np.allclose(state['r'],state['x']+state['a']@state['v']@printed[2])
+    assert not np.allclose(state['r'],state['x']+state['a']@state['v'])
+    # Verify each newly printed second-position result at its own stage.
+    for key,section in [('q','第二步'),('raw','第三步'),('r','第三步'),('b','第四步'),
+                        ('pre','第四步'),('h','第四步'),('logits','第五步')]:
+        stage=source.split(r'\subsection{'+section,1)[1].split(r'\subsection{',1)[0]
+        assert all(value==0 or f'{value:.4f}' in stage for value in state[key][1]),(key,state[key][1])
+    print('Published forward QA: projection/FFN/output weights, ten matrices, second-position trace and Wo residual match canonical computation')
 
 
 def check_new_supplements():
@@ -133,6 +187,7 @@ def check_printed_mini(c, gradients):
 
 def main():
     check_motivation_examples()
+    check_published_forward()
     check_agent_loop()
     data=json.loads((ROOT/'book/exercises.json').read_text())
     by_legacy={r['legacy_id']:r for r in data if r['legacy_id']}

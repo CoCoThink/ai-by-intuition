@@ -41,6 +41,19 @@ $\approx$ & 数值近似而非精确相等，例如 $1/3\approx0.333$\\
 学习率 $\eta$ 的梯度下降一步是
 $w_{\rm new}=w-\eta\,\mathrm dL/\mathrm dw$。
 
+\subsubsection*{指数与对数怎样求导？}
+\label{app:exp-log-derivatives}
+
+Softmax 与交叉熵需要两条求导规则：
+\[
+\frac{\mathrm d e^z}{\mathrm dz}=e^z,\qquad
+\frac{\mathrm d\ln u}{\mathrm du}=\frac1u\quad(u>0).
+\]
+若对数里面还有计算，要再乘内层的导数。
+例如 $f(z)=\ln(1+e^z)$，外层给出 $1/(1+e^z)$，内层给出 $e^z$，所以
+$f'(z)=e^z/(1+e^z)$；在 $z=0$ 时为 $1/2$。
+分类损失章将逐项用这两条规则求出 $p-y$。
+
 \subsubsection*{均值、方差与独立波动相加}
 \phantomsection\label{app:variance-scaling}
 

@@ -1,31 +1,39 @@
-% The Figure structure intentionally includes the non-floating caption.
+% Same five observations and exact functions as the accompanying hand calculation.
 \noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={欠拟合、合适拟合与过拟合的曲线比较}}
+\tagstructbegin{tag=Figure,alttext={三个面板使用相同数据：实心训练点为负一与负一点五、零与二、一与二点五；空心验证点为负二分之一与八分之一、二分之一与十七分之八。依次画常数一、直线二倍 x 加一、二次曲线负一点五倍 x 平方加二倍 x 加二。二次曲线穿过训练点，却在两个区间内验证点上比直线误差更大。}}
 \begin{center}
-\begin{tikzpicture}[x=7.5mm,y=8mm]
-\foreach \dx/\lab in {0/欠拟合,4.8/合适拟合,9.6/过拟合}{
+\begin{tikzpicture}[x=15mm,y=8mm]
+\foreach \dx/\lab/\formula in {0/欠拟合/{$\widehat{y}=1$},3.1/直线拟合/{$\widehat{y}=2x+1$},6.2/曲线拟合/{$\widehat{y}=-1.5x^2+2x+2$}}{
   \begin{scope}[shift={(\dx,0)}]
-    \draw[->,linegray] (0,0)--(3.8,0);
-    \draw[->,linegray] (0,0)--(0,3);
-    \foreach \px/\py in {.4/.48,1/.92,1.6/1.15,2.25/1.92,2.95/2.08,3.45/2.66}
-      \fill[noisecolor] (\px,\py) circle(2pt);
-    \node[font=\small\bfseries] at (1.9,-.55) {\lab};
+    \draw[->,linegray] (-1.18,0)--(1.25,0) node[right,font=\scriptsize] {$x$};
+    \draw[->,linegray] (0,-1.9)--(0,3.4) node[above,font=\scriptsize] {$y$};
+    \foreach \px in {-1,1}{
+      \draw[linegray] (\px,.08)--(\px,-.08);
+      \node[below,font=\scriptsize] at (\px,-.08) {$\px$};
+    }
+    \node[font=\small\bfseries] at (0,4.3) {\lab};
+    \node[font=\scriptsize] at (0,3.7) {\formula};
   \end{scope}
 }
-\draw[flowcolor,very thick] (.25,1.52)--(3.52,1.52);
-\begin{scope}[shift={(4.8,0)}]
- \draw[flowcolor,very thick] (.28,.32)--(3.52,2.66);
+\draw[flowcolor,very thick] (-1.05,1)--(1.05,1);
+\begin{scope}[shift={(3.1,0)}]
+  \draw[flowcolor,very thick] plot[domain=-1.05:1.05,samples=2] (\x,{2*\x+1});
 \end{scope}
-\begin{scope}[shift={(9.6,0)}]
- \draw[flowcolor,very thick] plot[smooth] coordinates {
- (.2,.1) (.4,.48) (.72,1.65) (1,.92) (1.32,.2)
- (1.6,1.15) (1.93,2.85) (2.25,1.92) (2.6,1.05)
- (2.95,2.08) (3.2,2.95) (3.45,2.66) (3.65,1.3)};
+\begin{scope}[shift={(6.2,0)}]
+  \draw[flowcolor,very thick] plot[domain=-1.05:1.05,samples=40] (\x,{-1.5*\x*\x+2*\x+2});
 \end{scope}
+\foreach \dx in {0,3.1,6.2}{
+  \begin{scope}[shift={(\dx,0)}]
+    \foreach \px/\py in {-1/-1.5,0/2,1/2.5}
+      \fill[noisecolor] (\px,\py) circle(2.3pt);
+    \foreach \px/\py in {-.5/.125,.5/2.125}
+      \draw[noisecolor,thick,fill=white] (\px,\py) circle(2.6pt);
+  \end{scope}
+}
 \end{tikzpicture}
 
-{\footnotesize 黑点是带测量噪声的训练样本，蓝灰线依次展示欠拟合、适度拟合与过拟合。}
-\captionof{figure}{相同训练样本的欠拟合、适度拟合与过拟合}\label{fig:fitting}
+{\footnotesize 黑点是带测量噪声的训练样本，蓝灰线是模型预测；空心点是两个验证样本，数据与正文相同。}
+\captionof{figure}{用相同三点训练、另两点验证：穿过训练点的曲线，未必更适合新题}\label{fig:fitting}
 \end{center}
 \tagstructend
 \end{minipage}\par

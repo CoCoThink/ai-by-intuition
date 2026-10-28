@@ -5,12 +5,29 @@ import numpy as np
 def softmax(z):
     e=np.exp(z-np.max(z,axis=-1,keepdims=True));return e/e.sum(axis=-1,keepdims=True)
 
+def icl_records(sequence):
+    """Build records from tokens, copying only the previous position's first channel pair."""
+    features = {token: np.eye(4)[i] for i, token in enumerate(('A', 'C', 'B', 'D'))}
+    x = np.array([features[token] for token in sequence])
+    # Each noninitial row has one visible predecessor: attention weight = 1.
+    previous_mask = np.eye(len(x), k=-1)
+    copied = previous_mask @ x[:, :2]
+    records = x.copy()
+    records[:, :2] += copied
+    # Only completed B/D records take part in the second-stage read.
+    indices = [i for i, token in enumerate(sequence[:-1]) if token in ('B', 'D')]
+    completed = records[indices]
+    return completed[:, :2], completed[:, 2:]
+
+
 def icl_read(query=0, swap_values=False):
-    # Keys carry the predecessor identity, already copied to each completed record.
-    q=np.eye(2)[query]*np.sqrt(2)*np.log(9)
-    k=np.eye(2);v=np.eye(2)[::-1] if swap_values else np.eye(2)
-    weights=softmax(q@k.T/np.sqrt(2));context=weights@v
-    return weights,context,softmax(context*5)
+    last_token = ('A', 'C')[query]
+    sequence = ('A', 'D', 'C', 'B', last_token) if swap_values else ('A', 'B', 'C', 'D', last_token)
+    k, v = icl_records(sequence)
+    q = np.eye(2)[query] * np.sqrt(2) * np.log(9)
+    weights = softmax(q @ k.T / np.sqrt(2))
+    context = weights @ v
+    return weights, context, softmax(context * 5)
 
 def policy_step():
     chosen=np.array([0,1,0,2]);advantages=np.array([1.,-1.,1.,-1.])
@@ -20,6 +37,10 @@ def policy_step():
     return gradient,updated,softmax(updated)
 
 def run_checks():
+    k, v = icl_records(('A', 'B', 'C', 'D', 'A'))
+    swapped_k, swapped_v = icl_records(('A', 'D', 'C', 'B', 'A'))
+    assert np.array_equal(k, np.eye(2)) and np.array_equal(v, np.eye(2))
+    assert np.array_equal(k, swapped_k) and np.array_equal(swapped_v, v[::-1])
     a,c,p=icl_read();assert np.allclose(a,[.9,.1]) and np.allclose(c,[.9,.1])
     assert p.argmax()==0 and icl_read(1)[2].argmax()==1
     assert icl_read(swap_values=True)[2].argmax()==1

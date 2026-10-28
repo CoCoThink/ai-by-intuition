@@ -9,8 +9,8 @@
 再研究 Embedding 和网络怎样产生这些分数。
 
 先说明本节的范围：这里先用一个三分类例子说明“分数、概率和损失”怎样连接。
-主线五项词表的输入与目标如何对齐，稍后在“任务契约”章统一规定；
-本节暂把正确类别视为已知。
+上一章已规定主线五项词表的输入与目标怎样对齐；
+这里先用独立的三分类小例子算清评分过程，再回到五项词表。
 
 \subsection{先给每一类一个分数：Logits}
 \phantomsection\label{concept:logits}
@@ -92,9 +92,8 @@ p_\theta(y_1,\ldots,y_T)=\prod_{t=1}^T p_\theta(y_t\mid y_{<t}).
 =\sum_{t=1}^T-\ln p_\theta(y_t\mid y_{<t}).
 \]
 对数把乘积化为和，便于分位置计分和反传，也避免直接连乘许多小数。
-平均惊讶度为 $L$ 时，$\exp(L)$ 就是\textbf{困惑度}：
-模型像是在每步从这么多个等概率候选中选择。
-第~\ref*{intro:23e-tech-judgement}~章会用它评价同一分词口径下的预测。
+本章先用平均负对数损失衡量预测。
+第~\ref*{intro:23e-tech-judgement}~章再介绍由它得到的困惑度，以及评测时需要统一的口径。
 
 \begin{example}
 \noindent\emph{{\symboliconfont ★} 选读：计算机怎样避免指数溢出？}\par
@@ -119,11 +118,33 @@ Attention 的逐行 Softmax 也使用同样的减最大值技巧。
 \subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}
 \phantomsection\label{concept:logit-gradient}
 
-把 Softmax 代入交叉熵，可改写为
+先只求正确类别是第二类的这一道题。将 Softmax 的概率代入损失：
 \[
-L=-z_{\rm correct}+\ln\!\left(\sum_k e^{z_k}\right).
+L=-\ln\frac{e^{z_2}}{e^{z_1}+e^{z_2}+e^{z_3}}
+=-z_2+\ln(e^{z_1}+e^{z_2}+e^{z_3}).
 \]
-对任意第 $j$ 项 logit 求偏导：
+这里用了 $\ln(a/b)=\ln a-\ln b$ 和 $\ln(e^{z_2})=z_2$。
+损失分成两部分：单独的 $-z_2$，以及依赖所有分数的对数项。
+
+求导还需要两条规则：$e^z$ 的导数仍是 $e^z$；
+$\ln u$ 对 $u$ 的导数是 $1/u$（$u>0$）。
+例如对 $z_2$ 求导，对数项要按链式法则先乘外层的倒数，再乘内层的导数：
+\[
+\frac{\partial}{\partial z_2}\ln(e^{z_1}+e^{z_2}+e^{z_3})
+=\frac{1}{e^{z_1}+e^{z_2}+e^{z_3}}\,e^{z_2}=p_2.
+\]
+回到 $(0,\ln2,0)$，指数值是 $(1,2,1)$，分母为 $4$。
+正确类 $z_2$ 还影响单独的 $-z_2$ 项，所以
+\[
+\frac{\partial L}{\partial z_2}=-1+\frac24=-\frac12.
+\]
+错误类 $z_1$ 不出现在 $-z_2$ 中，这一部分导数为零，因此
+\[
+\frac{\partial L}{\partial z_1}=0+\frac14=\frac14;
+\qquad \frac{\partial L}{\partial z_3}=\frac14.
+\]
+一般情况下，One-hot 的 $y_j$ 记录第 $j$ 类是否正确：正确类为 $1$，其余为 $0$。
+把刚才两种情况合起来，就得到
 \[
 \frac{\partial L}{\partial z_j}
 =-y_j+\frac{e^{z_j}}{\sum_k e^{z_k}}
@@ -141,8 +162,7 @@ L=-z_{\rm correct}+\ln\!\left(\sum_k e^{z_k}\right).
 
 \subsection{回到主线：五个候选怎样计分？}
 
-下面先引用任务契约章规定的主线对齐结果；任务契约章会进一步解释，
-为什么目标序列正好是输入整体左移一位：
+沿用上一章已经确定的输入与目标：
 \[
 [2,4,5]\longrightarrow[4,5,3].
 \]
@@ -156,8 +176,7 @@ L=-z_{\rm correct}+\ln\!\left(\sum_k e^{z_k}\right).
 L_1=-\ln\Pi_{1,4}.
 \]
 若五个 logits 相等，$\Pi_{1,4}=1/5$，$L_1=\ln5\approx1.609$；
-第~\ref*{intro:22b-token-to-output}~章的初始网络给出 $\Pi_{1,4}\approx0.2617$，
-对应 $L_1\approx1.341$。
+若另一次预测给目标分配 $1/2$ 的概率，则 $L_1=\ln2\approx0.693$，损失更小。
 本章三分类例的 $p-y$ 梯度照样适用：只是 $\vect y$ 换成第 $4$ 列为 $1$ 的五维 one-hot。
 
 \begin{warningbox}

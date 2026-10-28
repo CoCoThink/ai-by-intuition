@@ -28,39 +28,39 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 \underbrace{[4,\ 5,\ 3]}_{\text{对应的下一 Token}}.
 \]
 第一行用“春天”预测“花”，第二行用“春天、花”预测“开了”，第三行预测句号。
-输入查表成为三行向量，目标 ID 指出每行应该提高哪一列的概率。
-分类交叉熵已给出计分公式；下面把输入、预测概率和目标接起来，再确定每个位置可以利用哪些输入。
+这三个目标来自训练文本，分别指出三道预测题的正确答案。
+本章先确定题目与答案怎样对齐，再确定每个位置可以利用哪些输入。
 
-\subsection{从输入到损失：先看预测任务}
+\subsection{模型接收什么，每个位置输出什么？}
 
-词表的 $5$ 个 Token 各用 $3$ 维向量表示，Embedding 表为 $5\times3$。
-三个输入 ID 经过查表，成为一个 $3\times3$ 的向量矩阵，每个位置一行。
-模型根据这些输入，为每个位置计算五个候选 Token 的分数，
-组成一个 $3\times5$ 的 logits 矩阵；再逐行通过 Softmax 得到同样形状的概率矩阵 $\Pi$。
+把预测模型暂时看成一个待展开的盒子。输入是 $[2,4,5]$，
+它要对三个位置各回答一次“下一 Token 是谁”。
+每道题都有五个候选，所以每个位置输出五项分数，合起来是一个 $3\times5$ 的矩阵：
+三行对应三个预测位置，五列对应五个词表 ID。
 
-图中把从输入 ID 到预测概率的计算统称为\textbf{预测模型}，
-其内部结构将在后续章节逐步展开。
-本章先确定它接收什么、输出什么，以及怎样衡量预测的好坏。
+分数怎样变成概率、怎样与正确答案比较，将在下一章计算；
+整数 ID 怎样变成可训练的向量，再由 Embedding 一章展开。
+这里先把\textbf{模型预测}与\textbf{训练目标}的去向分清。
 
-训练时，交叉熵读取每行目标 Token 对应的概率，计算三个位置的平均损失。
-本例依次读取第一行“花”、第二行“开了”、第三行“。”的概率。
-再通过反向传播，更新 Embedding 和模型中的其他可学习参数。
+训练时，用每行目标 ID 指出的答案评价该行预测，再汇总成损失 $L$。
+例如第一行评价“花”，第二行评价“开了”，第三行评价“。”。
+目标分支进入评分步骤；模型做预测时，只能使用本题允许读取的输入。
 
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={下一 Token 预测的训练任务：输入 Token ID 为二、四、五，经过预测模型得到三行五列的词表概率。概率与另一条分支上的目标 Token ID 四、五、三共同送入交叉熵，计算平均损失 L；目标来自错开一位的训练文本。}}
+\tagstructbegin{tag=Figure,alttext={下一 Token 预测的训练任务：输入 Token ID 二、四、五经过预测模型，得到三行五列的候选分数。预测与另一分支上的目标 ID 四、五、三共同进入评分步骤，得到损失 L。目标只进入评分步骤。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,node distance=6mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=white,align=center,
  font=\sffamily\footnotesize,minimum height=12mm,minimum width=28mm,inner sep=1mm}]
 \node[n,fill=paper] (input) {输入 Token ID\\ $[2,4,5]$};
 \node[n,right=of input,minimum width=32mm] (model) {预测模型\\ 内部随后展开};
-\node[n,right=of model] (probability) {词表概率 $\Pi$\\ $3\times5$};
-\node[n,right=of probability,fill=linegray!15] (loss) {交叉熵损失 $L$\\ 三个位置取平均};
+\node[n,right=of model] (probability) {五项候选分数\\ 共 $3\times5$};
+\node[n,right=of probability,fill=linegray!15] (loss) {比较预测与目标\\ 得到损失 $L$};
 \node[n,below=6mm of probability,fill=paper] (target) {目标 Token ID\\ $[4,5,3]$};
 \foreach \a/\b in {input/model,model/probability,probability/loss}{\draw[->,flowcolor,thick] (\a.east)--(\b.west);}
 \draw[->,flowcolor,thick] (target.east)-|(loss.south);
 \end{tikzpicture}
-\captionof{figure}{下一 Token 预测的训练任务：预测概率与错开一位的目标共同确定损失}
+\captionof{figure}{先确定预测题：模型输出三行候选分数，错开一位的目标用于评价预测}
 \label{fig:token-ffn-output-pipeline}
 \end{center}
 \tagstructend
@@ -92,9 +92,10 @@ $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
 例如，第一位置要预测“花”，若计算预测时已经读到了第二位置的“花”，
 就提前看到了答案，造成\textbf{信息泄漏}。
 目标应当参与损失计算；预测模型怎样利用允许读取的前文，将从下一部分逐步展开。
+下一章先解决评分问题：五项实数分数怎样变成概率，怎样衡量它们与正确答案的差距？
 
 \chapterchecktasks{20b-task-contract}{理解与复算}{
 \item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{把完整序列整体左移一位（去掉首项），对齐三个位置。}
-\item \textbf{形状：}词表大小为 $5$，批内这条示例的三个位置各输出五类分数。把 logits 组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
+\item \textbf{形状：}词表大小为 $5$，这条示例的三个位置各输出五类分数。把这些分数组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
 \item \textbf{找错：}同学让第一个位置直接读取第二个位置的“花”，再预测第一个位置的下一 Token。哪里发生信息泄漏？\chapterinlinehint{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}
 }

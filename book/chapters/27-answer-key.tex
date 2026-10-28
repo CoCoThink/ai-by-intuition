@@ -88,39 +88,39 @@ $(a,a):1$，$(a,b):2$；第一轮合并 $a+b\to ab$，
 \item[\textbf{C-026.}] \phantomsection\label{solution:C-026}\phantomsection\label{answerpiece:20a-tokenizer:4}\hyperref[exercise:C-026]{\textbf{第一步：}}先把长度代入 $T\times T$。\par\nobreak\textbf{解题过程：}分数矩阵由 $T^2$ 增到 $(2T)^2=\answerresult{4T^2}$，元素数四倍；端到端耗时还受实现、投影、硬件和序列生成方式等影响。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:20c-classification-loss}~章 · 分类损失：预测错了哪一类，怎样调整分数？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-027]{题目见第~\pageref*{exercise:C-027}~页起}）}}
+\subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（\hyperref[exercise:C-027]{题目见第~\pageref*{exercise:C-027}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-027.}] \phantomsection\label{solution:C-027}\hyperref[exercise:C-027]{\textbf{第一步：}}利用 $-\ln p=\ln(1/p)$，先把概率写成倒数。\par\nobreak
-\textbf{解答：} $-\ln(0.25)=\ln4\approx1.386$。
-\item[\textbf{C-028.}] \phantomsection\label{solution:C-028}\hyperref[exercise:C-028]{\textbf{第一步：}}先把类别 1 写成与 $p$ 同形的 One-hot 向量。\par\nobreak
-\textbf{解答：}$y=(1,0,0)$，$p-y=\answerresult{(-0.8,0.5,0.3)}$。沿负梯度更新，$z_1$ 升高，$z_2,z_3$ 降低；错误类中概率越大的 $z_2$ 被压低得越多。
-\item[\textbf{C-029.}] \phantomsection\label{solution:C-029}\hyperref[exercise:C-029]{\textbf{第一步：}}先分别取负对数，再用 $\ln a-\ln b=\ln(a/b)$。\par\nobreak
-\textbf{解答：}$-\ln0.2\approx1.609$，$-\ln0.8\approx0.223$，差约 $\answerresult{1.386}=\ln(0.8/0.2)=\ln4$：正确类概率提高到四倍，惊讶度减少 $\ln4$。
-\item[\textbf{C-030.}] \phantomsection\label{solution:C-030}\phantomsection\label{answerpiece:20c-classification-loss:4}\hyperref[exercise:C-030]{\textbf{第一步：}}先把类别标签写成与 $p$ 同形的向量。\par\nobreak\textbf{解题过程：}$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$；整数 ID 只用于索引。
+\item[\textbf{C-027.}] \phantomsection\label{solution:C-027}\hyperref[exercise:C-027]{\textbf{第一步：}}训练时输入序列和目标序列错开一个位置。\par\nobreak
+\textbf{解答：} 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
+\item[\textbf{C-028.}] \phantomsection\label{solution:C-028}\hyperref[exercise:C-028]{\textbf{第一步：}}从当前位置向前列出允许读取的位置，再找到目标与预测汇合的步骤。\par\nobreak
+\textbf{解答：} 三个位置分别允许读取位置 $\answerresult{\{1\}}$、$\answerresult{\{1,2\}}$、$\answerresult{\{1,2,3\}}$。
+第三位置的目标 ID $3$ 指出该行应预测“。”；评分步骤比较该行预测与这个答案，计算预测损失。
+\item[\textbf{C-029.}] \phantomsection\label{solution:C-029}\phantomsection\label{answerpiece:20b-task-contract:4}\hyperref[exercise:C-029]{\textbf{第一步：}}分别追踪训练目标和生成时新输入的来源。\par\nobreak\textbf{解题过程：}训练目标来自已有文本：输入 $[2,4,5]$，对应目标是 $[4,5,3]$，即“花、开了、。”。
+生成时只有给定的“春天”，模型先输出下一 Token 的概率，再按选取规则得到一个 Token 并追加到输入；若选出“花”，下一轮输入就是“春天 花”。
+训练目标从文本直接取得，生成时追加的 Token 来自模型的预测与选取。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:20-embeddings}~章 · Embedding：让 Token ID 变成可训练的向量\enspace{\mdseries\footnotesize（\hyperref[exercise:C-031]{题目见第~\pageref*{exercise:C-031}~页起}）}}
+\subsubsection*{第~\ref*{intro:20c-classification-loss}~章 · 分类损失：预测错了哪一类，怎样调整分数？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-030]{题目见第~\pageref*{exercise:C-030}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-031.}] \phantomsection\label{solution:C-031}\hyperref[exercise:C-031]{\textbf{第一步：}}按新输入的三个 ID 依次取表行。\par\nobreak
+\item[\textbf{C-030.}] \phantomsection\label{solution:C-030}\hyperref[exercise:C-030]{\textbf{第一步：}}利用 $-\ln p=\ln(1/p)$，先把概率写成倒数。\par\nobreak
+\textbf{解答：} $-\ln(0.25)=\ln4\approx1.386$。
+\item[\textbf{C-031.}] \phantomsection\label{solution:C-031}\hyperref[exercise:C-031]{\textbf{第一步：}}先把类别 1 写成与 $p$ 同形的 One-hot 向量。\par\nobreak
+\textbf{解答：}$y=(1,0,0)$，$p-y=\answerresult{(-0.8,0.5,0.3)}$。沿负梯度更新，$z_1$ 升高，$z_2,z_3$ 降低；错误类中概率越大的 $z_2$ 被压低得越多。
+\item[\textbf{C-032.}] \phantomsection\label{solution:C-032}\hyperref[exercise:C-032]{\textbf{第一步：}}先分别取负对数，再用 $\ln a-\ln b=\ln(a/b)$。\par\nobreak
+\textbf{解答：}$-\ln0.2\approx1.609$，$-\ln0.8\approx0.223$，差约 $\answerresult{1.386}=\ln(0.8/0.2)=\ln4$：正确类概率提高到四倍，惊讶度减少 $\ln4$。
+\item[\textbf{C-033.}] \phantomsection\label{solution:C-033}\phantomsection\label{answerpiece:20c-classification-loss:4}\hyperref[exercise:C-033]{\textbf{第一步：}}先把类别标签写成与 $p$ 同形的向量。\par\nobreak\textbf{解题过程：}$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$；整数 ID 只用于索引。
+\end{enumerate}
+\Needspace{6\baselineskip}
+\subsubsection*{第~\ref*{intro:20-embeddings}~章 · Embedding：让 Token ID 变成可训练的向量\enspace{\mdseries\footnotesize（\hyperref[exercise:C-034]{题目见第~\pageref*{exercise:C-034}~页起}）}}
+\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
+\item[\textbf{C-034.}] \phantomsection\label{solution:C-034}\hyperref[exercise:C-034]{\textbf{第一步：}}按新输入的三个 ID 依次取表行。\par\nobreak
 \textbf{解题过程：}新的查表结果为
 \[\begin{bmatrix}0.15&-0.2&1.25\\-0.3&1.1&0.2\\0.15&-0.2&1.25\end{bmatrix}.\]
 只有第一行查表结果改变；第 1、3 行因为读取同一个 ID 而相同。这里只更换输入，没有优化器更新，Embedding 表中的参数保持不变。
-\item[\textbf{C-032.}] \phantomsection\label{solution:C-032}\hyperref[exercise:C-032]{\textbf{第一步：}}词表项数确定行数，特征宽度确定列数。\par\nobreak
+\item[\textbf{C-035.}] \phantomsection\label{solution:C-035}\hyperref[exercise:C-035]{\textbf{第一步：}}词表项数确定行数，特征宽度确定列数。\par\nobreak
 \textbf{解答：} $E:4\times3$；每个 Token 嵌入为 3 维。
-\item[\textbf{C-033.}] \phantomsection\label{solution:C-033}\phantomsection\label{answerpiece:20-embeddings:4}\hyperref[exercise:C-033]{\textbf{第一步：}}把给定坐标、梯度和学习率代入“参数减去学习率乘梯度”。\par\nobreak
+\item[\textbf{C-036.}] \phantomsection\label{solution:C-036}\phantomsection\label{answerpiece:20-embeddings:4}\hyperref[exercise:C-036]{\textbf{第一步：}}把给定坐标、梯度和学习率代入“参数减去学习率乘梯度”。\par\nobreak
 \textbf{解题过程：}$-0.3-0.04\times0.257642=\answerresult{-0.31030568}\approx-0.31031$。更换输入 ID 只改变读取哪一行；没有参数更新时，$E[4]$ 保持原值。
-\end{enumerate}
-\Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（\hyperref[exercise:C-034]{题目见第~\pageref*{exercise:C-034}~页起}）}}
-\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-034.}] \phantomsection\label{solution:C-034}\hyperref[exercise:C-034]{\textbf{第一步：}}训练时输入序列和目标序列错开一个位置。\par\nobreak
-\textbf{解答：} 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。
-\item[\textbf{C-035.}] \phantomsection\label{solution:C-035}\hyperref[exercise:C-035]{\textbf{第一步：}}从当前位置向前列出允许读取的位置，再找到目标与预测概率汇合的步骤。\par\nobreak
-\textbf{解答：} 三个位置分别允许读取位置 $\answerresult{\{1\}}$、$\answerresult{\{1,2\}}$、$\answerresult{\{1,2,3\}}$。
-第三位置的目标 ID $3$ 指出该行概率的第 $3$ 列，交叉熵用这一项概率计算该位置的损失。
-\item[\textbf{C-036.}] \phantomsection\label{solution:C-036}\phantomsection\label{answerpiece:20b-task-contract:4}\hyperref[exercise:C-036]{\textbf{第一步：}}分别追踪训练目标和生成时新输入的来源。\par\nobreak\textbf{解题过程：}训练目标来自已有文本：输入 $[2,4,5]$，对应目标是 $[4,5,3]$，即“花、开了、。”。
-生成时只有给定的“春天”，模型先输出下一 Token 的概率，再按选取规则得到一个 Token 并追加到输入；若选出“花”，下一轮输入就是“春天 花”。
-训练目标从文本直接取得，生成时追加的 Token 来自模型的预测与选取。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:21a-context-gap}~章 · 前文怎样传到当前词？从逐行处理到 RNN\enspace{\mdseries\footnotesize（\hyperref[exercise:C-037]{题目见第~\pageref*{exercise:C-037}~页起}）}}

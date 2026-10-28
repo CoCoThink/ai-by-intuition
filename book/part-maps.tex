@@ -125,9 +125,9 @@
 \item 把一行分数变成概率并算出损失，分清一个 Token 的编号、向量和输出概率是三种不同的表示。
 }{%
 \mapchapter{20a-tokenizer}{Token 与 ID} & “春天 花 开了”怎样切分并编号？\\
+\mapchapter{20b-task-contract}{预测任务} & 三个输入位置分别要预测哪一个下一 Token？\\
 \mapchapter{20c-classification-loss}{分类损失} & 一行分数怎样变成概率与损失？主线五个候选又怎样计分？\\
 \mapchapter{20-embeddings}{Embedding} & 为什么用 ID 查向量，而不直接计算 ID 的距离？\\
-\mapchapter{20b-task-contract}{预测任务} & 三个输入位置分别要预测哪一个下一 Token？\\
 }}
 \newcommand{\partexittokens}{\partexit{tokens}{\partthinktokens}{%
 不能。编号只表示身份，大小没有意义；直接当特征会引入虚假的倍数关系。所以要按编号查出一行可训练的向量。

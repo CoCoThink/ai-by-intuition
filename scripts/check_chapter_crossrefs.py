@@ -17,7 +17,7 @@ BOOK = ROOT / "book"
 # Printed numbered chapters; keep in step with check_book_contract.CHAPTER_COUNT.
 CHAPTER_COUNT = 34
 INPUT_OR_APPENDIX = re.compile(r"\\appendix\b|\\input\{chapters/([^}]+)\}")
-SECTION_OR_CHECK = re.compile(r"\\section\s*\{|\\chapterchecktasks\{([^}]+)\}")
+SECTION_OR_CHECK = re.compile(r"\\section\s*\{|\\chapterchecktasks\{([^}]+)\}|\\label\{(intro:[^}]+)\}")
 # Also catch Chinese numerals ("第三章"), lists and ranges ("第 23、24 章",
 # "第 1–10 章") and dotted section numbers ("第 24.10 节").
 NUMERIC_CHAPTER = re.compile(
@@ -25,7 +25,7 @@ NUMERIC_CHAPTER = re.compile(
     r"(?:[ \t~]*(?:--|[、，,–—-])[ \t~]*[0-9]{1,2})*[ \t~]*章"
     r"|第[ \t~]*([0-9]{1,2}\.[0-9]{1,2})[ \t~]*节")
 ANSWER_CHAPTER = re.compile(
-    r"\\item\s*\[\s*\\textbf\{第\s*(\d+)\s*章\}\s*\]"
+    r"\\item\s*\[\s*\\textbf\{第[\s~]*(?:(\d+)|\\ref\*?\{([^}]+)\})[\s~]*章\}\s*\]"
     r"\s*\\phantomsection\s*\\label\{answer:([^}]+)\}"
 )
 
@@ -41,6 +41,7 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
     chapter_no = 0
     in_appendix = False
     core_checks: dict[str, int] = {}
+    intro_numbers: dict[str, int] = {}
     active: list[str] = []
 
     # Read chapter files in actual compilation order, not alphabetical filename order.
@@ -58,6 +59,9 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
         if in_appendix:
             continue
         for token in SECTION_OR_CHECK.finditer(uncomment(chapters[name])):
+            if token.group(2):
+                intro_numbers[token.group(2)] = chapter_no
+                continue
             slug = token.group(1)
             if slug is None:
                 chapter_no += 1
@@ -89,7 +93,8 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
     answers = uncomment(chapters["28-chapter-checks"])
     observed: dict[str, int] = {}
     for item in ANSWER_CHAPTER.finditer(answers):
-        number, slug = int(item.group(1)), item.group(2)
+        number = int(item.group(1)) if item.group(1) else intro_numbers.get(item.group(2))
+        slug = item.group(3)
         line = answers.count("\n", 0, item.start()) + 1
         if slug in observed:
             errors.append(f"28-chapter-checks.tex:{line}: duplicate answer ID {slug}")
@@ -142,6 +147,10 @@ def self_test() -> None:
         assert any("hard-coded" in e for e in check_crossrefs(main, stale)), literal
     linked = dict(inputs, b=b + r"见第~\ref*{intro:a}~章与第一部分。")
     assert check_crossrefs(main, linked) == check_crossrefs(main, inputs)
+    auto = answers.replace('第 1 章', r'第~\ref*{intro:a}~章').replace('第 2 章', r'第~\ref*{intro:b}~章')
+    assert check_crossrefs(main, dict(inputs, **{'28-chapter-checks': auto})) == check_crossrefs(main, inputs)
+    wrong_auto = auto.replace(r'\ref*{intro:b}', r'\ref*{intro:a}')
+    assert any('actual chapter is 2' in e for e in check_crossrefs(main, dict(inputs, **{'28-chapter-checks': wrong_auto})))
     missing = dict(inputs, **{"28-chapter-checks": answers.splitlines()[0]})
     assert any("missing numbered answer entry two" in e
                for e in check_crossrefs(main, missing))

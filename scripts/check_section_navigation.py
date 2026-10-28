@@ -38,6 +38,8 @@ def source_errors(body, targets):
             errors.append('Section/elective page reference points to a figure instead of its heading')
     if re.search(r'第[\s~]*\d+[\s~]*页',body):
         errors.append('Literal page number: use an automatic page reference')
+    if re.search(r'\\hyperref\[app:[^]]+\]\{附录[\s~]*[A-G]\.\d+',body):
+        errors.append('Appendix link prints a literal subsection number: use the target label')
     return errors
 
 
@@ -264,6 +266,37 @@ def check_toc_folios(reader, aux, labels):
     print(f'TOC folio QA: all {len(entries)} printed page numbers have their own correct destination link')
 
 
+def check_forward_appendix_link(reader, path, labels):
+    """Inspect the printed text inside the actual link to the full parameter table."""
+    import xml.etree.ElementTree as ET
+    target='app:transformer-intermediates'
+    number,folio,_,dest=labels[target][:4]
+    actual_page=reader.get_destination_page_number(reader.named_destinations[dest])+1
+    if actual_page!=int(folio):return [f'{target}: label/destination page mismatch']
+    source=reader.get_destination_page_number(reader.named_destinations[labels['intro:22b-token-to-output'][3]])
+    page=reader.pages[source]
+    xml=subprocess.check_output(['pdftotext','-f',str(source+1),'-l',str(source+1),
+                                 '-bbox-layout',str(path),'-'])
+    words=[node for node in ET.fromstring(xml).iter() if node.tag.rsplit('}',1)[-1]=='word']
+    fragments=[]
+    for ref in page.get('/Annots',[]):
+        annot=ref.get_object();action=annot.get('/A')
+        if action is None:continue
+        action=action.get_object()
+        if action.get('/S')!='/GoTo' or str(action.get('/D'))!=dest:continue
+        left,bottom,right,top=map(float,annot['/Rect']);height=float(page.mediabox.height)
+        for word in words:
+            x=(float(word.get('xMin'))+float(word.get('xMax')))/2
+            y=(float(word.get('yMin'))+float(word.get('yMax')))/2
+            if left-1<=x<=right+1 and height-top-1<=y<=height-bottom+1:
+                fragments.append(''.join(word.itertext()))
+    printed=re.sub(r'\s+','',''.join(fragments))
+    if not re.search(r'(?<![A-Za-z0-9.])'+re.escape(number)+r'(?![0-9.])',printed):
+        return [f'Forward parameter link must print actual appendix {number}; found {printed!r} on page {source+1}']
+    print(f'Forward appendix link QA: printed {number} resolves to its actual parameter-table page {actual_page}')
+    return []
+
+
 def check_pdf(path, aux, used):
     from pypdf import PdfReader
     reader=PdfReader(path)
@@ -297,6 +330,7 @@ def check_pdf(path, aux, used):
         if primary not in labels or legacy not in labels or labels[primary][3]!=labels[legacy][3]:
             failures.append(f'Merged compatibility link resolves to a different destination: {primary}/{legacy}')
     check_toc_folios(reader,aux,labels)
+    failures.extend(check_forward_appendix_link(reader,path,labels))
     failures.extend(contour_label_errors(reader,path,labels))
     failures.extend(check_iteration_legend(reader,path,labels))
     failures.extend(check_activation_labels(reader,path,labels))
@@ -323,6 +357,8 @@ def self_test():
     assert source_errors(r'\sectionentry{fig:test}',targets)
     assert source_errors(r'选读（第~\pageref*{fig:test}~页）',targets)
     assert source_errors('见第 65 页',targets)
+    assert source_errors(r'\hyperref[app:full]{附录 B.1 的参数}',targets)
+    assert not source_errors(r'\hyperref[app:full]{附录~\ref*{app:full} 的参数}',targets)
     assert not caption_errors([('kept together',{50})])
     assert caption_errors([('old RNN diagram regression',{50,51})])
     leaked={'/S':'/Sect','/K':[{'/S':'/H2'},{'/S':'/Div','/K':[{'/S':'/Caption'}]},{'/S':'/P'}]}
