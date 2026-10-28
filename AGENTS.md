@@ -1,6 +1,6 @@
 # AGENTS.md
 
-本文件适用于整个仓库。用户当前指令及会话中已明确的偏好优先；在已授权范围内完成修改、验证和交付，不重复询问已经确认的事项。
+本文件是适用于整个仓库的编码助手执行约定；日常写作、构建和检查见[编写与维护指南](CONTRIBUTING.md)。用户当前指令及会话中已明确的偏好优先；在已授权范围内完成修改、验证和交付，不重复询问已经确认的事项。
 
 ## 项目与维护入口
 
@@ -10,7 +10,7 @@
 - `book/chapters/`：正文与附录；`book/figures/`：TikZ 矢量教学图。
 - [scripts/teaching_reference.py](scripts/teaching_reference.py)：三维主线实验的数值基线。其他 `scripts/*_demo.py` 提供局部实验与复算。
 - `.github/workflows/`：实际 CI 配置与依赖版本的维护入口。
-- [book/README.md](book/README.md)：章节与源码文件对照、生成文件一览；[docs/MAINTENANCE.md](docs/MAINTENANCE.md)：CI、依赖固定、无障碍验收与来源复核；[docs/PART_BOOKENDS.md](docs/PART_BOOKENDS.md)：部分开篇与收尾；[docs/PUBLISHING.md](docs/PUBLISHING.md)：发布签核；[docs/ERRATA.md](docs/ERRATA.md)：勘误；[docs/NEXT_EDITION.md](docs/NEXT_EDITION.md)：尚未实施的下一版计划。
+- [编写与维护指南](CONTRIBUTING.md)：章节源码、生成器、部分首尾设计、CI、无障碍、来源复核、发布、实验记录与反馈的统一入口。
 
 历史评审、Release 和审计报告只证明各自提交的状态。文档统计与实际源码冲突时，先检查源码、生成器及最新对应提交的 CI，不照搬旧章数、页数或公式数。
 
@@ -28,18 +28,7 @@
 
 ## 生成内容：修改来源，再运行生成器
 
-不要只改生成结果；如需调整生成版式，修改生成器并重新生成。生成器可能读取正文锚点，应在正文修改完成后运行。
-
-| 内容 | 维护入口 | 生成命令（仓库根目录） |
-| --- | --- | --- |
-| 附录 C 题库、D.1 解答、部分复习 | [book/exercises.json](book/exercises.json) | `python3 scripts/generate_exercise_bank.py` |
-| 各章练习指针与答案导航 | 题库、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
-| 附录 E.1 拼音排序术语主表及全文出现位置 | [基础词条](book/chapters/24-lexicon.tex)、[现代词条](book/chapters/24b-modern-lexicon.tex)、[英文索引映射](book/chapters/24d-english-index.tex) 及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
-| 附录 E.3 英文简表 | 已生成的术语主表 | `python3 scripts/generate_chinese_index.py` |
-| 附录 F 二维码、网页参考清单 | [book/source-audit.json](book/source-audit.json) | `python3 scripts/generate_reference_assets.py` |
-| 附录 G 带日期断言表 | [book/dated-claims.json](book/dated-claims.json) | `python3 scripts/check_dated_claims.py --write` |
-
-前述题库、章末导航、双语术语和参考资产生成器支持 `--check`。英文简表生成器（`generate_chinese_index.py`）直接写文件，应检查生成后的差异；不要给它使用不存在的 `--check` 参数。
+生成文件、维护来源与命令统一见[生成文件](CONTRIBUTING.md#生成文件)。不要只改生成结果；调整生成版式时修改生成器。生成器可能读取正文锚点，应在正文修改完成后运行；注意各生成器是否支持 `--check`。
 
 ## 本地环境与构建
 
@@ -48,29 +37,7 @@
 - 当前环境的 TeX 通过 Homebrew 管理，字体通过系统包管理器管理。需要 Noto CJK 与西文字体、Poppler；具体 Python 依赖版本以工作流为准。
 - 默认运行离线教学实验。Claude 等付费 API 的真实调用须有对应的明确授权；中文分词器的 `--real` 是下载固定分词器，不等于加载模型权重或调用付费 API。
 
-正文、公式或章节结构改动后，按影响范围运行源码检查：
-
-```bash
-python3 scripts/generate_exercise_bank.py --check
-python3 scripts/generate_chapter_navigation.py --check
-python3 scripts/generate_bilingual_glossary.py --check
-python3 scripts/check_book_contract.py --self-test
-python3 scripts/validate_book.py
-python3 scripts/check_teaching_claims.py
-python3 scripts/check_chapter_crossrefs.py
-python3 scripts/check_part_references.py
-python3 scripts/check_source_hygiene.py --self-test
-```
-
-需要验证排版时，构建并检查最终产物：
-
-```bash
-bash scripts/build_book.sh
-python3 scripts/validate_book.py --pdf book/build/main.pdf
-python3 scripts/check_latex_references.py --log book/build/main.log --pdf book/build/main.pdf
-python3 scripts/check_section_navigation.py --pdf book/build/main.pdf --aux book/build/main.aux
-python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
-```
+正文、公式或章节结构改动后，按[提交前检查](CONTRIBUTING.md#提交前检查)运行源码检查；影响排版时构建并检查最终产物。命令统一维护在编写与维护指南。
 
 等 `latexmk` 全部轮次完成后再读取、复制或检查 PDF 与 `.aux`，避免使用正在重写的中间产物。构建脚本自动写入 Git 提交号；不要手填 `local-build`，也不要把未提交修改的预览称为对应提交的最终 CI 产物。
 

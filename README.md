@@ -28,35 +28,15 @@
 | 八 · 视觉（扩展） | CNN 和 ViT 怎样把图像接到同一个 Transformer 主干？ |
 | 九 · 联想记忆（扩展） | 外积、串扰和 Delta 规则怎样从“存入与取出”重看 Attention？ |
 
-附录 A–G 依次是公式与符号速查、三维实验与复算脚本、按章题库与累积复习、参考答案、术语表与索引、来源、版本与带日期断言。源码与章节的对应见 [book/README.md](book/README.md)。
+附录 A–G 依次是公式与符号速查、三维实验与复算脚本、按章题库与累积复习、参考答案、术语表与索引、来源、版本与带日期断言。源码与章节的对应见[源码导览](CONTRIBUTING.md#源码导览)。
 
 ## 本地构建
 
-需要 TeX Live 2026（LuaLaTeX、latexmk）、Noto Serif/Sans CJK SC 与 Noto Serif/Sans 字体、Poppler。在仓库根目录运行：
+在仓库根目录运行 `bash scripts/build_book.sh`，产物为 `book/build/main.pdf`，版权页和附录 G 自动印出当前 Git 提交号。环境准备和检查命令见[构建说明](CONTRIBUTING.md#本地构建)。
 
-```bash
-python3 -m pip install pypinyin==0.55.0 pypdf==5.9.0 numpy
-python3 scripts/validate_book.py
-bash scripts/build_book.sh
-python3 scripts/validate_book.py --pdf book/build/main.pdf
-```
+## 修改与反馈
 
-产物是 `book/build/main.pdf`，版权页和附录 G 自动印出当前 Git 提交号。完整的检查命令与 CI 门禁见 [CONTRIBUTING.md](CONTRIBUTING.md)。
-
-## 文档
-
-| 文档 | 用途 |
-|---|---|
-| [CONTRIBUTING.md](CONTRIBUTING.md) | 写作原则、修改流程与提交前检查 |
-| [AGENTS.md](AGENTS.md) | 编辑约定、生成内容的维护入口、构建与 CI 规则（人和编码助手共用） |
-| [book/README.md](book/README.md) | 部分与章节源码对照、生成文件一览 |
-| [docs/ERRATA.md](docs/ERRATA.md) | 勘误与反馈方式 |
-| [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | CI 门禁、依赖固定、无障碍机器验收、来源复核 |
-| [docs/PART_BOOKENDS.md](docs/PART_BOOKENDS.md) | 部分开篇与收尾的设计规则和维护入口 |
-| [docs/PUBLISHING.md](docs/PUBLISHING.md) | 正式发布流程与发布前签核 |
-| [docs/NEXT_EDITION.md](docs/NEXT_EDITION.md) | 尚未实施的下一版计划 |
-| [docs/GPT2_REAL_RUN.md](docs/GPT2_REAL_RUN.md) | GPT-2 真实权重实验的固定版本与结果 |
-| [docs/REFERENCES.md](docs/REFERENCES.md)、[docs/TERM_OCCURRENCES.md](docs/TERM_OCCURRENCES.md) | 自动生成的网页参考清单与术语出现位置 |
+写作约定、源码对照、生成器、构建检查和发布流程统一见[编写与维护指南](CONTRIBUTING.md)。阅读中遇到问题，请通过 [Issues](https://github.com/CoCoThink/ai-by-intuition/issues) 反馈，并注明 PDF 提交号、章节及复算步骤。
 
 ## 开放许可证与转载
 
@@ -75,5 +55,3 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 - Vaswani et al.：[Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
 这些资源启发了选题和讲解路径；教材按学习依赖重新组织，文字、图表、数值例题和实验独立编写。完整来源见附录 F。
-
-欢迎通过 Issue 报告看不懂的段落、跳过的步骤、算错的数字或形状不对的地方。

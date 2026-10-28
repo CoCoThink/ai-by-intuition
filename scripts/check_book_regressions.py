@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / 'book'
 
@@ -112,9 +113,10 @@ def validate_existing_regressions(main, sources):
         fail(f"GPT-2 offline smoke failed: {gpt2_result.stdout}{gpt2_result.stderr}")
     # Run IDs are maintainer provenance: keep them in the archived run record,
     # and keep the reader appendix pointing at that record.
-    includes((ROOT / "docs" / "GPT2_REAL_RUN.md").read_text(encoding="utf-8"), "39897932969",
+    includes((ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8"), "39897932969",
              "successful source-pinned real GPT-2 inference reference")
-    includes(sources["29-revision-notes"], "docs/GPT2_REAL_RUN.md",
+    run_record_anchor = quote("gpt-2-真实权重实验").replace("%", r"\%")
+    includes(sources["29-revision-notes"], r"CONTRIBUTING.md\#" + run_record_anchor,
              "reader pointer to the archived real GPT-2 run record")
     includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
              "reproducible optional real GPT-2 example (verbatim command)")
