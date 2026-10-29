@@ -1,66 +1,40 @@
 \chapterrule
-\section{向量与点积：怎样用数字表示一个东西，又怎样比较两个？}
+\section{向量与点积：怎样把多个特征变成一个匹配分数？}
 \label{intro:01-vectors}
 \label{intro:02-dot-product}
 
-上一部分用一个数走通训练循环。但仅靠一个数不足以同时表示
-面积、房龄、位置，或同一个 Token 的不同特征。
-因此先试着让一项输入由\textbf{按顺序排列的多个数字}组成。
+上一部分已经会用参数控制预测，也会通过损失调整参数。
+现在换一个问题：假设想找一篇\textbf{既谈技术、也谈生活，稍偏向生活}的文章，
+计算机怎样比较几篇候选，判断哪篇更符合需求？
+我们先把需求和文章写成数字，再试着设计一个可以手算的匹配分数。
 
-\subsection{一个数字分不开，两个数字却可以}
+\subsection{想找符合需求的文章，先把什么写成数字？}
 
-设想一维输入 $x$ 有三个样本：$-1$ 和 $1$ 属于 A 类，
-$0$ 属于 B 类。若只准用一个阈值按“左边一类、右边一类”来分，
-就不可能把两端的 A 类同时选中、把中间的 B 类排除。
-但如果\textbf{增加一个特征}，将每个数映射成
-\[
-(u_1,u_2)=(x,x^2):
-\quad -1\mapsto(-1,1),\quad0\mapsto(0,0),\quad1\mapsto(1,1),
-\]
-那么在二维平面上只要使用直线 $u_2=0.5$：
-直线上方两个点为 A，直线下方一个点为 B。
-\textbf{升维不是凭空增加信息}；这里的新坐标来自原数字的平方，
-却让简单直线可以表达原来单阈值表达不了的分类边界。
-把原输入变成便于分类的特征，正是后面多层网络要学习的工作。
-神经网络以后会通过可训练变换学习类似的特征，而不是总让人手写平方。
-
-\subsection{向量把特征放在同一份表示中}
-\phantomsection\label{concept:vector}
-
-\localfixture{二维教学特征；与后面主线的三维 Embedding 无关}
-以“春天”和“花”的两维教学特征为例：
-\begin{equation}
-\vect x_{\text{春天}}^\top=(1,0),\qquad
-\vect x_{\text{花}}^\top=(0,1).
-\end{equation}
-
-这种按顺序排列的数字叫作\textbf{向量（vector）}。$(1,0)$ 和 $(0,1)$ 都是二维向量；大型模型往往使用维度更高的表示。
-右上角的 $\top$ 读作“转置”：数学里习惯把向量 $\vect x$ 竖着写成一列，
-$\vect x^\top$ 则把同样的数\textbf{横着写成一行}。
-本书约定一个 Token 的特征占一行，所以给单条向量起名时写 $\vect x^\top$；括号写法 $(1,0)$ 也按一行来读。
-
-两条同维向量相加时，\textbf{同位置的分量相加}：
-$(1,0)+(0,1)=(1,1)$。相加的前提是两条向量每个位置表示同一种特征。
-
-\par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={二维坐标平面上从原点出发的两条箭头：春天指向一零，沿横轴；花指向零一，沿纵轴。两条向量互相垂直。}}
+\localfixture{人工设定的二维文章特征；与后面主线的三维 Embedding 分开使用}
+先约定两个位置依次代表\textbf{技术、生活}，两项使用同一套评分尺度，
+数越大表示对应特征越强。为方便手算，需求和候选文章取下面这些数：
 \begin{center}
-\begin{tikzpicture}[x=2.6cm,y=2.6cm,>=Latex]
-\draw[->,gray!70] (-.12,0)--(1.5,0) node[below] {$x$};
-\draw[->,gray!70] (0,-.12)--(0,1.42) node[left] {$y$};
-\draw[->,line width=1.6pt,flowcolor] (0,0)--(1,0) node[above right] {春天 $(1,0)$};
-\draw[->,line width=1.6pt,flowcolor] (0,0)--(0,1) node[right] {花 $(0,1)$};
-\fill[ink] (0,0) circle(1.2pt);\node[below left] at (0,0) {$0$};
-\end{tikzpicture}
-\captionof{figure}{两条二维教学向量：每个坐标轴对应一个特征}
-\label{fig:vector-two-features}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}lcc@{}}\toprule
+对象 & 技术 & 生活\\\midrule
+需求 $\vect q$ & $0.6$ & $0.8$\\
+文章 A，$\vect a$ & $0.8$ & $0.6$\\
+文章 B，$\vect b$ & $1$ & $0$\\
+文章 C，$\vect c$ & $0$ & $1$\\\bottomrule
+\end{tabular}
 \end{center}
-\tagstructend
-\end{minipage}\par
-\medskip
+需求中的 $0.8>0.6$ 表示稍偏向生活；A 两方面都有，B 只谈技术，C 只谈生活。
+这些数是教学用的特征分数，并非概率，各项也不要求加起来为 $1$。
 
-\phantomsection\label{concept:vector-length}向量还有一个重要性质：\textbf{长度}。二维向量 $\vect{a}=(a_1,a_2)$ 的长度就是勾股定理：
-\begin{equation}
-\|\vect{a}\|=\sqrt{a_1^2+a_2^2}.
-\end{equation}
-例如 $(0.6,0.8)$ 的长度为 $\sqrt{0.6^2+0.8^2}=1$。长度等于 $1$ 的向量叫\textbf{单位向量}，后面很多计算会方便得多。
+\phantomsection\label{concept:vector}
+把同一个对象的特征\textbf{按固定顺序排起来}，就得到一条\textbf{向量（vector）}。
+例如需求写成 $\vect q=(0.6,0.8)$，文章 A 写成 $\vect a=(0.8,0.6)$。
+每条有两个分量，因此叫二维向量。
+交换两个位置，就交换了技术与生活的分数；比较时必须保持特征定义、顺序和尺度一致。
+
+也可以把每条向量画成从原点出发的箭头：第一个数决定横向走多少，第二个数决定纵向走多少。
+\input{figures/article-match-vectors}
+
+本章把向量横着写成一行，下一章再说明行、列与转置的关系。
+这里的特征由人指定，暂不训练；后面文字的向量会由模型学习，
+其每一维通常没有这样明确的名称。

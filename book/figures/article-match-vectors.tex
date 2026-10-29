@@ -1,0 +1,21 @@
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={沿用文章匹配表。横轴为技术，纵轴为生活。需求 q 为零点六、零点八，文章 A 为零点八、零点六，文章 B 为一、零，文章 C 为零、一。四条箭头均从原点出发，需求更靠近生活轴，A 同时包含两种特征。}}
+\begin{center}
+\begin{tikzpicture}[x=32mm,y=32mm,>=Latex]
+\coordinate (q) at (0.6,0.8);
+\coordinate (a) at (0.8,0.6);
+\coordinate (b) at (1,0);
+\coordinate (c) at (0,1);
+\draw[->,linegray] (-.12,0)--(1.55,0) node[right,font=\small,text=muted] {技术};
+\draw[->,linegray] (0,-.12)--(0,1.35) node[above,font=\small,text=muted] {生活};
+\draw[->,very thick,flowcolor] (0,0)--(q) node[above left,font=\small] {需求 $(0.6,0.8)$};
+\draw[->,thick,datacolor,dashed] (0,0)--(a) node[right,font=\small] {A $(0.8,0.6)$};
+\draw[->,thick,muted] (0,0)--(b) node[below,font=\small] {B $(1,0)$};
+\draw[->,thick,muted] (0,0)--(c) node[left,font=\small] {C $(0,1)$};
+\fill[ink] (0,0) circle (1pt) node[below left,font=\small] {$0$};
+\end{tikzpicture}
+\captionof{figure}{同一组二维文章特征：每条箭头的横、纵位移对应向量的两个分量}
+\label{fig:vector-two-features}
+\end{center}
+\tagstructend
+\end{minipage}\par

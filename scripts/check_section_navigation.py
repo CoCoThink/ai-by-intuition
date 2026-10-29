@@ -326,6 +326,8 @@ def check_reproduction_and_definitions(reader,labels):
     """Verify actual page contents and the executable-code link, beyond valid labels."""
     failures=[]
     expected={
+        'concept:dot-product':('同位置相乘','点积'),
+        'concept:cosine-similarity':('余弦相似度','长度'),
         'concept:vit':('ViT','Transformer'),
         'concept:patch':('Patch','局部'),
         'concept:clip':('CLIP','配对'),
@@ -371,12 +373,8 @@ def check_reproduction_and_definitions(reader,labels):
     return failures
 
 
-def chapter_divider_positions(reader,page):
-    """Find the actual full-width .55pt chapter rules in PDF coordinates.
-
-    Existing bounds and whitespace gates accepted a redundant divider below
-    the running-head rule. A source label or a page number cannot reveal it.
-    """
+def rendered_line_segments(reader,page):
+    """Read stroked lines after applying the actual PDF coordinate transforms."""
     from pypdf.generic import ContentStream
     matrix=(1,0,0,1,0,0);width=1;stack=[];point=None;lines=[];found=[]
     def transform(x,y):
@@ -396,11 +394,51 @@ def chapter_divider_positions(reader,page):
             point=end
         elif op in (b'S',b's'):
             for (x0,y0),(x1,y1) in lines:
-                if abs(width-.548)<.01 and abs(y0-y1)<.1 and abs(x1-x0)>.7*float(page.mediabox.width):
-                    found.append(float(page.mediabox.height)-(y0+y1)/2)
+                found.append((width,x0,y0,x1,y1))
             lines=[]
         elif op in (b'n',b'f',b'f*',b'B',b'B*'):lines=[]
     return found
+
+
+def chapter_divider_positions(reader,page):
+    """Find the actual full-width .55pt chapter rules in PDF coordinates."""
+    return [float(page.mediabox.height)-(y0+y1)/2
+            for width,x0,y0,x1,y1 in rendered_line_segments(reader,page)
+            if abs(width-.548)<.01 and abs(y0-y1)<.1 and abs(x1-x0)>.7*float(page.mediabox.width)]
+
+
+def normalization_arrow_errors(segments):
+    """Both copies of q must point up and right within their own panels.
+
+    A named TikZ point outside a translated scope once made the right-hand
+    arrow reach back into the left panel. Correct literal coordinates and
+    same-page captions alone did not reveal the rendered connection.
+    """
+    diagonals=[(x1-x0,y1-y0) for _,x0,y0,x1,y1 in segments
+               if abs(x1-x0)>12 and abs(y1-y0)>12]
+    if len(diagonals)!=2 or any(not(15<dx<40 and 20<dy<50 and abs(dx/dy-.75)<.03)
+                                for dx,dy in diagonals):
+        return [f'Normalization figure: demand arrows must stay in their own panels, got {diagonals}']
+    return []
+
+
+def check_normalization_arrows(reader,path,labels):
+    import xml.etree.ElementTree as ET
+    dest=reader.named_destinations[labels['fig:dot-product-length'][3]]
+    page_index=reader.get_destination_page_number(dest);page=reader.pages[page_index]
+    xml=subprocess.check_output(['pdftotext','-f',str(page_index+1),'-l',str(page_index+1),
+                                 '-bbox-layout',str(path),'-'])
+    lines=[(re.sub(r'\s+','',''.join(node.itertext())),float(node.get('yMin')))
+           for node in ET.fromstring(xml).iter() if node.tag.rsplit('}',1)[-1]=='line']
+    top=[y for text,y in lines if '整体放大，方向不变' in text]
+    bottom=[y for text,y in lines if '放大B会提高原始点积' in text]
+    if len(top)!=1 or len(bottom)!=1:return ['Normalization figure: actual panel/caption bounds missing']
+    height=float(page.mediabox.height)
+    segments=[line for line in rendered_line_segments(reader,page)
+              if all(top[0]<height-y<bottom[0] for y in (line[2],line[4]))]
+    errors=normalization_arrow_errors(segments)
+    if not errors:print(f'Normalization arrow QA: both rendered demand arrows stay within their panels on page {page_index+1}')
+    return errors
 
 
 def check_chapter_dividers(reader,labels):
@@ -473,6 +511,7 @@ def check_pdf(path, aux, used):
     failures.extend(contour_label_errors(reader,path,labels))
     failures.extend(check_iteration_legend(reader,path,labels))
     failures.extend(check_activation_labels(reader,path,labels))
+    failures.extend(check_normalization_arrows(reader,path,labels))
     for target,count in used.items():
         if target not in labels:
             failures.append(f'Missing built label: {target}');continue
@@ -530,7 +569,10 @@ def self_test():
     negative=('负数归零',220,138,260,153)
     assert activation_label_errors([positive,negative,('ReLU(t)',303,68,340,78)])
     assert not activation_label_errors([positive,negative,('ReLU(t)',280,68,320,78)])
-    print('Section/figure regressions passed: wrong targets, literal folios, split captions, orphaned code introductions, contour collisions, displaced legends and ReLU label overlaps are rejected')
+    demand_arrows=[(1,100,200,127,236),(1,330,200,357,236)]
+    assert not normalization_arrow_errors(demand_arrows)
+    assert normalization_arrow_errors([demand_arrows[0],(1,330,200,127,236)])
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps and cross-panel arrows are rejected')
 
 
 def main():

@@ -51,7 +51,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 D}\\*
 导数 & Derivative & 衡量函数在某一点的局部变化率。 & \hyperref[intro:16a-gradient-descent]{\ref*{intro:16a-gradient-descent}/\pageref*{intro:16a-gradient-descent}}\\
 低秩适配 & Low-rank adaptation & 冻结多数基础权重并训练低秩参数的微调方法。 & \hyperref[concept:lora]{\ref*{concept:lora}/\pageref*{concept:lora}}\\
-点积 & Dot product & 对应分量相乘后求和；若向量归一化，可反映夹角余弦。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
+点积 & Dot product & 对应分量相乘后求和；两条单位向量的点积等于夹角余弦。 & \hyperref[concept:dot-product]{\ref*{concept:dot-product}/\pageref*{concept:dot-product}}\\
 独热编码 & One-hot encoding & 只有对应类别位置为一，其余为零的编码。 & \hyperref[concept:cross-entropy]{\ref*{concept:cross-entropy}/\pageref*{concept:cross-entropy}}\\
 多层感知机 & Multi-layer perceptron & 把矩阵乘法、偏置和非线性激活逐层组合的前馈网络。 & \hyperref[concept:mlp]{\ref*{concept:mlp}/\pageref*{concept:mlp}}\\
 多查询注意力 & Multi-query attention (MQA) & 让多个 Query 头共享一组 K/V 头。 & \hyperref[concept:mqa]{\ref*{concept:mqa}/\pageref*{concept:mqa}}\\
@@ -198,7 +198,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 隐藏状态 & Hidden state & 序列模型随位置传递的中间向量。 & \hyperref[concept:hidden-state]{\ref*{concept:hidden-state}/\pageref*{concept:hidden-state}}\\
 应用记忆 & Application memory & 应用保存并在需要时恢复的信息，不等于模型权重或 KV Cache。 & \hyperref[concept:app-memory]{\ref*{concept:app-memory}/\pageref*{concept:app-memory}}\\
 优化器 & Optimizer & 根据梯度与状态计算参数更新的算法。 & \hyperref[concept:optimizer]{\ref*{concept:optimizer}/\pageref*{concept:optimizer}}\\
-余弦相似度 & Cosine similarity & 点积除以两向量长度之积，关注方向。 & \hyperref[intro:02-dot-product]{\ref*{intro:02-dot-product}/\pageref*{intro:02-dot-product}}\\
+余弦相似度 & Cosine similarity & 两条非零向量的点积除以长度乘积，关注方向。 & \hyperref[concept:cosine-similarity]{\ref*{concept:cosine-similarity}/\pageref*{concept:cosine-similarity}}\\
 预填充与解码 & Prefill and decode & 先处理已知前缀建立缓存，再逐步处理新增 Token 并读取历史。 & \hyperref[concept:prefill-decode]{\ref*{concept:prefill-decode}/\pageref*{concept:prefill-decode}}\\
 预训练 & Pretraining & 通过大规模数据先学习一般的表示和模式。 & \hyperref[concept:pretraining]{\ref*{concept:pretraining}/\pageref*{concept:pretraining}}\\
 \addlinespace[4pt]

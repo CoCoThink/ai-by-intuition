@@ -50,15 +50,13 @@
 \item[\textbf{C-015.}] \phantomsection\label{solution:C-015}\phantomsection\label{answerpiece:18-generalization:4}\hyperref[exercise:C-015]{\textbf{第一步：}}先把最终测试集保留在选择过程之外。\par\nobreak\textbf{解题过程：}在训练集内部采用交叉验证或重复验证切分做模型选择，最终测试集独立保留；代价是多次训练成本。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:01-vectors}~章 · 向量与点积：怎样用数字表示一个东西，又怎样比较两个？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-016]{题目见第~\pageref*{exercise:C-016}~页起}）}}
+\subsubsection*{第~\ref*{intro:01-vectors}~章 · 向量与点积：怎样把多个特征变成一个匹配分数？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-016]{题目见第~\pageref*{exercise:C-016}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-016.}] \phantomsection\label{solution:C-016}\phantomsection\label{answerpiece:01-vectors:4}\hyperref[exercise:C-016]{\textbf{第一步：}}先选择统一特征、投影或拼接中的一种。\par\nobreak\textbf{解题过程：}先统一特征定义和尺度，或将二维向量投影到三维空间，或分别拼接成五维；不可无规则地逐项相加。
 \item[\textbf{C-017.}] \phantomsection\label{solution:C-017}\hyperref[exercise:C-017]{\textbf{第一步：}}加法与数乘都逐个坐标计算；长度用勾股定理。\par\nobreak
 \textbf{解答：}$\vect a+\vect b=(4,2)$，$2\vect a=(6,8)$，$\|\vect a\|=\sqrt{3^2+4^2}=\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。
-\item[\textbf{C-018.}] \phantomsection\label{solution:C-018}\hyperref[exercise:C-018]{\textbf{第一步：}}先回顾两个单位向量点积与夹角的关系。\par\nobreak
-\textbf{解答：} $0.8$，两单位向量方向比较接近。
-\item[\textbf{C-019.}] \phantomsection\label{solution:C-019}\hyperref[exercise:C-019]{\textbf{第一步：}}利用点积等于长度乘积乘余弦。\par\nobreak
-\textbf{解答：} $\vect a\cdot\vect b=6\times5=30$，$\|\vect a\|=6$，$\|\vect b\|=13$，$\cos\theta=5/13$，故 $6\times13\times(5/13)=30$。
+\item[\textbf{C-018.}] \phantomsection\label{solution:C-018}\hyperref[exercise:C-018]{\textbf{第一步：}}用新的需求分别与三篇文章做点积。\par\nobreak\textbf{解题过程：}$\vect q\cdot\vect a=0.8\times0.8+0.6\times0.6=\answerresult{1}$，$\vect q\cdot\vect b=\answerresult{0.8}$，$\vect q\cdot\vect c=\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。
+\item[\textbf{C-019.}] \phantomsection\label{solution:C-019}\hyperref[exercise:C-019]{\textbf{第一步：}}先算原始点积，再除以两个长度的乘积。\par\nobreak\textbf{解题过程：}点积 $3\times4+4\times3=\answerresult{24}$，两个长度均为 $\sqrt{3^2+4^2}=\answerresult{5}$；余弦相似度为 $24/(5\times5)=\answerresult{0.96}$。两条向量各放大 $5$ 倍，原始点积放大 $25$ 倍，方向与夹角不变；分母也放大 $25$ 倍，所以余弦相似度保持不变。
 \item[\textbf{C-020.}] \phantomsection\label{solution:C-020}\phantomsection\label{answerpiece:02-dot-product:4}\hyperref[exercise:C-020]{\textbf{第一步：}}先把每条向量除以自己的长度。\par\nobreak\textbf{解题过程：}余弦相似度除以两个范数，排除了非零向量整体放大的影响；原始点积则会随长度变化。
 \end{enumerate}
 \Needspace{6\baselineskip}

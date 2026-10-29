@@ -1,114 +1,179 @@
-\subsection{点积：同位置相乘再求和}
-上面把一个东西写成一行数字；要判断两行数字“像不像”，最直接的办法是逐项比较再汇总成一个分数。
-给定 $\vect{a}=(a_1,a_2)$ 和 $\vect{b}=(b_1,b_2)$，它们的\textbf{点积}定义为：
-\begin{equation}
-\boxed{\vect{a}\cdot\vect{b}=a_1b_1+a_2b_2.}
-\end{equation}
-只要把对应数字相乘再加起来即可。例如：
-\[
-(1,0)\cdot(0.6,0.8)=1\times0.6+0\times0.8=0.6.
-\]
+\subsection{两个方面都要考虑，怎样得到一个分数？}
 
-\subsection{点积为什么与角度有关？先从投影开始}
+只比较技术这一项，会忽略需求中的生活部分。
+若直接把文章自身的两个分量相加，B 和 C 都得到 $1$，又区分不出当前需求更偏向谁。
+我们需要让\textbf{需求参与每一项比较}。
 
-先看一个可以手算的例子。令
+可以沿用前面乘法与加法的思路：让需求中的技术数乘文章的技术数，
+生活数乘生活数，再把两项贡献相加。
+于是文章 A 的分数为
 \[
-\vect a=(4,0),\qquad \vect b=(3,4).
+\underbrace{0.6\times0.8}_{\text{技术方面的贡献}}
++\underbrace{0.8\times0.6}_{\text{生活方面的贡献}}
+=0.48+0.48=0.96.
 \]
-$\vect a$ 长度是 $4$；$\vect b$ 长度是 $\sqrt{3^2+4^2}=5$。把 $\vect b$ 垂直投影到 $\vect a$ 的水平方向，投影长度是 $3$。直角三角形告诉我们
-\[
-\cos\theta=\frac35,\qquad
-\|\vect b\|\cos\theta=5\times\frac35=3.
-\]
-于是$\vect a$ 的长度乘以$\vect b$ 在$\vect a$ 方向上的投影是 $4\times3=12$。
-而点积按坐标计算也等于 $4\times3+0\times4=12$。
-
-\tagstructbegin{tag=Figure,alttext={向量 a 为四零，向量 b 为三四；b 在 a 方向上的投影长三，夹角余弦为五分之三，点积为十二。}}
+同样计算另外两篇：
 \begin{center}
-\begin{tikzpicture}[scale=1.05,>=Latex]
-\draw[->,linegray,thick] (-.2,0)--(5.3,0);
-\draw[->,linegray,thick] (0,-.2)--(0,4.7);
-\draw[->,very thick,flowcolor] (0,0)--(4,0) node[below right] {$\vect a=(4,0)$};
-\draw[->,very thick,flowcolor] (0,0)--(3,4) node[above right] {$\vect b=(3,4)$};
-\draw[dashed,thick,muted] (3,4)--(3,0);
-\draw[linegray] (3,0) rectangle (3.18,.18);
-\draw[flowcolor,thick] (.78,0) arc[start angle=0,end angle=53.13,radius=.78];
-\node[font=\small] at (1.12,.36) {$\theta$};
-\node[font=\small,below] at (1.5,0) {投影为 $3$};
-\end{tikzpicture}
-\captionof{figure}{点积等于一条向量的长度乘以另一条在该方向上的投影：$4\times3=12$}
-\label{fig:dot-product-projection}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}lll@{}}\toprule
+候选 & 计算 & 匹配分数\\\midrule
+A & $0.6\times0.8+0.8\times0.6$ & $0.96$\\
+B & $0.6\times1+0.8\times0$ & $0.60$\\
+C & $0.6\times0+0.8\times1$ & $0.80$\\\bottomrule
+\end{tabular}
 \end{center}
-\tagstructend
+按这条规则，排序是 A、C、B：A 兼顾两方面；
+两篇纯主题文章中，C 的生活主题更符合这次需求。
+这是一条方便计算的匹配规则，是否适合实际任务，要结合特征的含义与尺度判断。
 
-\subsection{用余弦定理推广到任意向量}
+\phantomsection\label{concept:dot-product}
+刚才做的\textbf{同位置相乘，再把乘积相加}，就叫\textbf{点积（dot product）}。
+两条二维向量的写法是
+\begin{equation}
+\boxed{\vect a\cdot\vect b=a_1b_1+a_2b_2.}
+\end{equation}
+推广到 $d$ 维，就是
+\[
+\vect a\cdot\vect b=a_1b_1+\cdots+a_db_d.
+\]
+输入是两条同维向量，输出是\textbf{一个数}。
+把一条向量当作权重看，这也是多项加权求和；
+点积的名称把这种反复出现的乘加写得更紧凑。
 
-把两条向量从同一点画出，连接它们的终点，第三条边的长度就是 $\|\vect a-\vect b\|$。
+\subsection{把数字放大，为什么分数就更高了？}
 
-二维画法可直接看到对应三角形；高维情况同理，因为任意两个非共线向量张成一个平面。一方面，根据高中数学中的\textbf{余弦定理}：
+继续使用同一组数据。将 B 的每个分量乘 $3$，得到
+\[
+3\vect b=3(1,0)=(3,0).
+\]
+这种操作叫\textbf{数乘}：每个位置都乘同一个数。
+B 的技术与生活配比仍然是“只有技术”，匹配分数却变成
+\[
+\vect q\cdot(3\vect b)=0.6\times3+0.8\times0=1.8.
+\]
+$1.8$ 超过了 A 的 $0.96$。如果我们要比较的是\textbf{主题配比}，
+仅仅整体放大数字就能改变排名，说明还需要区分向量的两个方面。
+
+在图中，$(1,0)$ 和 $(3,0)$ 指向相同方向，后者的箭头更长。
+\textbf{方向}体现各分量的配比，\textbf{长度}体现整体大小。
+在本例中，正数倍放大保留了主题配比，却放大了点积。
+
+\phantomsection\label{concept:vector-length}
+怎样量箭头的长度？从原点走到 $(a_1,a_2)$，横、纵位移构成直角三角形，
+用勾股定理便得到
+\begin{equation}
+\boxed{\|\vect a\|=\sqrt{a_1^2+a_2^2}.}
+\end{equation}
+符号 $\|\vect a\|$ 读作“向量 $\vect a$ 的长度”；本章用\textbf{范数}一词表示这种长度。
+因此 $\|\vect b\|=\sqrt{1^2+0^2}=1$，
+$\|3\vect b\|=\sqrt{3^2+0^2}=3$。
+\textbf{原始点积会受向量长度影响}，需要把这点纳入分数的解释。
+
+向量也可以逐项相加，例如 $\vect b+\vect c=(1,0)+(0,1)=(1,1)$。
+加法要求对应位置的含义与单位相容；后面的矩阵运算会反复使用这些数乘与加法。
+
+\subsection{只想比较方向，怎样排除长度影响？}
+
+可以先把非零向量的每个分量都\textbf{除以自己的长度}。
+方向保持不变，长度则变成 $1$；这样的向量叫\textbf{单位向量}。
+这个操作叫长度归一化。例如
+\[
+\frac{3\vect b}{\|3\vect b\|}=\frac{(3,0)}3=(1,0)=\vect b.
+\]
+归一化后再和需求比较，分数恢复为 $0.6$。
+\input{figures/dot-product-length}
+
+回头核对最初的数据：
+\[
+\|\vect q\|=\sqrt{0.6^2+0.8^2}=1,\qquad
+\|\vect a\|=\sqrt{0.8^2+0.6^2}=1.
+\]
+B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异，
+比较的是这些向量的方向。
+
+\phantomsection\label{concept:cosine-similarity}
+对于长度不同的两条非零向量，先各自除以长度，再做点积。
+每项乘积都除以同一个长度乘积，可以把分母提出来：
+\begin{equation}
+\boxed{\text{余弦相似度}
+=\frac{\vect a\cdot\vect b}{\|\vect a\|\|\vect b\|}.}
+\end{equation}
+分母消除了正数倍整体放大的影响。以放大后的 B 为例：
+\[
+\frac{\vect q\cdot(3\vect b)}{\|\vect q\|\|3\vect b\|}
+=\frac{1.8}{1\times3}=0.6.
+\]
+零向量没有方向，长度也是零，因此这条除法要求两条向量都非零。
+下一节解释这个分数为什么叫“余弦”。
+
+\subsection{为什么这种比较与夹角有关？}
+
+\textbf{归一化后，点积恰好等于夹角的余弦。}
+先在原来的需求与文章 A 上看这个结论：它们的长度都是 $1$，点积为 $0.96$。
+把 A 的箭头端点向需求所在的直线作垂线，垂足就给出 A 在需求方向上的\textbf{投影}。
+这条投影的长度可以理解为：A 沿着需求方向伸出了多远。
+\input{figures/dot-product-projection}
+
+两条箭头的夹角记作 $\theta$。图中的直角三角形以 A 为斜边，斜边长为 $1$；
+需求方向上的投影为邻边。
+按“余弦等于邻边除以斜边”，投影长就是 $1\times\cos\theta$。
+对这两条单位向量，点积与投影长相等，所以两者都是 $0.96$。
+
+一般地，两条非零向量满足
+\begin{equation}
+\boxed{\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta.}
+\label{eq:dot-product-geometry}
+\end{equation}
+因此除以两个长度，留下的就是 $\cos\theta$，这解释了“余弦相似度”的名称。
+对单位向量，同向时为 $1$，垂直时为 $0$，反向时为 $-1$。
+夹角越小，方向越接近，余弦相似度越大。
+这些是向量之间的几何关系；应用到文字时，表示的训练方式决定它们能否反映所需的语义关系。
+
+\begin{example}[title={{\symboliconfont ★} 为什么坐标计算与几何解释一致？}]
+这一段证明上面的通式，可以在掌握计算方法后回看。
+把两条非零、非共线向量从同一点画出，连接终点，第三条边长为 $\|\vect a-\vect b\|$。
+根据余弦定理，
 \begin{equation}
 \|\vect a-\vect b\|^2
 =\|\vect a\|^2+\|\vect b\|^2
 -2\|\vect a\|\|\vect b\|\cos\theta.
 \label{eq:cosine-law}
 \end{equation}
-另一方面，直接按坐标展开平方：
+另一方面，按坐标展开：
 \[\begin{aligned}
 \|\vect a-\vect b\|^2
 &=(a_1-b_1)^2+(a_2-b_2)^2\\
-&=(a_1^2+a_2^2)+(b_1^2+b_2^2)
--2(a_1b_1+a_2b_2)\\
 &=\|\vect a\|^2+\|\vect b\|^2
--2(\vect a\cdot\vect b).
+-2(a_1b_1+a_2b_2)\\
+&=\|\vect a\|^2+\|\vect b\|^2-2(\vect a\cdot\vect b).
 \end{aligned}\]
-比较两式，消去共同的项，就得到
-\begin{equation}
-\boxed{\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta.}
-\label{eq:dot-product-geometry}
-\end{equation}
+两式左侧相等，右侧又有相同的两个长度平方项，消去后得到
+$-2(\vect a\cdot\vect b)=-2\|\vect a\|\|\vect b\|\cos\theta$。
+再同时除以 $-2$，就是式~\eqref{eq:dot-product-geometry}。
+高维时按坐标展开仍成立，两条非共线向量也仍处在同一个平面内；
+同向或反向的共线情况可以直接代入核对。
+\end{example}
 
-当两条向量都是单位向量时，长度的乘积是 $1$，所以
-\[
-\boxed{\vect a\cdot\vect b=\cos\theta.}
-\]
-方向越接近，点积越接近 $1$；垂直为 $0$；方向相反为 $-1$。
+\subsection{一个需求要比较成千上万篇文章，怎么办？}
 
-\begin{warningbox}
-原始点积同时包含长度和角度。
-例如 $(100,0)\cdot(1,0)=100$。后面用 Query 和 Key 计算匹配分数时，长度也会影响点积。
-\end{warningbox}
+现在会算一个需求与一篇文章的匹配分数了。
+若有一万篇候选，就要做一万次类似的点积。
+这些计算彼此独立，可以并行；下一章会把候选排成矩阵，一次组织这些重复乘加。
 
-\tagstructbegin{tag=Figure,alttext={三组单位向量夹角依次为十七度、九十度和一百六十五度，点积约为零点九六、零和负零点九七。}}
-\begin{center}
-\begin{tikzpicture}[>=Latex,x=19mm,y=19mm]
-\foreach \x/\ang/\score/\lab in {0/17/{\approx 0.96}/同向附近,2.9/90/{0}/垂直,5.8/165/{\approx -0.97}/反方向附近} {
- \begin{scope}[shift={(\x,0)}]
- \draw[->,thick,flowcolor] (0,0)--(1,0);
- \draw[->,thick,flowcolor] (0,0)--({cos(\ang)},{sin(\ang)});
- \fill (0,0) circle(1pt);
- \node[font=\footnotesize,align=center] at (.55,-.55) {\lab\\点积 $\score$};
- \end{scope}
+后面学习 Attention 时，也会用点积计算匹配分数。
+那里的表示由模型训练得到，原始点积同时受方向与长度影响；
+是否归一化，应结合具体计算规则判断。
+
+\chapterchecktasks{01-vectors}{沿着文章匹配例子复算}{
+\item \textbf{表示：}本章向量按“技术、生活”排列。把需求 $(0.6,0.8)$ 改写成 $(0.8,0.6)$，表达的偏好发生了什么变化？\chapterinlinehint{先给两个位置写上特征名称。}
+\item \textbf{手算：}仍用需求 $\vect q=(0.6,0.8)$，一篇新文章的向量为 $(0.6,0.8)$。它的点积分数是多少？按本章规则，与 A 相比排在前还是后？\chapterinlinehint{同位置相乘，再把两项贡献相加。}
+\item \textbf{预测：}把 B 从 $(1,0)$ 放大到 $(3,0)$，原始点积怎样变化？主题配比是否改变？\chapterinlinehint{同时检查各分量的比例与点积分数。}
+\item \textbf{手算：}求 $(3,0)$ 的长度及归一化后的向量，再算它与需求的余弦相似度。\chapterinlinehint{先用勾股定理求长度，再逐项除以长度。}
+\item \textbf{几何：}两个单位向量点积为 $0$，它们的方向有什么关系？把其中一条反向，点积会怎样？\chapterinlinehint{先由点积读出夹角，再看反向后的夹角。}
+\item \textbf{找错：}同学说“两个句子的原始点积更大，就一定表示意思更接近”。结合本章，说明需要先核对哪两个方面。\chapterinlinehint{回看放大 B 的实验，以及特征如何得到。}
 }
-\end{tikzpicture}
-
-\captionof{figure}{单位向量的夹角与点积：接近同向为正、垂直为零、接近反向为负}\label{fig:dot-product-angles}
-\end{center}
-\tagstructend
-
-许多组点积彼此独立，可以同时计算，这正是 GPU 擅长的并行乘加。
-下一章会用矩阵把这些计算排在一起。
-
-\chapterchecktasks{01-vectors}{正文基础六题}{
-\item \textbf{定义：}向量 $(2,3)$ 与 $(3,2)$ 为什么一般不代表同一条数据记录？解释位置与含义之间的关系。\chapterinlinehint{先给每个坐标标上字段名称。}
-\item \textbf{手算：}计算 $(2,3)+(1,-1)$，并核对结果有几个分量。\chapterinlinehint{同一位置的分量分别相加。}
-\item \textbf{找错：}程序把二维“年龄／身高”向量和二维“身高／年龄”向量直接逐项相加。形状对了，为什么仍不合理？\chapterinlinehint{先把两个向量的字段顺序写出来。}
-\item \textbf{手算：}求 $(1,2)\cdot(3,1)$，并说明点积为何是标量。\chapterinlinehint{将同位置分量相乘，再求和。}
-\item \textbf{预测：}两个单位向量点积为 $0$；若把第一个向量反向，新点积会怎样？\chapterinlinehint{利用点积对第一个向量的线性关系。}
-\item \textbf{找错：}同学说“点积较大总能证明两个句子语义更接近”，哪两项条件没有核对？\chapterinlinehint{检查向量长度与表示的训练方式。}
-}
-
 
 \par\smallskip
-向量把多个特征按固定顺序放进一行，同维向量按位置相加，长度用勾股定理计算。
-点积就是\textbf{同位置相乘再求和}，既可以用数字算，也可以从两个向量之间的夹角理解。
-后面学习 Attention 时，我们会用它衡量不同位置之间的匹配程度。
+向量把特征按固定顺序放在一行；点积把对应分量相乘后求和，得到一个分数。
+当目标是比较方向时，先除以各自长度，就能排除整体放大的影响。
+下一章把一组组向量排起来，继续解决“怎样一次完成许多相同计算”的问题。

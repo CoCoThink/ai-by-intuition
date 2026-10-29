@@ -55,13 +55,13 @@
 \par\answerpiece{2}{手算}{逐轮比较验证损失。}第 $\answerresult{2}$ 轮验证损失最低，为 $\answerresult{0.4}$。
 \par\answerpiece{3}{找错}{先查 Dropout 屏蔽的对象及测试集用途。}Dropout 训练时随机屏蔽\textbf{激活}，不是永久删除参数；超参数在验证数据上选择，不可反复用最终测试集挑选。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 6 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量与点积：怎样用数字表示一个东西，又怎样比较两个？}}\answercheckpage{01-vectors}\par\nobreak
-\answerpiece{1}{定义}{先为每个坐标写上特征名称。}有序位置对应不同特征；交换位置就交换了对应特征。
-\par\answerpiece{2}{手算}{按相同坐标逐项相加。}$(2,3)+(1,-1)=\answerresult{(3,2)}$，仍是二维向量。
-\par\answerpiece{3}{找错}{先检查两个向量的特征定义和单位。}即使都为二维，特征定义与单位也不同，不能将年龄与身高直接相加。
-\par\answerpiece{4}{手算}{按坐标配对相乘，再相加。}$1\cdot3+2\cdot1=\answerresult{5}$，同位置乘积求和得到标量。
-\par\answerpiece{5}{预测}{先用正交性判断反向是否改变零点积。}新点积为 $-1\times0$，仍为 $\answerresult{0}$，反向后仍正交。
-\par\answerpiece{6}{找错}{先列出点积中除角度外的因素。}点积还受向量范数与训练方式影响；相似分数本身不能保证语义正确或事实一致。
+\item[\textbf{第 6 章}] \phantomsection\label{answer:01-vectors}\textbf{\hyperref[check:01-vectors]{向量与点积：怎样把多个特征变成一个匹配分数？}}\answercheckpage{01-vectors}\par\nobreak
+\answerpiece{1}{表示}{先为两个位置写上“技术、生活”。}原需求的生活分数 $0.8$ 大于技术分数 $0.6$；交换后技术分数更高，变成\textbf{稍偏向技术}。只换数字而保持特征顺序，就改变了需求。
+\par\answerpiece{2}{手算}{将需求与新文章的两个分量分别相乘。}$0.6\times0.6+0.8\times0.8=0.36+0.64=\answerresult{1}$，超过 A 的 $0.96$，因此新文章排在 A 前。两条向量相同且长度均为 $1$，这个分数也对应方向完全一致。
+\par\answerpiece{3}{预测}{先比较放大前后的点积，再看方向。}原分数 $0.6$，放大后为 $0.6\times3+0.8\times0=\answerresult{1.8}$，增至三倍；两个分量仍只有技术项非零，\textbf{主题配比不变}。
+\par\answerpiece{4}{手算}{先用勾股定理算长度。}$\sqrt{3^2+0^2}=\answerresult{3}$；逐项除以 $3$ 得到$\answerresult{(1,0)}$。需求本身长为 $1$，所以归一化后点积为 $0.6\times1+0.8\times0=\answerresult{0.6}$，也等于原始点积 $1.8$ 除以长度乘积 $1\times3$。
+\par\answerpiece{5}{几何}{由单位向量点积等于夹角余弦判断。}点积为零说明夹角为直角，两条向量\textbf{垂直}；其中一条反向后仍然垂直，新点积仍为$\answerresult{0}$。
+\par\answerpiece{6}{找错}{先回看长度的作用，再问表示怎样得到。}首先核对\textbf{长度是否影响了比较}，原始点积会随整体放大而增大；其次核对\textbf{表示是否适合所需的语义比较}，同维、同尺度的数字仍须通过合适的训练或特征设计反映任务关系。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 7 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法到底在算什么？}}\answercheckpage{03-matrix-multiplication}\par\nobreak
 \answerpiece{1}{形状}{先比较内侧两个维度。}$2\times3$ 乘 $3\times4$ 内侧维度相同，输出 $\answerresult{2\times4}$；若右矩阵变为 $4\times3$，内侧 $3\ne4$，不合法。

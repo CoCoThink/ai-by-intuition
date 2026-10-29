@@ -1,0 +1,25 @@
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={仍用需求 q 为零点六、零点八与文章 A 为零点八、零点六，两条向量长度均为一。A 的端点向 q 所在直线作垂线，垂足为零点五七六、零点七六八，投影长为零点九六。两条箭头夹角为 theta，点积、投影长与夹角余弦都等于零点九六。}}
+\begin{center}
+\begin{tikzpicture}[x=52mm,y=52mm,>=Latex]
+\coordinate (q) at (0.6,0.8);
+\coordinate (a) at (0.8,0.6);
+\coordinate (p) at (0.576,0.768);
+\draw[->,linegray] (-.08,0)--(1.1,0) node[right,font=\small,text=muted] {技术};
+\draw[->,linegray] (0,-.08)--(0,1.13) node[above,font=\small,text=muted] {生活};
+\draw[->,very thick,flowcolor] (0,0)--(q) node[above left,font=\small] {$\vect q=(0.6,0.8)$};
+\draw[->,thick,datacolor] (0,0)--(a) node[right,font=\small] {$\vect a=(0.8,0.6)$};
+\draw[dashed,thick,muted] (a)--(p);
+\draw[muted] (.54,.72)--(.588,.684)--(.624,.732);
+\fill[ink] (p) circle (1.1pt);
+\draw[flowcolor,thick] (36.87:.26) arc (36.87:53.13:.26);
+\node[font=\small] at (.35,.18) {$\theta$};
+\node[font=\small,rotate=53.13,above] at (.23,.34) {投影长 $0.96$};
+\node[font=\small,align=left,anchor=west] at (1.02,.3)
+ {$\|\vect q\|=\|\vect a\|=1$\\[2mm]$\vect q\cdot\vect a=\cos\theta=0.96$};
+\end{tikzpicture}
+\captionof{figure}{沿用需求与文章 A：两条单位向量的点积为 $0.96$，等于投影长与夹角余弦}
+\label{fig:dot-product-projection}
+\end{center}
+\tagstructend
+\end{minipage}\par

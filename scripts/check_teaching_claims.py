@@ -26,6 +26,54 @@ from check_agent_loop import run_checks as check_agent_loop
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def check_article_matching():
+    """Recompute the printed ranking, scaling counterexample and plotted projection."""
+    vectors=(ROOT/'book/chapters/01-vectors.tex').read_text()
+    source=(ROOT/'book/chapters/02-dot-product.tex').read_text()
+    rows=re.findall(r'\$\\vect ([qabc])\$ & \$([\d.]+)\$ & \$([\d.]+)\$',vectors)
+    data={name:np.array([float(x),float(y)]) for name,x,y in rows}
+    assert set(data)==set('qabc'), 'Missing article feature-table rows'
+    scores={name:float(data['q']@data[name]) for name in 'abc'}
+    printed=re.findall(r'^([ABC]) & \$([^$]+)\$ & \$([\d.]+)\$',source,re.M)
+    assert len(printed)==3
+    for name,expression,result in printed:
+        expression=expression.replace(r'\times','*')
+        assert re.fullmatch(r'[\d.*+]+',expression)
+        evaluated=eval(expression,{'__builtins__':{}},{})
+        assert np.isclose(evaluated,scores[name.lower()])
+        assert np.isclose(float(result),evaluated), (name,result,evaluated)
+    assert sorted(scores,key=scores.get,reverse=True)==list('acb')
+    assert all(np.isclose(np.linalg.norm(row),1) for row in data.values())
+    scaled=3*data['b'];raw=float(data['q']@scaled)
+    cosine=raw/(np.linalg.norm(data['q'])*np.linalg.norm(scaled))
+    assert raw>scores['a'] and f'={raw:g}.' in source
+    assert np.isclose(cosine,scores['b'])
+    def coordinates(name):
+        figure=(ROOT/'book/figures'/name).read_text()
+        return {key:np.array([float(x),float(y)]) for key,x,y in
+                re.findall(r'\\coordinate \((\w+)\) at \(([\d.]+),([\d.]+)\)',figure)}
+    plotted=coordinates('article-match-vectors.tex')
+    assert set(plotted)==set(data)
+    for name,row in data.items():assert np.allclose(plotted[name],row),name
+    length=coordinates('dot-product-length.tex')
+    for name in ('q','b'):assert np.allclose(length[name],data[name])
+    assert np.allclose(length['scaled'],scaled)
+    assert np.allclose(length['unitq'],data['q']/np.linalg.norm(data['q']))
+    assert np.allclose(length['unitb'],scaled/np.linalg.norm(scaled))
+    projection=coordinates('dot-product-projection.tex')
+    for name in ('q','a'):assert np.allclose(projection[name],data[name])
+    foot=(data['a']@data['q'])/(data['q']@data['q'])*data['q']
+    assert np.allclose(projection['p'],foot), 'Projection foot differs from printed vectors'
+    assert np.isclose(np.linalg.norm(foot),scores['a'])
+    assert np.isclose((data['a']-foot)@data['q'],0)
+    exercises={item['id']:item for item in json.loads((ROOT/'book/exercises.json').read_text())}
+    changed=data['q'][::-1]
+    assert all(f'{{{changed@data[name]:g}}}' in exercises['C-018']['solution'] for name in 'abc')
+    assert f'{{{(5*data["q"])@(5*data["a"]):g}}}' in exercises['C-019']['solution']
+    assert f'{{{scores["a"]:g}}}' in exercises['C-019']['solution']
+    print('Article matching QA: actual table/three figures agree; ranking A,C,B, scaled score 1.8, cosine 0.6 and projection 0.96 passed')
+
+
 def check_motivation_examples():
     """Recompute the added bridges using their actual data and matrix shapes."""
     general=(ROOT/'book/chapters/18-generalization.tex').read_text()
@@ -246,6 +294,7 @@ def check_printed_mini(c, gradients):
 
 
 def main():
+    check_article_matching()
     check_motivation_examples()
     check_attention_maxima()
     check_model_comparison()

@@ -1,0 +1,28 @@
+\par\noindent\begin{minipage}{\linewidth}
+\tagstructbegin{tag=Figure,alttext={比较需求 q 为零点六、零点八与文章 B。左图 B 从一、零放大为三、零，方向不变，长度从一变三，原始点积从零点六变一点八。右图将放大后的 B 除以长度三，回到一、零，需求本来就是单位向量，归一化后点积为零点六。}}
+\begin{center}
+\begin{tikzpicture}[x=16mm,y=16mm,>=Latex]
+\coordinate (q) at (0.6,0.8);
+\coordinate (b) at (1,0);
+\coordinate (scaled) at (3,0);
+\node[font=\small\bfseries] at (1.3,1.65) {整体放大，方向不变};
+\draw[->,linegray] (-.1,0)--(3.45,0);
+\draw[->,very thick,flowcolor] (0,0)--(q) node[above,font=\small] {需求 $\vect q$};
+\draw[->,very thick,datacolor] (0,0)--(scaled) node[above,font=\small] {$3\vect b=(3,0)$};
+\fill[ink] (b) circle (1.4pt) node[below,font=\small] {$\vect b=(1,0)$};
+\node[font=\small,align=center] at (1.3,-.9) {原始点积\\$0.6\longrightarrow1.8$};
+\begin{scope}[xshift=8.3cm]
+\coordinate (unitq) at (0.6,0.8);
+\coordinate (unitb) at (1,0);
+\node[font=\small\bfseries] at (.7,1.65) {各自除以长度后};
+\draw[->,linegray] (-.1,0)--(1.7,0);
+\draw[->,very thick,flowcolor] (0,0)--(unitq) node[above,font=\small] {需求 $\vect q$};
+\draw[->,very thick,datacolor] (0,0)--(unitb) node[below,font=\small] {$(1,0)$};
+\node[font=\small,align=center] at (.7,-.9) {两条长度均为 $1$\\点积恢复为 $0.6$};
+\end{scope}
+\end{tikzpicture}
+\captionof{figure}{放大 B 会提高原始点积；先归一化，再比较方向，分数恢复为 $0.6$}
+\label{fig:dot-product-length}
+\end{center}
+\tagstructend
+\end{minipage}\par

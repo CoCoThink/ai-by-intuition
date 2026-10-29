@@ -192,8 +192,8 @@
     "slug": "01-vectors",
     "difficulty": "基础",
     "minutes": 3,
-    "question": "$\\vect{a}=(1,0)$，$\\vect{b}=(0.8,0.6)$，两者点积是多少？相似度高还是低？",
-    "solution": "\\textbf{第一步：}先回顾两个单位向量点积与夹角的关系。\\par\\nobreak\n\\textbf{解答：} $0.8$，两单位向量方向比较接近。",
+    "question": "沿用本章文章 A、B、C 的向量，将需求改为 $\\vect q=(0.8,0.6)$。重算三个点积分数与排名；为什么 B 与 C 的先后顺序改变了？",
+    "solution": "\\textbf{第一步：}用新的需求分别与三篇文章做点积。\\par\\nobreak\\textbf{解题过程：}$\\vect q\\cdot\\vect a=0.8\\times0.8+0.6\\times0.6=\\answerresult{1}$，$\\vect q\\cdot\\vect b=\\answerresult{0.8}$，$\\vect q\\cdot\\vect c=\\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。",
     "legacy_answer_anchor": "",
     "id": "C-018"
   },
@@ -203,8 +203,8 @@
     "slug": "01-vectors",
     "difficulty": "标准",
     "minutes": 6,
-    "question": "已知 $\\vect a=(6,0)$、$\\vect b=(5,12)$，求点积、两个长度与 $\\cos\\theta$，并验证 $\\vect a\\cdot\\vect b=\\|\\vect a\\|\\|\\vect b\\|\\cos\\theta$。",
-    "solution": "\\textbf{第一步：}利用点积等于长度乘积乘余弦。\\par\\nobreak\n\\textbf{解答：} $\\vect a\\cdot\\vect b=6\\times5=30$，$\\|\\vect a\\|=6$，$\\|\\vect b\\|=13$，$\\cos\\theta=5/13$，故 $6\\times13\\times(5/13)=30$。",
+    "question": "将本章需求与文章 A 的向量都放大 $5$ 倍，得到 $(3,4)$ 与 $(4,3)$。求点积、两个长度与余弦相似度，解释为什么原始分数变了，余弦相似度仍与本章相同。",
+    "solution": "\\textbf{第一步：}先算原始点积，再除以两个长度的乘积。\\par\\nobreak\\textbf{解题过程：}点积 $3\\times4+4\\times3=\\answerresult{24}$，两个长度均为 $\\sqrt{3^2+4^2}=\\answerresult{5}$；余弦相似度为 $24/(5\\times5)=\\answerresult{0.96}$。两条向量各放大 $5$ 倍，原始点积放大 $25$ 倍，方向与夹角不变；分母也放大 $25$ 倍，所以余弦相似度保持不变。",
     "legacy_answer_anchor": "",
     "id": "C-019"
   },
