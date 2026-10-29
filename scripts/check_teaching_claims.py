@@ -86,6 +86,66 @@ def numeric_matrices(source):
             for body in re.findall(r'\\begin\{bmatrix\}(.*?)\\end\{bmatrix\}',source,re.S)]
 
 
+def attention_maximum_errors(source):
+    """Compare the printed winner sets with Softmax of the actual printed scores.
+
+    The old checks did not inspect which positions shared a row maximum; a
+    correct score matrix could therefore accompany a misleading prose claim.
+    """
+    x,scores=numeric_matrices(source)
+    assert np.array_equal(scores,x@x.T), 'Zero-projection score matrix differs from XX^T'
+    exponentials=np.exp(scores-scores.max(axis=1,keepdims=True))
+    weights=exponentials/exponentials.sum(axis=1,keepdims=True)
+    claims=re.findall(r'第([一二三])行对位置 \$([\d,]+)\$ 给出(并列|唯一)最大权重',source)
+    if len(claims)!=len(weights):return ['Missing explicit maximum positions for each attention row']
+    errors=[]
+    for name,positions,kind in claims:
+        index='一二三'.index(name)
+        expected=(np.flatnonzero(np.isclose(weights[index],weights[index].max()))+1).tolist()
+        actual=[int(value) for value in positions.split(',')]
+        if actual!=expected or (kind=='唯一')!=(len(expected)==1):
+            errors.append(f'Attention row {index+1}: printed {actual}/{kind}, computed {expected}')
+    return errors
+
+
+def check_attention_maxima():
+    source=(ROOT/'book/chapters/21c-naive-attention.tex').read_text()
+    assert not attention_maximum_errors(source)
+    # Reproduce the misleading unique-winner reading of the former sentence.
+    bad=source.replace('第一行对位置 $1,3$ 给出并列最大权重',
+                       '第一行对位置 $3$ 给出唯一最大权重')
+    assert attention_maximum_errors(bad), 'Maximum-position gate accepted the original confusion'
+    print('Attention maximum QA: first/second rows tie at [1,3]/[2,3]; only the third has unique winner [3]')
+
+
+def check_model_comparison():
+    """Recompute comparison-table dimensions and count shared GPT-2 weights once."""
+    source=(ROOT/'book/chapters/23a-from-toy-to-gpt.tex').read_text()
+    table=source.split(r'\label{sec:toy-real-model-comparison}',1)[1].split(r'\end{tabularx}',1)[0]
+    rows={name.strip():(left,right) for name,left,right in
+          re.findall(r'^([^&\n]+) & (.*?) & (.*?)\\\\',table,re.M)}
+    cfg=json.loads((ROOT/'scripts/model_configs/gpt2.json').read_text())['config']
+    w=parameters();width=cfg['n_embd'];layers=cfg['n_layer']
+    # Each block: 12*d^2 projection weights, 9*d biases, 4*d Norm coefficients.
+    # Token/position embeddings and final Norm are outside the blocks; Wout is tied.
+    gpt_count=(cfg['vocab_size']+cfg['n_positions'])*width+layers*(12*width**2+13*width)+2*width
+    expected={
+        '可训练参数':(sum(value.size for value in w.values()),gpt_count),
+        '词表大小':(w['E'].shape[0],cfg['vocab_size']),
+        '隐藏宽度':(w['E'].shape[1],width),
+        'Block 层数':(1,layers),
+        '注意力头数':(1,cfg['n_head']),
+        'FFN 中间宽度':(w['Wup'].shape[1],4*width),
+        '可处理的位置数':(w['P'].shape[0],cfg['n_positions']),
+    }
+    for name,pair in expected.items():
+        printed=tuple(int(re.search(r'\d+',cell.replace('{,}',''))[0]) for cell in rows[name])
+        assert printed==pair,(name,printed,pair)
+    ratio=gpt_count/expected['可训练参数'][0]
+    assert round(ratio/10000)==126 and '$126$ 万倍' in source
+    print(f'Model comparison QA: seven numeric rows match canonical toy/pinned GPT-2; {gpt_count:,} parameters, ratio {ratio:.3f}')
+
+
 def check_published_forward():
     """Check printed parameters and real intermediate matrices, not label presence."""
     w=parameters();state=forward(w)
@@ -187,6 +247,8 @@ def check_printed_mini(c, gradients):
 
 def main():
     check_motivation_examples()
+    check_attention_maxima()
+    check_model_comparison()
     check_published_forward()
     check_agent_loop()
     data=json.loads((ROOT/'book/exercises.json').read_text())

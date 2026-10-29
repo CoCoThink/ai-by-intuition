@@ -35,6 +35,13 @@ def normalized(text: str) -> str:
     return re.sub(r"\s+", "", text)
 
 
+def chapter_at_position(anchors, page: int, top: float):
+    """Resolve ownership by physical page and vertical position, not a running head."""
+    preceding=[(p,-y,number) for number,(p,y) in anchors.items()
+               if (p,-y)<=(page,-top)]
+    return max(preceding)[2] if preceding else None
+
+
 def chapter(name: str) -> str:
     path = BOOK / "chapters" / f"{name}.tex"
     if not path.is_file():
@@ -596,6 +603,7 @@ def validate_pdf(path: Path) -> None:
     # Scan each candidate page only once, even when two self-checks share a
     # page or adjacent earlier boxes flow into the same continuation page.
     answer_links = []
+    answer_link_positions = []
     for page_index in sorted(inspect_pages):
         on_page_links = []
         for ref in reader.pages[page_index].get("/Annots", []):
@@ -615,6 +623,7 @@ def validate_pdf(path: Path) -> None:
             if is_selfcheck_answer(named_destinations[dest_name]):
                 answer_links.append(dest_name)
                 on_page_links.append(dest_name)
+                answer_link_positions.append((page_index,float(annot['/Rect'][3])))
         # Questions may flow to the next page. The global check below still
         # requires exactly one correct answer destination per exercise group.
     if len(answer_links) != CHECK_COUNT or len(set(answer_links)) != CHECK_COUNT:
@@ -676,24 +685,26 @@ def validate_pdf(path: Path) -> None:
                     )
     chapter_checks={g['checks'][0]:number for number,g in
                     enumerate((g for g in core_groups() if g['numbered']),1)}
+    chapter_anchors={number:(page,chapter_tops[number]) for number,page in numbered_pages.items()}
+    # A shared page may begin with the previous chapter's self-check, while
+    # its running head already names the next chapter. Resolve both the
+    # question backlink and the answer-link source at their actual positions.
+    assert chapter_at_position({7:(36,780),8:(37,600)},37,750)==7
+    assert chapter_at_position({7:(36,780),8:(37,600)},37,500)==8
+    starts_by_chapter={}
+    for target in answer_heading_targets:
+        destination=named_destinations[target]
+        page=reader.get_destination_page_number(destination)
+        owner=chapter_at_position(chapter_anchors,page,float(destination.top))
+        starts_by_chapter.setdefault(owner,[]).append(page)
     for slug in ('10-mlp','20b-task-contract'):
         number=chapter_checks[slug]
-        candidates=[page for page in question_pages if
-                    numbered_pages[number]<=page<numbered_pages[number+1]]
-        # A chapter-end box may share its physical page with the next
-        # chapter's opening.  The page-range test above then also sees the
-        # preceding chapter's self-check.  Use the running header to attach
-        # each candidate to the chapter whose box it contains; a genuine
-        # breakable self-check still leaves multiple pages with the same
-        # header and therefore still fails the one-page requirement below.
-        chapter_header = re.compile(rf"第\s*{number}\s*章")
-        header_candidates = [page for page in candidates
-                             if chapter_header.search(pages[page])]
-        if header_candidates:
-            candidates = header_candidates
-        if len(candidates)!=1:
-            fail(f"R01 {slug}: expected one self-check page, found {candidates}")
-        check_page=candidates[0]
+        starts=starts_by_chapter.get(number,[])
+        ends={page for page,top in answer_link_positions
+              if chapter_at_position(chapter_anchors,page,top)==number}
+        if len(starts)!=1 or ends!={starts[0]}:
+            fail(f"R01 {slug}: self-check and answer navigation must share one page; starts={starts}, ends={sorted(ends)}")
+        check_page=starts[0]
         page_text=pages[check_page]
         if ('读完自测' not in page_text or '提示与解答' not in normalized(page_text)
                 or len(re.findall(r"[\u4e00-\u9fff]",page_text))<260):

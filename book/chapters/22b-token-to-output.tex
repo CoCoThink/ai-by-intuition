@@ -6,6 +6,8 @@
 本章沿第二个位置逐步算完三维前向，它能读取两个位置，便于看清加权读取。
 现在\textbf{只用同一组三维参数}，把 Embedding、因果掩码、Q/K/V、Norm、残差、
 FFN 与输出头串成一次前向计算。
+这个 $99$ 参数模型用于逐项复算；它与真实 GPT-2 的规模和实现差别集中列在
+\sectionentry{sec:toy-real-model-comparison}，本章先追踪这一套教学参数。
 
 所有数值由 \path{scripts/teaching_reference.py} 计算；
 完整参数与中间量见\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates} 的逐层数值核对表}。

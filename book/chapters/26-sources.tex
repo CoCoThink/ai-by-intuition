@@ -104,7 +104,10 @@ Distill (2016)：
 \sourcecheck{2026-10-24}{链接可访问}
 \item GPT-2 配置文件（固定提交）：\\
 GPT-2 small（revision: \texttt{607a30d}）：\sourceurl{https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json}
-\sourcecheck{2026-10-25}{已重新读取层数、头数与隐藏宽度}
+\sourcecheck{2026-10-29}{已核对词表、位置范围、层数、头数、宽度与激活设置}
+\item GPT-2 原始模型实现（固定提交）：\phantomsection\label{source:gpt2-implementation}\\
+\sourceurl{https://github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py}
+\sourcecheck{2026-10-29}{已核对 FFN 扩展比例、归一化、偏置与输出头共享，复算参数总数}
 \item Qwen2.5-0.5B 配置文件（固定提交）：\\
 Qwen2.5-0.5B（revision: \texttt{060db64}）：\sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json}
 \sourcecheck{2026-10-25}{已重新读取层数、Q/KV 头数与隐藏宽度}

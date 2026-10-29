@@ -102,22 +102,30 @@
   {
     "id": "gpt2-config",
     "target": "intro:23a-from-toy-to-gpt",
-    "claim": "GPT-2 small：12 层、12 头、隐藏宽度 768",
+    "claim": "GPT-2 small：12 层、12 头、隐藏宽度 768，约 1.244 亿参数；GELU、可学习 LayerNorm 与共享输出头",
     "version": "607a30d",
-    "checked_utc": "2026-10-25",
+    "checked_utc": "2026-10-29",
     "sources": [
       {
         "name": "固定配置",
         "url": "https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json"
+      },
+      {
+        "name": "固定模型实现",
+        "url": "https://github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py"
       }
     ],
-    "scope": "本日重新读取配置字段；权重推理仍采用下文 2026-10-23 的存档实测。",
+    "scope": "本日重新核对固定配置与 c2dae27 模型实现：词表、位置范围、FFN 宽度、GELU、归一化、偏置及输出头共享；按可训练元素复算 124,439,808 参数。权重推理仍引用 2026-10-23 存档实测。",
     "review_interval_days": 90,
     "review_on_new_revision": true,
     "evidence": [
-      "$768$",
-      "$12$ 层",
-      "$12$ 个注意力头"
+      "隐藏宽度 & $3$ & $768$",
+      "Block 层数 & $1$ & $12$",
+      "注意力头数 & $1$ & $12$",
+      "124{,}439{,}808",
+      "GELU",
+      "复用 Token Embedding",
+      "最后一个 Block 后还做一次 LayerNorm"
     ]
   },
   {

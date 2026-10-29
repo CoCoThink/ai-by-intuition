@@ -7,13 +7,42 @@
 它怎样展示 GPT 的训练原理，真实模型还要扩大哪些部分？
 
 \subsection{用 GPT-2 small 对照真实模型的尺寸}
+\label{sec:toy-real-model-comparison}
 
-按 \href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{GPT-2 small 的公开配置}：
-词表 $50{,}257$，隐藏宽度 $768$，
-$12$ 层 Transformer Block、$12$ 个注意力头，最多处理 $1{,}024$ 个位置；
-每层 FFN 的中间宽度是隐藏宽度的 $4$ 倍，即 $4\times768=3{,}072$。
-后来的模型普遍更宽、更深，并会替换其中的部件（见第~\ref*{intro:22d-modern-transformers}~章），
-但都可以按这几项来读配置。
+先把本书三维主线与一个具体的真实模型并排看。
+GPT-2 small 一列按\href{https://huggingface.co/openai-community/gpt2/blob/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json}{固定修订的公开配置}及\hyperref[source:gpt2-implementation]{固定版本的模型实现}填写；
+它是这里的对照对象，其他模型仍须检查各自的配置。
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{30mm}XX@{}}
+\toprule
+比较项 & 本书三维主线模型 & GPT-2 small\\\midrule
+可训练参数 & $99$ & $124{,}439{,}808$（约 $1.244$ 亿）\\
+词表大小 & $5$ & $50{,}257$\\
+隐藏宽度 & $3$ & $768$\\
+Block 层数 & $1$ & $12$\\
+注意力头数 & $1$ & $12$\\
+FFN 中间宽度 & $4$ & $3{,}072$\\
+可处理的位置数 & 当前实现最多 $3$ 个 & 最多 $1{,}024$ 个\\
+FFN 激活 & ReLU & GELU（\texttt{gelu\_new}）\\
+输出头 & 与 Token Embedding 独立 & 复用 Token Embedding\\
+本书怎样使用它 & 在一条小序列上复算前向、梯度与更新 & 使用预训练权重观察真实分词与输出\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+参数量相差约 $126$ 万倍，跨了约六个数量级；后面会按矩阵逐项复算。
+其中，宽度、层数与词表展示了\textbf{规模的扩大}；
+激活、输出头和归一化的设置还涉及\textbf{实现选择}，并非只把同一套矩阵放大。
+教学模型固定 LayerNorm 的仿射系数并省去偏置；GPT-2 使用可学习的归一化参数与偏置，
+在最后一个 Block 后还做一次 LayerNorm。
+
+真实模型的能力还取决于训练数据、优化预算和任务评测。
+教学例降低一条序列的损失，能验证计算与更新过程；
+参数的倍数不能直接换算成理解或回答问题的能力。
+现代模型还会替换其中的部件，见第~\ref*{intro:22d-modern-transformers}~章。
 
 \subsection{宽度、层数、头数分别在改变什么？}
 

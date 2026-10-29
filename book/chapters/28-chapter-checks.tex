@@ -103,7 +103,7 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 14 章}] \phantomsection\label{answer:21c-naive-attention}\textbf{\hyperref[check:21c-naive-attention]{Attention：从直接读取到 Q/K/V 分工}}\answercheckpage{21c-naive-attention}\par\nobreak
 \phantomsection\label{answer:21b-why-attention}
-\answerpiece{1}{手算}{先用第一行和各行做点积。}第一行 $(1,0,1)$，第三行 $(1,1,2)$，$S_{13}=S_{31}=\answerresult{1}$。
+\answerpiece{1}{手算}{先用第一行和各行做点积。}第一行 $(1,0,1)$，第三行 $(1,1,2)$，$S_{13}=S_{31}=\answerresult{1}$。Softmax 保持同一行的大小关系：第一行在位置 $1,3$ 并列最大；第二行 $(0,1,1)$ 在位置 $2,3$ 并列最大；第三行只有位置 $3$ 最大。
 \answerpiece{2}{预测}{分别写出两行 Softmax 的分母。}不必相等。$A_{13}=e/(2e+1)$，$A_{31}=e/(2e+e^2)$；虽然对应原始分数同为 $1$，每行 Softmax 的分母不同。
 \answerpiece{3}{找错}{先问 Query 和 Key 是否有独立投影。}零参数 $XX^\top$ 让 Query/Key 使用同样的输入向量，不能单独学“如何问”和“如何匹配”。
 \answerpiece{4}{定位}{先给 Q、K、V 分配查询、匹配、内容角色。}Query 发问、Key 用于匹配、Value 提供读取内容；$\vect q^\top K^\top:1\times3$，乘 $V$ 后输出 $1\times2$。

@@ -116,9 +116,17 @@
     "url": "https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json",
     "status": 200,
     "final_url": "https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json",
-    "checked_utc": "2026-10-25",
+    "checked_utc": "2026-10-29",
     "method": "Primary source content review: gpt2-config; see book/dated-claims.json for the reviewed scope",
-    "result": "已重新读取层数、头数与隐藏宽度"
+    "result": "已核对词表、位置范围、层数、头数、宽度与激活设置"
+  },
+  {
+    "url": "https://github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py",
+    "status": 200,
+    "final_url": "https://github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py",
+    "checked_utc": "2026-10-29",
+    "method": "Primary source content review: gpt2-config; fixed model.py implementation at c2dae27c1029770cea40978813f17a5fd545b883",
+    "result": "已核对 FFN 扩展比例、归一化、偏置与输出头共享，复算参数总数"
   },
   {
     "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json",

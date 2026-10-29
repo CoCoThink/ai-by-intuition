@@ -89,8 +89,9 @@ Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。
 两者都在减少干扰：前者一次求联立解，后者逐条修正当前读出。
-\hyperref[sec:modern-delta-rule]{现代架构章}已经展示 B 被修正、旧 Key A 受扰动；
-这里完整展开两种写入，并说明反复重访的作用；Gated DeltaNet 的遗忘门控就在调节旧记忆保留多少。
+\hyperref[sec:modern-delta-rule]{现代架构章}给出了残差写入的动机；
+这里完整展开两种写入，算出 B 被修正时旧 Key A 怎样受扰动，并说明反复重访的作用。
+Gated DeltaNet 的遗忘门控就在调节旧记忆保留多少。
 \end{idea}
 
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{交换写入次序的迁移题}

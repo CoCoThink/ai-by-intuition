@@ -5,11 +5,18 @@
 \asof{2026-10-25}{相对位置、归一化与缓存预算}
 
 
-先按顺序完成 RoPE、RMSNorm、GQA 和三维数值复核，再根据瓶颈选择后面的扩展专题。\par\smallskip
+\begin{boundarybox}[title={首次阅读：只走完这三步}]
+\begin{enumerate}[itemsep=1pt,topsep=2pt]
+\item \hyperref[sec:modern-rope]{RoPE}：算二维旋转例，理解相对位置怎样影响匹配。
+\item \hyperref[sec:modern-rmsnorm]{RMSNorm}：算 $(3,4)$ 的归一化，理解怎样控制数值尺度。
+\item \hyperref[sec:modern-gqa]{GQA}：看共享示意图，算缓存如何从 $12{,}800$ 减到 $3{,}200$ 个数。
+\end{enumerate}
+再读\hyperref[sec:modern-core-comparison]{三项改动的对照与适用条件}，完成紧随其后的\hyperref[check:22d-modern-transformers]{基础自测}，即可进入\hyperref[intro:23e-tech-judgement]{下一章}。
+标星推导、三维 Norm 复算与后面的专题均可按需回来读。
+\end{boundarybox}
 
-
-\subsection*{基础必读：位置、归一化与 KV 缓存}
 \subsection{必读 1：RoPE 怎样利用相对位置？}
+\label{sec:modern-rope}
 \phantomsection\label{concept:rope}
 
 经典 Transformer 可以把位置向量 $P_{\rm pos}$ 加在 Token 嵌入上：
@@ -43,7 +50,9 @@ $X_0=X_{\rm token}+P_{\rm pos}$。现在进一步问：同样的两个词整体�
 内容向量、角频率与位置取值相同，两次点积都为 $1/2$。
 \input{figures/rope-relative-rotation}
 
-对一般内容向量，用二维旋转矩阵把刚才的操作写全：
+\noindent\textbf{\texorpdfstring{{\symboliconfont ★}}{★} 选读推导：为什么一般向量也只留下位置差？}\par
+上面的算例已展示位置平移后的分数不变；下面把它写成一般公式。
+用二维旋转矩阵表示刚才的操作：
 \[
 R(\phi)=\begin{bmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{bmatrix}.
 \]
@@ -58,6 +67,7 @@ R(\phi)=\begin{bmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{bmatrix}.
 高维 RoPE 对多个特征对使用不同角频率，把多种距离尺度一起带入匹配。
 
 \subsection{必读 2：RMSNorm 为什么不减均值？}
+\label{sec:modern-rmsnorm}
 \phantomsection\label{concept:rmsnorm}
 
 \textbf{LayerNorm} 做了两件事：减均值，把中心移到零；再除以标准差，调整尺度。
@@ -85,10 +95,33 @@ RMSNorm 的两项则仍为正。RMSNorm 省去中心化、简化计算；
 LayerNorm/RMSNorm 回答前一个问题；Pre-Norm/Post-Norm 回答后一个问题，
 位置与残差路径见\hyperref[intro:22-transformer-architecture]{Block 章}。
 
+\begin{example}[breakable]
+\noindent\emph{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：只替换一次 Norm，核对三维数字}\par
+
+三维贯通模型在 Attention 前的第一行是
+$\vect x^\top=(1.30,0.05,-0.30)$。
+此前使用固定 $\gamma=1,\beta=0$ 的 LayerNorm：
+\[
+\operatorname{LN}(\vect x^\top)\approx(1.3833,-0.4368,-0.9464).
+\]
+如果\textbf{仅为了比较数值}，在同一输入上改算
+\[
+\operatorname{RMSNorm}(\vect x^\top)
+=\frac{\vect x^\top}{
+\sqrt{(1.30^2+0.05^2+(-0.30)^2)/3+10^{-5}}}
+\approx\answerresult{(1.6865,0.0649,-0.3892)}.
+\]
+两种归一化\textbf{同样输出 $1\times3$}，
+但 LayerNorm 先减均值、RMSNorm 不减均值，
+因此下一步 $Q=XW_Q$ 的输入数值会改变。
+上面只是\textbf{单组件数值对比}；
+真正替换架构后，要在相同训练设置和任务上检验收敛速度与输出质量。
+
+\end{example}
+
 \subsection{必读 3：GQA 怎样减少 KV 缓存？}
-\phantomsection\label{concept:mla}
+\label{sec:modern-gqa}
 \phantomsection\label{concept:mqa}
-\phantomsection\label{example:gqa-budget}
 \phantomsection\label{partq:architecture}
 
 标准 \conceptlink{multihead}{多头注意力}（MHA）可以为每个 Query 头保存自己的 Key/Value 头。
@@ -127,13 +160,14 @@ LayerNorm/RMSNorm 回答前一个问题；Pre-Norm/Post-Norm 回答后一个问�
  \draw[share] (qMQA\i.south)--(kQ.north);
 }
 \end{tikzpicture}
-\captionof{figure}{四个 Query 头的三种 K/V 共享方式：MHA 4 组、GQA 2 组、MQA 1 组；多头潜在注意力（MLA）是另一类潜在压缩思路}
+\captionof{figure}{四个 Query 头的三种 K/V 共享方式：MHA 4 组、GQA 2 组、MQA 1 组}
 \label{fig:mha-gqa-mqa}
 \end{center}
 \tagstructend
 
 
-为了比较缓存的\textbf{理论元素个数}，假设单层：
+图中用 $4$ 个 Query 头说明共享方式；下面改用 $8$ 个 Query 头，
+比较单层缓存的\textbf{理论元素个数}：
 上下文长度 $T=100$，每头维度 $d_k=8$，
 有 8 个 Query 头。如果 MHA 有 8 个 K/V 头：
 \[
@@ -153,54 +187,8 @@ LayerNorm/RMSNorm 回答前一个问题；Pre-Norm/Post-Norm 回答后一个问�
 
 \input{figures/gqa-cache-read}
 
-\textbf{多头潜在注意力}（Multi-head Latent Attention，MLA）
-由 \href{https://arxiv.org/abs/2405.04434}{DeepSeek-V2（arXiv:\allowbreak 2405.04434）}提出，
-把每个 Token 的 K/V 压缩成一条低秩潜在向量来缓存，走另一条路线；
-GQA 则直接减少独立 K/V 头数。选型时要比较质量和实际缓存字节数。
-
-\begin{example}[breakable]
-\noindent\emph{真实配置：Qwen2.5-0.5B 的 32K 缓存是多少？}\par
-它的公开配置为 $24$ 层、$14$ 个 Query 头、$2$ 个 KV 头，
-隐藏宽度 $896$，所以每头宽度 $896/14=64$。
-对单请求、每个 K/V 元素 $2$ 字节、完整保存所有位置的缓存，
-\[
-B_{\rm token}=2\text{(K/V)}\times24\times2\times64\times2
-=12{,}288\text{ 字节}=12\text{ KiB}.
-\]
-把 32K 明确定义成 $32{,}768$ 个位置，缓存本体为
-\[
-B_{32K}=12{,}288\times32{,}768=402{,}653{,}184\text{ 字节},
-\]
-即 $384$ MiB，约 $0.403$ 十进制 GB。
-保持其他条件不变，改成 $14$ 个 KV 头的 MHA，缓存为原来 $7$ 倍：
-$2{,}818{,}572{,}288$ 字节，约 $2.819$ GB。
-这是满长度 K/V 数据的估算，未计权重、分页碎片和运行时缓冲；
-批量中的多条请求分别计入其有效缓存位置。
-配置来源见附录 F；\texttt{scripts/cache\_budget\_demo.py} 从锁定配置复算。
-\end{example}
-
-\subsection{只替换一次 Norm：落回前面的三维数字}
-
-三维贯通模型在 Attention 前的第一行是
-$\vect x^\top=(1.30,0.05,-0.30)$。
-此前使用固定 $\gamma=1,\beta=0$ 的 LayerNorm：
-\[
-\operatorname{LN}(\vect x^\top)\approx(1.3833,-0.4368,-0.9464).
-\]
-如果\textbf{仅为了比较数值}，在同一输入上改算
-\[
-\operatorname{RMSNorm}(\vect x^\top)
-=\frac{\vect x^\top}{
-\sqrt{(1.30^2+0.05^2+(-0.30)^2)/3+10^{-5}}}
-\approx\answerresult{(1.6865,0.0649,-0.3892)}.
-\]
-两种归一化\textbf{同样输出 $1\times3$}，
-但 LayerNorm 先减均值、RMSNorm 不减均值，
-因此下一步 $Q=XW_Q$ 的输入数值会改变。
-上面只是\textbf{单组件数值对比}；
-真正替换架构后，要在相同训练设置和任务上检验收敛速度与输出质量。
-
-\subsection{读完三项必读，怎样比较架构？}
+\subsection{三项改动放回计算图，怎样比较？}
+\label{sec:modern-core-comparison}
 
 \begin{center}
 \small
@@ -210,16 +198,47 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 \toprule
 设计部件 & 你应追问的输入/输出 & 首先检查的权衡\\
 \midrule
-位置表示 & Q/K 如何感知相对位置？ & 长度外推、位置泛化\\
-归一化/残差 & 特征尺度和梯度怎样流动？ & 稳定性、训练成本\\
-逐位置 FFN & 中间层扩到多宽？如何激活？ & 参数量、计算量、表示能力\\
-MHA/MQA/GQA & K/V 头有多少？ & 缓存、质量、吞吐\\
-注意力模式 & 哪些 Token 彼此可见？ & 长程依赖、复杂度\\
+位置表示（RoPE） & Q/K 如何感知相对位置？ & 长度外推、位置泛化\\
+归一化（RMSNorm） & 一行特征怎样调整尺度？ & 数值稳定性、训练成本\\
+K/V 共享（GQA） & K/V 头有多少？ & 缓存、质量、吞吐\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\subsection{［复算］从公开配置文件对照两种模型}
+\begin{boundarybox}[title={适用条件：结构计数与实际性能}]
+上面的共享例给出缓存元素数；后面的专题还会计算字节数、激活专家数与可见位置对数。
+性能对照统一输入长度、批量、精度、硬件和目标质量，另测长程检索、吞吐与延迟；
+计数节省先解释瓶颈，实际收益由实现与负载决定。
+\end{boundarybox}
+
+\chapterchecktasks{22d-modern-transformers}{基础理解与复算}{
+\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}
+\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
+\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
+}
+
+
+\par\smallskip
+到这里，已经可以说明位置表示、数值尺度与 K/V 共享分别改变了什么。
+首次阅读可直接进入\hyperref[intro:23e-tech-judgement]{下一章：怎样判断新技术}；
+需要读模型配置或解决具体瓶颈时，再按下面的入口选读。
+
+\subsection*{按问题选择专题}
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}p{53mm}X@{}}
+\toprule
+现在想解决的问题 & 选读入口\\\midrule
+怎样读真实配置、计算缓存？ & \hyperref[sec:modern-config-budget]{公开配置、32K 缓存与 MLA 假设预算}\\
+怎样改变 FFN 的容量与计算？ & \hyperref[elective:architecture-extras]{SwiGLU 与 MoE}\\
+怎样减少长序列的访问或状态成本？ & \hyperref[sec:modern-sparse-access]{窗口与稀疏访问}；\hyperref[sec:modern-linear-state]{线性 Attention 与 Delta 概览}\\
+怎样查新术语、看新的读入与生成分工？ & \hyperref[sec:modern-term-index]{术语索引}；\hyperref[elective:causal-encoder-decoder]{因果编码器—解码器案例}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：公开配置与缓存预算}
+\label{sec:modern-config-budget}
 
 只凭宣传名称判断“用了哪些技术”容易出错。
 \texttt{scripts/config\_table.py} 读取带来源和固定修订号的
@@ -250,8 +269,54 @@ Qwen2.5-0.5B & 896 & 24 & 14/2 & RoPE，RMSNorm\\
 这张表只比较\textbf{结构元数据}；
 模型质量与推理速度需由独立基准测量。
 
-\subsection*{\texorpdfstring{{\symboliconfont ★}}{★} 选读：FFN、稀疏与线性状态的变体}
-\noindent\textcolor{muted}{以下按需选读；首次阅读可直接跳到章末自测。}\par
+\begin{example}[breakable]
+\phantomsection\label{example:gqa-budget}
+\noindent\emph{真实配置：Qwen2.5-0.5B 的 32K 缓存是多少？}\par
+它的公开配置为 $24$ 层、$14$ 个 Query 头、$2$ 个 KV 头，
+隐藏宽度 $896$，所以每头宽度 $896/14=64$。
+对单请求、每个 K/V 元素 $2$ 字节、完整保存所有位置的缓存，
+\[
+B_{\rm token}=2\text{(K/V)}\times24\times2\times64\times2
+=12{,}288\text{ 字节}=12\text{ KiB}.
+\]
+把 32K 明确定义成 $32{,}768$ 个位置，缓存本体为
+\[
+B_{32K}=12{,}288\times32{,}768=402{,}653{,}184\text{ 字节},
+\]
+即 $384$ MiB，约 $0.403$ 十进制 GB。
+保持其他条件不变，改成 $14$ 个 KV 头的 MHA，缓存为原来 $7$ 倍：
+$2{,}818{,}572{,}288$ 字节，约 $2.819$ GB。
+这是满长度 K/V 数据的估算，未计权重、分页碎片和运行时缓冲；
+批量中的多条请求分别计入其有效缓存位置。
+配置来源见附录 F；\texttt{scripts/cache\_budget\_demo.py} 从锁定配置复算。
+\end{example}
+
+\phantomsection\label{concept:mla}
+\textbf{多头潜在注意力}（Multi-head Latent Attention，MLA）
+由 \href{https://arxiv.org/abs/2405.04434}{DeepSeek-V2（arXiv:\allowbreak 2405.04434）}提出，
+把每个 Token 的 K/V 压缩成一条低秩潜在向量来缓存，走另一条路线；
+GQA 则直接减少独立 K/V 头数。选型时要比较质量和实际缓存字节数。
+
+\noindent\textbf{独立预算：MLA 式压缩能少存多少？}\par
+
+\localfixture{假设参数下的单层缓存；不对应特定发布模型}
+取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
+普通 MHA 的 Key/Value 缓存元素数为
+$2\times8\times4\times2=\answerresult{128}$。
+若 GQA 只保留 2 个 K/V 头：
+$2\times8\times2\times2=\answerresult{64}$。
+
+再假设一种 MLA 式压缩设计，每个 Token 缓存
+宽度为 $3$ 的共享潜在向量和宽度为 $2$ 的位置相关部分，
+则\textbf{这份假设}的缓存数为
+$8\times(3+2)=\answerresult{40}$。
+
+
+\begin{boundarybox}
+以上 $128/64/40$ 是\textbf{假设结构的缓存元素数}，与前面 Qwen 配置的字节预算分别计算。
+实际 MLA 还涉及位置分支、张量布局、投影与解码重建。
+\end{boundarybox}
+
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：SwiGLU 与 MoE 怎样改变 FFN？}
 \label{elective:architecture-extras}
 \phantomsection\label{concept:router}
@@ -324,8 +389,8 @@ MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 \end{warningbox}
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：长上下文与稀疏访问}
+\label{sec:modern-sparse-access}
 \phantomsection\label{concept:sliding-window-attention}
-\phantomsection\label{concept:linear-attention}
 \phantomsection\label{concept:sparse-attention}
 
 对长度为 $T$ 的普通全量 Attention，分数矩阵有 $T^2$ 个位置；
@@ -382,7 +447,27 @@ MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 判断扩展性时，先标明节约的是训练分数矩阵、解码 KV Cache，还是单 Token 计算。
 这三个对象分别计量，后面的例子据此对照。
 
+\noindent\textbf{换一个窗口宽度再核对：}\par
+对五个 Token，用窗口 $w=3$ 的\textbf{包含当前位置}的因果掩码，
+行是 Query 位置，列是 Key 位置；1 表示允许读取：
+\[
+\boxed{\begin{bmatrix}
+1&0&0&0&0\\
+1&1&0&0&0\\
+1&1&1&0&0\\
+0&1&1&1&0\\
+0&0&1&1&1
+\end{bmatrix}}.
+\]
+最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
+窗口掩码有 $1+2+3+3+3=\answerresult{12}$ 个可见位置对，
+全量因果掩码 则有 $15$ 个。
+这里的 $12/15$ 是可见位置对数。实际显存和运行时间仍取决于实现、精度、Kernel 与设备。
+运行 \texttt{python3 scripts/architecture\_demo.py} 可复算本章的 RoPE、MoE 权重、MLA 式缓存和窗口掩码。
+
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：线性 Attention 与 Delta 规则}
+\label{sec:modern-linear-state}
+\phantomsection\label{concept:linear-attention}
 
 \textbf{将历史压入固定形状的状态，就能逐步写入与读取。}
 沿用行向量约定，$\vect{k}_i^\top:1\times d_k$、$\vect{v}_i^\top:1\times d_v$。
@@ -405,38 +490,23 @@ $\vect{k}_2^\top=(0,1)$、$\vect{v}_2^\top=(0,3)$，
 \end{example}
 
 \phantomsection\label{sec:modern-delta-rule}
-\textbf{Key 不正交时，直接相加会串扰。}
-先写入 $\vect{k}_A^\top=(1,0)$、$\vect{v}_A^\top=(1,0)$，得 $\mathcal{M}_1=\vect{k}_A \vect{v}_A^\top=\begin{bmatrix}1&0\\0&0\end{bmatrix}$。
-再来 $\vect{k}_B^\top=(0.6,0.8)$、$\vect{v}_B^\top=(0,1)$：若直接加上 $\vect{k}_B \vect{v}_B^\top$，
-\[
-\mathcal{M}_2^{\rm add}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix},\qquad
-\vect{k}_B^\top\mathcal{M}_2^{\rm add}=(0.6,\,1),
-\]
-多出的 $0.6$ 来自旧记忆 A，因为 $\vect{k}_B^\top\vect{k}_A=0.6\ne0$。
-\textbf{Delta 规则}先读旧状态，只写入还没记住的残差：
-\[
-\vect{r}_t^\top=\vect{v}_t^\top-\vect{k}_t^\top\mathcal{M}_{t-1},\qquad
-\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta\, \vect{k}_t \vect{r}_t^\top}.
-\]
-取 $\eta=1$：$\vect{r}_B^\top=(0,1)-(0.6,0)=(-0.6,1)$，
-\[
-\mathcal{M}_2=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix},\qquad
-\vect{k}_B^\top\mathcal{M}_2=\boxed{(0,1)}.
-\]
-B 的读出被精确修正，但旧 A 的读出变成 $\vect{k}_A^\top\mathcal{M}_2=(0.64,0.6)$，误差约 $0.700$。
-作为对照，从同一个“只写好 A”的 $\mathcal{M}_1$ 出发，直接相加写入 B 时 A 的误差为 $0.600$。
-修正当前 Key 并不等于保住所有旧记忆。Gated DeltaNet 把残差写入与遗忘门控结合。
-完整外积展开与反复重访的收敛过程，
-\hyperref[part:memory]{联想记忆部分}用外积视角再算一遍（可选延伸）。
+Key 不正交时，新外积会改变旧 Key 的读出，这叫\textbf{串扰}。
+Delta 规则先用当前状态读一次，再把“目标 Value 减去已有读出”的残差写入，
+而不是无条件追加完整 Value；Gated DeltaNet 还结合了控制旧状态保留量的门控。
+残差写入针对当前 Key 修正误差，也可能扰动其他 Key。
 
+要逐项核对这件事，转到\hyperref[concept:delta-rule]{联想记忆部分的 Delta 写入}：
+那里用同一组二维 Key/Value 完整比较直接累加、残差写入和反复重访，
+并给出旧记忆误差 $0.600$ 与 $0.700$ 的对照。
+运行 \texttt{python3 scripts/memory\_demo.py} 可复算。
 
 \begin{boundarybox}
-这里展示线性状态的最小算例。标准 Softmax Attention 还对每行权重归一化；
-线性变体的特征映射、归一化与遗忘规则会改变输出。
-Gated DeltaNet 的完整算法还要指定门控与参数化，本文只展示残差写入的动机。
+这里的最小线性状态保留了累计幅度；标准 Softmax Attention 则对每行权重归一化。
+线性变体的特征映射、归一化、遗忘门控与参数化会改变输出，具体模型要按完整公式比较。
 \end{boundarybox}
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读索引：其他现代架构术语}
+\label{sec:modern-term-index}
 
 以 GPT-2 类 Decoder-only Transformer 为坐标系，按被替换的部件认识新设计。
 Dense 使用相关稠密计算；稀疏 Attention 选择位置，稀疏 MoE 选择专家。
@@ -491,64 +561,9 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 原始翻译模型的编码器双向读取整句源文；这里的编码器冠以“因果”，读结构图时先核对它的可见范围。
 按本章的问法，它替换的是“每层同时负责读入与生成”的统一堆叠；
 首先检查 KV Cache 来自哪一层、预填充与解码各激活多少参数。
-这些是厂商公布的结构描述，质量与速度需按本章末的条件另行对照。
-
-\subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：MLA 缓存与窗口}
-
-\localfixture{假设参数下的单层缓存与五位置窗口；不对应特定发布模型}
-取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
-普通 MHA 的 Key/Value 缓存元素数为
-$2\times8\times4\times2=\answerresult{128}$。
-若 GQA 只保留 2 个 K/V 头：
-$2\times8\times2\times2=\answerresult{64}$。
-
-再假设一种 MLA 式压缩设计，每个 Token 缓存
-宽度为 $3$ 的共享潜在向量和宽度为 $2$ 的位置相关部分，
-则\textbf{这份假设}的缓存数为
-$8\times(3+2)=\answerresult{40}$。
-
-
-对五个 Token，用窗口 $w=3$ 的\textbf{包含当前位置}的因果掩码，
-行是 Query 位置，列是 Key 位置；1 表示允许读取：
-\[
-\boxed{\begin{bmatrix}
-1&0&0&0&0\\
-1&1&0&0&0\\
-1&1&1&0&0\\
-0&1&1&1&0\\
-0&0&1&1&1
-\end{bmatrix}}.
-\]
-最后一个 Token 只能读取位置 3、4、5（这里位置从 1 编号）。
-窗口掩码有 $1+2+3+3+3=\answerresult{12}$ 个可见位置对，
-全量因果掩码 则有 $15$ 个。
-\begin{boundarybox}
-\textbf{计算口径：}以上 $128/64/40$ 是\textbf{示例结构的缓存元素数}；
-实际 MLA 还涉及位置分支、张量布局、投影与解码重建。
-掩码的 $12/15$ 是\textbf{可见位置对数}；
-实际显存和运行时间还取决于实现、数据类型、Kernel 与设备。
-\end{boundarybox}
-
-\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
-运行 \texttt{python3 scripts/architecture\_demo.py}
-可以检查 RoPE 平移例、MoE Top-2 权重、缓存元素数与 $5\times5$ 掩码的 12 个可见位置；
-\texttt{python3 scripts/memory\_demo.py} 复算上文的串扰与 Delta 写入。
-
-
-\begin{boundarybox}[title={适用条件：结构计数与实际性能}]
-本章的缓存字节数、激活专家数与位置对数按给定配置计算。
-性能对照统一输入长度、批量、精度、硬件和目标质量，另测长程检索、吞吐与延迟；
-计数节省先解释瓶颈，实际收益由实现与负载决定。
-\end{boundarybox}
-
-\chapterchecktasks{22d-modern-transformers}{理解与复算}{
-\item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}
-\item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
-\item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
-}
-
+这些是厂商公布的结构描述，质量与速度需按\hyperref[sec:modern-core-comparison]{基础部分的适用条件}另行对照。
 
 \par\smallskip
-现代 Transformer 在位置表示、数值尺度、参数使用方式和上下文访问方式上提供了不同选择。
-判断一项技术，先问它解决了什么已知问题，在哪种计算或数据条件下有收益，付出了什么代价。
-下一章从这些具体选择中抽离出来，讨论怎样用实验、来源与适用条件评价任何新的模型架构或 Agent 技术。
+这些专题分别改动参数使用、上下文访问或读入与生成的分工。
+回到\hyperref[sec:modern-core-comparison]{基础部分的三项对照}，仍要先问解决了什么问题、在什么条件下有收益、付出了什么代价。
+下一章把这些问法整理成通用的技术判断步骤。

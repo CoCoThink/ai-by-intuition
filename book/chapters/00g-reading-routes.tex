@@ -5,13 +5,13 @@
 \setlength{\parskip}{3pt}
 本书把学习、矩阵、上下文读取和生成接成一条路线，再扩展到助手系统；视觉输入与联想记忆是主线之后的两条扩展路径。
 先看每步的输入、输出和用途，再追踪矩阵元素。\par
-每章末的“读完自测”用于读完后立即检查本章的核心理解；附录 C 的 C 题按需选做，用来换数据、做迁移或挑战。跨章节的 R 题放在各部分收尾，用于累积复习。\par
+各章的“读完自测”用于检查核心理解；附录 C 的 C 题按需选做，用来换数据、做迁移或挑战。跨章节的 R 题放在各部分收尾，用于累积复习。\par
 \tagpdfsetup{table/header-rows={1}}
 \noindent\begin{tabularx}{\linewidth}{@{}p{12mm}p{65mm}X@{}}
 \toprule
 路线 & 章节与阅读预算 & 怎样读\\\midrule
 速读 & \routech{00-functions}--\routech{16a-gradient-descent}、\routech{01-vectors}--\routech{10-mlp}、\routech{20a-tokenizer}--\routech{21a-context-gap}、\routech{21c-naive-attention}--\routech{11-softmax-memory}、\routech{22-transformer-architecture}--\routech{23-llm-systems}、\routech{23aa-pretraining-icl}、\routech{23d-agent-systems}--\routech{23d-agent-protocols}；约 80 页 & 读导入、关键计算与收束；跳过{\symboliconfont ★}选读与复算推导\\
-标准 & \routech{00-functions}--\routech{23e-tech-judgement}；约 135 页 & 顺序读并做自测；首读可跳过原论文对照、GPT-2 追踪及现代架构{\symboliconfont ★}专题\\
+标准 & \routech{00-functions}--\routech{23e-tech-judgement}；约 135 页 & 顺序读并做自测；现代架构读完\hyperref[sec:modern-core-comparison]{三项基础与自测}即可继续，{\symboliconfont ★}专题按需读\\
 动手 & \routech{16-loss-gradient}--\routech{17-backpropagation}、\routech{01-vectors}--\routech{10-mlp}、\routech{20c-classification-loss}--\routech{20-embeddings}、\routech{21b-why-attention}--\routech{22c-language-training}、\routech{23aa-pretraining-icl}--\routech{23cc-test-time-compute}，\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}}；约 95 页 & 先算二维迷你版，再跑三维训练；选练 C 题，按 R 题跨章复习\\
 \bottomrule
 \end{tabularx}\par
@@ -40,7 +40,7 @@
 {\symboliconfont ★}选读 & 首读可跳过；小节目录在 PDF 书签中展开\\
 \bottomrule
 \end{tabularx}\par
-章末自测按学习目标设置题数，{\symboliconfont ★}题可选做；题号、提示与解答共用一行入口，电子版可双向跳转。
+自测按学习目标设置题数，{\symboliconfont ★}题可选做；题号、提示与解答共用一行入口，电子版可双向跳转。
 章节按内容收束，部分末章与部分复习衔接。
 
 图中颜色只区分角色（如 Q、K、V），同时保留标签、线型与标记，黑白打印也能分辨；色彩表见第~\pageref*{app:color-semantics}~页。

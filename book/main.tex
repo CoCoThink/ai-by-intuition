@@ -230,8 +230,13 @@
 % Plain core formulas: reserve visible boxing for Appendix A's mathematical quick reference.
 \let\bookboxed\boxed
 \renewcommand{\boxed}[1]{#1}
-% Include the enlarged title and divider in the one-third opening allowance.
-\newcommand{\chapterrule}{\Needspace{.40\textheight}\par\medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak}
+% Reserve the chapter opening first; Needspace may move it to a fresh page.
+% A fresh page already has the running-head rule. Only separate chapters
+% when earlier body content remains on the same page.
+\newcommand{\chapterrule}{\Needspace{.40\textheight}\par%
+  \ifdim\pagetotal>0pt%
+    \medskip\noindent{\color{linegray}\rule{\linewidth}{.55pt}}\par\nobreak%
+  \fi}
 \begin{document}
 \thispagestyle{empty}
 \vspace*{7mm}

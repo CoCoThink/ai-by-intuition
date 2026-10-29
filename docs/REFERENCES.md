@@ -20,7 +20,8 @@
 | [modelcontextprotocol.io/specification](https://modelcontextprotocol.io/specification) | 2026-10-25 | 已核对当前入口指向 2026-07-28 版 |
 | [a2a-protocol.org/latest/](https://a2a-protocol.org/latest/) | 2026-10-24 | 链接可访问 |
 | [huggingface.co/openai-community/gpt2](https://huggingface.co/openai-community/gpt2) | 2026-10-24 | 链接可访问 |
-| [huggingface.co/openai-community/gpt2/blob/607a30d/config.json](https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json) | 2026-10-25 | 已重新读取层数、头数与隐藏宽度 |
+| [huggingface.co/openai-community/gpt2/blob/607a30d/config.json](https://huggingface.co/openai-community/gpt2/blob/607a30d/config.json) | 2026-10-29 | 已核对词表、位置范围、层数、头数、宽度与激活设置 |
+| [github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py](https://github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py) | 2026-10-29 | 已核对 FFN 扩展比例、归一化、偏置与输出头共享，复算参数总数 |
 | [huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json](https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json) | 2026-10-25 | 已重新读取层数、Q/KV 头数与隐藏宽度 |
 | [arxiv.org/abs/2010.11929](https://arxiv.org/abs/2010.11929) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2505.09388](https://arxiv.org/abs/2505.09388) | 2026-10-25 | 已核对 Dense/MoE 家族的公开描述 |

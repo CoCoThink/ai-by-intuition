@@ -335,6 +335,9 @@ def check_reproduction_and_definitions(reader,labels):
         'concept:qk-norm':('QK-Norm','尺度'),
         'concept:cross-correlation':('互相关','翻转'),
         'concept:gqa':('GQA','共享一组'),
+        'concept:mla':('多头潜在注意力','潜在向量'),
+        'concept:linear-attention':('历史压入','外积'),
+        'example:gqa-budget':('真实配置','Qwen2.5-0.5B'),
     }
     for label,words in expected.items():
         dest=reader.named_destinations[labels[label][3]]
@@ -364,7 +367,69 @@ def check_reproduction_and_definitions(reader,labels):
                     failures.append(f'Code revision differs from PDF copyright source: {suffix}: {sha}')
         elif '编译来源为Git提交' in copyright_text:
             failures.append(f'PDF has Git provenance but lacks a matching versioned code link: {suffix}')
-    if not failures:print('Reproduction/lookup QA: Notebook/script SHAs match copyright; nine actual destinations contain their definitions')
+    if not failures:print(f'Reproduction/lookup QA: Notebook/script SHAs match copyright; {len(expected)} actual destinations contain their definitions')
+    return failures
+
+
+def chapter_divider_positions(reader,page):
+    """Find the actual full-width .55pt chapter rules in PDF coordinates.
+
+    Existing bounds and whitespace gates accepted a redundant divider below
+    the running-head rule. A source label or a page number cannot reveal it.
+    """
+    from pypdf.generic import ContentStream
+    matrix=(1,0,0,1,0,0);width=1;stack=[];point=None;lines=[];found=[]
+    def transform(x,y):
+        a,b,c,d,e,f=matrix
+        return a*x+c*y+e,b*x+d*y+f
+    for values,op in ContentStream(page.get_contents(),reader).operations:
+        if op==b'q':stack.append((matrix,width))
+        elif op==b'Q':matrix,width=stack.pop()
+        elif op==b'cm':
+            a,b,c,d,e,f=matrix;aa,bb,cc,dd,ee,ff=map(float,values)
+            matrix=(a*aa+c*bb,b*aa+d*bb,a*cc+c*dd,b*cc+d*dd,a*ee+c*ff+e,b*ee+d*ff+f)
+        elif op==b'w':width=float(values[0])
+        elif op==b'm':point=transform(*map(float,values));lines=[]
+        elif op==b'l':
+            end=transform(*map(float,values))
+            if point is not None:lines.append((point,end))
+            point=end
+        elif op in (b'S',b's'):
+            for (x0,y0),(x1,y1) in lines:
+                if abs(width-.548)<.01 and abs(y0-y1)<.1 and abs(x1-x0)>.7*float(page.mediabox.width):
+                    found.append(float(page.mediabox.height)-(y0+y1)/2)
+            lines=[]
+        elif op in (b'n',b'f',b'f*',b'B',b'B*'):lines=[]
+    return found
+
+
+def check_chapter_dividers(reader,labels):
+    failures=[];seen=set();top_count=0;mixed_count=0
+    for label,fields in labels.items():
+        if not label.startswith('intro:') or not re.fullmatch(r'section\.\d+',fields[3]):continue
+        target=fields[3]
+        if target in seen:continue
+        seen.add(target)
+        dest=reader.named_destinations[target];page_number=reader.get_destination_page_number(dest)
+        page=reader.pages[page_number];heading_top=float(page.mediabox.height)-float(dest.top)
+        rules=chapter_divider_positions(reader,page)
+        above=[y for y in rules if y<=heading_top+2]
+        body_baselines=[]
+        def collect(text,cm,tm,font,size):
+            if text.strip():body_baselines.append(float(page.mediabox.height)-(cm[1]*tm[4]+cm[3]*tm[5]+cm[5]))
+        page.extract_text(visitor_text=collect)
+        # Use actual earlier body text, not a heading-height threshold: the
+        # redundant rule itself used to push a fresh-page heading downward.
+        # The 22mm text margin is the geometry setting in book/main.tex.
+        mixed=any(22*72/25.4-1<=y<heading_top-2 for y in body_baselines)
+        if not mixed:
+            top_count+=1
+            if above:failures.append(f'{label}: redundant chapter divider above page-opening heading on page {page_number+1}')
+        else:
+            mixed_count+=1
+            if not any(0<=heading_top-y<=60 for y in above):
+                failures.append(f'{label}: missing divider before mixed-page chapter heading on page {page_number+1}')
+    if not failures:print(f'Chapter divider QA: {top_count} page-opening headings have no duplicate rule; {mixed_count} mixed-page headings retain separation')
     return failures
 
 
@@ -402,6 +467,7 @@ def check_pdf(path, aux, used):
             failures.append(f'Merged compatibility link resolves to a different destination: {primary}/{legacy}')
     failures.extend(check_exercise_destinations(reader,path,labels))
     failures.extend(check_reproduction_and_definitions(reader,labels))
+    failures.extend(check_chapter_dividers(reader,labels))
     check_toc_folios(reader,aux,labels)
     failures.extend(check_forward_appendix_link(reader,path,labels))
     failures.extend(contour_label_errors(reader,path,labels))
