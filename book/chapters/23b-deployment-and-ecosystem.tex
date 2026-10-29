@@ -62,20 +62,35 @@ FP32 表示每个数用 $32$ bit，也就是 $4$ 字节保存。
 激活、临时缓冲和额外权重副本需另计。
 多张设备共同完成训练，叫作\textbf{分布式训练}。怎样分，要先看遇到哪个瓶颈。
 
-先判断瓶颈是单卡存储，还是样本计算，再按表选择分摊对象；这些方法也可以组合使用。
+\textbf{放得下，但样本算得慢：先分数据。}
+两张卡各自保存完整模型，各处理一半样本，再汇总梯度、更新为相同的新权重。
+等大批次的梯度取平均，就对应两批合成的 Mini-batch 梯度。
+这叫\textbf{数据并行}：分摊了样本计算，朴素方案每卡仍需上述约 $16$ GB 的训练状态，激活另计。
+
+\textbf{放不下：看能把哪部分拆开。}
+若主要是权重、梯度和优化器状态占空间，可以把它们分片，计算需要时再通信取用，
+这叫\textbf{状态分片}。若四份状态全部均分到两卡，理想的持久存储约为每卡 $8$ GB；
+激活、临时聚合和通信缓冲仍要另外预留，不能据此判断 $8$ GB 显卡就能训练。
+也可以把四层网络的前两层放卡 1、后两层放卡 2，传递中间激活，
+这叫\textbf{流水线并行}；多份微批次依次进入，才能让不同阶段同时工作。
+若连一层的大矩阵都需要拆，则可把一个 $4\times4$ 权重按输出列分成两张 $4\times2$ 表，
+两卡分别算一半输出，再拼接，这叫\textbf{张量并行}。
+
+\input{figures/distributed-two-devices}
 
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{35mm}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}p{31mm}p{35mm}>{\raggedright\arraybackslash}X@{}}
 \toprule
-做法 & 分摊的对象及主要代价\\\midrule
-数据并行（Data Parallelism） & 不同设备处理不同样本批次，再同步或归约梯度；朴素方案每卡仍保留完整权重\\
-张量并行（Tensor Parallelism） & 把一层的大矩阵与计算拆到多设备；层内通信频繁\\
-流水线并行（Pipeline Parallelism） & 不同设备保存不同层；微批次填充流水线，需处理流水线空泡\\
-状态分片（如 ZeRO/FSDP） & 分摊优化器状态、梯度乃至权重；以设备间通信换显存\\
+做法 & 主要分摊对象 & 主要代价\\\midrule
+数据并行 & 样本计算 & 需同步梯度，完整模型仍需放得下\\
+状态分片 & 优化器状态、梯度、权重 & 按分片范围通信取用与归约，如 ZeRO/FSDP\\
+流水线并行 & 完整层 & 传递激活，等待会形成空泡\\
+张量并行 & 一层中的矩阵与计算 & 层内需要频繁通信\\
 \bottomrule
 \end{tabularx}
 \end{center}
+先找到瓶颈，再选择分摊对象；实际训练可以组合使用这些办法。
 
 \phantomsection\label{concept:mixed-precision}
 \textbf{一个数占多少空间，也可以调整。}

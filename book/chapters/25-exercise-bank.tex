@@ -185,7 +185,7 @@ $\partial L/\partial W_V$ 的 $2\times2$ 数值矩阵。
 \item[\textbf{C-064.}] \phantomsection\label{exercise:C-064}\label{exercise:C4-28}\exercisemeta{标准}{5}{\hyperref[solution:C-064]{解答第~\pageref*{solution:C-064}~页}}\textbf{预测：}若训练一步后位置 $2$ 的贪心标签仍错，但正确类概率由 $0.05$ 升到 $0.07$，单位置交叉熵是升还是降？
 \item[\textbf{C-065.}] \phantomsection\label{exercise:C-065}\label{exercise:C4-29}\exercisemeta{标准}{8}{\hyperref[solution:C-065]{解答第~\pageref*{solution:C-065}~页}}\textbf{诊断：}训练 20 步后，“开了”读“花”的权重 $A_{3,2}$ 由 $0.241768$ 升到 $0.325602$。同学据此说“Q/K 学会了让‘开了’去找‘花’”。用 \texttt{scripts/teaching\_trace.py} 的哪两组对照可以检验这一说法？结果说明了什么？
 \item[\textbf{C-066.}] \phantomsection\label{exercise:C-066}\exercisemeta{标准}{10}{\hyperref[solution:C-066]{解答第~\pageref*{solution:C-066}~页}}\textbf{【实验】}先预测：冻结输出头 $W_{\rm out}$、其余参数照常训练 20 步，平均损失还会下降吗？三个位置的贪心预测是否一定都对？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-freeze Wout} 核对。
-\item[\textbf{C-067.}] \phantomsection\label{exercise:C-067}\exercisemeta{标准}{10}{\hyperref[solution:C-067]{解答第~\pageref*{solution:C-067}~页}}\textbf{【实验】}先预测：把学习率从 $0.04$ 依次改成 $0.2$、$1.0$、$3.0$，各训练 20 步，最终平均损失和三个位置的贪心预测会怎样？哪一个会发散？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-lr 0.2}（及另两个值）核对，并用第~\ref*{intro:16a-gradient-descent}~章的学习率稳定区间解释。
+\item[\textbf{C-067.}] \phantomsection\label{exercise:C-067}\exercisemeta{标准}{10}{\hyperref[solution:C-067]{解答第~\pageref*{solution:C-067}~页}}\textbf{【实验】}先预测：把学习率从 $0.04$ 依次改成 $0.2$、$1.0$、$3.0$，各训练 20 步，最终平均损失和三个位置的贪心预测会怎样？哪一个会发散？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-lr 0.2}（及另两个值）核对，联系第~\ref*{intro:16a-gradient-descent}~章的振荡与发散现象解释：为什么步长过大可能失稳？这些实验能确定本网络的完整稳定区间吗？
 \item[\textbf{C-068.}] \phantomsection\label{exercise:C-068}\exercisemeta{标准}{10}{\hyperref[solution:C-068]{解答第~\pageref*{solution:C-068}~页}}\textbf{【实验】}把训练句换成“春天 开了 花 。”：输入 ID $[2,5,4]$、目标 $[5,4,3]$，初始参数与学习率不变。先预测：初始平均损失比主例的 $1.798430$ 高还是低？训练 20 步后三个位置的贪心预测都会对吗？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-ids 2,5,4} 核对。
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -285,7 +285,7 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 \item[\textbf{C-099.}] \phantomsection\label{exercise:C-099}\exercisemeta{标准}{8}{\hyperref[solution:C-099]{解答第~\pageref*{solution:C-099}~页}}\textbf{【估算】} 两个模型在同一套 $500$ 题基准上分别答对 $81.0\%$ 与 $80.2\%$。按各题独立的二项近似，单个准确率的标准误约是多少？$0.8$ 个百分点的差值能否说明前者更好？还需排查什么？
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:19-cnn}~章 · 为什么图片不能只靠大矩阵？从局部特征到 CNN\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:19-cnn}~页）}}
+\subsubsection*{第~\ref*{intro:19-cnn}~章 · CNN：怎样用局部连接与参数共享处理图片？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:19-cnn}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-100.}] \phantomsection\label{exercise:C-100}\label{exercise:C1-6}\exercisemeta{基础}{3}{\hyperref[solution:C-100]{解答第~\pageref*{solution:C-100}~页}}\phantomsection\label{exercise:linked-19-cnn}  \textbf{【手算】} $4\times4$ 图片上使用 $2\times2$ 卷积核，stride 为 1、padding 为 0，输出图像宽高是多少？如果卷积核只有一个输入通道和一个输出通道，权重有几个？
 \item[\textbf{C-101.}] \phantomsection\label{exercise:C-101}\label{exercise:C4-33}\exercisemeta{标准}{5}{\hyperref[solution:C-101]{解答第~\pageref*{solution:C-101}~页}}\textbf{方案：}图像分类时，何时可能使用池化减小空间分辨率？指出它可能丢失的一类细节信息。

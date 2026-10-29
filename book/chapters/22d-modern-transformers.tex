@@ -469,25 +469,55 @@ MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 \label{sec:modern-linear-state}
 \phantomsection\label{concept:linear-attention}
 
-\textbf{将历史压入固定形状的状态，就能逐步写入与读取。}
-沿用行向量约定，$\vect{k}_i^\top:1\times d_k$、$\vect{v}_i^\top:1\times d_v$。
-每来一对 Key--Value，就把外积 $\vect{k}_i \vect{v}_i^\top$（$d_k\times d_v$）加进状态：
-\[
-\underbrace{\mathcal{M}_t}_{d_k\times d_v}
-=\sum_{i\le t}\vect{k}_i \vect{v}_i^\top,\qquad
-\underbrace{\vect{y}_t^\top}_{1\times d_v}=\vect{q}_t^\top\mathcal{M}_t.
-\]
-查询时只读这个固定大小的状态，长度增加也不必保存每个位置的 K/V。
+KV 缓存随历史增长，每次读取也要处理更多位置。
+能否把历史先汇成一张固定大小的表，让新查询只读这张表？
+先改变一条规则：\textbf{暂时不经过 Softmax，直接用点积分数加权 Value}，
+看看乘法能否重新分组。下面的数字是给定数据，不做参数训练。
 
 \begin{example}
-\noindent\emph{两条关联如何汇成一个状态}\par
+\noindent\emph{先按两条记录读取，再尝试合并}\par
 \localfixture{二维行向量状态，独立于三维 Transformer 贯通参数}
-若 $\vect{k}_1^\top=(1,0)$、$\vect{v}_1^\top=(2,0)$，
-$\vect{k}_2^\top=(0,1)$、$\vect{v}_2^\top=(0,3)$，
-则外积相加得到 $\mathcal{M}_2=\begin{bmatrix}2&0\\0&3\end{bmatrix}$。
-用 $\vect{q}_2^\top=(1,1)$ 查询，$\vect{q}_2^\top\mathcal{M}_2=(2,3)$；
-两条 Value 的贡献直接相加，保留了累计幅度。
+取 $\vect q^\top=(1,1)$、
+$\vect k_1^\top=(1,0)$、$\vect v_1^\top=(2,0)$、
+$\vect k_2^\top=(0,1)$、$\vect v_2^\top=(0,3)$。
+两个点积分数为 $(1,1)$，所以直接读取为
+\[
+(1,1)\begin{bmatrix}2&0\\0&3\end{bmatrix}=(2,3).
+\]
+另一条路是先把每条 Key--Value 对贡献的表加起来：
+\[
+\mathcal{M}_2
+=\begin{bmatrix}1\\0\end{bmatrix}(2,0)
++\begin{bmatrix}0\\1\end{bmatrix}(0,3)
+=\begin{bmatrix}2&0\\0&0\end{bmatrix}
++\begin{bmatrix}0&0\\0&3\end{bmatrix}
+=\begin{bmatrix}2&0\\0&3\end{bmatrix}.
+\]
+此后只需 $\vect q^\top\mathcal{M}_2=(2,3)$，结果相同。
+这种“Key 列乘 Value 行”叫作\textbf{外积}，其逐项写法在
+\hyperref[intro:04-key-value-outer-product]{联想记忆部分}继续展开。
 \end{example}
+
+为什么能合并？把 Key、Value 按行排成 $K,V$，结合律给出
+\[
+\underbrace{(\vect q^\top K^\top)V}_{\text{先得到各位置分数，再加权}}
+=\underbrace{\vect q^\top(K^\top V)}_{\text{先合并历史，再查询}}.
+\]
+沿用行向量约定，$\vect k_i^\top:1\times d_k$、$\vect v_i^\top:1\times d_v$，
+于是状态与逐步更新式为
+\[
+\mathcal{M}_t=\sum_{i\le t}\vect k_i\vect v_i^\top
+=\mathcal{M}_{t-1}+\vect k_t\vect v_t^\top,
+\qquad \vect y_t^\top=\vect q_t^\top\mathcal{M}_t.
+\]
+状态始终是 $d_k\times d_v$，每步写入、读取的乘加规模不随历史长度增加。
+固定特征维度时，处理 $T$ 个位置的这部分总工作量随 $T$ 线性增长，
+这就是此处“线性”的含义；实际速度还受维度、实现和设备影响。
+
+\textbf{改变读取规则，也改变了输出。}
+同例若使用标准 Softmax，$(1,1)$ 变成权重 $(0.5,0.5)$，
+输出便为 $(1,1.5)$，而非 $(2,3)$。
+标准 Softmax 的归一化依赖当前查询，不能按上面的结合律直接预先合并成 $K^\top V$。
 
 \phantomsection\label{sec:modern-delta-rule}
 Key 不正交时，新外积会改变旧 Key 的读出，这叫\textbf{串扰}。

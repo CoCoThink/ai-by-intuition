@@ -2,7 +2,7 @@
 % The box must stay unbreakable: inside this minipage a breakable tcolorbox
 % still splits against \pagegoal-\pagetotal, and the stacked parts overlap.
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={三条二维向量按行放置形成三乘二矩阵，转置后按列排列得到二乘三矩阵}}
+\tagstructbegin{tag=Figure,alttext={文章 A、B、C 的特征按行排成三乘二矩阵 K，转置后成为二乘三矩阵，每列仍对应同一篇文章}}
 \begin{tcolorbox}[
   enhanced,breakable=false,colback=paper,colframe=linegray,
   boxrule=.7pt,arc=2mm,left=3mm,right=3mm,top=3mm,bottom=3mm,
@@ -10,8 +10,8 @@
   title={图解：同一批向量，可以按行排，也可以按列排}
 ]
 \small
-这里先不谈 Attention。假设有三条二维向量：
-$(1,0)$、$(0,1)$、$(1,1)$。
+沿用文章 A、B、C：
+$(0.8,0.6)$、$(1,0)$、$(0,1)$。
 \textbf{每种底色始终表示同一条向量}，转置只改变行列方向，不改变数字。
 
 \vspace{1.5mm}
@@ -26,12 +26,12 @@ $(1,0)$、$(0,1)$、$(1,1)$。
       (\c-1,1-\r) rectangle (\c,-\r);
   }
 }
-\node at (.5,-.5){\sffamily 1}; \node at (1.5,-.5){\sffamily 0};
-\node at (.5,-1.5){\sffamily 0}; \node at (1.5,-1.5){\sffamily 1};
-\node at (.5,-2.5){\sffamily 1}; \node at (1.5,-2.5){\sffamily 1};
+\node at (.5,-.5){\sffamily 0.8}; \node at (1.5,-.5){\sffamily 0.6};
+\node at (.5,-1.5){\sffamily 1}; \node at (1.5,-1.5){\sffamily 0};
+\node at (.5,-2.5){\sffamily 0}; \node at (1.5,-2.5){\sffamily 1};
 \end{tikzpicture}
 \\[1mm]
-$A:\ 3\times2$\\[-1mm]
+$K:\ 3\times2$\\[-1mm]
 {\footnotesize 每行一条向量}
 \end{minipage}%
 \begin{minipage}[t]{.49\linewidth}
@@ -44,17 +44,17 @@ $A:\ 3\times2$\\[-1mm]
       (\c-1,1-\r) rectangle (\c,-\r);
   }
 }
-\node at (.5,-.5){\sffamily 1}; \node at (1.5,-.5){\sffamily 0};
-\node at (2.5,-.5){\sffamily 1};
-\node at (.5,-1.5){\sffamily 0}; \node at (1.5,-1.5){\sffamily 1};
+\node at (.5,-.5){\sffamily 0.8}; \node at (1.5,-.5){\sffamily 1};
+\node at (2.5,-.5){\sffamily 0};
+\node at (.5,-1.5){\sffamily 0.6}; \node at (1.5,-1.5){\sffamily 0};
 \node at (2.5,-1.5){\sffamily 1};
 \end{tikzpicture}
 \\[1mm]
-$A^\top:\ 2\times3$\\[-1mm]
+$K^\top:\ 2\times3$\\[-1mm]
 {\footnotesize 每列一条向量}
 \end{minipage}
 \[
-A^\top=\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}.
+K^\top=\begin{bmatrix}0.8&1&0\\0.6&0&1\end{bmatrix}.
 \]
 
 \textbf{先看方向，再检查形状。}

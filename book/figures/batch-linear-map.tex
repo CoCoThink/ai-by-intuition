@@ -1,19 +1,19 @@
-\tagstructbegin{tag=Figure,alttext={三行输入共享一张二乘三权重矩阵：第一行一零得到一三零，第二行零一得到二负一一，第三行一一得到三二一。批量乘法一次排出三行结果，各行之间没有读取。}}
+\tagstructbegin{tag=Figure,alttext={三行输入共享本章第一层二乘三权重矩阵：二负一得到二负一一，一负二得到一负二负一，一一得到一一二。图中尚未应用 ReLU。批量乘法一次排出三行结果，各行之间没有读取。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,x=1mm,y=1mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=paper,align=center,font=\small,text width=30mm,minimum height=10mm}]
-\node[n,fill=paper] (x1) at (0,0) {$(1,0)$};
-\node[n,fill=linegray!15] (x2) at (0,-15) {$(0,1)$};
+\node[n,fill=paper] (x1) at (0,0) {$(2,-1)$};
+\node[n,fill=linegray!15] (x2) at (0,-15) {$(1,-2)$};
 \node[n,fill=linegray!25] (x3) at (0,-30) {$(1,1)$};
-\node[n,text width=40mm,minimum height=32mm] (w) at (53,-15) {共享 $W:2\times3$\\[2mm]$\begin{bmatrix}1&3&0\\2&-1&1\end{bmatrix}$};
-\node[n,fill=paper] (y1) at (107,0) {$(1,3,0)$};
-\node[n,fill=linegray!15] (y2) at (107,-15) {$(2,-1,1)$};
-\node[n,fill=linegray!25] (y3) at (107,-30) {$(3,2,1)$};
+\node[n,text width=40mm,minimum height=32mm] (w) at (53,-15) {共享 $W_1:2\times3$\\[2mm]$\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}$};
+\node[n,fill=paper] (y1) at (107,0) {$(2,-1,1)$};
+\node[n,fill=linegray!15] (y2) at (107,-15) {$(1,-2,-1)$};
+\node[n,fill=linegray!25] (y3) at (107,-30) {$(1,1,2)$};
 \foreach \i in {1,2,3}{\draw[->,thick] (x\i.east)--(w.west |- x\i.east);\draw[->,thick] (w.east |- y\i.west)--(y\i.west);}
 \node[font=\small] at (0,12) {$X:3\times2$};
-\node[font=\small] at (107,12) {$XW:3\times3$};
+\node[font=\small] at (107,12) {$XW_1:3\times3$};
 \end{tikzpicture}
-\captionof{figure}{批量线性映射：三行各自乘同一个 $W$，一起得到三行结果}
+\captionof{figure}{批量线性映射：三行各自乘同一个 $W_1$，一起得到三行结果}
 \label{fig:batch-linear-map}
 \end{center}
 \tagstructend

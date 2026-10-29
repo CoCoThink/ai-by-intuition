@@ -65,7 +65,7 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 7 章}] \phantomsection\label{answer:03-matrix-multiplication}\textbf{\hyperref[check:03-matrix-multiplication]{矩阵乘法到底在算什么？}}\answercheckpage{03-matrix-multiplication}\par\nobreak
 \answerpiece{1}{形状}{先比较内侧两个维度。}$2\times3$ 乘 $3\times4$ 内侧维度相同，输出 $\answerresult{2\times4}$；若右矩阵变为 $4\times3$，内侧 $3\ne4$，不合法。
-\par\answerpiece{2}{手算}{用输入行分别点乘权重的两列。}$(2,1)\begin{bmatrix}1&3\\2&-1\end{bmatrix}=(2+2,\ 6-1)=\answerresult{(4,5)}$，一行两列。
+\par\answerpiece{2}{手算}{将 $(1,0)$ 分别与三篇文章的特征做点积。}得到 $\answerresult{(0.8,1,0)}$，对应 A、B、C。文章按行放在 $K:3\times2$ 中，转置后每列一篇，才能与需求行逐项配对；$(1\times2)(2\times3)\to1\times3$。
 \par\answerpiece{3}{找错}{先检查交换后内侧维度是否相等。}矩阵乘法不满足一般交换律。前例 $AB$ 合法，但 $BA$ 连形状也不合法；即使均合法，可取具体数字检验结果是否相等。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 8 章}] \phantomsection\label{answer:10-mlp}\textbf{\hyperref[check:10-mlp]{MLP：把矩阵与激活函数组成两层网络}}\answercheckpage{10-mlp}\par\nobreak
@@ -194,7 +194,7 @@
 \par\answerpiece{2}{手算}{先用节省量除以原存储量。}$(100-50)/100=\answerresult{50\%}$；不能由这一局部存储比例推出质量或响应延迟。
 \par\answerpiece{3}{找错}{先找实验中同时改变的条件。}输入长度和硬件同时改变，无法隔离架构效果；须统一测试条件。
 \par\Needspace{8\baselineskip}
-\item[\textbf{第 31 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{为什么图片不能只靠大矩阵？从局部特征到 CNN}}\answercheckpage{19-cnn}\par\nobreak
+\item[\textbf{第 31 章}] \phantomsection\label{answer:19-cnn}\textbf{\hyperref[check:19-cnn]{CNN：怎样用局部连接与参数共享处理图片？}}\answercheckpage{19-cnn}\par\nobreak
 \answerpiece{1}{比较}{先看同一个卷积核在哪些位置复用。}卷积核在不同位置复用，可显著减少逐像素独立连接需要的参数，并保留局部邻域结构。
 \par\answerpiece{2}{手算}{按高、宽、输入通道、输出通道相乘。}$3\cdot3\cdot3\cdot8=\answerresult{216}$ 个权重。
 \par\answerpiece{3}{预测}{先区分核的形状与滑动位置数量。}核参数量不变；边界与步长条件相近时，空间输出位置约变为原来的四倍，逐位置卷积的乘加次数相应上升。

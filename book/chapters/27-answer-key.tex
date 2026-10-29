@@ -220,7 +220,7 @@ $\partial L/\partial W_{\rm down}=f^\top g_h
 \item[\textbf{C-065.}] \phantomsection\label{solution:C-065}\phantomsection\label{answerpiece:22c-language-training:5}\hyperref[exercise:C-065]{\textbf{第一步：}}只改变一组参数是否可训练，其余设置保持不变。\par\nobreak\textbf{解题过程：}加 \texttt{-{}-freeze Wq,Wk} 冻结 $W_Q,W_K$，$A_{3,2}$ 仍升至 $0.324789$；加 \texttt{-{}-only Wq,Wk} 只训练它们，$A_{3,2}$ 反降至 $0.223962$。变化主要来自 $E$、$P_{\rm pos}$ 等输入表示的更新，不能归功于 Q/K 学会选择；检验选择能力要用带干扰项的对照实验。
 \item[\textbf{C-066.}] \phantomsection\label{solution:C-066}\hyperref[exercise:C-066]{\textbf{第一步：}}平均交叉熵看三个正确类的概率，贪心预测只看每行最大概率，两者分开记录。\par\nobreak
 \textbf{解题过程：}实测损失由 $1.798430$ 降到 $\answerresult{0.736445}$；位置 2 在第 12 步改对，但位置 3 从第 13 步起改猜 ID 5，第 20 步贪心预测为 $[4,5,5]$。平均损失持续下降不保证每个位置都预测正确，需要逐位置检查。
-\item[\textbf{C-067.}] \phantomsection\label{solution:C-067}\hyperref[exercise:C-067]{\textbf{第一步：}}回想第~\ref*{intro:16a-gradient-descent}~章：步长过大时，每一步越过谷底的幅度会越来越大。\par\nobreak\textbf{解题过程：}$\eta=0.2$ 时第 20 步损失为 $\answerresult{0.035471}$，预测 $[4,5,3]$ 全对；$\eta=1.0$ 时第 5 步已降到 $0.035315$，第 20 步为 $\answerresult{0.003354}$；$\eta=3.0$ 时第 1 步损失升到 $4.080523$，第 2 步 $25.863833$，第 3 步起溢出为 \texttt{inf}，随后变成 \texttt{nan}，$\answerresult{\text{发散}}$。在稳定上限以内，加大学习率收敛更快；越过上限后每步都把参数推得更远。这个上限由这组参数和数据决定，换网络要重新试。
+\item[\textbf{C-067.}] \phantomsection\label{solution:C-067}\hyperref[exercise:C-067]{\textbf{第一步：}}回想第~\ref*{intro:16a-gradient-descent}~章：步长过大时，每一步越过谷底的幅度会越来越大。\par\nobreak\textbf{解题过程：}$\eta=0.2$ 时第 20 步损失为 $\answerresult{0.035471}$，预测 $[4,5,3]$ 全对；$\eta=1.0$ 时第 5 步已降到 $0.035315$，第 20 步为 $\answerresult{0.003354}$；$\eta=3.0$ 时第 1 步损失升到 $4.080523$，第 2 步 $25.863833$，第 3 步起溢出为 \texttt{inf}，随后变成 \texttt{nan}，$\answerresult{\text{发散}}$。在这次实验、相同初值与给定步数下，$1.0$ 比 $0.2$ 降得更低，$3.0$ 出现损失急升和数值溢出。第~\ref*{intro:16a-gradient-descent}~章算出的 $0<\eta<1$ 只适用于那一个二次损失，不能直接套给本网络；三次运行也不足以确定完整稳定区间。即使两个学习率都能收敛，较大的也可能因振荡而更慢：该章三点例从相同初值训练 10 步，$\eta=0.75$ 的损失约为 $0.500001$，$\eta=0.9$ 则约为 $0.511529$。
 \item[\textbf{C-068.}] \phantomsection\label{solution:C-068}\hyperref[exercise:C-068]{\textbf{第一步：}}平均损失是三个位置 $-\ln\Pi_{t,y_t}$ 的均值；先想同一组初始参数给新目标的概率会更高还是更低。\par\nobreak\textbf{解题过程：}初始损失为 $\answerresult{2.436438}$，高于主例：同一组初始参数给新目标的概率更低。20 步后损失降到 $\answerresult{0.746673}$，贪心预测为 $[5,4,4]$：前两个位置已对，第三个位置仍把“花”之后预测成“花”（ID 4），而不是句号。同样的步数和学习率，换一组数据收敛快慢就不同；主例的 20 步结果不能直接搬到别的句子。
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -332,7 +332,7 @@ GQA：$2\times120\times2\times4=1{,}920$ 个数；
 \textbf{解题过程：}$\sqrt{0.81\times0.19/500}\approx0.0175$，约 $1.8$ 个百分点；若按两份独立估计近似，差值的标准误约 $2.5$ 个百分点，$0.8$ 远小于它，不能断言前者更好。还应做同题配对比较、报告多次运行的波动，并排查评测污染与提示格式差异。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:19-cnn}~章 · 为什么图片不能只靠大矩阵？从局部特征到 CNN\enspace{\mdseries\footnotesize（\hyperref[exercise:C-100]{题目见第~\pageref*{exercise:C-100}~页起}）}}
+\subsubsection*{第~\ref*{intro:19-cnn}~章 · CNN：怎样用局部连接与参数共享处理图片？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-100]{题目见第~\pageref*{exercise:C-100}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-100.}] \phantomsection\label{solution:C-100}\hyperref[exercise:C-100]{\textbf{第一步：}}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。\par\nobreak
 \textbf{解答：} 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。

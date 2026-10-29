@@ -338,7 +338,7 @@ def check_reproduction_and_definitions(reader,labels):
         'concept:cross-correlation':('互相关','翻转'),
         'concept:gqa':('GQA','共享一组'),
         'concept:mla':('多头潜在注意力','潜在向量'),
-        'concept:linear-attention':('历史压入','外积'),
+        'concept:linear-attention':('固定大小','Softmax','外积'),
         'example:gqa-budget':('真实配置','Qwen2.5-0.5B'),
     }
     for label,words in expected.items():

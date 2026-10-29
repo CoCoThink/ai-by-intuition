@@ -48,6 +48,7 @@ O(X)=\softmax\left(\frac{(XW_Q)(XW_K)^\top}{\sqrt3}\right)XW_V
 现代模型常用的旋转位置表示（RoPE）见第~\ref*{intro:22d-modern-transformers}~章。
 
 \subsection{加入位置绑定的向量，再观察交换后的区别}
+\label{sec:position-input}
 取主例位置表的前两行，绑定位置而不随 Token 交换；该表在训练中可学习：
 \[
 {P_{\rm pos}}_{1:2}=\begin{bmatrix}

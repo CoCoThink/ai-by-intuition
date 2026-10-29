@@ -2,159 +2,124 @@
 \section{矩阵乘法到底在算什么？}
 \label{intro:03-matrix-multiplication}
 
-点积每次得到一个分数。要对大量向量执行相似的运算，可以把它们排成矩阵，
-用一次矩阵乘法完成多次点积，并清楚记录输入和输出的形状。
+上一章为需求与一篇文章算出一个匹配分数。如果有一万篇候选，
+能不能把这些点积一次排好？先沿用原来的三篇文章，看看怎样从一个分数得到一整行分数。
 
-\subsection{矩阵就是一张有行和列的数字表}
+\subsection{把三篇文章排成一张表}
 \phantomsection\label{concept:matrix}
 
+仍按“技术、生活”的顺序，每篇文章占一行：
 \[
-\vect{x}=\begin{bmatrix}4\\5\end{bmatrix},
-\qquad
-A=\begin{bmatrix}1&2\\3&4\end{bmatrix},
-\qquad
-B=\begin{bmatrix}1&2&3\\4&5&6\end{bmatrix}.
+K=\begin{bmatrix}0.8&0.6\\1&0\\0&1\end{bmatrix}.
 \]
-$\vect{x}$ 有 2 行 1 列，形状是 $2\times1$；$A$ 是 $2\times2$；$B$ 是 $2\times3$。记形状时，\textbf{先数行，再数列}。
+第一行是文章 A，第二行是 B，第三行是 C。
+这张有行和列的数字表叫作\textbf{矩阵（matrix）}。
+$K$ 有 3 行、2 列，形状记为 $3\times2$；记形状时\textbf{先数行，再数列}。
+这里每行对应一篇文章，每列对应一种特征，所有数字都来自上一章的人工特征表。
 
-\begin{example}
-\noindent\emph{不要把行数与每行元素数搞反}\par
-
-$\begin{bmatrix}1&2\\3&4\\5&6\end{bmatrix}$ 有 3 行，每行 2 个数，所以是 $3\times2$，不是 $2\times3$。
-\end{example}
-
-\subsection{按行做点积：矩阵乘列向量}
-
-我们来手算：
-\begin{equation}
-\begin{aligned}
-\begin{bmatrix}1&2\\3&4\end{bmatrix}
-\begin{bmatrix}5\\6\end{bmatrix}
-&=\begin{bmatrix}
-1\times5+2\times6\\
-3\times5+4\times6
-\end{bmatrix}\\
-&=\boxed{\begin{bmatrix}17\\39\end{bmatrix}}.
-\end{aligned}
-\end{equation}
-
-发生了什么？第一行 $(1,2)$ 与 $(5,6)$ 点积得到 $17$，第二行 $(3,4)$ 与 $(5,6)$ 点积得到 $39$。把结果按行排成一列就完成了。
-
-\begin{idea}
-矩阵 $\times$ 列向量 = 每一行与该列向量分别点积。
-例如把许多二维向量排成不同行，再乘一条二维列向量，就能一次算出许多个点积分数。
-\end{idea}
-
-\subsection{第二种看法：把矩阵的每一列按权重加起来}
-
-\textbf{同一个乘法}还可以这样算：
-\begin{equation}
-\begin{aligned}
-\begin{bmatrix}1&2\\3&4\end{bmatrix}
-\begin{bmatrix}5\\6\end{bmatrix}
-&=5\begin{bmatrix}1\\3\end{bmatrix}
-+6\begin{bmatrix}2\\4\end{bmatrix}\\
-&=\begin{bmatrix}5\\15\end{bmatrix}
-+\begin{bmatrix}12\\24\end{bmatrix}
-=\boxed{\begin{bmatrix}17\\39\end{bmatrix}}.
-\end{aligned}
-\end{equation}
-
-我们将两列分别乘以 $5$、$6$，再相加。输出仍然是 $(17,39)^\top$。
-
-\subsection{神经网络中常用的行向量写法}
-\phantomsection\label{concept:linear-map}
-一条输入写成 $\vect x^\top=(5,6)$，使用
-$W=\begin{bmatrix}1&3\\2&4\end{bmatrix}$，那么
-\[
-(5,6)
-\begin{bmatrix}1&3\\2&4\end{bmatrix}
-=\boxed{(17,39)}.
-\]
-输入为 $1\times2$，权重为 $2\times2$，输出为 $1\times2$。
-这是此前列向量算式的转置形式：$W=A^\top$，
-$\vect x^\top W=(A\vect x)^\top$。
-从这里开始，MLP、RNN 和 Transformer 主线都采用行向量右乘权重。
-
-\subsection{矩阵和矩阵相乘，只是重复更多次}
-
-例如：
-\[
-\begin{bmatrix}1&2\\3&4\end{bmatrix}
-\begin{bmatrix}5&7\\6&8\end{bmatrix}
-=\begin{bmatrix}
-1\cdot5+2\cdot6 & 1\cdot7+2\cdot8\\
-3\cdot5+4\cdot6 & 3\cdot7+4\cdot8
-\end{bmatrix}
-=\begin{bmatrix}17&23\\39&53\end{bmatrix}.
-\]
-结果的第 $i$ 行、第 $j$ 列，恰好是左边第 $i$ 行与右边第 $j$ 列的点积。
-
-\input{figures/matrix-row-column-pairing}
-
-\subsection{为什么两个矩阵不是总能相乘？}
-\[
-AB,\qquad
-(m\times n)(n\times p)\longrightarrow(m\times p).
-\]
-中间两个 $n$（称为\textbf{内侧维度}）必须相同，点积才能逐项配对；结果的形状由外侧两个数决定：
-\begin{center}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabular}{@{}lll@{}}\toprule
-要计算的形状 & 能否相乘 & 输出形状\\\midrule
-$(3\times2)(2\times1)$ & 可以 & $3\times1$\\
-$(2\times3)(3\times4)$ & 可以 & $2\times4$\\
-$(2\times3)(2\times1)$ & 不可以：$3\ne2$ & 无输出\\\bottomrule
-\end{tabular}
-\end{center}
-
-这叫\textbf{形状检查}（shape checking）：学习神经网络时，它比死背公式更有用。
-
-\subsection{转置：为什么同一向量会横着写或竖着写？}
+\subsection{先把候选变成列：转置有什么用？}
+\label{sec:layout-matrix-card}
 \phantomsection\label{concept:transpose}
 
-转置就是把行换成列：
+需求仍横着写成 $\vect q^\top=(0.6,0.8)$。
+要让它与文章 A 逐项配对，可以把 A 的两个数竖着排。
+把整张候选表的行与列交换，就得到
 \[
-\begin{bmatrix}1\\2\end{bmatrix}^{\!\top}
-=\begin{bmatrix}1&2\end{bmatrix},\qquad
-\begin{bmatrix}1&2\\3&4\end{bmatrix}^{\!\top}
-=\begin{bmatrix}1&3\\2&4\end{bmatrix}.
+K^\top=\begin{bmatrix}0.8&1&0\\0.6&0&1\end{bmatrix}.
 \]
-所以 $\vect a^\top\vect b$ 就是把第一条列向量转成行，再与另一条同维列向量做点积。
-以后遇到任何横写、竖写的向量时，都先检查是否只是转置。
-
-\subsection{同一批向量如何从行变成列？}
-\label{sec:layout-matrix-card}
-
-学会矩阵的行、列之后，还需要知道：同样的数字可以用两种方向排列。
-在后面的神经网络与 Attention 中，我们会不断遇到这种转置。先用一个没有 AI 术语的数字例子认清它。
+这个操作叫\textbf{转置（transpose）}，用右上角的 $\top$ 表示。
+转置后，A、B、C 分别占一列，形状从 $3\times2$ 变成 $2\times3$；数字及其配对关系没有改变。
+本书也用 $\vect q^\top$ 表示横写的行向量，$\vect q$ 表示对应的列向量。
 
 \input{figures/row-column-intuition}
 
+\subsection{一个需求，一次得到三个分数}
+
+让需求行分别与候选的三列做点积，把结果按原顺序排成一行：
+\begin{equation}
+\begin{aligned}
+\vect q^\top K^\top
+&=(0.6,0.8)\begin{bmatrix}0.8&1&0\\0.6&0&1\end{bmatrix}\\
+&=(0.6\times0.8+0.8\times0.6,\ 0.6\times1+0.8\times0,\ 0.6\times0+0.8\times1)\\
+&=\boxed{(0.96,0.6,0.8)}.
+\end{aligned}
+\end{equation}
+这正是上一章逐篇算出的三个分数，排序仍为 A、C、B。
+\textbf{行向量乘矩阵，就是让这一行分别与右边的每一列做点积。}
+形状也对应：$(1\times2)(2\times3)\to1\times3$。
+
+同一次乘法也可以看成\textbf{按输入系数加权组合矩阵的行}：
+\[
+0.6(0.8,1,0)+0.8(0.6,0,1)=(0.96,0.6,0.8).
+\]
+两种看法只是把同一组乘加按不同顺序组织。
+
+\subsection{两个需求，一次得到两行结果}
+\label{sec:matrix-article-batch}
+
+现在再来一个稍偏向技术的需求 $(0.8,0.6)$。
+把两个需求按行排好，仍与同一批文章比较：
+\[
+Q=\begin{bmatrix}0.6&0.8\\0.8&0.6\end{bmatrix},\qquad
+QK^\top=\boxed{\begin{bmatrix}0.96&0.6&0.8\\1&0.8&0.6\end{bmatrix}}.
+\]
+第一行回答原需求，第二行回答新需求；每一列始终对应同一篇文章。
+例如第二行第一列为 $0.8\times0.8+0.6\times0.6=1$。
+\textbf{矩阵乘矩阵，就是把每个输入行都这样算一次。}
+
+\input{figures/matrix-row-column-pairing}
+
+\subsection{从例子推广：形状怎样检查？}
+
+一般地，结果第 $i$ 行、第 $j$ 列是左矩阵第 $i$ 行与右矩阵第 $j$ 列的点积：
+\[
+(AB)_{ij}=\sum_{r=1}^{n}A_{ir}B_{rj},\qquad
+\underbrace{A}_{m\times n}\underbrace{B}_{n\times p}
+\longrightarrow\underbrace{AB}_{m\times p}.
+\]
+内侧两个 $n$ 必须相同，点积才能逐项配对；结果形状由外侧的 $m,p$ 决定。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}lll@{}}\toprule
+要计算的形状 & 能否相乘 & 输出形状\\\midrule
+$(1\times2)(2\times3)$ & 可以：一个需求与三篇文章 & $1\times3$\\
+$(2\times2)(2\times3)$ & 可以：两个需求与三篇文章 & $2\times3$\\
+$(1\times2)(3\times2)$ & 不可以：$2\ne3$ & 无输出\\\bottomrule
+\end{tabular}
+\end{center}
+这叫\textbf{形状检查}。直接写 $\vect q^\top K$ 不合法，正好说明了前面为何需要转置。
+
 \begin{warningbox}
-不要混淆\textbf{乘法顺序}。矩阵乘法一般不满足交换律（$AB\ne BA$），交换后还须重新检查 $BA$ 的形状；但对于形状相容的矩阵，满足结合律 $(AB)C=A(BC)$。
+矩阵乘法一般不满足交换律：$AB$ 与 $BA$ 的形状甚至可能不同。
+对于形状相容的矩阵，结合律 $(AB)C=A(BC)$ 成立，可以改变计算的分组。
 \end{warningbox}
 
-\subsection{一次比较许多候选：把点积排成一行}
+\subsection{从计算匹配分数，到生成新的特征}
+\phantomsection\label{concept:linear-map}
 
-设查询为 $\vect q^\top:1\times d$，候选为 $\vect k_i^\top:1\times d$。
-一个匹配分数是 $s_i=\vect q^\top\vect k_i$：左边一行与右边一列做点积。
-把候选按行叠成 $K:T_k\times d$，转置后每一列就是一条候选，因而
+上面的右矩阵装的是候选文章。若换成一张可训练的权重矩阵 $W$，
+同样的乘法就能从输入特征生成输出特征：
 \[
-\underbrace{\vect q^\top}_{1\times d}\underbrace{K^\top}_{d\times T_k}
-=(s_1,\ldots,s_{T_k}).
+\underbrace{\vect x^\top}_{1\times d_{\rm in}}
+\underbrace{W}_{d_{\rm in}\times d_{\rm out}}
+=\underbrace{\vect h^\top}_{1\times d_{\rm out}}.
 \]
-例如查询 $(1,2)$ 与候选 $(1,0),(0,1)$ 比较，结果是 $(1,2)$。
-以后学习 Attention 时，这就是一次查询同时匹配多个位置的计算。
+$W$ 的每一列规定一个输出怎样组合全部输入，这叫\textbf{线性映射}。
+例如下一章用 $2\times3$ 的可训练矩阵，把两个输入数变成三个中间数。
+文章表 $K$ 在本例中是给定数据；网络权重 $W$ 则由训练调整。
+
+若遇到列向量写法，先转置即可对应：
+$\vect h=W^\top\vect x$ 与 $\vect h^\top=\vect x^\top W$ 是同一次计算，
+因为 $(AB)^\top=B^\top A^\top$。
+主线继续使用行向量右乘权重。
 
 \chapterchecktasks{03-matrix-multiplication}{理解与复算}{
 \item \textbf{形状：}若 $A:2\times3$、$B:3\times4$，说明为什么 $AB$ 合法，并给出输出形状。若 $B$ 换为 $4\times3$ 呢？\chapterinlinehint{先核对内侧维度，再保留外侧维度。}
-\item \textbf{手算：}行向量 $x=(2,1)$，$W=\begin{bmatrix}1&3\\2&-1\end{bmatrix}$，计算 $xW$，并标出行与列。\chapterinlinehint{让输入行分别与权重的两列做点积。}
+\item \textbf{手算：}沿用本章文章表 $K$，新需求为 $(1,0)$。求三个匹配分数，并说明为何要乘 $K^\top$。\chapterinlinehint{让需求行分别与三篇文章的特征列做点积。}
 \item \textbf{找错：}某人断言“矩阵相乘和数字相乘一样，可以把 $AB$ 随意换成 $BA$”。用形状或一次反例指出问题。\chapterinlinehint{分别列出两个乘法的内侧维度。}
 }
 
-
 \par\smallskip
-矩阵乘向量既可以理解为每行依次做点积，也可以理解为按系数组合各列。
-行向量与列向量的写法通过转置相互对应；计算前先核对矩阵的形状，便能避免大多数形状错误。
-下一章用这些运算把前面学过的标量两层网络推广到多维。
+从一对向量的点积，到一个需求比较多篇文章，再到多个需求同时比较，
+增加的只是结果的行数和列数。
+下一章让右边的矩阵变成可训练权重，把这些运算接成一个多维网络。

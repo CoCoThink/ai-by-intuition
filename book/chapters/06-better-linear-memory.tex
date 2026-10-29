@@ -29,15 +29,30 @@ A 要求 $\vect{m}_1^\top=(1,0)$；B 要求 $0.6\vect{m}_1^\top+0.8\vect{m}_2^\t
 
 \subsection{从误差修正到 Delta 写入}
 \phantomsection\label{concept:delta-rule}
-比无条件相加外积更进一步：写入新配对之前，先看旧状态
-$\mathcal{M}_{t-1}$ 已经读出什么，只写入尚未记住的残差：
+前面已知道怎样让一个矩阵拟合目标。现在每次只来一条配对，
+能否像 Mini-batch 训练一样，先看当前误差，再走一步负梯度？
+对当前 Key--Value 配对，定义平方误差与读取残差：
 \[
-\vect{r}_t^\top=\vect{v}_t^\top-\vect{k}_t^\top\mathcal{M}_{t-1},\qquad
-\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta \vect{k}_t \vect{r}_t^\top}.
+\ell_t(\mathcal{M})=\tfrac12\|\vect k_t^\top\mathcal{M}-\vect v_t^\top\|^2,
+\qquad
+\vect r_t^\top=\vect v_t^\top-\vect k_t^\top\mathcal{M}_{t-1}.
 \]
-这里 $\vect{k}_t^\top:1\times d_k$、$\vect{r}_t^\top:1\times d_v$；
-若 $\vect{k}_t^\top$ 归一化且 $\eta=1$，可以在该 Key 方向消除\textbf{当次}读出误差。
-但这未必保护此前已学会的 Key。
+残差就是“期望读出减去已有读出”。沿用
+\hyperref[sec:mlp-matrix-gradient]{矩阵反向传播}的“输入列乘输出误差行”，有
+\[
+\frac{\partial\ell_t}{\partial\mathcal{M}}
+=\vect k_t(\vect k_t^\top\mathcal{M}_{t-1}-\vect v_t^\top)
+=-\vect k_t\vect r_t^\top.
+\]
+减去学习率乘梯度，便得到\textbf{Delta 写入}：
+\[
+\boxed{\mathcal{M}_t=\mathcal{M}_{t-1}+\eta\vect k_t\vect r_t^\top}.
+\]
+这里 $\vect k_t^\top:1\times d_k$、$\vect r_t^\top:1\times d_v$，
+所以外积与状态同为 $d_k\times d_v$。
+若 Key 长度为 $1$ 且 $\eta=1$，当次写入可消除该 Key 的读取误差，但也可能改变其他 Key 的读出。
+形式上这是一次单样本梯度更新；此处更新对象是随记录变化的\textbf{记忆状态} $\mathcal{M}$，
+与训练模型的投影权重分开。本例反复调整状态时，Key、Value 始终固定。
 
 \subsection{［复算］写好 B 时，A 会不会再次出错？}
 
@@ -77,14 +92,38 @@ A 的误差范数为
 若采用直接相加外积来写 B，A 的误差为 $0.600$。
 \textbf{在这个明确例子里，单步 Delta 对旧记忆的扰动反而更大。}
 
-\begin{boundarybox}
-Delta 写入的价值是\textbf{按残差修正当前读取}，不意味着
-每写一条后所有旧记忆都更准确。
-交替重访 A、B，在这两条线性无关的单位 Key 与 $\eta=1$
-的条件下可收敛到本章的精确解 $\mathcal{M}_{\rm better}$。
-它是一次次更新得到的结果，而不是两次写入后的立即结果。
-\end{boundarybox}
+\subsection{把 A、B 再访问几轮，误差怎样变化？}
+\label{sec:delta-revisit}
 
+写好 B 后，A 又错了；下一次重新访问 A 时，就按 A 的新残差修正。
+从上面的 $\mathcal{M}_2$ 出发，A 的残差为 $(0.36,-0.6)$，所以
+\[
+\mathcal{M}_3
+=\begin{bmatrix}0.64&0.6\\-0.48&0.8\end{bmatrix}
++\begin{bmatrix}1\\0\end{bmatrix}(0.36,-0.6)
+=\begin{bmatrix}1&0\\-0.48&0.8\end{bmatrix}.
+\]
+A 当次恢复正确，但 B 读成 $(0.216,0.64)$，还需按 B 的残差继续修正。
+把从零开始依次访问一次 A、一次 B 叫作一轮；始终保持 $\eta=1$，结果如下。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}rrr@{}}\toprule
+完整 A$\to$B 轮数 & A 的误差范数 & B 的误差范数\\\midrule
+1 & 0.699714 & 0\\
+2 & 0.251897 & 0\\
+3 & 0.090683 & 0\\
+5 & 0.011753 & 0\\\bottomrule
+\end{tabular}
+\end{center}
+每行都在写完 B 后测量，因此 B 恰好刚被修正，误差为零。
+A 的误差随完整轮次缩小；在这两条线性无关的单位 Key、固定目标与 $\eta=1$ 的条件下，
+反复重访收敛到前面联立求出的 $\mathcal{M}_{\rm better}$。
+运行 \texttt{python3 scripts/memory\_demo.py} 可复算这张表。
+
+\begin{boundarybox}
+Delta 写入按残差修正当前读取；每次修正都可能改变旧记忆。
+本例的改善来自反复重访，不能据此推断每次写入后所有记忆都更准确。
+\end{boundarybox}
 
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。

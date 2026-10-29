@@ -300,9 +300,32 @@ g_y:=\frac{\partial L}{\partial y}=y-1\approx-0.6358.
 \textbf{先对读取结果求导。}
 因为 $y=\sum_j a_jv_j$，
 $\partial L/\partial a_j=g_yv_j$。
-Softmax 的关键局部导数是
-$\partial a_i/\partial s_j=a_i(\delta_{ij}-a_j)$。
-链式法则把三项合并为
+\textbf{只提高第一个分数，会影响哪些权重？}
+三个权重共用分母 $D=e^{s_1}+e^{s_2}+e^{s_3}$。
+$s_1$ 变化时，第一个分子的 $e^{s_1}$ 和分母都变化，
+后两项则只有分母变化。利用商的求导法则，先算第一项：
+\[
+\frac{\partial a_1}{\partial s_1}
+=\frac{e^{s_1}D-e^{s_1}e^{s_1}}{D^2}
+=\frac{e^{s_1}}D\left(1-\frac{e^{s_1}}D\right)=a_1(1-a_1).
+\]
+另两项的分子不变，因此
+\[
+\frac{\partial a_2}{\partial s_1}=-\frac{e^{s_2}e^{s_1}}{D^2}=-a_2a_1,
+\qquad
+\frac{\partial a_3}{\partial s_1}=-a_3a_1.
+\]
+这正对应“第一项权重上升，其他项权重下降”。
+$s_1$ 通过三个权重影响 $y$，所以要把三条路径相加：
+\[
+\begin{aligned}
+\frac{\partial L}{\partial s_1}
+&=g_y\bigl[v_1a_1(1-a_1)-v_2a_2a_1-v_3a_3a_1\bigr]\\
+&=g_ya_1\bigl[v_1-(a_1v_1+a_2v_2+a_3v_3)\bigr]\\
+&=g_ya_1(v_1-y)\approx\boxed{-0.2329}.
+\end{aligned}
+\]
+对第二、第三个分数做同样的计算，便得到通式
 \begin{equation}
 \boxed{\frac{\partial L}{\partial s_j}
 =g_ya_j(v_j-y).}
@@ -322,26 +345,55 @@ Value 也收到梯度 $\partial L/\partial v_j=g_ya_j$。
 这就打通了“预测误差 $\to$ 读取 $\to$ Softmax
 $\to$ Q/K”整条路径；多个位置与头的梯度再按共享参数求和。
 
-\textbf{LayerNorm 如何继续向输入传？}
-对一个三维行 $x=(1,2,3)$，取 $\varepsilon=0$、
-无仿射参数，$\mu=2$、$\sigma=\sqrt{2/3}$、
-$\widehat{x}=(x-\mu)/\sigma$。
-若来自后层的梯度 $g=(1,0,0)$，则
+\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：LayerNorm 改一项，为何三项都受影响？}
+\label{sec:layernorm-backward-example}
+
+另取三维行 $x=(1,2,3)$，仅看一次无仿射参数的归一化。
+令 $\varepsilon=0$ 以便手算，输入先经过
 \[
-\frac{\partial L}{\partial x_i}
-=\frac{g_i-\overline g-\widehat{x}_i\,
-\overline{g\widehat{x}}}{\sigma}
-\quad\Longrightarrow\quad
-\nabla_xL=\frac{(1/6,-1/3,1/6)}{\sqrt{2/3}}.
+x\ \longrightarrow\ \mu=\tfrac13\sum_i x_i
+\ \longrightarrow\ u_i=x_i-\mu
+\ \longrightarrow\ v=\tfrac13\sum_i u_i^2
+\ \longrightarrow\ \sigma=\sqrt{v}
+\ \longrightarrow\ \widehat{x}_i=u_i/\sigma.
 \]
-这里 $\overline g$ 表示三个分量的均值，
-$\overline{g\widehat{x}}$ 表示逐项乘积的均值；
-三项输入梯度之和为零，反映减去均值的操作。
+这里 $\mu=2$、$u=(-1,0,1)$、$v=2/3$、$\sigma=\sqrt{2/3}$。
+改动一个 $x_i$，既改变自己的分子，也会改变公共均值与公共分母，因而影响全部输出。
+
+假设后层只把梯度传给第一个归一化输出，即 $g=(1,0,0)$。
+求输入梯度时，可以直接对 $L=\widehat{x}_1=(x_1-\mu)/\sigma$ 求导。
+先看 $x_1$：$\partial\mu/\partial x_1=1/3$，所以分子导数为 $1-1/3=2/3$。
+方差求导时，利用 $\sum_i(x_i-\mu)=0$ 消去均值变化项，得到
+\[
+\frac{\partial v}{\partial x_1}=\frac23(x_1-\mu)=-\frac23,
+\qquad
+\frac{\partial\sigma}{\partial x_1}
+=\frac{1}{2\sigma}\frac{\partial v}{\partial x_1}
+=-\frac{1}{3\sigma}.
+\]
+再用一次商的求导法则：
+\[
+\frac{\partial L}{\partial x_1}
+=\frac{2/3}{\sigma}
+-\frac{x_1-\mu}{\sigma^2}\left(-\frac{1}{3\sigma}\right)
+=\frac{2}{3\sigma}-\frac{1}{3\sigma^3}
+=\frac{1}{6\sigma}\approx0.2041.
+\]
+最后一步代入 $\sigma^2=2/3$。
+对 $x_2,x_3$，分子的导数都为 $-1/3$，
+而 $\partial\sigma/\partial x_i=(x_i-\mu)/(3\sigma)$，分别为 $0$、$1/(3\sigma)$。
+同样代入可得
+\[
+\nabla_x L=\frac{(1/6,-1/3,1/6)}{\sqrt{2/3}}
+\approx\boxed{(0.2041,-0.4082,0.2041)}.
+\]
+后层只传回一项梯度，输入却收到三项，因为均值和方差把它们连在一起。
 实际 LayerNorm 使用正的 $\varepsilon$ 避免零方差，
-有 $\gamma,\beta$ 时还需沿仿射变换应用链式法则。
+有 $\gamma,\beta$ 时还需沿仿射变换继续应用链式法则。
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
-可用上面三条公式逐项核对 $g_s$、$g_q$、$g_K$，
+运行 \texttt{python3 scripts/check\_attention\_backward\_demo.py}，
+用有限差分独立核对 Softmax、Q/K 与 LayerNorm 的局部梯度，
 再与\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} 的真实三维全网络梯度相对照。\par\medskip
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：回到上下文缺口，去掉 Attention 会怎样？}

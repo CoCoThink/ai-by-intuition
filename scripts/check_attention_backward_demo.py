@@ -36,6 +36,13 @@ def layernorm(x):
 def main():
     loss, a, y = forward(Q, K)
     g_y = y - 1
+    # Raise only s1: Q[0]/sqrt(2) is s1 for these printed keys.
+    # Check each weight separately, including the two falling weights.
+    local = [a[0] * (1 - a[0]), -a[1] * a[0], -a[2] * a[0]]
+    for i, expected in enumerate(local):
+        def varying_score(value):
+            return forward([value * SQRT2, 0.0], K)[1][i]
+        assert abs(derivative(varying_score, 1.0) - expected) < 1e-7
     g_scores = [g_y * a[i] * (V[i] - y) for i in range(3)]
     g_q = [sum(g_scores[i] * K[i][j] for i in range(3)) / SQRT2
            for j in range(2)]

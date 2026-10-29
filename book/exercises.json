@@ -731,8 +731,8 @@
     "slug": "22c-language-training",
     "difficulty": "标准",
     "minutes": 10,
-    "question": "\\textbf{【实验】}先预测：把学习率从 $0.04$ 依次改成 $0.2$、$1.0$、$3.0$，各训练 20 步，最终平均损失和三个位置的贪心预测会怎样？哪一个会发散？再运行 \\texttt{python3 scripts/teaching\\_trace.py -{}-lr 0.2}（及另两个值）核对，并用第~\\ref*{intro:16a-gradient-descent}~章的学习率稳定区间解释。",
-    "solution": "\\textbf{第一步：}回想第~\\ref*{intro:16a-gradient-descent}~章：步长过大时，每一步越过谷底的幅度会越来越大。\\par\\nobreak\\textbf{解题过程：}$\\eta=0.2$ 时第 20 步损失为 $\\answerresult{0.035471}$，预测 $[4,5,3]$ 全对；$\\eta=1.0$ 时第 5 步已降到 $0.035315$，第 20 步为 $\\answerresult{0.003354}$；$\\eta=3.0$ 时第 1 步损失升到 $4.080523$，第 2 步 $25.863833$，第 3 步起溢出为 \\texttt{inf}，随后变成 \\texttt{nan}，$\\answerresult{\\text{发散}}$。在稳定上限以内，加大学习率收敛更快；越过上限后每步都把参数推得更远。这个上限由这组参数和数据决定，换网络要重新试。",
+    "question": "\\textbf{【实验】}先预测：把学习率从 $0.04$ 依次改成 $0.2$、$1.0$、$3.0$，各训练 20 步，最终平均损失和三个位置的贪心预测会怎样？哪一个会发散？再运行 \\texttt{python3 scripts/teaching\\_trace.py -{}-lr 0.2}（及另两个值）核对，联系第~\\ref*{intro:16a-gradient-descent}~章的振荡与发散现象解释：为什么步长过大可能失稳？这些实验能确定本网络的完整稳定区间吗？",
+    "solution": "\\textbf{第一步：}回想第~\\ref*{intro:16a-gradient-descent}~章：步长过大时，每一步越过谷底的幅度会越来越大。\\par\\nobreak\\textbf{解题过程：}$\\eta=0.2$ 时第 20 步损失为 $\\answerresult{0.035471}$，预测 $[4,5,3]$ 全对；$\\eta=1.0$ 时第 5 步已降到 $0.035315$，第 20 步为 $\\answerresult{0.003354}$；$\\eta=3.0$ 时第 1 步损失升到 $4.080523$，第 2 步 $25.863833$，第 3 步起溢出为 \\texttt{inf}，随后变成 \\texttt{nan}，$\\answerresult{\\text{发散}}$。在这次实验、相同初值与给定步数下，$1.0$ 比 $0.2$ 降得更低，$3.0$ 出现损失急升和数值溢出。第~\\ref*{intro:16a-gradient-descent}~章算出的 $0<\\eta<1$ 只适用于那一个二次损失，不能直接套给本网络；三次运行也不足以确定完整稳定区间。即使两个学习率都能收敛，较大的也可能因振荡而更慢：该章三点例从相同初值训练 10 步，$\\eta=0.75$ 的损失约为 $0.500001$，$\\eta=0.9$ 则约为 $0.511529$。",
     "legacy_answer_anchor": "",
     "id": "C-067"
   },

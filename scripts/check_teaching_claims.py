@@ -22,6 +22,7 @@ from mini_transformer_demo import run_checks as check_mini
 from pretraining_data_demo import run_checks as check_data
 from teaching_reference import parameters,forward,backward,LR
 from check_agent_loop import run_checks as check_agent_loop
+from memory_demo import main as check_memory
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -72,6 +73,95 @@ def check_article_matching():
     assert f'{{{(5*data["q"])@(5*data["a"]):g}}}' in exercises['C-019']['solution']
     assert f'{{{scores["a"]:g}}}' in exercises['C-019']['solution']
     print('Article matching QA: actual table/three figures agree; ranking A,C,B, scaled score 1.8, cosine 0.6 and projection 0.96 passed')
+
+
+def check_matrix_training_bridges():
+    """Follow the printed article data through matrices and the complete MLP update."""
+    matrix_source=(ROOT/'book/chapters/03-matrix-multiplication.tex').read_text()
+    candidates,transposed=numeric_matrices(matrix_source)[:2]
+    feature_source=(ROOT/'book/chapters/01-vectors.tex').read_text()
+    features={name:np.array([float(x),float(y)]) for name,x,y in
+              re.findall(r'\$\\vect ([qabc])\$ & \$([\d.]+)\$ & \$([\d.]+)\$',feature_source)}
+    assert np.allclose(candidates,[features[name] for name in 'abc'])
+    assert np.array_equal(transposed,candidates.T)
+    batch=matrix_source.split(r'\label{sec:matrix-article-batch}',1)[1].split(r'\subsection{',1)[0]
+    queries,printed_scores=numeric_matrices(batch)
+    assert np.allclose(queries[0],features['q'])
+    assert np.allclose(printed_scores,queries@candidates.T)
+    single=re.search(r'\\boxed\{\(([^()]+)\)\}',matrix_source)
+    assert single and np.allclose([float(v) for v in single[1].split(',')],printed_scores[0])
+    figure=(ROOT/'book/figures/row-column-intuition.tex').read_text()
+    cells=[float(v) for v in re.findall(r'\\node at \([^()]+\)\{\\sffamily ([0-9.]+)\}',figure)]
+    assert np.allclose(cells[:6],candidates.ravel())
+    assert np.allclose(cells[6:],transposed.ravel())
+    pairing=(ROOT/'book/figures/matrix-row-column-pairing.tex').read_text()
+    cells=[float(v) for v in re.findall(r'\\node at \([^()]+\) \{\$([0-9.]+)\$\}',pairing)]
+    assert np.allclose(cells[:4],queries.ravel())
+    assert np.allclose(cells[4:10],transposed.T.ravel())  # Diagram lists whole columns.
+    assert np.allclose(cells[10:],printed_scores.ravel())
+
+    source=(ROOT/'book/chapters/10-mlp.tex').read_text()
+    forward_part=source.split(r'\subsection{按行向量约定',1)[1].split(r'\subsection{',1)[0]
+    w1,w2=numeric_matrices(forward_part)
+    shared=(ROOT/'book/figures/batch-linear-map.tex').read_text()
+    assert np.array_equal(numeric_matrices(shared)[0],w1)
+    rows={name:np.array([float(value) for value in values.split(',')])
+          for name,values in re.findall(r'\(([xy][123])\) at [^;]*?\{\$\(([-\d.,]+)\)\$\}',shared)}
+    assert len(rows)==6
+    for i in (1,2,3):assert np.allclose(rows[f'x{i}']@w1,rows[f'y{i}'])
+    x=np.array([2.,-1.]);target=np.array([2.,2.])
+    def objective():
+        predicted=np.maximum(x@w1,0)@w2
+        return np.sum((predicted-target)**2)/2
+    h=np.maximum(x@w1,0);delta=h@w2-target
+    gradient2=np.outer(h,delta)
+    gradient1=np.outer(x,(delta@w2.T)*(x@w1>0))
+    gradients=source.split(r'\label{sec:mlp-matrix-gradient}',1)[1].split(r'\subsection{',1)[0]
+    printed=numeric_matrices(gradients)
+    assert np.allclose(printed[1],gradient2) and np.allclose(printed[-1],gradient1)
+    for weight,gradient in ((w1,gradient1),(w2,gradient2)):
+        for index in np.ndindex(weight.shape):
+            old=weight[index];eps=1e-6
+            weight[index]=old+eps;hi=objective()
+            weight[index]=old-eps;lo=objective()
+            weight[index]=old
+            assert abs((hi-lo)/(2*eps)-gradient[index])<1e-7
+    update=source.split(r'\label{sec:mlp-update-check}',1)[1].split(r'\subsection{',1)[0]
+    new1,new2=numeric_matrices(update)
+    assert np.allclose(new1,w1-.1*gradient1) and np.allclose(new2,w2-.1*gradient2)
+    predicted=np.maximum(x@new1,0)@new2
+    assert np.allclose(predicted,[2.1,1.4]) and np.isclose(np.sum((predicted-target)**2)/2,.185)
+    assert '(2.1,1.4)' in update and r'\boxed{0.185}' in update
+    print('Matrix bridges QA: article table/transpose/two figures, all twelve MLP weight derivatives and updated prediction/loss passed')
+
+
+def check_learning_rate_comparison():
+    """Compare convergent steps on the original data, catching the faster-if-larger claim."""
+    from beginner_training_demo import loss, gradient
+    results=[]
+    for eta in (.75,.9):
+        w,b=1.,0.
+        for _ in range(10):
+            gw,gb=gradient(w,b);w,b=w-eta*gw,b-eta*gb
+        results.append(loss(w,b))
+    assert .5<results[0]<results[1]
+    chapter=(ROOT/'book/chapters/16-loss-gradient.tex').read_text()
+    exercise=next(row for row in json.loads((ROOT/'book/exercises.json').read_text()) if row['id']=='C-067')
+    for result in results:
+        assert f'{result:.6f}' in chapter and f'{result:.6f}' in exercise['solution']
+    print('Learning-rate QA: both stable, eta .75 beats .9 at step 10 on the actual three-point loss')
+
+
+def check_cnn_channels():
+    source=(ROOT/'book/chapters/19-cnn.tex').read_text()
+    kernel=numeric_matrices(source.split(r'\subsection{小区域扫描',1)[1])[1]
+    channels=source.split(r'\label{sec:cnn-channel-sum}',1)[1].split(r'\subsection{',1)[0]
+    windows=numeric_matrices(channels)
+    responses=[float(np.sum(window*kernel)) for window in windows]
+    assert responses==[1.,1.,-1.] and sum(responses)==1
+    assert kernel.size*len(windows)==12 and 2*kernel.size*len(windows)==24
+    assert r'\boxed{1}' in channels
+    print('CNN channel QA: all three printed RGB windows, shared initial slices, response 1 and 12/24 weights passed')
 
 
 def check_motivation_examples():
@@ -295,6 +385,10 @@ def check_printed_mini(c, gradients):
 
 def main():
     check_article_matching()
+    check_matrix_training_bridges()
+    check_learning_rate_comparison()
+    check_cnn_channels()
+    check_memory()
     check_motivation_examples()
     check_attention_maxima()
     check_model_comparison()
