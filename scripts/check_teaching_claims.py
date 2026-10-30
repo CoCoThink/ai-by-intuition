@@ -320,6 +320,55 @@ def check_attention_maxima():
     print('Attention maximum QA: first/second rows tie at [1,3]/[2,3]; only the third has unique winner [3]')
 
 
+def check_distance_reading():
+    """Run the printed recurrence and a full Softmax for each printed distance."""
+    rnn=(ROOT/'book/chapters/21-rnn.tex').read_text()
+    coefficient=float(re.search(r'h_t=x_t\+([\d.]+)h_',rnn)[1])
+    source=(ROOT/'book/chapters/21c-naive-attention.tex').read_text()
+    example=source.split(r'\label{experiment:distance-reading}',1)[1].split(r'\subsection{',1)[0]
+    target_score=np.log(float(re.search(r'匹配分数为 \$\\ln(\d+)\$',example)[1]))
+    rows=re.findall(r'^\$(\d+)\$ & \$([\d.]+)\$ & \$([\d.]+)\$',example,re.M)
+    assert [int(row[0]) for row in rows]==[1,2,4,8]
+    for distance,printed_rnn,printed_attention in rows:
+        distance=int(distance)
+        state=1.
+        for _ in range(distance):state=coefficient*state
+        scores=np.zeros(distance+1);scores[0]=target_score
+        weights=np.exp(scores-scores.max());weights/=weights.sum()
+        values=np.zeros(distance+1);values[0]=1.
+        readout=float(weights@values)
+        assert f'{state:.4f}'==printed_rnn,(distance,state,printed_rnn)
+        assert f'{readout:.4f}'==printed_attention,(distance,readout,printed_attention)
+        assert np.isclose(readout,9/(9+distance))
+    # Check the stated counterexample to universal decay: coefficient 1 preserves the signal.
+    state=1.
+    for _ in range(8):state=1.*state
+    assert state==1. and np.isclose(coefficient**8,1/256)
+    print('Distance reading QA: four recurrence/Softmax rows and coefficient-1 counterexample passed')
+
+
+def check_scaling_budget():
+    """Recompute the printed FLOP budget and the historical Chinchilla ratio."""
+    source=(ROOT/'book/chapters/23e-tech-judgement.tex').read_text()
+    example=source.split(r'\label{sec:scaling-compute-budget}',1)[1].split(r'\subsection{',1)[0]
+    def scientific(pattern):
+        match=re.search(pattern,example)
+        assert match,pattern
+        return float(match[1])*10**int(match[2])
+    parameters=scientific(r'N=([\d.]+)\\times10\^(\d+)')
+    budget=scientific(r'C=([\d.]+)\\times10\^\{(\d+)\}')
+    tokens=scientific(r'&=([\d.]+)\\times10\^(\d+)')
+    assert np.isclose(tokens,budget/(6*parameters))
+    assert np.isclose(tokens/parameters,20)
+    assert np.isclose(tokens/1e8,25)
+    assert np.isclose(budget/(6*2*parameters)/1e8,12.5)
+    assert np.isclose(6*(2*parameters)*(2*tokens)/budget,4)
+    numerator,denominator=re.search(
+        r'\\frac\{D\}\{N\}=\\frac\{([\d.]+)\\times10\^\{12\}\}\{([\d.]+)\\times10\^\{10\}\}',example).groups()
+    assert np.isclose(float(numerator)*1e12/(float(denominator)*1e10),20)
+    print('Scaling budget QA: 2.5B tokens, fixed-compute trade-off, fourfold FLOPs and Chinchilla 20:1 passed')
+
+
 def check_model_comparison():
     """Recompute comparison-table dimensions and count shared GPT-2 weights once."""
     source=(ROOT/'book/chapters/23a-from-toy-to-gpt.tex').read_text()
@@ -457,6 +506,8 @@ def main():
     check_memory()
     check_motivation_examples()
     check_attention_maxima()
+    check_distance_reading()
+    check_scaling_budget()
     check_model_comparison()
     check_published_forward()
     check_agent_loop()

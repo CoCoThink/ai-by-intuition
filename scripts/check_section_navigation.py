@@ -140,6 +140,16 @@ def softmax_note_errors(pages):
     return []
 
 
+def attention_boundary_errors(pages):
+    """A valid table/figure layout can still split this short explanatory box."""
+    compact=[re.sub(r'\s+','',page) for page in pages]
+    markers=('零参数点积的匹配规则是固定的：','训练无法让模型学会“按哪些特征匹配”。')
+    found=[[i+1 for i,page in enumerate(compact) if marker in page] for marker in markers]
+    if len(found[0])!=1 or found[1]!=found[0]:
+        return [f'Zero-parameter attention boundary split or missing: start/end pages {found}']
+    return []
+
+
 def ellipse_rect_intersects(ellipse, rect):
     """Whether an axis-aligned text rectangle touches an ellipse's boundary."""
     cx,cy,rx,ry=ellipse
@@ -535,6 +545,7 @@ def check_pdf(path, aux, used):
     raw_text=subprocess.check_output(['pdftotext',str(path),'-'],text=True)
     failures.extend(agent_intro_errors(raw_text.split('\f')))
     failures.extend(softmax_note_errors(raw_text.split('\f')))
+    failures.extend(attention_boundary_errors(raw_text.split('\f')))
     text=re.sub(r'\s+','',raw_text)
     labels={}
     for line in aux.read_text().splitlines():
@@ -617,6 +628,11 @@ def self_test():
     assert not softmax_note_errors([note+result+ending])
     assert softmax_note_errors([note+result,ending])
     assert softmax_note_errors([note+ending])
+    attention_start='零参数点积的匹配规则是固定的：'
+    attention_end='训练无法让模型学会“按哪些特征匹配”。'
+    assert not attention_boundary_errors([attention_start+attention_end])
+    assert attention_boundary_errors([attention_start,attention_end])
+    assert attention_boundary_errors([attention_start])
     assert not toc_folio_errors([(64,'subsection.21.7')],{'subsection.21.7'})
     assert toc_folio_errors([(64,'subsection.21.7')],set())
     ellipse=(0,0,4,2)
@@ -638,7 +654,7 @@ def self_test():
     demand_arrows=[(1,100,200,127,236),(1,330,200,357,236)]
     assert not normalization_arrow_errors(demand_arrows)
     assert normalization_arrow_errors([demand_arrows[0],(1,330,200,127,236)])
-    print('Section/figure regressions passed: wrong targets, literal folios, split captions or Softmax notes, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps and cross-panel arrows are rejected')
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions/Softmax/attention notes, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps and cross-panel arrows are rejected')
 
 
 def main():

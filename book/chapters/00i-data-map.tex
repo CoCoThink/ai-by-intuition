@@ -4,6 +4,7 @@
 下表汇总各组算例的输入、参数与章节入口，便于跨章复算。
 三维贯通主例沿用\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} 的同一套初始参数，训练时从这套数值出发更新；
 其他小例子各自给出数据，不与主例混用。
+上下文对照中的“冬天”“窗”用于构造不同前文，“谢了”只作为二分类的输出类别，均不加入主线五项词表；二分类输入使用“春天／冬天／花”的三维 one-hot 编码。
 
 \begin{center}\small
 \renewcommand{\arraystretch}{1.3}
@@ -15,7 +16,7 @@
 二维 Q/K/V & 手设向量与投影；各节写出 $X,W_Q,W_K,W_V$ & 逐项核对点积、读取与形状；第~\ref*{intro:21c-naive-attention}--\ref*{intro:11-softmax-memory}~章\\
 四维双头 & 两个位置、每行四维；拆为两个二维头 & 拼接和输出投影；第~\ref*{intro:22a-position-multihead}~章\\
 三维贯通例 & $X=E_{[2,4,5]}+P_{\rm pos}$；参数见\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & 前向、联合训练、生成；第~\ref*{intro:20b-task-contract}、\ref*{intro:22-transformer-architecture}--\ref*{intro:23a-from-toy-to-gpt}~章\\
-上下文与选择消融 & 相同末 Token／相同均值；冻结或训练 Q/K & 区分读取前文与选择记录；第~\ref*{intro:22c-language-training}~章（第~\pageref*{experiment:attention-selection}~页）\\
+上下文与选择消融 & 局部 one-hot／相同末 Token；冻结或训练 Q/K & 区分读取前文与选择记录；第~\ref*{intro:21a-context-gap}、\ref*{intro:22c-language-training}~章\\
 ICL 前驱与后继记录 & 四维记录投影为二维 $K,V$；从序列生成 & 示例改变、权重固定；第~\ref*{sec:icl-induction}~节\\
 三分类奖励 & logits 三维；四个采样动作与固定优势 & 优势如何改变 logits；第~\ref*{concept:rlvr}~节\\
 二维 RAG & $q=(1,0.5)$；三行文档矩阵 $D$ & 检索排序与证据覆盖；第~\ref*{intro:23d-agent-systems}~章\\

@@ -10,11 +10,11 @@
 | [zh.d2l.ai/](https://zh.d2l.ai/) | 2026-10-24 | 链接可访问 |
 | [distill.pub/2016/augmented-rnns/](https://distill.pub/2016/augmented-rnns/) | 2026-10-24 | 链接可访问 |
 | [alexwang.ai/posts/associative-memory](https://alexwang.ai/posts/associative-memory) | 2026-10-25 | 链接可访问 |
-| [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) | 2026-10-24 | 链接可访问 |
+| [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) | 2026-10-30 | 已核对递推与直接读取的信息路径比较；正文距离表为手设规则对照 |
 | [www.deeplearningbook.org/](https://www.deeplearningbook.org/) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2005.14165](https://arxiv.org/abs/2005.14165) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2001.08361](https://arxiv.org/abs/2001.08361) | 2026-10-24 | 链接可访问 |
-| [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-10-24 | 链接可访问 |
+| [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-10-30 | 已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算 |
 | [www.incompleteideas.net/IncIdeas/BitterLesson.html](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) | 2026-10-24 | 链接可访问 |
 | [law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/](https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/) | 2026-10-24 | 访问受限 |
 | [modelcontextprotocol.io/specification](https://modelcontextprotocol.io/specification) | 2026-10-25 | 已核对当前入口指向 2026-07-28 版 |

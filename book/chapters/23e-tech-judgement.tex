@@ -25,17 +25,43 @@
 神经网络的参数与宽度没有因此变化。
 
 \subsection{Scaling Laws：更多参数一定更聪明吗？}
+\label{sec:scaling-compute-budget}
 
-经典缩放规律研究在一定实验范围内发现：
-语言模型的\textbf{验证损失}常随参数量、训练 Token 与计算预算
-呈较规律的变化趋势。Kaplan 等（2020）讨论了这些关系，
-见 \href{https://arxiv.org/abs/2001.08361}{Scaling Laws for Neural Language Models}。
-Hoffmann 等（2022）进一步研究给定训练计算量时
-\textbf{模型参数和训练 Token 应如何分配}，见
-\href{https://arxiv.org/abs/2203.15556}{Training Compute-Optimal Large Language Models}。
+假设训练算力已经固定：是把模型做大，还是让较小的模型多读一些数据？
+先把这笔账算出来。用 $N$ 表示参数个数，$D$ 表示训练中累计处理的 Token 数
+（同一 Token 重复训练也重复计数），$C$ 表示训练所需的浮点运算总量，单位是 FLOPs。
+对稠密 Transformer，常用的粗略预算是
+\[
+\boxed{C\approx6ND.}
+\]
+系数 $6$ 来自每个参数、每个 Token 约 $2$ 次前向运算与约 $4$ 次反向运算。
+它概括主要矩阵计算；上下文长度、Embedding 的计数口径与实现会影响误差，
+不能直接换算成实际训练时长。
 
-这些\textbf{经验规律}把“多大模型配多少数据”变成可测量的资源分配问题。
-把参数翻倍时，也要追踪训练 Token 和计算预算；三者共同决定验证损失的变化。
+把前文 GPT-2 small 约 $1.244$ 亿参数取整到 $N=1.25\times10^8$，
+假设训练预算为 $C=1.875\times10^{18}$ FLOPs，能够处理多少 Token？
+\[
+\begin{aligned}
+D&\approx\frac{C}{6N}
+=\frac{1.875\times10^{18}}{6\times1.25\times10^8}\\
+&=2.5\times10^9=\boxed{25\text{ 亿 Token}}.
+\end{aligned}
+\]
+预算不变时，若参数翻倍为 $2.5\times10^8$，训练 Token 就只能减半为 $12.5$ 亿。
+这两份方案的乘积 $ND$ 相同，但算力相同并不意味着损失相同：哪种分配更好，还要用实验判断。
+
+\textbf{Scaling Laws（缩放规律）}研究的正是参数、训练数据、算力与验证损失之间的经验关系。
+Kaplan 等（2020）的\href{https://arxiv.org/abs/2001.08361}{早期研究}讨论了这些趋势；
+Hoffmann 等（2022）的\href{https://arxiv.org/abs/2203.15556}{Chinchilla 研究}进一步比较固定训练算力下的分配。
+论文中的 Chinchilla 用 $700$ 亿参数训练了 $1.4$ 万亿 Token，比例为
+\[
+\frac{D}{N}=\frac{1.4\times10^{12}}{7\times10^{10}}=20.
+\]
+把 $D\approx20N$ 用作一个简化预算起点，本例的 $25$ 亿恰为参数量的 $20$ 倍。
+若参数和 Token 都翻倍，代入 $6ND$，所需算力就变成原来的 $4$ 倍。
+
+这里是借 GPT-2 量级做的玩具估算，并非 GPT-2 实际训练记录；
+$20$ 倍也不是通用最优配方。真实预算还要评估数据质量、上下文长度与部署成本。
 
 \subsection{Bitter Lesson：计算与通用方法为何常被重视？}
 

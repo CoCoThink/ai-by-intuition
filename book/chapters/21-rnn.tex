@@ -137,8 +137,9 @@ $\tanh$ 是\textbf{逐元素非线性函数}，
 \phantomsection\label{concept:long-term-dependency}
 \phantomsection\label{concept:lstm}
 
-上面的规则里，第一步的影响在第三步前就经过多次 $0.5$ 缩小。
-随着状态多次更新，早期信息有衰减风险。
+上面的规则里，第一步的影响每经过一次状态更新就乘以 $0.5$。
+传递 $2$ 步只剩 $0.25$，传递 $8$ 步只剩 $1/256\approx0.0039$。
+下一章的\hyperref[experiment:distance-reading]{距离对照实验}会用同一条线索，与直接加权读取并排比较。
 真实 RNN 的问题不只这一种：
 长期依赖还面临梯度消失或爆炸的训练难题；
 沿时间的状态更新也有\textbf{必须依次计算}的依赖。

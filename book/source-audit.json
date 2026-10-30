@@ -45,8 +45,9 @@
     "url": "https://arxiv.org/abs/1706.03762",
     "status": 200,
     "final_url": "https://arxiv.org/abs/1706.03762",
-    "checked_utc": "2026-10-24",
-    "method": "HTTP GET; link accessibility only, not full content verification"
+    "checked_utc": "2026-10-30",
+    "method": "HTTP GET and paper reading; verified Section 4 and Table 1 on recurrent versus self-attention information paths",
+    "result": "已核对递推与直接读取的信息路径比较；正文距离表为手设规则对照"
   },
   {
     "url": "https://www.deeplearningbook.org/",
@@ -73,8 +74,9 @@
     "url": "https://arxiv.org/abs/2203.15556",
     "status": 200,
     "final_url": "https://arxiv.org/abs/2203.15556",
-    "checked_utc": "2026-10-24",
-    "method": "HTTP GET; link accessibility only, not full content verification"
+    "checked_utc": "2026-10-30",
+    "method": "HTTP GET and paper reading; verified Appendix F FLOPs approximation C~6ND and 70B parameters / 1.4T training tokens in Section 4",
+    "result": "已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算"
   },
   {
     "url": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html",
