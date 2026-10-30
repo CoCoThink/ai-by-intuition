@@ -2,7 +2,6 @@
 \section{现代 Transformer 为什么看起来越来越不像原版？}
 \label{intro:22d-modern-transformers}
 \chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_k,\quad KV:T\times H_{KV}\times d_k$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
-\asof{2026-10-25}{相对位置、归一化与缓存预算}
 
 
 \begin{boundarybox}[title={首次阅读：只走完这三步}]
@@ -321,10 +320,9 @@ $2{,}818{,}572{,}288$ 字节，约 $2.819$ GB。
 把每个 Token 的 K/V 压缩成一条低秩潜在向量来缓存，走另一条路线；
 GQA 则直接减少独立 K/V 头数。选型时要比较质量和实际缓存字节数。
 
-\noindent\textbf{独立预算：MLA 式压缩能少存多少？}\par
+\noindent\textbf{缓存预算：MLA 式压缩能少存多少？}\par
 
-\localfixture{假设参数下的单层缓存；不对应特定发布模型}
-取 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
+只算一层，假设 $T=8$、4 个 Query 头、每头 Key/Value 宽度 $2$。
 普通 MHA 的 Key/Value 缓存元素数为
 $2\times8\times4\times2=\answerresult{128}$。
 若 GQA 只保留 2 个 K/V 头：
@@ -503,7 +501,6 @@ KV 缓存随历史增长，每次读取也要处理更多位置。
 
 \begin{example}
 \noindent\emph{先按两条记录读取，再尝试合并}\par
-\localfixture{二维行向量状态，独立于三维 Transformer 贯通参数}
 取 $\vect q^\top=(1,1)$、
 $\vect k_1^\top=(1,0)$、$\vect v_1^\top=(2,0)$、
 $\vect k_2^\top=(0,1)$、$\vect v_2^\top=(0,3)$。

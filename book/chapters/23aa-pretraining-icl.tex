@@ -72,7 +72,6 @@ p_\theta(y\mid\underbrace{\text{任务说明、示例、新输入}}_{\text{上�
 
 \subsubsection{动手算：固定参数怎样从示例中读出新映射？}
 \label{sec:icl-induction}
-\localfixture{四维记录、二维 Key/Value；展示固定参数下的前驱读取与后继匹配}
 考虑序列 $[A][B][C][D][A]$：已完成的示例是 $A\to B$、$C\to D$，
 末尾的新 $A$ 后该接什么？分两步做：先把前驱复制到后继所在位置，
 再用末尾的 $A$ 匹配记录中的前驱，读出它的后继。

@@ -58,7 +58,7 @@ loss_after, z_after = forward()
 这里展示梯度的收集与同步更新；模型初始化、因果 Attention、
 两次 LayerNorm、FFN 和断言保留在
 \ifdefempty{\bookbuildfullsha}{\path{scripts/pytorch_starter.py}}{%
-\href{https://github.com/CoCoThink/ai-by-intuition/blob/\bookbuildfullsha/scripts/pytorch_starter.py}{同一提交的完整可运行脚本}}，避免纸质版印出数十行维护性代码。
+\href{https://github.com/CoCoThink/ai-by-intuition/blob/\bookbuildfullsha/scripts/pytorch_starter.py}{同一提交的完整可运行脚本}}。
 
 脚本采用双精度以便与 NumPy 手算基线按容差对齐。观察代码时请检查：
 \texttt{E[ids - 1]} 是三行查表，

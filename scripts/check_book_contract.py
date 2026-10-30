@@ -398,14 +398,12 @@ def validate_contract():
         spelling=name.replace('_',r'\_')
         # The reproduction table lives in Appendix B beside the experiments it reruns.
         require(spelling in sources['24e-pytorch-lab'] or name in sources['24e-pytorch-lab'],f'Missing reproduction entry: {name}')
-    for name in ('23d-agent-protocols','23b-deployment-and-ecosystem','22d-modern-transformers','23e-tech-judgement'):
-        stamp=re.search(r'\\asof\{(\d{4}-\d{2}-\d{2})\}\{([^}]+)\}',sources[name])
-        require(bool(stamp),f'{name}: date and stable-principle stamp required')
-        if stamp:date.fromisoformat(stamp[1])
     require('易错／边界' not in sources['00g-reading-routes'],'Use one caution category in the legend')
     from check_section_navigation import section_targets,source_errors
     heading_targets=section_targets(combined)
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in source_errors(body,heading_targets))
+    # Content-review dates and version evidence belong to the central manifest,
+    # not repeated chapter stamps.
     from check_dated_claims import validate as validate_dated_claims
     errors.extend(validate_dated_claims())
     return errors

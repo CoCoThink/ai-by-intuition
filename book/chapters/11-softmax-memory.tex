@@ -7,10 +7,9 @@
 \phantomsection\label{concept:self-attention}
 
 
-\localfixture{二维 Q/K/V；承接上一章的独立投影，未缩放、未加因果掩码}
 上一章使用 $W_Q=I_2$、$W_K=\begin{bmatrix}1&0\\1&1\end{bmatrix}$、
 $W_V=I_2$ 得到了\textbf{不对称}的匹配分数。
-这里保持同一套投影与输入，先复核最后一条 Query，
+这里保持同一套投影与输入，先在不缩放、不加因果掩码的条件下复核最后一条 Query，
 再\textbf{对所有行并行归一化和读取 Value}。
 相比\hyperref[intro:21c-naive-attention]{更早的未投影例子}，
 现在 Key 已经由独立的矩阵生成。
@@ -76,7 +75,6 @@ QK^\top=S.
 \end{center}
 
 \subsection{\texorpdfstring{完整三行复算：$S\to A\to Y$}{完整三行复算：S 到 A 到 Y}}
-\localfixture{承接上一章的三位置非对称 Q/K/V 数值例}
 继续使用 $Q=X$、$K=XW_K$、$V=X$，
 上一章得到的原始分数为（\textbf{未缩放、未加因果掩码}）
 \[
@@ -122,13 +120,13 @@ Y=AV=
 \subsection{\texorpdfstring{因果 Self-Attention：位置 $i$ 只读位置 $1$ 到 $i$}{因果 Self-Attention：位置 i 只读位置 1 到 i}}
 \phantomsection\label{concept:causal-mask}
 
-\localfixture{同一组 $S$ 与 $V$；加因果掩码，仍未缩放}
 \textbf{结论先行：}语言模型训练时，三个位置在同一次前向中一起计算，
 而位置 $i$ 要预测的是第 $i+1$ 个 Token。
 \textbf{因果掩码（Causal Mask）}让第 $i$ 行只读第 $1$ 到 $i$ 列，
 每个位置只用自己及以前的内容。
 
-做法是在 Softmax 之前，把 $S$ 中 $j>i$ 的项（对角线以上）换成 $-\infty$：
+继续使用上一节未缩放的 $S$ 和同一份 $V$。在 Softmax 之前，
+把 $S$ 中 $j>i$ 的项（对角线以上）换成 $-\infty$：
 \[
 S_{\rm causal}=\begin{bmatrix}
 1&-\infty&-\infty\\

@@ -56,7 +56,6 @@ Value 的维度也不必等于 Key 的维度。
 
 \subsection{匹配：独立投影让两个方向的分数可以不同}
 
-\localfixture{二维 Q/K/V；沿用前面的三条二维输入 $\vect x_1^\top,\vect x_2^\top,\vect x_3^\top$（与主线 $E$ 无关）；未缩放、未加因果掩码}
 沿用前面三条二维输入组成的 $X$，每行一个位置：
 \[
 X=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\qquad
@@ -64,7 +63,7 @@ W_Q=I_2,\qquad
 W_K=\begin{bmatrix}1&0\\1&1\end{bmatrix},\qquad W_V=I_2.
 \]
 这组权重只是\textbf{为了观察分工而设定的例子}，实际训练可学习不同的投影。
-矩阵乘法得到
+先直接用点积作为分数，并让每个位置都可读取三个位置。矩阵乘法得到
 \[
 Q=XW_Q=X,\quad
 K=XW_K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix},\quad

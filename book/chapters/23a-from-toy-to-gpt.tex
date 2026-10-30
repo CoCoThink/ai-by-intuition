@@ -165,8 +165,7 @@ GPT-2 small 的词表规模为 $50{,}257$，
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读复算：真实 GPT-2 的分词、概率、温度与注意力}
 
-\localfixture{公开 GPT-2 small 预训练权重；非本书三维参数}
-这一节提供一个\textbf{独立运行的真实模型实验}：
+下面直接加载 GPT-2 small 的公开预训练权重：
 \href{https://huggingface.co/openai-community/gpt2}{openai-community/gpt2}，
 固定修订（短 SHA）
 \texttt{607a30d7}；完整 40 位 revision
@@ -246,7 +245,7 @@ Qwen2.5-0.5B 分词器，\texttt{add\_special\_tokens=False} 时实测为：
 输入别的句子应重新运行分词器，不能把这四个片段推成通用中文分词规则。
 
 % Keep this closing block with the self-check so the part-end page is not a sparse tail.
-\Needspace{12\baselineskip}
+\Needspace{18\baselineskip}
 运行：
 \begin{verbatim}
 python3 scripts/chinese_tokenizer_demo.py --real

@@ -687,7 +687,7 @@
     "slug": "22c-language-training",
     "difficulty": "挑战",
     "minutes": 20,
-    "question": "\\phantomsection\\label{exercise:linked-22c-language-training}  \\textbf{【手算】} \\textbf{简化残差梯度（独立例）：}本题固定注意力权重、关闭两次 Norm，令 $W_{\\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\\relu(rW_{\\rm up})$、$h=r+fW_{\\rm down}$，其中 $x=(0,1)$。设注意力读取权重为\n$a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，\nFFN 下投影为 $W_{\\rm down}=0.5I_2$，第一次残差后向量\n$r=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为\n$g_h=(0.09716,0.72516)$。计算\n$\\partial L/\\partial W_{\\rm down}$ 和\n$\\partial L/\\partial W_V$ 的 $2\\times2$ 数值矩阵。",
+    "question": "\\phantomsection\\label{exercise:linked-22c-language-training}  \\textbf{【手算】} \\textbf{简化残差梯度：}本题固定注意力权重、关闭两次 Norm，令 $W_{\\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\\relu(rW_{\\rm up})$、$h=r+fW_{\\rm down}$，其中 $x=(0,1)$。设注意力读取权重为\n$a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，\nFFN 下投影为 $W_{\\rm down}=0.5I_2$，第一次残差后向量\n$r=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为\n$g_h=(0.09716,0.72516)$。计算\n$\\partial L/\\partial W_{\\rm down}$ 和\n$\\partial L/\\partial W_V$ 的 $2\\times2$ 数值矩阵。",
     "solution": "\\textbf{第一步：}先求 $f^\\top g_h$，再沿残差路径反传。\\par\\nobreak\n\\textbf{解答：} 本题已关闭 Norm、固定 $W_{\\rm up}=I_2$；$r=(0.330,1.670)$ 两项为正，故 $f=\\relu(r)=r$，$h=r+fW_{\\rm down}$，\n$\\partial L/\\partial W_{\\rm down}=f^\\top g_h\n\\approx\\begin{bmatrix}0.03206&0.23930\\\\0.16226&1.21102\\end{bmatrix}$。\n上游梯度 $g_r=g_h(I_2+0.5I_2)=1.5g_h$，\n故 $\\partial L/\\partial W_V=a^\\top g_r\n\\approx\\begin{bmatrix}0.04809&0.35895\\\\0.09765&0.72879\\end{bmatrix}$。",
     "legacy_answer_anchor": "",
     "id": "C-063"

@@ -175,7 +175,7 @@ $Y'=A'V$；列出三行权重和三行输出，检查形状。
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-061.}] \phantomsection\label{exercise:C-061}\exercisemeta{标准}{10}{\hyperref[solution:C-061]{解答第~\pageref*{solution:C-061}~页}}\textbf{【编程／解释】}运行 \nolinkurl{scripts/context_contrast_demo.py}。把第二条样本的前文也改成“春天”，保持两个目标不同；训练后上下文版还能低于 $\ln2$ 吗？先预测，再改代码核对。
 \item[\textbf{C-062.}] \phantomsection\label{exercise:C-062}\exercisemeta{挑战}{20}{\hyperref[solution:C-062]{解答第~\pageref*{solution:C-062}~页}}\textbf{【手算／复现】}完成\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini} 的二维分数迷你版}：先遮住梯度表，求 $g_h$、两条残差汇合的 $g_r$ 和 $\nabla_{W_K}L$，再用 \nolinkurl{scripts/mini_transformer_demo.py} 核对。
-\item[\textbf{C-063.}] \phantomsection\label{exercise:C-063}\label{exercise:C2-13}\exercisemeta{挑战}{20}{\hyperref[solution:C-063]{解答第~\pageref*{solution:C-063}~页}}\phantomsection\label{exercise:linked-22c-language-training}  \textbf{【手算】} \textbf{简化残差梯度（独立例）：}本题固定注意力权重、关闭两次 Norm，令 $W_{\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\relu(rW_{\rm up})$、$h=r+fW_{\rm down}$，其中 $x=(0,1)$。设注意力读取权重为
+\item[\textbf{C-063.}] \phantomsection\label{exercise:C-063}\label{exercise:C2-13}\exercisemeta{挑战}{20}{\hyperref[solution:C-063]{解答第~\pageref*{solution:C-063}~页}}\phantomsection\label{exercise:linked-22c-language-training}  \textbf{【手算】} \textbf{简化残差梯度：}本题固定注意力权重、关闭两次 Norm，令 $W_{\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\relu(rW_{\rm up})$、$h=r+fW_{\rm down}$，其中 $x=(0,1)$。设注意力读取权重为
 $a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，
 FFN 下投影为 $W_{\rm down}=0.5I_2$，第一次残差后向量
 $r=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为

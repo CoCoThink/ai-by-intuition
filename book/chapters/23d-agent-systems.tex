@@ -23,7 +23,6 @@
 \subsection{无状态请求、会话历史与 KV Cache 的区别}
 
 对于\textbf{无状态的模型请求接口}，应用把相关系统约束、用户消息、工具结果和历史重新提交，模型据此继续生成。
-\localfixture{每轮固定新增 200 Token 的教学假设}
 设每轮对话新增 $200$ 个 Token。第 $t$ 轮无删减重传时要提交 $200t$ 个，十轮累计
 \[
 200\times(1+2+\cdots+10)=200\times55=\boxed{11{,}000}\ \text{个输入 Token},
@@ -82,7 +81,6 @@ Agent 是组织模型决策与工具动作的系统方式。
 \subsection{［复算］三个二维文档块怎样决定检索结果？}
 \phantomsection\label{concept:vector-retrieval}
 
-\localfixture{二维 RAG 检索，独立于三维 Transformer 贯通参数}
 先用第~\ref*{intro:02-dot-product}~章的点积代替真实系统中复杂的向量检索：查询
 $q=(1,0.5)$；三个文档块（分别来自 Q1、Q2、Q3 报表）的教学向量排成三行：
 \[

@@ -51,11 +51,8 @@ ID 4 的 One-hot 行向量是 $(0,0,0,1,0)$。
 
 \subsection{同一份三维教学参数：五行向量}
 
-本节给出\textbf{三维贯通主算例}的参数。
-后文的二维注意力、四维双头等示例都在开头标“独立例”，
-各自使用独立的数值参数，不与这里的表混用。
-从这里开始，\textbf{三维贯通实验的唯一初始 Embedding 表}
-使用 $d_{\rm model}=3$，五个 ID 各对应一行：
+本节给出后续三维贯通计算使用的 Embedding 初值。
+取 $d_{\rm model}=3$，五个 ID 各对应一行：
 \[
 \begin{array}{c|ccccc}
 \text{ID／表的行号}&1&2&3&4&5\\\hline
@@ -118,6 +115,7 @@ X=\begin{bmatrix}
 等完整网络建立后，\hyperref[sec:embedding-training-snapshot]{联合训练章中的向量变化实验}
 会用同一张初始表展示二十步更新的结果。
 
+\Needspace{10\baselineskip}
 \subsection{Word2Vec 与上下文化表示有什么关系？}
 
 经典 Word2Vec 用词与上下文之间的预测关系训练\textbf{静态词向量}，

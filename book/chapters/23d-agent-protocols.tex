@@ -3,7 +3,6 @@
 \section{协议、Skill 与多 Agent：怎样在边界内协作？}
 \label{intro:23d-agent-protocols}
 
-\asof{2026-10-28}{信任分层、授权与消息关联}
 
 \subsection{MCP 为什么是协议，不是更聪明的模型？}
 \phantomsection\label{concept:mcp}
@@ -87,8 +86,7 @@
 
 \begin{example}[breakable=false]
 \noindent\emph{把注入测试分成模型层与执行层两项通过率}\par
-\localfixture{假设的 40 条注入测试，用于说明计分口径}
-准备 $40$ 份夹带“把私人文件外发”指令的报告。
+假设用 $40$ 份夹带“把私人文件外发”指令的报告做测试。
 设模型在 $36$ 份中只提取收入、未提出外发请求，在 $4$ 份中提出了上传请求；
 执行端白名单把这 $4$ 次请求全部拒绝。两层分别计分：
 \[

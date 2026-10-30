@@ -1,6 +1,6 @@
 % Global route: exact part order and a highlighted current stage.
 \newcommand{\globalroute}[1]{%
-\par\smallskip
+\par\smallskip\noindent\begin{minipage}{\linewidth}
 \tagstructbegin{tag=Figure,alttext={全书九段路线依次为学习、矩阵、文字、上下文、Transformer、助手、架构、视觉、联想记忆；第八、九段是主线之后的扩展路径。}}
 \begin{center}
 \begin{tikzpicture}[x=1mm,y=1mm,>=Latex,
@@ -20,7 +20,8 @@
 \end{tikzpicture}\par
 \tagstructbegin{tag=Caption}{\small\sffamily\color{muted}全书路线 · 沿编号前进；每部分开篇用一行路线标出当前位置}\par\tagstructend
 \end{center}
-\tagstructend\par\smallskip}
+\tagstructend
+\end{minipage}\par\smallskip}
 
 % Chapter numbers and destinations follow the same labels as the main text.
 \newcommand{\mapchapter}[2]{\hyperref[intro:#1]{第~\ref*{intro:#1}~章 · #2}}
