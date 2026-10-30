@@ -7,16 +7,16 @@
 \coordinate (scaled) at (3,0);
 \node[font=\small\bfseries] at (1.3,1.65) {整体放大，方向不变};
 \draw[->,linegray] (-.1,0)--(3.45,0);
-\draw[->,very thick,flowcolor] (0,0)--(q) node[above,font=\small] {需求 $\vect q$};
-\draw[->,very thick,datacolor] (0,0)--(scaled) node[above,font=\small] {$3\vect b=(3,0)$};
-\fill[ink] (b) circle (1.4pt) node[below,font=\small] {$\vect b=(1,0)$};
+\draw[->,very thick,flowcolor] (0,0)--(q) node[above,font=\small] {需求 $\vect q^\top$};
+\draw[->,very thick,datacolor] (0,0)--(scaled) node[above,font=\small] {$3\vect b^\top=(3,0)$};
+\fill[ink] (b) circle (1.4pt) node[below,font=\small] {$\vect b^\top=(1,0)$};
 \node[font=\small,align=center] at (1.3,-.9) {原始点积\\$0.6\longrightarrow1.8$};
 \begin{scope}[xshift=8.3cm]
 \coordinate (unitq) at (0.6,0.8);
 \coordinate (unitb) at (1,0);
 \node[font=\small\bfseries] at (.7,1.65) {各自除以长度后};
 \draw[->,linegray] (-.1,0)--(1.7,0);
-\draw[->,very thick,flowcolor] (0,0)--(unitq) node[above,font=\small] {需求 $\vect q$};
+\draw[->,very thick,flowcolor] (0,0)--(unitq) node[above,font=\small] {需求 $\vect q^\top$};
 \draw[->,very thick,datacolor] (0,0)--(unitb) node[below,font=\small] {$(1,0)$};
 \node[font=\small,align=center] at (.7,-.9) {两条长度均为 $1$\\点积恢复为 $0.6$};
 \end{scope}

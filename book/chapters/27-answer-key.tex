@@ -54,8 +54,8 @@
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-016.}] \phantomsection\label{solution:C-016}\phantomsection\label{answerpiece:01-vectors:4}\hyperref[exercise:C-016]{\textbf{第一步：}}先选择统一特征、投影或拼接中的一种。\par\nobreak\textbf{解题过程：}先统一特征定义和尺度，或将二维向量投影到三维空间，或分别拼接成五维；不可无规则地逐项相加。
 \item[\textbf{C-017.}] \phantomsection\label{solution:C-017}\hyperref[exercise:C-017]{\textbf{第一步：}}加法与数乘都逐个坐标计算；长度用勾股定理。\par\nobreak
-\textbf{解答：}$\vect a+\vect b=(4,2)$，$2\vect a=(6,8)$，$\|\vect a\|=\sqrt{3^2+4^2}=\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。
-\item[\textbf{C-018.}] \phantomsection\label{solution:C-018}\hyperref[exercise:C-018]{\textbf{第一步：}}用新的需求分别与三篇文章做点积。\par\nobreak\textbf{解题过程：}$\vect q\cdot\vect a=0.8\times0.8+0.6\times0.6=\answerresult{1}$，$\vect q\cdot\vect b=\answerresult{0.8}$，$\vect q\cdot\vect c=\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。
+\textbf{解答：}$\vect a^\top+\vect b^\top=(4,2)$，$2\vect a^\top=(6,8)$，$\|\vect a^\top\|=\sqrt{3^2+4^2}=\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。
+\item[\textbf{C-018.}] \phantomsection\label{solution:C-018}\hyperref[exercise:C-018]{\textbf{第一步：}}用新的需求分别与三篇文章做点积。\par\nobreak\textbf{解题过程：}$\vect q^\top\cdot\vect a^\top=0.8\times0.8+0.6\times0.6=\answerresult{1}$，$\vect q^\top\cdot\vect b^\top=\answerresult{0.8}$，$\vect q^\top\cdot\vect c^\top=\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。
 \item[\textbf{C-019.}] \phantomsection\label{solution:C-019}\hyperref[exercise:C-019]{\textbf{第一步：}}先算原始点积，再除以两个长度的乘积。\par\nobreak\textbf{解题过程：}点积 $3\times4+4\times3=\answerresult{24}$，两个长度均为 $\sqrt{3^2+4^2}=\answerresult{5}$；余弦相似度为 $24/(5\times5)=\answerresult{0.96}$。两条向量各放大 $5$ 倍，原始点积放大 $25$ 倍，方向与夹角不变；分母也放大 $25$ 倍，所以余弦相似度保持不变。
 \item[\textbf{C-020.}] \phantomsection\label{solution:C-020}\phantomsection\label{answerpiece:02-dot-product:4}\hyperref[exercise:C-020]{\textbf{第一步：}}先把每条向量除以自己的长度。\par\nobreak\textbf{解题过程：}余弦相似度除以两个范数，排除了非零向量整体放大的影响；原始点积则会随长度变化。
 \end{enumerate}
@@ -446,8 +446,8 @@ $\mathcal{M}_2=\mathcal{M}_1+\vect{k}_A \vect{r}_A^\top=
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 架构\enspace{\mdseries\footnotesize（\hyperref[exercise:R-13]{题目见第~\pageref*{exercise:R-13}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{R-13.}] \phantomsection\label{solution:R-13}\hyperref[exercise:R-13]{\textbf{第一步：}}先算单 Token：层数 $\times$ KV 头数 $\times$ 头宽 $\times$ 2（K、V）$\times$ 2 字节。\par\nobreak
-\textbf{解题过程：}单 Token $24\times2\times64\times2\times2=\answerresult{12{,}288}$ 字节；乘 $32{,}768$ 个位置得单请求 $402{,}653{,}184$ 字节，两条为 $\answerresult{805{,}306{,}368}$ 字节（768 MiB）。改为 MHA 时 KV 头 $2\to14$，总量乘 $7$；这个倍率与长度和请求数无关，未计额外运行开销。
+\item[\textbf{R-13.}] \phantomsection\label{solution:R-13}\hyperref[exercise:R-13]{\textbf{第一步：}}先数单层、单请求的 K/V 元素，再乘层数、请求数和每元素字节数。\par\nobreak
+\textbf{解题过程：}GQA 单层、单请求有 $2\times100\times3\times8=4{,}800$ 个数；两层、两条请求的缓存本体为 $4{,}800\times2\times2\times2=\answerresult{38{,}400}$ 字节。改为 MHA 后，K/V 头数从 $3$ 变为 $12$，字节数为 $38{,}400\times(12/3)=\answerresult{153{,}600}$。倍率是 $\answerresult{4}$，请求数同时乘在两者上，不改变倍率；未计布局、分配与运行时开销。
 \item[\textbf{R-14.}] \phantomsection\label{solution:R-14}\hyperref[exercise:R-14]{\textbf{第一步：}}每次只替换一个组件并保持负载一致。\par\nobreak\textbf{解题过程：}固定任务、权重训练预算、硬件、精度、长度、并发与质量阈值，分别替换位置、KV 共享、内核，再测组合。联合报告质量、延迟、吞吐与显存，不能用一个总时间归因三项。
 \end{enumerate}
 \Needspace{6\baselineskip}

@@ -31,7 +31,7 @@ def check_article_matching():
     """Recompute the printed ranking, scaling counterexample and plotted projection."""
     vectors=(ROOT/'book/chapters/01-vectors.tex').read_text()
     source=(ROOT/'book/chapters/02-dot-product.tex').read_text()
-    rows=re.findall(r'\$\\vect ([qabc])\$ & \$([\d.]+)\$ & \$([\d.]+)\$',vectors)
+    rows=re.findall(r'\$\\vect ([qabc])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',vectors)
     data={name:np.array([float(x),float(y)]) for name,x,y in rows}
     assert set(data)==set('qabc'), 'Missing article feature-table rows'
     scores={name:float(data['q']@data[name]) for name in 'abc'}
@@ -81,7 +81,7 @@ def check_matrix_training_bridges():
     candidates,transposed=numeric_matrices(matrix_source)[:2]
     feature_source=(ROOT/'book/chapters/01-vectors.tex').read_text()
     features={name:np.array([float(x),float(y)]) for name,x,y in
-              re.findall(r'\$\\vect ([qabc])\$ & \$([\d.]+)\$ & \$([\d.]+)\$',feature_source)}
+              re.findall(r'\$\\vect ([qabc])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',feature_source)}
     assert np.allclose(candidates,[features[name] for name in 'abc'])
     assert np.array_equal(transposed,candidates.T)
     batch=matrix_source.split(r'\label{sec:matrix-article-batch}',1)[1].split(r'\subsection{',1)[0]
@@ -150,6 +150,42 @@ def check_learning_rate_comparison():
     for result in results:
         assert f'{result:.6f}' in chapter and f'{result:.6f}' in exercise['solution']
     print('Learning-rate QA: both stable, eta .75 beats .9 at step 10 on the actual three-point loss')
+
+
+def check_mlp_nonlinearity():
+    """Recompute every row of the same-weight linear/nonlinear contrast."""
+    source=(ROOT/'book/chapters/10-mlp.tex').read_text()
+    forward=source.split(r'\label{sec:mlp-forward}',1)[1].split(r'\subsection{',1)[0]
+    w1,w2=numeric_matrices(forward)
+    contrast=source.split(r'\label{sec:mlp-nonlinearity}',1)[1].split(r'\subsection{',1)[0]
+    assert np.array_equal(numeric_matrices(contrast)[0],w1@w2)
+    rows=re.findall(r'^\$\(([-\d,]+)\)\$ & \$\(([-\d,]+)\)\$ & \$\(([-\d,]+)\)\$',contrast,re.M)
+    assert len(rows)==3
+    results=[]
+    for given,linear,nonlinear in rows:
+        x=np.fromstring(given,sep=',');linear=np.fromstring(linear,sep=',');nonlinear=np.fromstring(nonlinear,sep=',')
+        assert np.array_equal((x@w1)@w2,linear)
+        assert np.array_equal(np.maximum(x@w1,0)@w2,nonlinear)
+        results.append((x,linear,nonlinear))
+    assert np.array_equal(results[0][0],-results[1][0])
+    assert np.array_equal(results[0][1]+results[1][1],results[2][1])
+    assert not np.array_equal(results[0][2]+results[1][2],results[2][2])
+    print('MLP activation QA: all three printed contrasts use original weights and disprove a single linear map')
+
+
+def check_core_cache_review():
+    """R-13 must supply its own inputs instead of relying on the optional config."""
+    row=next(r for r in json.loads((ROOT/'book/exercises.json').read_text()) if r['id']=='R-13')
+    assert 'Qwen' not in row['question']+row['review_prompt']
+    layers,q_heads,kv_heads,width,batch,positions,element_bytes,mha_heads=map(int,re.findall(r'\$(\d+)\$',row['question']))
+    assert q_heads==mha_heads and q_heads%kv_heads==0
+    gqa=kv_bytes(layers,kv_heads,width,positions,element_bytes,batch)
+    mha=kv_bytes(layers,mha_heads,width,positions,element_bytes,batch)
+    answers=re.findall(r'\\answerresult\{([\d{},]+)\}',row['solution'])
+    assert [int(v.replace('{,}','')) for v in answers]==[gqa,mha,mha//gqa]
+    for requests in (1,2,5):
+        assert kv_bytes(layers,mha_heads,width,positions,element_bytes,requests)/kv_bytes(layers,kv_heads,width,positions,element_bytes,requests)==mha/gqa
+    print(f'Core cache review QA: supplied R-13 inputs give {gqa}/{mha} bytes; batch-independent ratio {mha//gqa}')
 
 
 def check_cnn_channels():
@@ -386,6 +422,8 @@ def check_printed_mini(c, gradients):
 def main():
     check_article_matching()
     check_matrix_training_bridges()
+    check_mlp_nonlinearity()
+    check_core_cache_review()
     check_learning_rate_comparison()
     check_cnn_channels()
     check_memory()

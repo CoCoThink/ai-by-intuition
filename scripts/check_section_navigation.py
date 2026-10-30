@@ -40,6 +40,9 @@ def source_errors(body, targets):
         errors.append('Literal page number: use an automatic page reference')
     if re.search(r'\\hyperref\[app:[^]]+\]\{附录[\s~]*[A-G]\.\d+',body):
         errors.append('Appendix link prints a literal subsection number: use the target label')
+    for match in re.finditer(r'\\hyperref\[(app:[^]]+)\]\{附录[\s~]*\\ref\*?\{([^}]+)\}',body):
+        if match[1]!=match[2]:
+            errors.append(f'Appendix link prints a different target number: {match[1]}/{match[2]}')
     return errors
 
 
@@ -264,6 +267,44 @@ def check_toc_folios(reader, aux, labels):
     if len(entries)<45:errors.append('TOC audit expected at least 45 chapter/part entries')
     if errors:raise SystemExit('\n'.join(errors))
     print(f'TOC folio QA: all {len(entries)} printed page numbers have their own correct destination link')
+
+
+def page_span_union(spans):
+    pages=set()
+    for first,last in spans:
+        if not 1<=first<=last:raise ValueError(f'Invalid reading page span: {first}/{last}')
+        pages.update(range(first,last+1))
+    return pages
+
+
+def reading_ranges(source):
+    return {key:[pair.split('/') for pair in ranges.split(',')]
+            for key,ranges in re.findall(r'\\setroutebudget\{(quick|standard|hands)\}\{([^{}]+)\}',source)}
+
+
+def check_reading_budgets(reader,labels):
+    """Count actual PDF destination spans and compare with the printed budgets."""
+    ranges=reading_ranges((ROOT/'book/chapters/00g-reading-routes.tex').read_text())
+    failures=[];counts={}
+    for key,pairs in ranges.items():
+        spans=[]
+        for pair in pairs:
+            pages=[]
+            for label in pair:
+                fields=labels[label]
+                actual=reader.get_destination_page_number(reader.named_destinations[fields[3]])+1
+                if actual!=int(fields[1]):failures.append(f'Reading endpoint {label}: label/destination mismatch')
+                pages.append(actual)
+            spans.append(pages)
+        counts[key]=len(page_span_union(spans))
+    first=reader.get_destination_page_number(reader.named_destinations[labels['front:reading-routes'][3]])
+    text=re.sub(r'\s+','',''.join(page.extract_text() for page in reader.pages[first:first+3]))
+    for key,title in [('quick','速读'),('standard','标准'),('hands','动手')]:
+        found=re.findall(title+r'，约(\d+)页',text)
+        if found!=[str(counts[key])]:failures.append(f'{title}: printed budget {found} differs from actual deduplicated {counts[key]} pages')
+    if counts['quick']>=counts['standard']:failures.append('Quick reading route must cover fewer pages than standard reading')
+    if not failures:print(f'Reading budget QA: printed quick/standard/hands match actual deduplicated page spans {counts}')
+    return failures
 
 
 def check_forward_appendix_link(reader, path, labels):
@@ -506,6 +547,7 @@ def check_pdf(path, aux, used):
     failures.extend(check_exercise_destinations(reader,path,labels))
     failures.extend(check_reproduction_and_definitions(reader,labels))
     failures.extend(check_chapter_dividers(reader,labels))
+    failures.extend(check_reading_budgets(reader,labels))
     check_toc_folios(reader,aux,labels)
     failures.extend(check_forward_appendix_link(reader,path,labels))
     failures.extend(contour_label_errors(reader,path,labels))
@@ -528,6 +570,8 @@ def check_pdf(path, aux, used):
 
 
 def self_test():
+    assert page_span_union([(3,5),(5,7),(3,3)])==set(range(3,8))
+    assert reading_ranges(r'\setroutebudget{quick}{a/b,c/d}')=={'quick':[['a','b'],['c','d']]}
     assert not printed_exercise_errors(['C-001','C-002'],['C-001','C-002'])
     assert printed_exercise_errors(['C-001','C-120','C-002'],['C-001','C-002','C-003'])
     source=r'\subsection{Elective}\label{elective:test}\begin{center}\captionof{figure}{Image}\label{fig:test}'
@@ -539,6 +583,7 @@ def self_test():
     assert source_errors('见第 65 页',targets)
     assert source_errors(r'\hyperref[app:full]{附录 B.1 的参数}',targets)
     assert not source_errors(r'\hyperref[app:full]{附录~\ref*{app:full} 的参数}',targets)
+    assert source_errors(r'\hyperref[app:rational-mini]{附录~\ref*{app:transformer-intermediates}}',targets)
     assert not caption_errors([('kept together',{50})])
     assert caption_errors([('old RNN diagram regression',{50,51})])
     leaked={'/S':'/Sect','/K':[{'/S':'/H2'},{'/S':'/Div','/K':[{'/S':'/Caption'}]},{'/S':'/P'}]}
@@ -581,6 +626,9 @@ def main():
     main=uncomment((ROOT/'book/main.tex').read_text());sources={'main':main}
     for name in re.findall(r'\\input\{chapters/([^}]+)\}',main):sources[name]=uncomment((ROOT/'book/chapters'/f'{name}.tex').read_text())
     targets=section_targets(sources);used={};errors=[]
+    ranges=reading_ranges(sources['00g-reading-routes'])
+    if set(ranges)!={'quick','standard','hands'}:
+        errors.append('All three reading routes need explicit page ranges and a printed budget')
     for name,body in sources.items():
         # Source diagrams and bibliography page ranges are not section entries.
         errors.extend(f'{name}: {e}' for e in source_errors(body,targets))

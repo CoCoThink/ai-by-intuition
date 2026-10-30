@@ -1,4 +1,4 @@
-\subsection{两个方面都要考虑，怎样得到一个分数？}
+\subsection{技术与生活都要考虑，怎样得到一个分数？}
 
 只比较技术这一项，会忽略需求中的生活部分。
 若直接把文章自身的两个分量相加，B 和 C 都得到 $1$，又区分不出当前需求更偏向谁。
@@ -30,11 +30,11 @@ C & $0.6\times0+0.8\times1$ & $0.80$\\\bottomrule
 刚才做的\textbf{同位置相乘，再把乘积相加}，就叫\textbf{点积（dot product）}。
 两条二维向量的写法是
 \begin{equation}
-\boxed{\vect a\cdot\vect b=a_1b_1+a_2b_2.}
+\boxed{\vect a^\top\cdot\vect b^\top=a_1b_1+a_2b_2.}
 \end{equation}
 推广到 $d$ 维，就是
 \[
-\vect a\cdot\vect b=a_1b_1+\cdots+a_db_d.
+\vect a^\top\cdot\vect b^\top=a_1b_1+\cdots+a_db_d.
 \]
 输入是两条同维向量，输出是\textbf{一个数}。
 把一条向量当作权重看，这也是多项加权求和；
@@ -44,15 +44,16 @@ C & $0.6\times0+0.8\times1$ & $0.80$\\\bottomrule
 
 继续使用同一组数据。将 B 的每个分量乘 $3$，得到
 \[
-3\vect b=3(1,0)=(3,0).
+3\vect b^\top=3(1,0)=(3,0).
 \]
 这种操作叫\textbf{数乘}：每个位置都乘同一个数。
 B 的技术与生活配比仍然是“只有技术”，匹配分数却变成
 \[
-\vect q\cdot(3\vect b)=0.6\times3+0.8\times0=1.8.
+\vect q^\top\cdot(3\vect b^\top)=0.6\times3+0.8\times0=1.8.
 \]
-$1.8$ 超过了 A 的 $0.96$。如果我们要比较的是\textbf{主题配比}，
-仅仅整体放大数字就能改变排名，说明还需要区分向量的两个方面。
+$1.8$ 超过了 A 的 $0.96$，但 B 仍然只谈技术。
+这说明原始点积同时受\textbf{特征的配比}和\textbf{数字的整体大小}影响；
+如果想比较主题配比，就要先把这两种影响分开。
 
 在图中，$(1,0)$ 和 $(3,0)$ 指向相同方向，后者的箭头更长。
 \textbf{方向}体现各分量的配比，\textbf{长度}体现整体大小。
@@ -62,14 +63,14 @@ $1.8$ 超过了 A 的 $0.96$。如果我们要比较的是\textbf{主题配比}�
 怎样量箭头的长度？从原点走到 $(a_1,a_2)$，横、纵位移构成直角三角形，
 用勾股定理便得到
 \begin{equation}
-\boxed{\|\vect a\|=\sqrt{a_1^2+a_2^2}.}
+\boxed{\|\vect a^\top\|=\sqrt{a_1^2+a_2^2}.}
 \end{equation}
-符号 $\|\vect a\|$ 读作“向量 $\vect a$ 的长度”；本章用\textbf{范数}一词表示这种长度。
-因此 $\|\vect b\|=\sqrt{1^2+0^2}=1$，
-$\|3\vect b\|=\sqrt{3^2+0^2}=3$。
+符号 $\|\vect a^\top\|$ 读作“向量 $\vect a^\top$ 的长度”；本章用\textbf{范数}一词表示这种长度。
+因此 $\|\vect b^\top\|=\sqrt{1^2+0^2}=1$，
+$\|3\vect b^\top\|=\sqrt{3^2+0^2}=3$。
 \textbf{原始点积会受向量长度影响}，需要把这点纳入分数的解释。
 
-向量也可以逐项相加，例如 $\vect b+\vect c=(1,0)+(0,1)=(1,1)$。
+向量也可以逐项相加，例如 $\vect b^\top+\vect c^\top=(1,0)+(0,1)=(1,1)$。
 加法要求对应位置的含义与单位相容；后面的矩阵运算会反复使用这些数乘与加法。
 
 \subsection{只想比较方向，怎样排除长度影响？}
@@ -78,15 +79,15 @@ $\|3\vect b\|=\sqrt{3^2+0^2}=3$。
 方向保持不变，长度则变成 $1$；这样的向量叫\textbf{单位向量}。
 这个操作叫长度归一化。例如
 \[
-\frac{3\vect b}{\|3\vect b\|}=\frac{(3,0)}3=(1,0)=\vect b.
+\frac{3\vect b^\top}{\|3\vect b^\top\|}=\frac{(3,0)}3=(1,0)=\vect b^\top.
 \]
 归一化后再和需求比较，分数恢复为 $0.6$。
 \input{figures/dot-product-length}
 
 回头核对最初的数据：
 \[
-\|\vect q\|=\sqrt{0.6^2+0.8^2}=1,\qquad
-\|\vect a\|=\sqrt{0.8^2+0.6^2}=1.
+\|\vect q^\top\|=\sqrt{0.6^2+0.8^2}=1,\qquad
+\|\vect a^\top\|=\sqrt{0.8^2+0.6^2}=1.
 \]
 B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异，
 比较的是这些向量的方向。
@@ -96,11 +97,11 @@ B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异�
 每项乘积都除以同一个长度乘积，可以把分母提出来：
 \begin{equation}
 \boxed{\text{余弦相似度}
-=\frac{\vect a\cdot\vect b}{\|\vect a\|\|\vect b\|}.}
+=\frac{\vect a^\top\cdot\vect b^\top}{\|\vect a^\top\|\|\vect b^\top\|}.}
 \end{equation}
 分母消除了正数倍整体放大的影响。以放大后的 B 为例：
 \[
-\frac{\vect q\cdot(3\vect b)}{\|\vect q\|\|3\vect b\|}
+\frac{\vect q^\top\cdot(3\vect b^\top)}{\|\vect q^\top\|\|3\vect b^\top\|}
 =\frac{1.8}{1\times3}=0.6.
 \]
 零向量没有方向，长度也是零，因此这条除法要求两条向量都非零。
@@ -121,7 +122,7 @@ B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异�
 
 一般地，两条非零向量满足
 \begin{equation}
-\boxed{\vect a\cdot\vect b=\|\vect a\|\|\vect b\|\cos\theta.}
+\boxed{\vect a^\top\cdot\vect b^\top=\|\vect a^\top\|\|\vect b^\top\|\cos\theta.}
 \label{eq:dot-product-geometry}
 \end{equation}
 因此除以两个长度，留下的就是 $\cos\theta$，这解释了“余弦相似度”的名称。
@@ -131,24 +132,24 @@ B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异�
 
 \begin{example}[title={{\symboliconfont ★} 为什么坐标计算与几何解释一致？}]
 这一段证明上面的通式，可以在掌握计算方法后回看。
-把两条非零、非共线向量从同一点画出，连接终点，第三条边长为 $\|\vect a-\vect b\|$。
+把两条非零、非共线向量从同一点画出，连接终点，第三条边长为 $\|\vect a^\top-\vect b^\top\|$。
 根据余弦定理，
 \begin{equation}
-\|\vect a-\vect b\|^2
-=\|\vect a\|^2+\|\vect b\|^2
--2\|\vect a\|\|\vect b\|\cos\theta.
+\|\vect a^\top-\vect b^\top\|^2
+=\|\vect a^\top\|^2+\|\vect b^\top\|^2
+-2\|\vect a^\top\|\|\vect b^\top\|\cos\theta.
 \label{eq:cosine-law}
 \end{equation}
 另一方面，按坐标展开：
 \[\begin{aligned}
-\|\vect a-\vect b\|^2
+\|\vect a^\top-\vect b^\top\|^2
 &=(a_1-b_1)^2+(a_2-b_2)^2\\
-&=\|\vect a\|^2+\|\vect b\|^2
+&=\|\vect a^\top\|^2+\|\vect b^\top\|^2
 -2(a_1b_1+a_2b_2)\\
-&=\|\vect a\|^2+\|\vect b\|^2-2(\vect a\cdot\vect b).
+&=\|\vect a^\top\|^2+\|\vect b^\top\|^2-2(\vect a^\top\cdot\vect b^\top).
 \end{aligned}\]
 两式左侧相等，右侧又有相同的两个长度平方项，消去后得到
-$-2(\vect a\cdot\vect b)=-2\|\vect a\|\|\vect b\|\cos\theta$。
+$-2(\vect a^\top\cdot\vect b^\top)=-2\|\vect a^\top\|\|\vect b^\top\|\cos\theta$。
 再同时除以 $-2$，就是式~\eqref{eq:dot-product-geometry}。
 高维时按坐标展开仍成立，两条非共线向量也仍处在同一个平面内；
 同向或反向的共线情况可以直接代入核对。
@@ -166,7 +167,7 @@ $-2(\vect a\cdot\vect b)=-2\|\vect a\|\|\vect b\|\cos\theta$。
 
 \chapterchecktasks{01-vectors}{沿着文章匹配例子复算}{
 \item \textbf{表示：}本章向量按“技术、生活”排列。把需求 $(0.6,0.8)$ 改写成 $(0.8,0.6)$，表达的偏好发生了什么变化？\chapterinlinehint{先给两个位置写上特征名称。}
-\item \textbf{手算：}仍用需求 $\vect q=(0.6,0.8)$，一篇新文章的向量为 $(0.6,0.8)$。它的点积分数是多少？按本章规则，与 A 相比排在前还是后？\chapterinlinehint{同位置相乘，再把两项贡献相加。}
+\item \textbf{手算：}仍用需求 $\vect q^\top=(0.6,0.8)$，一篇新文章的向量为 $(0.6,0.8)$。它的点积分数是多少？按本章规则，与 A 相比排在前还是后？\chapterinlinehint{同位置相乘，再把两项贡献相加。}
 \item \textbf{预测：}把 B 从 $(1,0)$ 放大到 $(3,0)$，原始点积怎样变化？主题配比是否改变？\chapterinlinehint{同时检查各分量的比例与点积分数。}
 \item \textbf{手算：}求 $(3,0)$ 的长度及归一化后的向量，再算它与需求的余弦相似度。\chapterinlinehint{先用勾股定理求长度，再逐项除以长度。}
 \item \textbf{几何：}两个单位向量点积为 $0$，它们的方向有什么关系？把其中一条反向，点积会怎样？\chapterinlinehint{先由点积读出夹角，再看反向后的夹角。}

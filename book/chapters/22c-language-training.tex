@@ -98,7 +98,7 @@ $(\nabla_{W_{\rm out}}L)_{1,4}\approx-0.8595$。
 例如 $(W_{\rm out})_{1,4}$ 的原值 $0.2$，
 学习率为 $\eta=0.04$ 时会更新为
 $0.2-0.04(-0.859532)\approx0.23438$。
-\textbf{训练会更新整个矩阵；这里选一个元素手算。}
+\textbf{训练会更新整个矩阵；这里选一个元素手算。}\phantomsection\label{route:joint-core-end}
 
 \subsection{梯度能走回 Query、Key、Value、Norm、FFN 和词向量吗？}
 \label{sec:gradient-paths}
@@ -498,4 +498,4 @@ CI 核对均值不可区分、两种查询的权重、恢复均匀后的退化�
 三个位置同时提供训练信号，所有共享参数沿完整图累积梯度，
 在同一旧参数状态下统一更新。
 现在整条“ID $\to$ 概率 $\to$ 损失 $\to$ 梯度 $\to$ 再预测”已可复算。
-下一章研究：没有给出未来标准答案时，模型如何自回归地产生文字？
+下一章研究：没有给出未来标准答案时，模型如何自回归地产生文字？\phantomsection\label{route:joint-all-end}

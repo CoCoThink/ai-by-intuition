@@ -7,8 +7,8 @@
 \coordinate (p) at (0.576,0.768);
 \draw[->,linegray] (-.08,0)--(1.1,0) node[right,font=\small,text=muted] {技术};
 \draw[->,linegray] (0,-.08)--(0,1.13) node[above,font=\small,text=muted] {生活};
-\draw[->,very thick,flowcolor] (0,0)--(q) node[above left,font=\small] {$\vect q=(0.6,0.8)$};
-\draw[->,thick,datacolor] (0,0)--(a) node[right,font=\small] {$\vect a=(0.8,0.6)$};
+\draw[->,very thick,flowcolor] (0,0)--(q) node[above left,font=\small] {$\vect q^\top=(0.6,0.8)$};
+\draw[->,thick,datacolor] (0,0)--(a) node[right,font=\small] {$\vect a^\top=(0.8,0.6)$};
 \draw[dashed,thick,muted] (a)--(p);
 \draw[muted] (.54,.72)--(.588,.684)--(.624,.732);
 \fill[ink] (p) circle (1.1pt);
@@ -16,7 +16,7 @@
 \node[font=\small] at (.35,.18) {$\theta$};
 \node[font=\small,rotate=53.13,above] at (.23,.34) {投影长 $0.96$};
 \node[font=\small,align=left,anchor=west] at (1.02,.3)
- {$\|\vect q\|=\|\vect a\|=1$\\[2mm]$\vect q\cdot\vect a=\cos\theta=0.96$};
+ {$\|\vect q^\top\|=\|\vect a^\top\|=1$\\[2mm]$\vect q^\top\cdot\vect a^\top=\cos\theta=0.96$};
 \end{tikzpicture}
 \captionof{figure}{沿用需求与文章 A：两条单位向量的点积为 $0.96$，等于投影长与夹角余弦}
 \label{fig:dot-product-projection}

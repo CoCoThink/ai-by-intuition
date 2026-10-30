@@ -22,6 +22,8 @@
 2. 题库、答案、章末导航、术语表、参考清单和附录 G 断言表都是**生成内容**：改源文件，再运行对应生成器，命令见[生成文件](#生成文件)。
 3. 时效性断言（协议、API、模型配置）要查官方来源，同步正文、[dated-claims.json](book/dated-claims.json) 和 [source-audit.json](book/source-audit.json)；`checked_utc` 只在实际复核内容后更新。
 
+阅读路线的页数预算由 [00g-reading-routes.tex](book/chapters/00g-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步文字指引与这些标签；成品导航检查会核对实际目标页和表中预算，不手填旧版页数。
+
 ## 本地构建
 
 需要 TeX Live 2026（LuaLaTeX、latexmk）、Noto Serif/Sans CJK SC 与 Noto Serif/Sans 字体、Poppler，以及已有的 Python 环境。在仓库根目录运行：

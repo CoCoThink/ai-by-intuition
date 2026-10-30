@@ -71,7 +71,7 @@ L=\tfrac12(4-5)^2=\tfrac12.
 反向传播（backpropagation）传的不是文字、答案或原始输入，而是损失对中间变量的梯度。
 前向时从 $x$ 算到 $L$；求梯度时从 $\partial L/\partial\widehat{y}$ 出发，沿同一条链倒着走，这就是“反向”的含义。
 后面的局部变化率先算出来，前面的参数直接复用，避免每求一个权重都从头展开整条函数。
-\end{idea}
+\end{idea}\phantomsection\label{route:backprop-end}
 
 \subsection{如果中间有 ReLU，怎样求导？}
 

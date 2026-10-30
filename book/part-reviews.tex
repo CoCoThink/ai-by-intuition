@@ -31,7 +31,7 @@
 \endgroup}
 \newcommand{\partreviewarchitecture}{\par\Needspace{3\baselineskip}\begingroup\small\linespread{1.06}\selectfont\setlength{\parskip}{1pt}
 \noindent{\sffamily\bfseries 本部分累积复习}\par\nobreak
-\noindent\textbf{R-13.} 按锁定 Qwen 配置算两条 32K 请求的 fp16 KV；改为 MHA 后倍率变吗？ \hyperref[solution:R-13]{（解答：第~\pageref*{solution:R-13}~页）}\par
+\noindent\textbf{R-13.} 两层模型，每层 $12$ 个 Q 头、$3$ 个 KV 头，每头宽 $8$；两条请求各 $100$ 个位置、每元素 $2$ 字节。算 KV 本体；改为 $12$ 个 KV 头后是多少，请求数影响倍率吗？ \hyperref[solution:R-13]{（解答：第~\pageref*{solution:R-13}~页）}\par
 \noindent\textbf{R-14.} 位置表示、KV 头数和内核同时改变：设计三组消融，控制质量与硬件。 \hyperref[solution:R-14]{（解答：第~\pageref*{solution:R-14}~页）}\par
 \endgroup}
 \newcommand{\partreviewvision}{\par\Needspace{3\baselineskip}\begingroup\small\linespread{1.06}\selectfont\setlength{\parskip}{1pt}

@@ -182,8 +182,14 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 2\times100\times2\times8=\answerresult{3{,}200\ \text{个数}}.
 \]
 在这个简化例子里，缓存元素数缩小为原来的四分之一。
-要换算成实际字节，还必须乘以每个元素占用的字节数、
-模型层数和批量大小，并考虑缓存布局、分配及实现开销。
+要换算成实际字节，在各层配置相同、各请求缓存长度相同的条件下：
+\[
+\text{缓存本体字节数}
+=\text{单层、单请求元素数}\times\text{层数}\times\text{请求数}\times\text{每元素字节数}.
+\]
+请求数就是这里同时保存缓存的批量大小；例如每元素 $2$ 字节，
+单层、单请求的 GQA 缓存本体为 $3{,}200\times2=6{,}400$ 字节。
+实际显存还需考虑缓存布局、分配及实现开销。
 
 \input{figures/gqa-cache-read}
 
@@ -215,8 +221,7 @@ K/V 共享（GQA） & K/V 头有多少？ & 缓存、质量、吞吐\\
 \item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}
 \item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
 \item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
-}
-
+}\phantomsection\label{route:modern-core-end}
 
 \par\smallskip
 到这里，已经可以说明位置表示、数值尺度与 K/V 共享分别改变了什么。

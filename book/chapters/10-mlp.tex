@@ -12,9 +12,13 @@ MLP（多层感知机）用多层可训练计算组合特征。本章先用两�
 \subsection{什么是神经元、输入层、隐藏层与输出层？}
 \phantomsection\label{concept:neuron}
 
-只有一个输出数字时，一组权重就能把输入加总。
-如果想同时形成三个中间特征，就并排使用三组权重，各自处理同一条输入。
-这样的一组计算叫作一个\textbf{人工神经元}：它接收若干输入数字，
+第~\ref*{intro:07-functions-relu}~章中，一条直线无法精确拟合 $(-1,1),(0,0),(1,1)$。
+我们让两个隐藏单元分别响应正、负输入，再把它们的输出相加，就得到了 $|x|$。
+\textbf{中间特征的用途，是让后面的简单组合能够表达原来表达不了的关系。}
+当时两个隐藏特征由人设置，只训练输出权重；本章进一步让隐藏层权重也参与训练。
+
+现在将同一做法推广到多个输入：并排使用多组权重，各自形成一个中间特征。
+每组计算叫作一个\textbf{人工神经元}：它接收若干输入数字，
 按权重加总、加偏置，再经过激活函数，例如
 $h=\relu(x_1w_1+x_2w_2+b)$。
 它只是可训练的计算单元，不是对生物神经元的精确模拟。
@@ -48,12 +52,8 @@ $h=\relu(x_1w_1+x_2w_2+b)$。
 \end{center}
 \tagstructend
 
-\subsection{为什么夹在中间的非线性不可少？}
-将前后两次投影的权重分别记为 $W_1,W_2$。去掉偏置和 ReLU，就有
-$\vect x^\top(W_1W_2)$，两层可以合并成一层；
-插入激活函数后，哪些中间分量为零随输入改变，不再能用一个固定矩阵普遍代替。
-
 \subsection{按行向量约定，手算一次}
+\label{sec:mlp-forward}
 令 $\vect x^\top=(2,-1)$，取
 \[
 W_1=\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix},\quad
@@ -70,6 +70,35 @@ W_2=\begin{bmatrix}1&0\\0&2\\1&1\end{bmatrix}.
 输入、隐藏和输出形状依次为 $1\times2$、
 $1\times3$ 和 $1\times2$。
 \end{example}
+
+\subsection{用同一组权重检查：为什么中间需要非线性？}
+\label{sec:mlp-nonlinearity}
+
+刚才的第二个隐藏分量由 $-1$ 变成了 $0$。如果省去这一步，输出会怎样？
+保持上面的 $W_1,W_2$ 不变，再试相反输入与零输入：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}ccc@{}}\toprule
+输入 $\vect x^\top$ & 无 ReLU：$(\vect x^\top W_1)W_2$ & 有 ReLU：$\relu(\vect x^\top W_1)W_2$\\\midrule
+$(2,-1)$ & $(3,-1)$ & $(3,1)$\\
+$(-2,1)$ & $(-3,1)$ & $(0,2)$\\
+$(0,0)$ & $(0,0)$ & $(0,0)$\\\bottomrule
+\end{tabular}
+\end{center}
+无 ReLU 时，相反的输入得到相反的输出，两行相加为零；
+有 ReLU 时，两项输出相加却为 $(3,3)$。
+原来，输入 $(2,-1)$ 保留第 1、3 个隐藏单元，输入 $(-2,1)$ 则只保留第 2 个。
+不同输入使用不同的激活状态，改变了整个网络的输入输出关系。
+
+回到矩阵乘法，无 ReLU 时可以先把权重相乘：
+\[
+W_1W_2=\begin{bmatrix}2&1\\1&3\end{bmatrix},\qquad
+(\vect x^\top W_1)W_2=\vect x^\top(W_1W_2).
+\]
+两层仍等同于一个固定线性映射。上表含 ReLU 的三组结果不满足这个线性关系，
+因此无法用一个固定矩阵普遍代替；零输入的输出为零，也排除了靠固定偏置补齐差异的可能。
+这正是前面用两个 ReLU 单元拼出折角的矩阵版本。下面回到原输入 $(2,-1)$，继续计算损失与更新。
+\phantomsection\label{route:mlp-forward-end}
 
 \subsection{矩阵形式的反向传播：一个最小例子}
 \label{sec:mlp-matrix-gradient}
@@ -157,6 +186,7 @@ $F^{(\ell)}:N\times d_\ell$；$\mathbf1_N$ 的作用
 只是给 $N$ 行广播同一个偏置。本例输出层不再加激活，直接保留两项预测值。
 
 \subsection{它与 Transformer 中的 FFN 有什么关系？}
+\label{sec:mlp-ffn}
 Transformer 的 FFN 就是这样一个对每个 Token 分别应用的共享两层网络：
 三个 Token、每行宽度为 2 时，$\relu(XW_1)W_2:(3\times2)(2\times3)(3\times2)\to3\times2$。
 FFN 改变每行的特征，跨 Token 的信息交换由 Attention 承担。
@@ -165,4 +195,4 @@ FFN 改变每行的特征，跨 Token 的信息交换由 Attention 承担。
 \item \textbf{形状：}输入行 $x:1\times2$，两层权重分别 $W_1:2\times3,W_2:3\times2$。写出隐藏层与输出层的形状。\chapterinlinehint{逐次核对行向量右乘矩阵的内侧维度。}
 \item \textbf{手算：}沿用本章手算的 $W_1,W_2$（不加偏置），输入改为 $\vect x^\top=(1,-2)$。依次求 $\vect z^\top$、$\vect h^\top$ 与 $\widehat{\vect y}^\top$，并指出哪些隐藏单元被 ReLU 截断。\chapterinlinehint{先让输入行分别点乘 $W_1$ 的三列。}
 \item \textbf{找错：}同学认为两个 Token 共用 FFN 权重，故第二行的输入会直接改变第一行 FFN 的输出。指出错误。\chapterinlinehint{沿计算图追踪第一行依赖哪些输入行。}
-}
+}\phantomsection\label{route:mlp-end}
