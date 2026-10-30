@@ -132,9 +132,9 @@
     "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json",
     "status": 200,
     "final_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json",
-    "checked_utc": "2026-10-25",
-    "method": "Primary source content review: qwen-config; see book/dated-claims.json for the reviewed scope",
-    "result": "已重新读取层数、Q/KV 头数与隐藏宽度"
+    "checked_utc": "2026-10-30",
+    "method": "Primary source content review: qwen-config; compared pinned config.json with scripts/model_configs/qwen25_05b.json and R-13 field excerpt",
+    "result": "已核对四个配置字段、头宽及 R-13 缓存预算"
   },
   {
     "url": "https://arxiv.org/abs/2010.11929",

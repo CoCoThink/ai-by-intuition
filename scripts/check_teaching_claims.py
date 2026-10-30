@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Recompute published teaching claims and compare them with canonical prose.
 
-This is the numerical counterpart to check_book_contract.py. Keep it after the
-NumPy install in CI; source gates deliberately require only the standard library.
+This is the numerical counterpart to check_book_contract.py. Install the declared
+book dependencies before running either source contracts or numerical checks.
 """
 from __future__ import annotations
 import json
@@ -68,6 +68,15 @@ def check_article_matching():
     assert np.isclose(np.linalg.norm(foot),scores['a'])
     assert np.isclose((data['a']-foot)@data['q'],0)
     exercises={item['id']:item for item in json.loads((ROOT/'book/exercises.json').read_text())}
+    # Check the notation at its first definition, not merely its numerical value.
+    # The old row-dot-row formula was valid but differed from every later q^T k.
+    figure=(ROOT/'book/figures/dot-product-projection.tex').read_text()
+    for body in (source,figure,exercises['C-017']['question'],exercises['C-017']['solution'],exercises['C-018']['solution']):
+        assert not re.search(r'\\vect [a-z]\^\\top\\cdot',body), 'Use the same row-column dot-product notation from its first definition'
+        assert not re.search(r'\\\|[^\n]*?\^\\top[^\n]*?\\\|',body), 'Vector lengths must use the common norm notation'
+    assert r'\boxed{\vect a^\top\vect b=a_1b_1+a_2b_2.}' in source
+    assert r'\vect b=\begin{bmatrix}b_1\\b_2\end{bmatrix}' in source
+    assert r'\boxed{\|\vect a\|=\sqrt{a_1^2+a_2^2}.}' in source
     changed=data['q'][::-1]
     assert all(f'{{{changed@data[name]:g}}}' in exercises['C-018']['solution'] for name in 'abc')
     assert f'{{{(5*data["q"])@(5*data["a"]):g}}}' in exercises['C-019']['solution']
@@ -174,18 +183,37 @@ def check_mlp_nonlinearity():
 
 
 def check_core_cache_review():
-    """R-13 must supply its own inputs instead of relying on the optional config."""
+    """R-13 supplies toy inputs AND a pinned real-config transfer without an elective prerequisite."""
+    from config_table import load_rows
     row=next(r for r in json.loads((ROOT/'book/exercises.json').read_text()) if r['id']=='R-13')
-    assert 'Qwen' not in row['question']+row['review_prompt']
-    layers,q_heads,kv_heads,width,batch,positions,element_bytes,mha_heads=map(int,re.findall(r'\$(\d+)\$',row['question']))
+    toy,real=row['question'].split(r'\textbf{再读真实配置：}',1)
+    layers,q_heads,kv_heads,width,batch,positions,element_bytes,mha_heads=map(int,re.findall(r'\$(\d+)\$',toy))
     assert q_heads==mha_heads and q_heads%kv_heads==0
     gqa=kv_bytes(layers,kv_heads,width,positions,element_bytes,batch)
     mha=kv_bytes(layers,mha_heads,width,positions,element_bytes,batch)
     answers=re.findall(r'\\answerresult\{([\d{},]+)\}',row['solution'])
-    assert [int(v.replace('{,}','')) for v in answers]==[gqa,mha,mha//gqa]
     for requests in (1,2,5):
         assert kv_bytes(layers,mha_heads,width,positions,element_bytes,requests)/kv_bytes(layers,kv_heads,width,positions,element_bytes,requests)==mha/gqa
-    print(f'Core cache review QA: supplied R-13 inputs give {gqa}/{mha} bytes; batch-independent ratio {mha//gqa}')
+    snapshot=next(obj for obj,_ in load_rows() if obj['config']['model_type']=='qwen2')
+    fields=('num_hidden_layers','hidden_size','num_attention_heads','num_key_value_heads')
+    expected={name:snapshot['config'][name] for name in fields}
+    for body in (real,row['review_prompt']):
+        published={name.replace(r'\_','_'):int(value) for name,value in
+                   re.findall(r'\\texttt\{([a-z\\_]+)=(\d+)\}',body)
+                   + re.findall(r'\\texttt\{([a-z\\_]+)\} & \$(\d+)\$',body)}
+        assert published==expected, 'R-13 must contain the four actual pinned fields in both printed questions'
+    runtime=real.split(r'\end{center}',1)[1]
+    assert list(map(int,re.findall(r'\$(\d+)\$',runtime)))==[positions,element_bytes]
+    assert expected['hidden_size']%expected['num_attention_heads']==0
+    real_width=expected['hidden_size']//expected['num_attention_heads']
+    real_gqa=kv_bytes(expected['num_hidden_layers'],expected['num_key_value_heads'],real_width,positions,element_bytes,batch)
+    ratio=expected['num_attention_heads']//expected['num_key_value_heads']
+    assert [int(v.replace('{,}','')) for v in answers]==[gqa,mha,mha//gqa,real_width,real_gqa,ratio]
+    core=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text().split(r'\label{sec:modern-gqa}',1)[1].split(r'\label{route:modern-core-end}',1)[0]
+    assert all(name.replace('_',r'\_') in core for name in fields), 'Field-reading prerequisites must stay on the required route'
+    assert r'd_k=d_{\rm model}/H_Q' in core
+    assert all(name in row['solution'] for name in (r'config\_table.py',r'cache\_budget\_demo.py'))
+    print(f'Core cache review QA: toy {gqa}/{mha} bytes; supplied pinned config gives width {real_width}, {real_gqa} bytes and {ratio}x MHA')
 
 
 def check_cnn_channels():

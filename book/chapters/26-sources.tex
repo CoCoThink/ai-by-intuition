@@ -108,9 +108,9 @@ GPT-2 small（revision: \texttt{607a30d}）：\sourceurl{https://huggingface.co/
 \item GPT-2 原始模型实现（固定提交）：\phantomsection\label{source:gpt2-implementation}\\
 \sourceurl{https://github.com/openai/gpt-2/blob/c2dae27c1029770cea40978813f17a5fd545b883/src/model.py}
 \sourcecheck{2026-10-29}{已核对 FFN 扩展比例、归一化、偏置与输出头共享，复算参数总数}
-\item Qwen2.5-0.5B 配置文件（固定提交）：\\
+\item Qwen2.5-0.5B 配置文件（固定提交）：\phantomsection\label{source:qwen-config}\\
 Qwen2.5-0.5B（revision: \texttt{060db64}）：\sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json}
-\sourcecheck{2026-10-25}{已重新读取层数、Q/KV 头数与隐藏宽度}
+\sourcecheck{2026-10-30}{已核对四个配置字段、头宽及 R-13 缓存预算}
 \item 同一 Qwen 修订的 Tokenizer（中文切分复算，不加载权重）：
 \sourceurl{https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db6499f32faf8b98477b0a26969ef7d8b9987/tokenizer.json}
 \sourcecheck{2026-10-25}{已实际运行分词器并核对四个 Token ID}

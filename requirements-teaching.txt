@@ -1,3 +1,4 @@
 # Verified with CPU float64 teaching examples; Python 3.12+ (tested 3.14.6).
+# Separate from book/GPT-2 baselines; see CONTRIBUTING.md (构建与依赖固定).
 numpy==2.5.0
 torch==2.14.0

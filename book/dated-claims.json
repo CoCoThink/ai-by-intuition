@@ -133,14 +133,14 @@
     "target": "example:gqa-budget",
     "claim": "Qwen2.5-0.5B：24 层、14 个 Query 头、2 个 KV 头、头宽 64",
     "version": "060db64",
-    "checked_utc": "2026-10-25",
+    "checked_utc": "2026-10-30",
     "sources": [
       {
         "name": "固定配置",
         "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B/blob/060db64/config.json"
       }
     ],
-    "scope": "已读取配置并复算缓存；这不是服务吞吐量或延迟实测。",
+    "scope": "已读取四个配置字段，复算 R-13 与 32K 缓存；预算不含运行时开销。",
     "review_interval_days": 90,
     "review_on_new_revision": true,
     "evidence": [

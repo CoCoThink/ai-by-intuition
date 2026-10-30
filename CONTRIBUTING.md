@@ -180,6 +180,16 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 - 仍会浮动的部分：`texlive_version: 2026` 是年份选择而非镜像摘要，apt 安装的 Noto 字体与 Poppler 取决于当时的 Debian 索引。因此不声称字节级可复现；`pdfua2-machine-audit` 中的 `texlive-environment.txt`、`runner-environment.txt`、`verapdf-image.txt` 记录了每次实际使用的版本。
 - 构建检查的 Python 依赖版本以 [requirements-book.txt](requirements-book.txt) 为准，本地与工作流共用同一清单；CI 在首次源码检查前选择 Python 3.12 并安装这些依赖。PyTorch 教学实验另见 [requirements-teaching.txt](requirements-teaching.txt)。
 
+三处 NumPy 固定版本对应不同的验证基线，分别维护：
+
+| 用途 | NumPy 与环境 | 保留该版本的原因与验证范围 |
+|---|---|---|
+| 整书构建与检查 | [requirements-book.txt](requirements-book.txt)：NumPy `2.3.5`；CI 使用 Python `3.12` | 沿用完整 PDF 构建流水线的数值复算与审计基线；这一环境不安装 PyTorch。 |
+| PyTorch 教学实验 | [requirements-teaching.txt](requirements-teaching.txt)：NumPy `2.5.0`、PyTorch `2.14.0`；已验证 Python `3.14.6` | 与附录 B、Notebook 的 CPU/float64 前向和梯度对照记录一致。 |
+| 固定 GPT-2 真实实验 | [实验工作流](.github/workflows/gpt2-real-experiment.yml)：NumPy `1.26.4`、PyTorch `2.5.1`、Transformers `4.46.3` | 保留已完成真实实验的依赖组合，复跑时另存完整安装记录；细节见[GPT-2 实验记录](#gpt-2-真实权重实验)。 |
+
+这些是已验证组合，不是 NumPy 版本之间必然不兼容的声明。选择任务对应的环境安装清单，不把两份清单连续装进同一环境。若要统一版本，先分别重跑整书 CI、教学梯度对照与固定 GPT-2 真实实验，再更新清单和验证记录；个人环境的绝对路径不写入仓库。
+
 **升级依赖时：**单独开 PR；Action 的 SHA 从上游官方标签重新获取；附上新旧环境记录；源码检查、成品检查、全部公式 MathML 关联和 veraPDF 零失败都要通过；页数或结构数量的意外变化要说明原因。
 
 ## 无障碍：机器验收与边界

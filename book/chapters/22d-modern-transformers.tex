@@ -9,7 +9,7 @@
 \begin{enumerate}[itemsep=1pt,topsep=2pt]
 \item \hyperref[sec:modern-rope]{RoPE}：算二维旋转例，理解相对位置怎样影响匹配。
 \item \hyperref[sec:modern-rmsnorm]{RMSNorm}：算 $(3,4)$ 的归一化，理解怎样控制数值尺度。
-\item \hyperref[sec:modern-gqa]{GQA}：看共享示意图，算缓存如何从 $12{,}800$ 减到 $3{,}200$ 个数。
+\item \hyperref[sec:modern-gqa]{GQA}：看共享示意图，算缓存如何从 $12{,}800$ 减到 $3{,}200$ 个数，再学习从配置字段取数。
 \end{enumerate}
 再读\hyperref[sec:modern-core-comparison]{三项改动的对照与适用条件}，完成紧随其后的\hyperref[check:22d-modern-transformers]{基础自测}，即可进入\hyperref[intro:23e-tech-judgement]{下一章}。
 标星推导、三维 Norm 复算与后面的专题均可按需回来读。
@@ -193,6 +193,25 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 
 \input{figures/gqa-cache-read}
 
+实际读模型的 \texttt{config.json} 时，怎样找到公式里的数？
+先认出四个字段：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}ll@{}}\toprule
+配置字段 & 缓存计算中对应的量\\\midrule
+\texttt{num\_hidden\_layers} & 层数\\
+\texttt{hidden\_size} & 隐藏宽度 $d_{\rm model}$\\
+\texttt{num\_attention\_heads} & Query 头数 $H_Q$\\
+\texttt{num\_key\_value\_heads} & K/V 头数 $H_{KV}$\\\bottomrule
+\end{tabular}
+\end{center}
+对本章将隐藏宽度均分给 Query 头的配置，$d_k=d_{\rm model}/H_Q$；
+缓存公式中则使用 $H_{KV}$，两种头数分别负责“求每头宽度”和“数缓存的头”。
+请求数、缓存位置数与元素精度由本次运行条件给出。
+部分收尾的\hyperref[exercise:R-13]{R-13}提供真实配置摘录，必做的迁移就是从这些字段取数、计算字节；
+可以先手算，再运行 \texttt{scripts/config\_table.py} 核对字段。
+该脚本只读本地固定配置，不下载权重；长上下文的完整预算留在后面的选读算例。
+
 \subsection{三项改动放回计算图，怎样比较？}
 \label{sec:modern-core-comparison}
 
@@ -226,7 +245,7 @@ K/V 共享（GQA） & K/V 头有多少？ & 缓存、质量、吞吐\\
 \par\smallskip
 到这里，已经可以说明位置表示、数值尺度与 K/V 共享分别改变了什么。
 首次阅读可直接进入\hyperref[intro:23e-tech-judgement]{下一章：怎样判断新技术}；
-需要读模型配置或解决具体瓶颈时，再按下面的入口选读。
+需要比较多份模型配置或解决具体瓶颈时，再按下面的入口选读。
 
 \subsection*{按问题选择专题}
 \begin{center}\small
@@ -470,6 +489,7 @@ MoE 的\emph{总参数量}与每 Token 激活量分开计数。
 这里的 $12/15$ 是可见位置对数。实际显存和运行时间仍取决于实现、精度、Kernel 与设备。
 运行 \texttt{python3 scripts/architecture\_demo.py} 可复算本章的 RoPE、MoE 权重、MLA 式缓存和窗口掩码。
 
+\Needspace{10\baselineskip}
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读：线性 Attention 与 Delta 规则}
 \label{sec:modern-linear-state}
 \phantomsection\label{concept:linear-attention}
@@ -478,6 +498,8 @@ KV 缓存随历史增长，每次读取也要处理更多位置。
 能否把历史先汇成一张固定大小的表，让新查询只读这张表？
 先改变一条规则：\textbf{暂时不经过 Softmax，直接用点积分数加权 Value}，
 看看乘法能否重新分组。下面的数字是给定数据，不做参数训练。
+先让每条 Key 的列乘对应 Value 的行，得到一张小表，这种乘法叫\textbf{外积}；
+再把小表加起来，用同一个查询核对读取结果。
 
 \begin{example}
 \noindent\emph{先按两条记录读取，再尝试合并}\par
@@ -499,7 +521,7 @@ $\vect k_2^\top=(0,1)$、$\vect v_2^\top=(0,3)$。
 =\begin{bmatrix}2&0\\0&3\end{bmatrix}.
 \]
 此后只需 $\vect q^\top\mathcal{M}_2=(2,3)$，结果相同。
-这种“Key 列乘 Value 行”叫作\textbf{外积}，其逐项写法在
+“Key 列乘 Value 行”的外积逐项写法，在
 \hyperref[intro:04-key-value-outer-product]{联想记忆部分}继续展开。
 \end{example}
 

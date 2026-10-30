@@ -181,8 +181,8 @@
     "slug": "01-vectors",
     "difficulty": "基础",
     "minutes": 4,
-    "question": "\\textbf{【手算】} 取 $\\vect a^\\top=(3,4)$、$\\vect b^\\top=(1,-2)$。求 $\\vect a^\\top+\\vect b^\\top$、$2\\vect a^\\top$ 与 $\\|\\vect a^\\top\\|$；把 $\\vect a^\\top$ 的两个坐标交换成 $(4,3)$ 后，它表示的还是同一个对象吗？",
-    "solution": "\\textbf{第一步：}加法与数乘都逐个坐标计算；长度用勾股定理。\\par\\nobreak\n\\textbf{解答：}$\\vect a^\\top+\\vect b^\\top=(4,2)$，$2\\vect a^\\top=(6,8)$，$\\|\\vect a^\\top\\|=\\sqrt{3^2+4^2}=\\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。",
+    "question": "\\textbf{【手算】} 取 $\\vect a^\\top=(3,4)$、$\\vect b^\\top=(1,-2)$。求 $\\vect a^\\top+\\vect b^\\top$、$2\\vect a^\\top$ 与 $\\|\\vect a\\|$；把 $\\vect a^\\top$ 的两个坐标交换成 $(4,3)$ 后，它表示的还是同一个对象吗？",
+    "solution": "\\textbf{第一步：}加法与数乘都逐个坐标计算；长度用勾股定理。\\par\\nobreak\n\\textbf{解答：}$\\vect a^\\top+\\vect b^\\top=(4,2)$，$2\\vect a^\\top=(6,8)$，$\\|\\vect a\\|=\\sqrt{3^2+4^2}=\\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。",
     "legacy_answer_anchor": "",
     "id": "C-017"
   },
@@ -193,7 +193,7 @@
     "difficulty": "基础",
     "minutes": 3,
     "question": "沿用本章文章 A、B、C 的向量，将需求改为 $\\vect q^\\top=(0.8,0.6)$。重算三个点积分数与排名；为什么 B 与 C 的先后顺序改变了？",
-    "solution": "\\textbf{第一步：}用新的需求分别与三篇文章做点积。\\par\\nobreak\\textbf{解题过程：}$\\vect q^\\top\\cdot\\vect a^\\top=0.8\\times0.8+0.6\\times0.6=\\answerresult{1}$，$\\vect q^\\top\\cdot\\vect b^\\top=\\answerresult{0.8}$，$\\vect q^\\top\\cdot\\vect c^\\top=\\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。",
+    "solution": "\\textbf{第一步：}用新的需求分别与三篇文章做点积。\\par\\nobreak\\textbf{解题过程：}$\\vect q^\\top\\vect a=0.8\\times0.8+0.6\\times0.6=\\answerresult{1}$，$\\vect q^\\top\\vect b=\\answerresult{0.8}$，$\\vect q^\\top\\vect c=\\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。",
     "legacy_answer_anchor": "",
     "id": "C-018"
   },
@@ -1525,12 +1525,12 @@
     "owner": "part:architecture",
     "slug": "review:architecture",
     "difficulty": "标准",
-    "minutes": 10,
-    "question": "\\textbf{【累积复习】}一个 $2$ 层模型，每层有 $12$ 个 Query 头、$3$ 个 K/V 头，每头宽度为 $8$。$2$ 条请求各缓存 $100$ 个位置，每个 K/V 元素占 $2$ 字节。计算 K/V 数据本体的总字节数；保持其余条件不变，改为 $12$ 个 K/V 头的 MHA 后为多少？请求数是否影响 MHA 与 GQA 的缓存倍率？",
-    "solution": "\\textbf{第一步：}先数单层、单请求的 K/V 元素，再乘层数、请求数和每元素字节数。\\par\\nobreak\n\\textbf{解题过程：}GQA 单层、单请求有 $2\\times100\\times3\\times8=4{,}800$ 个数；两层、两条请求的缓存本体为 $4{,}800\\times2\\times2\\times2=\\answerresult{38{,}400}$ 字节。改为 MHA 后，K/V 头数从 $3$ 变为 $12$，字节数为 $38{,}400\\times(12/3)=\\answerresult{153{,}600}$。倍率是 $\\answerresult{4}$，请求数同时乘在两者上，不改变倍率；未计布局、分配与运行时开销。",
+    "minutes": 18,
+    "question": "\\textbf{【累积复习】}一个 $2$ 层模型，每层有 $12$ 个 Query 头、$3$ 个 K/V 头，每头宽度为 $8$。$2$ 条请求各缓存 $100$ 个位置，每个 K/V 元素占 $2$ 字节。计算 K/V 数据本体的总字节数；保持其余条件不变，改为 $12$ 个 K/V 头的 MHA 后为多少？请求数是否影响 MHA 与 GQA 的缓存倍率？\n\\par\\textbf{再读真实配置：}\\hyperref[source:qwen-config]{Qwen2.5-0.5B 的固定配置}摘录如下：\n\\begin{center}\\small\n\\tagpdfsetup{table/header-rows={1}}\n\\begin{tabular}{@{}lr@{}}\\toprule\n配置字段 & 取值\\\\\\midrule\n\\texttt{num\\_hidden\\_layers} & $24$\\\\\n\\texttt{hidden\\_size} & $896$\\\\\n\\texttt{num\\_attention\\_heads} & $14$\\\\\n\\texttt{num\\_key\\_value\\_heads} & $2$\\\\\\bottomrule\n\\end{tabular}\n\\end{center}\n逐项读出层数、隐藏宽度、Q/KV 头数，求每头宽度。仍按两条请求、各 $100$ 个缓存位置、每元素 $2$ 字节，计算 KV 本体总字节数；若改成 MHA，缓存倍率是多少？",
+    "solution": "\\textbf{第一步：}先数单层、单请求的 K/V 元素，再乘层数、请求数和每元素字节数。\\par\\nobreak\n\\textbf{解题过程：}GQA 单层、单请求有 $2\\times100\\times3\\times8=4{,}800$ 个数；两层、两条请求的缓存本体为 $4{,}800\\times2\\times2\\times2=\\answerresult{38{,}400}$ 字节。改为 MHA 后，K/V 头数从 $3$ 变为 $12$，字节数为 $38{,}400\\times(12/3)=\\answerresult{153{,}600}$。倍率是 $\\answerresult{4}$，请求数同时乘在两者上，不改变倍率；未计布局、分配与运行时开销。\n\\par\\textbf{真实配置：}层数为 $24$，隐藏宽度为 $896$，Q/KV 头数分别为 $14/2$。头宽由隐藏宽度除以 Q 头数得到 $896/14=\\answerresult{64}$；缓存计数使用 KV 头数 $2$。单位置、全层缓存为 $2\\times24\\times2\\times64\\times2=12{,}288$ 字节；两条请求各 $100$ 个位置，共 $12{,}288\\times100\\times2=\\answerresult{2{,}457{,}600}$ 字节。MHA 有 $14$ 个 KV 头，倍率为 $14/2=\\answerresult{7}$。\\texttt{scripts/config\\_table.py} 可离线核对四个字段；\\texttt{scripts/cache\\_budget\\_demo.py} 使用同一固定配置，复算每位置 $12{,}288$ 字节并推广到 32K。",
     "legacy_answer_anchor": "",
     "part_review": "architecture",
-    "review_prompt": "两层模型，每层 $12$ 个 Q 头、$3$ 个 KV 头，每头宽 $8$；两条请求各 $100$ 个位置、每元素 $2$ 字节。算 KV 本体；改为 $12$ 个 KV 头后是多少，请求数影响倍率吗？"
+    "review_prompt": "先算两层模型：每层 $12$ 个 Q 头、$3$ 个 KV 头，每头宽 $8$，两条请求各 $100$ 个位置、每元素 $2$ 字节；求 KV 本体、改为 MHA 后的字节数与倍率，并判断请求数是否改变倍率。再读 Qwen2.5-0.5B 配置摘录：\\texttt{num\\_hidden\\_layers=24}、\\allowbreak\\texttt{hidden\\_size=896}、\\allowbreak\\texttt{num\\_attention\\_heads=14}、\\allowbreak\\texttt{num\\_key\\_value\\_heads=2}。沿用同样的请求数、位置数和精度，求每头宽、KV 总字节与 MHA 倍率。"
   },
   {
     "id": "R-14",

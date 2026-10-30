@@ -46,7 +46,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \subsubsection*{第~\ref*{intro:01-vectors}~章 · 向量与点积：怎样把多个特征变成一个匹配分数？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:01-vectors}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-016.}] \phantomsection\label{exercise:C-016}\label{exercise:C4-10}\exercisemeta{标准}{8}{\hyperref[solution:C-016]{解答第~\pageref*{solution:C-016}~页}}\textbf{场景：}要把一个二维特征向量和三维特征向量合并给模型，先需约定哪些事情？至少给出一种合法的表示方案。
-\item[\textbf{C-017.}] \phantomsection\label{exercise:C-017}\exercisemeta{基础}{4}{\hyperref[solution:C-017]{解答第~\pageref*{solution:C-017}~页}}\textbf{【手算】} 取 $\vect a^\top=(3,4)$、$\vect b^\top=(1,-2)$。求 $\vect a^\top+\vect b^\top$、$2\vect a^\top$ 与 $\|\vect a^\top\|$；把 $\vect a^\top$ 的两个坐标交换成 $(4,3)$ 后，它表示的还是同一个对象吗？
+\item[\textbf{C-017.}] \phantomsection\label{exercise:C-017}\exercisemeta{基础}{4}{\hyperref[solution:C-017]{解答第~\pageref*{solution:C-017}~页}}\textbf{【手算】} 取 $\vect a^\top=(3,4)$、$\vect b^\top=(1,-2)$。求 $\vect a^\top+\vect b^\top$、$2\vect a^\top$ 与 $\|\vect a\|$；把 $\vect a^\top$ 的两个坐标交换成 $(4,3)$ 后，它表示的还是同一个对象吗？
 \item[\textbf{C-018.}] \phantomsection\label{exercise:C-018}\label{exercise:C3-1}\exercisemeta{基础}{3}{\hyperref[solution:C-018]{解答第~\pageref*{solution:C-018}~页}}沿用本章文章 A、B、C 的向量，将需求改为 $\vect q^\top=(0.8,0.6)$。重算三个点积分数与排名；为什么 B 与 C 的先后顺序改变了？
 \item[\textbf{C-019.}] \phantomsection\label{exercise:C-019}\label{exercise:C3-8}\exercisemeta{标准}{6}{\hyperref[solution:C-019]{解答第~\pageref*{solution:C-019}~页}}将本章需求与文章 A 的向量都放大 $5$ 倍，得到 $(3,4)$ 与 $(4,3)$。求点积、两个长度与余弦相似度，解释为什么原始分数变了，余弦相似度仍与本章相同。
 \item[\textbf{C-020.}] \phantomsection\label{exercise:C-020}\label{exercise:C4-11}\exercisemeta{标准}{5}{\hyperref[solution:C-020]{解答第~\pageref*{solution:C-020}~页}}\textbf{设计：}当向量长度差别很大时，比较原始点积与归一化后的余弦相似度：哪一种更能隔离向量长度影响？
@@ -377,7 +377,19 @@ $\mathcal{M}_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 架构\enspace{\mdseries\footnotesize（本部分第~\pageref*{part:architecture}~页起）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{R-13.}] \phantomsection\label{exercise:R-13}\exercisemeta{标准}{10}{\hyperref[solution:R-13]{解答第~\pageref*{solution:R-13}~页}}\textbf{【累积复习】}一个 $2$ 层模型，每层有 $12$ 个 Query 头、$3$ 个 K/V 头，每头宽度为 $8$。$2$ 条请求各缓存 $100$ 个位置，每个 K/V 元素占 $2$ 字节。计算 K/V 数据本体的总字节数；保持其余条件不变，改为 $12$ 个 K/V 头的 MHA 后为多少？请求数是否影响 MHA 与 GQA 的缓存倍率？
+\item[\textbf{R-13.}] \phantomsection\label{exercise:R-13}\exercisemeta{标准}{18}{\hyperref[solution:R-13]{解答第~\pageref*{solution:R-13}~页}}\textbf{【累积复习】}一个 $2$ 层模型，每层有 $12$ 个 Query 头、$3$ 个 K/V 头，每头宽度为 $8$。$2$ 条请求各缓存 $100$ 个位置，每个 K/V 元素占 $2$ 字节。计算 K/V 数据本体的总字节数；保持其余条件不变，改为 $12$ 个 K/V 头的 MHA 后为多少？请求数是否影响 MHA 与 GQA 的缓存倍率？
+\par\textbf{再读真实配置：}\hyperref[source:qwen-config]{Qwen2.5-0.5B 的固定配置}摘录如下：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}lr@{}}\toprule
+配置字段 & 取值\\\midrule
+\texttt{num\_hidden\_layers} & $24$\\
+\texttt{hidden\_size} & $896$\\
+\texttt{num\_attention\_heads} & $14$\\
+\texttt{num\_key\_value\_heads} & $2$\\\bottomrule
+\end{tabular}
+\end{center}
+逐项读出层数、隐藏宽度、Q/KV 头数，求每头宽度。仍按两条请求、各 $100$ 个缓存位置、每元素 $2$ 字节，计算 KV 本体总字节数；若改成 MHA，缓存倍率是多少？
 \item[\textbf{R-14.}] \phantomsection\label{exercise:R-14}\exercisemeta{标准}{15}{\hyperref[solution:R-14]{解答第~\pageref*{solution:R-14}~页}}\textbf{【累积复习】}某新结构同时改了位置表示、KV 头数与内核，并宣称延迟减半。设计能区分三个贡献的消融实验，明确质量口径。
 \end{enumerate}
 \Needspace{6\baselineskip}

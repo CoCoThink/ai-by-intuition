@@ -1,4 +1,5 @@
 # Book source checks, generators and PDF audits; CI uses Python 3.12.
+# Separate from teaching/GPT-2 baselines; see CONTRIBUTING.md (构建与依赖固定).
 pypinyin==0.55.0
 pypdf==5.9.0
 numpy==2.3.5
