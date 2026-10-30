@@ -138,6 +138,7 @@ def rendered(rows):
     header=r'\toprule 断言与正文位置 & 版本／核验日（UTC） & 来源与核验范围\\\midrule'
     lines=[BEGIN,r'\subsubsection*{带日期断言清单}',r'\phantomsection\label{app:dated-claims}',
         '下表列出带日期的断言：所用版本、内容核验日（UTC）与核验范围；来源均列于附录 F。',
+        '核验日指实际内容复核日期；重新编译不会刷新核验日期。',
         r'\begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.25}',
         r'\tagpdfsetup{table/header-rows={1}}',
         r'\begin{longtable}{'+columns+'}',

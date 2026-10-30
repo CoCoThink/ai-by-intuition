@@ -393,6 +393,8 @@ def check_reproduction_and_definitions(reader,labels):
         'concept:mla':('多头潜在注意力','潜在向量'),
         'concept:linear-attention':('固定大小','Softmax','外积'),
         'example:gqa-budget':('真实配置','Qwen2.5-0.5B'),
+        'app:data-map':('算例数据地图','三维贯通主例','四维双头'),
+        'sec:toy-real-model-comparison':('可训练参数','99','GPT-2small'),
     }
     for label,words in expected.items():
         dest=reader.named_destinations[labels[label][3]]

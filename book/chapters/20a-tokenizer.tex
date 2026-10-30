@@ -135,6 +135,7 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 \end{tabular}
 \end{center}
 本句恰好也切成四项，\textbf{真实 ID 与教学词表完全不同}。
+去掉句号后，“春天花开了”恰好是三个 Token，与主例的三位置输入对应；主例仍使用教学 ID $[2,4,5]$。
 换一句话仍须重新分词，“春天”或“开了”可能被拆成多个 Token。
 真实 ID 从 $0$ 编号，查表直接用这个 ID；本书的五项手算词表从 $1$ 数，写 Python 时减 $1$。
 想亲自复核，可运行 \texttt{python3 scripts/chinese\_tokenizer\_demo.py --real}，它只下载分词器、不下载模型权重；
