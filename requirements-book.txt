@@ -1,0 +1,8 @@
+# Book source checks, generators and PDF audits; CI uses Python 3.12.
+pypinyin==0.55.0
+pypdf==5.9.0
+numpy==2.3.5
+tokenizers==0.22.1
+qrcode==8.2
+Pillow==11.3.0
+colorspacious==1.1.2

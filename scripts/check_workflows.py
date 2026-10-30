@@ -44,6 +44,22 @@ def main() -> None:
               "pull_request" in data[workflow_name]["on"])
     build = data["build-latex.yml"]
     steps = build["jobs"]["build-book"]["steps"]
+    requirements = (ROOT / "requirements-book.txt").read_text(encoding="utf-8")
+    check("book checks declare their pinyin glossary dependency",
+          bool(re.search(r"^pypinyin==[^\s#]+\s*$", requirements, re.M)))
+    for event in ("push", "pull_request"):
+        check(f"book dependency changes trigger {event} validation",
+              "requirements-book.txt" in build["on"][event]["paths"])
+    python_setup = [i for i, step in enumerate(steps)
+                    if step.get("uses", "").startswith("actions/setup-python@")]
+    dependency_install = [i for i, step in enumerate(steps)
+                          if re.search(r"\bpip install\b[^\n]*-r requirements-book\.txt\b",
+                                       step.get("run", ""))]
+    source_checks = [i for i, step in enumerate(steps)
+                     if re.search(r"\bpython3? scripts/[^\s]+\.py\b", step.get("run", ""))]
+    check("select Python once, then install declared book dependencies before source checks",
+          len(python_setup) == len(dependency_install) == 1 and bool(source_checks)
+          and python_setup[0] < dependency_install[0] < min(source_checks))
     uploads = [step for step in steps if (step.get("uses") or "").startswith("actions/upload-artifact@")]
     artifact_names = [step["with"]["name"] for step in uploads]
     check("only one successful PDF artifact", artifact_names.count("ai-by-intuition-book") == 1)

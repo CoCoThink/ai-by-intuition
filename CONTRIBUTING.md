@@ -29,13 +29,15 @@
 需要 TeX Live 2026（LuaLaTeX、latexmk）、Noto Serif/Sans CJK SC 与 Noto Serif/Sans 字体、Poppler，以及已有的 Python 环境。在仓库根目录运行：
 
 ```bash
-python3 -m pip install pypinyin==0.55.0 pypdf==5.9.0 numpy
+python3 -m pip install -r requirements-book.txt
 python3 scripts/validate_book.py
 bash scripts/build_book.sh
 python3 scripts/validate_book.py --pdf book/build/main.pdf
 ```
 
 产物为 `book/build/main.pdf`。等 `latexmk` 全部轮次完成后再读取 PDF 与 `.aux`；改动后的本地预览不作为对应提交的最终 CI 产物。依赖维护与机器审计见[构建与依赖固定](#构建与依赖固定)。
+
+源码检查、生成器与 PDF 审计的 Python 依赖统一列在 [requirements-book.txt](requirements-book.txt)。其中 `pypinyin` 用于术语表排序，`check_book_contract.py` 通过术语表生成器间接使用它；运行下列源码检查前也需要先安装该清单。
 
 ## 提交前检查
 
@@ -176,7 +178,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 - 本地与 CI 都通过 `bash scripts/build_book.sh` 构建。提交号依次取 `BOOK_BUILD_SHA`、`GITHUB_SHA`、`git rev-parse HEAD`，印在版权页和附录 G；没有 Git 信息的源码包会省略整句来源说明。提交号变化时脚本强制刷新 PDF。
 - 所有第三方 Action 固定到完整提交 SHA；veraPDF 1.30.2 按镜像摘要拉取：`verapdf/cli@sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb`。
 - 仍会浮动的部分：`texlive_version: 2026` 是年份选择而非镜像摘要，apt 安装的 Noto 字体与 Poppler 取决于当时的 Debian 索引。因此不声称字节级可复现；`pdfua2-machine-audit` 中的 `texlive-environment.txt`、`runner-environment.txt`、`verapdf-image.txt` 记录了每次实际使用的版本。
-- Python 依赖版本以工作流为准（`pypdf`、`numpy`、`tokenizers`、`qrcode`、`Pillow`、`colorspacious`、`pypinyin`）。
+- 构建检查的 Python 依赖版本以 [requirements-book.txt](requirements-book.txt) 为准，本地与工作流共用同一清单；CI 在首次源码检查前选择 Python 3.12 并安装这些依赖。PyTorch 教学实验另见 [requirements-teaching.txt](requirements-teaching.txt)。
 
 **升级依赖时：**单独开 PR；Action 的 SHA 从上游官方标签重新获取；附上新旧环境记录；源码检查、成品检查、全部公式 MathML 关联和 veraPDF 零失败都要通过；页数或结构数量的意外变化要说明原因。
 

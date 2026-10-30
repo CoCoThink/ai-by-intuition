@@ -34,7 +34,7 @@
 
 - 使用 **TeX Live 2026 + LuaLaTeX + latexmk**；统一从根目录运行 `bash scripts/build_book.sh`，不要换用其他引擎规避 Tagged PDF 问题。
 - 当前 Linux 工作环境复用 `daily` Python；本机解释器为 `/home/guan/mamba/envs/daily/bin/python3`。其他机器使用对应已有环境，缺包用该解释器的 `-m pip` 安装，不另装一套 Python。
-- 当前环境的 TeX 通过 Homebrew 管理，字体通过系统包管理器管理。需要 Noto CJK 与西文字体、Poppler；具体 Python 依赖版本以工作流为准。
+- 当前环境的 TeX 通过 Homebrew 管理，字体通过系统包管理器管理。需要 Noto CJK 与西文字体、Poppler；构建检查的 Python 依赖见 [requirements-book.txt](requirements-book.txt)，本地与工作流共用。
 - 默认运行离线教学实验。Claude 等付费 API 的真实调用须有对应的明确授权；中文分词器的 `--real` 是下载固定分词器，不等于加载模型权重或调用付费 API。
 
 正文、公式或章节结构改动后，按[提交前检查](CONTRIBUTING.md#提交前检查)运行源码检查；影响排版时构建并检查最终产物。命令统一维护在编写与维护指南。
