@@ -2,16 +2,11 @@
 \section{三维贯通实验：从 Token ID 到三个位置的输出概率}
 \label{intro:22b-token-to-output}
 \chaptercompass{能否让三个 Token 从输入 ID 一直算到概率？}{固定同一组参数，依次算 Attention、残差、FFN 和词表 Softmax。}{$[2,4,5]\to H:3\times3\to \Pi:3\times5$}{本章只做前向；参数取自统一三维例子}
-手算入口：\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini} 的二维分数迷你版}提供更短的分数练习；
-本章沿第二个位置逐步算完三维前向，它能读取两个位置，便于看清加权读取。
-现在\textbf{只用同一组三维参数}，把 Embedding、因果掩码、Q/K/V、Norm、残差、
-FFN 与输出头串成一次前向计算。
-这个 $99$ 参数模型用于逐项复算；它与真实 GPT-2 的规模和实现差别集中列在
-\sectionentry{sec:toy-real-model-comparison}，本章先追踪这一套教学参数。
+下面重点沿第二个位置逐步计算；它能读取前两个位置，便于看清加权读取。
 
-所有数值由 \path{scripts/teaching_reference.py} 计算；
 完整参数与中间量见\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates} 的逐层数值核对表}。
 下列中间量显示四位小数；最终结果使用未舍入数值计算，手算可能有末位差异。
+想先做更短的分数练习，可从\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini} 的二维迷你版}开始。
 \par\smallskip
 \input{figures/three-position-shapes}
 

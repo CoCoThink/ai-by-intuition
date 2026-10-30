@@ -10,7 +10,6 @@
 \subsubsection*{带日期断言清单}
 \phantomsection\label{app:dated-claims}
 下表列出带日期的断言：所用版本、内容核验日（UTC）与核验范围；来源均列于附录 F。
-每条断言均在 90 天内或新修订发布时复查，以先到者为准；重新编译不会刷新核验日期。
 \begingroup\small\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.25}
 \tagpdfsetup{table/header-rows={1}}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{50mm}>{\raggedright\arraybackslash}p{26mm}>{\raggedright\arraybackslash}p{80mm}@{}}
@@ -31,6 +30,14 @@ LLM 评审存在位置、冗长与自我偏好等偏差（\hyperref[concept:llm-
 PyTorch nn.Dropout：训练时独立置零并缩放，评估时直接传递（\hyperref[concept:dropout]{第~\pageref*{concept:dropout}~页}） & 2.14 文档\newline 2026-10-27 & \href{https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html}{Dropout}、\href{https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html}{评估模式}。已核对该版官方文档并复算缩放例子；未运行该版 PyTorch。\\
 \end{longtable}\endgroup
 % END GENERATED DATED CLAIMS
+
+\subsubsection*{真实中文分词：固定修订与实测记录}
+\phantomsection\label{app:tokenizer-record}
+
+第~\ref*{intro:20a-tokenizer}~章的中文切分使用 Qwen2.5-0.5B 分词器，
+修订为 \nolinkurl{060db6499f32faf8b98477b0a26969ef7d8b9987}，
+设置 \texttt{add\_special\_tokens=False}。
+分词器文件哈希和实测记录见仓库 \path{scripts/fixtures/qwen25_tokenizer_trace.json}。
 
 \subsubsection*{真实 GPT-2：运行方式与实测来源}
 

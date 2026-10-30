@@ -172,7 +172,7 @@ GPT-2 small 的词表规模为 $50{,}257$，
 由 \texttt{scripts/gpt2\_demo.py} 固定并在运行时输出。
 GPT-2 small 主要在英文语料上预训练，
 适合观察真实 Token、词表分数及 Attention，
-本节用它观察英文续写的计算过程，下一小节再对照中文分词。
+本节用它观察英文续写的计算过程。
 
 先在仓库根目录运行无需联网或额外依赖的数学自检：
 \begin{verbatim}
@@ -222,39 +222,9 @@ Transformers 4.46.3 下，
 GPT-2 属于 Decoder-only 家族；与原论文翻译架构的对照见
 \sectionentry{elective:original-paper}。
 
-\subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读复算：同一句中文，真实分词器怎样编号？}
-\phantomsection\label{experiment:real-chinese-tokenizer}
-
-回到“春天花开了。”。沿用第~\ref*{intro:20a-tokenizer}~章锁定的
-Qwen2.5-0.5B 分词器，\texttt{add\_special\_tokens=False} 时实测为：
-\begin{center}
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabular}{lrr}
-\toprule
-解码片段 & 真实 Token ID & 教学词表 ID\\\midrule
-春天 & 105303 & 2\\
-花 & 99232 & 4\\
-开了 & 101467 & 5\\
-。 & 1773 & 3\\
-\bottomrule
-\end{tabular}
-\end{center}
-带句号共四个 Token，去掉句号的“春天花开了”共三个。
-\textbf{这句话的切分恰好与教学切分一致，编号却来自不同词表}。
-真实 ID 直接用作分词器所属模型的数组索引；本书教学 ID 从 1 起，写 Python 时才减 1。
-输入别的句子应重新运行分词器，不能把这四个片段推成通用中文分词规则。
-
-% Keep this closing block with the self-check so the part-end page is not a sparse tail.
-\Needspace{18\baselineskip}
-运行：
-\begin{verbatim}
-python3 scripts/chinese_tokenizer_demo.py --real
-\end{verbatim}
-完整权重修订\par\nobreak
-\noindent\texttt{060db6499f32faf8b98477b0a26969ef7d8b9987}、
-分词器文件哈希和实测记录见仓库 \path{scripts/fixtures/qwen25_tokenizer_trace.json}。
-训练资料的来源、去重与配比则转到第~\ref*{intro:23b-deployment-and-ecosystem}~章的
-\sectionentry{sec:data-engineering}，分别检查模型与数据两条链。
+中文输入的真实 ID 对照与分词实验见\hyperref[experiment:real-chinese-tokenizer]{第~
+\ref*{intro:20a-tokenizer}~章的中文切分算例}；
+训练资料的来源、去重与配比见\sectionentry{sec:data-engineering}。
 
 \chapterchecktasks{23a-from-toy-to-gpt}{理解与复算}{
 \item \textbf{形状：}GPT-2 small 的隐藏宽度为 $768$，采用 $12$ 个等宽头。每个头宽是多少？这是否直接决定模型拥有多少层？\chapterinlinehint{用隐藏宽度除以头数，再单独检查层数配置。}

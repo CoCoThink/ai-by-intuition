@@ -236,8 +236,7 @@ Agent & 动态选工具和步骤；需要权限、预算与终止条件\\
 直接运行只验证离线合成消息、ID 关联、计算与越权拒绝，\textbf{不调用在线模型}。
 显式使用 \texttt{--real --model 模型ID} 并设置 \texttt{ANTHROPIC\_API\_KEY}，
 才会进入有轮数上限的在线工具循环；运行记录应保存模型标识和日期。
-字段依据\href{https://platform.claude.com/docs/en/api/messages/create}{官方 Messages API 文档}，
-本书未将离线检查写成在线推理实测。
+字段依据\href{https://platform.claude.com/docs/en/api/messages/create}{官方 Messages API 文档}。
 
 \chapterchecktasks{23d-agent-tools}{理解与复算}{
 \item \textbf{分工：}模型发出工具调用 JSON 后，由谁验证参数和权限？\chapterinlinehint{追踪请求从模型交到执行器之前的检查环节。}

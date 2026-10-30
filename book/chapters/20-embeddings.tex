@@ -32,7 +32,6 @@ ID 4 的 One-hot 行向量是 $(0,0,0,1,0)$。
 \subsection{真实模型的参数如何开始？}
 \phantomsection\label{concept:embedding-initialization}
 
-本书手设下面这张 $5\times3$ 表，便于逐项核算；
 从头训练时，常见做法是对 Embedding 和投影权重进行\textbf{随机初始化}，
 再用大量训练样本、同一损失函数联合调整。
 \textbf{为什么不把所有权重都置零？}
@@ -51,8 +50,7 @@ ID 4 的 One-hot 行向量是 $(0,0,0,1,0)$。
 
 \subsection{同一份三维教学参数：五行向量}
 
-本节给出后续三维贯通计算使用的 Embedding 初值。
-取 $d_{\rm model}=3$，五个 ID 各对应一行：
+取 $d_{\rm model}=3$，为五个 ID 手设以下\textbf{训练前的 Embedding 初值}，每个 ID 对应一行：
 \[
 \begin{array}{c|ccccc}
 \text{ID／表的行号}&1&2&3&4&5\\\hline
@@ -70,12 +68,8 @@ E=\begin{bmatrix}
 0.15&-0.2&1.25
 \end{bmatrix}\in\R^{5\times3}.
 \]
-数值来自仓库 \texttt{scripts/teaching\_reference.py} 的
-\texttt{parameters()}，用作\textbf{训练前的统一初始参数}。
 其中“春天”是 ID 2 的 $(1.2,0,-0.2)$，“花”是 ID 4 的
 $(-0.3,1.1,0.2)$，“开了”是 ID 5 的 $(0.15,-0.2,1.25)$。
-本书为便于追踪数值而手设了这组三维初值；
-它们不是训练得到的词义规律。
 
 把输入 $[2,4,5]$ 逐行查表：
 \begin{equation}

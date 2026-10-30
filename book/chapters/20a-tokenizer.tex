@@ -120,27 +120,25 @@ Token 化影响上下文成本，却\textbf{不会自动赋予 ID 语义}。
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
 执行 \texttt{python3 scripts/bpe\_demo.py} 可以重放两轮计数与合并。
 
-\subsection*{真实中文切分：同一句话进入 Qwen2.5}
-\label{sec:chinese-tokenization}
+\subsection{真实中文切分：同一句话进入 Qwen2.5}
+\phantomsection\label{sec:chinese-tokenization}
+\label{experiment:real-chinese-tokenizer}
 把“春天花开了。”交给真实模型 Qwen2.5-0.5B 的分词器（不添加特殊 Token），得到：
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabular}{@{}lr@{}}\toprule
-逐项解码文本 & 真实 ID\\\midrule
-春天 & 105303\\
-花 & 99232\\
-开了 & 101467\\
-。 & 1773\\\bottomrule
+\begin{tabular}{@{}lrr@{}}\toprule
+逐项解码文本 & 真实 ID & 教学词表 ID\\\midrule
+春天 & 105303 & 2\\
+花 & 99232 & 4\\
+开了 & 101467 & 5\\
+。 & 1773 & 3\\\bottomrule
 \end{tabular}
 \end{center}
-本句恰好也切成四项，\textbf{真实 ID 与教学词表完全不同}；换一句话仍须重新分词。
+本句恰好也切成四项，\textbf{真实 ID 与教学词表完全不同}。
+换一句话仍须重新分词，“春天”或“开了”可能被拆成多个 Token。
 真实 ID 从 $0$ 编号，查表直接用这个 ID；本书的五项手算词表从 $1$ 数，写 Python 时减 $1$。
-想亲自复核，可运行 \texttt{python3 scripts/chinese\_tokenizer\_demo.py --real}，它只下载分词器、不下载模型权重。
-
-\begin{warningbox}
-本文五项词表只为统一计算和手算服务。
-真实模型并不保证将“春天”或“开了”保留为单个 Token。
-\end{warningbox}
+想亲自复核，可运行 \texttt{python3 scripts/chinese\_tokenizer\_demo.py --real}，它只下载分词器、不下载模型权重；
+固定修订与实测记录见\hyperref[app:tokenizer-record]{附录 G 的中文分词记录}。
 
 \chapterchecktasks{20a-tokenizer}{理解与复算}{
 \item \textbf{解释：}为什么整数 Token ID 只是词表索引，而不是“数字越大、词义越强”的语义分数？\chapterinlinehint{想一想重新排列词表编号是否会改变词义。}

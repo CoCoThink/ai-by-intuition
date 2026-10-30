@@ -8,10 +8,6 @@
 回归问题可以用均方误差（MSE）；这里先算适用于类别概率的交叉熵，
 再研究 Embedding 和网络怎样产生这些分数。
 
-先说明本节的范围：这里先用一个三分类例子说明“分数、概率和损失”怎样连接。
-上一章已规定主线五项词表的输入与目标怎样对齐；
-这里先用独立的三分类小例子算清评分过程，再回到五项词表。
-
 \subsection{先给每一类一个分数：Logits}
 \phantomsection\label{concept:logits}
 
@@ -111,8 +107,7 @@ p_j=\frac{e^{z_j-m}}{\sum_k e^{z_k-m}}.
 L=(m-z_{\rm correct})+\ln\sum_k e^{z_k-m}
 =1+\ln(1+e^{-1})\approx1.3133.
 \]
-这种 LogSumExp 写法避免先求极小概率再取对数，减少概率下溢成零的问题。
-Attention 的逐行 Softmax 也使用同样的减最大值技巧。
+这种 \textbf{LogSumExp} 写法避免先算极小概率再取对数，减少下溢风险。
 \end{example}
 
 \subsection{\texorpdfstring{为什么从 logits 反传得到 $p-y$？}{为什么从 logits 反传得到 p 减 y？}}

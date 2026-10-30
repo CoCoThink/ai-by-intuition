@@ -128,6 +128,18 @@ def toc_folio_errors(entries, folio_targets):
             for page,target in entries if target not in folio_targets]
 
 
+def softmax_note_errors(pages):
+    """Keep this short numerical-stability box together. Chapter density checks
+    missed its single concluding line stranded above the next subsection."""
+    compact=[re.sub(r'\s+','',page) for page in pages]
+    markers=('计算机怎样避免指数溢出？',r'1\.3133',
+             r'(?:使用同样的减最大值技巧|也先减去最大值|减少下溢风险)。')
+    found=[[i+1 for i,page in enumerate(compact) if re.search(marker,page)] for marker in markers]
+    if len(found[0])!=1 or any(locations!=found[0] for locations in found[1:]):
+        return [f'Softmax stability note split or missing: heading/formula/conclusion pages {found}']
+    return []
+
+
 def ellipse_rect_intersects(ellipse, rect):
     """Whether an axis-aligned text rectangle touches an ellipse's boundary."""
     cx,cy,rx,ry=ellipse
@@ -520,6 +532,7 @@ def check_pdf(path, aux, used):
     failures.extend(caption_structure_errors(root,root.get('/RoleMap',{})))
     raw_text=subprocess.check_output(['pdftotext',str(path),'-'],text=True)
     failures.extend(agent_intro_errors(raw_text.split('\f')))
+    failures.extend(softmax_note_errors(raw_text.split('\f')))
     text=re.sub(r'\s+','',raw_text)
     labels={}
     for line in aux.read_text().splitlines():
@@ -596,6 +609,12 @@ def self_test():
     assert not agent_intro_errors([intro+'\n'+code])
     assert agent_intro_errors([intro,code])
     assert agent_intro_errors([intro])
+    note='计算机怎样避免指数溢出？'
+    result='1.3133'
+    ending='这种 LogSumExp 写法避免先算极小概率再取对数，减少下溢风险。'
+    assert not softmax_note_errors([note+result+ending])
+    assert softmax_note_errors([note+result,ending])
+    assert softmax_note_errors([note+ending])
     assert not toc_folio_errors([(64,'subsection.21.7')],{'subsection.21.7'})
     assert toc_folio_errors([(64,'subsection.21.7')],set())
     ellipse=(0,0,4,2)
@@ -617,7 +636,7 @@ def self_test():
     demand_arrows=[(1,100,200,127,236),(1,330,200,357,236)]
     assert not normalization_arrow_errors(demand_arrows)
     assert normalization_arrow_errors([demand_arrows[0],(1,330,200,127,236)])
-    print('Section/figure regressions passed: wrong targets, literal folios, split captions, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps and cross-panel arrows are rejected')
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions or Softmax notes, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps and cross-panel arrows are rejected')
 
 
 def main():
