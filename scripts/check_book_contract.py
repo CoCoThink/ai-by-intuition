@@ -56,6 +56,11 @@ def ten_step_errors(body):
 
 def notation_errors(body):
     errors=[]
+    row_vector=r'\\vect(?:\{[A-Za-z]+\}|\s+[A-Za-z])(?:_\{[^{}]+\}|_[A-Za-z0-9])?\^\\top'
+    if re.search(row_vector+r'\s*\\cdot\s*'+row_vector,body):
+        errors.append('Use row-column dot products consistently, including the first definition')
+    if re.search(r'\\\|\s*'+row_vector+r'\s*\\\|',body):
+        errors.append('Use the common norm notation without a transpose on a named vector')
     if re.search(r'\\log(?![A-Za-z])',body):errors.append('Natural logarithms must use ln consistently')
     if re.search(r'W_\{\\rm vocab\}|\\(?:widehat|hat)\s*(?:\{P\}|P\b)',body):
         errors.append('Use W_out and Pi, not W_vocab/hat P')
@@ -419,6 +424,11 @@ def self_test():
     assert ten_step_errors(good.replace('intro:22c-language-training','intro:23a-from-toy-to-gpt'))
     assert ten_step_errors(good.replace('intro:23-llm-systems','intro:22c-language-training'))
     assert not notation_errors(r'\widehat{y}_i+\Pi_{1,4}')
+    for bad in (r'\vect a^\top\cdot\vect b^\top',r'\vect{q}_i^\top\cdot\vect{k}_j^\top',
+                r'\|\vect a^\top\|',r'\|\vect{k}^\top\|^2'):
+        assert notation_errors(bad),bad
+    for good in (r'\vect a^\top\vect b',r'\|\vect{k}\|^2',r'\|\vect k_t^\top\mathcal{M}-\vect v_t^\top\|^2'):
+        assert not notation_errors(good),good
     assert notation_errors(r'L=-\log p') and not notation_errors(r'L=-\ln p')
     for bad in (r'\widehat y',r'\widehat{P}',r'\widehat{y\approx0}',r'W_{\rm vocab}',r'A^{(\ell)}',r'\to L:T\times|\mathcal V|'):
         assert notation_errors(bad),bad
