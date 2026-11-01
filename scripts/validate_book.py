@@ -723,16 +723,16 @@ def validate_pdf(path: Path) -> None:
     # Search until the printed guide rather than guessing from TOC line counts.
     guide_index = next(
         (i for i, body in enumerate(pages) if i > 1 and
-         "怎么读：路线与数学预备" in body),
+         "写给谁，怎么读" in body),
         None)
     if guide_index is None:
         fail("Front-matter reading guide missing after table of contents")
     if guide_index > 4:
         fail("Printed chapter TOC must occupy no more than two pages before the reading guide")
     guide = normalized(pages[guide_index])
-    for heading in ("速读", "标准", "动手", "数学预备与表示约定", "ID、位置和矩阵行列从1数", "图例：先判断这一块要你做什么"):
+    for heading in ("适合谁", "读完能做到什么", "速读", "标准", "动手", "怎样安排时间", "内容范围"):
         if heading not in guide:
-            fail(f"Reading routes, prerequisites and conventions must fit one page: {heading}")
+            fail(f"Audience, outcomes, route budgets and scope must fit one reader-guide page: {heading}")
     toc = normalized("".join(pages[1:guide_index]))
     for num, title in zip("一二三四五六七八九", PARTS):
         # pdftotext can interleave the page number before the title.

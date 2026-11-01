@@ -10,6 +10,7 @@ from html import unescape
 from pathlib import Path
 import re
 import subprocess
+from unicodedata import normalize
 from check_chapter_crossrefs import uncomment
 from generate_chapter_navigation import argument
 
@@ -339,6 +340,50 @@ def reading_ranges(source):
             for key,ranges in re.findall(r'\\setroutebudget\{(quick|standard|hands)\}\{([^{}]+)\}',source)}
 
 
+def front_matter_errors(pages, locations):
+    """Inspect physical pages: valid labels alone cannot detect a long preface."""
+    required=('front:colophon','front:toc','front:toc-end','front:reading-routes',
+              'front:reading-end','front:prologue','part:learning','app:math-tools',
+              'app:math-entry','answer:math-entry','app:reading-details')
+    missing=set(required)-locations.keys()
+    if missing:return [f'Missing reader-entry destinations: {sorted(missing)}']
+    errors=[]
+    colophon,toc,toc_end,guide,guide_end,prologue,learning,math,entry,answer,detail=(locations[k] for k in required)
+    if colophon!=1 or toc!=2:
+        errors.append('Cover, copyright and printed contents must open in that order')
+    if not toc<=toc_end<toc+2 or guide!=toc_end+1:
+        errors.append('Printed contents and legend must fit at most two pages immediately before the reader guide')
+    if guide_end!=guide or prologue!=guide+1:
+        errors.append('Reader guide must occupy exactly one page immediately before the prologue')
+    if not prologue<learning<math<=entry<=answer<=detail:
+        errors.append('Math diagnostic, answers and route details must follow Part 1 in Appendix A')
+    compact=lambda body:re.sub(r'\s+','',normalize('NFKC',body))
+    front=compact(''.join(pages[:prologue]))
+    if '速读的具体剪裁' in front or '解2w+1=5' in front:
+        errors.append('Detailed route clipping and diagnostic problems must not precede the prologue')
+    legend=compact(pages[toc_end])
+    if not all(word in legend for word in ('可选读','纸笔复算','运行脚本','核对条件与易错步骤')):
+        errors.append('The compact legend must appear on the last printed contents page')
+    diagnostic=compact(''.join(pages[entry:answer+1]))
+    if not all(word in diagnostic for word in ('五题数学自检','核对结果与补读建议','第一步','结果','补读')):
+        errors.append('Math diagnostic and its actual answers must appear at their appendix destinations')
+    if '解2w+1=5' not in compact(pages[entry]):
+        errors.append('Math diagnostic heading must share its actual destination page with the first problem')
+    if '按路线阅读与查阅' not in compact(pages[detail]):
+        errors.append('Detailed reading route destination must show its appendix heading')
+    return errors
+
+
+def check_front_matter(reader,labels):
+    destinations=reader.named_destinations
+    locations={key:reader.get_destination_page_number(destinations[fields[3]])
+               for key,fields in labels.items() if fields[3] in destinations}
+    errors=front_matter_errors([page.extract_text() for page in reader.pages],locations)
+    if not errors:
+        print('Reader entry QA: compact TOC/legend, one-page guide, immediate prologue; diagnostic and answers in Appendix A')
+    return errors
+
+
 def check_reading_budgets(reader,labels):
     """Count actual PDF destination spans and compare with the printed budgets."""
     ranges=reading_ranges((ROOT/'book/chapters/front-reading-routes.tex').read_text())
@@ -355,10 +400,13 @@ def check_reading_budgets(reader,labels):
             spans.append(pages)
         counts[key]=len(page_span_union(spans))
     first=reader.get_destination_page_number(reader.named_destinations[labels['front:reading-routes'][3]])
-    text=re.sub(r'\s+','',''.join(page.extract_text() for page in reader.pages[first:first+3]))
+    text=re.sub(r'\s+','',reader.pages[first].extract_text())
     for key,title in [('quick','速读'),('standard','标准'),('hands','动手')]:
         found=re.findall(title+r'，约(\d+)页',text)
         if found!=[str(counts[key])]:failures.append(f'{title}: printed budget {found} differs from actual deduplicated {counts[key]} pages')
+    visits=re.findall(r'按每次读5页安排，速读约需(\d+)次，标准约需(\d+)次',text)
+    expected=(str((counts['quick']+4)//5),str((counts['standard']+4)//5))
+    if visits!=[expected]:failures.append(f'Reading schedule must use ceil(actual page budget / 5): {visits} != {expected}')
     if counts['quick']>=counts['standard']:failures.append('Quick reading route must cover fewer pages than standard reading')
     if not failures:print(f'Reading budget QA: printed quick/standard/hands match actual deduplicated page spans {counts}')
     return failures
@@ -611,6 +659,7 @@ def check_pdf(path, aux, used):
     failures.extend(check_exercise_destinations(reader,path,labels))
     failures.extend(check_reproduction_and_definitions(reader,labels))
     failures.extend(check_chapter_dividers(reader,labels))
+    failures.extend(check_front_matter(reader,labels))
     failures.extend(check_reading_budgets(reader,labels))
     check_toc_folios(reader,aux,labels)
     failures.extend(check_forward_appendix_link(reader,path,labels))
@@ -634,6 +683,21 @@ def check_pdf(path, aux, used):
 
 
 def self_test():
+    front_pages=['cover','copyright','contents','可选读 纸笔复算 运行脚本 核对条件与易错步骤',
+                 '写给谁，怎么读','prologue','Part 1',
+                 '五题数学自检 解 2𝑤 + 1 = 5 核对结果与补读建议 第一步 结果 补读','按路线阅读与查阅']
+    locations=dict(zip(('front:colophon','front:toc','front:toc-end','front:reading-routes',
+                        'front:reading-end','front:prologue','part:learning','app:math-tools',
+                        'app:math-entry','answer:math-entry','app:reading-details'),
+                       (1,2,3,4,4,5,6,7,7,7,8)))
+    assert not front_matter_errors(front_pages,locations)
+    assert front_matter_errors(front_pages,{**locations,'front:reading-end':5})
+    assert front_matter_errors(front_pages,{**locations,'front:prologue':6})
+    assert front_matter_errors(front_pages,{**locations,'front:toc-end':4})
+    assert front_matter_errors(front_pages,{**locations,'app:math-entry':4})
+    assert front_matter_errors(front_pages,{**locations,'answer:math-entry':4})
+    assert front_matter_errors([*front_pages[:7],'empty',front_pages[8]],locations)
+    assert front_matter_errors([*front_pages[:7],front_pages[7].replace('解 2𝑤 + 1 = 5',''),front_pages[8]],locations)
     assert page_span_union([(3,5),(5,7),(3,3)])==set(range(3,8))
     assert reading_ranges(r'\setroutebudget{quick}{a/b,c/d}')=={'quick':[['a','b'],['c','d']]}
     assert not printed_exercise_errors(['C-001','C-002'],['C-001','C-002'])

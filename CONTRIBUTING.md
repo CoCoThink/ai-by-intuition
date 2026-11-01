@@ -22,7 +22,9 @@
 2. 题库、答案、章末导航、术语表、参考清单和附录 G 断言表都是**生成内容**：改源文件，再运行对应生成器，命令见[生成文件](#生成文件)。
 3. 时效性断言（协议、API、模型配置）要查官方来源，同步正文、[dated-claims.json](book/dated-claims.json) 和 [source-audit.json](book/source-audit.json)；`checked_utc` 只在实际复核内容后更新。
 
-阅读路线的页数预算由 [front-reading-routes.tex](book/chapters/front-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步文字指引与这些标签；成品导航检查会核对实际目标页和表中预算，不手填旧版页数。
+阅读路线的页数预算由 [front-reading-routes.tex](book/chapters/front-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步附录 A 的路线细目与这些标签；成品导航检查会核对实际目标页、表中预算及按每次 5 页计算的排期示例，不手填旧版页数。
+
+前置顺序为封面、简短版权页、两页以内目录、一页“写给谁，怎么读”、序章和第一部分。五题数学自检与答案在附录 A 的数学速查中；详细路线和图例在同附录的路线细目中。编号、行列与代码下标的约定在首次使用时引入。
 
 ## 本地构建
 
@@ -82,8 +84,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 |---|---|
 | 封面、目录 | [main.tex](book/main.tex) |
 | 版权页 | [front-colophon.tex](book/chapters/front-colophon.tex) |
-| 阅读路线与表示约定 | [front-reading-routes.tex](book/chapters/front-reading-routes.tex) |
-| 开读前：五题入门自检 | [front-entry-check.tex](book/chapters/front-entry-check.tex) |
+| 写给谁、阅读路线与内容范围 | [front-reading-routes.tex](book/chapters/front-reading-routes.tex) |
 | 序章（在第一部分之前） | [00-prologue.tex](book/chapters/00-prologue.tex) |
 | 部分开篇与收尾 | [part-maps.tex](book/part-maps.tex)，累积复习生成到 [part-reviews.tex](book/part-reviews.tex)；设计见[下文](#部分开篇与收尾) |
 
@@ -108,7 +109,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 | 附录 | 源码 |
 |---|---|
-| A 公式、数学与符号速查 | [公式](book/chapters/appendix-a-core-formulas.tex)、[数学工具](book/chapters/appendix-a-math-tools.tex)、[符号表](book/chapters/appendix-a-symbols.tex)、[优化器](book/chapters/appendix-a-optimizers.tex)、[数据地图](book/chapters/appendix-a-data-map.tex) |
+| A 阅读、数学与形状速查 | [公式](book/chapters/appendix-a-core-formulas.tex)、[数学工具与五题自检](book/chapters/appendix-a-math-tools.tex)、[符号表](book/chapters/appendix-a-symbols.tex)、[优化器](book/chapters/appendix-a-optimizers.tex)、[数据地图](book/chapters/appendix-a-data-map.tex)、[路线细目与图例](book/chapters/appendix-a-reading-details.tex) |
 | B 三维实验、复算与脚本 | [中间量](book/chapters/appendix-b-transformer-intermediates.tex)、[PyTorch 与脚本总表](book/chapters/appendix-b-pytorch-lab.tex) |
 | C 题库 · D 答案 | 由 [exercises.json](book/exercises.json) 生成[题库](book/chapters/appendix-c-exercises.tex)与[题库答案](book/chapters/appendix-d-exercise-solutions.tex)；[随堂自测答案](book/chapters/appendix-d-self-check-solutions.tex)手写 |
 | E 术语表与索引 | 源：[基础词条](book/chapters/glossary-source-core.tex)、[现代词条](book/chapters/glossary-source-modern.tex)、[英文映射](book/chapters/glossary-source-english.tex)；生成：[拼音主表](book/chapters/appendix-e-glossary.tex)、[英文简表](book/chapters/appendix-e-english-index.tex)；手写：[概念图](book/chapters/appendix-e-concept-map.tex) |
@@ -150,7 +151,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | 开篇：为什么从这里开始 | 1–2 句承接上一部分或序章，提出具体问题；扩展路径注明“主线不依赖”。 |
 | 开篇：先想一想 | 一道凭直觉可答的题，只用已知词语；浅蓝框提示“凭直觉答就行，本部分末尾会给出答案”。 |
 | 开篇：学完你能做到 | 两条，用“算出、判断、说明、写出”等动作描述。 |
-| 开篇：地图与路线 | 每个实际章节只列一次，兼容标签不另列；路线用“（你在这里）”标出当前位置，完整九格图只在“怎么读”页出现。 |
+| 开篇：地图与路线 | 每个实际章节只列一次，兼容标签不另列；路线用“（你在这里）”标出当前位置，完整九格图放在附录 A 的路线细目中。 |
 | 收尾：回到开篇 | 复述问题并给出简答，链接到本部分的答案小节。 |
 | 收尾：累积复习与下一步 | 接生成的两道 R 题，再交代下一部分；主线结束处说明后面是两条扩展路径。 |
 

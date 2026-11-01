@@ -47,7 +47,7 @@ def core_groups():
 def source_layout_errors(main, sources):
     """A numbered chapter has one file whose prefix matches compilation order."""
     errors=[];number=0
-    unnumbered={'front-colophon','front-reading-routes','front-entry-check','00-prologue','epilogue'}
+    unnumbered={'front-colophon','front-reading-routes','00-prologue','epilogue'}
     core,_,appendices=main.partition(r'\appendix')
     names=re.findall(r'\\input\{chapters/([^}]+)\}',main)
     if len(names)!=len(set(names)):
@@ -220,6 +220,12 @@ def validate_contract():
     def require(condition,message):
         if not condition:errors.append(message)
     errors.extend(source_layout_errors(main,sources))
+    front_inputs=re.findall(r'\\input\{chapters/([^}]+)\}',main.split(r'\part{',1)[0])
+    require(front_inputs==['front-colophon','front-reading-routes','00-prologue'],
+            'Only copyright, the reader guide and the prologue precede Part 1')
+    for label in ('app:math-entry','answer:math-entry'):
+        require(r'\label{'+label+'}' in sources['appendix-a-math-tools'],
+                f'{label}: diagnostic questions and answers belong in the math lookup')
     glossary_sources={'glossary-source-core','glossary-source-modern','glossary-source-english'}
     require({p.stem for p in (BOOK/'chapters').glob('*.tex')}==set(sources)|glossary_sources,
             'Every chapter source must be included in main.tex or be declared glossary input data')

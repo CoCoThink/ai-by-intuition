@@ -1,0 +1,51 @@
+\subsection{按路线阅读与查阅}
+\phantomsection\label{app:reading-details}
+\begingroup\small
+\newcommand{\routech}[1]{\ref*{intro:#1}}
+三条路线选择不同的章段；页数预算见\hyperref[front:reading-routes]{前面的阅读说明（第~\pageref*{front:reading-routes}~页）}。
+预算按所选段落覆盖的整页去重统计，同页内跳读的内容仍计入；练习、补数学与脚本运行时间另计。
+
+\tagpdfsetup{table/header-rows={1}}
+\noindent\begin{tabularx}{\linewidth}{@{}p{15mm}X@{}}
+\toprule
+路线 & 阅读范围与做法\\\midrule
+速读 & 第~\routech{00-functions}--\routech{17-backpropagation}、\routech{01-vectors}--\routech{23-llm-systems}、\routech{23aa-pretraining-icl}、\routech{23d-agent-systems}--\routech{23d-agent-protocols}~章中的指定片段；按下文保留最小计算链，其余内容按需选读\\
+标准 & 第~\routech{00-functions}--\routech{23e-tech-judgement}~章，顺序读并做自测；现代架构读完\hyperref[sec:modern-core-comparison]{三项基础与自测}即可继续，{\symboliconfont ★}专题按需读\\
+动手 & 第~\routech{00-functions}--\routech{17-backpropagation}、\routech{01-vectors}--\routech{10-mlp}、\routech{20c-classification-loss}--\routech{20-embeddings}、\routech{21b-why-attention}--\routech{22c-language-training}、\routech{23aa-pretraining-icl}--\routech{23cc-test-time-compute}~章，以及\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini}起的实验}；先复算二维迷你版，再跑三维训练\\
+\bottomrule
+\end{tabularx}\par\smallskip
+\textbf{速读的具体剪裁：}
+第~\routech{16a-gradient-descent}~章读到\hyperref[intro:training-four-steps]{训练四步}；
+第~\routech{07-functions-relu}~章读完 ReLU 与三点反例；
+第~\routech{17-backpropagation}~章只读到\hyperref[sec:backprop-weight-gradients]{两层梯度例子}的收束。
+第~\routech{10-mlp}~章读到\hyperref[sec:mlp-nonlinearity]{有无 ReLU 的对照}，再跳到\hyperref[sec:mlp-ffn]{与 FFN 的关系}；
+第~\routech{22c-language-training}~章只读到\hyperref[sec:transformer-gradient-step]{输出头汇总三处梯度}，后续反传展开与迭代表留给标准、动手路线。
+进入 Transformer 前，保留第~\routech{22a-position-multihead}~章的\hyperref[sec:position-input]{位置输入}与\hyperref[concept:multihead]{双头计算}。\par
+主线之后有两条{\symboliconfont ★}扩展路径，三条路线读完均可转入：
+\hyperref[part:vision]{视觉部分（第~\routech{19-cnn}--\routech{19b-vit}~章）}把同一套 Transformer 主干接到图像输入；
+\textbf{\hyperref[part:memory]{联想记忆部分（第~\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity}~章）}是理解 Attention 的第二条路径}。
+
+
+各章的“读完自测”用于检查核心理解；附录 C 的 C 题按需选做，用来换数据、做迁移或挑战。
+跨章节的 R 题放在各部分收尾，用于累积复习。
+全书符号表见第~\pageref*{app:symbols}~页；跨章核对输入和参数时，可查\hyperref[app:data-map]{算例数据地图（第~\pageref*{app:data-map}~页）}。
+
+\subsubsection*{图例与查阅入口}
+\tagpdfsetup{table/header-rows={1}}
+\noindent\begin{tabularx}{\linewidth}{@{}p{34mm}X@{}}
+\toprule
+标记 & 阅读动作\\\midrule
+直觉 & 理解新机制，再回看计算链\\
+动手算／复算 & 纸笔算给定数据／运行脚本核对\\
+! 注意 & 核对易错步骤和影响结论的适用条件\\
+案例 & 分析现实事件\\
+{\symboliconfont ★}选读 & 首读可跳过；小节目录在 PDF 书签中展开\\
+\bottomrule
+\end{tabularx}\par
+自测中的{\symboliconfont ★}题可选做；每组自测附题号、提示与解答入口，电子版可双向跳转。
+
+图中颜色只区分角色（如 Q、K、V），同时保留标签、线型与标记，黑白打印也能分辨；色彩表见第~\pageref*{app:color-semantics}~页。
+术语可按\hyperref[app:chinese-index]{中文拼音索引}或\hyperref[app:english-index]{英文索引}查询。纸面目录列到章，电子目录与书签均可点击。
+
+\globalroute{0}
+\endgroup

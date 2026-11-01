@@ -286,7 +286,7 @@
 \noindent{\sffamily\small\color{muted}https://github.com/CoCoThink/ai-by-intuition}\par
 \noindent{\sffamily\small\color{muted}CC BY 4.0}\par
 \clearpage
-% Reader routes precede the TOC; front matter does not add numbered chapters.
+% Copyright occupies the verso; the compact contents precede the one-page reader guide.
 \input{chapters/front-colophon}
 \clearpage
 \setcounter{tocdepth}{1} % print chapters; subsection navigation remains in PDF bookmarks
@@ -304,17 +304,18 @@
 \makeatletter
 \patchcmd{\l@part}{2.25em}{1.4em}{}{\PackageError{book}{TOC part spacing patch failed}{Check the tagged article TOC implementation.}}
 \makeatother
+\phantomsection\label{front:toc}
 \tableofcontents
 \par\smallskip\noindent{\footnotesize {\symboliconfont ★}选读入口：原论文对照见\sectionentry{elective:original-paper}；
 现代架构扩展从\sectionentry{elective:architecture-extras}起。}
+\par\smallskip\noindent{\footnotesize {\symboliconfont ★}可选读\quad 动手算：纸笔复算\quad 复算：运行脚本\quad 注意：核对条件与易错步骤}
+\par\phantomsection\label{front:toc-end}
 \clearpage
 \endgroup
 
-% Reading conventions follow the TOC, before chapter one.
+% The reader guide answers who, scope and reading effort; the prologue follows directly.
 \clearpage
 \input{chapters/front-reading-routes}
-% Entry check and its answers sit together before Part 1 (no chapter number).
-\input{chapters/front-entry-check}
 \clearpage
 % The prologue poses the book's question; Part 1 answers it from the smallest case.
 \input{chapters/00-prologue}
@@ -438,12 +439,13 @@
 \part*{附录：公式、练习与答案}
 \addcontentsline{toc}{part}{附录：公式、练习与答案}
 \let\boxed\bookboxed
-\section{核心公式、数学与形状速查}
+\section{阅读、数学与形状速查}
 \input{chapters/appendix-a-core-formulas}
 \input{chapters/appendix-a-math-tools}
 \input{chapters/appendix-a-symbols}
 \input{chapters/appendix-a-optimizers}
 \input{chapters/appendix-a-data-map}
+\input{chapters/appendix-a-reading-details}
 
 \renewcommand{\boxed}[1]{#1}
 \clearpage

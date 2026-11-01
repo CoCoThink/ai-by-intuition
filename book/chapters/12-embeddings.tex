@@ -28,6 +28,7 @@ ID 4 的 One-hot 行向量是 $(0,0,0,1,0)$。
 不同 One-hot 类别互相正交，点积为零，
 “花”与“春天”的语境关联要由后续训练建立。
 实际实现用整数索引直接查表，省去显式的高维 One-hot 矩阵。
+本书词表 ID 从 $1$ 起，而 Python 数组下标从 $0$ 起；查表时减 $1$，例如 ID 4 的“花”用数组下标 $3$ 读取。
 
 \subsection{真实模型的参数如何开始？}
 \phantomsection\label{concept:embedding-initialization}

@@ -1,5 +1,6 @@
 \markboth{序章}{序章}
 \section*{序章：为什么 AI 能接住我们说的话？}
+\label{front:prologue}
 \addcontentsline{toc}{section}{序章：为什么 AI 能接住我们说的话？}
 
 \begin{idea}
@@ -68,6 +69,7 @@ left=5mm,right=5mm,top=3mm,bottom=3mm]
 \]
 我们约定一个只有五个候选的简化词表，将这句话切为四个 Token，
 编号为 $[2,4,5,3]$，另留编号 $1$ 表示“其他”。
+这里的词表 ID 与位置都从 $1$ 开始编号。
 全书的手算数据沿用这份约定：数字由我们设定，用来观察运算过程，模型中的参数则需要通过训练学习。
 
 \chapterchecktasks{00-guide}{理解与复算}{
