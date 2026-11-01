@@ -70,7 +70,7 @@ def validate_existing_regressions(main, sources):
         if not script_path.is_file():
             fail(f"Missing P1 reproducibility script: {script}")
         ast.parse(script_path.read_text(encoding="utf-8"))
-    includes(sources["24e-pytorch-lab"], "1.798430", "initial loss in lab")
+    includes(sources["appendix-b-pytorch-lab"], "1.798430", "initial loss in lab")
     # Runnable, dependency-free examples must agree with the book after edits.
     for script in ("memory_demo.py", "bpe_demo.py", "rag_demo.py", "agent_loop.py"):
         script_path = ROOT / "scripts" / script
@@ -116,9 +116,9 @@ def validate_existing_regressions(main, sources):
     includes((ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8"), "39897932969",
              "successful source-pinned real GPT-2 inference reference")
     run_record_anchor = quote("gpt-2-真实权重实验").replace("%", r"\%")
-    includes(sources["29-revision-notes"], r"CONTRIBUTING.md\#" + run_record_anchor,
+    includes(sources["appendix-g-revision-notes"], r"CONTRIBUTING.md\#" + run_record_anchor,
              "reader pointer to the archived real GPT-2 run record")
-    includes(sources["23a-from-toy-to-gpt"], "gpt2_demo.py",
+    includes(sources["22-real-models"], "gpt2_demo.py",
              "reproducible optional real GPT-2 example (verbatim command)")
     includes(gpt2_source.read_text(encoding="utf-8"), "masked_future",
              "real-model causal-mask numeric assertion")
@@ -136,7 +136,7 @@ def validate_existing_regressions(main, sources):
         if result.returncode:
             fail(f"Architecture example {reproducible} failed:\n"
                  + result.stdout + result.stderr)
-    includes(sources["22d-modern-transformers"], "architecture\\_demo.py",
+    includes(sources["29-modern-transformers"], "architecture\\_demo.py",
              "sliding-window and illustrative MLA arithmetic")
 
     # Visual-to-language adapter arithmetic is a deliberately untrained toy fixture.
@@ -149,7 +149,7 @@ def validate_existing_regressions(main, sources):
     if bridge_result.returncode or "Vision bridge QA passed" not in bridge_result.stdout:
         fail("Vision bridge regression failed:\n"
              + bridge_result.stdout + bridge_result.stderr)
-    includes(sources["19b-vit"], r"\label{eq:vit-llm-bridge}",
+    includes(sources["32-vit"], r"\label{eq:vit-llm-bridge}",
              "multimodal adapter teaching example")
 
     # Print-proof selector QA: must not require a PDF, Poppler or online access.
@@ -229,7 +229,7 @@ def validate_existing_regressions(main, sources):
 
 
     # A ten-step oral mapping must remain complete and linked to its figure.
-    block_ch22 = sources["22-transformer-architecture"]
+    block_ch22 = sources["17-transformer-architecture"]
     ten_steps = block_ch22.split(r"\label{sec:transformer-ten-steps}")[1]
     ten_steps = ten_steps.split(r"\end{enumerate}")[0]
     if len(re.findall(r"(?m)^\\item ", ten_steps)) != 10:
@@ -245,25 +245,28 @@ def validate_existing_regressions(main, sources):
                          "FFN", "归一化", "因果")):
         fail("Original Transformer figure alt text lacks source/target or FFN detail")
 
-    # These numbered chapters span two or more .tex files. Source checks and
-    # recaps belong after their final subsection in every merged chapter.
-    for early, late, check_id in (
-        ("00-functions", "16-loss-gradient", "00-functions"),
-        ("21c-naive-attention", "21b-why-attention", "21c-naive-attention"),
-        ("23c-post-training", "23cc-test-time-compute", "23c-post-training"),
-        ("04-key-value-outer-product", "06-better-linear-memory", "04-key-value-outer-product"),
-        ("17-backpropagation", "18b-end-to-end-learning", "17-backpropagation"),
-        ("08-stacking-key-value", "13-capacity", "09-nonlinearity-and-memory"),
-        ("09-nonlinearity-and-memory", "13-capacity", "09-nonlinearity-and-memory"),
+    # Self-checks follow the complete chapter, including its optional sections.
+    for name, check_id in (
+        ("01-functions-and-loss", "00-functions"),
+        ("02-gradient-descent", "16-loss-gradient"),
+        ("04-backpropagation", "17-backpropagation"),
+        ("06-vectors-and-dot-products", "01-vectors"),
+        ("13-context-and-rnn", "21-rnn"),
+        ("14-attention-qkv", "21c-naive-attention"),
+        ("24-post-training-and-inference", "23c-post-training"),
+        ("33-linear-associative-memory", "04-key-value-outer-product"),
+        ("34-nonlinear-memory", "09-nonlinearity-and-memory"),
     ):
         marker = r"\chapterchecktasks{" + check_id + "}"
-        if marker in sources[early] or marker not in sources[late]:
-            fail(f"Chapter self-check not relocated to final subsection: {check_id}")
+        body = sources[name]
+        headings = list(re.finditer(r"\\subsection\*?\{", body))
+        if body.count(marker) != 1 or (headings and body.index(marker) < headings[-1].start()):
+            fail(f"Chapter self-check must follow its final subsection: {name}")
     labels = {label for source in sources.values() for label in re.findall(r"\\label\{([^}]+)\}", source)}
     REQUIRED = re.findall(r"\\input\{chapters/([^}]+)\}", main)
-    for lex in ("24-lexicon", "24b-modern-lexicon"):
+    for lex in ("glossary-source-core", "glossary-source-modern"):
         refs = re.findall(r"\\termref\{([^}]+)\}", sources[lex])
-        if lex == "24-lexicon":
+        if lex == "glossary-source-core":
             key_terms = {
                 "交叉熵": "concept:cross-entropy",
                 "梯度下降": "concept:gradient-descent",
@@ -299,7 +302,7 @@ def validate_existing_regressions(main, sources):
                 if items.get(term) != destination:
                     fail(f"Foundation term {term} must link to {destination}, got {items.get(term)}")
 
-        if lex == "24b-modern-lexicon" and any(not ref.startswith("concept:") for ref in refs):
+        if lex == "glossary-source-modern" and any(not ref.startswith("concept:") for ref in refs):
             fail("Modern glossary must link to precise concept definitions, not chapter introductions")
     # Also verify in-text concept explanations precede their hyperlinks.
     seen: set[str] = set()
@@ -355,7 +358,7 @@ def validate_existing_regressions(main, sources):
 
     # Figure 16 must not reverse the training feedback arrow or visually suggest
     # that inference -> post-training -> external tools is one execution chain.
-    concept = sources["24c-concept-map"]
+    concept = sources["appendix-e-concept-map"]
     for arrow in (
         "(upd.north) --",
         "(emb.south);",
@@ -377,5 +380,5 @@ def validate_existing_regressions(main, sources):
     weight_figure = (BOOK / "figures" / "attention-three-step-weights.tex").read_text(
         encoding="utf-8")
     includes(weight_figure, "coltitle=ink", "figure 10 dark title on light background")
-    includes(sources["00c-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
+    includes(sources["appendix-a-symbols"], r"\beta=1/\tau", "inverse-temperature definition")
     print("Existing regressions passed: reproducible examples, proof provenance, directed figures, glossary targets and release gates")

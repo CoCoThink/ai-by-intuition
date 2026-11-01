@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the compact English -> Chinese lookup (Appendix E.3, 24f-english-index.tex).
+"""Generate the compact English -> Chinese lookup (Appendix E.3, appendix-e-english-index.tex).
 
 The pinyin-ordered main glossary with definitions is E.1 (generate_bilingual_glossary.py).
 This lookup repeats no definitions: English name, Chinese name and the same page targets.
@@ -13,8 +13,8 @@ import re
 from generate_bilingual_glossary import glossary_rows
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "book" / "chapters" / "24e-bilingual-glossary.tex"
-TARGET = ROOT / "book" / "chapters" / "24f-english-index.tex"
+SOURCE = ROOT / "book" / "chapters" / "appendix-e-glossary.tex"
+TARGET = ROOT / "book" / "chapters" / "appendix-e-english-index.tex"
 COLUMN = (r">{\raggedright\arraybackslash}p{37mm}>{\raggedright\arraybackslash}p{26.5mm}"
           r">{\raggedright\arraybackslash}p{13mm}")
 HEADER = r"English & 中文 & 页码 & English & 中文 & 页码\\\midrule"

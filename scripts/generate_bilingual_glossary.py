@@ -14,7 +14,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 CJK = re.compile(r"[\u3400-\u9fff]")
 CHAPTERS = ROOT / "book" / "chapters"
-TARGET = CHAPTERS / "24e-bilingual-glossary.tex"
+TARGET = CHAPTERS / "appendix-e-glossary.tex"
 
 # Extra lookup destinations are attached to individual terms, never to a
 # shared chapter target: every term keeps its own first-definition anchor.
@@ -176,11 +176,11 @@ def entries(file: str) -> list[tuple[str, str, str]]:
 
 def glossary_rows() -> list[dict[str, str]]:
     """Canonical rows: Chinese display name, English, definition and lookup cells."""
-    base = entries("24-lexicon.tex")
-    modern = entries("24b-modern-lexicon.tex")
+    base = entries("glossary-source-core.tex")
+    modern = entries("glossary-source-modern.tex")
     if len(base) != 100 or not modern:
         raise ValueError("Canonical inventory requires foundation entries and modern definitions")
-    idx = (CHAPTERS / "24d-english-index.tex").read_text(encoding="utf-8")
+    idx = (CHAPTERS / "glossary-source-english.tex").read_text(encoding="utf-8")
     aliases = {m.group(2).strip(): m.group(1) for m in ALIAS.finditer(idx)}
     display = dict(line.split("=", 1) for line in OVERRIDES)
     modern_pairs = [line.split(" | ", 1) for line in MODERN_PAIRS]
@@ -217,7 +217,7 @@ def generate() -> str:
         lines.append(r"\addlinespace[4pt]")
         lines.append(r"\multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} " + title + r"}\\*")
         lines.extend(tex for _, tex in sorted(groups[letter]))
-    five_pairs = (CHAPTERS / "24-lexicon.tex").read_text(encoding="utf-8").split(
+    five_pairs = (CHAPTERS / "glossary-source-core.tex").read_text(encoding="utf-8").split(
         r"\subsubsection*{不要混淆的五对概念}", 1
     )[1].strip()
     lines.extend([r"\end{longtable}", r"\endgroup", "",
@@ -238,7 +238,7 @@ def occurrence_index(glossary: str) -> str:
     chapters = []
     number = 0
     for name in re.findall(r'\\input\{chapters/([^}]+)\}', main):
-        if name in ('00-guide', '23f-foundation-recap'):
+        if name in ('00-prologue', 'epilogue'):
             continue
         raw = (CHAPTERS / (name + '.tex')).read_text()
         body = uncomment(raw)
@@ -300,7 +300,7 @@ def main() -> int:
                 or not occurrence_target.is_file() or occurrence_target.read_text() != occurrences):
             print("Bilingual glossary is stale. Regenerate its TeX.", file=sys.stderr)
             return 1
-        print(f"{len(entries('24-lexicon.tex')) + len(entries('24b-modern-lexicon.tex'))}-row bilingual glossary QA passed")
+        print(f"{len(entries('glossary-source-core.tex')) + len(entries('glossary-source-modern.tex'))}-row bilingual glossary QA passed")
         return 0
     TARGET.write_text(output, encoding="utf-8")
     occurrence_target.write_text(occurrences, encoding='utf-8')

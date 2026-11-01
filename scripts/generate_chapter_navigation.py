@@ -28,7 +28,7 @@ def argument(text: str, start: int) -> tuple[str, int]:
 
 
 def lesson_metadata() -> tuple[dict[str, str], dict[str, str]]:
-    """Follow compilation order, including chapters split across source files."""
+    """Follow compilation order; stable label/check IDs do not depend on filenames."""
     main = uncomment((BOOK / 'main.tex').read_text())
     owners, titles = {}, {}
     section, checks, section_labels = '', [], []
@@ -88,7 +88,7 @@ def validate_navigation() -> list[str]:
     if not OUTPUT.is_file() or OUTPUT.read_text() != rendered_navigation():
         errors.append('Chapter practice navigation is stale; run scripts/generate_chapter_navigation.py')
     _, titles = lesson_metadata()
-    answers = (BOOK / 'chapters/28-chapter-checks.tex').read_text()
+    answers = (BOOK / 'chapters/appendix-d-self-check-solutions.tex').read_text()
     seen = set()
     for match in re.finditer(r'\\label\{answer:([^}]+)\}\\textbf\{\\hyperref\[check:([^]]+)\]\{', answers):
         slug = match[1]

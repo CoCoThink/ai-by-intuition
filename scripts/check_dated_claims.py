@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BOOK=ROOT/'book'
 BEGIN='% BEGIN GENERATED DATED CLAIMS'
 END='% END GENERATED DATED CLAIMS'
-OUTPUT=BOOK/'chapters/29-revision-notes.tex'
+OUTPUT=BOOK/'chapters/appendix-g-revision-notes.tex'
 PREFIX='https://modelcontextprotocol.io/specification/'
 
 
@@ -164,7 +164,7 @@ def validate():
     expected=rendered(rows)
     if expected not in OUTPUT.read_text():errors.append('Dated assertion table is stale; run check_dated_claims.py --write')
     mcp=next(r for r in rows if r['id']=='mcp')
-    chapter=(BOOK/'chapters/23d-agent-protocols.tex').read_text()
+    chapter=(BOOK/'chapters/27-protocols-and-multi-agent.tex').read_text()
     declaration=re.search(r'以下按 MCP (\d{4}-\d{2}-\d{2}) 版',chapter)
     if not declaration or declaration[1]!=mcp['version']:
         errors.append('The prose MCP version differs from the reviewed request/source version')

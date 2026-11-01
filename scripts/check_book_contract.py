@@ -37,11 +37,40 @@ def core_groups():
             if m[2]:
                 if current is None:raise ValueError(f'{name}: self-check has no chapter')
                 current['checks'].append(m[2])
-            elif not m[1] or name=='00-guide':
+            elif not m[1] or name=='00-prologue':
                 title,_=argument(sources[name],m.end()-1)
                 current=dict(title=title,numbered=not bool(m[1]),checks=[])
                 groups.append(current)
     return groups
+
+
+def source_layout_errors(main, sources):
+    """A numbered chapter has one file whose prefix matches compilation order."""
+    errors=[];number=0
+    unnumbered={'front-colophon','front-reading-routes','front-entry-check','00-prologue','epilogue'}
+    core,_,appendices=main.partition(r'\appendix')
+    names=re.findall(r'\\input\{chapters/([^}]+)\}',main)
+    if len(names)!=len(set(names)):
+        errors.append('Chapter sources must be included exactly once')
+    for name in re.findall(r'\\input\{chapters/([^}]+)\}',core):
+        headings=re.findall(r'\\section\s*\{',sources[name])
+        numbered_file=bool(re.fullmatch(r'(?!00-)\d{2}-[a-z]+(?:-[a-z]+)*',name))
+        if not headings and not numbered_file:
+            if name not in unnumbered:
+                errors.append(f'{name}: chapter continuations must be kept in their numbered chapter file')
+            continue
+        number+=1
+        if len(headings)!=1:
+            errors.append(f'{name}: each numbered chapter needs one section in one file')
+        if not numbered_file or not name.startswith(f'{number:02d}-'):
+            errors.append(f'{name}: source filename must start with current chapter number {number:02d}-')
+    letter=ord('a')-1
+    for event in re.finditer(r'\\section\s*\{|\\input\{chapters/([^}]+)\}',appendices):
+        if event[1]:
+            if not event[1].startswith(f'appendix-{chr(letter)}-'):
+                errors.append(f'{event[1]}: source filename must match appendix {chr(letter).upper()}')
+        else:letter+=1
+    return errors
 
 
 def ten_step_errors(body):
@@ -149,7 +178,7 @@ def part_bookend_errors(main, sources):
     answer (partq:<key>) must be taught inside that same part."""
     errors=[];core=main.split(r'\appendix',1)[0]
     first=core.find(r'\part{')
-    if first<0 or core.find(r'\input{chapters/00-guide}') not in range(0,first):
+    if first<0 or core.find(r'\input{chapters/00-prologue}') not in range(0,first):
         errors.append('Prologue must precede Part 1')
     for seg in re.split(r'(?=\\part\{)',core[first:]):
         label=re.search(r'\\label\{part:([^}]+)\}',seg)
@@ -190,6 +219,10 @@ def validate_contract():
     main,sources=read_sources()
     def require(condition,message):
         if not condition:errors.append(message)
+    errors.extend(source_layout_errors(main,sources))
+    glossary_sources={'glossary-source-core','glossary-source-modern','glossary-source-english'}
+    require({p.stem for p in (BOOK/'chapters').glob('*.tex')}==set(sources)|glossary_sources,
+            'Every chapter source must be included in main.tex or be declared glossary input data')
     require(re.findall(r'\\part\{([^}]+)\}',main)==PART_TITLES,'Nine-part curriculum order changed')
     groups=core_groups()
     require(sum(g['numbered'] for g in groups)==CHAPTER_COUNT,f'Expected {CHAPTER_COUNT} numbered chapters')
@@ -214,12 +247,12 @@ def validate_contract():
     mapped=[owners.get('intro:'+entry) for entry in entries]
     require(len(mapped)==CHAPTER_COUNT and len(set(mapped))==CHAPTER_COUNT,
             'Part maps must list each merged chapter once')
-    require('阅读指南' not in main and '阅读指南' not in sources['20b-task-contract'],'Prelude must be called 序章')
-    errors.extend(ten_step_errors(sources['22-transformer-architecture']))
+    require('阅读指南' not in main and '阅读指南' not in sources['10-language-model-task'],'Prelude must be called 序章')
+    errors.extend(ten_step_errors(sources['17-transformer-architecture']))
     for filename,label,heading in (
-        ('23b-deployment-and-ecosystem','concept:evaluation-contamination','训练数据工程：来源、清洗、去重与配比'),
-        ('23e-tech-judgement','concept:evaluation-contamination-benchmark','为什么 Benchmark 高分仍需要复核？'),
-        ('23-llm-systems','concept:autoregressive','为什么训练能一次算多个位置，自回归生成却要逐个产生？'),
+        ('28-training-and-deployment','concept:evaluation-contamination','训练数据工程：来源、清洗、去重与配比'),
+        ('30-evaluating-new-models','concept:evaluation-contamination-benchmark','为什么 Benchmark 高分仍需要复核？'),
+        ('21-autoregressive-generation','concept:autoregressive','为什么训练能一次算多个位置，自回归生成却要逐个产生？'),
     ):
         errors.extend(concept_anchor_errors(sources[filename],label,heading))
     combined={'main':main,**sources,'part-maps':(BOOK/'part-maps.tex').read_text(),
@@ -228,16 +261,14 @@ def validate_contract():
     for name,body in combined.items():
         errors.extend(f'{name}: {e}' for e in notation_errors(body))
         errors.extend(f'{name}: {e}' for e in ending_order_errors(body))
-    for name in ('00c-symbols','11-softmax-memory','04-key-value-outer-product',
-                 '05-memory-interference','06-better-linear-memory','08-stacking-key-value',
-                 '09-nonlinearity-and-memory','13-capacity'):
+    for name in ('appendix-a-symbols','15-self-attention',
+                 '33-linear-associative-memory','34-nonlinear-memory'):
         body=sources[name].replace(r'\mathcal{M}','')
         require(not re.search(r'(?<![A-Za-z])M(?![A-Za-z])',body),f'{name}: KV/memory counts must use T_k, not M')
-    require('d_h' not in sources['22d-modern-transformers'],'Modern head widths must use d_k; d_h is the RNN state width')
-    require(not re.search(r'(?<![A-Za-z])N(?![A-Za-z_])', sources['23cc-test-time-compute']),
+    require('d_h' not in sources['29-modern-transformers'],'Modern head widths must use d_k; d_h is the RNN state width')
+    require(not re.search(r'(?<![A-Za-z])N(?![A-Za-z_])', sources['24-post-training-and-inference'].split(r'\label{intro:23cc-test-time-compute}',1)[1]),
             'Test-time candidate counts must use n')
-    for name in ('04-key-value-outer-product','05-memory-interference','06-better-linear-memory',
-                 '08-stacking-key-value','09-nonlinearity-and-memory','14-summary','13-capacity'):
+    for name in ('33-linear-associative-memory','34-nonlinear-memory'):
         require(not re.search(r'(?<![A-Za-z\\])S(?![A-Za-z])', sources[name]),
                 f'{name}: memory state must be mathcal M, not attention score S')
     # Explicit source graph and virtual macro labels; check both ref existence and uniqueness.
@@ -263,32 +294,32 @@ def validate_contract():
     require('tagging=on' in main and 'pdfstandard=ua-2' in main and 'mathml-AF' in main,'Keep tagged PDF/UA-2 with MathML AF')
     require('local-build' not in main,'Unknown SHA must not be printed')
     require(r'\sourcecheck' in main,'Source date macro missing')
-    require('选读：对照原论文' in sources['22-transformer-architecture'],'Paper comparison must be elective')
-    require('训练资料从哪里来' not in sources['23aa-pretraining-icl'] and
-            '训练数据工程' in sources['23b-deployment-and-ecosystem'] and
-            'concept:pretraining-data' not in sources['23a-from-toy-to-gpt'],'Data cleaning must be outside ICL chapter')
+    require('选读：对照原论文' in sources['17-transformer-architecture'],'Paper comparison must be elective')
+    require('训练资料从哪里来' not in sources['23-pretraining-and-icl'] and
+            '训练数据工程' in sources['28-training-and-deployment'] and
+            'concept:pretraining-data' not in sources['22-real-models'],'Data cleaning must be outside ICL chapter')
     require(lesson_metadata()[0].get('intro:23cc-test-time-compute')=='23c-post-training' and
-            '冻结参数' in sources['23cc-test-time-compute'],
+            '冻结参数' in sources['24-post-training-and-inference'],
             'Training feedback and fixed-weight verification must share a chapter with an explicit boundary')
     for marker in ('concept:bos-eos','concept:prefill-decode','concept:autoregressive'):
-        require(marker in sources['23-llm-systems'],f'Missing generation interface: {marker}')
-    require('concept:chat-template' in sources['23c-post-training'],'Chat template explanation missing')
-    require('12{,}288' in sources['22d-modern-transformers'] and '402{,}653{,}184' in sources['22d-modern-transformers'],'Real KV byte estimate missing')
+        require(marker in sources['21-autoregressive-generation'],f'Missing generation interface: {marker}')
+    require('concept:chat-template' in sources['24-post-training-and-inference'],'Chat template explanation missing')
+    require('12{,}288' in sources['29-modern-transformers'] and '402{,}653{,}184' in sources['29-modern-transformers'],'Real KV byte estimate missing')
     for fragment in ('P_{\\rm pos}',r'\Pi',r'W_{\rm out}',r'\mathcal{M}',r'N_{\rm layer}'):
-        require(fragment in sources['00c-symbols'],f'Symbol table missing {fragment}')
+        require(fragment in sources['appendix-a-symbols'],f'Symbol table missing {fragment}')
     for fragment in ('T_q','T_k','Best-of-$n$',r'\beta_1,\beta_2','LayerNorm',r'\texttt{loss}',r'\texttt{logits}'):
-        require(fragment in sources['00c-symbols'],f'Symbol/code table missing {fragment}')
-    require(r'\ln[p(1-p)]' in sources['21a-context-gap'] and
-            '固定窗口 MLP 或 RNN' in sources['21a-context-gap'],'Context motivation must connect the loss bound to missing history and explain alternatives')
-    require('experiment:attention-selection' in sources['22c-language-training'] and
-            'figures/learned-attention-selection' in sources['22c-language-training'],
+        require(fragment in sources['appendix-a-symbols'],f'Symbol/code table missing {fragment}')
+    require(r'\ln[p(1-p)]' in sources['13-context-and-rnn'] and
+            '固定窗口 MLP 或 RNN' in sources['13-context-and-rnn'],'Context motivation must connect the loss bound to missing history and explain alternatives')
+    require('experiment:attention-selection' in sources['20-language-model-training'] and
+            'figures/learned-attention-selection' in sources['20-language-model-training'],
             'Context training must show learned Q/K selection')
     require('叙述借鉴与第三方许可见版权页' not in main,'Remove cover credit pointer')
     memory_part=main.split(r'\part{联想记忆与线性状态}',1)[1].split(r'\clearpage',1)[0]
     require('Alex Wang' in memory_part and 'source:alex-wang' in memory_part,'Memory part opener must credit its teaching framework')
     # One framework acknowledgment at the part entrance; F keeps the citation.
     require(main.count('Alex Wang')==1 and
-            all('Alex Wang' not in body for name,body in sources.items() if name!='26-sources'),
+            all('Alex Wang' not in body for name,body in sources.items() if name!='appendix-f-sources'),
             'Keep the framework acknowledgment once at the part opener, with its bibliographic entry in F')
     # One canonical JSON bank; every published ID and answer uses the same value.
     from generate_exercise_bank import load_exercises,render
@@ -321,15 +352,15 @@ def validate_contract():
     require(bool(guard) and float(guard[1])>=1/3,'Chapter opening guard must reserve at least one-third of a page')
     chart_font=re.search(r'\\renewcommand\{\\scriptsize\}\{\\fontsize\{([.0-9]+)\}',main)
     require(bool(chart_font) and float(chart_font[1])>=8.5,'Chart annotations must be at least 8.5 pt')
-    require(main.index(r'\input{chapters/23f-foundation-recap}')>main.index(r"\partexitmemory"),'Closing recap must follow the final part')
-    require('终章：回到那四个 Token' in sources['23f-foundation-recap'],'Missing final bookend')
+    require(main.index(r'\input{chapters/epilogue}')>main.index(r"\partexitmemory"),'Closing recap must follow the final part')
+    require('终章：回到那四个 Token' in sources['epilogue'],'Missing final bookend')
     require('一句话本质' not in main,'Remove redundant chapter-compass label')
     require(r'\answerresult{1280}' in exercises['kv-cache-bytes']['solution'],'KV cache exercise must include bytes, not 640 elements')
     for fragment in (r'W_{\rm up}=I_2','关闭两次 Norm',r'r=x+aXW_V',r'f=\relu(rW_{\rm up})'):
         require(fragment in exercises['simplified-block-gradient']['question'],f'Simplified Block exercise contract missing: {fragment}')
     errors.extend(validate_navigation())
     # Self-check/answer bijection follows the actual learning goals of each chapter.
-    ans=sources['28-chapter-checks']
+    ans=sources['appendix-d-self-check-solutions']
     require(ans.count(r'\par\Needspace{8\baselineskip}')==len(allchecks),'Every answer heading must keep its first answer')
     for name,body in sources.items():
         for m in re.finditer(r'\\chapterchecktasks\{',body):
@@ -345,9 +376,9 @@ def validate_contract():
                 require(ids==[str(i) for i in range(1,count+1)],f'{slug}: answer numbering differs from questions: {ids}')
     # Canonical glossary defines its own count; both generated indices must match.
     from generate_bilingual_glossary import generate,entries,EXTRA_REFERENCES
-    require(sources['24e-bilingual-glossary'].strip()==uncomment(generate()).strip(),'Stale generated glossary')
-    total=len(entries('24-lexicon.tex'))+len(entries('24b-modern-lexicon.tex'))
-    require(f'全量中英对照：{total} 项' in sources['24e-bilingual-glossary'],'Glossary count must be generated')
+    require(sources['appendix-e-glossary'].strip()==uncomment(generate()).strip(),'Stale generated glossary')
+    total=len(entries('glossary-source-core.tex'))+len(entries('glossary-source-modern.tex'))
+    require(f'全量中英对照：{total} 项' in sources['appendix-e-glossary'],'Glossary count must be generated')
     expected_links=sum(line.count(r'\hyperref[') for line in generate().splitlines() if ' & ' in line and r'\hyperref[' in line)
     def lookup_entries(name):
         """Each glossary row is one entry; the English lookup prints two
@@ -357,14 +388,14 @@ def validate_contract():
             if ' & ' not in line or r'\hyperref[' not in line:
                 continue
             cells=line.rstrip().removesuffix('\\\\').split(' & ')
-            if name=='24f-english-index':
+            if name=='appendix-e-english-index':
                 # A group's first entry is prefixed by its printed initial.
                 cells=[re.sub(r'^\{\\sffamily\\bfseries\\color\{blue\}[A-Z]\}\\enspace ','',c) for c in cells]
                 found += [cells[i:i+3] for i in range(0,len(cells),3) if cells[i].strip()]
             else:
                 found.append(cells)
         return found
-    for name in ('24e-bilingual-glossary','24f-english-index'):
+    for name in ('appendix-e-glossary','appendix-e-english-index'):
         rows=lookup_entries(name)
         require(len(rows)==total,f'{name}: glossary row count mismatch')
         require(all(r'\hyperref[' in ' & '.join(row) for row in rows),f'{name}: glossary entry without a link')
@@ -372,12 +403,12 @@ def validate_contract():
         for target in ('concept:evaluation-contamination','concept:evaluation-contamination-benchmark','concept:autoregressive'):
             require(r'\hyperref['+target+']' in sources[name],f'{name}: missing lookup destination {target}')
     index_rows=[]
-    for name in ('24e-bilingual-glossary','24f-english-index'):
+    for name in ('appendix-e-glossary','appendix-e-english-index'):
         index_rows.append({tuple(sorted(row[:2])): tuple(re.findall(r'\\hyperref\[([^]]+)\]',' & '.join(row)))
                            for row in lookup_entries(name)})
     require(index_rows[0]==index_rows[1],'English and pinyin lookup destinations differ')
     for term in ('提示注入','困惑度','自回归','蒸馏','剪枝','评测污染','混合精度','BOS/EOS'):
-        require(term in sources['24e-bilingual-glossary'],f'Missing glossary term {term}')
+        require(term in sources['appendix-e-glossary'],f'Missing glossary term {term}')
     # The reserved role colors cannot silently return to the diagrams that
     # previously confused roles with states, shortcuts, sample points and windows.
     for name,required in {'pre-norm-block':'residualcolor','causal-mask-heatmap':'maskedcolor',
@@ -389,7 +420,7 @@ def validate_contract():
     errors.extend(fitting_color_errors(combined['figures/generalization-three-fits.tex']))
     # Per-link UTC audit records. Accessibility is deliberately distinct from content verification.
     manifest={r['url']:r for r in json.loads((BOOK/'source-audit.json').read_text())}
-    source=sources['26-sources']
+    source=sources['appendix-f-sources']
     require('台北' not in source,'Source dates must use UTC')
     urls=re.findall(r'\\sourceurl\{([^}]+)\}',source)
     for url in urls:
@@ -407,8 +438,8 @@ def validate_contract():
     for name in ('beginner_training_demo','claude_function_call_demo','context_contrast_demo','attention_selection_demo','mini_transformer_demo','cache_budget_demo','pretraining_data_demo','pytorch_starter','teaching_trace','chinese_tokenizer_demo','icl_policy_demo'):
         spelling=name.replace('_',r'\_')
         # The reproduction table lives in Appendix B beside the experiments it reruns.
-        require(spelling in sources['24e-pytorch-lab'] or name in sources['24e-pytorch-lab'],f'Missing reproduction entry: {name}')
-    require('易错／边界' not in sources['00g-reading-routes'],'Use one caution category in the legend')
+        require(spelling in sources['appendix-b-pytorch-lab'] or name in sources['appendix-b-pytorch-lab'],f'Missing reproduction entry: {name}')
+    require('易错／边界' not in sources['front-reading-routes'],'Use one caution category in the legend')
     from check_section_navigation import section_targets,source_errors
     heading_targets=section_targets(combined)
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in source_errors(body,heading_targets))
@@ -420,6 +451,18 @@ def validate_contract():
 
 
 def self_test():
+    layout=(r'\input{chapters/01-first}' r'\input{chapters/02-second}'
+            r'\appendix\section{A}\input{chapters/appendix-a-formulas}')
+    sources={'01-first':r'\section{First}','02-second':r'\section{Second}',
+             'appendix-a-formulas':r'\subsection{Formulas}'}
+    assert not source_layout_errors(layout,sources)
+    assert source_layout_errors(layout.replace('01-first','03-first'),
+                                {**sources,'03-first':sources['01-first']})
+    assert source_layout_errors(layout,{**sources,'01-first':r'\section{First}\section{Second}'})
+    assert source_layout_errors(layout.replace(r'\appendix',r'\input{chapters/continuation}\appendix'),
+                                {**sources,'continuation':r'\subsection{More}'})
+    assert source_layout_errors(layout.replace('appendix-a-formulas','appendix-b-formulas'),sources)
+    assert source_layout_errors(layout+r'\input{chapters/02-second}',sources)
     from generate_exercise_bank import printed_regular,validate_keys,validate_progression
     progression=[dict(slug='first',difficulty='基础'),dict(slug='first',difficulty='标准')]
     validate_progression(progression,{'first'})
@@ -480,14 +523,14 @@ def self_test():
     assert review_ownership_errors(reviews,'C-001、R-01')
     assert not route_caption_errors(r'\tagstructbegin{tag=Caption}')
     assert route_caption_errors(r'\captionof{figure}{全书路线}')
-    book=('\\input{chapters/00-guide}\n\\part{A}\\label{part:context}\n\\partentrycontext\n\\input{chapters/21a}\n\\partexitcontext\n'
+    book=('\\input{chapters/00-prologue}\n\\part{A}\\label{part:context}\n\\partentrycontext\n\\input{chapters/21a}\n\\partexitcontext\n'
           '\\part{B}\\label{part:transformer}\n\\partentrytransformer\n\\input{chapters/22b}\n\\partexittransformer\n')
     taught={'21a':r'\label{partq:context}','22b':r'\label{partq:transformer}'}
     assert not part_bookend_errors(book,taught)
     # The answer to Part 5's question may not be taught in Part 4.
     assert part_bookend_errors(book,{'21a':r'\label{partq:context}\label{partq:transformer}','22b':''})
     assert part_bookend_errors(book.replace('\\partexittransformer','\\partexitcontext'),taught)
-    assert part_bookend_errors(book.replace('\\input{chapters/00-guide}\n','')+'\\input{chapters/00-guide}\n',taught)
+    assert part_bookend_errors(book.replace('\\input{chapters/00-prologue}\n','')+'\\input{chapters/00-prologue}\n',taught)
     opener='参数／是否训练：'+('这是连续的正文内容'*5)
     assert not chapter_opening_errors(740,842,opener)
     assert chapter_opening_errors(180,842,opener)

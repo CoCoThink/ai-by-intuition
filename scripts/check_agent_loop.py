@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def printed_loop(max_steps=4, *, model=agent.choose_next,
                  authorizer=agent.is_authorized, executor=agent.execute_with_limits):
-    source = (ROOT / "book/chapters/23d-agent-tools.tex").read_text()
+    source = (ROOT / "book/chapters/26-tool-use-and-agents.tex").read_text()
     blocks = re.findall(r"\\begin\{Verbatim\}(?:\[[^\]]*\])?\s*\n(.*?)\\end\{Verbatim\}",
                         source, re.S)
     bodies = [block for block in blocks

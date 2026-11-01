@@ -158,7 +158,7 @@ def run_checks():
         else:raise AssertionError('Unsafe dispatch accepted')
     from pathlib import Path
     import re
-    source=(Path(__file__).resolve().parents[1]/'book/chapters/23d-agent-tools.tex').read_text()
+    source=(Path(__file__).resolve().parents[1]/'book/chapters/26-tool-use-and-agents.tex').read_text()
     definitions=[json.loads(block) for block in re.findall(r'\\begin\{Verbatim\}[^\n]*\n(.*?)\\end\{Verbatim\}',source,re.S)
                  if '"input_schema"' in block]
     assert len(definitions)==1 and definitions[0]==TOOL, 'Printed tool definition differs from executable one'

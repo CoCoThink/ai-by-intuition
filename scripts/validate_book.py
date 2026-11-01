@@ -24,7 +24,7 @@ from generate_chapter_navigation import argument
 REQUIRED = re.findall(r"\\input\{chapters/([^}]+)\}", (BOOK / "main.tex").read_text())
 CHECK_COUNT = CHAPTER_COUNT + 1
 EXERCISE_COUNT = len(load_exercises()[0])
-GLOSSARY_COUNT = len(glossary_entries("24-lexicon.tex")) + len(glossary_entries("24b-modern-lexicon.tex"))
+GLOSSARY_COUNT = len(glossary_entries("glossary-source-core.tex")) + len(glossary_entries("glossary-source-modern.tex"))
 
 
 def fail(msg: str) -> None:
@@ -84,7 +84,7 @@ def test_numeric_examples() -> None:
     q1, q2, q3 = 100, 120, 132
     assert math.isclose((q2 - q1) / q1, 0.20)
     assert math.isclose((q3 - q2) / q2, 0.10)
-    includes(chapter("23d-agent-tools"),
+    includes(chapter("26-tool-use-and-agents"),
              '"revenue":132', "fictitious Q3 tool result")
     # Numeric regression: attention -> projection -> logits -> cross-entropy.
     e = math.e
@@ -176,7 +176,7 @@ def validate_source() -> None:
     test_numeric_examples()
     from check_book_regressions import validate_existing_regressions
     main = (BOOK / 'main.tex').read_text()
-    sources = {name: chapter(name) for name in REQUIRED + ['24-lexicon', '24b-modern-lexicon']}
+    sources = {name: chapter(name) for name in REQUIRED + ['glossary-source-core', 'glossary-source-modern']}
     validate_existing_regressions(main, sources)
     issues = validate_contract()
     if issues:

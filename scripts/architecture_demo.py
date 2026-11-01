@@ -52,7 +52,7 @@ def mask(n: int, window: int):
 
 
 def main():
-    check_rope_figure((ROOT/'book/chapters/22d-modern-transformers.tex').read_text(),
+    check_rope_figure((ROOT/'book/chapters/29-modern-transformers.tex').read_text(),
                       (ROOT/'book/figures/rope-relative-rotation.tex').read_text())
     theta = pi / 3
     assert isclose(rope_score(1, 2, theta), .5) and isclose(rope_score(3, 4, theta), .5)

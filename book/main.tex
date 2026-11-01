@@ -287,7 +287,7 @@
 \noindent{\sffamily\small\color{muted}CC BY 4.0}\par
 \clearpage
 % Reader routes precede the TOC; front matter does not add numbered chapters.
-\input{chapters/00h-colophon}
+\input{chapters/front-colophon}
 \clearpage
 \setcounter{tocdepth}{1} % print chapters; subsection navigation remains in PDF bookmarks
 % Subsection TOC reaches triple-digit folios. LaTeX's default page-number
@@ -312,101 +312,95 @@
 
 % Reading conventions follow the TOC, before chapter one.
 \clearpage
-\input{chapters/00g-reading-routes}
+\input{chapters/front-reading-routes}
 % Entry check and its answers sit together before Part 1 (no chapter number).
-\input{chapters/00j-entry-check}
+\input{chapters/front-entry-check}
 \clearpage
 % The prologue poses the book's question; Part 1 answers it from the smallest case.
-\input{chapters/00-guide}
+\input{chapters/00-prologue}
 \clearpage
 
 
 \part{学习是什么：从规则到参数更新}\label{part:learning}\markboth{学习是什么：从规则到参数更新}{}
 \partentrylearning
 \clearpage
-% 函数与损失合为一章；16-loss-gradient 同时承接下一章梯度下降。
-\input{chapters/00-functions}
-\input{chapters/16-loss-gradient}
-\input{chapters/18c-training-engineering}
-\input{chapters/07-functions-relu}
-\input{chapters/17-backpropagation}
-\input{chapters/18b-end-to-end-learning}
-\input{chapters/18-generalization}
+% 正文每章对应一个按当前章号命名的源码文件。
+\input{chapters/01-functions-and-loss}
+\input{chapters/02-gradient-descent}
+\input{chapters/03-nonlinearity}
+\input{chapters/04-backpropagation}
+\input{chapters/05-generalization}
 \partexitlearning
 
 \clearpage
 \part{把许多数一起算}\label{part:matrices}\markboth{把许多数一起算}{}
 \partentrymatrices
 \clearpage
-\input{chapters/01-vectors}
-\input{chapters/02-dot-product}
-\input{chapters/03-matrix-multiplication}
-\input{chapters/10-mlp}
+\input{chapters/06-vectors-and-dot-products}
+\input{chapters/07-matrix-multiplication}
+\input{chapters/08-mlp}
 \partexitmatrices
 
 \clearpage
 \part{让文字进入计算}\label{part:tokens}\markboth{让文字进入计算}{}
 \partentrytokens
 \clearpage
-\input{chapters/20a-tokenizer}
-\input{chapters/20b-task-contract}
-\input{chapters/20c-classification-loss}
-\input{chapters/20-embeddings}
+\input{chapters/09-tokenization}
+\input{chapters/10-language-model-task}
+\input{chapters/11-classification-loss}
+\input{chapters/12-embeddings}
 \partexittokens
 
 \clearpage
 \part{让词与词交换信息}\label{part:context}\markboth{让词与词交换信息}{}
 \partentrycontext
 \clearpage
-\input{chapters/21a-context-gap}
-\input{chapters/21-rnn}
+\input{chapters/13-context-and-rnn}
 % 同一章从零参数读取接到 Q/K/V 投影对照。
-\input{chapters/21c-naive-attention}
-\input{chapters/21b-why-attention}
-\input{chapters/11-softmax-memory}
-\input{chapters/22a-position-multihead}
+\input{chapters/14-attention-qkv}
+\input{chapters/15-self-attention}
+\input{chapters/16-position-and-multihead}
 \partexitcontext
 
 \clearpage
 \part{组装并训练 Transformer}\label{part:transformer}\markboth{组装并训练 Transformer}{}
 \partentrytransformer
 \clearpage
-\input{chapters/22-transformer-architecture}
-\input{chapters/10b-ffn-output-head}
-\input{chapters/22b-token-to-output}
-\input{chapters/22c-language-training}
-\input{chapters/23-llm-systems}
-\input{chapters/23a-from-toy-to-gpt}
+\input{chapters/17-transformer-architecture}
+\input{chapters/18-ffn-and-output-head}
+\input{chapters/19-transformer-forward-pass}
+\input{chapters/20-language-model-training}
+\input{chapters/21-autoregressive-generation}
+\input{chapters/22-real-models}
 \partexittransformer
 
 \clearpage
 \part{从语言模型到助手}\label{part:assistant}\markboth{从语言模型到助手}{}
 \partentryassistant
 \clearpage
-\input{chapters/23aa-pretraining-icl}
+\input{chapters/23-pretraining-and-icl}
 % 同一章比较奖励用于训练与验证用于本次选答。
-\input{chapters/23c-post-training}
-\input{chapters/23cc-test-time-compute}
-\input{chapters/23d-agent-systems}
-\input{chapters/23d-agent-tools}
-\input{chapters/23d-agent-protocols}
-\input{chapters/23b-deployment-and-ecosystem}
+\input{chapters/24-post-training-and-inference}
+\input{chapters/25-rag}
+\input{chapters/26-tool-use-and-agents}
+\input{chapters/27-protocols-and-multi-agent}
+\input{chapters/28-training-and-deployment}
 \partexitassistant
 
 \clearpage
 \part{架构为什么在变，往哪走}\label{part:architecture}\markboth{架构为什么在变，往哪走}{}
 \partentryarchitecture
 \clearpage
-\input{chapters/22d-modern-transformers}
-\input{chapters/23e-tech-judgement}
+\input{chapters/29-modern-transformers}
+\input{chapters/30-evaluating-new-models}
 \partexitarchitecture
 
 \clearpage
 \part{换一种数据看 Transformer：从 CNN 到 ViT}\label{part:vision}\markboth{换一种数据看 Transformer：从 CNN 到 ViT}{}
 \partentryvision
 \clearpage
-\input{chapters/19-cnn}
-\input{chapters/19b-vit}
+\input{chapters/31-cnn}
+\input{chapters/32-vit}
 \partexitvision
 
 \clearpage
@@ -417,17 +411,12 @@
 本文链接及核验日期见第~\pageref{source:alex-wang}~页；数值推导与练习按本书行向量约定展开。\par
 \clearpage
 % 扩展路径两章：线性写入与修正；非线性读取与选读容量。
-\input{chapters/04-key-value-outer-product}
-\input{chapters/05-memory-interference}
-\input{chapters/06-better-linear-memory}
-\input{chapters/08-stacking-key-value}
-\input{chapters/09-nonlinearity-and-memory}
-\input{chapters/14-summary}
-\input{chapters/13-capacity}
+\input{chapters/33-linear-associative-memory}
+\input{chapters/34-nonlinear-memory}
 \partexitmemory
 
 \clearpage
-\input{chapters/23f-foundation-recap}
+\input{chapters/epilogue}
 
 
 
@@ -450,41 +439,41 @@
 \addcontentsline{toc}{part}{附录：公式、练习与答案}
 \let\boxed\bookboxed
 \section{核心公式、数学与形状速查}
-\input{chapters/00e-core-formulas}
-\input{chapters/00b-math-tools}
-\input{chapters/00c-symbols}
-\input{chapters/30-optimizer-appendix}
-\input{chapters/00i-data-map}
+\input{chapters/appendix-a-core-formulas}
+\input{chapters/appendix-a-math-tools}
+\input{chapters/appendix-a-symbols}
+\input{chapters/appendix-a-optimizers}
+\input{chapters/appendix-a-data-map}
 
 \renewcommand{\boxed}[1]{#1}
 \clearpage
 \section{三维贯通实验、复算与脚本}
-\input{chapters/00f-transformer-intermediates}
-\input{chapters/24e-pytorch-lab}
+\input{chapters/appendix-b-transformer-intermediates}
+\input{chapters/appendix-b-pytorch-lab}
 
 \clearpage
 \section{综合练习与迁移实践}
-\input{chapters/25-exercise-bank}
+\input{chapters/appendix-c-exercises}
 
 \clearpage
 \section{集中参考答案与随堂解答}
-\input{chapters/27-answer-key}
-\input{chapters/28-chapter-checks}
+\input{chapters/appendix-d-exercise-solutions}
+\input{chapters/appendix-d-self-check-solutions}
 
 \clearpage
 \section{术语地图、概念关系与索引}
 % Canonical definitions and English aliases remain generator data only.
 % E.1 pinyin glossary with definitions; E.3 compact English lookup without definitions.
-\input{chapters/24e-bilingual-glossary}
-\input{chapters/24c-concept-map}
-\input{chapters/24f-english-index}
+\input{chapters/appendix-e-glossary}
+\input{chapters/appendix-e-concept-map}
+\input{chapters/appendix-e-english-index}
 
 \clearpage
 \section{来源与延伸阅读}
-\input{chapters/26-sources}
+\input{chapters/appendix-f-sources}
 
 \Needspace{.36\textheight}
 \section{版本、勘误与复现说明}
-\input{chapters/29-revision-notes}
+\input{chapters/appendix-g-revision-notes}
 
 \end{document}

@@ -87,7 +87,7 @@ def lint(main: str, chapters: dict[str, str]) -> list[str]:
 
     # Memory is a teaching part before reference appendices, with a real part anchor.
     app = cleaned.find(r"\appendix")
-    memory = cleaned.find(r"\input{chapters/04-key-value-outer-product}")
+    memory = cleaned.find(r"\input{chapters/33-linear-associative-memory}")
     memory_part = cleaned.find(r"\label{part:memory}")
     if memory >= 0 and not (0 <= memory_part < memory < app):
         errors.append("book/main.tex: associative memory must be inside Part IX before appendices")
@@ -119,11 +119,11 @@ def self_test() -> None:
         "example": r"\\hyperref[part:vision]{联想记忆}"
     })
     assert any("incorrectly targets" in issue for issue in misdirected)
-    with_memory = parts + r"\input{chapters/04-key-value-outer-product}" + r"\appendix"
-    assert lint(with_memory, {"04-key-value-outer-product": r"\section{Memory}"}) == []
-    misordered = parts + r"\appendix\input{chapters/04-key-value-outer-product}"
+    with_memory = parts + r"\input{chapters/33-linear-associative-memory}" + r"\appendix"
+    assert lint(with_memory, {"33-linear-associative-memory": r"\section{Memory}"}) == []
+    misordered = parts + r"\appendix\input{chapters/33-linear-associative-memory}"
     assert any("must be inside Part IX" in issue for issue in lint(
-        misordered, {"04-key-value-outer-product": r"\section{Memory}"}))
+        misordered, {"33-linear-associative-memory": r"\section{Memory}"}))
     assert not HARDCODED.search(strip_comments("% 第 VI 部分\n普通文字"))
     print("Part reference regression QA passed: 6 invalid ordinals, "
           "wrong part order, wrong topic link and commented prose")

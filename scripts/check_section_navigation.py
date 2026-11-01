@@ -341,7 +341,7 @@ def reading_ranges(source):
 
 def check_reading_budgets(reader,labels):
     """Count actual PDF destination spans and compare with the printed budgets."""
-    ranges=reading_ranges((ROOT/'book/chapters/00g-reading-routes.tex').read_text())
+    ranges=reading_ranges((ROOT/'book/chapters/front-reading-routes.tex').read_text())
     failures=[];counts={}
     for key,pairs in ranges.items():
         spans=[]
@@ -712,7 +712,7 @@ def main():
     main=uncomment((ROOT/'book/main.tex').read_text());sources={'main':main}
     for name in re.findall(r'\\input\{chapters/([^}]+)\}',main):sources[name]=uncomment((ROOT/'book/chapters'/f'{name}.tex').read_text())
     targets=section_targets(sources);used={};errors=[]
-    ranges=reading_ranges(sources['00g-reading-routes'])
+    ranges=reading_ranges(sources['front-reading-routes'])
     if set(ranges)!={'quick','standard','hands'}:
         errors.append('All three reading routes need explicit page ranges and a printed budget')
     for name,body in sources.items():
@@ -720,7 +720,7 @@ def main():
         errors.extend(f'{name}: {e}' for e in source_errors(body,targets))
         for target in re.findall(r'\\sectionentry\{([^}]+)\}',body):
             if '#' not in target:used[target]=used.get(target,0)+1
-    if r'\sectionentry{elective:original-paper}' not in sources['23a-from-toy-to-gpt']:
+    if r'\sectionentry{elective:original-paper}' not in sources['22-real-models']:
         errors.append('Real-model chapter must link to original-paper subsection, not its diagram')
     if r'\sectionentry{elective:original-paper}' not in main:
         errors.append('Contents elective entry must use the same heading/page macro as the real-model chapter')

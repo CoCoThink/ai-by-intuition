@@ -11,7 +11,7 @@
 
 - **先结论与直觉，再小数值例子，最后推广为公式。**交代输入、输出、形状，以及哪些参数参与训练。
 - **同一组数据贯穿推导。**三维主例的参数只取自 [teaching_reference.py](scripts/teaching_reference.py)。切换算例时，直接在问题或计算旁给出所需数据、维度与假设；避免“独立例”提示条和反复声明与主线无关。
-- **行向量约定：**每个 Token 占一行，投影写 `XW`；教学词表 ID、位置和矩阵行列从 1 起，Python 索引减 1。符号以[符号表](book/chapters/00c-symbols.tex)为准。
+- **行向量约定：**每个 Token 占一行，投影写 `XW`；教学词表 ID、位置和矩阵行列从 1 起，Python 索引减 1。符号以[符号表](book/chapters/appendix-a-symbols.tex)为准。
 - **区分等式、近似、启发式解释与真实系统行为。**保留会改变结论的限制，合并重复提醒。版本与核验记录集中在来源附录，正文只保留影响理解或复算的版本条件。
 - **不写死章号、页码和题号。**用 `\ref`、`\pageref`、`\hyperref`；CI 会拦截“第 3 章”“第三章”“第 24.10 节”这类字面编号。
 - 新增数学、术语或算法时给出可复算的检查；练习和答案保持一一对应。
@@ -22,7 +22,7 @@
 2. 题库、答案、章末导航、术语表、参考清单和附录 G 断言表都是**生成内容**：改源文件，再运行对应生成器，命令见[生成文件](#生成文件)。
 3. 时效性断言（协议、API、模型配置）要查官方来源，同步正文、[dated-claims.json](book/dated-claims.json) 和 [source-audit.json](book/source-audit.json)；`checked_utc` 只在实际复核内容后更新。
 
-阅读路线的页数预算由 [00g-reading-routes.tex](book/chapters/00g-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步文字指引与这些标签；成品导航检查会核对实际目标页和表中预算，不手填旧版页数。
+阅读路线的页数预算由 [front-reading-routes.tex](book/chapters/front-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步文字指引与这些标签；成品导航检查会核对实际目标页和表中预算，不手填旧版页数。
 
 ## 本地构建
 
@@ -74,46 +74,46 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 ## 源码导览
 
-读者只读一个 PDF；作者按章节维护 LaTeX 源码。[main.tex](book/main.tex) 是唯一入口，**章节顺序和章号只由其中的 `\input` 与 `\section` 决定**，文件名前缀不代表章号（多数文件名沿用了早期编号）。
+读者只读一个 PDF；作者按章节维护 LaTeX 源码。[main.tex](book/main.tex) 是唯一入口，**章节顺序和章号只由其中的 `\input` 与 `\section` 决定**，正文采用 `两位章号-主题.tex`，一章一文件；调整章序时同步重命名和路径引用。前置内容用 `front-`，序章用 `00-prologue.tex`，终章用 `epilogue.tex`，附录用 `appendix-a-` 至 `appendix-g-`，供生成器读取的术语数据用 `glossary-source-`。标签、题目归属键与文件名独立，改路径时不要据此改写交叉引用目标。
 
 ### 前置部分
 
 | 内容 | 源码 |
 |---|---|
 | 封面、目录 | [main.tex](book/main.tex) |
-| 版权页 | [00h-colophon.tex](book/chapters/00h-colophon.tex) |
-| 阅读路线与表示约定 | [00g-reading-routes.tex](book/chapters/00g-reading-routes.tex) |
-| 开读前：五题入门自检 | [00j-entry-check.tex](book/chapters/00j-entry-check.tex) |
-| 序章（在第一部分之前） | [00-guide.tex](book/chapters/00-guide.tex) |
+| 版权页 | [front-colophon.tex](book/chapters/front-colophon.tex) |
+| 阅读路线与表示约定 | [front-reading-routes.tex](book/chapters/front-reading-routes.tex) |
+| 开读前：五题入门自检 | [front-entry-check.tex](book/chapters/front-entry-check.tex) |
+| 序章（在第一部分之前） | [00-prologue.tex](book/chapters/00-prologue.tex) |
 | 部分开篇与收尾 | [part-maps.tex](book/part-maps.tex)，累积复习生成到 [part-reviews.tex](book/part-reviews.tex)；设计见[下文](#部分开篇与收尾) |
 
 ### 正文
 
-正文共 34 章。前七部分为主线，第八、九部分为扩展路径。一个文件可能只是某章的后半部分（表中标“含”“续”）。
+正文共 34 章。前七部分为主线，第八、九部分为扩展路径；文件名前缀与当前印刷章号对应。
 
 | 部分 | 章节源码（按印刷顺序） |
 |---|---|
-| 一 · 学习 | [函数与损失](book/chapters/00-functions.tex)（续 [损失](book/chapters/16-loss-gradient.tex)）；[梯度下降](book/chapters/16-loss-gradient.tex)（续 [训练组织](book/chapters/18c-training-engineering.tex)）、[非线性](book/chapters/07-functions-relu.tex)、[反向传播](book/chapters/17-backpropagation.tex)（含[完整一步](book/chapters/18b-end-to-end-learning.tex)）、[泛化](book/chapters/18-generalization.tex) |
-| 二 · 矩阵 | [向量与点积](book/chapters/01-vectors.tex)（续 [02](book/chapters/02-dot-product.tex)）、[矩阵乘法](book/chapters/03-matrix-multiplication.tex)、[MLP](book/chapters/10-mlp.tex) |
-| 三 · 文字 | [Tokenizer](book/chapters/20a-tokenizer.tex)、[预测任务](book/chapters/20b-task-contract.tex)、[分类损失](book/chapters/20c-classification-loss.tex)、[Embedding](book/chapters/20-embeddings.tex) |
-| 四 · 上下文 | [上下文缺口与 RNN](book/chapters/21a-context-gap.tex)（续 [21](book/chapters/21-rnn.tex)）、[Attention 与 Q/K/V](book/chapters/21c-naive-attention.tex)（续 [投影对照](book/chapters/21b-why-attention.tex)）、[批量与因果注意力](book/chapters/11-softmax-memory.tex)、[位置与多头](book/chapters/22a-position-multihead.tex) |
-| 五 · Transformer | [Block](book/chapters/22-transformer-architecture.tex)、[FFN 与输出头](book/chapters/10b-ffn-output-head.tex)、[三维前向](book/chapters/22b-token-to-output.tex)、[联合训练](book/chapters/22c-language-training.tex)、[逐词生成](book/chapters/23-llm-systems.tex)、[真实尺度](book/chapters/23a-from-toy-to-gpt.tex) |
-| 六 · 助手 | [ICL](book/chapters/23aa-pretraining-icl.tex)、[训练反馈与推理时计算](book/chapters/23c-post-training.tex)（续 [固定权重选答](book/chapters/23cc-test-time-compute.tex)）、[RAG](book/chapters/23d-agent-systems.tex)、[工具与 Agent 循环](book/chapters/23d-agent-tools.tex)、[协议与多 Agent](book/chapters/23d-agent-protocols.tex)、[数据、训练与部署](book/chapters/23b-deployment-and-ecosystem.tex) |
-| 七 · 架构 | [现代 Transformer](book/chapters/22d-modern-transformers.tex)、[技术判断](book/chapters/23e-tech-judgement.tex) |
-| 八 · 视觉（扩展） | [CNN](book/chapters/19-cnn.tex)、[ViT 与视觉桥接](book/chapters/19b-vit.tex) |
-| 九 · 联想记忆（扩展） | [线性写入与误差修正](book/chapters/04-key-value-outer-product.tex)（续 [串扰](book/chapters/05-memory-interference.tex)、[修正](book/chapters/06-better-linear-memory.tex)）、[非线性检索与容量](book/chapters/08-stacking-key-value.tex)（续 [非线性](book/chapters/09-nonlinearity-and-memory.tex)、[统一视角](book/chapters/14-summary.tex)、[★ 容量](book/chapters/13-capacity.tex)） |
-| 终章 | [回到那四个 Token](book/chapters/23f-foundation-recap.tex) |
+| 一 · 学习 | [01 函数与损失](book/chapters/01-functions-and-loss.tex)、[02 梯度下降](book/chapters/02-gradient-descent.tex)、[03 非线性](book/chapters/03-nonlinearity.tex)、[04 反向传播](book/chapters/04-backpropagation.tex)、[05 泛化](book/chapters/05-generalization.tex) |
+| 二 · 矩阵 | [06 向量与点积](book/chapters/06-vectors-and-dot-products.tex)、[07 矩阵乘法](book/chapters/07-matrix-multiplication.tex)、[08 MLP](book/chapters/08-mlp.tex) |
+| 三 · 文字 | [09 Tokenizer](book/chapters/09-tokenization.tex)、[10 预测任务](book/chapters/10-language-model-task.tex)、[11 分类损失](book/chapters/11-classification-loss.tex)、[12 Embedding](book/chapters/12-embeddings.tex) |
+| 四 · 上下文 | [13 上下文与 RNN](book/chapters/13-context-and-rnn.tex)、[14 Attention 与 Q/K/V](book/chapters/14-attention-qkv.tex)、[15 Self-Attention](book/chapters/15-self-attention.tex)、[16 位置与多头](book/chapters/16-position-and-multihead.tex) |
+| 五 · Transformer | [17 Block](book/chapters/17-transformer-architecture.tex)、[18 FFN 与输出头](book/chapters/18-ffn-and-output-head.tex)、[19 三维前向](book/chapters/19-transformer-forward-pass.tex)、[20 联合训练](book/chapters/20-language-model-training.tex)、[21 逐词生成](book/chapters/21-autoregressive-generation.tex)、[22 真实尺度](book/chapters/22-real-models.tex) |
+| 六 · 助手 | [23 ICL](book/chapters/23-pretraining-and-icl.tex)、[24 训练反馈与推理时计算](book/chapters/24-post-training-and-inference.tex)、[25 RAG](book/chapters/25-rag.tex)、[26 工具与 Agent 循环](book/chapters/26-tool-use-and-agents.tex)、[27 协议与多 Agent](book/chapters/27-protocols-and-multi-agent.tex)、[28 数据、训练与部署](book/chapters/28-training-and-deployment.tex) |
+| 七 · 架构 | [29 现代 Transformer](book/chapters/29-modern-transformers.tex)、[30 技术判断](book/chapters/30-evaluating-new-models.tex) |
+| 八 · 视觉（扩展） | [31 CNN](book/chapters/31-cnn.tex)、[32 ViT](book/chapters/32-vit.tex) |
+| 九 · 联想记忆（扩展） | [33 线性写入与误差修正](book/chapters/33-linear-associative-memory.tex)、[34 非线性检索与容量](book/chapters/34-nonlinear-memory.tex) |
+| 终章 | [回到那四个 Token](book/chapters/epilogue.tex) |
 
 ### 附录
 
 | 附录 | 源码 |
 |---|---|
-| A 公式、数学与符号速查 | [00e](book/chapters/00e-core-formulas.tex)、[00b](book/chapters/00b-math-tools.tex)、[00c 符号表](book/chapters/00c-symbols.tex)、[30 优化器](book/chapters/30-optimizer-appendix.tex)、[00i 数据地图](book/chapters/00i-data-map.tex) |
-| B 三维实验、复算与脚本 | [00f 中间量](book/chapters/00f-transformer-intermediates.tex)、[24e PyTorch 与脚本总表](book/chapters/24e-pytorch-lab.tex) |
-| C 题库 · D 答案 | 由 [exercises.json](book/exercises.json) 生成 [25](book/chapters/25-exercise-bank.tex)、[27](book/chapters/27-answer-key.tex)；随堂自测答案 [28](book/chapters/28-chapter-checks.tex) 手写 |
-| E 术语表与索引 | 源：[24-lexicon](book/chapters/24-lexicon.tex)、[24b](book/chapters/24b-modern-lexicon.tex)、[24d 英文映射](book/chapters/24d-english-index.tex)；生成：[24e 拼音主表](book/chapters/24e-bilingual-glossary.tex)、[24f 英文简表](book/chapters/24f-english-index.tex)；手写：[24c 概念图](book/chapters/24c-concept-map.tex) |
-| F 来源 | [26-sources](book/chapters/26-sources.tex)，链接记录 [source-audit.json](book/source-audit.json) |
-| G 版本与带日期断言 | [29-revision-notes](book/chapters/29-revision-notes.tex)，断言表由 [dated-claims.json](book/dated-claims.json) 生成 |
+| A 公式、数学与符号速查 | [公式](book/chapters/appendix-a-core-formulas.tex)、[数学工具](book/chapters/appendix-a-math-tools.tex)、[符号表](book/chapters/appendix-a-symbols.tex)、[优化器](book/chapters/appendix-a-optimizers.tex)、[数据地图](book/chapters/appendix-a-data-map.tex) |
+| B 三维实验、复算与脚本 | [中间量](book/chapters/appendix-b-transformer-intermediates.tex)、[PyTorch 与脚本总表](book/chapters/appendix-b-pytorch-lab.tex) |
+| C 题库 · D 答案 | 由 [exercises.json](book/exercises.json) 生成[题库](book/chapters/appendix-c-exercises.tex)与[题库答案](book/chapters/appendix-d-exercise-solutions.tex)；[随堂自测答案](book/chapters/appendix-d-self-check-solutions.tex)手写 |
+| E 术语表与索引 | 源：[基础词条](book/chapters/glossary-source-core.tex)、[现代词条](book/chapters/glossary-source-modern.tex)、[英文映射](book/chapters/glossary-source-english.tex)；生成：[拼音主表](book/chapters/appendix-e-glossary.tex)、[英文简表](book/chapters/appendix-e-english-index.tex)；手写：[概念图](book/chapters/appendix-e-concept-map.tex) |
+| F 来源 | [来源条目](book/chapters/appendix-f-sources.tex)，链接记录 [source-audit.json](book/source-audit.json) |
+| G 版本与带日期断言 | [版本说明](book/chapters/appendix-g-revision-notes.tex)，断言表由 [dated-claims.json](book/dated-claims.json) 生成 |
 
 ### 其他文件
 
@@ -125,16 +125,16 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 下列文件不要手改；修改维护来源，并在正文修改完成后运行对应生成器：
 
-- `book/chapters/25-exercise-bank.tex`、`book/chapters/27-answer-key.tex`、`book/part-reviews.tex`、`book/chapter-practice.tex`
-- `book/chapters/24e-bilingual-glossary.tex`、`book/chapters/24f-english-index.tex`、`docs/TERM_OCCURRENCES.md`
+- `book/chapters/appendix-c-exercises.tex`、`book/chapters/appendix-d-exercise-solutions.tex`、`book/part-reviews.tex`、`book/chapter-practice.tex`
+- `book/chapters/appendix-e-glossary.tex`、`book/chapters/appendix-e-english-index.tex`、`docs/TERM_OCCURRENCES.md`
 - `book/figures/reference-qr.tex`、`docs/REFERENCES.md`
-- `book/chapters/29-revision-notes.tex` 中的断言表
+- `book/chapters/appendix-g-revision-notes.tex` 中的断言表
 
 | 内容 | 维护来源 | 生成命令（仓库根目录） |
 |---|---|---|
 | 题库、D.1 解答、部分复习 | [exercises.json](book/exercises.json) | `python3 scripts/generate_exercise_bank.py` |
 | 各章练习指针与答案导航 | 题库、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
-| 拼音术语主表与[出现章节表](docs/TERM_OCCURRENCES.md) | [基础词条](book/chapters/24-lexicon.tex)、[现代词条](book/chapters/24b-modern-lexicon.tex)、[英文映射](book/chapters/24d-english-index.tex)及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
+| 拼音术语主表与[出现章节表](docs/TERM_OCCURRENCES.md) | [基础词条](book/chapters/glossary-source-core.tex)、[现代词条](book/chapters/glossary-source-modern.tex)、[英文映射](book/chapters/glossary-source-english.tex)及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
 | 英文简表 | 已生成的术语主表 | `python3 scripts/generate_english_index.py` |
 | 二维码与[网页参考清单](docs/REFERENCES.md) | [source-audit.json](book/source-audit.json) | `python3 scripts/generate_reference_assets.py` |
 | 带日期断言表 | [dated-claims.json](book/dated-claims.json) | `python3 scripts/check_dated_claims.py --write` |
@@ -237,7 +237,7 @@ python3 scripts/print_proof.py book/build/main.pdf --all --scale 1100 --out-dir 
 
 ## 复算与题号
 
-复算脚本总表在[附录 B 源码](book/chapters/24e-pytorch-lab.tex)（标签 `app:reproduction-scripts`），`check_book_contract.py` 检查关键脚本都列在表中。默认只运行离线实验；Claude 等付费 API 的真实调用需要明确授权，中文分词器的 `--real` 只下载固定版本的分词器文件。
+复算脚本总表在[附录 B 源码](book/chapters/appendix-b-pytorch-lab.tex)（标签 `app:reproduction-scripts`），`check_book_contract.py` 检查关键脚本都列在表中。默认只运行离线实验；Claude 等付费 API 的真实调用需要明确授权，中文分词器的 `--real` 只下载固定版本的分词器文件。
 
 C 题和 R 题各按印刷顺序连续编号，由 `generate_exercise_bank.py` 校验。每题的 `key` 是独立于印刷题号的稳定语义键；脚本按 `key` 查题，正文可链接 `exercise:<key>`，答案可链接 `solution:<key>`。增删题目后重排印刷题号并重新生成题库与章末导航，同步带题号的手写引用；不保留旧编号兼容字段或锚点。
 

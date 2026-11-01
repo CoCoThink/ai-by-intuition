@@ -60,7 +60,7 @@ def main():
     from pathlib import Path
     import re
     source = (Path(__file__).resolve().parents[1] /
-              'book/chapters/06-better-linear-memory.tex').read_text()
+              'book/chapters/33-linear-associative-memory.tex').read_text()
     printed = {int(n): (float(a), float(b)) for n, a, b in
                re.findall(r'^(\d+) & ([0-9.]+) & ([0-9.]+)\\\\', source, re.M)}
     assert set(printed) == {1, 2, 3, 5}

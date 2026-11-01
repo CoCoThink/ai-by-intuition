@@ -117,7 +117,7 @@ def check_optimization_figures():
 
 
 def check_sample_gradients():
-    source=(ROOT/'book/chapters/18c-training-engineering.tex').read_text()
+    source=(ROOT/'book/chapters/02-gradient-descent.tex').read_text()
     rows=[sample_gradient(F(1),F(0),x,y) for x,y in DATA]
     for (x,y),(gw,gb) in zip(DATA,rows):
         row=f'只有样本 $({x},{y})$ & $({gw},{gb})$'
@@ -151,7 +151,7 @@ def check_sample_gradients():
 
 def check_relu_fit():
     data=((-1,1),(0,0),(1,1))
-    source=(ROOT/'book/chapters/07-functions-relu.tex').read_text()
+    source=(ROOT/'book/chapters/03-nonlinearity.tex').read_text()
     figure=(ROOT/'book/figures/relu-function.tex').read_text()
     segments=re.findall(r'\\addplot\[[^\]]*domain=([-+.0-9]+):([-+.0-9]+)[^\]]*\]\s*\{([^{}]+)\};',figure)
     assert len(segments)==2 and F(segments[0][1])==F(segments[1][0])==0
@@ -189,7 +189,7 @@ def run_checks():
     check_sample_gradients()
     check_relu_fit()
     check_optimization_figures()
-    source = (ROOT/'book/chapters/16-loss-gradient.tex').read_text()
+    source = (ROOT/'book/chapters/02-gradient-descent.tex').read_text()
     # Recompute candidate scores from individual residuals, before using any optimum.
     for w, b, expected in ((1, 0, F(5, 3)), (1, 1, F(2, 3)),
                            (1, 2, F(5, 3)), (2, 1, F(2, 3))):

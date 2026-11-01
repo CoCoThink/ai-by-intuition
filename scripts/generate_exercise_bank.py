@@ -139,7 +139,7 @@ def render():
         reviews += [r'\noindent 可先做\hyperref[exercise:'+warmup['key']+r']{基础热身 '+warmup['id']+r'}，再连接本部分的多个步骤。\par']
         for row in selected:reviews += [r'\noindent\textbf{'+row['id']+r'.} '+row['review_prompt']+r' \hyperref[solution:'+row['id']+r']{（解答：第~\pageref*{solution:'+row['id']+r'}~页）}\par']
         reviews += [r'\endgroup}']
-    return {BOOK/'part-reviews.tex':'\n'.join(reviews)+'\n',BOOK/'chapters/25-exercise-bank.tex':'\n'.join(question)+'\n',BOOK/'chapters/27-answer-key.tex':'\n'.join(answer)+'\n'}
+    return {BOOK/'part-reviews.tex':'\n'.join(reviews)+'\n',BOOK/'chapters/appendix-c-exercises.tex':'\n'.join(question)+'\n',BOOK/'chapters/appendix-d-exercise-solutions.tex':'\n'.join(answer)+'\n'}
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--check',action='store_true');args=p.parse_args()

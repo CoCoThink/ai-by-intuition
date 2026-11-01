@@ -110,7 +110,7 @@ def check_exercise_warmups():
     }
     for key,result in expected.items():
         assert r'\answerresult{'+result+'}' in exercises[key]['solution'],key
-    weight_table=(ROOT/'book/chapters/23a-from-toy-to-gpt.tex').read_text()
+    weight_table=(ROOT/'book/chapters/22-real-models.tex').read_text()
     assert '50{,}257' in weight_table and '768' in weight_table
     for key in ('review-matrix-nonlinearity','review-cache-output-head'):
         code=re.search(r'\\begin\{verbatim\}\n(.*?)\\end\{verbatim\}',exercises[key]['solution'],re.S)[1]
@@ -147,8 +147,8 @@ def check_open_exercises():
 
 def check_article_matching():
     """Recompute the printed ranking, scaling counterexample and plotted projection."""
-    vectors=(ROOT/'book/chapters/01-vectors.tex').read_text()
-    source=(ROOT/'book/chapters/02-dot-product.tex').read_text()
+    vectors=(ROOT/'book/chapters/06-vectors-and-dot-products.tex').read_text()
+    source=(ROOT/'book/chapters/06-vectors-and-dot-products.tex').read_text()
     rows=re.findall(r'\$\\vect ([qabc])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',vectors)
     data={name:np.array([float(x),float(y)]) for name,x,y in rows}
     assert set(data)==set('qabc'), 'Missing article feature-table rows'
@@ -204,9 +204,9 @@ def check_article_matching():
 
 def check_matrix_training_bridges():
     """Follow the printed article data through matrices and the complete MLP update."""
-    matrix_source=(ROOT/'book/chapters/03-matrix-multiplication.tex').read_text()
+    matrix_source=(ROOT/'book/chapters/07-matrix-multiplication.tex').read_text()
     candidates,transposed=numeric_matrices(matrix_source)[:2]
-    feature_source=(ROOT/'book/chapters/01-vectors.tex').read_text()
+    feature_source=(ROOT/'book/chapters/06-vectors-and-dot-products.tex').read_text()
     features={name:np.array([float(x),float(y)]) for name,x,y in
               re.findall(r'\$\\vect ([qabc])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',feature_source)}
     assert np.allclose(candidates,[features[name] for name in 'abc'])
@@ -227,7 +227,7 @@ def check_matrix_training_bridges():
     assert np.allclose(cells[4:10],transposed.T.ravel())  # Diagram lists whole columns.
     assert np.allclose(cells[10:],printed_scores.ravel())
 
-    source=(ROOT/'book/chapters/10-mlp.tex').read_text()
+    source=(ROOT/'book/chapters/08-mlp.tex').read_text()
     forward_part=source.split(r'\subsection{按行向量约定',1)[1].split(r'\subsection{',1)[0]
     w1,w2=numeric_matrices(forward_part)
     shared=(ROOT/'book/figures/batch-linear-map.tex').read_text()
@@ -272,7 +272,7 @@ def check_learning_rate_comparison():
             gw,gb=gradient(w,b);w,b=w-eta*gw,b-eta*gb
         results.append(loss(w,b))
     assert .5<results[0]<results[1]
-    chapter=(ROOT/'book/chapters/16-loss-gradient.tex').read_text()
+    chapter=(ROOT/'book/chapters/02-gradient-descent.tex').read_text()
     exercise=next(row for row in json.loads((ROOT/'book/exercises.json').read_text()) if row['key']=='training-rate-transfer')
     for result in results:
         assert f'{result:.6f}' in chapter and f'{result:.6f}' in exercise['solution']
@@ -281,7 +281,7 @@ def check_learning_rate_comparison():
 
 def check_mlp_nonlinearity():
     """Recompute every row of the same-weight linear/nonlinear contrast."""
-    source=(ROOT/'book/chapters/10-mlp.tex').read_text()
+    source=(ROOT/'book/chapters/08-mlp.tex').read_text()
     forward=source.split(r'\label{sec:mlp-forward}',1)[1].split(r'\subsection{',1)[0]
     w1,w2=numeric_matrices(forward)
     contrast=source.split(r'\label{sec:mlp-nonlinearity}',1)[1].split(r'\subsection{',1)[0]
@@ -327,7 +327,7 @@ def check_core_cache_review():
     real_gqa=kv_bytes(expected['num_hidden_layers'],expected['num_key_value_heads'],real_width,positions,element_bytes,batch)
     ratio=expected['num_attention_heads']//expected['num_key_value_heads']
     assert [int(v.replace('{,}','')) for v in answers]==[gqa,mha,mha//gqa,real_width,real_gqa,ratio]
-    core=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text().split(r'\label{sec:modern-gqa}',1)[1].split(r'\label{route:modern-core-end}',1)[0]
+    core=(ROOT/'book/chapters/29-modern-transformers.tex').read_text().split(r'\label{sec:modern-gqa}',1)[1].split(r'\label{route:modern-core-end}',1)[0]
     assert all(name.replace('_',r'\_') in core for name in fields), 'Field-reading prerequisites must stay on the required route'
     assert r'd_k=d_{\rm model}/H_Q' in core
     assert all(name in row['solution'] for name in (r'config\_table.py',r'cache\_budget\_demo.py'))
@@ -335,7 +335,7 @@ def check_core_cache_review():
 
 
 def check_cnn_channels():
-    source=(ROOT/'book/chapters/19-cnn.tex').read_text()
+    source=(ROOT/'book/chapters/31-cnn.tex').read_text()
     kernel=numeric_matrices(source.split(r'\subsection{小区域扫描',1)[1])[1]
     channels=source.split(r'\label{sec:cnn-channel-sum}',1)[1].split(r'\subsection{',1)[0]
     windows=numeric_matrices(channels)
@@ -348,7 +348,7 @@ def check_cnn_channels():
 
 def check_motivation_examples():
     """Recompute the added bridges using their actual data and matrix shapes."""
-    general=(ROOT/'book/chapters/18-generalization.tex').read_text()
+    general=(ROOT/'book/chapters/05-generalization.tex').read_text()
     x=np.array([-1.,0.,1.]);y=np.array([-1.5,2.,2.5])
     linear=np.column_stack([x,np.ones(3)])
     quadratic=np.column_stack([x*x,x,np.ones(3)])
@@ -379,18 +379,18 @@ def check_motivation_examples():
         expression=expression.replace(r'\x','x')
         assert re.fullmatch(r'[x0-9.*+ /()-]+',expression)
         assert np.allclose(eval(expression,{'__builtins__':{}},{'x':validation_x}),expected)
-    post=(ROOT/'book/chapters/23c-post-training.tex').read_text()
+    post=(ROOT/'book/chapters/24-post-training-and-inference.tex').read_text()
     new=np.array([.7,.3]);reference=np.array([.5,.5])
     kl=np.sum(new*np.log(new/reference))
     assert f'{kl:.4f}' in post
-    modern=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text()
+    modern=(ROOT/'book/chapters/29-modern-transformers.tex').read_text()
     vector=np.array([3.,4.])
     rms=vector/np.sqrt(np.mean(vector**2))
     assert np.allclose(rms,10*vector/np.sqrt(np.mean((10*vector)**2)))
     assert all(f'{value:.3f}' in modern for value in rms)
     assert np.allclose((vector-vector.mean())/vector.std(),[-1,1])
     assert np.allclose(np.array([2,3])*[.5,2],[1,6]) and '(1,6)' in modern
-    deployment=(ROOT/'book/chapters/23b-deployment-and-ecosystem.tex').read_text()
+    deployment=(ROOT/'book/chapters/28-training-and-deployment.tex').read_text()
     row=np.array([1,2]);weight=np.eye(2)
     up=np.array([[1],[0]]);down=np.array([[0,1]])
     assert up.shape==(2,1) and down.shape==(1,2)
@@ -412,6 +412,9 @@ def attention_maximum_errors(source):
     The old checks did not inspect which positions shared a row maximum; a
     correct score matrix could therefore accompany a misleading prose claim.
     """
+    # Select the zero-parameter example, not the later Q/K projection matrices
+    # that now share the same chapter source file.
+    source=source.split(r'\subsection{分数从哪里来？',1)[1].split(r'\subsection{',1)[0]
     x,scores=numeric_matrices(source)
     assert np.array_equal(scores,x@x.T), 'Zero-projection score matrix differs from XX^T'
     exponentials=np.exp(scores-scores.max(axis=1,keepdims=True))
@@ -429,7 +432,7 @@ def attention_maximum_errors(source):
 
 
 def check_attention_maxima():
-    source=(ROOT/'book/chapters/21c-naive-attention.tex').read_text()
+    source=(ROOT/'book/chapters/14-attention-qkv.tex').read_text()
     assert not attention_maximum_errors(source)
     # Reproduce the misleading unique-winner reading of the former sentence.
     bad=source.replace('第一行对位置 $1,3$ 给出并列最大权重',
@@ -440,9 +443,9 @@ def check_attention_maxima():
 
 def check_distance_reading():
     """Run the printed recurrence and a full Softmax for each printed distance."""
-    rnn=(ROOT/'book/chapters/21-rnn.tex').read_text()
+    rnn=(ROOT/'book/chapters/13-context-and-rnn.tex').read_text()
     coefficient=float(re.search(r'h_t=x_t\+([\d.]+)h_',rnn)[1])
-    source=(ROOT/'book/chapters/21c-naive-attention.tex').read_text()
+    source=(ROOT/'book/chapters/14-attention-qkv.tex').read_text()
     example=source.split(r'\label{experiment:distance-reading}',1)[1].split(r'\subsection{',1)[0]
     target_score=np.log(float(re.search(r's_1=\\ln(\d+)',example)[1]))
     assert '这些分数是本实验手工指定的条件' in example
@@ -470,7 +473,7 @@ def check_distance_reading():
 
 def check_scaling_budget():
     """Recompute the printed FLOP budget and the historical Chinchilla ratio."""
-    source=(ROOT/'book/chapters/23e-tech-judgement.tex').read_text()
+    source=(ROOT/'book/chapters/30-evaluating-new-models.tex').read_text()
     example=source.split(r'\label{sec:scaling-compute-budget}',1)[1].split(r'\subsection{',1)[0]
     def scientific(pattern):
         match=re.search(pattern,example)
@@ -492,7 +495,7 @@ def check_scaling_budget():
 
 def check_model_comparison():
     """Recompute comparison-table dimensions and count shared GPT-2 weights once."""
-    source=(ROOT/'book/chapters/23a-from-toy-to-gpt.tex').read_text()
+    source=(ROOT/'book/chapters/22-real-models.tex').read_text()
     table=source.split(r'\label{sec:toy-real-model-comparison}',1)[1].split(r'\end{tabularx}',1)[0]
     rows={name.strip():(left,right) for name,left,right in
           re.findall(r'^([^&\n]+) & (.*?) & (.*?)\\\\',table,re.M)}
@@ -521,11 +524,11 @@ def check_model_comparison():
 def check_published_forward():
     """Check printed parameters and real intermediate matrices, not label presence."""
     w=parameters();state=forward(w)
-    position=(ROOT/'book/chapters/22a-position-multihead.tex').read_text()
+    position=(ROOT/'book/chapters/16-position-and-multihead.tex').read_text()
     projections=numeric_matrices(position)[:5]
     for printed,expected in zip(projections,[w['E'][[1,3]],w['E'][[3,1]],w['Wq'],w['Wk'],w['Wv']]):
         assert np.array_equal(printed,expected)
-    source=(ROOT/'book/chapters/22b-token-to-output.tex').read_text()
+    source=(ROOT/'book/chapters/19-transformer-forward-pass.tex').read_text()
     expected=[w['Wq'],w['Wk'],w['Wv'],state['k'][:2],state['v'][:2],w['Wo'],w['Wup'],w['Wdown'],w['Wout'],
               state['x'],state['a'],state['h'],state['probs']]
     printed=numeric_matrices(source)
@@ -533,7 +536,7 @@ def check_published_forward():
     for actual,wanted in zip(printed,expected):
         assert actual.shape==wanted.shape and np.allclose(actual,wanted,atol=5.1e-5,rtol=0),(actual,wanted)
     # A quick-reference definition omitting nonidentity Wo silently changes the model.
-    card=(ROOT/'book/chapters/00e-core-formulas.tex').read_text()
+    card=(ROOT/'book/chapters/appendix-a-core-formulas.tex').read_text()
     assert r'R_{\rm raw}=AV' in card and r'X_{\rm att}=X+R_{\rm raw}W_O' in card
     assert np.allclose(state['r'],state['x']+state['a']@state['v']@printed[5])
     assert not np.allclose(state['r'],state['x']+state['a']@state['v'])
@@ -549,17 +552,17 @@ def check_new_supplements():
     pair_probability=np.exp(2)/(np.exp(2)+1)
     pair_loss=-np.log(pair_probability)
     swapped_loss=-np.log(1-pair_probability)
-    vision=(ROOT/'book/chapters/19b-vit.tex').read_text()
+    vision=(ROOT/'book/chapters/32-vit.tex').read_text()
     for number in (pair_probability,pair_loss,swapped_loss):
         assert f'{number:.3f}' in vision, number
     assert abs(swapped_loss-pair_loss-2)<1e-12
-    calibration=(ROOT/'book/chapters/23d-agent-systems.tex').read_text()
+    calibration=(ROOT/'book/chapters/25-rag.tex').read_text()
     assert '6/10=0.6' in calibration and abs(.8-6/10-.2)<1e-12
     print('Supplement QA: paired/incorrect CLIP toy losses and confidence-bin calibration arithmetic match prose')
 
 
 def check_dropout():
-    source=(ROOT/'book/chapters/18-generalization.tex').read_text()
+    source=(ROOT/'book/chapters/05-generalization.tex').read_text()
     figure=(ROOT/'book/figures/dropout-training-evaluation.tex').read_text()
     values=(2,1,3,4);keep=Fraction(1,2)
     def tex_tuple(row):return '('+','.join(str(int(value)) for value in row)+')'
@@ -603,7 +606,7 @@ def check_simplified_gradient(item):
 
 
 def check_printed_mini(c, gradients):
-    text=(ROOT/'book/chapters/00f-transformer-intermediates.tex').read_text()
+    text=(ROOT/'book/chapters/appendix-b-transformer-intermediates.tex').read_text()
     text=text.split(r'\label{app:rational-mini}',1)[1].split(r'\subsection{',1)[0]
     printed=[]
     for body in re.findall(r'\\begin\{bmatrix\}(.*?)\\end\{bmatrix\}',text,re.S):
@@ -640,12 +643,12 @@ def main():
     byte_answer=kv_bytes(2,2,8,10,2)
     assert re.search(r'\\answerresult\{'+str(byte_answer)+r'\}',exercises['kv-cache-bytes']['solution'])
     cache=check_cache()
-    modern=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text().replace('{,}', '')
+    modern=(ROOT/'book/chapters/29-modern-transformers.tex').read_text().replace('{,}', '')
     assert all(str(value) in modern for value in cache), 'Printed real KV budget differs from pinned configuration'
     c,gradients=check_mini();check_printed_mini(c,gradients)
     check_new_supplements();check_dropout();check_beginner();check_function_call();check_data();check_simplified_gradient(exercises['simplified-block-gradient'])
     local,context=check_context()
-    training=(ROOT/'book/chapters/22c-language-training.tex').read_text()
+    training=(ROOT/'book/chapters/20-language-model-training.tex').read_text()
     assert f'{local:.6f}' in training and f'{context:.6f}' in training
     uniform, learned, restored = check_selection()
     selection = training.split(r'\label{experiment:attention-selection}', 1)[1]
@@ -657,8 +660,8 @@ def main():
         assert f'{value:.6f}' in selection, 'Printed selection weight differs from trained Q/K'
         assert f'{value:.6f}' in figure or f'{value:.6f}'.lstrip('0') in figure
     _,_,icl_p,_,_,policy_p=check_icl_policy()
-    icl=(ROOT/'book/chapters/23aa-pretraining-icl.tex').read_text()
-    post=(ROOT/'book/chapters/23c-post-training.tex').read_text()
+    icl=(ROOT/'book/chapters/23-pretraining-and-icl.tex').read_text()
+    post=(ROOT/'book/chapters/24-post-training-and-inference.tex').read_text()
     assert f'{icl_p[0]:.6f}' in icl and f'{policy_p[0]:.6f}' in post
     check_tokenizer()
     trained=parameters();a0=forward(trained)['a']
@@ -676,7 +679,7 @@ def main():
         value=forward(train(trainable=trainable))['a'][2,1]
         assert f'{value:.6f}' in attention_table,('A32 ablation',trainable,value)
     # Greedy generation with the 20-step weights, KV-cache row and context window.
-    generation=(ROOT/'book/chapters/23-llm-systems.tex').read_text()
+    generation=(ROOT/'book/chapters/21-autoregressive-generation.tex').read_text()
     ids,trace=greedy_generate(train())
     assert ids==[2,4,5,3] and len(ids)>trained['P'].shape[0]
     for item in trace:

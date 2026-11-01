@@ -77,7 +77,7 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
     # stale after a section is inserted, moved, or removed. The answer bank is
     # handled separately below because it intentionally prints chapter titles.
     for name in active:
-        if name == "28-chapter-checks":
+        if name == "appendix-d-self-check-solutions":
             continue
         body = uncomment(chapters[name])
         for found in NUMERIC_CHAPTER.finditer(body):
@@ -87,31 +87,31 @@ def check_crossrefs(main: str, chapters: dict[str, str]) -> list[str]:
                 "use 第~\\ref*{intro:target}~章 instead"
             )
 
-    if "28-chapter-checks" not in chapters:
+    if "appendix-d-self-check-solutions" not in chapters:
         errors.append("missing appendix D chapter-answer source")
         return errors
-    answers = uncomment(chapters["28-chapter-checks"])
+    answers = uncomment(chapters["appendix-d-self-check-solutions"])
     observed: dict[str, int] = {}
     for item in ANSWER_CHAPTER.finditer(answers):
         number = int(item.group(1)) if item.group(1) else intro_numbers.get(item.group(2))
         slug = item.group(3)
         line = answers.count("\n", 0, item.start()) + 1
         if slug in observed:
-            errors.append(f"28-chapter-checks.tex:{line}: duplicate answer ID {slug}")
+            errors.append(f"appendix-d-self-check-solutions.tex:{line}: duplicate answer ID {slug}")
         observed[slug] = number
         expected = core_checks.get(slug)
         if expected is None:
             errors.append(
-                f"28-chapter-checks.tex:{line}: no numbered core self-check for {slug}"
+                f"appendix-d-self-check-solutions.tex:{line}: no numbered core self-check for {slug}"
             )
         elif number != expected:
             errors.append(
-                f"28-chapter-checks.tex:{line}: answer {slug} says chapter {number}; "
+                f"appendix-d-self-check-solutions.tex:{line}: answer {slug} says chapter {number}; "
                 f"actual chapter is {expected} in book/main.tex order"
             )
 
     for slug in sorted(set(core_checks) - set(observed)):
-        errors.append(f"28-chapter-checks.tex: missing numbered answer entry {slug}")
+        errors.append(f"appendix-d-self-check-solutions.tex: missing numbered answer entry {slug}")
     if len(observed) != len(core_checks):
         errors.append(
             f"appendix D: expected {len(core_checks)} numbered answer headings, "
@@ -124,19 +124,19 @@ def self_test() -> None:
     main = (r"\input{chapters/a}" "\n"
             r"\input{chapters/b}" "\n"
             r"\appendix" "\n"
-            r"\input{chapters/28-chapter-checks}" "\n")
+            r"\input{chapters/appendix-d-self-check-solutions}" "\n")
     a = r"\section{One}\label{intro:a}\chapterchecktasks{one}{A}{\item x}"
     b = r"\section{Two}\label{intro:b}\chapterchecktasks{two}{B}{\item y}"
     answers = (
         r"\item[\textbf{第 1 章}] \phantomsection\label{answer:one}" "\n"
         r"\item[\textbf{第 2 章}] \phantomsection\label{answer:two}" "\n"
     )
-    inputs = {"a": a, "b": b, "28-chapter-checks": answers}
+    inputs = {"a": a, "b": b, "appendix-d-self-check-solutions": answers}
     # In this two-chapter fixture only the fixed-book cardinality warning is expected.
     assert check_crossrefs(main, inputs) == [
         f"core numbered chapters: expected {CHAPTER_COUNT}, found 2"
     ]
-    wrong = dict(inputs, **{"28-chapter-checks": answers.replace(
+    wrong = dict(inputs, **{"appendix-d-self-check-solutions": answers.replace(
         "第 2 章", "第 1 章"
     )})
     assert any("actual chapter is 2" in e for e in check_crossrefs(main, wrong))
@@ -148,10 +148,10 @@ def self_test() -> None:
     linked = dict(inputs, b=b + r"见第~\ref*{intro:a}~章与第一部分。")
     assert check_crossrefs(main, linked) == check_crossrefs(main, inputs)
     auto = answers.replace('第 1 章', r'第~\ref*{intro:a}~章').replace('第 2 章', r'第~\ref*{intro:b}~章')
-    assert check_crossrefs(main, dict(inputs, **{'28-chapter-checks': auto})) == check_crossrefs(main, inputs)
+    assert check_crossrefs(main, dict(inputs, **{'appendix-d-self-check-solutions': auto})) == check_crossrefs(main, inputs)
     wrong_auto = auto.replace(r'\ref*{intro:b}', r'\ref*{intro:a}')
-    assert any('actual chapter is 2' in e for e in check_crossrefs(main, dict(inputs, **{'28-chapter-checks': wrong_auto})))
-    missing = dict(inputs, **{"28-chapter-checks": answers.splitlines()[0]})
+    assert any('actual chapter is 2' in e for e in check_crossrefs(main, dict(inputs, **{'appendix-d-self-check-solutions': wrong_auto})))
+    missing = dict(inputs, **{"appendix-d-self-check-solutions": answers.splitlines()[0]})
     assert any("missing numbered answer entry two" in e
                for e in check_crossrefs(main, missing))
     assert uncomment(r"A \% escaped" "\n" r"% 第 5 章 commented") == (

@@ -1,3 +1,102 @@
+\chapterrule
+\section{线性联想记忆：写入、串扰与误差修正}
+\label{intro:04-key-value-outer-product}
+\label{intro:06-better-linear-memory}
+
+\phantomsection\label{concept:outer-product}
+
+\noindent\textbf{{\symboliconfont ★} 扩展路径：从存入与取出的角度重看 Attention。}
+从主线已经学过的点积、Attention 与 FFN 出发，
+本部分把同样的计算拆成外积写入、串扰、误差修正与非线性检索逐步复算。
+若读过\hyperref[sec:modern-delta-rule]{现代架构章的选读 Delta 规则}，也可以在这里核对它的写入过程。
+这里改写的是外部状态 $\mathcal{M}$；它与训练神经网络权重是两种更新。
+
+Transformer 主线里每个 Token 占一行。现在换一种视角理解线性层：
+能否把“遇见 Key 就读出 Value”的关联写入一个矩阵？
+和前面一样，Key、Query 与 Value 都以\textbf{一条记录占一行}来表示。
+
+\subsection{先问输入、输出和形状}
+单次 Query 是 $\vect{x}^\top:1\times d_k$，Key 为 $\vect{k}^\top:1\times d_k$，
+Value 为 $\vect{v}^\top:1\times d_v$。我们希望读出一行 $1\times d_v$ 的结果。
+\[
+\underbrace{\vect{x}^\top}_{1\times d_k}
+\underbrace{\vect{k}}_{d_k\times1}
+\underbrace{\vect{v}^\top}_{1\times d_v}
+=(\vect{x}^\top\vect{k})\vect{v}^\top.
+\]
+先用点积得到匹配分数，再乘 Value；不能直接把 Key 和 Value 的维度混同。
+
+\subsection{亲手写入一条二维记忆}
+先写 A：令 $\vect{k}_A^\top=(1,0)$，$\vect{v}_A^\top=(1,0)$，查询 $\vect{x}^\top=\vect{k}_A^\top$。
+下面先记作 $\vect{k}^\top=\vect{k}_A^\top,\vect{v}^\top=\vect{v}_A^\top$；后续加入 B 时继续使用这条 A。
+两条向量的外积矩阵是
+\[
+\mathcal{M}=\vect{k} \vect{v}^\top
+=\begin{bmatrix}1\\0\end{bmatrix}
+\begin{bmatrix}1&0\end{bmatrix}
+=\boxed{\begin{bmatrix}1&0\\0&0\end{bmatrix}}.
+\]
+读取时从左边乘一条\textbf{行向量}：
+\begin{equation}
+\boxed{\vect{x}^\top\mathcal{M}=(1,0)\mathcal{M}=(1,0).}
+\end{equation}
+因为 $\vect{k}^\top\vect{k}=1$，所以 $\vect{k}^\top\mathcal{M}=(\vect{k}^\top\vect{k})\vect{v}^\top=\vect{v}^\top$；
+若 Key 并非单位向量，结果一般会乘上 $\|\vect{k}\|^2$。
+外积得到一个矩阵，点积得到一个数；二者不要混淆。
+
+\begin{idea}
+这就是同一计算的两种写法：$\vect{x}^\top(\vect{k} \vect{v}^\top)=(\vect{x}^\top\vect{k})\vect{v}^\top$。
+如果有 $T_k$ 条记忆，Key 和 Value 分别\textbf{按行}存进
+$K:T_k\times d_k$、$V:T_k\times d_v$，
+匹配权重为 $\vect{a}^\top:1\times T_k$，
+则最后读出为 $\vect{a}^\top V:1\times d_v$。
+形式直接对齐主线 Attention 的“权重乘 Value”。
+\end{idea}
+
+\subsection{多条记忆：为什么会互相干扰？}
+\phantomsection\label{intro:05-memory-interference}
+\phantomsection\label{concept:memory-interference}
+\phantomsection\label{partq:memory}
+对 $T_k$ 条行向量 Key--Value 配对，最直接的写入是外积累加：
+\begin{equation}
+\boxed{\mathcal{M}=\sum_{i=1}^{T_k}\vect{k}_i \vect{v}_i^\top},
+\qquad
+\boxed{\vect{x}^\top\mathcal{M}=\sum_{i=1}^{T_k}(\vect{x}^\top\vect{k}_i)\vect{v}_i^\top}.
+\end{equation}
+这里 $\mathcal{M}:d_k\times d_v$，$\vect{x}^\top:1\times d_k$，读取输出仍是一行。
+
+\subsubsection{两条记忆的二维例子}
+\[
+\vect{k}_A^\top=(1,0),\quad \vect{v}_A^\top=(1,0),\qquad
+\vect{k}_B^\top=(0.6,0.8),\quad \vect{v}_B^\top=(0,1).
+\]
+写入矩阵分别是
+\[
+\vect{k}_A \vect{v}_A^\top=\begin{bmatrix}1&0\\0&0\end{bmatrix},
+\qquad
+\vect{k}_B \vect{v}_B^\top=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}.
+\]
+因此
+\[
+\boxed{\mathcal{M}_{\rm simple}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}}.
+\]
+查询 A：
+\[
+\vect{k}_A^\top \mathcal{M}_{\rm simple}
+=(1,0)\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}
+=\boxed{(1,0.6)}
+=\underbrace{(1,0)}_{\text{正确信号}}
++\underbrace{(0,0.6)}_{\text{来自 B 的串扰}}.
+\]
+B 被激活，是因为 $\vect{k}_A^\top\vect{k}_B=0.6$ 不为零；
+两条 Key 虽然都是单位长度，却不垂直。
+
+对单位行向量 Key $\vect{k}_j^\top$（$\vect{k}_j^\top\vect{k}_j=1$），恒有
+\[
+\vect{k}_j^\top\mathcal{M}=\vect{v}_j^\top+\sum_{i\ne j}(\vect{k}_j^\top\vect{k}_i)\vect{v}_i^\top.
+\]
+其他 Key 的匹配分数不为零时，就会产生干扰。
+
 \subsection{联立求解：同时拟合两条记忆}
 直接累加外积时，每条新记忆可能改变旧 Key 的输出。
 可以让矩阵同时拟合全部输入与目标：

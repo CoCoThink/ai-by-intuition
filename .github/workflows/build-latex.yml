@@ -44,7 +44,7 @@ jobs:
       - name: Check generated English lookup
         run: |
           python3 scripts/generate_english_index.py
-          git diff --exit-code -- book/chapters/24f-english-index.tex
+          git diff --exit-code -- book/chapters/appendix-e-english-index.tex
       - name: Check generated chapter practice links and answer titles
         run: |
           python3 scripts/generate_exercise_bank.py --check
