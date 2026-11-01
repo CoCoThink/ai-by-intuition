@@ -27,6 +27,72 @@ from memory_demo import main as check_memory
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def check_rebalanced_exercises():
+    """Check the new worked answers, including finite-difference branch gradients."""
+    exercises={r['key']:r for r in json.loads((ROOT/'book/exercises.json').read_text())}
+    def number(value):return f'{round(float(value),6):g}'
+    def row(values):return '('+','.join(number(v) for v in values)+')'
+    def published(key,*results):
+        for result in results:
+            text=result if isinstance(result,str) else number(result)
+            assert r'\answerresult{'+text+'}' in exercises[key]['solution'], (key,text)
+    def difference(function,point):
+        point=np.array(point,dtype=float);result=[]
+        for i in range(len(point)):
+            delta=np.zeros_like(point);delta[i]=1e-5
+            result.append((function(point+delta)-function(point-delta))/(2e-5))
+        return np.array(result)
+
+    scalar=lambda p:.5*(p[0]-3)**2
+    derivative=difference(scalar,[1])[0]
+    published('local-derivative-change',derivative,.1*derivative)
+    x=np.array([-1.,0.,1.]);y=np.array([-1.,2.,2.])
+    mse=lambda p:np.mean((x*p[0]+p[1]-y)**2)
+    updated=np.array([1.,1.])-.3*difference(mse,[1,1])
+    published('synchronous-gradient-step',row(updated),mse(updated))
+    gradients=[difference(lambda p:(xi*p[0]+p[1]-yi)**2,[1,0])
+               for xi,yi in zip(x[[0,2]],y[[0,2]])]
+    batch=np.mean(gradients,axis=0)
+    published('mini-batch-gradient-average',row(batch),row(np.array([1.,0.])-.1*batch))
+
+    # Independent loss functions catch a missed branch or a missing zero ReLU derivative.
+    published('local-chain-gradient',difference(lambda p:-2*3*p[0],[1])[0],
+              difference(lambda p:-2*3*(p[0]*2),[1])[0])
+    published('branch-gradient-sum',difference(lambda p:.5*(2*p[0]+3*p[0]-4)**2,[1])[0])
+    relu_loss=lambda p:.5*(3*max(0,2*p[0])-1)**2
+    published('relu-blocked-gradient',difference(relu_loss,[-1])[0])
+    assert np.isclose(relu_loss([-1]),.5)
+
+    a=np.array([[1,2],[3,0]]);b=np.array([[2,-1,1],[1,3,0]])
+    published('matrix-single-entry',(a@b)[0,1],(a@b)[1,2])
+    batch_x=np.array([[1,-1],[2,1]]);weights=np.array([[1,2],[3,0]])
+    result=batch_x@weights
+    matrix=r'\begin{bmatrix}'+r'\\'.join('&'.join(number(v) for v in r) for r in result)+r'\end{bmatrix}'
+    published('matrix-batch-calculation',matrix)
+    changed=batch_x.copy();changed[0]=0
+    assert np.array_equal((changed@weights)[1],result[1])
+    hidden=np.maximum(0,np.array([1,-2])@np.array([[2,-1],[1,1]])+np.array([1,0]))
+    published('mlp-activation-forward',row(hidden),hidden@np.array([2,-1])+.5)
+    parameters=[np.zeros(shape) for shape in ((2,3),(1,3),(3,1),(1,1))]
+    published('mlp-parameter-count',sum(p.size for p in parameters))
+    image=np.array([[1,2,0],[0,1,3],[2,1,1]])
+    kernel=np.array([[1,0],[0,-1]])
+    windows=np.lib.stride_tricks.sliding_window_view(image,(2,2))
+    conv=(windows*kernel).sum(axis=(-2,-1))
+    published('convolution-shared-kernel',*conv[0])
+
+    key=np.array([.6,.8]);value=np.array([2,-1])
+    published('memory-single-write',row(key@np.outer(key,value)))
+    ka=np.array([1,0]);va=np.array([1,0]);vb=np.array([0,1])
+    state=np.outer(ka,va)+np.outer(key,vb)
+    published('memory-cross-talk',row(ka@state))
+    values=np.array([[2,1],[0,3]])
+    published('weighted-value-read',row(np.array([.8,.2])@values),row(np.array([.25,.75])@values))
+    published('memory-selectivity',','.join(number(.5**n) for n in (1,2,3)))
+    published('memory-random-capacity',1/np.sqrt(64),1/np.sqrt(1024))
+    print('Exercise QA: new gradient answers match finite differences; batch, matrix, MLP, convolution and memory results match printed answers')
+
+
 def check_article_matching():
     """Recompute the printed ranking, scaling counterexample and plotted projection."""
     vectors=(ROOT/'book/chapters/01-vectors.tex').read_text()
@@ -67,20 +133,20 @@ def check_article_matching():
     assert np.allclose(projection['p'],foot), 'Projection foot differs from printed vectors'
     assert np.isclose(np.linalg.norm(foot),scores['a'])
     assert np.isclose((data['a']-foot)@data['q'],0)
-    exercises={item['id']:item for item in json.loads((ROOT/'book/exercises.json').read_text())}
+    exercises={item['key']:item for item in json.loads((ROOT/'book/exercises.json').read_text())}
     # Check the notation at its first definition, not merely its numerical value.
     # The old row-dot-row formula was valid but differed from every later q^T k.
     figure=(ROOT/'book/figures/dot-product-projection.tex').read_text()
-    for body in (source,figure,exercises['C-017']['question'],exercises['C-017']['solution'],exercises['C-018']['solution']):
+    for body in (source,figure,exercises['vector-coordinate-operations']['question'],exercises['vector-coordinate-operations']['solution'],exercises['article-query-ranking']['solution']):
         assert not re.search(r'\\vect [a-z]\^\\top\\cdot',body), 'Use the same row-column dot-product notation from its first definition'
         assert not re.search(r'\\\|[^\n]*?\^\\top[^\n]*?\\\|',body), 'Vector lengths must use the common norm notation'
     assert r'\boxed{\vect a^\top\vect b=a_1b_1+a_2b_2.}' in source
     assert r'\vect b=\begin{bmatrix}b_1\\b_2\end{bmatrix}' in source
     assert r'\boxed{\|\vect a\|=\sqrt{a_1^2+a_2^2}.}' in source
     changed=data['q'][::-1]
-    assert all(f'{{{changed@data[name]:g}}}' in exercises['C-018']['solution'] for name in 'abc')
-    assert f'{{{(5*data["q"])@(5*data["a"]):g}}}' in exercises['C-019']['solution']
-    assert f'{{{scores["a"]:g}}}' in exercises['C-019']['solution']
+    assert all(f'{{{changed@data[name]:g}}}' in exercises['article-query-ranking']['solution'] for name in 'abc')
+    assert f'{{{(5*data["q"])@(5*data["a"]):g}}}' in exercises['cosine-rescaling']['solution']
+    assert f'{{{scores["a"]:g}}}' in exercises['cosine-rescaling']['solution']
     print('Article matching QA: actual table/three figures agree; ranking A,C,B, scaled score 1.8, cosine 0.6 and projection 0.96 passed')
 
 
@@ -155,7 +221,7 @@ def check_learning_rate_comparison():
         results.append(loss(w,b))
     assert .5<results[0]<results[1]
     chapter=(ROOT/'book/chapters/16-loss-gradient.tex').read_text()
-    exercise=next(row for row in json.loads((ROOT/'book/exercises.json').read_text()) if row['id']=='C-067')
+    exercise=next(row for row in json.loads((ROOT/'book/exercises.json').read_text()) if row['key']=='training-rate-transfer')
     for result in results:
         assert f'{result:.6f}' in chapter and f'{result:.6f}' in exercise['solution']
     print('Learning-rate QA: both stable, eta .75 beats .9 at step 10 on the actual three-point loss')
@@ -481,7 +547,7 @@ def check_simplified_gradient(item):
             assert abs((hi-lo)/(2*eps)-gradient[index])<1e-8,(name,index)
         for number in gradient.flat:
             assert f'{number:.5f}' in item['solution'],(name,number)
-    print('Former C2-13: explicit simplified Block, all 8 parameter derivatives match published matrices')
+    print('Simplified Block exercise: explicit model, all 8 parameter derivatives match published matrices')
 
 
 def check_printed_mini(c, gradients):
@@ -500,6 +566,7 @@ def check_printed_mini(c, gradients):
 
 
 def main():
+    check_rebalanced_exercises()
     check_article_matching()
     check_matrix_training_bridges()
     check_mlp_nonlinearity()
@@ -515,14 +582,14 @@ def main():
     check_published_forward()
     check_agent_loop()
     data=json.loads((ROOT/'book/exercises.json').read_text())
-    by_legacy={r['legacy_id']:r for r in data if r['legacy_id']}
+    exercises={r['key']:r for r in data}
     byte_answer=kv_bytes(2,2,8,10,2)
-    assert re.search(r'\\answerresult\{'+str(byte_answer)+r'\}',by_legacy['C4-41']['solution'])
+    assert re.search(r'\\answerresult\{'+str(byte_answer)+r'\}',exercises['kv-cache-bytes']['solution'])
     cache=check_cache()
     modern=(ROOT/'book/chapters/22d-modern-transformers.tex').read_text().replace('{,}', '')
     assert all(str(value) in modern for value in cache), 'Printed real KV budget differs from pinned configuration'
     c,gradients=check_mini();check_printed_mini(c,gradients)
-    check_new_supplements();check_dropout();check_beginner();check_function_call();check_data();check_simplified_gradient(by_legacy['C2-13'])
+    check_new_supplements();check_dropout();check_beginner();check_function_call();check_data();check_simplified_gradient(exercises['simplified-block-gradient'])
     local,context=check_context()
     training=(ROOT/'book/chapters/22c-language-training.tex').read_text()
     assert f'{local:.6f}' in training and f'{context:.6f}' in training

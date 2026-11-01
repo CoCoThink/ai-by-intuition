@@ -294,14 +294,24 @@ def validate_contract():
     from generate_exercise_bank import load_exercises,render
     data,_,_=load_exercises()
     for path,expected in render().items():require(path.read_text()==expected,f'Stale generated bank/review: {path}')
-    expected_legacy = {f'C{group}-{i}' for group,n in ((1,18),(2,21),(3,12),(4,50)) for i in range(1,n+1)}
-    require({r['legacy_id'] for r in data if r['legacy_id']}==expected_legacy,'All 101 original exercise IDs must survive the bank merge')
     require(len([r for r in data if r.get('part_review')])==18,'Nine parts need two cumulative exercises each')
-    legacy={r['legacy_id']:r for r in data if r['legacy_id']}
+    exercises={r['key']:r for r in data}
+    for key,slug in (
+            ('local-derivative-change','16-loss-gradient'),
+            ('synchronous-gradient-step','16-loss-gradient'),
+            ('mini-batch-gradient-average','16-loss-gradient'),
+            ('local-chain-gradient','17-backpropagation'),
+            ('branch-gradient-sum','17-backpropagation'),
+            ('relu-blocked-gradient','17-backpropagation'),
+            ('zero-loss-generalization','18-generalization'),
+            ('matrix-single-entry','03-matrix-multiplication'),
+            ('matrix-batch-calculation','03-matrix-multiplication'),
+            ('convolution-shared-kernel','19-cnn')):
+        require(key in exercises and exercises[key]['slug']==slug,f'Missing prerequisite exercise: {key} in {slug}')
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in visible_exercise_errors(body,[r['id'] for r in data]))
     aliases={}
     for row in data:
-        for anchor in [row['id'],row['legacy_id'],*re.findall(r'\\label\{exercise:([^}]+)\}',row['question'])]:
+        for anchor in [row['id'],row['key'],*re.findall(r'\\label\{exercise:([^}]+)\}',row['question'])]:
             if anchor:aliases[anchor]=row['id']
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in exercise_link_text_errors(body,aliases))
     errors.extend(review_ownership_errors(data,(BOOK/'chapter-practice.tex').read_text()))
@@ -314,9 +324,9 @@ def validate_contract():
     require(main.index(r'\input{chapters/23f-foundation-recap}')>main.index(r"\partexitmemory"),'Closing recap must follow the final part')
     require('终章：回到那四个 Token' in sources['23f-foundation-recap'],'Missing final bookend')
     require('一句话本质' not in main,'Remove redundant chapter-compass label')
-    require(r'\answerresult{1280}' in legacy['C4-41']['solution'],'C4-41 must include bytes, not 640 elements')
+    require(r'\answerresult{1280}' in exercises['kv-cache-bytes']['solution'],'KV cache exercise must include bytes, not 640 elements')
     for fragment in (r'W_{\rm up}=I_2','关闭两次 Norm',r'r=x+aXW_V',r'f=\relu(rW_{\rm up})'):
-        require(fragment in legacy['C2-13']['question'],f'C2-13 simplified model contract missing: {fragment}')
+        require(fragment in exercises['simplified-block-gradient']['question'],f'Simplified Block exercise contract missing: {fragment}')
     errors.extend(validate_navigation())
     # Self-check/answer bijection follows the actual learning goals of each chapter.
     ans=sources['28-chapter-checks']
@@ -410,7 +420,14 @@ def validate_contract():
 
 
 def self_test():
-    from generate_exercise_bank import printed_regular
+    from generate_exercise_bank import printed_regular,validate_keys
+    validate_keys([dict(key='matrix-single-entry'),dict(key='branch-gradient-sum')])
+    for invalid in ([dict(key='same-key'),dict(key='same-key')], [dict(id='C-001')],
+                    [dict(key='matrix-single-entry',legacy_id='retired')],
+                    [dict(key='matrix-single-entry',legacy_answer_anchor='retired')]):
+        try:validate_keys(invalid)
+        except ValueError:pass
+        else:raise AssertionError('Missing/duplicate keys and retired fields must be rejected')
     rows=[dict(id='C-001',slug='first'),dict(id='C-002',slug='second')]
     assert [r['id'] for r in printed_regular(rows,{'first':'A','second':'B'})]==['C-001','C-002']
     try:printed_regular(rows,{'second':'B','first':'A'})
@@ -442,7 +459,7 @@ def self_test():
     assert not fitting_color_errors(fitting)
     assert fitting_color_errors(fitting.replace('黑点','橙点'))
     assert fitting_color_errors(fitting.replace('noisecolor','orange'))
-    assert not visible_exercise_errors(r'\label{exercise:C2-21}\hyperref[exercise:C2-21]{C-045}', {'C-045'})
+    assert not visible_exercise_errors(r'\label{exercise:stable-key}\hyperref[exercise:stable-key]{C-045}', {'C-045'})
     for old in ('C2-21','C3-12','C1-17、C1-18','做C2-21题'):
         assert visible_exercise_errors(r'\hyperref[exercise:valid]{附录 C 的 '+old+'}')
     assert visible_exercise_errors('C-999', {'C-001'})

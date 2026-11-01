@@ -66,7 +66,7 @@ def main() -> None:
     close(exp(-1000), 0)
     close(1000 + log(1 + exp(-1000)), 1000)
 
-    # C1-15. Non-orthogonal rows: XX^T is symmetric, XWX^T is not for asymmetric W.
+    # Gram asymmetry. Non-orthogonal rows: XX^T is symmetric, XWX^T is not for asymmetric W.
     x = [[1, 2], [0, 1], [1, -1]]
     gram = matmul(x, transpose(x))
     assert gram == [[5, 2, -1], [2, 1, -1], [-1, -1, 2]] == transpose(gram)
@@ -75,13 +75,13 @@ def main() -> None:
     s = matmul(matmul(x, w), transpose(x))
     assert s == [[7, 3, -2], [2, 1, -1], [1, 0, 1]] and s != transpose(s)
 
-    # C1-16. Recompute pair frequency before a single BPE merge.
+    # BPE pair merge. Recompute pair frequency before a single BPE merge.
     corpus = [["a", "a", "b"], ["a", "b"]]
     pairs = bpe_pairs(corpus)
     assert pairs == Counter({("a", "a"): 1, ("a", "b"): 2})
     assert bpe_merge(corpus, ("a", "b")) == [["a", "ab"], ["ab"]]
 
-    # C2-17. Changed RAG query: Q1 is excluded by top-2.
+    # RAG query ranking. Changed RAG query: Q1 is excluded by top-2.
     q = [[0.2, 1.0]]
     documents = [[1, 0], [0, 1], [0.8, 0.8]]
     scores = matmul(q, transpose(documents))[0]
@@ -90,7 +90,7 @@ def main() -> None:
     rank = sorted(range(3), key=lambda i: (-scores[i], i))
     assert rank == [1, 2, 0]   # Q2, Q3, Q1
 
-    # C2-18. A five-token causal window of width two has nine visible pairs.
+    # Sliding-window pairs. A five-token causal window of width two has nine visible pairs.
     mask = sliding_mask(5, 2)
     assert mask == [[1, 0, 0, 0, 0],
                     [1, 1, 0, 0, 0],
@@ -98,12 +98,12 @@ def main() -> None:
                     [0, 0, 1, 1, 0],
                     [0, 0, 0, 1, 1]]
     assert sum(map(sum, mask)) == 9
-    # C2-20 programming extension: same length, window 3 instead of 2.
+    # Sliding-window code extension: same length, window 3 instead of 2.
     mask3 = sliding_mask(5, 3)
     assert list(map(sum, mask3)) == [1, 2, 3, 3, 3]
     assert sum(map(sum, mask3)) == 12
 
-    # C2-19. Softmax/cross-entropy logit gradient p - y; C2-5 loss comparison.
+    # Softmax logit gradient. Softmax/cross-entropy logit gradient p - y; Probability/loss comparison.
     p, y = (0.2, 0.5, 0.3), (1, 0, 0)
     for got, wanted in zip([a - b for a, b in zip(p, y)], (-0.8, 0.5, 0.3)):
         close(got, wanted)
@@ -142,7 +142,7 @@ def main() -> None:
     close(read[0], 0.7552715289452023)
     close(read[1], 0.9099694268296196)
 
-    print("Review exercises QA passed: C1-15/16, C2-17/18/19/20, rewritten transfer items, asymmetric Q/K, stable Softmax")
+    print("Review exercises QA passed: Gram asymmetry, BPE, RAG, sliding windows, logit gradient, rewritten transfer items, asymmetric Q/K, stable Softmax")
 
 
 if __name__ == "__main__":

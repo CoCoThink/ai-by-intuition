@@ -239,7 +239,7 @@ python3 scripts/print_proof.py book/build/main.pdf --all --scale 1100 --out-dir 
 
 复算脚本总表在[附录 B 源码](book/chapters/24e-pytorch-lab.tex)（标签 `app:reproduction-scripts`），`check_book_contract.py` 检查关键脚本都列在表中。默认只运行离线实验；Claude 等付费 API 的真实调用需要明确授权，中文分词器的 `--real` 只下载固定版本的分词器文件。
 
-C 题和 R 题按印刷顺序连续编号，由 `generate_exercise_bank.py` 校验。增删题目后整体重排，并同步正文、脚本和文档中的引用；`legacy_id` 中的旧编号只作隐藏锚点，不在印刷版显示。
+C 题和 R 题各按印刷顺序连续编号，由 `generate_exercise_bank.py` 校验。每题的 `key` 是独立于印刷题号的稳定语义键；脚本按 `key` 查题，正文可链接 `exercise:<key>`，答案可链接 `solution:<key>`。增删题目后重排印刷题号并重新生成题库与章末导航，同步带题号的手写引用；不保留旧编号兼容字段或锚点。
 
 ## 正式发布
 
