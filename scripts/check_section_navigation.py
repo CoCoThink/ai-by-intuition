@@ -150,6 +150,21 @@ def attention_boundary_errors(pages):
     return []
 
 
+def distance_condition_errors(pages):
+    """Keep the hand-set-score qualification beside the distance table."""
+    compact=[re.sub(r'\s+','',page) for page in pages]
+    markers=(
+        '这些分数是本实验手工指定的条件',
+        '直接读取（手设分数）',
+        '右列是上述手设分数条件下的直接读取结果',
+    )
+    found=[[i+1 for i,page in enumerate(compact) if marker in page]
+           for marker in markers]
+    if any(len(locations)!=1 for locations in found) or len({locations[0] for locations in found})!=1:
+        return [f'Distance experiment qualification/table split or missing: pages {found}']
+    return []
+
+
 def ellipse_rect_intersects(ellipse, rect):
     """Whether an axis-aligned text rectangle touches an ellipse's boundary."""
     cx,cy,rx,ry=ellipse
@@ -546,6 +561,7 @@ def check_pdf(path, aux, used):
     failures.extend(agent_intro_errors(raw_text.split('\f')))
     failures.extend(softmax_note_errors(raw_text.split('\f')))
     failures.extend(attention_boundary_errors(raw_text.split('\f')))
+    failures.extend(distance_condition_errors(raw_text.split('\f')))
     text=re.sub(r'\s+','',raw_text)
     labels={}
     for line in aux.read_text().splitlines():
@@ -633,6 +649,12 @@ def self_test():
     assert not attention_boundary_errors([attention_start+attention_end])
     assert attention_boundary_errors([attention_start,attention_end])
     assert attention_boundary_errors([attention_start])
+    distance_start='这些分数是本实验手工指定的条件'
+    distance_header='直接读取（手设分数）'
+    distance_note='右列是上述手设分数条件下的直接读取结果'
+    assert not distance_condition_errors([distance_start+distance_header+distance_note])
+    assert distance_condition_errors([distance_start+distance_header,distance_note])
+    assert distance_condition_errors([distance_start,distance_header,distance_note])
     assert not toc_folio_errors([(64,'subsection.21.7')],{'subsection.21.7'})
     assert toc_folio_errors([(64,'subsection.21.7')],set())
     ellipse=(0,0,4,2)

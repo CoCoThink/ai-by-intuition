@@ -326,7 +326,10 @@ def check_distance_reading():
     coefficient=float(re.search(r'h_t=x_t\+([\d.]+)h_',rnn)[1])
     source=(ROOT/'book/chapters/21c-naive-attention.tex').read_text()
     example=source.split(r'\label{experiment:distance-reading}',1)[1].split(r'\subsection{',1)[0]
-    target_score=np.log(float(re.search(r'匹配分数为 \$\\ln(\d+)\$',example)[1]))
+    target_score=np.log(float(re.search(r's_1=\\ln(\d+)',example)[1]))
+    assert '这些分数是本实验手工指定的条件' in example
+    assert '不是由 $Q、K$ 计算出来的，也不是训练后的模型结果' in example
+    assert '直接读取（手设分数）' in example
     rows=re.findall(r'^\$(\d+)\$ & \$([\d.]+)\$ & \$([\d.]+)\$',example,re.M)
     assert [int(row[0]) for row in rows]==[1,2,4,8]
     for distance,printed_rnn,printed_attention in rows:
