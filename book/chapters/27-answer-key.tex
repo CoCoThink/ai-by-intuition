@@ -252,153 +252,167 @@ $\partial L/\partial W_{\rm down}=f^\top g_h
 上游梯度 $g_r=g_h(I_2+0.5I_2)=1.5g_h$，
 故 $\partial L/\partial W_V=a^\top g_r
 \approx\begin{bmatrix}0.04809&0.35895\\0.09765&0.72879\end{bmatrix}$。\par\textbf{核对：}两张权重梯度都是“输入列向量乘上游梯度行向量”的外积，结果应为 $2\times2$。$g_r=g_h+0.5g_h$ 包含直通和 FFN 两条贡献；若只用 $0.5g_h$，Value 梯度会少掉残差直通项。
+\item[\textbf{C-083.}] \leavevmode\phantomsection\label{solution:C-083}\label{solution:joint-prefix-loss-floor}\hyperref[exercise:joint-prefix-loss-floor]{\textbf{第一步：}}找出两句完全相同的可见前缀，以及这个前缀对应的两个不同目标。\par\nobreak\textbf{解题过程：}因果 Mask 下，首位置都只看到 ID 2，必须输出同一分布。设它给目标 ID 4、5 的概率为 $p_4,p_5$；由 $p_4+p_5\le1$，首位置的两句平均损失 $-\tfrac12\ln(p_4p_5)\ge\ln2$。另外四项交叉熵非负，所以全体六个位置的平均损失至少为 $\answerresult{\ln2/3}\approx0.231049$。这是任何确定性因果预测器都要满足的下界，不保证这个有限模型能达到。一次更新须在同一组旧参数上分别计算 $G_1,G_2$，再令 $\theta\leftarrow\theta-0.04(G_1+G_2)/2$。\par 一种复算结果：第 $0,20,200$ 步损失约为 $2.117434,1.371395,\answerresult{0.261142}$；末步首位置给 ID 4、5 的概率约为 $0.480729,0.512150$，两句首位置都猜 ID 5，故其中一句必错。运行 \path{scripts/advanced_exercise_demo.py} 可核对。\par\textbf{验收与错因：}核验两个首位置的整行概率相同，并用联合损失的有限差分检查一项参数梯度。若损失低于下界，先查未来信息是否泄漏、两句是否真的共用参数、损失是否仍除以六；先更新第一句再计算第二句不再是题设的同步全批次更新。
+\item[\textbf{C-084.}] \leavevmode\phantomsection\label{solution:C-084}\label{solution:attention-causal-intervention}\hyperref[exercise:attention-causal-intervention]{\textbf{第一步：}}固定已训练参数，只改变读取系数，区分单位置损失与三位置平均损失。\par\nobreak\textbf{解题过程：}第三位置目标是句号 ID 3。各方案的（正确类概率，单位置损失）约为
+\[
+\begin{aligned}
+\text{原模型：}&\quad(\answerresult{0.582945},\answerresult{0.539662}),\\
+\text{方案 A：}&\quad(\answerresult{0.624290},\answerresult{0.471139}),\\
+\text{方案 B：}&\quad(\answerresult{0.520865},\answerresult{0.652265}).
+\end{aligned}
+\]
+因此本例去掉对“花”的这一路读取反而降低损失；权重大小本身不能确定这一路对最终目标的净贡献。复算见 \path{scripts/advanced_exercise_demo.py}。\par\textbf{验收与错因：}重算 $r=X+(AV)W_O$、$h=r+\relu(\operatorname{LN}(r)W_{\rm up})W_{\rm down}$ 和输出概率，检查前两行不变。仅把某个输出概率改掉，或干预后重新训练，都没有隔离这次读取的影响；方案 A 还同时增加了其余位置的相对权重。可进一步在多条带不同干扰项的样本上重复检验，但单句干预只支持该模型、该输入与该干预下的结论。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23-llm-systems}~章 · 训练好了，模型怎样逐词生成文字？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-083]{题目见第~\pageref*{exercise:C-083}~页起}）}}
+\subsubsection*{第~\ref*{intro:23-llm-systems}~章 · 训练好了，模型怎样逐词生成文字？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-085]{题目见第~\pageref*{exercise:C-085}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-083.}] \leavevmode\phantomsection\label{solution:C-083}\label{solution:generation-prefix-append}\hyperref[exercise:generation-prefix-append]{\textbf{第一步：}}保留已有前缀，把新选出的 ID 接在末尾。\par\nobreak
+\item[\textbf{C-085.}] \leavevmode\phantomsection\label{solution:C-085}\label{solution:generation-prefix-append}\hyperref[exercise:generation-prefix-append]{\textbf{第一步：}}保留已有前缀，把新选出的 ID 接在末尾。\par\nobreak
 \textbf{解题过程：}下一轮输入前缀是 $\answerresult{[2,4,5]}$。每轮在旧前缀上追加新 Token，已有输入仍是下一步预测的上下文。
-\item[\textbf{C-084.}] \leavevmode\phantomsection\label{solution:C-084}\label{solution:cached-next-token}\hyperref[exercise:cached-next-token]{\textbf{第一步：}}先分开数首次 Prefill 和追加一步的 K/V。\par\nobreak\textbf{解题过程：}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。
-\item[\textbf{C-085.}] \leavevmode\phantomsection\label{solution:C-085}\label{solution:context-window-memory}\hyperref[exercise:context-window-memory]{\textbf{第一步：}}先检查旧会话文本有没有进入本次上下文。\par\nobreak\textbf{解题过程：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。
-\item[\textbf{C-086.}] \leavevmode\phantomsection\label{solution:C-086}\label{solution:greedy-generation}\hyperref[exercise:greedy-generation]{\textbf{第一步：}}每一步只取最后一行概率最大的 ID，并把它接回输入。\par\nobreak
+\item[\textbf{C-086.}] \leavevmode\phantomsection\label{solution:C-086}\label{solution:cached-next-token}\hyperref[exercise:cached-next-token]{\textbf{第一步：}}先分开数首次 Prefill 和追加一步的 K/V。\par\nobreak\textbf{解题过程：}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。
+\item[\textbf{C-087.}] \leavevmode\phantomsection\label{solution:C-087}\label{solution:context-window-memory}\hyperref[exercise:context-window-memory]{\textbf{第一步：}}先检查旧会话文本有没有进入本次上下文。\par\nobreak\textbf{解题过程：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。
+\item[\textbf{C-088.}] \leavevmode\phantomsection\label{solution:C-088}\label{solution:greedy-generation}\hyperref[exercise:greedy-generation]{\textbf{第一步：}}每一步只取最后一行概率最大的 ID，并把它接回输入。\par\nobreak
 \textbf{解题过程：}实测依次得到 $4$（花，$p=0.8817$）、$5$（开了，$p=0.4566$）、$3$（。，$p=0.5829$），上下文变为 $[2,4,5,3]$。停止是因为教学位置表 $P_{\rm pos}$ 只有 3 行，无法为第 4 个输入位置查表；这是长度上限，不表示模型学会了结束。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23a-from-toy-to-gpt}~章 · 从三维到真实模型：规模、配置与分词\enspace{\mdseries\footnotesize（\hyperref[exercise:C-087]{题目见第~\pageref*{exercise:C-087}~页起}）}}
+\subsubsection*{第~\ref*{intro:23a-from-toy-to-gpt}~章 · 从三维到真实模型：规模、配置与分词\enspace{\mdseries\footnotesize（\hyperref[exercise:C-089]{题目见第~\pageref*{exercise:C-089}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-087.}] \leavevmode\phantomsection\label{solution:C-087}\label{solution:real-embedding-shape}\hyperref[exercise:real-embedding-shape]{\textbf{第一步：}}行数对应词表项数，列数对应每个 Token 的特征宽度。\par\nobreak
+\item[\textbf{C-089.}] \leavevmode\phantomsection\label{solution:C-089}\label{solution:real-embedding-shape}\hyperref[exercise:real-embedding-shape]{\textbf{第一步：}}行数对应词表项数，列数对应每个 Token 的特征宽度。\par\nobreak
 \textbf{解题过程：}矩阵形状为 $\answerresult{50{,}257\times768}$。层数与注意力头数不决定这张查找表的行数。
-\item[\textbf{C-088.}] \leavevmode\phantomsection\label{solution:C-088}\label{solution:uniform-baseline-interpretation}\hyperref[exercise:uniform-baseline-interpretation]{\textbf{第一步：}}先检查初始 logits 是否均匀。\par\nobreak\textbf{解题过程：}不构成代码错误证明；初值给出非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。\par\textbf{核对：}均匀基线只对应每个正确类概率都为 $1/5$。非均匀初值可能给正确类更小概率，从而损失超过 $\ln5$。先用同一份参数、输入与目标复现每行概率，再判断是否有实现差异。
-\item[\textbf{C-089.}] \leavevmode\phantomsection\label{solution:C-089}\label{solution:compute-token-budget}\hyperref[exercise:compute-token-budget]{\textbf{第一步：}}先算一层 $12d^2$，再乘层数；宽度出现在平方项里。\par\nobreak
+\item[\textbf{C-090.}] \leavevmode\phantomsection\label{solution:C-090}\label{solution:uniform-baseline-interpretation}\hyperref[exercise:uniform-baseline-interpretation]{\textbf{第一步：}}先检查初始 logits 是否均匀。\par\nobreak\textbf{解题过程：}不构成代码错误证明；初值给出非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。\par\textbf{核对：}均匀基线只对应每个正确类概率都为 $1/5$。非均匀初值可能给正确类更小概率，从而损失超过 $\ln5$。先用同一份参数、输入与目标复现每行概率，再判断是否有实现差异。
+\item[\textbf{C-091.}] \leavevmode\phantomsection\label{solution:C-091}\label{solution:compute-token-budget}\hyperref[exercise:compute-token-budget]{\textbf{第一步：}}先算一层 $12d^2$，再乘层数；宽度出现在平方项里。\par\nobreak
 \textbf{解答：}$12\times12\times768^2=84{,}934{,}656$，约 $85$ M。宽度翻倍时每层 $12d^2$ 变为 $\answerresult{4}$ 倍；层数翻倍只使总量变为 $2$ 倍。\par\textbf{核对：}这里的两个 $12$ 含义不同：一个是每层主导项的系数，一个是层数。把宽度翻倍后若只算两倍，通常是漏了平方；把结果当成全部模型参数，则遗漏了本题明确排除的词表、偏置与 Norm。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23aa-pretraining-icl}~章 · 预训练已经学会续写，为什么还能临时学会新任务？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-090]{题目见第~\pageref*{exercise:C-090}~页起}）}}
+\subsubsection*{第~\ref*{intro:23aa-pretraining-icl}~章 · 预训练已经学会续写，为什么还能临时学会新任务？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-092]{题目见第~\pageref*{exercise:C-092}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-090.}] \leavevmode\phantomsection\label{solution:C-090}\label{solution:icl-context-budget}\hyperref[exercise:icl-context-budget]{\textbf{第一步：}}把原任务与两条示例的 Token 数相加。\par\nobreak
+\item[\textbf{C-092.}] \leavevmode\phantomsection\label{solution:C-092}\label{solution:icl-context-budget}\hyperref[exercise:icl-context-budget]{\textbf{第一步：}}把原任务与两条示例的 Token 数相加。\par\nobreak
 \textbf{解题过程：}输入总长为 $8+2\times6=\answerresult{20}$ 个 Token。示例作为输入进入本次上下文，增加的是输入长度。
-\item[\textbf{C-091.}] \leavevmode\phantomsection\label{solution:C-091}\label{solution:prompt-or-training}\hyperref[exercise:prompt-or-training]{\textbf{第一步：}}先区分格式需求与新季度事实来源。\par\nobreak\textbf{解题过程：}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。\par\textbf{核对：}一份可行方案是先用 Prompt 规定字段，再检索并核验本季度报告；只有当稳定格式需要反复学习时才考虑 SFT。把新季度数字写进模板，可以改变本次输入，不能代替对原始报告的核验。
-\item[\textbf{C-092.}] \leavevmode\phantomsection\label{solution:C-092}\label{solution:icl-query-transfer}\hyperref[exercise:icl-query-transfer]{\textbf{第一步：}}先算缩放分数，再做 Softmax 与读出，最后乘输出头。\par\nobreak
+\item[\textbf{C-093.}] \leavevmode\phantomsection\label{solution:C-093}\label{solution:prompt-or-training}\hyperref[exercise:prompt-or-training]{\textbf{第一步：}}先区分格式需求与新季度事实来源。\par\nobreak\textbf{解题过程：}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。\par\textbf{核对：}一份可行方案是先用 Prompt 规定字段，再检索并核验本季度报告；只有当稳定格式需要反复学习时才考虑 SFT。把新季度数字写进模板，可以改变本次输入，不能代替对原始报告的核验。
+\item[\textbf{C-094.}] \leavevmode\phantomsection\label{solution:C-094}\label{solution:icl-query-transfer}\hyperref[exercise:icl-query-transfer]{\textbf{第一步：}}先算缩放分数，再做 Softmax 与读出，最后乘输出头。\par\nobreak
 \textbf{解题过程：}（a）$s=(0,\ln9)$，$\alpha=(0.1,0.9)$，读出 $(0.1,0.9)$，$Z=(0.5,4.5)$，$\Pr(D)\approx\answerresult{0.982014}$，与查询 $A$ 的情形对称。（b）$s=(\ln3,0)$，$\alpha=(0.75,0.25)$，$Z=(3.75,1.25)$，$\Pr(B)=1/(1+e^{-2.5})\approx\answerresult{0.924142}$。参数没变，查询与示例决定读出；匹配越弱，选择越不尖锐。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23c-post-training}~章 · 怎样改进回答：训练反馈与推理时计算\enspace{\mdseries\footnotesize（\hyperref[exercise:C-093]{题目见第~\pageref*{exercise:C-093}~页起}）}}
+\subsubsection*{第~\ref*{intro:23c-post-training}~章 · 怎样改进回答：训练反馈与推理时计算\enspace{\mdseries\footnotesize（\hyperref[exercise:C-095]{题目见第~\pageref*{exercise:C-095}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-093.}] \leavevmode\phantomsection\label{solution:C-093}\label{solution:reference-policy-role}\hyperref[exercise:reference-policy-role]{\textbf{第一步：}}看训练是否会更新权重，还是只改变当前上下文。\par\nobreak
+\item[\textbf{C-095.}] \leavevmode\phantomsection\label{solution:C-095}\label{solution:reference-policy-role}\hyperref[exercise:reference-policy-role]{\textbf{第一步：}}看训练是否会更新权重，还是只改变当前上下文。\par\nobreak
 \textbf{解答：} SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；
 CoT 提示改变输入或生成形式，本身保持参数固定。
-\item[\textbf{C-094.}] \leavevmode\phantomsection\label{solution:C-094}\label{solution:reasoning-interventions}\hyperref[exercise:reasoning-interventions]{\textbf{第一步：}}逐项检查改变的是上下文、参数还是候选选择。\par\nobreak\textbf{解题过程：}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。\par\textbf{核对：}可分别记录：Prompt 改的是输入；SFT 用示范序列更新权重；可验证奖励用结果评分参与训练。若只写“输出更像推理”，就没有说明改变发生在哪个环节，也没有验证步骤是否正确。
-\item[\textbf{C-095.}] \leavevmode\phantomsection\label{solution:C-095}\label{solution:candidate-success-budget}\hyperref[exercise:candidate-success-budget]{\textbf{第一步：}}先要求全部失败的概率 $0.7^n\le0.1$。\par\nobreak
+\item[\textbf{C-096.}] \leavevmode\phantomsection\label{solution:C-096}\label{solution:reasoning-interventions}\hyperref[exercise:reasoning-interventions]{\textbf{第一步：}}逐项检查改变的是上下文、参数还是候选选择。\par\nobreak\textbf{解题过程：}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。\par\textbf{核对：}可分别记录：Prompt 改的是输入；SFT 用示范序列更新权重；可验证奖励用结果评分参与训练。若只写“输出更像推理”，就没有说明改变发生在哪个环节，也没有验证步骤是否正确。
+\item[\textbf{C-097.}] \leavevmode\phantomsection\label{solution:C-097}\label{solution:candidate-success-budget}\hyperref[exercise:candidate-success-budget]{\textbf{第一步：}}先要求全部失败的概率 $0.7^n\le0.1$。\par\nobreak
 \textbf{解题过程：}$n\ge\ln10/\ln(1/0.7)\approx6.456$，最少 $\answerresult{7}$ 份：六份成功率 $1-0.7^6\approx88.2\%$，七份约 $91.8\%$。完全相关时成功率仍只有 $30\%$，复制结果没有独立试错收益。
-\item[\textbf{C-096.}] \leavevmode\phantomsection\label{solution:C-096}\label{solution:faulty-verifier-limit}\hyperref[exercise:faulty-verifier-limit]{\textbf{第一步：}}先求“至少一份通过”的概率，再看第一份通过的候选是 42 的条件概率。\par\nobreak\textbf{解题过程：}每份候选不通过的概率是 $1/4$，所以至少一份通过的概率为 $1-0.25^n$；第一份通过的候选在 41、42、43 中等可能，是 42 的概率为 $1/3$。于是 $P_n=(1-0.25^n)/3$：（a）$P_2=0.9375/3=\answerresult{0.3125}$；（b）趋于 $\answerresult{1/3}$；（c）验证器分不出 41、43 与 42，多采样只让“有候选通过”几乎必然发生，却不改变通过者中正确答案只占三分之一。要提高上限，得先改进验证器。
+\item[\textbf{C-098.}] \leavevmode\phantomsection\label{solution:C-098}\label{solution:faulty-verifier-limit}\hyperref[exercise:faulty-verifier-limit]{\textbf{第一步：}}先求“至少一份通过”的概率，再看第一份通过的候选是 42 的条件概率。\par\nobreak\textbf{解题过程：}每份候选不通过的概率是 $1/4$，所以至少一份通过的概率为 $1-0.25^n$；第一份通过的候选在 41、42、43 中等可能，是 42 的概率为 $1/3$。于是 $P_n=(1-0.25^n)/3$：（a）$P_2=0.9375/3=\answerresult{0.3125}$；（b）趋于 $\answerresult{1/3}$；（c）验证器分不出 41、43 与 42，多采样只让“有候选通过”几乎必然发生，却不改变通过者中正确答案只占三分之一。要提高上限，得先改进验证器。
+\item[\textbf{C-099.}] \leavevmode\phantomsection\label{solution:C-099}\label{solution:verifier-budget-design}\hyperref[exercise:verifier-budget-design]{\textbf{第一步：}}每份成本同时包含生成与验证；把“通过且正确”“通过但错误”“不通过”分开计数。\par\nobreak\textbf{解题过程：}粗验证最多 $12/(1+1)=6$ 份，每份正确通过率 $a=0.3$，错误通过率 $b=0.7\times0.2=0.14$。六份中正确交付概率为 $\frac{a}{a+b}[1-(1-a-b)^6]\approx\answerresult{0.660790}$；错误交付概率为 $\frac{b}{a+b}[1-(1-a-b)^6]\approx\answerresult{0.308369}$。严格验证最多四份，每份正确通过率 $0.3\times0.8=0.24$，因此正确交付概率 $1-0.76^4\approx\answerresult{0.666378}$，错误交付率为零。按正确交付率比较，本例严格验证略优；若另给错误交付惩罚，还需按该目标重新评分。\par\textbf{一种验证方案：}枚举每份候选的三类事件，累加首个通过者的概率，见 \path{scripts/advanced_exercise_demo.py}。把粗验证误过率改为 $0$ 时，六份的成功率为 $1-0.7^6\approx0.882351$，选择便改变。\par\textbf{验收与错因：}每方案的正确交付、错误交付、未完成概率之和应为 $1$；达到预算上限即停止。不能用“至少有一份正确”代替交付成功，因为更早误过的错误候选会抢先被交付。
+\item[\textbf{C-100.}] \leavevmode\phantomsection\label{solution:C-100}\label{solution:reward-verifier-audit}\hyperref[exercise:reward-verifier-audit]{\textbf{第一步：}}先分别列出真实奖励和缺陷奖励，采样动作固定，优势也在求梯度时固定。\par\nobreak\textbf{解题过程：}正确奖励为 $(1,0,1,0)$，优势为 $(1,-1,1,-1)$，平均梯度 $(-0.5,0.25,0.25)$；更新后正确答案概率约为 $\answerresult{0.367456}$。缺陷奖励为 $(0,1,0,0)$，均值 $1/4$、总体标准差 $\sqrt3/4$，优势为 $(-1/\sqrt3,\sqrt3,-1/\sqrt3,-1/\sqrt3)$。平均梯度约为 $(0.288675,-0.433013,0.144338)$，一步后答案 $(42,41,50)$ 的概率约为 $(\answerresult{0.314015},\answerresult{0.362773},0.323212)$：真实正确率下降，缺陷通过率却上升。复算见 \path{scripts/advanced_exercise_demo.py}。\par\textbf{一种核验方案：}在更新之外，用准确乘法结果核查 $6\times7$ 的答案 $40,41,42,43,50$，比较两个验证器的接受集合；40、41 被缺陷规则误收，42 被误拒。再检查其他乘法题是否按各自正确答案判定，而不是沿用阈值。\par\textbf{验收与错因：}分别报告训练奖励和独立判据下的正确率；奖励全相同时另处理零标准差。这里展示固定动作的一步代理梯度，不是完整 GRPO 训练，也不能据此推断多步训练的最终效果。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23d-agent-systems}~章 · 检索与证据：RAG 怎样回答有来源的问题？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-097]{题目见第~\pageref*{exercise:C-097}~页起}）}}
+\subsubsection*{第~\ref*{intro:23d-agent-systems}~章 · 检索与证据：RAG 怎样回答有来源的问题？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-101]{题目见第~\pageref*{exercise:C-101}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-097.}] \leavevmode\phantomsection\label{solution:C-097}\label{solution:missing-evidence-response}\hyperref[exercise:missing-evidence-response]{\textbf{第一步：}}先标出缺失证据影响哪一步计算。\par\nobreak\textbf{解题过程：}明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比。
-\item[\textbf{C-098.}] \leavevmode\phantomsection\label{solution:C-098}\label{solution:rag-failure-modes}\hyperref[exercise:rag-failure-modes]{\textbf{第一步：}}分别检查检索、来源和生成步骤可能引入的错误。\par\nobreak
+\item[\textbf{C-101.}] \leavevmode\phantomsection\label{solution:C-101}\label{solution:missing-evidence-response}\hyperref[exercise:missing-evidence-response]{\textbf{第一步：}}先标出缺失证据影响哪一步计算。\par\nobreak\textbf{解题过程：}明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比。
+\item[\textbf{C-102.}] \leavevmode\phantomsection\label{solution:C-102}\label{solution:rag-failure-modes}\hyperref[exercise:rag-failure-modes]{\textbf{第一步：}}分别检查检索、来源和生成步骤可能引入的错误。\par\nobreak
 \textbf{解答：} 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。\par\textbf{核对：}可以先核查检索是否含所需季度及版本，再把回答中的每个数字对应到原表。若检索漏了 Q2，即使引用了真实 Q1 文件，也仍不能据此补出 Q2。
-\item[\textbf{C-099.}] \leavevmode\phantomsection\label{solution:C-099}\label{solution:quarterly-evidence-update}\hyperref[exercise:quarterly-evidence-update]{\textbf{第一步：}}先固定相邻季度的分母，再分别算两个增长率。\par\nobreak
+\item[\textbf{C-103.}] \leavevmode\phantomsection\label{solution:C-103}\label{solution:quarterly-evidence-update}\hyperref[exercise:quarterly-evidence-update]{\textbf{第一步：}}先固定相邻季度的分母，再分别算两个增长率。\par\nobreak
 \textbf{解题过程：}Q2 环比为 $(125-100)/100=\answerresult{25\%}$；
 Q3 环比为 $(132-125)/125=\answerresult{5.6\%}$。
 仅修改 Prompt 输入数据不改变网络权重；
 实际执行 SFT 训练才会进行参数更新。
-\item[\textbf{C-100.}] \leavevmode\phantomsection\label{solution:C-100}\label{solution:rag-query-ranking}\hyperref[exercise:rag-query-ranking]{\textbf{第一步：}}先把查询行向量右乘文档矩阵的转置，再排序。\par\nobreak
+\item[\textbf{C-104.}] \leavevmode\phantomsection\label{solution:C-104}\label{solution:rag-query-ranking}\hyperref[exercise:rag-query-ranking]{\textbf{第一步：}}先把查询行向量右乘文档矩阵的转置，再排序。\par\nobreak
 \textbf{解题过程：}$q=(0.2,1)$，
 $qD^\top=(0.2\cdot1+1\cdot0,\;0.2\cdot0+1\cdot1,\;
 0.2\cdot0.8+1\cdot0.8)=(0.2,1,0.96)$。
 Top-2 为 Q2、Q3；
 Q1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核对。
+\item[\textbf{C-105.}] \leavevmode\phantomsection\label{solution:C-105}\label{solution:rag-versioned-evidence-audit}\hyperref[exercise:rag-versioned-evidence-audit]{\textbf{第一步：}}先统一单位，再按题设的最新口径为三个季度选择数值，保留原值与重述来源。\par\nobreak\textbf{解题过程：}转为百万元后，可比收入为 $(100,125,132)$，故 Q2 环比 $\answerresult{25\%}$，Q3 环比 $\answerresult{5.6\%}$。记录至少包括季度、原值、原单位、换算值、口径、报告版本、原表或附注位置；Q2 的 $125$ 来自 Q3 的重述附注，不能标成 Q2 旧表原值。两项环比分别依赖 Q1/Q2 与 Q2/Q3 的同口径证据，旧摘要的检索排名不改变题设来源优先级。\par\textbf{一种验收方案：}删除 Q3 最新原表时报告最新证据缺失，不用旧摘要补位；保留 Q3 收入却删除重述附注时标记 Q2 可比口径待核验；把万元误当百万元时由单位断言拦截。再构造两份同版本原表数值冲突，要求暂停依赖该字段的计算并请求核对。\par\textbf{核对：}最终答案同时列出数值、口径、来源与缺口；检索召回率为 $100\%$ 仍不能替代版本选择和单位检查。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23d-agent-tools}~章 · 工具调用与 Agent 循环：从请求到执行\enspace{\mdseries\footnotesize（\hyperref[exercise:C-101]{题目见第~\pageref*{exercise:C-101}~页起}）}}
+\subsubsection*{第~\ref*{intro:23d-agent-tools}~章 · 工具调用与 Agent 循环：从请求到执行\enspace{\mdseries\footnotesize（\hyperref[exercise:C-106]{题目见第~\pageref*{exercise:C-106}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-101.}] \leavevmode\phantomsection\label{solution:C-101}\label{solution:fixed-workflow-audit}\hyperref[exercise:fixed-workflow-audit]{\textbf{第一步：}}先看步骤和输入格式能否预先确定。\par\nobreak\textbf{解题过程：}固定 Workflow 更易测试、审计与限制成本。\par\textbf{评分要点：}(1)依据是步骤与输入格式能否预先确定；(2)Workflow 可逐步测试、日志可重放；(3)调用次数、成本与权限可预先限定；(4)指出例外：出现未知格式时再引入 Agent 或人工处理。
-\item[\textbf{C-102.}] \leavevmode\phantomsection\label{solution:C-102}\label{solution:workflow-agent-choice}\hyperref[exercise:workflow-agent-choice]{\textbf{第一步：}}判断任务是否有稳定步骤，及如何独立复核。\par\nobreak
+\item[\textbf{C-106.}] \leavevmode\phantomsection\label{solution:C-106}\label{solution:fixed-workflow-audit}\hyperref[exercise:fixed-workflow-audit]{\textbf{第一步：}}先看步骤和输入格式能否预先确定。\par\nobreak\textbf{解题过程：}固定 Workflow 更易测试、审计与限制成本。\par\textbf{评分要点：}(1)依据是步骤与输入格式能否预先确定；(2)Workflow 可逐步测试、日志可重放；(3)调用次数、成本与权限可预先限定；(4)指出例外：出现未知格式时再引入 Agent 或人工处理。
+\item[\textbf{C-107.}] \leavevmode\phantomsection\label{solution:C-107}\label{solution:workflow-agent-choice}\hyperref[exercise:workflow-agent-choice]{\textbf{第一步：}}判断任务是否有稳定步骤，及如何独立复核。\par\nobreak
 \textbf{解答：} 示例：固定格式的发票字段抽取可以使用确定工作流并做字段校验；
 跨多种格式的资料比较可以用 Agent 选择读取工具，
 最终均需核对来源、单位与输出内容。\par\textbf{评分要点：}(1)固定任务写明可预先确定的步骤与格式；(2)动态任务说明为什么要按中间结果选择工具；(3)两者都给出可独立执行的验证，如字段校验、来源核对；(4)指出权限或成本边界。\par\textbf{核对：}例如固定月报可以依次解析、统一单位、计算、校验；未知格式材料可能需要模型先识别格式再选择工具。答案应同时给出验收条件，例如每个结果能追溯到输入字段，失败时明确返回缺口。
+\item[\textbf{C-108.}] \leavevmode\phantomsection\label{solution:C-108}\label{solution:agent-bounded-retry-design}\hyperref[exercise:agent-bounded-retry-design]{\textbf{第一步：}}把模型调用预算与工具执行预算分开，先检查授权，再决定是否执行和重试。\par\nobreak\textbf{解题过程：}一种方案：第一次模型调用提出三个不同 ID 的读取请求；应用逐项校验并执行，只有超时且尚未重试时才重试；每次实际执行都扣工具预算。每个调用 ID 最终向对话追加一条成功或失败的工具结果，内部尝试次数另记审计日志。三份证据成功后才进行第二次模型调用，随后由应用检查季度、单位、来源和环比。\par\textbf{预期验收：}正常路径为两次模型调用、三次工具执行；Q2 一次超时恢复为两次与四次，交付环比 $20\%$、$10\%$。若按 Q1、Q2、Q3 顺序执行且 Q2 持续超时，Q1 执行一次、Q2 执行两次后即停止，为一次模型调用、三次执行，状态未完成。Q2 权限拒绝时仍在第一次模型调用内终止，只执行过 Q1 一次，被拒绝的 Q2 执行次数为零，不能靠重试绕过；最终数字伪造时即使三份读取成功，也须在第二次模型调用后的应用核验中判为未完成。\par\textbf{核对：}预算包含失败执行；首次超时日志不能冒充成功工具结果，错误状态不能被模型自己的“完成”覆盖。测试还应断言每次响应关联正确的调用 ID，并检查越界前已停止；改变执行顺序或并行策略时，写明相应计数口径。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23d-agent-protocols}~章 · 协议、Skill 与多 Agent：怎样在边界内协作？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-103]{题目见第~\pageref*{exercise:C-103}~页起}）}}
+\subsubsection*{第~\ref*{intro:23d-agent-protocols}~章 · 协议、Skill 与多 Agent：怎样在边界内协作？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-109]{题目见第~\pageref*{exercise:C-109}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-103.}] \leavevmode\phantomsection\label{solution:C-103}\label{solution:retrieved-instruction-boundary}\hyperref[exercise:retrieved-instruction-boundary]{\textbf{第一步：}}先区分工具返回数据与用户授权指令。\par\nobreak
+\item[\textbf{C-109.}] \leavevmode\phantomsection\label{solution:C-109}\label{solution:retrieved-instruction-boundary}\hyperref[exercise:retrieved-instruction-boundary]{\textbf{第一步：}}先区分工具返回数据与用户授权指令。\par\nobreak
 \textbf{解答：} 那句话是\textbf{不可信外部内容}而非用户授权指令；
 未经适当验证和明确授权，不应执行向陌生外部地址发送文件的动作。
-\item[\textbf{C-104.}] \leavevmode\phantomsection\label{solution:C-104}\label{solution:source-permission-boundaries}\hyperref[exercise:source-permission-boundaries]{\textbf{第一步：}}把“排名高”“来源可信”“获得授权”拆成三个独立问题。\par\nobreak
+\item[\textbf{C-110.}] \leavevmode\phantomsection\label{solution:C-110}\label{solution:source-permission-boundaries}\hyperref[exercise:source-permission-boundaries]{\textbf{第一步：}}把“排名高”“来源可信”“获得授权”拆成三个独立问题。\par\nobreak
 \textbf{解答：}检索排名只反映与查询的相关程度，不等于来源可信或获得授权；网页内容是低信任数据，必须核验来源，并由应用层单独校验工具调用和外发权限。\par\textbf{核对：}可信来源可以提供合同事实，却仍没有替用户批准外发资料的权限。核查事实看原文、日期与出处；执行外部动作另查用户授权、目标地址与允许发送的内容。两项检查应分别给出结果。
-\item[\textbf{C-105.}] \leavevmode\phantomsection\label{solution:C-105}\label{solution:skill-subagent-design}\hyperref[exercise:skill-subagent-design]{\textbf{第一步：}}先列出 Skill 的交付物与子任务的验收条件。\par\nobreak\textbf{解题过程：}Skill 记录报表字段、单位换算、出处格式和检查脚本；分派给 Subagent 的单位检查任务还需限定可读报告、返回字段及来源，由主任务复核后汇总。若三个文件格式和步骤固定，也可直接运行既定工作流。\par\textbf{核对：}具体可交付两项 Skill 材料：字段与单位对照表、带输入输出例子的核查脚本。单位检查子任务只读取指定报告，不外发、不改原文件；返回“文件与页码、字段、原值与原单位、换算值与目标单位、异常”供主任务核对。只写“返回检查结果”不足以让双方验证同一件事。
-\item[\textbf{C-106.}] \leavevmode\phantomsection\label{solution:C-106}\label{solution:a2a-result-verification}\hyperref[exercise:a2a-result-verification]{\textbf{第一步：}}先列出协议传输之外尚未解决的信任问题。\par\nobreak\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。\par\textbf{核对：}可要求对方返回原表出处、页码、数值与单位；证据未补齐时，将该字段标为待核验并停止依赖它的计算。外发请求进入应用自身的授权检查，协议消息中的“成功”状态不能代替内容核验或用户批准。
+\item[\textbf{C-111.}] \leavevmode\phantomsection\label{solution:C-111}\label{solution:skill-subagent-design}\hyperref[exercise:skill-subagent-design]{\textbf{第一步：}}先列出 Skill 的交付物与子任务的验收条件。\par\nobreak\textbf{解题过程：}Skill 记录报表字段、单位换算、出处格式和检查脚本；分派给 Subagent 的单位检查任务还需限定可读报告、返回字段及来源，由主任务复核后汇总。若三个文件格式和步骤固定，也可直接运行既定工作流。\par\textbf{核对：}具体可交付两项 Skill 材料：字段与单位对照表、带输入输出例子的核查脚本。单位检查子任务只读取指定报告，不外发、不改原文件；返回“文件与页码、字段、原值与原单位、换算值与目标单位、异常”供主任务核对。只写“返回检查结果”不足以让双方验证同一件事。
+\item[\textbf{C-112.}] \leavevmode\phantomsection\label{solution:C-112}\label{solution:a2a-result-verification}\hyperref[exercise:a2a-result-verification]{\textbf{第一步：}}先列出协议传输之外尚未解决的信任问题。\par\nobreak\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。\par\textbf{核对：}可要求对方返回原表出处、页码、数值与单位；证据未补齐时，将该字段标为待核验并停止依赖它的计算。外发请求进入应用自身的授权检查，协议消息中的“成功”状态不能代替内容核验或用户批准。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 数据、训练系统与部署：资源怎样分配？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-107]{题目见第~\pageref*{exercise:C-107}~页起}）}}
+\subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 数据、训练系统与部署：资源怎样分配？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-113]{题目见第~\pageref*{exercise:C-113}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-107.}] \leavevmode\phantomsection\label{solution:C-107}\label{solution:weight-memory-budget}\hyperref[exercise:weight-memory-budget]{\textbf{第一步：}}参数个数乘每个参数的字节数；4 bit 是半个字节。\par\nobreak
+\item[\textbf{C-113.}] \leavevmode\phantomsection\label{solution:C-113}\label{solution:weight-memory-budget}\hyperref[exercise:weight-memory-budget]{\textbf{第一步：}}参数个数乘每个参数的字节数；4 bit 是半个字节。\par\nobreak
 \textbf{解答：}fp16 约 $14$ GB；4 bit 约 $\answerresult{3.5}$ GB（未计量化缩放因子等元数据）。部署还需 KV Cache、激活与运行时缓冲，并随上下文长度和并发增长。
-\item[\textbf{C-108.}] \leavevmode\phantomsection\label{solution:C-108}\label{solution:kv-cache-bytes}\hyperref[exercise:kv-cache-bytes]{\textbf{第一步：}}先按 K/V、层、头、维、位置、字节展开。\par\nobreak\textbf{解题过程：}$2\text{(K/V)}\cdot2\text{层}\cdot2\text{头}\cdot8\text{维}\cdot10\text{位置}\cdot2\text{字节}=\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。\par\textbf{核对：}先数 K 和 V 两份，再把层数、KV 头数、头宽、位置数和每元素字节数相乘。若得到 $640$，只是元素数，尚未乘两字节；若把权重内存也加进来，已经超出本题的缓存数据本体。
+\item[\textbf{C-114.}] \leavevmode\phantomsection\label{solution:C-114}\label{solution:kv-cache-bytes}\hyperref[exercise:kv-cache-bytes]{\textbf{第一步：}}先按 K/V、层、头、维、位置、字节展开。\par\nobreak\textbf{解题过程：}$2\text{(K/V)}\cdot2\text{层}\cdot2\text{头}\cdot8\text{维}\cdot10\text{位置}\cdot2\text{字节}=\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。\par\textbf{核对：}先数 K 和 V 两份，再把层数、KV 头数、头宽、位置数和每元素字节数相乘。若得到 $640$，只是元素数，尚未乘两字节；若把权重内存也加进来，已经超出本题的缓存数据本体。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:22d-modern-transformers}~章 · 现代 Transformer 为什么看起来越来越不像原版？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-109]{题目见第~\pageref*{exercise:C-109}~页起}）}}
+\subsubsection*{第~\ref*{intro:22d-modern-transformers}~章 · 现代 Transformer 为什么看起来越来越不像原版？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-115]{题目见第~\pageref*{exercise:C-115}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-109.}] \leavevmode\phantomsection\label{solution:C-109}\label{solution:moe-routing}\hyperref[exercise:moe-routing]{\textbf{第一步：}}对分数排序即可确定 Top-1 与 Top-2。\par\nobreak
+\item[\textbf{C-115.}] \leavevmode\phantomsection\label{solution:C-115}\label{solution:moe-routing}\hyperref[exercise:moe-routing]{\textbf{第一步：}}对分数排序即可确定 Top-1 与 Top-2。\par\nobreak
 \textbf{解答：} Top-1 选专家 2；Top-2 选专家 2 和 3。
 每次只激活路由选中的专家。
-\item[\textbf{C-110.}] \leavevmode\phantomsection\label{solution:C-110}\label{solution:sliding-window-pairs}\hyperref[exercise:sliding-window-pairs]{\textbf{第一步：}}窗口包含当前位置，前两行还未填满窗口。\par\nobreak
+\item[\textbf{C-116.}] \leavevmode\phantomsection\label{solution:C-116}\label{solution:sliding-window-pairs}\hyperref[exercise:sliding-window-pairs]{\textbf{第一步：}}窗口包含当前位置，前两行还未填满窗口。\par\nobreak
 \textbf{解题过程：}五行可见位置数为 $(1,2,2,2,2)$，
 允许位置对总数 $1+2+2+2+2=\answerresult{9}$；
 这里包含查询自己的当前位置。\par\textbf{核对：}逐行窗口只向左看，并包含当前位置。若得到 $10$，检查是否把第一行也当成已填满两个位置；若把当前位置排除，又会少数对角线。
-\item[\textbf{C-111.}] \leavevmode\phantomsection\label{solution:C-111}\label{solution:sliding-window-code}\hyperref[exercise:sliding-window-code]{\textbf{第一步：}}修改窗口宽度，逐行数出允许位置对。\par\nobreak
+\item[\textbf{C-117.}] \leavevmode\phantomsection\label{solution:C-117}\label{solution:sliding-window-code}\hyperref[exercise:sliding-window-code]{\textbf{第一步：}}修改窗口宽度，逐行数出允许位置对。\par\nobreak
 \textbf{解题过程：}将 $w=3$ 代入五行因果滑窗，
 逐行可见位置数为 $(1,2,3,3,3)$，
 允许位置对共 $\answerresult{12}$ 个，比 $w=2$ 多 $3$ 个。
 可添加 \texttt{assert sum(map(sum, sliding\_mask(5, 3))) == 12}。
-\item[\textbf{C-112.}] \leavevmode\phantomsection\label{solution:C-112}\label{solution:gqa-cache-ratio}\hyperref[exercise:gqa-cache-ratio]{\textbf{第一步：}}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。\par\nobreak
+\item[\textbf{C-118.}] \leavevmode\phantomsection\label{solution:C-118}\label{solution:gqa-cache-ratio}\hyperref[exercise:gqa-cache-ratio]{\textbf{第一步：}}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。\par\nobreak
 \textbf{解答：} MHA：$2\times120\times6\times4=5{,}760$ 个数；
 GQA：$2\times120\times2\times4=1{,}920$ 个数；
 每个两字节时是 $3{,}840$ 字节（仅本层这些缓存数值）。\par\textbf{核对：}先区分“几个数”与“多少字节”：GQA 的 $1920$ 个元素需再乘 $2$ 字节。缓存使用 K/V 头数，若仍把 Query 头数 $6$ 代入 GQA，就不会得到应有的三倍差别。
-\item[\textbf{C-113.}] \leavevmode\phantomsection\label{solution:C-113}\label{solution:rope-relative-position}\hyperref[exercise:rope-relative-position]{\textbf{第一步：}}Query 旋转 $m\theta$、Key 旋转 $n\theta$；点积只依赖两者之间的夹角。\par\nobreak
+\item[\textbf{C-119.}] \leavevmode\phantomsection\label{solution:C-119}\label{solution:rope-relative-position}\hyperref[exercise:rope-relative-position]{\textbf{第一步：}}Query 旋转 $m\theta$、Key 旋转 $n\theta$；点积只依赖两者之间的夹角。\par\nobreak
 \textbf{解答：} 相对角为 $(5-2)\theta=3\theta$。\par\textbf{核对：}可从 $(R_{m\theta}q)^\top R_{n\theta}k=q^\top R_{(n-m)\theta}k$ 核对旋转顺序。本题为 $(5-2)\theta$，若写成 $(2+5)\theta$，通常是漏掉了转置会将第一项旋转取反。
-\item[\textbf{C-114.}] \leavevmode\phantomsection\label{solution:C-114}\label{solution:architecture-fair-comparison}\hyperref[exercise:architecture-fair-comparison]{\textbf{第一步：}}先固定质量、数据、硬件和负载条件。\par\nobreak\textbf{解题过程：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。\par\textbf{评分要点：}(1)每次只改一个模块，其余配置相同；(2)质量与资源指标同时报告；(3)负载、长度、精度与硬件固定并写明；(4)多次运行给出波动或置信区间。\par\textbf{核对：}可分别记录相同质量阈值下的峰值显存与延迟，并对单项替换重复测量。缓存下降只支持缓存这一项改善；若质量、长度或硬件同时变化，就无法把总收益归因于所研究的模块。
+\item[\textbf{C-120.}] \leavevmode\phantomsection\label{solution:C-120}\label{solution:architecture-fair-comparison}\hyperref[exercise:architecture-fair-comparison]{\textbf{第一步：}}先固定质量、数据、硬件和负载条件。\par\nobreak\textbf{解题过程：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。\par\textbf{评分要点：}(1)每次只改一个模块，其余配置相同；(2)质量与资源指标同时报告；(3)负载、长度、精度与硬件固定并写明；(4)多次运行给出波动或置信区间。\par\textbf{核对：}可分别记录相同质量阈值下的峰值显存与延迟，并对单项替换重复测量。缓存下降只支持缓存这一项改善；若质量、长度或硬件同时变化，就无法把总收益归因于所研究的模块。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:23e-tech-judgement}~章 · 面对新模型与新缩写，怎么判断它值不值得学？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-115]{题目见第~\pageref*{exercise:C-115}~页起}）}}
+\subsubsection*{第~\ref*{intro:23e-tech-judgement}~章 · 面对新模型与新缩写，怎么判断它值不值得学？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-121]{题目见第~\pageref*{exercise:C-121}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-115.}] \leavevmode\phantomsection\label{solution:C-115}\label{solution:metric-percentage-points}\hyperref[exercise:metric-percentage-points]{\textbf{第一步：}}先分别除以同一个总题数，再相减。\par\nobreak
+\item[\textbf{C-121.}] \leavevmode\phantomsection\label{solution:C-121}\label{solution:metric-percentage-points}\hyperref[exercise:metric-percentage-points]{\textbf{第一步：}}先分别除以同一个总题数，再相减。\par\nobreak
 \textbf{解题过程：}准确率分别为 $80\%$、$82\%$，相差 $\answerresult{2}$ 个百分点。这里报告的是准确率的绝对差；相对于 A 的增幅才是 $20/800=2.5\%$。
-\item[\textbf{C-116.}] \leavevmode\phantomsection\label{solution:C-116}\label{solution:benchmark-count-gap}\hyperref[exercise:benchmark-count-gap]{\textbf{第一步：}}用 $\sqrt{p(1-p)/n}$ 估计标准误，再与差值比较。\par\nobreak
+\item[\textbf{C-122.}] \leavevmode\phantomsection\label{solution:C-122}\label{solution:benchmark-count-gap}\hyperref[exercise:benchmark-count-gap]{\textbf{第一步：}}用 $\sqrt{p(1-p)/n}$ 估计标准误，再与差值比较。\par\nobreak
 \textbf{解题过程：}$\sqrt{0.81\times0.19/500}\approx0.0175$，约 $1.8$ 个百分点；若按两份独立估计近似，差值的标准误约 $2.5$ 个百分点，$0.8$ 远小于它，不能断言前者更好。还应做同题配对比较、报告多次运行的波动，并排查评测污染与提示格式差异。
-\item[\textbf{C-117.}] \leavevmode\phantomsection\label{solution:C-117}\label{solution:production-architecture-evaluation}\hyperref[exercise:production-architecture-evaluation]{\textbf{第一步：}}先写出双方共用的测试条件表。\par\nobreak\textbf{解题过程：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。\par\textbf{评分要点：}(1)至少四项可复现的控制条件；(2)同时报告质量与延迟、吞吐、显存、成本；(3)说明榜单可能受污染或与业务分布不同；(4)给出失败案例或统计波动。\par\textbf{核对：}可用同一批业务输入先比较质量、失败类型与服务延迟，再核算给定并发下的总成本。只列四个指标名称而不给双方共用的条件，仍不能复现实验；榜单任务与实际业务不一致时，还需业务验证集。
+\item[\textbf{C-123.}] \leavevmode\phantomsection\label{solution:C-123}\label{solution:production-architecture-evaluation}\hyperref[exercise:production-architecture-evaluation]{\textbf{第一步：}}先写出双方共用的测试条件表。\par\nobreak\textbf{解题过程：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。\par\textbf{评分要点：}(1)至少四项可复现的控制条件；(2)同时报告质量与延迟、吞吐、显存、成本；(3)说明榜单可能受污染或与业务分布不同；(4)给出失败案例或统计波动。\par\textbf{核对：}可用同一批业务输入先比较质量、失败类型与服务延迟，再核算给定并发下的总成本。只列四个指标名称而不给双方共用的条件，仍不能复现实验；榜单任务与实际业务不一致时，还需业务验证集。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:19-cnn}~章 · CNN：怎样用局部连接与参数共享处理图片？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-118]{题目见第~\pageref*{exercise:C-118}~页起}）}}
+\subsubsection*{第~\ref*{intro:19-cnn}~章 · CNN：怎样用局部连接与参数共享处理图片？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-124]{题目见第~\pageref*{exercise:C-124}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-118.}] \leavevmode\phantomsection\label{solution:C-118}\label{solution:convolution-output-shape}\hyperref[exercise:convolution-output-shape]{\textbf{第一步：}}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。\par\nobreak
+\item[\textbf{C-124.}] \leavevmode\phantomsection\label{solution:C-124}\label{solution:convolution-output-shape}\hyperref[exercise:convolution-output-shape]{\textbf{第一步：}}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。\par\nobreak
 \textbf{解答：} 宽高为 $3\times3$；卷积核权重 $2\times2=4$ 个（不含偏置）。
-\item[\textbf{C-119.}] \leavevmode\phantomsection\label{solution:C-119}\label{solution:convolution-shared-kernel}\hyperref[exercise:convolution-shared-kernel]{\textbf{第一步：}}分别取左上与右上两个 $2\times2$ 窗口，各与同一个核对应相乘。\par\nobreak
+\item[\textbf{C-125.}] \leavevmode\phantomsection\label{solution:C-125}\label{solution:convolution-shared-kernel}\hyperref[exercise:convolution-shared-kernel]{\textbf{第一步：}}分别取左上与右上两个 $2\times2$ 窗口，各与同一个核对应相乘。\par\nobreak
 \textbf{解题过程：}左上输出为 $1\times1+2\times0+0\times0+1\times(-1)=\answerresult{0}$；右上输出为 $2\times1+0\times0+1\times0+3\times(-1)=\answerresult{-1}$。两个位置共用一组 $4$ 个核权重，不是各有一组；输入窗口不同，输出可以不同。
-\item[\textbf{C-120.}] \leavevmode\phantomsection\label{solution:C-120}\label{solution:pooling-detail-loss}\hyperref[exercise:pooling-detail-loss]{\textbf{第一步：}}先看下采样保留了哪些空间信息。\par\nobreak\textbf{解题过程：}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。\par\textbf{核对：}例如 $2\times2$ 窗口取平均后，不同像素排列可能得到同一数值，位置差异已丢失。若任务要定位小物体，仅报告更小的特征图不足以说明这种下采样合适，还要检验目标是否仍可识别。
+\item[\textbf{C-126.}] \leavevmode\phantomsection\label{solution:C-126}\label{solution:pooling-detail-loss}\hyperref[exercise:pooling-detail-loss]{\textbf{第一步：}}先看下采样保留了哪些空间信息。\par\nobreak\textbf{解题过程：}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。\par\textbf{核对：}例如 $2\times2$ 窗口取平均后，不同像素排列可能得到同一数值，位置差异已丢失。若任务要定位小物体，仅报告更小的特征图不足以说明这种下采样合适，还要检验目标是否仍可识别。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:19b-vit}~章 · 从 CNN 到 ViT：如何把图片变成一串 Token？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-121]{题目见第~\pageref*{exercise:C-121}~页起}）}}
+\subsubsection*{第~\ref*{intro:19b-vit}~章 · 从 CNN 到 ViT：如何把图片变成一串 Token？\enspace{\mdseries\footnotesize（\hyperref[exercise:C-127]{题目见第~\pageref*{exercise:C-127}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-121.}] \leavevmode\phantomsection\label{solution:C-121}\label{solution:rectangular-patch-count}\hyperref[exercise:rectangular-patch-count]{\textbf{第一步：}}分别数高、宽方向能切几块，再相乘。\par\nobreak
+\item[\textbf{C-127.}] \leavevmode\phantomsection\label{solution:C-127}\label{solution:rectangular-patch-count}\hyperref[exercise:rectangular-patch-count]{\textbf{第一步：}}分别数高、宽方向能切几块，再相乘。\par\nobreak
 \textbf{解题过程：}共有 $(48/8)\times(32/8)=6\times4=\answerresult{24}$ 个 Patch。RGB 的三个通道都属于每个 Patch，不把 Patch 数再乘 $3$。
-\item[\textbf{C-122.}] \leavevmode\phantomsection\label{solution:C-122}\label{solution:vit-spatial-order}\hyperref[exercise:vit-spatial-order]{\textbf{第一步：}}先问平均后是否还能定位原来的区域。\par\nobreak\textbf{解题过程：}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。\par\textbf{核对：}将左上与右下两个 Patch 交换，四条向量的无序平均不变，但问题的正确答案可能改变。这提供了一个直接反例：平均后的表示无法区分两幅图。
-\item[\textbf{C-123.}] \leavevmode\phantomsection\label{solution:C-123}\label{solution:patch-projection-count}\hyperref[exercise:patch-projection-count]{\textbf{第一步：}}先数行、列方向各能切几块，再把一块的高、宽、通道数相乘。\par\nobreak
+\item[\textbf{C-128.}] \leavevmode\phantomsection\label{solution:C-128}\label{solution:vit-spatial-order}\hyperref[exercise:vit-spatial-order]{\textbf{第一步：}}先问平均后是否还能定位原来的区域。\par\nobreak\textbf{解题过程：}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。\par\textbf{核对：}将左上与右下两个 Patch 交换，四条向量的无序平均不变，但问题的正确答案可能改变。这提供了一个直接反例：平均后的表示无法区分两幅图。
+\item[\textbf{C-129.}] \leavevmode\phantomsection\label{solution:C-129}\label{solution:patch-projection-count}\hyperref[exercise:patch-projection-count]{\textbf{第一步：}}先数行、列方向各能切几块，再把一块的高、宽、通道数相乘。\par\nobreak
 \textbf{解答：}$(32/8)^2=16$ 个 Patch；每块展平为 $8\times8\times3=192$；投影矩阵 $192\times64$，共 $\answerresult{12{,}288}$ 个权重，所有 Patch 共用；加 CLS 后序列长度为 $17$。\par\textbf{核对：}Patch 数 $16$ 与每块宽度 $192$ 分别是序列轴和特征轴。投影权重由所有 Patch 共用，因此只数 $192\times64$，不再乘 $16$；CLS 只使序列多一行。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:04-key-value-outer-product}~章 · 线性联想记忆：写入、串扰与误差修正\enspace{\mdseries\footnotesize（\hyperref[exercise:C-124]{题目见第~\pageref*{exercise:C-124}~页起}）}}
+\subsubsection*{第~\ref*{intro:04-key-value-outer-product}~章 · 线性联想记忆：写入、串扰与误差修正\enspace{\mdseries\footnotesize（\hyperref[exercise:C-130]{题目见第~\pageref*{exercise:C-130}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-124.}] \leavevmode\phantomsection\label{solution:C-124}\label{solution:memory-single-write}\hyperref[exercise:memory-single-write]{\textbf{第一步：}}先用 Key 的每个分量分别乘整条 Value，形成状态矩阵的两行。\par\nobreak
+\item[\textbf{C-130.}] \leavevmode\phantomsection\label{solution:C-130}\label{solution:memory-single-write}\hyperref[exercise:memory-single-write]{\textbf{第一步：}}先用 Key 的每个分量分别乘整条 Value，形成状态矩阵的两行。\par\nobreak
 \textbf{解题过程：}$\mathcal{M}=\begin{bmatrix}1.2&-0.6\\1.6&-0.8\end{bmatrix}$；读取结果为 $(0.6\times1.2+0.8\times1.6,\,-0.6\times0.6-0.8\times0.8)=\answerresult{(2,-1)}$。一般有 $\vect k^\top\mathcal{M}=(\vect k^\top\vect k)\vect v^\top$；单位 Key 的自身点积为 $1$，所以读回 $\vect v^\top$。
-\item[\textbf{C-125.}] \leavevmode\phantomsection\label{solution:C-125}\label{solution:memory-cross-talk}\hyperref[exercise:memory-cross-talk]{\textbf{第一步：}}将查询对两条外积的读取分别展开，再相加。\par\nobreak
+\item[\textbf{C-131.}] \leavevmode\phantomsection\label{solution:C-131}\label{solution:memory-cross-talk}\hyperref[exercise:memory-cross-talk]{\textbf{第一步：}}将查询对两条外积的读取分别展开，再相加。\par\nobreak
 \textbf{解题过程：}$\mathcal{M}=\begin{bmatrix}1&0.6\\0&0.8\end{bmatrix}$，$\vect k_A^\top\mathcal{M}=\answerresult{(1,0.6)}$，多出的 $(0,0.6)$ 来自 B。一般交叉项是 $(\vect k_A^\top\vect k_B)\vect v_B^\top$；非零交叉点积把别条 Value 混进读出。
-\item[\textbf{C-126.}] \leavevmode\phantomsection\label{solution:C-126}\label{solution:memory-outer-shape}\hyperref[exercise:memory-outer-shape]{\textbf{第一步：}}先写出 $\vect{v}^\top$ 与 $\vect{k}$ 的形状，比较内侧维度。\par\nobreak
+\item[\textbf{C-132.}] \leavevmode\phantomsection\label{solution:C-132}\label{solution:memory-outer-shape}\hyperref[exercise:memory-outer-shape]{\textbf{第一步：}}先写出 $\vect{v}^\top$ 与 $\vect{k}$ 的形状，比较内侧维度。\par\nobreak
 \textbf{解题过程：}$\vect{v}^\top:1\times3$ 乘 $\vect{k}:2\times1$，内侧维度 $3\neq2$，无法相乘；正确写入 $\vect{k} \vect{v}^\top$ 为 $2\times3$，供 $\vect{q}^\top:1\times2$ 读出 $1\times3$。若 $d_k=d_v$，$\vect{v}^\top\vect{k}$ 是 $1\times1$ 标量（两向量的内积），不是 $d_k\times d_v$ 的状态矩阵。
-\item[\textbf{C-127.}] \leavevmode\phantomsection\label{solution:C-127}\label{solution:memory-write-strategies}\hyperref[exercise:memory-write-strategies]{\textbf{第一步：}}先检查修正 B 时会不会同时改变 A 的读出。\par\nobreak
+\item[\textbf{C-133.}] \leavevmode\phantomsection\label{solution:C-133}\label{solution:memory-write-strategies}\hyperref[exercise:memory-write-strategies]{\textbf{第一步：}}先检查修正 B 时会不会同时改变 A 的读出。\par\nobreak
 \textbf{解题过程：}接近正交会减小不同 Key 的交叉点积；Delta 写入则按当前读出与目标 Value 的差补写。非正交时，修正新记忆也可能扰动旧记忆，因此单遍修正不保证同时读准。可以监测全部读出误差并尝试反复校正；若 Key 与目标允许同一个线性状态精确表示，也可求联立方程。反复校正的收敛仍取决于更新规则与步长。
-\item[\textbf{C-128.}] \leavevmode\phantomsection\label{solution:C-128}\label{solution:delta-write-order}\hyperref[exercise:delta-write-order]{\textbf{第一步：}}依次写入 B、计算 A 的残差、再重读旧 B。\par\nobreak
+\item[\textbf{C-134.}] \leavevmode\phantomsection\label{solution:C-134}\label{solution:delta-write-order}\hyperref[exercise:delta-write-order]{\textbf{第一步：}}依次写入 B、计算 A 的残差、再重读旧 B。\par\nobreak
 \textbf{解答：} 先写 B 得
 $\mathcal{M}_1=\vect{k}_B \vect{v}_B^\top=\begin{bmatrix}0&0.6\\0&0.8\end{bmatrix}$；
 再写 A 时，$\vect{k}_A^\top\mathcal{M}_1=(0,0.6)$，残差
@@ -412,26 +426,27 @@ $\mathcal{M}_2=\mathcal{M}_1+\vect{k}_A \vect{r}_A^\top=
 不能推断两条同时精确。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:09-nonlinearity-and-memory}~章 · 非线性检索：从 MLP 视角到记忆容量\enspace{\mdseries\footnotesize（\hyperref[exercise:C-129]{题目见第~\pageref*{exercise:C-129}~页起}）}}
+\subsubsection*{第~\ref*{intro:09-nonlinearity-and-memory}~章 · 非线性检索：从 MLP 视角到记忆容量\enspace{\mdseries\footnotesize（\hyperref[exercise:C-135]{题目见第~\pageref*{exercise:C-135}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-129.}] \leavevmode\phantomsection\label{solution:C-129}\label{solution:memory-relu-read}\hyperref[exercise:memory-relu-read]{\textbf{第一步：}}先让 $\vect{x}^\top$ 分别与 $K$ 的两行做点积，再逐项过 ReLU。\par\nobreak
+\item[\textbf{C-135.}] \leavevmode\phantomsection\label{solution:C-135}\label{solution:memory-relu-read}\hyperref[exercise:memory-relu-read]{\textbf{第一步：}}先让 $\vect{x}^\top$ 分别与 $K$ 的两行做点积，再逐项过 ReLU。\par\nobreak
 \textbf{解答：}$\vect{x}^\top K^\top=(1-2,\,3-1)=(-1,2)$，所以 $\relu(\vect{x}^\top K^\top)=\answerresult{(0,2)}$：负匹配的第 1 条记忆被关闭，第 2 条按分数 $2$ 保留。
-\item[\textbf{C-130.}] \leavevmode\phantomsection\label{solution:C-130}\label{solution:memory-pairing-shape}\hyperref[exercise:memory-pairing-shape]{\textbf{第一步：}}先核对权重列数与 Value 行数。\par\nobreak\textbf{解题过程：}四条 Key 会得到 $1\times4$ 匹配权重，而三条 Value 只有三行，$1\times4$ 与 $3\times4$ 不能相乘。\par\textbf{核对：}Key 的第 $i$ 行权重必须乘同一条记录的第 $i$ 行 Value。若为了让形状相乘而随意补一行，仍没有说明缺少的第 $4$ 条 Value 来自哪条记忆；应先修正配对数据。
-\item[\textbf{C-131.}] \leavevmode\phantomsection\label{solution:C-131}\label{solution:memory-selectivity}\hyperref[exercise:memory-selectivity]{\textbf{第一步：}}先比较幂运算后的弱／强比值；Softmax 则比较两个指数的商。\par\nobreak
+\item[\textbf{C-136.}] \leavevmode\phantomsection\label{solution:C-136}\label{solution:memory-pairing-shape}\hyperref[exercise:memory-pairing-shape]{\textbf{第一步：}}先核对权重列数与 Value 行数。\par\nobreak\textbf{解题过程：}四条 Key 会得到 $1\times4$ 匹配权重，而三条 Value 只有三行，$1\times4$ 与 $3\times4$ 不能相乘。\par\textbf{核对：}Key 的第 $i$ 行权重必须乘同一条记录的第 $i$ 行 Value。若为了让形状相乘而随意补一行，仍没有说明缺少的第 $4$ 条 Value 来自哪条记忆；应先修正配对数据。
+\item[\textbf{C-137.}] \leavevmode\phantomsection\label{solution:C-137}\label{solution:memory-selectivity}\hyperref[exercise:memory-selectivity]{\textbf{第一步：}}先比较幂运算后的弱／强比值；Softmax 则比较两个指数的商。\par\nobreak
 \textbf{解题过程：}幂运算后的弱／强比值依次为 $\answerresult{0.5,0.25,0.125}$，强匹配仍为 $1$。Softmax 的第一条与第二条权重之比为 $e^{\beta(1-0.6)}$，从 $e^{0.4}$ 增至 $e^{0.8}$，因此第一条权重上升。这两种方法都让已有分数的差异更突出；本题的幂运算比较限于 $[0,1]$ 内的非负分数。\par\textbf{核对：}幂运算的比较用的是本题给定的 $[0,1]$ 非负分数。若忽略这个条件，例如把绝对值大于 $1$ 的分数也解释成“越乘越小”，结论就会反过来。Softmax 则应比较归一化后的相对权重，而不是只看指数是否增大。
-\item[\textbf{C-132.}] \leavevmode\phantomsection\label{solution:C-132}\label{solution:memory-mlp-interpretation}\hyperref[exercise:memory-mlp-interpretation]{\textbf{第一步：}}先区分对计算机制的解释与对输出事实的验证。\par\nobreak
+\item[\textbf{C-138.}] \leavevmode\phantomsection\label{solution:C-138}\label{solution:memory-mlp-interpretation}\hyperref[exercise:memory-mlp-interpretation]{\textbf{第一步：}}先区分对计算机制的解释与对输出事实的验证。\par\nobreak
 \textbf{解题过程：}这种对应把各隐藏分量的激活和输出贡献联系起来，帮助理解网络怎样组合特征。它并未建立单个神经元与一条真实事实的一一对应。确认回答仍要核查原始来源、语境与实际输出；单个激活不是事实证据。
-\item[\textbf{C-133.}] \leavevmode\phantomsection\label{solution:C-133}\label{solution:memory-random-capacity}\hyperref[exercise:memory-random-capacity]{\textbf{第一步：}}先用正交向量条数不超过维度，区分精确上限与随机量级估计。\par\nobreak
+\item[\textbf{C-139.}] \leavevmode\phantomsection\label{solution:C-139}\label{solution:memory-random-capacity}\hyperref[exercise:memory-random-capacity]{\textbf{第一步：}}先用正交向量条数不超过维度，区分精确上限与随机量级估计。\par\nobreak
 \textbf{解题过程：}最多 $4$ 条；前四条若两两正交，第 $5$ 条非零 Key 必与其中某条有非零点积。随机交叉点积的典型量级分别为 $\answerresult{0.125}$ 与 $\answerresult{0.03125}$。应用于真实模型前，应检查真实 Key 的相关性是否符合随机假设，并测随记忆数变化的读出误差及 Value 尺度；维度量级不能直接解释成能记住的可靠事实数。
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{附录 A · 优化器\enspace{\mdseries\footnotesize（\hyperref[exercise:C-134]{题目见第~\pageref*{exercise:C-134}~页起}）}}
+\subsubsection*{附录 A · 优化器\enspace{\mdseries\footnotesize（\hyperref[exercise:C-140]{题目见第~\pageref*{exercise:C-140}~页起}）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{C-134.}] \leavevmode\phantomsection\label{solution:C-134}\label{solution:optimizer-clipping}\hyperref[exercise:optimizer-clipping]{\textbf{第一步：}}先求长度 $\sqrt{5^2+12^2}$，只有超过阈值才整体缩放。\par\nobreak
+\item[\textbf{C-140.}] \leavevmode\phantomsection\label{solution:C-140}\label{solution:optimizer-basic-step}\hyperref[exercise:optimizer-basic-step]{\textbf{第一步：}}保留梯度的负号，再计算“原参数减去学习率乘梯度”。\par\nobreak\textbf{解题过程：}$w_{\rm new}=2-0.1\times(-3)=\answerresult{2.3}$，参数增大 $0.3$。负梯度方向在这里指向较大的 $w$；不能把“下降”理解成每个参数的数值都变小。
+\item[\textbf{C-141.}] \leavevmode\phantomsection\label{solution:C-141}\label{solution:optimizer-clipping}\hyperref[exercise:optimizer-clipping]{\textbf{第一步：}}先求长度 $\sqrt{5^2+12^2}$，只有超过阈值才整体缩放。\par\nobreak
 \textbf{解题过程：}$\|(5,12)\|_2=13$，乘 $6.5/13=0.5$ 得 $\answerresult{(2.5,6)}$，方向不变；阈值为 $20$ 时长度未超限，梯度保持 $(5,12)$。梯度裁剪作用于更新前的梯度，不是对预测概率归一化。高级优化器手算见附录 A。
-\item[\textbf{C-135.}] \leavevmode\phantomsection\label{solution:C-135}\label{solution:optimizer-warmup}\hyperref[exercise:optimizer-warmup]{\textbf{第一步：}}每一步先用上一步的 $w$ 重新算梯度，再乘该步的学习率。\par\nobreak
+\item[\textbf{C-142.}] \leavevmode\phantomsection\label{solution:C-142}\label{solution:optimizer-warmup}\hyperref[exercise:optimizer-warmup]{\textbf{第一步：}}每一步先用上一步的 $w$ 重新算梯度，再乘该步的学习率。\par\nobreak
 \textbf{解题过程：}$w_1=1-0.01\times2=\answerresult{0.98}$，$w_2=0.98(1-0.04)=\answerresult{0.9408}$，$w_3=0.9408(1-0.06)\approx\answerresult{0.8844}$。恒定 $\eta=0.03$ 时 $w_3=0.94^3\approx0.8306$，下降更快。Warmup 只改变步长 $\eta_t$，不更换损失函数；初期步子小，前几步下降也较慢。
-\item[\textbf{C-136.}] \leavevmode\phantomsection\label{solution:C-136}\label{solution:optimizer-adamw}\hyperref[exercise:optimizer-adamw]{\textbf{第一步：}}第一步偏置校正后 $\widehat{m}_1/\sqrt{\widehat{v}_1}=g_1/|g_1|$，先算出这一方向。\par\nobreak
+\item[\textbf{C-143.}] \leavevmode\phantomsection\label{solution:C-143}\label{solution:optimizer-adamw}\hyperref[exercise:optimizer-adamw]{\textbf{第一步：}}第一步偏置校正后 $\widehat{m}_1/\sqrt{\widehat{v}_1}=g_1/|g_1|$，先算出这一方向。\par\nobreak
 \textbf{解题过程：}（a）方向为 $1$，$w_1=(1-0.1\times0.05)\times4-0.1\times1=\answerresult{3.88}$。（b）$g_1'=0.5+0.2=0.7$，但 $\widehat{m}_1/\sqrt{\widehat{v}_1}=0.7/0.7=1$，$w_1=4-0.1=\answerresult{3.9}$：衰减在第一步被自适应归一化抵消。AdamW 把缩小项放在梯度统计之外，才保证每步都按 $\eta\lambda w$ 衰减。
 \end{enumerate}
 \Needspace{6\baselineskip}

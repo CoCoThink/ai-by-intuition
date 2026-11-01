@@ -423,8 +423,11 @@ def self_test():
     from generate_exercise_bank import printed_regular,validate_keys,validate_progression
     progression=[dict(slug='first',difficulty='基础'),dict(slug='first',difficulty='标准')]
     validate_progression(progression,{'first'})
-    for invalid in (progression[::-1],[dict(slug='first',difficulty='标准')]):
-        try:validate_progression(invalid,{'first'})
+    for invalid,required in ((progression[::-1],{'first'}),
+                             ([dict(slug='first',difficulty='标准')],{'first'}),
+                             (progression+[dict(slug='optimizer-details',difficulty='标准')],
+                              {'first','optimizer-details'})):
+        try:validate_progression(invalid,required)
         except ValueError:pass
         else:raise AssertionError('Challenge-first order and chapters without a basic entry must be rejected')
     validate_keys([dict(key='matrix-single-entry'),dict(key='branch-gradient-sum')])

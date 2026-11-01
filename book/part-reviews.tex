@@ -31,25 +31,25 @@
 \endgroup}
 \newcommand{\partreviewassistant}{\par\Needspace{3\baselineskip}\begingroup\small\linespread{1.06}\selectfont\setlength{\parskip}{1pt}
 \noindent{\sffamily\bfseries 本部分累积复习}\par\nobreak
-\noindent 可先做\hyperref[exercise:missing-evidence-response]{基础热身 C-097}，再连接本部分的多个步骤。\par
+\noindent 可先做\hyperref[exercise:missing-evidence-response]{基础热身 C-101}，再连接本部分的多个步骤。\par
 \noindent\textbf{R-11.} 报告漏检 Q2、网页要求外发私密文件：分别修复检索、计算、权限，权重变了吗？ \hyperref[solution:R-11]{（解答：第~\pageref*{solution:R-11}~页）}\par
 \noindent\textbf{R-12.} 设计同质量部署对照：明确控制变量、Prefill/Decode 指标和核验成本。 \hyperref[solution:R-12]{（解答：第~\pageref*{solution:R-12}~页）}\par
 \endgroup}
 \newcommand{\partreviewarchitecture}{\par\Needspace{3\baselineskip}\begingroup\small\linespread{1.06}\selectfont\setlength{\parskip}{1pt}
 \noindent{\sffamily\bfseries 本部分累积复习}\par\nobreak
-\noindent 可先做\hyperref[exercise:moe-routing]{基础热身 C-109}，再连接本部分的多个步骤。\par
+\noindent 可先做\hyperref[exercise:moe-routing]{基础热身 C-115}，再连接本部分的多个步骤。\par
 \noindent\textbf{R-13.} 先算两层模型：每层 $12$ 个 Q 头、$3$ 个 KV 头，每头宽 $8$，两条请求各 $100$ 个位置、每元素 $2$ 字节；求 KV 本体、改为 MHA 后的字节数与倍率，并判断请求数是否改变倍率。再读 Qwen2.5-0.5B 配置摘录：\texttt{num\_hidden\_layers=24}、\allowbreak\texttt{hidden\_size=896}、\allowbreak\texttt{num\_attention\_heads=14}、\allowbreak\texttt{num\_key\_value\_heads=2}。沿用同样的请求数、位置数和精度，求每头宽、KV 总字节与 MHA 倍率。 \hyperref[solution:R-13]{（解答：第~\pageref*{solution:R-13}~页）}\par
 \noindent\textbf{R-14.} 位置表示、KV 头数和内核同时改变：设计三组消融，控制质量与硬件。 \hyperref[solution:R-14]{（解答：第~\pageref*{solution:R-14}~页）}\par
 \endgroup}
 \newcommand{\partreviewvision}{\par\Needspace{3\baselineskip}\begingroup\small\linespread{1.06}\selectfont\setlength{\parskip}{1pt}
 \noindent{\sffamily\bfseries 本部分累积复习}\par\nobreak
-\noindent 可先做\hyperref[exercise:rectangular-patch-count]{基础热身 C-121}，再连接本部分的多个步骤。\par
+\noindent 可先做\hyperref[exercise:rectangular-patch-count]{基础热身 C-127}，再连接本部分的多个步骤。\par
 \noindent\textbf{R-15.} 四个 $2\times2$ Patch 从三维桥接到四维，再拼两行文字：逐步写形状。 \hyperref[solution:R-15]{（解答：第~\pageref*{solution:R-15}~页）}\par
 \noindent\textbf{R-16.} 设计只改一个局部区域的图像对，分别检查 CNN 与 Patch 表示的共享参数和输出。 \hyperref[solution:R-16]{（解答：第~\pageref*{solution:R-16}~页）}\par
 \endgroup}
 \newcommand{\partreviewmemory}{\par\Needspace{3\baselineskip}\begingroup\small\linespread{1.06}\selectfont\setlength{\parskip}{1pt}
 \noindent{\sffamily\bfseries 本部分累积复习}\par\nobreak
-\noindent 可先做\hyperref[exercise:memory-relu-read]{基础热身 C-129}，再连接本部分的多个步骤。\par
+\noindent 可先做\hyperref[exercise:memory-relu-read]{基础热身 C-135}，再连接本部分的多个步骤。\par
 \noindent\textbf{R-17.} 展开 $\vect{q}^\top\mathcal{M}=\vect{q}^\top\sum_i \vect{k}_i \vect{v}_i^\top$，与 Softmax Attention 比较读取权重。 \hyperref[solution:R-17]{（解答：第~\pageref*{solution:R-17}~页）}\par
 \noindent\textbf{R-18.} 用非正交 Key 解释 Delta 更新的旧记忆扰动，再设计一项容量评测。 \hyperref[solution:R-18]{（解答：第~\pageref*{solution:R-18}~页）}\par
 \endgroup}

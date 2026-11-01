@@ -362,8 +362,8 @@
   {
     "id": "C-037",
     "key": "token-id-lookup",
-    "slug": "20a-tokenizer",
     "owner": "intro:20a-tokenizer",
+    "slug": "20a-tokenizer",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【查词表】} 分词结果是“花／开了／。”，给定这三项的 Token ID 分别为 $4,5,3$。写出送入模型的 ID 序列。这里是否需要按数字大小重新排序？",
@@ -492,8 +492,8 @@
   {
     "id": "C-050",
     "key": "rnn-one-step",
-    "slug": "21-rnn",
     "owner": "intro:21a-context-gap",
+    "slug": "21-rnn",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【一次状态更新】} 标量 RNN 使用 $h_t=x_t+0.5h_{t-1}$。已知上一步状态为 $2$，当前输入为 $3$，求新的状态。",
@@ -712,8 +712,8 @@
   {
     "id": "C-072",
     "key": "probability-row-greedy",
-    "slug": "22b-token-to-output",
     "owner": "intro:22b-token-to-output",
+    "slug": "22b-token-to-output",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【读一行概率】} 输出概率矩阵的最后一行为 $(0.05,0.15,0.10,0.60,0.10)$，五列依次对应词表 ID $1$ 到 $5$。若选择概率最大的 Token，应得到哪个 ID？",
@@ -821,16 +821,36 @@
   },
   {
     "id": "C-083",
+    "key": "joint-prefix-loss-floor",
+    "owner": "intro:22c-language-training",
+    "slug": "22c-language-training",
+    "difficulty": "挑战",
+    "minutes": 40,
+    "question": "\\textbf{【开放实验：双句联合训练】}用同一组主例初值同时训练两条等权样本：输入／目标分别为 $[2,4,5]/[4,5,3]$ 与 $[2,5,4]/[5,4,3]$。每句的损失仍按三个位置平均，再对两句取平均；学习率 $0.04$，训练 $200$ 次同步更新。先推导一个正的损失下界，再实现两句梯度的平均，记录第 $0,20,200$ 步的损失与首位置概率。交付推导、曲线和至少一项梯度验算；解释为什么两句不能都在首位置贪心预测正确。",
+    "solution": "\\textbf{第一步：}找出两句完全相同的可见前缀，以及这个前缀对应的两个不同目标。\\par\\nobreak\\textbf{解题过程：}因果 Mask 下，首位置都只看到 ID 2，必须输出同一分布。设它给目标 ID 4、5 的概率为 $p_4,p_5$；由 $p_4+p_5\\le1$，首位置的两句平均损失 $-\\tfrac12\\ln(p_4p_5)\\ge\\ln2$。另外四项交叉熵非负，所以全体六个位置的平均损失至少为 $\\answerresult{\\ln2/3}\\approx0.231049$。这是任何确定性因果预测器都要满足的下界，不保证这个有限模型能达到。一次更新须在同一组旧参数上分别计算 $G_1,G_2$，再令 $\\theta\\leftarrow\\theta-0.04(G_1+G_2)/2$。\\par 一种复算结果：第 $0,20,200$ 步损失约为 $2.117434,1.371395,\\answerresult{0.261142}$；末步首位置给 ID 4、5 的概率约为 $0.480729,0.512150$，两句首位置都猜 ID 5，故其中一句必错。运行 \\path{scripts/advanced_exercise_demo.py} 可核对。\\par\\textbf{验收与错因：}核验两个首位置的整行概率相同，并用联合损失的有限差分检查一项参数梯度。若损失低于下界，先查未来信息是否泄漏、两句是否真的共用参数、损失是否仍除以六；先更新第一句再计算第二句不再是题设的同步全批次更新。"
+  },
+  {
+    "id": "C-084",
+    "key": "attention-causal-intervention",
+    "owner": "intro:22c-language-training",
+    "slug": "22c-language-training",
+    "difficulty": "挑战",
+    "minutes": 40,
+    "question": "\\textbf{【开放实验：权重大就有帮助吗？】}用主例初值与学习率训练 $20$ 步后冻结全部参数。只干预第三位置的读取权重：方案 A 将 $A_{3,2}$ 置零并把该行其余权重重新归一化；方案 B 将第三行改成 $(1/3,1/3,1/3)$。保留原有 Value、残差输入和其他位置，从读取结果开始重算后续 FFN 与输出头。交付三组第三位置正确类概率、单位置损失，以及你对“读花的权重大，所以它降低了本次损失”的判断；再提出一个需要额外样本才能检验的结论。",
+    "solution": "\\textbf{第一步：}固定已训练参数，只改变读取系数，区分单位置损失与三位置平均损失。\\par\\nobreak\\textbf{解题过程：}第三位置目标是句号 ID 3。各方案的（正确类概率，单位置损失）约为\n\\[\n\\begin{aligned}\n\\text{原模型：}&\\quad(\\answerresult{0.582945},\\answerresult{0.539662}),\\\\\n\\text{方案 A：}&\\quad(\\answerresult{0.624290},\\answerresult{0.471139}),\\\\\n\\text{方案 B：}&\\quad(\\answerresult{0.520865},\\answerresult{0.652265}).\n\\end{aligned}\n\\]\n因此本例去掉对“花”的这一路读取反而降低损失；权重大小本身不能确定这一路对最终目标的净贡献。复算见 \\path{scripts/advanced_exercise_demo.py}。\\par\\textbf{验收与错因：}重算 $r=X+(AV)W_O$、$h=r+\\relu(\\operatorname{LN}(r)W_{\\rm up})W_{\\rm down}$ 和输出概率，检查前两行不变。仅把某个输出概率改掉，或干预后重新训练，都没有隔离这次读取的影响；方案 A 还同时增加了其余位置的相对权重。可进一步在多条带不同干扰项的样本上重复检验，但单句干预只支持该模型、该输入与该干预下的结论。"
+  },
+  {
+    "id": "C-085",
     "key": "generation-prefix-append",
-    "slug": "23-llm-systems",
     "owner": "intro:23-llm-systems",
+    "slug": "23-llm-systems",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【追加一个 Token】} 当前前缀是 ID 序列 $[2,4]$，本轮选择了下一 Token ID $5$。若继续生成，下一轮的输入前缀是什么？",
     "solution": "\\textbf{第一步：}保留已有前缀，把新选出的 ID 接在末尾。\\par\\nobreak\n\\textbf{解题过程：}下一轮输入前缀是 $\\answerresult{[2,4,5]}$。每轮在旧前缀上追加新 Token，已有输入仍是下一步预测的上下文。"
   },
   {
-    "id": "C-084",
+    "id": "C-086",
     "key": "cached-next-token",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -840,7 +860,7 @@
     "solution": "\\textbf{第一步：}先分开数首次 Prefill 和追加一步的 K/V。\\par\\nobreak\\textbf{解题过程：}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。"
   },
   {
-    "id": "C-085",
+    "id": "C-087",
     "key": "context-window-memory",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -850,7 +870,7 @@
     "solution": "\\textbf{第一步：}先检查旧会话文本有没有进入本次上下文。\\par\\nobreak\\textbf{解题过程：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。"
   },
   {
-    "id": "C-086",
+    "id": "C-088",
     "key": "greedy-generation",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -860,17 +880,17 @@
     "solution": "\\textbf{第一步：}每一步只取最后一行概率最大的 ID，并把它接回输入。\\par\\nobreak\n\\textbf{解题过程：}实测依次得到 $4$（花，$p=0.8817$）、$5$（开了，$p=0.4566$）、$3$（。，$p=0.5829$），上下文变为 $[2,4,5,3]$。停止是因为教学位置表 $P_{\\rm pos}$ 只有 3 行，无法为第 4 个输入位置查表；这是长度上限，不表示模型学会了结束。"
   },
   {
-    "id": "C-087",
+    "id": "C-089",
     "key": "real-embedding-shape",
-    "slug": "23a-from-toy-to-gpt",
     "owner": "intro:23a-from-toy-to-gpt",
+    "slug": "23a-from-toy-to-gpt",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【读真实配置】} 给定 GPT-2 small 的词表大小 $50{,}257$、隐藏宽度 $768$。若每个 Token 的 Embedding 占一行，Embedding 矩阵的形状是什么？",
     "solution": "\\textbf{第一步：}行数对应词表项数，列数对应每个 Token 的特征宽度。\\par\\nobreak\n\\textbf{解题过程：}矩阵形状为 $\\answerresult{50{,}257\\times768}$。层数与注意力头数不决定这张查找表的行数。"
   },
   {
-    "id": "C-088",
+    "id": "C-090",
     "key": "uniform-baseline-interpretation",
     "owner": "intro:23a-from-toy-to-gpt",
     "slug": "23a-from-toy-to-gpt",
@@ -880,7 +900,7 @@
     "solution": "\\textbf{第一步：}先检查初始 logits 是否均匀。\\par\\nobreak\\textbf{解题过程：}不构成代码错误证明；初值给出非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。\\par\\textbf{核对：}均匀基线只对应每个正确类概率都为 $1/5$。非均匀初值可能给正确类更小概率，从而损失超过 $\\ln5$。先用同一份参数、输入与目标复现每行概率，再判断是否有实现差异。"
   },
   {
-    "id": "C-089",
+    "id": "C-091",
     "key": "compute-token-budget",
     "owner": "intro:23a-from-toy-to-gpt",
     "slug": "23a-from-toy-to-gpt",
@@ -890,17 +910,17 @@
     "solution": "\\textbf{第一步：}先算一层 $12d^2$，再乘层数；宽度出现在平方项里。\\par\\nobreak\n\\textbf{解答：}$12\\times12\\times768^2=84{,}934{,}656$，约 $85$ M。宽度翻倍时每层 $12d^2$ 变为 $\\answerresult{4}$ 倍；层数翻倍只使总量变为 $2$ 倍。\\par\\textbf{核对：}这里的两个 $12$ 含义不同：一个是每层主导项的系数，一个是层数。把宽度翻倍后若只算两倍，通常是漏了平方；把结果当成全部模型参数，则遗漏了本题明确排除的词表、偏置与 Norm。"
   },
   {
-    "id": "C-090",
+    "id": "C-092",
     "key": "icl-context-budget",
-    "slug": "23aa-pretraining-icl",
     "owner": "intro:23aa-pretraining-icl",
+    "slug": "23aa-pretraining-icl",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【示例占多少上下文】} 一次冻结模型参数的 ICL 请求，原任务占 $8$ 个 Token，后来加了两条示例，每条各占 $6$ 个 Token。不另计分隔符，本次输入总长是多少？",
     "solution": "\\textbf{第一步：}把原任务与两条示例的 Token 数相加。\\par\\nobreak\n\\textbf{解题过程：}输入总长为 $8+2\\times6=\\answerresult{20}$ 个 Token。示例作为输入进入本次上下文，增加的是输入长度。"
   },
   {
-    "id": "C-091",
+    "id": "C-093",
     "key": "prompt-or-training",
     "owner": "intro:23aa-pretraining-icl",
     "slug": "23aa-pretraining-icl",
@@ -910,7 +930,7 @@
     "solution": "\\textbf{第一步：}先区分格式需求与新季度事实来源。\\par\\nobreak\\textbf{解题过程：}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。\\par\\textbf{核对：}一份可行方案是先用 Prompt 规定字段，再检索并核验本季度报告；只有当稳定格式需要反复学习时才考虑 SFT。把新季度数字写进模板，可以改变本次输入，不能代替对原始报告的核验。"
   },
   {
-    "id": "C-092",
+    "id": "C-094",
     "key": "icl-query-transfer",
     "owner": "intro:23aa-pretraining-icl",
     "slug": "23aa-pretraining-icl",
@@ -920,7 +940,7 @@
     "solution": "\\textbf{第一步：}先算缩放分数，再做 Softmax 与读出，最后乘输出头。\\par\\nobreak\n\\textbf{解题过程：}（a）$s=(0,\\ln9)$，$\\alpha=(0.1,0.9)$，读出 $(0.1,0.9)$，$Z=(0.5,4.5)$，$\\Pr(D)\\approx\\answerresult{0.982014}$，与查询 $A$ 的情形对称。（b）$s=(\\ln3,0)$，$\\alpha=(0.75,0.25)$，$Z=(3.75,1.25)$，$\\Pr(B)=1/(1+e^{-2.5})\\approx\\answerresult{0.924142}$。参数没变，查询与示例决定读出；匹配越弱，选择越不尖锐。"
   },
   {
-    "id": "C-093",
+    "id": "C-095",
     "key": "reference-policy-role",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -930,7 +950,7 @@
     "solution": "\\textbf{第一步：}看训练是否会更新权重，还是只改变当前上下文。\\par\\nobreak\n\\textbf{解答：} SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；\nCoT 提示改变输入或生成形式，本身保持参数固定。"
   },
   {
-    "id": "C-094",
+    "id": "C-096",
     "key": "reasoning-interventions",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -940,7 +960,7 @@
     "solution": "\\textbf{第一步：}逐项检查改变的是上下文、参数还是候选选择。\\par\\nobreak\\textbf{解题过程：}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。\\par\\textbf{核对：}可分别记录：Prompt 改的是输入；SFT 用示范序列更新权重；可验证奖励用结果评分参与训练。若只写“输出更像推理”，就没有说明改变发生在哪个环节，也没有验证步骤是否正确。"
   },
   {
-    "id": "C-095",
+    "id": "C-097",
     "key": "candidate-success-budget",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -950,7 +970,7 @@
     "solution": "\\textbf{第一步：}先要求全部失败的概率 $0.7^n\\le0.1$。\\par\\nobreak\n\\textbf{解题过程：}$n\\ge\\ln10/\\ln(1/0.7)\\approx6.456$，最少 $\\answerresult{7}$ 份：六份成功率 $1-0.7^6\\approx88.2\\%$，七份约 $91.8\\%$。完全相关时成功率仍只有 $30\\%$，复制结果没有独立试错收益。"
   },
   {
-    "id": "C-096",
+    "id": "C-098",
     "key": "faulty-verifier-limit",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -960,7 +980,27 @@
     "solution": "\\textbf{第一步：}先求“至少一份通过”的概率，再看第一份通过的候选是 42 的条件概率。\\par\\nobreak\\textbf{解题过程：}每份候选不通过的概率是 $1/4$，所以至少一份通过的概率为 $1-0.25^n$；第一份通过的候选在 41、42、43 中等可能，是 42 的概率为 $1/3$。于是 $P_n=(1-0.25^n)/3$：（a）$P_2=0.9375/3=\\answerresult{0.3125}$；（b）趋于 $\\answerresult{1/3}$；（c）验证器分不出 41、43 与 42，多采样只让“有候选通过”几乎必然发生，却不改变通过者中正确答案只占三分之一。要提高上限，得先改进验证器。"
   },
   {
-    "id": "C-097",
+    "id": "C-099",
+    "key": "verifier-budget-design",
+    "owner": "intro:23c-post-training",
+    "slug": "23c-post-training",
+    "difficulty": "挑战",
+    "minutes": 35,
+    "question": "\\textbf{【开放设计：把预算花在候选还是核验上？】}候选独立，单次正确率为 $0.3$；生成每份花 $1$ 个预算单位。粗验证每份再花 $1$，正确候选全通过、错误候选以 $0.2$ 的概率误过；严格验证每份再花 $2$，正确候选以 $0.8$ 的概率通过、错误候选全拒绝。各次验证结果条件独立。总预算上限为 $12$，系统交付第一份通过的候选，无通过则报未完成。设计并比较两种方案：算出最大候选数、正确交付率与错误交付率，再改变粗验证的误过率，给出你的选择何时改变。交付预算表和枚举或模拟结果。",
+    "solution": "\\textbf{第一步：}每份成本同时包含生成与验证；把“通过且正确”“通过但错误”“不通过”分开计数。\\par\\nobreak\\textbf{解题过程：}粗验证最多 $12/(1+1)=6$ 份，每份正确通过率 $a=0.3$，错误通过率 $b=0.7\\times0.2=0.14$。六份中正确交付概率为 $\\frac{a}{a+b}[1-(1-a-b)^6]\\approx\\answerresult{0.660790}$；错误交付概率为 $\\frac{b}{a+b}[1-(1-a-b)^6]\\approx\\answerresult{0.308369}$。严格验证最多四份，每份正确通过率 $0.3\\times0.8=0.24$，因此正确交付概率 $1-0.76^4\\approx\\answerresult{0.666378}$，错误交付率为零。按正确交付率比较，本例严格验证略优；若另给错误交付惩罚，还需按该目标重新评分。\\par\\textbf{一种验证方案：}枚举每份候选的三类事件，累加首个通过者的概率，见 \\path{scripts/advanced_exercise_demo.py}。把粗验证误过率改为 $0$ 时，六份的成功率为 $1-0.7^6\\approx0.882351$，选择便改变。\\par\\textbf{验收与错因：}每方案的正确交付、错误交付、未完成概率之和应为 $1$；达到预算上限即停止。不能用“至少有一份正确”代替交付成功，因为更早误过的错误候选会抢先被交付。"
+  },
+  {
+    "id": "C-100",
+    "key": "reward-verifier-audit",
+    "owner": "intro:23c-post-training",
+    "slug": "23c-post-training",
+    "difficulty": "挑战",
+    "minutes": 40,
+    "question": "\\textbf{【开放实验：奖励升高，答案会更对吗？】}沿用本章的三分类答案 $(42,41,50)$，初始 logits 全零，固定已采样答案为 $(42,41,42,50)$。真实任务是 $6\\times7$；正确验证器只接受 $42$，缺陷验证器却只检查“答案小于 $42$”。分别用总体标准差归一化组内奖励，按本章的简化损失 $-\\mathcal A_i\\ln p(y_i)$ 取平均，以学习率 $0.2$ 更新一步；本题不含策略概率比、裁剪或 KL 罚项。比较真实答案概率与缺陷验证器的通过概率，再设计一组不参与本步更新的核验用例来暴露奖励漏洞。交付梯度、概率和测试判据。",
+    "solution": "\\textbf{第一步：}先分别列出真实奖励和缺陷奖励，采样动作固定，优势也在求梯度时固定。\\par\\nobreak\\textbf{解题过程：}正确奖励为 $(1,0,1,0)$，优势为 $(1,-1,1,-1)$，平均梯度 $(-0.5,0.25,0.25)$；更新后正确答案概率约为 $\\answerresult{0.367456}$。缺陷奖励为 $(0,1,0,0)$，均值 $1/4$、总体标准差 $\\sqrt3/4$，优势为 $(-1/\\sqrt3,\\sqrt3,-1/\\sqrt3,-1/\\sqrt3)$。平均梯度约为 $(0.288675,-0.433013,0.144338)$，一步后答案 $(42,41,50)$ 的概率约为 $(\\answerresult{0.314015},\\answerresult{0.362773},0.323212)$：真实正确率下降，缺陷通过率却上升。复算见 \\path{scripts/advanced_exercise_demo.py}。\\par\\textbf{一种核验方案：}在更新之外，用准确乘法结果核查 $6\\times7$ 的答案 $40,41,42,43,50$，比较两个验证器的接受集合；40、41 被缺陷规则误收，42 被误拒。再检查其他乘法题是否按各自正确答案判定，而不是沿用阈值。\\par\\textbf{验收与错因：}分别报告训练奖励和独立判据下的正确率；奖励全相同时另处理零标准差。这里展示固定动作的一步代理梯度，不是完整 GRPO 训练，也不能据此推断多步训练的最终效果。"
+  },
+  {
+    "id": "C-101",
     "key": "missing-evidence-response",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -970,7 +1010,7 @@
     "solution": "\\textbf{第一步：}先标出缺失证据影响哪一步计算。\\par\\nobreak\\textbf{解题过程：}明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比。"
   },
   {
-    "id": "C-098",
+    "id": "C-102",
     "key": "rag-failure-modes",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -980,7 +1020,7 @@
     "solution": "\\textbf{第一步：}分别检查检索、来源和生成步骤可能引入的错误。\\par\\nobreak\n\\textbf{解答：} 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。\\par\\textbf{核对：}可以先核查检索是否含所需季度及版本，再把回答中的每个数字对应到原表。若检索漏了 Q2，即使引用了真实 Q1 文件，也仍不能据此补出 Q2。"
   },
   {
-    "id": "C-099",
+    "id": "C-103",
     "key": "quarterly-evidence-update",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -990,7 +1030,7 @@
     "solution": "\\textbf{第一步：}先固定相邻季度的分母，再分别算两个增长率。\\par\\nobreak\n\\textbf{解题过程：}Q2 环比为 $(125-100)/100=\\answerresult{25\\%}$；\nQ3 环比为 $(132-125)/125=\\answerresult{5.6\\%}$。\n仅修改 Prompt 输入数据不改变网络权重；\n实际执行 SFT 训练才会进行参数更新。"
   },
   {
-    "id": "C-100",
+    "id": "C-104",
     "key": "rag-query-ranking",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -1000,7 +1040,17 @@
     "solution": "\\textbf{第一步：}先把查询行向量右乘文档矩阵的转置，再排序。\\par\\nobreak\n\\textbf{解题过程：}$q=(0.2,1)$，\n$qD^\\top=(0.2\\cdot1+1\\cdot0,\\;0.2\\cdot0+1\\cdot1,\\;\n0.2\\cdot0.8+1\\cdot0.8)=(0.2,1,0.96)$。\nTop-2 为 Q2、Q3；\nQ1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核对。"
   },
   {
-    "id": "C-101",
+    "id": "C-105",
+    "key": "rag-versioned-evidence-audit",
+    "owner": "intro:23d-agent-systems",
+    "slug": "23d-agent-rag",
+    "difficulty": "挑战",
+    "minutes": 40,
+    "question": "\\textbf{【开放设计：证据齐了，口径仍会错吗？】}获授权材料包括：Q1 原表收入 $100$ 百万元；Q2 旧原表 $120$ 百万元；Q3 最新原表收入 $13{,}200$ 万元，附注将 Q2 重述为 $12{,}500$ 万元并明确 Q1 不变；另有排名最高的旧 Q3 摘要写 $130$ 百万元。任务要求按 Q3 最新披露的可比口径重算 Q2、Q3 环比。设计证据记录和计算流程，让每个结果追溯到原表及版本；给出数值，并注入至少三种故障检验流程。交付字段表、依赖关系与失败时的输出示例。",
+    "solution": "\\textbf{第一步：}先统一单位，再按题设的最新口径为三个季度选择数值，保留原值与重述来源。\\par\\nobreak\\textbf{解题过程：}转为百万元后，可比收入为 $(100,125,132)$，故 Q2 环比 $\\answerresult{25\\%}$，Q3 环比 $\\answerresult{5.6\\%}$。记录至少包括季度、原值、原单位、换算值、口径、报告版本、原表或附注位置；Q2 的 $125$ 来自 Q3 的重述附注，不能标成 Q2 旧表原值。两项环比分别依赖 Q1/Q2 与 Q2/Q3 的同口径证据，旧摘要的检索排名不改变题设来源优先级。\\par\\textbf{一种验收方案：}删除 Q3 最新原表时报告最新证据缺失，不用旧摘要补位；保留 Q3 收入却删除重述附注时标记 Q2 可比口径待核验；把万元误当百万元时由单位断言拦截。再构造两份同版本原表数值冲突，要求暂停依赖该字段的计算并请求核对。\\par\\textbf{核对：}最终答案同时列出数值、口径、来源与缺口；检索召回率为 $100\\%$ 仍不能替代版本选择和单位检查。"
+  },
+  {
+    "id": "C-106",
     "key": "fixed-workflow-audit",
     "owner": "intro:23d-agent-tools",
     "slug": "23d-agent-tools",
@@ -1010,7 +1060,7 @@
     "solution": "\\textbf{第一步：}先看步骤和输入格式能否预先确定。\\par\\nobreak\\textbf{解题过程：}固定 Workflow 更易测试、审计与限制成本。\\par\\textbf{评分要点：}(1)依据是步骤与输入格式能否预先确定；(2)Workflow 可逐步测试、日志可重放；(3)调用次数、成本与权限可预先限定；(4)指出例外：出现未知格式时再引入 Agent 或人工处理。"
   },
   {
-    "id": "C-102",
+    "id": "C-107",
     "key": "workflow-agent-choice",
     "owner": "intro:23d-agent-tools",
     "slug": "23d-agent-tools",
@@ -1020,7 +1070,17 @@
     "solution": "\\textbf{第一步：}判断任务是否有稳定步骤，及如何独立复核。\\par\\nobreak\n\\textbf{解答：} 示例：固定格式的发票字段抽取可以使用确定工作流并做字段校验；\n跨多种格式的资料比较可以用 Agent 选择读取工具，\n最终均需核对来源、单位与输出内容。\\par\\textbf{评分要点：}(1)固定任务写明可预先确定的步骤与格式；(2)动态任务说明为什么要按中间结果选择工具；(3)两者都给出可独立执行的验证，如字段校验、来源核对；(4)指出权限或成本边界。\\par\\textbf{核对：}例如固定月报可以依次解析、统一单位、计算、校验；未知格式材料可能需要模型先识别格式再选择工具。答案应同时给出验收条件，例如每个结果能追溯到输入字段，失败时明确返回缺口。"
   },
   {
-    "id": "C-103",
+    "id": "C-108",
+    "key": "agent-bounded-retry-design",
+    "owner": "intro:23d-agent-tools",
+    "slug": "23d-agent-tools",
+    "difficulty": "挑战",
+    "minutes": 45,
+    "question": "\\textbf{【开放设计：工具超时后怎样继续？】}以 \\path{scripts/agent_loop.py} 的离线报告任务为起点，让模型一次提出 Q1 至 Q3 三个读取请求；Q2 首次执行超时，应用可对超时请求重试一次。限制最多两次模型调用、四次工具执行，拒绝授权的请求不得执行或重试。设计状态机或伪代码，保留调用 ID 与来源，最终仍经应用核验。交付正常、一次超时后恢复、持续超时、Q2 权限拒绝、最终数字伪造五种注入测试的预期状态与调用计数规则。",
+    "solution": "\\textbf{第一步：}把模型调用预算与工具执行预算分开，先检查授权，再决定是否执行和重试。\\par\\nobreak\\textbf{解题过程：}一种方案：第一次模型调用提出三个不同 ID 的读取请求；应用逐项校验并执行，只有超时且尚未重试时才重试；每次实际执行都扣工具预算。每个调用 ID 最终向对话追加一条成功或失败的工具结果，内部尝试次数另记审计日志。三份证据成功后才进行第二次模型调用，随后由应用检查季度、单位、来源和环比。\\par\\textbf{预期验收：}正常路径为两次模型调用、三次工具执行；Q2 一次超时恢复为两次与四次，交付环比 $20\\%$、$10\\%$。若按 Q1、Q2、Q3 顺序执行且 Q2 持续超时，Q1 执行一次、Q2 执行两次后即停止，为一次模型调用、三次执行，状态未完成。Q2 权限拒绝时仍在第一次模型调用内终止，只执行过 Q1 一次，被拒绝的 Q2 执行次数为零，不能靠重试绕过；最终数字伪造时即使三份读取成功，也须在第二次模型调用后的应用核验中判为未完成。\\par\\textbf{核对：}预算包含失败执行；首次超时日志不能冒充成功工具结果，错误状态不能被模型自己的“完成”覆盖。测试还应断言每次响应关联正确的调用 ID，并检查越界前已停止；改变执行顺序或并行策略时，写明相应计数口径。"
+  },
+  {
+    "id": "C-109",
     "key": "retrieved-instruction-boundary",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1030,7 +1090,7 @@
     "solution": "\\textbf{第一步：}先区分工具返回数据与用户授权指令。\\par\\nobreak\n\\textbf{解答：} 那句话是\\textbf{不可信外部内容}而非用户授权指令；\n未经适当验证和明确授权，不应执行向陌生外部地址发送文件的动作。"
   },
   {
-    "id": "C-104",
+    "id": "C-110",
     "key": "source-permission-boundaries",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1040,7 +1100,7 @@
     "solution": "\\textbf{第一步：}把“排名高”“来源可信”“获得授权”拆成三个独立问题。\\par\\nobreak\n\\textbf{解答：}检索排名只反映与查询的相关程度，不等于来源可信或获得授权；网页内容是低信任数据，必须核验来源，并由应用层单独校验工具调用和外发权限。\\par\\textbf{核对：}可信来源可以提供合同事实，却仍没有替用户批准外发资料的权限。核查事实看原文、日期与出处；执行外部动作另查用户授权、目标地址与允许发送的内容。两项检查应分别给出结果。"
   },
   {
-    "id": "C-105",
+    "id": "C-111",
     "key": "skill-subagent-design",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1050,7 +1110,7 @@
     "solution": "\\textbf{第一步：}先列出 Skill 的交付物与子任务的验收条件。\\par\\nobreak\\textbf{解题过程：}Skill 记录报表字段、单位换算、出处格式和检查脚本；分派给 Subagent 的单位检查任务还需限定可读报告、返回字段及来源，由主任务复核后汇总。若三个文件格式和步骤固定，也可直接运行既定工作流。\\par\\textbf{核对：}具体可交付两项 Skill 材料：字段与单位对照表、带输入输出例子的核查脚本。单位检查子任务只读取指定报告，不外发、不改原文件；返回“文件与页码、字段、原值与原单位、换算值与目标单位、异常”供主任务核对。只写“返回检查结果”不足以让双方验证同一件事。"
   },
   {
-    "id": "C-106",
+    "id": "C-112",
     "key": "a2a-result-verification",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1060,7 +1120,7 @@
     "solution": "\\textbf{第一步：}先列出协议传输之外尚未解决的信任问题。\\par\\nobreak\\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。\\par\\textbf{核对：}可要求对方返回原表出处、页码、数值与单位；证据未补齐时，将该字段标为待核验并停止依赖它的计算。外发请求进入应用自身的授权检查，协议消息中的“成功”状态不能代替内容核验或用户批准。"
   },
   {
-    "id": "C-107",
+    "id": "C-113",
     "key": "weight-memory-budget",
     "owner": "intro:23b-deployment-and-ecosystem",
     "slug": "23b-deployment-and-ecosystem",
@@ -1070,7 +1130,7 @@
     "solution": "\\textbf{第一步：}参数个数乘每个参数的字节数；4 bit 是半个字节。\\par\\nobreak\n\\textbf{解答：}fp16 约 $14$ GB；4 bit 约 $\\answerresult{3.5}$ GB（未计量化缩放因子等元数据）。部署还需 KV Cache、激活与运行时缓冲，并随上下文长度和并发增长。"
   },
   {
-    "id": "C-108",
+    "id": "C-114",
     "key": "kv-cache-bytes",
     "owner": "intro:23b-deployment-and-ecosystem",
     "slug": "23b-deployment-and-ecosystem",
@@ -1080,7 +1140,7 @@
     "solution": "\\textbf{第一步：}先按 K/V、层、头、维、位置、字节展开。\\par\\nobreak\\textbf{解题过程：}$2\\text{(K/V)}\\cdot2\\text{层}\\cdot2\\text{头}\\cdot8\\text{维}\\cdot10\\text{位置}\\cdot2\\text{字节}=\\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。\\par\\textbf{核对：}先数 K 和 V 两份，再把层数、KV 头数、头宽、位置数和每元素字节数相乘。若得到 $640$，只是元素数，尚未乘两字节；若把权重内存也加进来，已经超出本题的缓存数据本体。"
   },
   {
-    "id": "C-109",
+    "id": "C-115",
     "key": "moe-routing",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1090,7 +1150,7 @@
     "solution": "\\textbf{第一步：}对分数排序即可确定 Top-1 与 Top-2。\\par\\nobreak\n\\textbf{解答：} Top-1 选专家 2；Top-2 选专家 2 和 3。\n每次只激活路由选中的专家。"
   },
   {
-    "id": "C-110",
+    "id": "C-116",
     "key": "sliding-window-pairs",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1100,7 +1160,7 @@
     "solution": "\\textbf{第一步：}窗口包含当前位置，前两行还未填满窗口。\\par\\nobreak\n\\textbf{解题过程：}五行可见位置数为 $(1,2,2,2,2)$，\n允许位置对总数 $1+2+2+2+2=\\answerresult{9}$；\n这里包含查询自己的当前位置。\\par\\textbf{核对：}逐行窗口只向左看，并包含当前位置。若得到 $10$，检查是否把第一行也当成已填满两个位置；若把当前位置排除，又会少数对角线。"
   },
   {
-    "id": "C-111",
+    "id": "C-117",
     "key": "sliding-window-code",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1110,7 +1170,7 @@
     "solution": "\\textbf{第一步：}修改窗口宽度，逐行数出允许位置对。\\par\\nobreak\n\\textbf{解题过程：}将 $w=3$ 代入五行因果滑窗，\n逐行可见位置数为 $(1,2,3,3,3)$，\n允许位置对共 $\\answerresult{12}$ 个，比 $w=2$ 多 $3$ 个。\n可添加 \\texttt{assert sum(map(sum, sliding\\_mask(5, 3))) == 12}。"
   },
   {
-    "id": "C-112",
+    "id": "C-118",
     "key": "gqa-cache-ratio",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1120,7 +1180,7 @@
     "solution": "\\textbf{第一步：}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。\\par\\nobreak\n\\textbf{解答：} MHA：$2\\times120\\times6\\times4=5{,}760$ 个数；\nGQA：$2\\times120\\times2\\times4=1{,}920$ 个数；\n每个两字节时是 $3{,}840$ 字节（仅本层这些缓存数值）。\\par\\textbf{核对：}先区分“几个数”与“多少字节”：GQA 的 $1920$ 个元素需再乘 $2$ 字节。缓存使用 K/V 头数，若仍把 Query 头数 $6$ 代入 GQA，就不会得到应有的三倍差别。"
   },
   {
-    "id": "C-113",
+    "id": "C-119",
     "key": "rope-relative-position",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1130,7 +1190,7 @@
     "solution": "\\textbf{第一步：}Query 旋转 $m\\theta$、Key 旋转 $n\\theta$；点积只依赖两者之间的夹角。\\par\\nobreak\n\\textbf{解答：} 相对角为 $(5-2)\\theta=3\\theta$。\\par\\textbf{核对：}可从 $(R_{m\\theta}q)^\\top R_{n\\theta}k=q^\\top R_{(n-m)\\theta}k$ 核对旋转顺序。本题为 $(5-2)\\theta$，若写成 $(2+5)\\theta$，通常是漏掉了转置会将第一项旋转取反。"
   },
   {
-    "id": "C-114",
+    "id": "C-120",
     "key": "architecture-fair-comparison",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1140,17 +1200,17 @@
     "solution": "\\textbf{第一步：}先固定质量、数据、硬件和负载条件。\\par\\nobreak\\textbf{解题过程：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。\\par\\textbf{评分要点：}(1)每次只改一个模块，其余配置相同；(2)质量与资源指标同时报告；(3)负载、长度、精度与硬件固定并写明；(4)多次运行给出波动或置信区间。\\par\\textbf{核对：}可分别记录相同质量阈值下的峰值显存与延迟，并对单项替换重复测量。缓存下降只支持缓存这一项改善；若质量、长度或硬件同时变化，就无法把总收益归因于所研究的模块。"
   },
   {
-    "id": "C-115",
+    "id": "C-121",
     "key": "metric-percentage-points",
-    "slug": "23e-tech-judgement",
     "owner": "intro:23e-tech-judgement",
+    "slug": "23e-tech-judgement",
     "difficulty": "基础",
     "minutes": 3,
     "question": "\\textbf{【先读懂指标】} 同一套 $1000$ 题，模型 A 答对 $800$ 题，模型 B 答对 $820$ 题。两者准确率相差几个百分点？",
     "solution": "\\textbf{第一步：}先分别除以同一个总题数，再相减。\\par\\nobreak\n\\textbf{解题过程：}准确率分别为 $80\\%$、$82\\%$，相差 $\\answerresult{2}$ 个百分点。这里报告的是准确率的绝对差；相对于 A 的增幅才是 $20/800=2.5\\%$。"
   },
   {
-    "id": "C-116",
+    "id": "C-122",
     "key": "benchmark-count-gap",
     "owner": "intro:23e-tech-judgement",
     "slug": "23e-tech-judgement",
@@ -1160,7 +1220,7 @@
     "solution": "\\textbf{第一步：}用 $\\sqrt{p(1-p)/n}$ 估计标准误，再与差值比较。\\par\\nobreak\n\\textbf{解题过程：}$\\sqrt{0.81\\times0.19/500}\\approx0.0175$，约 $1.8$ 个百分点；若按两份独立估计近似，差值的标准误约 $2.5$ 个百分点，$0.8$ 远小于它，不能断言前者更好。还应做同题配对比较、报告多次运行的波动，并排查评测污染与提示格式差异。"
   },
   {
-    "id": "C-117",
+    "id": "C-123",
     "key": "production-architecture-evaluation",
     "owner": "intro:23e-tech-judgement",
     "slug": "23e-tech-judgement",
@@ -1170,7 +1230,7 @@
     "solution": "\\textbf{第一步：}先写出双方共用的测试条件表。\\par\\nobreak\\textbf{解题过程：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。\\par\\textbf{评分要点：}(1)至少四项可复现的控制条件；(2)同时报告质量与延迟、吞吐、显存、成本；(3)说明榜单可能受污染或与业务分布不同；(4)给出失败案例或统计波动。\\par\\textbf{核对：}可用同一批业务输入先比较质量、失败类型与服务延迟，再核算给定并发下的总成本。只列四个指标名称而不给双方共用的条件，仍不能复现实验；榜单任务与实际业务不一致时，还需业务验证集。"
   },
   {
-    "id": "C-118",
+    "id": "C-124",
     "key": "convolution-output-shape",
     "owner": "intro:19-cnn",
     "slug": "19-cnn",
@@ -1180,7 +1240,7 @@
     "solution": "\\textbf{第一步：}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。\\par\\nobreak\n\\textbf{解答：} 宽高为 $3\\times3$；卷积核权重 $2\\times2=4$ 个（不含偏置）。"
   },
   {
-    "id": "C-119",
+    "id": "C-125",
     "key": "convolution-shared-kernel",
     "owner": "intro:19-cnn",
     "slug": "19-cnn",
@@ -1190,7 +1250,7 @@
     "solution": "\\textbf{第一步：}分别取左上与右上两个 $2\\times2$ 窗口，各与同一个核对应相乘。\\par\\nobreak\n\\textbf{解题过程：}左上输出为 $1\\times1+2\\times0+0\\times0+1\\times(-1)=\\answerresult{0}$；右上输出为 $2\\times1+0\\times0+1\\times0+3\\times(-1)=\\answerresult{-1}$。两个位置共用一组 $4$ 个核权重，不是各有一组；输入窗口不同，输出可以不同。"
   },
   {
-    "id": "C-120",
+    "id": "C-126",
     "key": "pooling-detail-loss",
     "owner": "intro:19-cnn",
     "slug": "19-cnn",
@@ -1200,17 +1260,17 @@
     "solution": "\\textbf{第一步：}先看下采样保留了哪些空间信息。\\par\\nobreak\\textbf{解题过程：}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。\\par\\textbf{核对：}例如 $2\\times2$ 窗口取平均后，不同像素排列可能得到同一数值，位置差异已丢失。若任务要定位小物体，仅报告更小的特征图不足以说明这种下采样合适，还要检验目标是否仍可识别。"
   },
   {
-    "id": "C-121",
+    "id": "C-127",
     "key": "rectangular-patch-count",
-    "slug": "19b-vit",
     "owner": "intro:19b-vit",
+    "slug": "19b-vit",
     "difficulty": "基础",
     "minutes": 2,
     "question": "\\textbf{【先数 Patch】} 将一张高 $48$、宽 $32$ 的 RGB 图片切成不重叠的 $8\\times8$ Patch，无填充。先不加 CLS Token，共有多少个 Patch？",
     "solution": "\\textbf{第一步：}分别数高、宽方向能切几块，再相乘。\\par\\nobreak\n\\textbf{解题过程：}共有 $(48/8)\\times(32/8)=6\\times4=\\answerresult{24}$ 个 Patch。RGB 的三个通道都属于每个 Patch，不把 Patch 数再乘 $3$。"
   },
   {
-    "id": "C-122",
+    "id": "C-128",
     "key": "vit-spatial-order",
     "owner": "intro:19b-vit",
     "slug": "19b-vit",
@@ -1220,7 +1280,7 @@
     "solution": "\\textbf{第一步：}先问平均后是否还能定位原来的区域。\\par\\nobreak\\textbf{解题过程：}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。\\par\\textbf{核对：}将左上与右下两个 Patch 交换，四条向量的无序平均不变，但问题的正确答案可能改变。这提供了一个直接反例：平均后的表示无法区分两幅图。"
   },
   {
-    "id": "C-123",
+    "id": "C-129",
     "key": "patch-projection-count",
     "owner": "intro:19b-vit",
     "slug": "19b-vit",
@@ -1230,7 +1290,7 @@
     "solution": "\\textbf{第一步：}先数行、列方向各能切几块，再把一块的高、宽、通道数相乘。\\par\\nobreak\n\\textbf{解答：}$(32/8)^2=16$ 个 Patch；每块展平为 $8\\times8\\times3=192$；投影矩阵 $192\\times64$，共 $\\answerresult{12{,}288}$ 个权重，所有 Patch 共用；加 CLS 后序列长度为 $17$。\\par\\textbf{核对：}Patch 数 $16$ 与每块宽度 $192$ 分别是序列轴和特征轴。投影权重由所有 Patch 共用，因此只数 $192\\times64$，不再乘 $16$；CLS 只使序列多一行。"
   },
   {
-    "id": "C-124",
+    "id": "C-130",
     "key": "memory-single-write",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1240,7 +1300,7 @@
     "solution": "\\textbf{第一步：}先用 Key 的每个分量分别乘整条 Value，形成状态矩阵的两行。\\par\\nobreak\n\\textbf{解题过程：}$\\mathcal{M}=\\begin{bmatrix}1.2&-0.6\\\\1.6&-0.8\\end{bmatrix}$；读取结果为 $(0.6\\times1.2+0.8\\times1.6,\\,-0.6\\times0.6-0.8\\times0.8)=\\answerresult{(2,-1)}$。一般有 $\\vect k^\\top\\mathcal{M}=(\\vect k^\\top\\vect k)\\vect v^\\top$；单位 Key 的自身点积为 $1$，所以读回 $\\vect v^\\top$。"
   },
   {
-    "id": "C-125",
+    "id": "C-131",
     "key": "memory-cross-talk",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1250,7 +1310,7 @@
     "solution": "\\textbf{第一步：}将查询对两条外积的读取分别展开，再相加。\\par\\nobreak\n\\textbf{解题过程：}$\\mathcal{M}=\\begin{bmatrix}1&0.6\\\\0&0.8\\end{bmatrix}$，$\\vect k_A^\\top\\mathcal{M}=\\answerresult{(1,0.6)}$，多出的 $(0,0.6)$ 来自 B。一般交叉项是 $(\\vect k_A^\\top\\vect k_B)\\vect v_B^\\top$；非零交叉点积把别条 Value 混进读出。"
   },
   {
-    "id": "C-126",
+    "id": "C-132",
     "key": "memory-outer-shape",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1260,7 +1320,7 @@
     "solution": "\\textbf{第一步：}先写出 $\\vect{v}^\\top$ 与 $\\vect{k}$ 的形状，比较内侧维度。\\par\\nobreak\n\\textbf{解题过程：}$\\vect{v}^\\top:1\\times3$ 乘 $\\vect{k}:2\\times1$，内侧维度 $3\\neq2$，无法相乘；正确写入 $\\vect{k} \\vect{v}^\\top$ 为 $2\\times3$，供 $\\vect{q}^\\top:1\\times2$ 读出 $1\\times3$。若 $d_k=d_v$，$\\vect{v}^\\top\\vect{k}$ 是 $1\\times1$ 标量（两向量的内积），不是 $d_k\\times d_v$ 的状态矩阵。"
   },
   {
-    "id": "C-127",
+    "id": "C-133",
     "key": "memory-write-strategies",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1270,7 +1330,7 @@
     "solution": "\\textbf{第一步：}先检查修正 B 时会不会同时改变 A 的读出。\\par\\nobreak\n\\textbf{解题过程：}接近正交会减小不同 Key 的交叉点积；Delta 写入则按当前读出与目标 Value 的差补写。非正交时，修正新记忆也可能扰动旧记忆，因此单遍修正不保证同时读准。可以监测全部读出误差并尝试反复校正；若 Key 与目标允许同一个线性状态精确表示，也可求联立方程。反复校正的收敛仍取决于更新规则与步长。"
   },
   {
-    "id": "C-128",
+    "id": "C-134",
     "key": "delta-write-order",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1280,7 +1340,7 @@
     "solution": "\\textbf{第一步：}依次写入 B、计算 A 的残差、再重读旧 B。\\par\\nobreak\n\\textbf{解答：} 先写 B 得\n$\\mathcal{M}_1=\\vect{k}_B \\vect{v}_B^\\top=\\begin{bmatrix}0&0.6\\\\0&0.8\\end{bmatrix}$；\n再写 A 时，$\\vect{k}_A^\\top\\mathcal{M}_1=(0,0.6)$，残差\n$\\vect{r}_A^\\top=(1,-0.6)$，因此\n$\\mathcal{M}_2=\\mathcal{M}_1+\\vect{k}_A \\vect{r}_A^\\top=\n\\boxed{\\begin{bmatrix}1&0\\\\0&0.8\\end{bmatrix}}$。\n最新的 A 读取为 $\\vect{k}_A^\\top\\mathcal{M}_2=\\answerresult{(1,0)}$；\n旧的 B 读取为 $\\vect{k}_B^\\top\\mathcal{M}_2=\\answerresult{(0.6,0.64)}$，\n误差 $\\sqrt{0.6^2+(-0.36)^2}\\approx\\answerresult{0.700}$。\n与正文先 A 后 B 对称：\\textbf{最后写入的 Key 当次精确，旧 Key 被扰动}，\n不能推断两条同时精确。"
   },
   {
-    "id": "C-129",
+    "id": "C-135",
     "key": "memory-relu-read",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1290,7 +1350,7 @@
     "solution": "\\textbf{第一步：}先让 $\\vect{x}^\\top$ 分别与 $K$ 的两行做点积，再逐项过 ReLU。\\par\\nobreak\n\\textbf{解答：}$\\vect{x}^\\top K^\\top=(1-2,\\,3-1)=(-1,2)$，所以 $\\relu(\\vect{x}^\\top K^\\top)=\\answerresult{(0,2)}$：负匹配的第 1 条记忆被关闭，第 2 条按分数 $2$ 保留。"
   },
   {
-    "id": "C-130",
+    "id": "C-136",
     "key": "memory-pairing-shape",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1300,7 +1360,7 @@
     "solution": "\\textbf{第一步：}先核对权重列数与 Value 行数。\\par\\nobreak\\textbf{解题过程：}四条 Key 会得到 $1\\times4$ 匹配权重，而三条 Value 只有三行，$1\\times4$ 与 $3\\times4$ 不能相乘。\\par\\textbf{核对：}Key 的第 $i$ 行权重必须乘同一条记录的第 $i$ 行 Value。若为了让形状相乘而随意补一行，仍没有说明缺少的第 $4$ 条 Value 来自哪条记忆；应先修正配对数据。"
   },
   {
-    "id": "C-131",
+    "id": "C-137",
     "key": "memory-selectivity",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1310,7 +1370,7 @@
     "solution": "\\textbf{第一步：}先比较幂运算后的弱／强比值；Softmax 则比较两个指数的商。\\par\\nobreak\n\\textbf{解题过程：}幂运算后的弱／强比值依次为 $\\answerresult{0.5,0.25,0.125}$，强匹配仍为 $1$。Softmax 的第一条与第二条权重之比为 $e^{\\beta(1-0.6)}$，从 $e^{0.4}$ 增至 $e^{0.8}$，因此第一条权重上升。这两种方法都让已有分数的差异更突出；本题的幂运算比较限于 $[0,1]$ 内的非负分数。\\par\\textbf{核对：}幂运算的比较用的是本题给定的 $[0,1]$ 非负分数。若忽略这个条件，例如把绝对值大于 $1$ 的分数也解释成“越乘越小”，结论就会反过来。Softmax 则应比较归一化后的相对权重，而不是只看指数是否增大。"
   },
   {
-    "id": "C-132",
+    "id": "C-138",
     "key": "memory-mlp-interpretation",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1320,7 +1380,7 @@
     "solution": "\\textbf{第一步：}先区分对计算机制的解释与对输出事实的验证。\\par\\nobreak\n\\textbf{解题过程：}这种对应把各隐藏分量的激活和输出贡献联系起来，帮助理解网络怎样组合特征。它并未建立单个神经元与一条真实事实的一一对应。确认回答仍要核查原始来源、语境与实际输出；单个激活不是事实证据。"
   },
   {
-    "id": "C-133",
+    "id": "C-139",
     "key": "memory-random-capacity",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1330,7 +1390,17 @@
     "solution": "\\textbf{第一步：}先用正交向量条数不超过维度，区分精确上限与随机量级估计。\\par\\nobreak\n\\textbf{解题过程：}最多 $4$ 条；前四条若两两正交，第 $5$ 条非零 Key 必与其中某条有非零点积。随机交叉点积的典型量级分别为 $\\answerresult{0.125}$ 与 $\\answerresult{0.03125}$。应用于真实模型前，应检查真实 Key 的相关性是否符合随机假设，并测随记忆数变化的读出误差及 Value 尺度；维度量级不能直接解释成能记住的可靠事实数。"
   },
   {
-    "id": "C-134",
+    "id": "C-140",
+    "key": "optimizer-basic-step",
+    "owner": "app:optimizer-details",
+    "slug": "optimizer-details",
+    "difficulty": "基础",
+    "minutes": 3,
+    "question": "\\textbf{【先走一步】}暂不使用动量或权重衰减。当前参数 $w=2$，梯度 $g=-3$，学习率 $\\eta=0.1$，按 $w_{\\rm new}=w-\\eta g$ 更新一次。新参数是多少，朝较大还是较小的方向移动？",
+    "solution": "\\textbf{第一步：}保留梯度的负号，再计算“原参数减去学习率乘梯度”。\\par\\nobreak\\textbf{解题过程：}$w_{\\rm new}=2-0.1\\times(-3)=\\answerresult{2.3}$，参数增大 $0.3$。负梯度方向在这里指向较大的 $w$；不能把“下降”理解成每个参数的数值都变小。"
+  },
+  {
+    "id": "C-141",
     "key": "optimizer-clipping",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",
@@ -1340,7 +1410,7 @@
     "solution": "\\textbf{第一步：}先求长度 $\\sqrt{5^2+12^2}$，只有超过阈值才整体缩放。\\par\\nobreak\n\\textbf{解题过程：}$\\|(5,12)\\|_2=13$，乘 $6.5/13=0.5$ 得 $\\answerresult{(2.5,6)}$，方向不变；阈值为 $20$ 时长度未超限，梯度保持 $(5,12)$。梯度裁剪作用于更新前的梯度，不是对预测概率归一化。高级优化器手算见附录 A。"
   },
   {
-    "id": "C-135",
+    "id": "C-142",
     "key": "optimizer-warmup",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",
@@ -1350,7 +1420,7 @@
     "solution": "\\textbf{第一步：}每一步先用上一步的 $w$ 重新算梯度，再乘该步的学习率。\\par\\nobreak\n\\textbf{解题过程：}$w_1=1-0.01\\times2=\\answerresult{0.98}$，$w_2=0.98(1-0.04)=\\answerresult{0.9408}$，$w_3=0.9408(1-0.06)\\approx\\answerresult{0.8844}$。恒定 $\\eta=0.03$ 时 $w_3=0.94^3\\approx0.8306$，下降更快。Warmup 只改变步长 $\\eta_t$，不更换损失函数；初期步子小，前几步下降也较慢。"
   },
   {
-    "id": "C-136",
+    "id": "C-143",
     "key": "optimizer-adamw",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",

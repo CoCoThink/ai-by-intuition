@@ -124,6 +124,27 @@ def check_exercise_warmups():
     print('Exercise warmup QA: eight new results and both printed <=10-line programs passed')
 
 
+def check_open_exercises():
+    from advanced_exercise_demo import run_checks
+    trace,interventions,coarse,strict,rewards=run_checks()
+    rows={r['key']:r for r in json.loads((ROOT/'book/exercises.json').read_text())}
+    results={
+        'joint-prefix-loss-floor':[f"{trace[200]['loss']:.6f}"],
+        'attention-causal-intervention':[f'{number:.6f}' for pair in interventions.values() for number in pair],
+        'verifier-budget-design':[f'{number:.6f}' for number in (coarse[0],coarse[1],strict[0])],
+        'reward-verifier-audit':[f"{rewards[mode]['probabilities'][i]:.6f}"
+                                 for mode,i in (('correct',0),('buggy',0),('buggy',1))],
+        'optimizer-basic-step':[f'{2-.1*(-3):g}'],
+        'rag-versioned-evidence-audit':[f'{100*((12500/100)/100-1):g}'+r'\%',
+                                        f'{100*((13200/100)/(12500/100)-1):g}'+r'\%'],
+    }
+    for key,numbers in results.items():
+        for number in numbers:
+            assert r'\answerresult{'+number+'}' in rows[key]['solution'],(key,number)
+    assert r'\answerresult{\ln2/3}' in rows['joint-prefix-loss-floor']['solution']
+    print('Open exercise answers match the actual numerical experiments and unit conversions')
+
+
 def check_article_matching():
     """Recompute the printed ranking, scaling counterexample and plotted projection."""
     vectors=(ROOT/'book/chapters/01-vectors.tex').read_text()
@@ -599,6 +620,7 @@ def check_printed_mini(c, gradients):
 def main():
     check_rebalanced_exercises()
     check_exercise_warmups()
+    check_open_exercises()
     check_article_matching()
     check_matrix_training_bridges()
     check_mlp_nonlinearity()

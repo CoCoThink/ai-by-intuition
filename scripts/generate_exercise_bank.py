@@ -26,7 +26,7 @@ def validate_progression(data,chapter_slugs):
     for slug in chapter_slugs:
         rows=[r for r in data if r['slug']==slug and not r.get('part_review')]
         if not any(r['difficulty']=='基础' for r in rows):
-            raise ValueError(f'{slug}: numbered chapters need a basic entry exercise')
+            raise ValueError(f'{slug}: chapter and optimizer practice need a basic entry exercise')
     groups={r['slug'] for r in data if not r.get('part_review')}
     for slug in groups:
         values=[levels[r['difficulty']] for r in data if r['slug']==slug]
@@ -59,7 +59,7 @@ def load_exercises():
         if not step or not step[1].rstrip().endswith(r'\par\nobreak') or step[2]:
             raise ValueError(f"{r['id']}: first step must end with \\par\\nobreak before one answer label")
         if r.get('part_review') and (r['part_review'] not in PARTS or not r.get('review_prompt')):raise ValueError(f"{r['id']}: missing review prompt/part")
-    validate_progression(data,set(titles)-{'00-guide'})
+    validate_progression(data,(set(titles)-{'00-guide'})|{'optimizer-details'})
     by_key={r['key']:r for r in data}
     for part in PARTS:
         reviews=[r for r in data if r.get('part_review')==part]
