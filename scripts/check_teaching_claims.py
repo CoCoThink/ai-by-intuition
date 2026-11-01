@@ -125,13 +125,14 @@ def check_exercise_warmups():
 
 
 def check_open_exercises():
-    from advanced_exercise_demo import run_checks
+    from advanced_exercise_demo import run_checks,verifier_switch_rate
     trace,interventions,coarse,strict,rewards=run_checks()
     rows={r['key']:r for r in json.loads((ROOT/'book/exercises.json').read_text())}
     results={
         'joint-prefix-loss-floor':[f"{trace[200]['loss']:.6f}"],
         'attention-causal-intervention':[f'{number:.6f}' for pair in interventions.values() for number in pair],
-        'verifier-budget-design':[f'{number:.6f}' for number in (coarse[0],coarse[1],strict[0])],
+        'verifier-budget-design':[f'{number:.6f}' for number in
+                                  (coarse[0],coarse[1],strict[0],verifier_switch_rate())],
         'reward-verifier-audit':[f"{rewards[mode]['probabilities'][i]:.6f}"
                                  for mode,i in (('correct',0),('buggy',0),('buggy',1))],
         'optimizer-basic-step':[f'{2-.1*(-3):g}'],

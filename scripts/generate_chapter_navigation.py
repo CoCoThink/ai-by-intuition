@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Derive chapter practice links from Appendix C ownership; guard answer titles.
+"""Derive practice links and the contributor source map; guard answer titles.
 
-Run after changing exercises: python3 scripts/generate_chapter_navigation.py
-CI uses --check to reject stale generated links or mismatched answer headings.
+Run after changing exercises, chapter inputs, labels or filenames:
+python3 scripts/generate_chapter_navigation.py
+CI uses --check to reject stale navigation/source maps or mismatched answer headings.
 """
 from __future__ import annotations
 import argparse
@@ -14,6 +15,9 @@ from check_chapter_crossrefs import uncomment
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / 'book'
 OUTPUT = BOOK / 'chapter-practice.tex'
+GUIDE = ROOT / 'CONTRIBUTING.md'
+MAP_BEGIN = '<!-- BEGIN GENERATED CHAPTER SOURCE MAP -->'
+MAP_END = '<!-- END GENERATED CHAPTER SOURCE MAP -->'
 
 def argument(text: str, start: int) -> tuple[str, int]:
     """Read a balanced TeX argument, preserving any nested commands."""
@@ -83,10 +87,36 @@ def rendered_navigation() -> str:
     return '\n'.join(lines) + '\n'
 
 
+def rendered_source_map() -> str:
+    """Map stable entry labels and practice slugs to actual compilation inputs."""
+    main = uncomment((BOOK / 'main.tex').read_text())
+    lines = ['| 当前章文件 | 入口与兼容标签 | 习题归属键（`slug`） |',
+             '|---|---|---|']
+    for name in re.findall(r'\\input\{chapters/([^}]+)\}', main):
+        body = uncomment((BOOK / 'chapters' / (name + '.tex')).read_text())
+        slugs = re.findall(r'\\(?:chapterchecktasks|chapterpracticejump)\{([^}]+)\}', body)
+        if not slugs:
+            continue
+        labels = re.findall(r'\\label\{(intro:[^}]+|front:prologue|app:optimizer-details)\}', body)
+        label_cell = '<br>'.join(f'`{label}`' for label in labels)
+        slug_cell = '<br>'.join(f'`{slug}`' for slug in dict.fromkeys(slugs))
+        lines.append(f'| [{name}.tex](book/chapters/{name}.tex) | {label_cell} | {slug_cell} |')
+    return '\n'.join(lines)
+
+
+def updated_source_guide() -> str:
+    guide = GUIDE.read_text()
+    start = guide.index(MAP_BEGIN) + len(MAP_BEGIN)
+    end = guide.index(MAP_END, start)
+    return guide[:start] + '\n' + rendered_source_map() + '\n' + guide[end:]
+
+
 def validate_navigation() -> list[str]:
     errors = []
     if not OUTPUT.is_file() or OUTPUT.read_text() != rendered_navigation():
         errors.append('Chapter practice navigation is stale; run scripts/generate_chapter_navigation.py')
+    if GUIDE.read_text() != updated_source_guide():
+        errors.append('Contributor label/source map is stale; run scripts/generate_chapter_navigation.py')
     _, titles = lesson_metadata()
     answers = (BOOK / 'chapters/appendix-d-self-check-solutions.tex').read_text()
     seen = set()
@@ -114,12 +144,13 @@ def main() -> int:
     args = parser.parse_args()
     if not args.check:
         OUTPUT.write_text(rendered_navigation())
+        GUIDE.write_text(updated_source_guide())
     errors = validate_navigation()
     if errors:
         for error in errors:
             print('NAVIGATION QA FAILED:', error)
         return 1
-    print('Navigation QA passed: chapter-ordered exercises mapped; all answer titles match their chapters')
+    print('Navigation QA passed: practice/source maps current; all answer titles match their chapters')
     return 0
 
 

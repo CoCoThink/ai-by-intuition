@@ -65,6 +65,19 @@ def verifier_outcomes(n, true_accept, false_accept):
     return result
 
 
+def verifier_switch_rate():
+    """Match correct-delivery rates for the fixed six-vs-four budget plans."""
+    target = verifier_outcomes(4, .3 * .8, 0)[0]
+    low, high = 0., 1.
+    while high - low > 1e-12:
+        rate = (low + high) / 2
+        if verifier_outcomes(6, .3, .7 * rate)[0] > target:
+            low = rate
+        else:
+            high = rate
+    return (low + high) / 2
+
+
 def reward_audit():
     chosen = np.array([0, 1, 0, 2])  # answers 42, 41, 42, 50
     results = {}
@@ -102,6 +115,13 @@ def run_checks():
     assert np.isclose(coarse[0], .3 / .44 * (1 - .56**6))
     assert np.isclose(strict[0], 1 - .76**4)
     assert np.isclose(coarse.sum(), 1) and np.isclose(strict.sum(), 1)
+    switch = verifier_switch_rate()
+    rejection = .7 * (1 - switch)
+    # Check the enumerated crossing against the independent geometric sum.
+    assert abs(.3 * sum(rejection**k for k in range(6)) - strict[0]) < 1e-12
+    assert .193 < switch < .194
+    assert verifier_outcomes(6, .3, .7 * (switch - 1e-5))[0] > strict[0]
+    assert verifier_outcomes(6, .3, .7 * (switch + 1e-5))[0] < strict[0]
     rewards = reward_audit()
     chosen = np.array([0, 1, 0, 2])
     for result in rewards.values():
@@ -115,7 +135,7 @@ def run_checks():
     assert rewards['buggy']['probabilities'][0] < 1 / 3
     assert rewards['buggy']['probabilities'][1] > 1 / 3
     print('Open exercise QA: joint-loss finite differences, attention interventions, '
-          'enumerated verifier outcomes and reward audit passed')
+          'enumerated verifier outcomes, switching threshold and reward audit passed')
     return trace, intervention, coarse, strict, rewards
 
 
@@ -127,5 +147,6 @@ if __name__ == '__main__':
     for mode, (probability, loss) in intervention.items():
         print(f'attention {mode}: target_probability={probability:.6f}; position_loss={loss:.6f}')
     print('verifiers [correct, wrong, no delivery]:', coarse, strict)
+    print(f'coarse false-positive switching threshold: {verifier_switch_rate():.12f}')
     for mode, result in rewards.items():
         print(f"reward {mode}: probabilities={result['probabilities']}")

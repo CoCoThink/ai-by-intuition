@@ -105,6 +105,53 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | 九 · 联想记忆（扩展） | [33 线性写入与误差修正](book/chapters/33-linear-associative-memory.tex)、[34 非线性检索与容量](book/chapters/34-nonlinear-memory.tex) |
 | 终章 | [回到那四个 Token](book/chapters/epilogue.tex) |
 
+### 标签与习题归属键对照
+
+正文章文件名中的编号是当前印刷章号；标签和 `exercises.json` 的 `slug` 是稳定的查找键，其中的数字不表示当前章号。`owner` 保存目标标签，`slug` 用于题目分组，两者也可能不同；请按下表找到文件，不按旧键的数字推断位置。
+
+下表列出序章、各章与优化器练习入口，包括保留的 `intro:` 兼容标签和局部入口。同一行中的局部标签只定位到该文件内的小节，不一定代表整章。表格由 `generate_chapter_navigation.py` 从实际输入顺序、正文标签及练习宏生成，`--check` 会检查是否过时。
+
+<!-- BEGIN GENERATED CHAPTER SOURCE MAP -->
+| 当前章文件 | 入口与兼容标签 | 习题归属键（`slug`） |
+|---|---|---|
+| [00-prologue.tex](book/chapters/00-prologue.tex) | `front:prologue` | `00-guide` |
+| [01-functions-and-loss.tex](book/chapters/01-functions-and-loss.tex) | `intro:00-functions`<br>`intro:16-loss-gradient` | `00-functions` |
+| [02-gradient-descent.tex](book/chapters/02-gradient-descent.tex) | `intro:16a-gradient-descent`<br>`intro:gradient-direct-solution`<br>`intro:training-four-steps`<br>`intro:18c-training-engineering` | `16-loss-gradient` |
+| [03-nonlinearity.tex](book/chapters/03-nonlinearity.tex) | `intro:07-functions-relu` | `07-functions-relu` |
+| [04-backpropagation.tex](book/chapters/04-backpropagation.tex) | `intro:17-backpropagation` | `17-backpropagation` |
+| [05-generalization.tex](book/chapters/05-generalization.tex) | `intro:18-generalization` | `18-generalization` |
+| [06-vectors-and-dot-products.tex](book/chapters/06-vectors-and-dot-products.tex) | `intro:01-vectors`<br>`intro:02-dot-product` | `01-vectors` |
+| [07-matrix-multiplication.tex](book/chapters/07-matrix-multiplication.tex) | `intro:03-matrix-multiplication` | `03-matrix-multiplication` |
+| [08-mlp.tex](book/chapters/08-mlp.tex) | `intro:10-mlp` | `10-mlp` |
+| [09-tokenization.tex](book/chapters/09-tokenization.tex) | `intro:20a-tokenizer` | `20a-tokenizer` |
+| [10-language-model-task.tex](book/chapters/10-language-model-task.tex) | `intro:20b-task-contract` | `20b-task-contract` |
+| [11-classification-loss.tex](book/chapters/11-classification-loss.tex) | `intro:20c-classification-loss` | `20c-classification-loss` |
+| [12-embeddings.tex](book/chapters/12-embeddings.tex) | `intro:20-embeddings` | `20-embeddings` |
+| [13-context-and-rnn.tex](book/chapters/13-context-and-rnn.tex) | `intro:21a-context-gap`<br>`intro:21-rnn` | `21-rnn` |
+| [14-attention-qkv.tex](book/chapters/14-attention-qkv.tex) | `intro:21c-naive-attention`<br>`intro:21b-why-attention` | `21c-naive-attention` |
+| [15-self-attention.tex](book/chapters/15-self-attention.tex) | `intro:11-softmax-memory`<br>`intro:12-self-attention-matrices` | `11-softmax-memory` |
+| [16-position-and-multihead.tex](book/chapters/16-position-and-multihead.tex) | `intro:22a-position-multihead` | `22a-position-multihead` |
+| [17-transformer-architecture.tex](book/chapters/17-transformer-architecture.tex) | `intro:22-transformer-architecture` | `22-transformer-architecture` |
+| [18-ffn-and-output-head.tex](book/chapters/18-ffn-and-output-head.tex) | `intro:10b-ffn-output-head` | `10b-ffn-output-head` |
+| [19-transformer-forward-pass.tex](book/chapters/19-transformer-forward-pass.tex) | `intro:22b-token-to-output` | `22b-token-to-output` |
+| [20-language-model-training.tex](book/chapters/20-language-model-training.tex) | `intro:22c-language-training` | `22c-language-training` |
+| [21-autoregressive-generation.tex](book/chapters/21-autoregressive-generation.tex) | `intro:23-llm-systems` | `23-llm-systems` |
+| [22-real-models.tex](book/chapters/22-real-models.tex) | `intro:23a-from-toy-to-gpt` | `23a-from-toy-to-gpt` |
+| [23-pretraining-and-icl.tex](book/chapters/23-pretraining-and-icl.tex) | `intro:23aa-pretraining-icl` | `23aa-pretraining-icl` |
+| [24-post-training-and-inference.tex](book/chapters/24-post-training-and-inference.tex) | `intro:23c-post-training`<br>`intro:23cc-test-time-compute` | `23c-post-training` |
+| [25-rag.tex](book/chapters/25-rag.tex) | `intro:23d-agent-systems` | `23d-agent-rag` |
+| [26-tool-use-and-agents.tex](book/chapters/26-tool-use-and-agents.tex) | `intro:23d-agent-tools` | `23d-agent-tools` |
+| [27-protocols-and-multi-agent.tex](book/chapters/27-protocols-and-multi-agent.tex) | `intro:23d-agent-protocols` | `23d-agent-systems` |
+| [28-training-and-deployment.tex](book/chapters/28-training-and-deployment.tex) | `intro:23b-deployment-and-ecosystem` | `23b-deployment-and-ecosystem` |
+| [29-modern-transformers.tex](book/chapters/29-modern-transformers.tex) | `intro:22d-modern-transformers` | `22d-modern-transformers` |
+| [30-evaluating-new-models.tex](book/chapters/30-evaluating-new-models.tex) | `intro:23e-tech-judgement` | `23e-tech-judgement` |
+| [31-cnn.tex](book/chapters/31-cnn.tex) | `intro:19-cnn` | `19-cnn` |
+| [32-vit.tex](book/chapters/32-vit.tex) | `intro:19b-vit` | `19b-vit` |
+| [33-linear-associative-memory.tex](book/chapters/33-linear-associative-memory.tex) | `intro:04-key-value-outer-product`<br>`intro:06-better-linear-memory`<br>`intro:05-memory-interference` | `04-key-value-outer-product` |
+| [34-nonlinear-memory.tex](book/chapters/34-nonlinear-memory.tex) | `intro:09-nonlinearity-and-memory`<br>`intro:13-capacity`<br>`intro:08-stacking-key-value`<br>`intro:14-summary` | `09-nonlinearity-and-memory` |
+| [appendix-a-optimizers.tex](book/chapters/appendix-a-optimizers.tex) | `app:optimizer-details` | `optimizer-details` |
+<!-- END GENERATED CHAPTER SOURCE MAP -->
+
 ### 附录
 
 | 附录 | 源码 |
@@ -127,6 +174,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 下列文件不要手改；修改维护来源，并在正文修改完成后运行对应生成器：
 
 - `book/chapters/appendix-c-exercises.tex`、`book/chapters/appendix-d-exercise-solutions.tex`、`book/part-reviews.tex`、`book/chapter-practice.tex`
+- 本页“标签与习题归属键对照”中的标记表格
 - `book/chapters/appendix-e-glossary.tex`、`book/chapters/appendix-e-english-index.tex`、`docs/TERM_OCCURRENCES.md`
 - `book/figures/reference-qr.tex`、`docs/REFERENCES.md`
 - `book/chapters/appendix-g-revision-notes.tex` 中的断言表
@@ -134,7 +182,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | 内容 | 维护来源 | 生成命令（仓库根目录） |
 |---|---|---|
 | 题库、D.1 解答、部分复习 | [exercises.json](book/exercises.json) | `python3 scripts/generate_exercise_bank.py` |
-| 各章练习指针与答案导航 | 题库、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
+| 各章练习指针、答案导航与本页源码对照表 | 题库、实际输入顺序、正文标签和答案标题 | `python3 scripts/generate_chapter_navigation.py` |
 | 拼音术语主表与[出现章节表](docs/TERM_OCCURRENCES.md) | [基础词条](book/chapters/glossary-source-core.tex)、[现代词条](book/chapters/glossary-source-modern.tex)、[英文映射](book/chapters/glossary-source-english.tex)及生成器映射 | `python3 scripts/generate_bilingual_glossary.py` |
 | 英文简表 | 已生成的术语主表 | `python3 scripts/generate_english_index.py` |
 | 二维码与[网页参考清单](docs/REFERENCES.md) | [source-audit.json](book/source-audit.json) | `python3 scripts/generate_reference_assets.py` |
