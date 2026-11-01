@@ -93,6 +93,37 @@ def check_rebalanced_exercises():
     print('Exercise QA: new gradient answers match finite differences; batch, matrix, MLP, convolution and memory results match printed answers')
 
 
+def check_exercise_warmups():
+    """Recompute new entry tasks and run the code actually printed in R answers."""
+    import subprocess
+    import sys
+    exercises={r['key']:r for r in json.loads((ROOT/'book/exercises.json').read_text())}
+    expected={
+        'token-id-lookup':'[4,5,3]',
+        'rnn-one-step':f'{3+.5*2:g}',
+        'probability-row-greedy':str(int(np.argmax([.05,.15,.10,.60,.10]))+1),
+        'generation-prefix-append':str([2,4]+[5]).replace(' ',''),
+        'real-embedding-shape':r'50{,}257\times768',
+        'icl-context-budget':str(8+2*6),
+        'metric-percentage-points':f'{100*(820-800)/1000:g}',
+        'rectangular-patch-count':str((48//8)*(32//8)),
+    }
+    for key,result in expected.items():
+        assert r'\answerresult{'+result+'}' in exercises[key]['solution'],key
+    weight_table=(ROOT/'book/chapters/23a-from-toy-to-gpt.tex').read_text()
+    assert '50{,}257' in weight_table and '768' in weight_table
+    for key in ('review-matrix-nonlinearity','review-cache-output-head'):
+        code=re.search(r'\\begin\{verbatim\}\n(.*?)\\end\{verbatim\}',exercises[key]['solution'],re.S)[1]
+        assert len(code.strip().splitlines())<=10,(key,'question promises at most ten lines')
+        if key=='review-matrix-nonlinearity':
+            checks="\nassert np.array_equal(linear,[[-1,1]])\nassert np.array_equal(nonlinear,[[0,1]])\n"
+        else:
+            checks="\nassert (w['Wout']==parameters()['Wout']).all()\nassert abs(w['E']-parameters()['E']).max()>1e-6\n"
+        result=subprocess.run([sys.executable,'-c',code+checks],cwd=ROOT,capture_output=True,text=True,check=True)
+        if key=='review-cache-output-head':assert len(result.stdout.splitlines())==40
+    print('Exercise warmup QA: eight new results and both printed <=10-line programs passed')
+
+
 def check_article_matching():
     """Recompute the printed ranking, scaling counterexample and plotted projection."""
     vectors=(ROOT/'book/chapters/01-vectors.tex').read_text()
@@ -567,6 +598,7 @@ def check_printed_mini(c, gradients):
 
 def main():
     check_rebalanced_exercises()
+    check_exercise_warmups()
     check_article_matching()
     check_matrix_training_bridges()
     check_mlp_nonlinearity()

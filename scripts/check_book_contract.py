@@ -420,7 +420,13 @@ def validate_contract():
 
 
 def self_test():
-    from generate_exercise_bank import printed_regular,validate_keys
+    from generate_exercise_bank import printed_regular,validate_keys,validate_progression
+    progression=[dict(slug='first',difficulty='基础'),dict(slug='first',difficulty='标准')]
+    validate_progression(progression,{'first'})
+    for invalid in (progression[::-1],[dict(slug='first',difficulty='标准')]):
+        try:validate_progression(invalid,{'first'})
+        except ValueError:pass
+        else:raise AssertionError('Challenge-first order and chapters without a basic entry must be rejected')
     validate_keys([dict(key='matrix-single-entry'),dict(key='branch-gradient-sum')])
     for invalid in ([dict(key='same-key'),dict(key='same-key')], [dict(id='C-001')],
                     [dict(key='matrix-single-entry',legacy_id='retired')],

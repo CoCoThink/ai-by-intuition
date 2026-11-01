@@ -123,6 +123,26 @@ def agent_intro_errors(pages):
     return []
 
 
+def exercise_code_errors(pages, exercises):
+    """Each short runnable answer must be readable on one actual PDF page."""
+    normalized=[re.sub(r'\s+','',page).replace('−','-') for page in pages]
+    errors=[]
+    for row in exercises:
+        for code in re.findall(r'\\begin\{verbatim\}(.*?)\\end\{verbatim\}',row['solution'],re.S):
+            lines=[re.sub(r'\s+','',line) for line in code.splitlines() if line.strip()]
+            if not 1<=len(lines)<=10:continue
+            source_prefix=row['solution'].split(r'\begin{verbatim}',1)[0]
+            source_prefix=re.sub(r'\\par\\nobreak\s*$','',source_prefix)
+            source_prefix=re.sub(r'\\Needspace\{[^}]*\}','',source_prefix)
+            intro=re.sub(r'\\[A-Za-z]+','',source_prefix)
+            intro=re.sub(r'[{}$^_\s]+','',intro)[-24:]
+            matches=[i+1 for i,page in enumerate(normalized)
+                     if intro and intro in page and all(line in page for line in lines)]
+            if len(matches)!=1:
+                errors.append(f"{row['id']}: short answer program or its lead-in split/missing; complete pages {matches}")
+    return errors
+
+
 def toc_folio_errors(entries, folio_targets):
     return [f'TOC page number is not independently linked to {target} (page {page})'
             for page,target in entries if target not in folio_targets]
@@ -558,6 +578,8 @@ def check_pdf(path, aux, used):
     root=reader.trailer['/Root']['/StructTreeRoot']
     failures.extend(caption_structure_errors(root,root.get('/RoleMap',{})))
     raw_text=subprocess.check_output(['pdftotext',str(path),'-'],text=True)
+    from generate_exercise_bank import load_exercises
+    failures.extend(exercise_code_errors(raw_text.split('\f'),load_exercises()[0]))
     failures.extend(agent_intro_errors(raw_text.split('\f')))
     failures.extend(softmax_note_errors(raw_text.split('\f')))
     failures.extend(attention_boundary_errors(raw_text.split('\f')))
@@ -638,6 +660,11 @@ def self_test():
     assert not agent_intro_errors([intro+'\n'+code])
     assert agent_intro_errors([intro,code])
     assert agent_intro_errors([intro])
+    program='import numpy as np\nx = np.eye(2)\nassert x.shape == (2, 2)'
+    exercise={'id':'R-test','solution':r'Lead-in sentence is sufficiently long here.\par\nobreak'+'\n'+r'\begin{verbatim}'+program+r'\end{verbatim}'}
+    assert not exercise_code_errors(['Lead-in sentence is sufficiently long here.'+program],[exercise])
+    assert exercise_code_errors(['Lead-in sentence is sufficiently long here.import numpy as np\nx = np.eye(2)','assert x.shape == (2, 2)'],[exercise])
+    assert exercise_code_errors(['Lead-in sentence is sufficiently long here.import numpy as np'],[exercise])
     note='计算机怎样避免指数溢出？'
     result='1.3133'
     ending='这种 LogSumExp 写法避免先算极小概率再取对数，减少下溢风险。'
