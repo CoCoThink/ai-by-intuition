@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Check every Formula in an experimental tagged PDF has parseable MathML via AF.
+"""Check every Formula has parseable MathML via AF without cluttering attachments.
 
-This tests PDF attachment integrity, not mathematical correctness or PDF/UA
-conformance. It is intended for experiment/full-book-mathml only.
+This tests associated-file integrity and attachment-pane visibility, not
+mathematical correctness or PDF/UA conformance.
 """
 from __future__ import annotations
 
@@ -11,12 +11,37 @@ from collections import Counter
 from hashlib import sha256
 import json
 from pathlib import Path
+import re
 import sys
 import xml.etree.ElementTree as ET
 
 from pypdf import PdfReader
 
 MATHML_NS = "http://www.w3.org/1998/Math/MathML"
+
+
+def visible_mathml_files(catalog):
+    """Find MathML registered in the viewer's EmbeddedFiles name tree."""
+    names = catalog.get("/Names", {})
+    names = names.get_object() if hasattr(names, "get_object") else names
+    stack = [names.get("/EmbeddedFiles", {})]
+    found = []
+    while stack:
+        node = stack.pop()
+        node = node.get_object() if hasattr(node, "get_object") else node
+        stack.extend(node.get("/Kids", []))
+        entries = node.get("/Names", [])
+        for item in entries[1::2]:
+            spec = item.get_object() if hasattr(item, "get_object") else item
+            filename = str(spec.get("/UF", spec.get("/F", "")))
+            streams = spec.get("/EF", {})
+            streams = streams.get_object() if hasattr(streams, "get_object") else streams
+            stream = streams.get("/F", {})
+            stream = stream.get_object() if hasattr(stream, "get_object") else stream
+            if (re.fullmatch(r"mathml-\d+\.xml", filename)
+                    or str(stream.get("/Subtype", "")) == "/application/mathml+xml"):
+                found.append(filename)
+    return found
 
 
 def walk(root):
@@ -39,6 +64,10 @@ def verify(pdf: Path, minimum: int) -> dict:
     catalog = reader.trailer["/Root"]
     if "/StructTreeRoot" not in catalog:
         raise ValueError("PDF lacks StructTreeRoot")
+    visible = visible_mathml_files(catalog)
+    if visible:
+        raise ValueError(f"{len(visible)} MathML files clutter the attachment pane; "
+                         f"first: {visible[0]}. Keep Formula /AF but disable viewer/pane/mathml")
     formulas = [n for n in walk(catalog["/StructTreeRoot"]["/K"])
                 if n.get("/S") == "/Formula"]
     if len(formulas) < minimum:
@@ -77,6 +106,7 @@ def verify(pdf: Path, minimum: int) -> dict:
     return {"pages": len(reader.pages), "formulas": len(formulas),
             "associations": sum(relations.values()),
             "unique_mathml_documents": len(digests),
+            "attachment_pane_mathml_files": len(visible),
             "relationships": dict(relations)}
 
 

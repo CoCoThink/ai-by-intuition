@@ -243,10 +243,10 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 ## 无障碍：机器验收与边界
 
-`book/main.tex` 使用 `\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2,tagging-setup={math/setup=mathml-AF}}`。CI 阻断以下任一失败：
+`book/main.tex` 使用 `\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2,tagging-setup={math/setup=mathml-AF,viewer/pane/mathml=false}}`。MathML 保留在每个公式的关联文件中，供辅助技术读取；不登记到阅读器的附件面板，避免显示数千个内部 XML 文件。CI 阻断以下任一失败：
 
 - 结构树、标题层级、表头、Figure 与 Caption 的嵌套和中文替代文字（`validate_book.py --pdf`）；
-- 每个公式都有可解析的 MathML 关联文件（`validate_mathml_af.py`）；
+- 每个公式都有可解析的 MathML 关联文件，且这些内部 XML 不出现在附件面板（`validate_mathml_af.py`）；
 - veraPDF PDF/UA-2 零失败。
 
 这些只覆盖机器可验证的规则。项目不安排真实读屏器体验测试，机器通过不代表辅助阅读器中的实际体验已经验证。

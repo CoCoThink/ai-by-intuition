@@ -1,6 +1,7 @@
 % !TeX program = lualatex
 % LuaLaTeX tagging: structured headings, text and alternative descriptions on TikZ figures.
-\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2,tagging-setup={math/setup=mathml-AF}}
+% Keep formula-associated MathML for accessibility, outside the viewer attachment list.
+\DocumentMetadata{lang=zh-CN,tagging=on,pdfstandard=ua-2,tagging-setup={math/setup=mathml-AF,viewer/pane/mathml=false}}
 % An intuition-first journey from functions and matrix algebra to learning and transformers.
 % Compile from repository root: bash scripts/build_book.sh
 \documentclass[11pt,a4paper,UTF8]{ctexart}
