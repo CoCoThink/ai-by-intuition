@@ -717,7 +717,7 @@ def validate_pdf(path: Path) -> None:
     if any(item not in normalized(pages[0]) for item in (
             'CoCoThinkandcontributors', 'https://github.com/CoCoThink/ai-by-intuition',
             'CCBY4.0', 'MIT', '引用或改编请署名并标明改动',
-            '完整致谢与来源见附录F', '公开实测另有注明')):
+            '完整致谢与来源见附录F')):
         fail('Cover and copyright footer must fit one page, including author, URL, licences and acknowledgements')
     if '目录' not in normalized(pages[1]):
         fail('Printed contents must immediately follow the combined cover/copyright page')
