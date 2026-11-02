@@ -238,7 +238,8 @@
   \fi}
 \begin{document}
 \thispagestyle{empty}
-\vspace*{7mm}
+\phantomsection\label{front:cover}
+\vspace*{3mm}
 \noindent{\sffamily\bfseries\footnotesize\color{blue}AI BY INTUITION · 从直觉到原理}\par
 \vspace{12mm}
 \noindent{\sffamily\bfseries\fontsize{34}{43}\selectfont
@@ -252,7 +253,7 @@
 % Distinct visual motif: the same four-token example runs through the book.
 \tagstructbegin{tag=Figure,alttext={四个依次连接的教学 Token：春天、花、开了、句号。}}
 \begin{center}
-\begin{tikzpicture}[>=Latex,token/.style={rounded corners=4pt,draw=linegray,fill=blueback,minimum width=37mm,minimum height=43mm,font=\sffamily\large\bfseries},node distance=5mm]
+\begin{tikzpicture}[>=Latex,token/.style={rounded corners=4pt,draw=linegray,fill=blueback,minimum width=37mm,minimum height=35mm,font=\sffamily\large\bfseries},node distance=5mm]
 \node[token] (a) {\shortstack{春天\\{\footnotesize ID 2}}};
 \node[token,right=of a,fill=greenback] (b) {\shortstack{花\\{\footnotesize ID 4}}};
 \node[token,right=of b,fill=orangeback] (c) {\shortstack{开了\\{\footnotesize ID 5}}};
@@ -268,7 +269,7 @@
 {\sffamily\small\color{muted}一个四 Token 例子，串起表示、注意力、学习与生成。}\par
 \tagstructend
 \tagstructend
-\vspace{8mm}
+\vspace{6mm}
 {\large\color{ink}从一个可手算的函数开始，逐层理解数据怎样训练模型、上下文怎样参与预测，以及工具怎样进入系统。}\par
 \vspace{4mm}
 \noindent{\sffamily\bfseries\color{blue}九部分全书路线}\par\smallskip
@@ -282,12 +283,7 @@
 \bottomrule
 \end{tabularx}\par\vspace{5mm}
 \vfill
-\noindent{\sffamily\normalsize\bfseries\color{ink}CoCoThink and contributors \quad · \quad 2026 年 10 月}\par
-
-\noindent{\sffamily\small\color{muted}https://github.com/CoCoThink/ai-by-intuition}\par
-\noindent{\sffamily\small\color{muted}CC BY 4.0}\par
-\clearpage
-% Copyright occupies the verso; the compact contents precede the one-page reader guide.
+% Copyright shares the cover; the compact contents follow on the next page.
 \input{chapters/front-colophon}
 \clearpage
 \setcounter{tocdepth}{1} % print chapters; subsection navigation remains in PDF bookmarks

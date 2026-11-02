@@ -24,7 +24,7 @@
 
 阅读路线的页数预算由 [front-reading-routes.tex](book/chapters/front-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步附录 A 的路线细目与这些标签；成品导航检查会核对实际目标页、表中预算及按每次 5 页计算的排期示例，不手填旧版页数。
 
-前置顺序为封面、简短版权页、两页以内目录、一页“写给谁，怎么读”、序章和第一部分。五题数学自检与答案在附录 A 的数学速查中；详细路线和图例在同附录的路线细目中。编号、行列与代码下标的约定在首次使用时引入。
+前置顺序为封面（底部合并版权信息）、两页以内目录、一页“写给谁，怎么读”、序章和第一部分。五题数学自检与答案在附录 A 的数学速查中；详细路线和图例在同附录的路线细目中。编号、行列与代码下标的约定在首次使用时引入。
 
 ## 本地构建
 
@@ -83,7 +83,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | 内容 | 源码 |
 |---|---|
 | 封面、目录 | [main.tex](book/main.tex) |
-| 版权页 | [front-colophon.tex](book/chapters/front-colophon.tex) |
+| 封面底部版权信息 | [front-colophon.tex](book/chapters/front-colophon.tex) |
 | 写给谁、阅读路线与内容范围 | [front-reading-routes.tex](book/chapters/front-reading-routes.tex) |
 | 序章（在第一部分之前） | [00-prologue.tex](book/chapters/00-prologue.tex) |
 | 部分开篇与收尾 | [part-maps.tex](book/part-maps.tex)，累积复习生成到 [part-reviews.tex](book/part-reviews.tex)；设计见[下文](#部分开篇与收尾) |
@@ -224,7 +224,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 ## 构建与依赖固定
 
-- 本地与 CI 都通过 `bash scripts/build_book.sh` 构建。提交号依次取 `BOOK_BUILD_SHA`、`GITHUB_SHA`、`git rev-parse HEAD`，印在版权页和附录 G；没有 Git 信息的源码包会省略整句来源说明。提交号变化时脚本强制刷新 PDF。
+- 本地与 CI 都通过 `bash scripts/build_book.sh` 构建。提交号依次取 `BOOK_BUILD_SHA`、`GITHUB_SHA`、`git rev-parse HEAD`，印在封面版权信息和附录 G；没有 Git 信息的源码包会省略整句来源说明。提交号变化时脚本强制刷新 PDF。
 - 所有第三方 Action 固定到完整提交 SHA；veraPDF 1.30.2 按镜像摘要拉取：`verapdf/cli@sha256:d5ee329657cf9bc4b2400392dd54c7d0a0ce9980ff6fa2da5590eebeec007cdb`。
 - 仍会浮动的部分：`texlive_version: 2026` 是年份选择而非镜像摘要，apt 安装的 Noto 字体与 Poppler 取决于当时的 Debian 索引。因此不声称字节级可复现；`pdfua2-machine-audit` 中的 `texlive-environment.txt`、`runner-environment.txt`、`verapdf-image.txt` 记录了每次实际使用的版本。
 - 构建检查的 Python 依赖版本以 [requirements-book.txt](requirements-book.txt) 为准，本地与工作流共用同一清单；CI 在首次源码检查前选择 Python 3.12 并安装这些依赖。PyTorch 教学实验另见 [requirements-teaching.txt](requirements-teaching.txt)。
@@ -302,7 +302,7 @@ C 题和 R 题各按印刷顺序连续编号，由 `generate_exercise_bank.py` �
 2. 按[灰度与人工校样](#灰度与人工校样)逐页审阅同一份 PDF，重点核对改动的算例、图表和分页。
 3. 核对附录 F 中飞天闪客课程及 Alex Wang 文章的集中署名与链接，确认没有复制原文或图片；逐项核对引用的模型配置、JSON 片段和第三方图示的使用条款。
 4. 运行 `python3 scripts/check_dated_claims.py --self-test --online --check-due`，确认附录 G 没有到期或落后于官方新修订的条目。
-5. 写好新版本的发布说明，核对封面、版权页与附录 G 中的版本和提交号。
+5. 写好新版本的发布说明，核对封面底部与附录 G 中的版本和提交号。
 
 在 [Publish validated book](.github/workflows/publish-release.yml) 中从 `main` 手动运行，填写 `version`（新版本号，如 `vMAJOR.MINOR.PATCH`）和 `build_run_id`（选定的成功运行编号）。工作流会拒绝已有标签或 Release，以及不属于本仓库、未成功或不在 `main` 上的构建；构建后若 `main` 又改动了 `book/`、`scripts/` 或构建工作流，须重新构建。
 
@@ -314,7 +314,7 @@ C 题和 R 题各按印刷顺序连续编号，由 `generate_exercise_bank.py` �
 
 请在 [Issues](https://github.com/CoCoThink/ai-by-intuition/issues) 中写明：
 
-- PDF 的版本与提交号（印在版权页和附录 G）、页码和章节；
+- PDF 的版本与提交号（印在封面版权信息和附录 G）、页码和章节；
 - 原文、算出的结果和期望结果，最好附上输入数据或复算步骤；
 - 图形问题附截图。
 
@@ -382,4 +382,4 @@ C 题和 R 题各按印刷顺序连续编号，由 `generate_exercise_bank.py` �
 
 教材正文、LaTeX/TikZ、文档及正式 PDF 采用 [CC BY 4.0](LICENSE)；`scripts/` 与 `.github/workflows/` 采用 [MIT](scripts/LICENSE)，范围和建议署名见 [README](README.md#开放许可证与转载)。提交前请确认你有权按对应许可证贡献这些内容；引用第三方材料时标明来源和原始许可，未经授权的内容不要并入仓库。
 
-教学 Notebook 与本 PDF 的代码版本分别核对，运行前填写版权页提交号；固定依赖见 [requirements-teaching.txt](requirements-teaching.txt)。本地复算仍使用已有 Python 环境，以该环境解释器执行 `-m pip install -r requirements-teaching.txt`。
+教学 Notebook 与本 PDF 的代码版本分别核对，运行前填写封面底部的提交号；固定依赖见 [requirements-teaching.txt](requirements-teaching.txt)。本地复算仍使用已有 Python 环境，以该环境解释器执行 `-m pip install -r requirements-teaching.txt`。

@@ -712,14 +712,15 @@ def validate_pdf(path: Path) -> None:
     print("R01 chapter-end pagination QA passed: MLP/task self-check pages retain substantive content")
 
     compact = normalized(text)
-    # A spilled cover can masquerade as an extra TOC page. Check both locations
-    # before diagnosing the compact TOC, so the error identifies the cause.
+    # Copyright shares the cover. Check all footer content before diagnosing
+    # the compact TOC, so a spill onto a second leaf identifies the cause.
     if any(item not in normalized(pages[0]) for item in (
             'CoCoThinkandcontributors', 'https://github.com/CoCoThink/ai-by-intuition',
-            'CCBY4.0')):
-        fail('Cover must fit one page, including author, URL and licence')
-    if '版权、致谢与版本' not in normalized(pages[1]):
-        fail('Copyright page must immediately follow the single-page cover')
+            'CCBY4.0', 'MIT', '引用或改编请署名并标明改动',
+            '完整致谢与来源见附录F', '公开实测另有注明')):
+        fail('Cover and copyright footer must fit one page, including author, URL, licences and acknowledgements')
+    if '目录' not in normalized(pages[1]):
+        fail('Printed contents must immediately follow the combined cover/copyright page')
     # Search until the printed guide rather than guessing from TOC line counts.
     guide_index = next(
         (i for i, body in enumerate(pages) if i > 1 and
@@ -727,7 +728,7 @@ def validate_pdf(path: Path) -> None:
         None)
     if guide_index is None:
         fail("Front-matter reading guide missing after table of contents")
-    if guide_index > 4:
+    if guide_index > 3:
         fail("Printed chapter TOC must occupy no more than two pages before the reading guide")
     guide = normalized(pages[guide_index])
     for heading in ("适合谁", "读完能做到什么", "速读", "标准", "动手", "怎样安排时间", "内容范围"):

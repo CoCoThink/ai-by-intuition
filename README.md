@@ -40,7 +40,7 @@
 
 ## 本地构建
 
-在仓库根目录运行 `bash scripts/build_book.sh`，产物为 `book/build/main.pdf`，版权页和附录 G 自动印出当前 Git 提交号。环境准备和检查命令见[构建说明](CONTRIBUTING.md#本地构建)。
+在仓库根目录运行 `bash scripts/build_book.sh`，产物为 `book/build/main.pdf`，封面底部和附录 G 自动印出当前 Git 提交号。环境准备和检查命令见[构建说明](CONTRIBUTING.md#本地构建)。
 
 ## 修改与反馈
 

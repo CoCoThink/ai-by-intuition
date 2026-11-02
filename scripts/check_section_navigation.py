@@ -313,8 +313,9 @@ def check_toc_folios(reader, aux, labels):
         if actual!=int(page):raise SystemExit(f'TOC folio {page} does not match actual {actual}: {target}')
         entries.append((int(page),target))
     folio_targets=set()
-    # Cover and copyright each own one leaf; routes begin after the printed TOC.
-    for page in reader.pages[2:reading_page]:
+    # Resolve the TOC itself: the copyright footer shares the cover.
+    toc_page=reader.get_destination_page_number(reader.named_destinations[labels['front:toc'][3]])
+    for page in reader.pages[toc_page:reading_page]:
         for ref in page.get('/Annots',[]):
             annot=ref.get_object();action=annot.get('/A')
             if not action:continue
@@ -342,15 +343,15 @@ def reading_ranges(source):
 
 def front_matter_errors(pages, locations):
     """Inspect physical pages: valid labels alone cannot detect a long preface."""
-    required=('front:colophon','front:toc','front:toc-end','front:reading-routes',
+    required=('front:cover','front:colophon','front:toc','front:toc-end','front:reading-routes',
               'front:reading-end','front:prologue','part:learning','app:math-tools',
               'app:math-entry','answer:math-entry','app:reading-details')
     missing=set(required)-locations.keys()
     if missing:return [f'Missing reader-entry destinations: {sorted(missing)}']
     errors=[]
-    colophon,toc,toc_end,guide,guide_end,prologue,learning,math,entry,answer,detail=(locations[k] for k in required)
-    if colophon!=1 or toc!=2:
-        errors.append('Cover, copyright and printed contents must open in that order')
+    cover,colophon,toc,toc_end,guide,guide_end,prologue,learning,math,entry,answer,detail=(locations[k] for k in required)
+    if cover!=0 or colophon!=cover or toc!=cover+1:
+        errors.append('Copyright must share the cover, immediately followed by printed contents')
     if not toc<=toc_end<toc+2 or guide!=toc_end+1:
         errors.append('Printed contents and legend must fit at most two pages immediately before the reader guide')
     if guide_end!=guide or prologue!=guide+1:
@@ -380,7 +381,7 @@ def check_front_matter(reader,labels):
                for key,fields in labels.items() if fields[3] in destinations}
     errors=front_matter_errors([page.extract_text() for page in reader.pages],locations)
     if not errors:
-        print('Reader entry QA: compact TOC/legend, one-page guide, immediate prologue; diagnostic and answers in Appendix A')
+        print('Reader entry QA: cover/copyright share one page, compact TOC/legend, one-page guide, immediate prologue; diagnostic and answers in Appendix A')
     return errors
 
 
@@ -508,7 +509,8 @@ def check_reproduction_and_definitions(reader,labels):
                 for prefix,suffix in code_targets.items():
                     if uri.startswith(prefix) and uri.endswith('/'+suffix):
                         links[suffix].append(uri[len(prefix):-(len(suffix)+1)])
-    copyright_text=re.sub(r'\s+','',reader.pages[1].extract_text())
+    copyright_page=reader.get_destination_page_number(reader.named_destinations[labels['front:colophon'][3]])
+    copyright_text=re.sub(r'\s+','',reader.pages[copyright_page].extract_text())
     for suffix,revisions in links.items():
         if revisions:
             if len(revisions)!=1:failures.append(f'Expected one versioned code destination: {suffix}')
@@ -717,21 +719,22 @@ def check_pdf(path, aux, used):
 
 
 def self_test():
-    front_pages=['cover','copyright','contents','可选读 纸笔复算 运行脚本 核对条件与易错步骤',
+    front_pages=['cover/copyright','contents','可选读 纸笔复算 运行脚本 核对条件与易错步骤',
                  '写给谁，怎么读','prologue','Part 1',
                  '五题数学自检 解 2𝑤 + 1 = 5 核对结果与补读建议 第一步 结果 补读','按路线阅读与查阅']
-    locations=dict(zip(('front:colophon','front:toc','front:toc-end','front:reading-routes',
+    locations=dict(zip(('front:cover','front:colophon','front:toc','front:toc-end','front:reading-routes',
                         'front:reading-end','front:prologue','part:learning','app:math-tools',
                         'app:math-entry','answer:math-entry','app:reading-details'),
-                       (1,2,3,4,4,5,6,7,7,7,8)))
+                       (0,0,1,2,3,3,4,5,6,6,6,7)))
     assert not front_matter_errors(front_pages,locations)
-    assert front_matter_errors(front_pages,{**locations,'front:reading-end':5})
-    assert front_matter_errors(front_pages,{**locations,'front:prologue':6})
-    assert front_matter_errors(front_pages,{**locations,'front:toc-end':4})
-    assert front_matter_errors(front_pages,{**locations,'app:math-entry':4})
-    assert front_matter_errors(front_pages,{**locations,'answer:math-entry':4})
-    assert front_matter_errors([*front_pages[:7],'empty',front_pages[8]],locations)
-    assert front_matter_errors([*front_pages[:7],front_pages[7].replace('解 2𝑤 + 1 = 5',''),front_pages[8]],locations)
+    assert front_matter_errors(front_pages,{**locations,'front:colophon':1})
+    assert front_matter_errors(front_pages,{**locations,'front:reading-end':4})
+    assert front_matter_errors(front_pages,{**locations,'front:prologue':5})
+    assert front_matter_errors(front_pages,{**locations,'front:toc-end':3})
+    assert front_matter_errors(front_pages,{**locations,'app:math-entry':3})
+    assert front_matter_errors(front_pages,{**locations,'answer:math-entry':3})
+    assert front_matter_errors([*front_pages[:6],'empty',front_pages[7]],locations)
+    assert front_matter_errors([*front_pages[:6],front_pages[6].replace('解 2𝑤 + 1 = 5',''),front_pages[7]],locations)
     assert page_span_union([(3,5),(5,7),(3,3)])==set(range(3,8))
     assert reading_ranges(r'\setroutebudget{quick}{a/b,c/d}')=={'quick':[['a','b'],['c','d']]}
     assert not printed_exercise_errors(['C-001','C-002'],['C-001','C-002'])
