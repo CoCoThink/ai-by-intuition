@@ -589,6 +589,39 @@ def check_normalization_arrows(reader,path,labels):
     return errors
 
 
+def vector_label_axis_errors(label_left,axis_x):
+    """The demand label in figure 14 must clear the vertical axis."""
+    if label_left <= axis_x+3:
+        return [f'Vector figure: demand label begins at {label_left:.1f}pt, too close to vertical axis at {axis_x:.1f}pt']
+    return []
+
+
+def check_vector_label_axis(reader,path,labels):
+    import xml.etree.ElementTree as ET
+    dest=reader.named_destinations[labels['fig:vector-two-features'][3]]
+    page_index=reader.get_destination_page_number(dest);page=reader.pages[page_index]
+    xml=subprocess.check_output(['pdftotext','-f',str(page_index+1),'-l',str(page_index+1),
+                                 '-bbox-layout',str(path),'-'])
+    lines=[(re.sub(r'\s+','',''.join(node.itertext())),
+            *(float(node.get(key)) for key in ('xMin','yMin','xMax','yMax')))
+           for node in ET.fromstring(xml).iter() if node.tag.rsplit('}',1)[-1]=='line']
+    demands=[line for line in lines if '需求(0.6,0.8)' in line[0]]
+    captions=[line for line in lines if '同一组二维文章特征' in line[0]]
+    if len(demands)!=1 or len(captions)!=1:
+        return ['Vector figure: rendered demand label or caption missing']
+    _,left,top,_,bottom=demands[0];caption_top=captions[0][2]
+    height=float(page.mediabox.height)
+    axes=[x0 for _,x0,y0,x1,y1 in rendered_line_segments(reader,page)
+          if abs(x0-x1)<.2 and abs(y0-y1)>70
+          and top<(height-y0+height-y1)/2<caption_top
+          and min(height-y0,height-y1)<(top+bottom)/2<max(height-y0,height-y1)]
+    if len({round(x,1) for x in axes})!=1:
+        return [f'Vector figure: expected one vertical axis crossing the demand label height, found {axes}']
+    errors=vector_label_axis_errors(left,axes[0])
+    if not errors:print(f'Vector figure QA: demand label clears vertical axis on page {page_index+1}')
+    return errors
+
+
 def check_chapter_dividers(reader,labels):
     failures=[];seen=set();top_count=0;mixed_count=0
     for label,fields in labels.items():
@@ -667,6 +700,7 @@ def check_pdf(path, aux, used):
     failures.extend(check_iteration_legend(reader,path,labels))
     failures.extend(check_activation_labels(reader,path,labels))
     failures.extend(check_normalization_arrows(reader,path,labels))
+    failures.extend(check_vector_label_axis(reader,path,labels))
     for target,count in used.items():
         if target not in labels:
             failures.append(f'Missing built label: {target}');continue
@@ -767,7 +801,9 @@ def self_test():
     demand_arrows=[(1,100,200,127,236),(1,330,200,357,236)]
     assert not normalization_arrow_errors(demand_arrows)
     assert normalization_arrow_errors([demand_arrows[0],(1,330,200,127,236)])
-    print('Section/figure regressions passed: wrong targets, literal folios, split captions/Softmax/attention notes, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps and cross-panel arrows are rejected')
+    assert vector_label_axis_errors(222.9,232.9)
+    assert not vector_label_axis_errors(291.6,232.9)
+    print('Section/figure regressions passed: wrong targets, literal folios, split captions/Softmax/attention notes, orphaned code introductions, contour collisions, displaced legends, ReLU label overlaps, crossed axes and cross-panel arrows are rejected')
 
 
 def main():
