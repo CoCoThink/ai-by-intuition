@@ -79,7 +79,7 @@
 \par\answerpiece{3}{找错}{先检查切分结果依赖哪些输入。}BPE 合并规则与词表由训练确定，实际切分还取决于新文本；不同文本或词表不保证相同 Token 数。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第~\ref*{intro:20b-task-contract}~章}] \phantomsection\label{answer:20b-task-contract}\textbf{\hyperref[check:20b-task-contract]{把语言练习变成一道可计算的预测题}}\answercheckpage{20b-task-contract}\par\nobreak
-\answerpiece{1}{对齐}{把完整序列整体左移一位（去掉首项）。}三个目标是 $\answerresult{[4,5,3]}$。
+\answerpiece{1}{对齐}{在完整文本中找到每个输入 Token，取它右边紧邻的一项作目标。}位置~1 的“春天”（ID $2$）后面是“花”（ID $4$）；位置~2 的“花”（ID $4$）后面是“开了”（ID $5$）；位置~3 的“开了”（ID $5$）后面是句号（ID $3$）。按预测位置排列，三个目标是 $\answerresult{[4,5,3]}$。
 \par\answerpiece{2}{形状}{先数预测位置，再数每行候选。}三个位置乘五类分数，分数矩阵为 $\answerresult{3\times5}$。
 \par\answerpiece{3}{找错}{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}第一个位置的目标就是“花”，本应只利用“春天”来预测；读取第二位置的“花”等于提前看到了答案。目标在评分步骤参与损失计算。
 \par\Needspace{8\baselineskip}
