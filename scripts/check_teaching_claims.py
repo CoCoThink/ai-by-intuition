@@ -146,12 +146,17 @@ def check_open_exercises():
     print('Open exercise answers match the actual numerical experiments and unit conversions')
 
 
+def article_feature_table(source):
+    rows=re.findall(r'\$\\vect (q|x_[ABC])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',source)
+    names={'q':'q','x_A':'a','x_B':'b','x_C':'c'}
+    return {names[name]:np.array([float(x),float(y)]) for name,x,y in rows}
+
+
 def check_article_matching():
     """Recompute the printed ranking, scaling counterexample and plotted projection."""
     vectors=(ROOT/'book/chapters/06-vectors-and-dot-products.tex').read_text()
     source=(ROOT/'book/chapters/06-vectors-and-dot-products.tex').read_text()
-    rows=re.findall(r'\$\\vect ([qabc])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',vectors)
-    data={name:np.array([float(x),float(y)]) for name,x,y in rows}
+    data=article_feature_table(vectors)
     assert set(data)==set('qabc'), 'Missing article feature-table rows'
     scores={name:float(data['q']@data[name]) for name in 'abc'}
     printed=re.findall(r'^([ABC]) & \$([^$]+)\$ & \$([\d.]+)\$',source,re.M)
@@ -193,9 +198,9 @@ def check_article_matching():
     for body in (source,figure,exercises['vector-coordinate-operations']['question'],exercises['vector-coordinate-operations']['solution'],exercises['article-query-ranking']['solution']):
         assert not re.search(r'\\vect [a-z]\^\\top\\cdot',body), 'Use the same row-column dot-product notation from its first definition'
         assert not re.search(r'\\\|[^\n]*?\^\\top[^\n]*?\\\|',body), 'Vector lengths must use the common norm notation'
-    assert r'\boxed{\vect a^\top\vect b=a_1b_1+a_2b_2.}' in source
-    assert r'\vect b=\begin{bmatrix}b_1\\b_2\end{bmatrix}' in source
-    assert r'\boxed{\|\vect a\|=\sqrt{a_1^2+a_2^2}.}' in source
+    assert r'\boxed{\vect u^\top\vect v=u_1v_1+u_2v_2.}' in source
+    assert r'\vect v=\begin{bmatrix}v_1\\v_2\end{bmatrix}' in source
+    assert r'\boxed{\|\vect u\|=\sqrt{u_1^2+u_2^2}.}' in source
     changed=data['q'][::-1]
     assert all(f'{{{changed@data[name]:g}}}' in exercises['article-query-ranking']['solution'] for name in 'abc')
     assert f'{{{(5*data["q"])@(5*data["a"]):g}}}' in exercises['cosine-rescaling']['solution']
@@ -208,8 +213,7 @@ def check_matrix_training_bridges():
     matrix_source=(ROOT/'book/chapters/07-matrix-multiplication.tex').read_text()
     candidates,transposed=numeric_matrices(matrix_source)[:2]
     feature_source=(ROOT/'book/chapters/06-vectors-and-dot-products.tex').read_text()
-    features={name:np.array([float(x),float(y)]) for name,x,y in
-              re.findall(r'\$\\vect ([qabc])\^\\top\$ & \$([\d.]+)\$ & \$([\d.]+)\$',feature_source)}
+    features=article_feature_table(feature_source)
     assert np.allclose(candidates,[features[name] for name in 'abc'])
     assert np.array_equal(transposed,candidates.T)
     batch=matrix_source.split(r'\label{sec:matrix-article-batch}',1)[1].split(r'\subsection{',1)[0]

@@ -201,10 +201,11 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 \texttt{num\_hidden\_layers} & 层数\\
 \texttt{hidden\_size} & 隐藏宽度 $d_{\rm model}$\\
 \texttt{num\_attention\_heads} & Query 头数 $H_Q$\\
+\texttt{head\_dim} & 每头 Query/Key 宽度（若配置显式提供）\\
 \texttt{num\_key\_value\_heads} & K/V 头数 $H_{KV}$\\\bottomrule
 \end{tabular}
 \end{center}
-对本章将隐藏宽度均分给 Query 头的配置，$d_k=d_{\rm model}/H_Q$；
+若配置给出 \texttt{head\_dim}，就用它作为 $d_k$；没有该字段时，只有在确认隐藏宽度均分给 Query 头的配置中，才用 $d_k=d_{\rm model}/H_Q$；
 缓存公式中则使用 $H_{KV}$，两种头数分别负责“求每头宽度”和“数缓存的头”。
 请求数、缓存位置数与元素精度由本次运行条件给出。
 想练习从配置取数，可以选做部分收尾的\hyperref[exercise:R-13]{R-13 第二问}，其中给出了真实配置摘录；

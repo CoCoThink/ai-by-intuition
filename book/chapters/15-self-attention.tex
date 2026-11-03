@@ -14,24 +14,10 @@ $W_V=I_2$ 得到了\textbf{不对称}的匹配分数。
 相比\hyperref[intro:21c-naive-attention]{更早的未投影例子}，
 现在 Key 已经由独立的矩阵生成。
 
-\subsection{先复核第三条 Query 的单次读取}
-\[
-K=\begin{bmatrix}1&0\\1&1\\2&1\end{bmatrix},\quad
-V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\quad
-\vect q^\top=(1,1).
-\]
-\begin{example}
-\[
-\begin{aligned}
-\vect q^\top K^\top&=(1,2,3),\\
-\vect a^\top&=\softmax(\vect q^\top K^\top)
-\approx(0.090,0.245,0.665),\\
-\vect y^\top&=\vect a^\top V=\boxed{(0.755,0.910).}
-\end{aligned}
-\]
-\end{example}
-Key 与 Value 均按位置逐行排列。将 $K$ 转置后，
-Query 与三个 Key 的分数一次求出；下面同时计算全部 Query。
+\subsection{回忆最后一条 Query 的读取结果}
+上一章用同一组 $K$、$V$ 和最后一条 Query $\vect q^\top=(1,1)$，
+已算出权重 $(0.090,0.245,0.665)$，读取结果为 $(0.755,0.910)$。
+本章保留这些数据，不再重复单行计算；接下来把三个位置的 Query 一起写成 $Q$，并行完成全部行的读取。
 
 \Needspace{23\baselineskip}
 \subsection{\texorpdfstring{为什么是 $K^\top$ 而不是 $K$？}{为什么是 K 转置而不是 K？}}

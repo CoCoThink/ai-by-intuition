@@ -236,8 +236,8 @@
     "slug": "01-vectors",
     "difficulty": "基础",
     "minutes": 4,
-    "question": "\\textbf{【手算】} 取 $\\vect a^\\top=(3,4)$、$\\vect b^\\top=(1,-2)$。求 $\\vect a^\\top+\\vect b^\\top$、$2\\vect a^\\top$ 与 $\\|\\vect a\\|$；把 $\\vect a^\\top$ 的两个坐标交换成 $(4,3)$ 后，它表示的还是同一个对象吗？",
-    "solution": "\\textbf{第一步：}加法与数乘都逐个坐标计算；长度用勾股定理。\\par\\nobreak\n\\textbf{解答：}$\\vect a^\\top+\\vect b^\\top=(4,2)$，$2\\vect a^\\top=(6,8)$，$\\|\\vect a\\|=\\sqrt{3^2+4^2}=\\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。"
+    "question": "\\textbf{【手算】} 取 $\\vect u^\\top=(3,4)$、$\\vect v^\\top=(1,-2)$。求 $\\vect u^\\top+\\vect v^\\top$、$2\\vect u^\\top$ 与 $\\|\\vect u\\|$；把 $\\vect u^\\top$ 的两个坐标交换成 $(4,3)$ 后，它表示的还是同一个对象吗？",
+    "solution": "\\textbf{第一步：}加法与数乘都逐个坐标计算；长度用勾股定理。\\par\\nobreak\n\\textbf{解答：}$\\vect u^\\top+\\vect v^\\top=(4,2)$，$2\\vect u^\\top=(6,8)$，$\\|\\vect u\\|=\\sqrt{3^2+4^2}=\\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。"
   },
   {
     "id": "C-025",
@@ -246,8 +246,8 @@
     "slug": "01-vectors",
     "difficulty": "基础",
     "minutes": 4,
-    "question": "\\textbf{【逐项匹配】} 设三个对象的两项特征依次表示技术与生活，$\\vect a^\\top=(1,0)$、$\\vect b^\\top=(0,1)$、$\\vect c^\\top=(0.6,0.8)$。计算 $\\vect a^\\top\\vect b$ 与 $\\vect a^\\top\\vect c$。若需求是 $\\vect a^\\top$，后两者谁的点积分数更高？这个结果需要假定它们都是单位向量吗？",
-    "solution": "\\textbf{第一步：}按同一特征位置相乘，再把两项相加。\\par\\nobreak\n\\textbf{解题过程：}$\\vect a^\\top\\vect b=1\\times0+0\\times1=\\answerresult{0}$，$\\vect a^\\top\\vect c=1\\times0.6+0\\times0.8=\\answerresult{0.6}$，所以 C 的分数更高。点积计算本身不要求单位长度；本题三条向量恰好长度均为 $1$，因此分数也可直接比较方向的接近程度。"
+    "question": "\\textbf{【逐项匹配】} 设三个对象的两项特征依次表示技术与生活，$\\vect u^\\top=(1,0)$、$\\vect v^\\top=(0,1)$、$\\vect w^\\top=(0.6,0.8)$。计算 $\\vect u^\\top\\vect v$ 与 $\\vect u^\\top\\vect w$。若需求是 $\\vect u^\\top$，后两者谁的点积分数更高？这个结果需要假定它们都是单位向量吗？",
+    "solution": "\\textbf{第一步：}按同一特征位置相乘，再把两项相加。\\par\\nobreak\n\\textbf{解题过程：}$\\vect u^\\top\\vect v=1\\times0+0\\times1=\\answerresult{0}$，$\\vect u^\\top\\vect w=1\\times0.6+0\\times0.8=\\answerresult{0.6}$，所以 C 的分数更高。点积计算本身不要求单位长度；本题三条向量恰好长度均为 $1$，因此分数也可直接比较方向的接近程度。"
   },
   {
     "id": "C-026",
@@ -257,7 +257,7 @@
     "difficulty": "基础",
     "minutes": 3,
     "question": "沿用本章文章 A、B、C 的向量，将需求改为 $\\vect q^\\top=(0.8,0.6)$。重算三个点积分数与排名；为什么 B 与 C 的先后顺序改变了？",
-    "solution": "\\textbf{第一步：}用新的需求分别与三篇文章做点积。\\par\\nobreak\\textbf{解题过程：}$\\vect q^\\top\\vect a=0.8\\times0.8+0.6\\times0.6=\\answerresult{1}$，$\\vect q^\\top\\vect b=\\answerresult{0.8}$，$\\vect q^\\top\\vect c=\\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。"
+    "solution": "\\textbf{第一步：}用新的需求分别与三篇文章做点积。\\par\\nobreak\\textbf{解题过程：}$\\vect q^\\top\\vect x_A=0.8\\times0.8+0.6\\times0.6=\\answerresult{1}$，$\\vect q^\\top\\vect x_B=\\answerresult{0.8}$，$\\vect q^\\top\\vect x_C=\\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。"
   },
   {
     "id": "C-027",

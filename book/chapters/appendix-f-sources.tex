@@ -186,7 +186,60 @@ Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
 \sourcecheck{2026-10-25}{已核对成对分类损失与参考策略重参数化}
 \item Liu et al., \emph{Understanding R1-Zero-Like Training}（Dr.~GRPO）:
 \sourceurl{https://arxiv.org/abs/2503.20783}
-\sourcecheck{2026-10-25}{已核对去掉标准差与长度归一化的修改}
+\sourcecheck{2026-11-03}{已复核 Dr.~GRPO 去掉组内标准差归一化与逐回答长度归一化}
+\item Peng et al., \emph{YaRN: Efficient Context Window Extension of Large Language Models}:
+\sourceurl{https://arxiv.org/abs/2309.00071}
+\sourcecheck{2026-11-03}{已核对基于 RoPE 扩展上下文窗口的方法定位}
+\item Henry et al., \emph{Query-Key Normalization for Transformers}:
+\sourceurl{https://aclanthology.org/2020.findings-emnlp.379/}
+\sourcecheck{2026-11-03}{已核对按头归一化 Query/Key 并学习分数尺度的做法}
+\item Xie et al., \emph{mHC: Manifold-Constrained Hyper-Connections}:
+\sourceurl{https://arxiv.org/abs/2512.24880}
+\sourcecheck{2026-11-03}{已核对其约束超连接通路以恢复恒等映射性质的目标}
+\item Gu and Dao, \emph{Mamba: Linear-Time Sequence Modeling with Selective State Spaces}:
+\sourceurl{https://arxiv.org/abs/2312.00752}
+\sourcecheck{2026-11-03}{已核对输入相关的选择性状态更新及线性时间建模定位}
+\item Yang et al., \emph{Gated Delta Networks: Improving Mamba2 with Delta Rule}:
+\sourceurl{https://arxiv.org/abs/2412.06464}
+\sourcecheck{2026-11-03}{已核对门控遗忘与 Delta 定向更新的组合动机}
+\item Snell et al., \emph{Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters}:
+\sourceurl{https://arxiv.org/abs/2408.03314}
+\sourcecheck{2026-11-03}{已核对测试时计算效果随题目难度变化及自适应分配的结论}
+\end{itemize}
+
+\subsubsection*{大模型训练与部署}
+\begin{itemize}
+\item Micikevicius et al., \emph{Mixed Precision Training}:
+\sourceurl{https://arxiv.org/abs/1710.03740}
+\sourcecheck{2026-11-03}{已核对半精度训练、单精度主权重与损失缩放方法}
+\item Dao et al., \emph{FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness}:
+\sourceurl{https://arxiv.org/abs/2205.14135}
+\sourcecheck{2026-11-03}{已核对分块减少 HBM 读写并保持精确 Attention 的方法}
+\item Rajbhandari et al., \emph{ZeRO: Memory Optimizations Toward Training Trillion Parameter Models}:
+\sourceurl{https://arxiv.org/abs/1910.02054}
+\sourcecheck{2026-11-03}{已核对消除数据并行冗余状态以降低显存占用的做法}
+\item PyTorch 2.15，FullyShardedDataParallel：
+\sourceurl{https://docs.pytorch.org/docs/2.15/fsdp.html}
+\sourcecheck{2026-11-03}{已核对 FSDP 的分片策略及其显存／通信权衡}
+\item Huang et al., \emph{GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism}:
+\sourceurl{https://arxiv.org/abs/1811.06965}
+\sourcecheck{2026-11-03}{已核对按层分段并在加速器间流水执行的并行方式}
+\item Shoeybi et al., \emph{Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism}:
+\sourceurl{https://arxiv.org/abs/1909.08053}
+\sourcecheck{2026-11-03}{已核对层内张量并行及其与流水线并行的关系}
+\item Jacob et al., \emph{Integer-Arithmetic-Only Inference}:
+\sourceurl{https://arxiv.org/abs/1712.05877}
+\sourcecheck{2026-11-03}{已核对整数算术推理量化方案与精度恢复训练}
+\end{itemize}
+
+\subsubsection*{联想记忆与容量}
+\begin{itemize}
+\item Krotov and Hopfield, \emph{Dense Associative Memory for Pattern Recognition}:
+\sourceurl{https://arxiv.org/abs/1606.01164}
+\sourcecheck{2026-11-03}{已核对高阶激活与密集联想记忆的理论联系}
+\item Ramsauer et al., \emph{Hopfield Networks is All You Need}:
+\sourceurl{https://arxiv.org/abs/2008.02217}
+\sourcecheck{2026-11-03}{已核对指数容量结论及与 Transformer Attention 的联系}
 \end{itemize}
 
 \subsubsection*{聊天序列化、缓存与生成接口}

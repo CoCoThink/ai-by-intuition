@@ -32,6 +32,7 @@ f\bigl(E[\text{开了}]\bigr)
 
 \subsection{只看当前词的模型过不了的对照任务}
 \phantomsection\label{experiment:context-contrast}
+开篇用“冬天，窗，开了”展示不同前文；为了让对照只改变前文，下面把中间词统一成“花”，并设置不同的下一词目标。
 取两条输入 $[\text{春天},\text{花}]$ 与 $[\text{冬天},\text{花}]$，
 只监督第二位置：目标分别为“开了”和“谢了”。
 将“春天／冬天／花”分别编码为三维 one-hot 向量，做一个二分类任务。

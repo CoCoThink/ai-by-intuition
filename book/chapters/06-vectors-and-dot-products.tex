@@ -18,9 +18,9 @@
 \begin{tabular}{@{}lcc@{}}\toprule
 对象 & 技术 & 生活\\\midrule
 需求 $\vect q^\top$ & $0.6$ & $0.8$\\
-文章 A，$\vect a^\top$ & $0.8$ & $0.6$\\
-文章 B，$\vect b^\top$ & $1$ & $0$\\
-文章 C，$\vect c^\top$ & $0$ & $1$\\\bottomrule
+文章 A，$\vect x_A^\top$ & $0.8$ & $0.6$\\
+文章 B，$\vect x_B^\top$ & $1$ & $0$\\
+文章 C，$\vect x_C^\top$ & $0$ & $1$\\\bottomrule
 \end{tabular}
 \end{center}
 需求中的 $0.8>0.6$ 表示稍偏向生活；A 两方面都有，B 只谈技术，C 只谈生活。
@@ -28,7 +28,7 @@
 
 \phantomsection\label{concept:vector}
 把同一个对象的特征\textbf{按固定顺序排起来}，就得到一条\textbf{向量（vector）}。
-例如需求写成 $\vect q^\top=(0.6,0.8)$，文章 A 写成 $\vect a^\top=(0.8,0.6)$。
+例如需求写成 $\vect q^\top=(0.6,0.8)$，文章 A 写成 $\vect x_A^\top=(0.8,0.6)$。
 每条有两个分量，因此叫二维向量。
 交换两个位置，就交换了技术与生活的分数；比较时必须保持特征定义、顺序和尺度一致。
 
@@ -70,20 +70,20 @@ C & $0.6\times0+0.8\times1$ & $0.80$\\\bottomrule
 刚才做的\textbf{同位置相乘，再把乘积相加}，就叫\textbf{点积（dot product）}。
 为让相同位置的数逐项配对，把左侧向量横排、右侧向量竖排：
 \[
-\vect a^\top=(a_1,a_2),\qquad
-\vect b=\begin{bmatrix}b_1\\b_2\end{bmatrix}.
+\vect u^\top=(u_1,u_2),\qquad
+\vect v=\begin{bmatrix}v_1\\v_2\end{bmatrix}.
 \]
-$\vect b$ 与 $\vect b^\top$ 装着相同的两个数，只是排列方向不同。
-本书用 $\vect a^\top\vect b$ 表示这一行与这一列的点积：
+$\vect v$ 与 $\vect v^\top$ 装着相同的两个数，只是排列方向不同。
+本书用 $\vect u^\top\vect v$ 表示这一行与这一列的点积：
 \begin{equation}
-\boxed{\vect a^\top\vect b=a_1b_1+a_2b_2.}
+\boxed{\vect u^\top\vect v=u_1v_1+u_2v_2.}
 \end{equation}
 推广到 $d$ 维，就是
 \[
-\vect a^\top\vect b=a_1b_1+\cdots+a_db_d.
+\vect u^\top\vect v=u_1v_1+\cdots+u_dv_d.
 \]
 输入是两条同维向量，输出是\textbf{一个数}。
-例如需求与文章 A 的分数写成 $\vect q^\top\vect a=0.96$。
+例如需求与文章 A 的分数写成 $\vect q^\top\vect x_A=0.96$。
 把一条向量当作权重看，这也是多项加权求和；
 点积的名称把这种反复出现的乘加写得更紧凑。
 
@@ -91,12 +91,12 @@ $\vect b$ 与 $\vect b^\top$ 装着相同的两个数，只是排列方向不同
 
 继续使用同一组数据。将 B 的每个分量乘 $3$，得到
 \[
-3\vect b^\top=3(1,0)=(3,0).
+3\vect x_B^\top=3(1,0)=(3,0).
 \]
 这种操作叫\textbf{数乘}：每个位置都乘同一个数。
 B 的技术与生活配比仍然是“只有技术”，匹配分数却变成
 \[
-\vect q^\top(3\vect b)=0.6\times3+0.8\times0=1.8.
+\vect q^\top(3\vect x_B)=0.6\times3+0.8\times0=1.8.
 \]
 $1.8$ 超过了 A 的 $0.96$，但 B 仍然只谈技术。
 这说明原始点积同时受\textbf{特征的配比}和\textbf{数字的整体大小}影响；
@@ -107,18 +107,18 @@ $1.8$ 超过了 A 的 $0.96$，但 B 仍然只谈技术。
 在本例中，正数倍放大保留了主题配比，却放大了点积。
 
 \phantomsection\label{concept:vector-length}
-怎样量箭头的长度？从原点走到 $(a_1,a_2)$，横、纵位移构成直角三角形，
+怎样量箭头的长度？从原点走到 $(u_1,u_2)$，横、纵位移构成直角三角形，
 用勾股定理便得到
 \begin{equation}
-\boxed{\|\vect a\|=\sqrt{a_1^2+a_2^2}.}
+\boxed{\|\vect u\|=\sqrt{u_1^2+u_2^2}.}
 \end{equation}
-符号 $\|\vect a\|$ 读作“向量 $\vect a$ 的长度”；本章用\textbf{范数}一词表示这种长度。
-横排或竖排都不改变分量，因此长度相同；本书统一用 $\|\vect a\|$ 记这个长度。
-因此 $\|\vect b\|=\sqrt{1^2+0^2}=1$，
-$\|3\vect b\|=\sqrt{3^2+0^2}=3$。
+符号 $\|\vect u\|$ 读作“向量 $\vect u$ 的长度”；本章用\textbf{范数}一词表示这种长度。
+横排或竖排都不改变分量，因此长度相同；本书统一用 $\|\vect u\|$ 记这个长度。
+因此 $\|\vect x_B\|=\sqrt{1^2+0^2}=1$，
+$\|3\vect x_B\|=\sqrt{3^2+0^2}=3$。
 \textbf{原始点积会受向量长度影响}，需要把这点纳入分数的解释。
 
-向量也可以逐项相加，例如 $\vect b^\top+\vect c^\top=(1,0)+(0,1)=(1,1)$。
+向量也可以逐项相加，例如 $\vect x_B^\top+\vect x_C^\top=(1,0)+(0,1)=(1,1)$。
 加法要求对应位置的含义与单位相容；后面的矩阵运算会反复使用这些数乘与加法。
 
 \subsection{只想比较方向，怎样排除长度影响？}
@@ -127,7 +127,7 @@ $\|3\vect b\|=\sqrt{3^2+0^2}=3$。
 方向保持不变，长度则变成 $1$；这样的向量叫\textbf{单位向量}。
 这个操作叫长度归一化。例如
 \[
-\frac{3\vect b^\top}{\|3\vect b\|}=\frac{(3,0)}3=(1,0)=\vect b^\top.
+\frac{3\vect x_B^\top}{\|3\vect x_B\|}=\frac{(3,0)}3=(1,0)=\vect x_B^\top.
 \]
 归一化后再和需求比较，分数恢复为 $0.6$。
 \input{figures/dot-product-length}
@@ -135,7 +135,7 @@ $\|3\vect b\|=\sqrt{3^2+0^2}=3$。
 回头核对最初的数据：
 \[
 \|\vect q\|=\sqrt{0.6^2+0.8^2}=1,\qquad
-\|\vect a\|=\sqrt{0.8^2+0.6^2}=1.
+\|\vect x_A\|=\sqrt{0.8^2+0.6^2}=1.
 \]
 B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异，
 比较的是这些向量的方向。
@@ -145,11 +145,11 @@ B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异�
 每项乘积都除以同一个长度乘积，可以把分母提出来：
 \begin{equation}
 \boxed{\text{余弦相似度}
-=\frac{\vect a^\top\vect b}{\|\vect a\|\|\vect b\|}.}
+=\frac{\vect u^\top\vect v}{\|\vect u\|\|\vect v\|}.}
 \end{equation}
 分母消除了正数倍整体放大的影响。以放大后的 B 为例：
 \[
-\frac{\vect q^\top(3\vect b)}{\|\vect q\|\|3\vect b\|}
+\frac{\vect q^\top(3\vect x_B)}{\|\vect q\|\|3\vect x_B\|}
 =\frac{1.8}{1\times3}=0.6.
 \]
 零向量没有方向，长度也是零，因此这条除法要求两条向量都非零。
@@ -167,10 +167,11 @@ B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异�
 需求方向上的投影为邻边。
 按“余弦等于邻边除以斜边”，投影长就是 $1\times\cos\theta$。
 对这两条单位向量，点积与投影长相等，所以两者都是 $0.96$。
+坐标乘加为什么等于投影长度，见下方选读框：余弦定理与坐标展开会推出一般公式。
 
 一般地，两条非零向量满足
 \begin{equation}
-\boxed{\vect a^\top\vect b=\|\vect a\|\|\vect b\|\cos\theta.}
+\boxed{\vect u^\top\vect v=\|\vect u\|\|\vect v\|\cos\theta.}
 \label{eq:dot-product-geometry}
 \end{equation}
 因此除以两个长度，留下的就是 $\cos\theta$，这解释了“余弦相似度”的名称。
@@ -180,24 +181,24 @@ B、C 的长度也都是 $1$。因此开头的排名恰好排除了长度差异�
 
 \begin{example}[title={{\symboliconfont ★} 为什么坐标计算与几何解释一致？}]
 这一段证明上面的通式，可以在掌握计算方法后回看。
-把两条非零、非共线向量从同一点画出，连接终点，第三条边长为 $\|\vect a-\vect b\|$。
+把两条非零、非共线向量从同一点画出，连接终点，第三条边长为 $\|\vect u-\vect v\|$。
 根据余弦定理，
 \begin{equation}
-\|\vect a-\vect b\|^2
-=\|\vect a\|^2+\|\vect b\|^2
--2\|\vect a\|\|\vect b\|\cos\theta.
+\|\vect u-\vect v\|^2
+=\|\vect u\|^2+\|\vect v\|^2
+-2\|\vect u\|\|\vect v\|\cos\theta.
 \label{eq:cosine-law}
 \end{equation}
 另一方面，按坐标展开：
 \[\begin{aligned}
-\|\vect a-\vect b\|^2
-&=(a_1-b_1)^2+(a_2-b_2)^2\\
-&=\|\vect a\|^2+\|\vect b\|^2
--2(a_1b_1+a_2b_2)\\
-&=\|\vect a\|^2+\|\vect b\|^2-2(\vect a^\top\vect b).
+\|\vect u-\vect v\|^2
+&=(u_1-v_1)^2+(u_2-v_2)^2\\
+&=\|\vect u\|^2+\|\vect v\|^2
+-2(u_1v_1+u_2v_2)\\
+&=\|\vect u\|^2+\|\vect v\|^2-2(\vect u^\top\vect v).
 \end{aligned}\]
 两式左侧相等，右侧又有相同的两个长度平方项，消去后得到
-$-2(\vect a^\top\vect b)=-2\|\vect a\|\|\vect b\|\cos\theta$。
+$-2(\vect u^\top\vect v)=-2\|\vect u\|\|\vect v\|\cos\theta$。
 再同时除以 $-2$，就是式~\eqref{eq:dot-product-geometry}。
 高维时按坐标展开仍成立，两条非共线向量也仍处在同一个平面内；
 同向或反向的共线情况可以直接代入核对。

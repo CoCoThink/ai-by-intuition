@@ -60,7 +60,9 @@
 例如工具返回
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
-{"ok":true,"revenue":132,"unit":"million_CNY"}
+{"id":"call_q3_01","ok":true,
+ "data":{"revenue":132,"unit":"million_CNY"},
+ "source":"Q3-report/table-A"}
 \end{Verbatim}
 \end{tcolorbox}
 应用需要确认工具实际执行的结果，再把数据转交模型，

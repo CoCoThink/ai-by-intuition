@@ -9,15 +9,16 @@
 更重要的是拿到一个新技术时，能独立判断\textbf{它解决了哪个瓶颈，
 用什么证据证明，付出了什么代价，以及哪些条件下会失效}。
 
-\subsection{先把“改进”分到四层，而不是混在一起}
+\subsection{先把“改进”分层，而不是混在一起}
 
 \begin{enumerate}
 \item \textbf{表示层：}Tokenizer、Embedding、位置表示如何编码输入？
 先追踪文本怎样进入网络，再测量表示改变带来的收益。
 \item \textbf{模型计算层：}Attention、FFN、MoE、归一化与缓存改变什么？
 区分训练 FLOPs、解码延迟、KV 内存和总参数量。
-\item \textbf{训练与反馈层／推理策略层：}改动修改了权重，还是在固定权重下多花计算？
-两层的区分见\hyperref[sec:training-inference-roles]{后训练章分工表}；这里追问数据、奖励与评测目标是否一致。
+\item \textbf{训练与反馈层：}改动怎样更新权重？数据、奖励与评测目标是否一致？
+\item \textbf{推理策略层：}权重固定时，额外计算如何分配给多次采样、搜索或核验？
+它与训练的区分见\hyperref[sec:training-inference-roles]{后训练章分工表}。
 \item \textbf{系统层：}RAG、工具、MCP、Workflow、Agent/A2A 是怎样连接
 资料与授权动作的？安全责任归谁？
 \end{enumerate}
@@ -42,6 +43,8 @@
 MoE 在专家宽度与每 Token 选取的专家数固定时，可增加总专家参数而保持相近的专家计算量，
 实际耗时还包括路由、负载分配与通信，
 固定 Workflow 主要减少人工操作；\textbf{三者应按各自的瓶颈与指标比较}。
+
+例如，在层数、头维、序列长度和精度相同的条件下，把 $12$ 个 K/V 头改为 $3$ 个，KV Cache 元素数降为四分之一；这能复算缓存节省，不能单独证明质量或速度改善。质量与延迟仍须在相同任务和负载下测量；缓存细算见第~\ref*{intro:22d-modern-transformers}~章。
 
 \subsection{Scaling Laws：更多参数一定更聪明吗？}
 \label{sec:scaling-compute-budget}

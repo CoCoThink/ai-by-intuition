@@ -37,7 +37,7 @@
 | [arxiv.org/abs/2405.04434](https://arxiv.org/abs/2405.04434) | 2026-10-25 | 已核对摘要中 MLA 把 KV Cache 压缩为潜在向量的描述 |
 | [arxiv.org/abs/2409.19606](https://arxiv.org/abs/2409.19606) | 2026-10-25 | 已核对其作为残差连接替代方案的定位 |
 | [arxiv.org/abs/2305.18290](https://arxiv.org/abs/2305.18290) | 2026-10-25 | 已核对成对分类损失与参考策略重参数化 |
-| [arxiv.org/abs/2503.20783](https://arxiv.org/abs/2503.20783) | 2026-10-25 | 已核对去掉标准差与长度归一化的修改 |
+| [arxiv.org/abs/2503.20783](https://arxiv.org/abs/2503.20783) | 2026-11-03 | 复核 Dr. GRPO 去掉组内标准差归一化与逐回答长度归一化 |
 | [huggingface.co/docs/transformers/main/en/chat_templating](https://huggingface.co/docs/transformers/main/en/chat_templating) | 2026-10-24 | 链接可访问 |
 | [huggingface.co/docs/transformers/main/en/cache_explanation](https://huggingface.co/docs/transformers/main/en/cache_explanation) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2209.11895](https://arxiv.org/abs/2209.11895) | 2026-10-25 | 已核对归纳头的两阶段匹配与复制机制 |
@@ -62,3 +62,18 @@
 | [modelcontextprotocol.io/docs/2026-07-28/getting-started/intro](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro) | 2026-10-27 | 已核对统一应用与外部工具连接接口的动机 |
 | [arxiv.org/html/2402.03300v3](https://arxiv.org/html/2402.03300v3) | 2026-10-28 | 已核对组相对优势，以及结果／过程监督使用奖励模型的例子 |
 | [modelcontextprotocol.io/specification/2026-07-28/architecture/index](https://modelcontextprotocol.io/specification/2026-07-28/architecture/index) | 2026-10-28 | 链接可访问 |
+| [arxiv.org/abs/2309.00071](https://arxiv.org/abs/2309.00071) | 2026-11-03 | 已核对基于 RoPE 扩展上下文窗口的方法定位 |
+| [aclanthology.org/2020.findings-emnlp.379/](https://aclanthology.org/2020.findings-emnlp.379/) | 2026-11-03 | 已核对按头归一化 Query/Key 并学习分数尺度的做法 |
+| [arxiv.org/abs/2512.24880](https://arxiv.org/abs/2512.24880) | 2026-11-03 | 已核对约束超连接通路以恢复恒等映射性质的目标 |
+| [arxiv.org/abs/2312.00752](https://arxiv.org/abs/2312.00752) | 2026-11-03 | 已核对输入相关的选择性状态更新及线性时间建模定位 |
+| [arxiv.org/abs/2412.06464](https://arxiv.org/abs/2412.06464) | 2026-11-03 | 已核对门控遗忘与 Delta 定向更新的组合动机 |
+| [arxiv.org/abs/2408.03314](https://arxiv.org/abs/2408.03314) | 2026-11-03 | 已核对测试时计算效果随题目难度变化及自适应分配的结论 |
+| [arxiv.org/abs/1710.03740](https://arxiv.org/abs/1710.03740) | 2026-11-03 | 已核对半精度训练、单精度主权重与损失缩放方法 |
+| [arxiv.org/abs/2205.14135](https://arxiv.org/abs/2205.14135) | 2026-11-03 | 已核对分块减少 HBM 读写并保持精确 Attention 的方法 |
+| [arxiv.org/abs/1910.02054](https://arxiv.org/abs/1910.02054) | 2026-11-03 | 已核对消除数据并行冗余状态以降低显存占用的做法 |
+| [docs.pytorch.org/docs/2.15/fsdp.html](https://docs.pytorch.org/docs/2.15/fsdp.html) | 2026-11-03 | 已核对 FSDP 的分片策略及其显存／通信权衡 |
+| [arxiv.org/abs/1811.06965](https://arxiv.org/abs/1811.06965) | 2026-11-03 | 已核对按层分段并在加速器间流水执行的并行方式 |
+| [arxiv.org/abs/1909.08053](https://arxiv.org/abs/1909.08053) | 2026-11-03 | 已核对层内张量并行及其与流水线并行的关系 |
+| [arxiv.org/abs/1712.05877](https://arxiv.org/abs/1712.05877) | 2026-11-03 | 已核对整数算术推理量化方案与精度恢复训练 |
+| [arxiv.org/abs/1606.01164](https://arxiv.org/abs/1606.01164) | 2026-11-03 | 已核对高阶激活与密集联想记忆的理论联系 |
+| [arxiv.org/abs/2008.02217](https://arxiv.org/abs/2008.02217) | 2026-11-03 | 已核对指数容量结论及与 Transformer Attention 的联系 |
