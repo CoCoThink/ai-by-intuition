@@ -24,6 +24,20 @@ def ordered_content_errors(body, steps):
         'Teach worked steps in this order: '+', '.join(name for name,_ in steps)]
 
 
+def bpe_comparison_errors(body):
+    """Keep the four-way tokenizer tradeoff table present and complete."""
+    table=re.search(r'\\begin\{tabularx\}\{\\linewidth\}.*?\\end\{tabularx\}',body,re.S)
+    if table is None:
+        return ['Missing BPE tokenizer comparison table']
+    return ordered_content_errors(table[0],[
+        ('table header',r'切分单位 & 词表大小 & 序列长度 & 遇到没见过的词'),
+        ('character row',r'逐字 & 较小 & 较长 & 未收录字符需要未知符号或其他回退方式'),
+        ('byte row',r'逐字节 & 256 个基础字节 & 较长 & 覆盖全部字节时'),
+        ('whole-word row',r'整词 & 极大 & 短 & 未收录词需要未知符号或其他回退方式'),
+        ('subword row',r'子词（BPE） & 基础表加合并项 & 居中 & 退回已覆盖的基础片段；覆盖取决于基础表'),
+    ])
+
+
 def route_prerequisite_errors(main, sources, dependencies):
     """Use source spans, not PDF pages: skipped chapters may share a page."""
     positions={};ends={};offset=0
@@ -101,6 +115,8 @@ def validate_pedagogy(main, sources):
     errors=route_prerequisite_errors(main,sources,[
         ('intro:20b-task-contract','intro:20c-classification-loss'),
         ('intro:21a-context-gap','intro:21c-naive-attention')])
+    errors.extend(f'09-tokenization: {error}'
+                  for error in bpe_comparison_errors(sources['09-tokenization']))
     sequences={
         '09-tokenization': [
             ('merge example',r'\[\\text\{今天\},\\text\{天气\},\\text\{好\}\]'),
@@ -151,6 +167,15 @@ def self_test():
     sources['prereq']=r'\label{pre}\label{cut} explanation after cut'
     sources['front-reading-routes']=r'\setroutebudget{hands}{pre/cut,use/end}'
     assert route_prerequisite_errors(main,sources,[('pre','use')])
+    bpe_table=r'''\begin{tabularx}{\linewidth}{X}
+切分单位 & 词表大小 & 序列长度 & 遇到没见过的词\\
+逐字 & 较小 & 较长 & 未收录字符需要未知符号或其他回退方式\\
+逐字节 & 256 个基础字节 & 较长 & 覆盖全部字节时\\
+整词 & 极大 & 短 & 未收录词需要未知符号或其他回退方式\\
+子词（BPE） & 基础表加合并项 & 居中 & 退回已覆盖的基础片段；覆盖取决于基础表\\
+\end{tabularx}'''
+    assert not bpe_comparison_errors(bpe_table)
+    assert bpe_comparison_errors(bpe_table.replace('逐字节 & 256 个基础字节','逐字节 & 128 个基础字节'))
     # Break the printed result while keeping all labels and prose intact.
     from pathlib import Path
     chapters=Path(__file__).resolve().parents[1]/'book/chapters'
