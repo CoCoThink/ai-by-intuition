@@ -208,7 +208,7 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 若配置给出 \texttt{head\_dim}，就用它作为 $d_k$；没有该字段时，只有在确认隐藏宽度均分给 Query 头的配置中，才用 $d_k=d_{\rm model}/H_Q$；
 缓存公式中则使用 $H_{KV}$，两种头数分别负责“求每头宽度”和“数缓存的头”。
 请求数、缓存位置数与元素精度由本次运行条件给出。
-想练习从配置取数，可以选做部分收尾的\hyperref[exercise:R-13]{R-13 第二问}，其中给出了真实配置摘录；
+想练习从配置取数，可以选做部分收尾题\hyperref[exercise:R-13]{R-13}中的“再读真实配置”部分；
 可以先手算，再运行 \texttt{scripts/config\_table.py} 核对字段。
 该脚本只读本地固定配置，不下载权重；长上下文的完整预算留在后面的选读算例。
 
@@ -592,15 +592,15 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 \textbf{mHC（Manifold-Constrained Hyper-Connections）}再约束这些通路的混合矩阵以恢复恒等映射性质；
 这些设计要连同连接路径与约束一起理解。
 可参考
-\href{https://arxiv.org/abs/2309.00071}{YaRN}、
-\href{https://aclanthology.org/2020.findings-emnlp.379/}{QK-Norm}、
+\hyperref[source:yarn]{YaRN}、
+\hyperref[source:qk-norm]{QK-Norm}、
 \href{https://arxiv.org/abs/2409.19606}{HC}
-与 \href{https://arxiv.org/abs/2512.24880}{mHC} 的原始论文。
+与 \hyperref[source:mhc]{mHC} 的原始论文。
 \phantomsection\label{concept:mamba}\textbf{Mamba} 是选择性状态空间模型的一类路线，
 \textbf{Gated DeltaNet} 采用门控 Delta 状态更新的高效序列建模路线；
 两者按各自的状态更新公式建立比较。
-参见 \href{https://arxiv.org/abs/2312.00752}{Mamba} 和
-\href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}。
+参见 \hyperref[source:mamba]{Mamba} 和
+\hyperref[source:gated-delta]{Gated DeltaNet}。
 
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读案例：因果编码器—解码器重新分工}
 \phantomsection\label{elective:causal-encoder-decoder}

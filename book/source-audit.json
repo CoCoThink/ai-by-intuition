@@ -67,14 +67,15 @@
     "url": "https://arxiv.org/abs/2001.08361",
     "status": 200,
     "final_url": "https://arxiv.org/abs/2001.08361",
-    "checked_utc": "2026-10-24",
-    "method": "HTTP GET; link accessibility only, not full content verification"
+    "checked_utc": "2026-11-03",
+    "method": "Primary source abstract review",
+    "result": "已核对摘要中验证损失随参数量、数据集大小与计算量呈幂律变化的结论"
   },
   {
     "url": "https://arxiv.org/abs/2203.15556",
     "status": 200,
     "final_url": "https://arxiv.org/abs/2203.15556",
-    "checked_utc": "2026-10-30",
+    "checked_utc": "2026-11-03",
     "method": "HTTP GET and paper reading; verified Appendix F FLOPs approximation C~6ND and 70B parameters / 1.4T training tokens in Section 4",
     "result": "已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算"
   },
@@ -441,7 +442,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2309.00071",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (YaRN method in section 3.3 and long-context evaluations in sections 4.2-4.5)",
     "result": "已核对基于 RoPE 扩展上下文窗口的方法定位"
   },
   {
@@ -457,7 +458,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2512.24880",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (method design, constrained mapping in section 4.1, and conclusion)",
     "result": "已核对约束超连接通路以恢复恒等映射性质的目标"
   },
   {
@@ -465,7 +466,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2312.00752",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (selection motivation, selective-scan method, and synthetic-task evaluation)",
     "result": "已核对输入相关的选择性状态更新及线性时间建模定位"
   },
   {
@@ -473,7 +474,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2412.06464",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (Mamba2 and DeltaNet formulation sections, including the gated update rule)",
     "result": "已核对门控遗忘与 Delta 定向更新的组合动机"
   },
   {
@@ -481,7 +482,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2408.03314",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (difficulty-conditioned compute strategy and binned search experiments)",
     "result": "已核对测试时计算效果随题目难度变化及自适应分配的结论"
   },
   {
@@ -489,7 +490,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/1710.03740",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (FP32 master weights and loss-scaling implementation sections)",
     "result": "已核对半精度训练、单精度主权重与损失缩放方法"
   },
   {
@@ -497,7 +498,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2205.14135",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (tiled algorithm and HBM/SRAM IO-complexity analysis)",
     "result": "已核对分块减少 HBM 读写并保持精确 Attention 的方法"
   },
   {
@@ -505,15 +506,15 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/1910.02054",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (ZeRO-DP stages and model/data/pipeline parallelism taxonomy)",
     "result": "已核对消除数据并行冗余状态以降低显存占用的做法"
   },
   {
-    "url": "https://docs.pytorch.org/docs/2.15/fsdp.html",
+    "url": "https://docs.pytorch.org/docs/2.14/fsdp.html",
     "status": 200,
-    "final_url": "https://docs.pytorch.org/docs/2.15/fsdp.html",
+    "final_url": "https://docs.pytorch.org/docs/2.14/fsdp.html",
     "checked_utc": "2026-11-03",
-    "method": "Versioned official PyTorch 2.15 FSDP documentation review",
+    "method": "Versioned official PyTorch 2.14 FSDP documentation review",
     "result": "已核对 FSDP 的分片策略及其显存／通信权衡"
   },
   {
@@ -521,7 +522,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/1811.06965",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (micro-batch algorithm, synchronous gradient accumulation, and pipeline bubble analysis)",
     "result": "已核对按层分段并在加速器间流水执行的并行方式"
   },
   {
@@ -529,7 +530,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/1909.08053",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (intra-layer model-parallel method and parallelism taxonomy)",
     "result": "已核对层内张量并行及其与流水线并行的关系"
   },
   {
@@ -537,7 +538,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/1712.05877",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (integer matrix arithmetic and simulated-quantization training sections)",
     "result": "已核对整数算术推理量化方案与精度恢复训练"
   },
   {
@@ -545,7 +546,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/1606.01164",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (higher-order energy formulation and associative-memory capacity section)",
     "result": "已核对高阶激活与密集联想记忆的理论联系"
   },
   {
@@ -553,7 +554,7 @@
     "status": 200,
     "final_url": "https://arxiv.org/abs/2008.02217",
     "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
+    "method": "Primary paper PDF review (continuous-state update, capacity results, and Transformer-attention equivalence in equation 10)",
     "result": "已核对指数容量结论及与 Transformer Attention 的联系"
   }
 ]

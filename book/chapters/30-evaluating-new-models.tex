@@ -60,30 +60,29 @@ MoE 在专家宽度与每 Token 选取的专家数固定时，可增加总专家
 它概括主要矩阵计算；上下文长度、Embedding 的计数口径与实现会影响误差。
 估算训练时长时，还要将运算量除以设备实际达到的吞吐量。
 
-把前文 GPT-2 small 约 $1.244$ 亿参数取整到 $N=1.25\times10^8$，
-假设训练预算为 $C=1.875\times10^{18}$ FLOPs，能够处理多少 Token？
+把前文 GPT-2 small 的参数量取整到 $N=1.25\times10^8$。
+假设预算为 $C=9\times10^{17}$ FLOPs（这是算例设定，不是 GPT-2 的实际训练记录），
+按 $C\approx6ND$，它能够处理多少 Token？
 \[
 \begin{aligned}
 D&\approx\frac{C}{6N}
-=\frac{1.875\times10^{18}}{6\times1.25\times10^8}\\
-&=2.5\times10^9=\boxed{25\text{ 亿 Token}}.
+=\frac{9\times10^{17}}{6\times1.25\times10^8}\\
+&=1.2\times10^9=\boxed{12\text{ 亿 Token}}.
 \end{aligned}
 \]
-预算不变时，若参数翻倍为 $2.5\times10^8$，训练 Token 就只能减半为 $12.5$ 亿。
-这两份方案的乘积 $ND$ 相同，但算力相同并不意味着损失相同：哪种分配更好，还要用实验判断。
+预算不变时，若参数翻倍为 $2.5\times10^8$，训练 Token 就只能减半为 $6$ 亿。
+两份方案的乘积 $ND$ 相同，但算力相同并不意味着损失相同，仍须实验比较。
 
 \textbf{Scaling Laws（缩放规律）}研究的正是参数、训练数据、算力与验证损失之间的经验关系。
-Kaplan 等（2020）的\href{https://arxiv.org/abs/2001.08361}{早期研究}讨论了这些趋势；
-Hoffmann 等（2022）的\href{https://arxiv.org/abs/2203.15556}{Chinchilla 研究}进一步比较固定训练算力下的分配。
-论文中的 Chinchilla 用 $700$ 亿参数训练了 $1.4$ 万亿 Token，比例为
+Kaplan 等的实验表明，在其研究范围内，扩大模型、数据或训练算力会使验证损失近似按幂律下降；
+规模越大，进一步扩张通常带来更小的损失改善（见\hyperref[source:scaling-laws]{附录 F}）。
+Hoffmann 等的\hyperref[source:chinchilla]{Chinchilla 研究}比较固定算力下的分配；该模型在其计算最优设置中用
+$700$ 亿参数训练了 $1.4$ 万亿 Token，比例为
 \[
 \frac{D}{N}=\frac{1.4\times10^{12}}{7\times10^{10}}=20.
 \]
-把 $D\approx20N$ 用作一个简化预算起点，本例的 $25$ 亿恰为参数量的 $20$ 倍。
-若参数和 Token 都翻倍，代入 $6ND$，所需算力就变成原来的 $4$ 倍。
-
-这笔预算采用 GPT-2 量级的参数个数与上面假设的算力。
-选择参数和数据的比例时，还要结合数据质量、上下文长度与部署成本做实验比较。
+该 $20:1$ 比例属于论文的特定训练设置，不是由上面的假设预算推出的通用配方。
+参数和 Token 同时翻倍需要 $4$ 倍算力；具体比例还要结合数据质量、上下文长度与部署成本做实验比较。
 
 \subsection{Bitter Lesson：计算与通用方法为何常被重视？}
 
@@ -111,9 +110,9 @@ Richard Sutton 在
 支持这项判断的证据应是：成熟结构在公开对照实验中持续提供更高的单位成本收益。
 
 另一种立场指出：序列建模还包括状态空间、线性状态与混合路线。
-例如\href{https://arxiv.org/abs/2312.00752}{Mamba}
+例如\hyperref[source:mamba]{Mamba}
 等状态空间路线、
-\href{https://arxiv.org/abs/2412.06464}{Gated DeltaNet}
+\hyperref[source:gated-delta]{Gated DeltaNet}
 等状态更新结构以及混合层，
 探索了长序列信息流和运行成本的不同权衡。
 它们分别尝试压缩状态、保留随机访问，或在两种信息通路之间分配计算。

@@ -478,7 +478,7 @@ def check_distance_reading():
 
 
 def check_scaling_budget():
-    """Recompute the printed FLOP budget and the historical Chinchilla ratio."""
+    """Recompute the assumed FLOP example and the separately reported Chinchilla ratio."""
     source=(ROOT/'book/chapters/30-evaluating-new-models.tex').read_text()
     example=source.split(r'\label{sec:scaling-compute-budget}',1)[1].split(r'\subsection{',1)[0]
     def scientific(pattern):
@@ -489,14 +489,68 @@ def check_scaling_budget():
     budget=scientific(r'C=([\d.]+)\\times10\^\{(\d+)\}')
     tokens=scientific(r'&=([\d.]+)\\times10\^(\d+)')
     assert np.isclose(tokens,budget/(6*parameters))
-    assert np.isclose(tokens/parameters,20)
-    assert np.isclose(tokens/1e8,25)
-    assert np.isclose(budget/(6*2*parameters)/1e8,12.5)
+    assert np.isclose(tokens/parameters,9.6)
+    assert np.isclose(tokens/1e8,12)
+    assert np.isclose(budget/(6*2*parameters)/1e8,6)
     assert np.isclose(6*(2*parameters)*(2*tokens)/budget,4)
+    assert '不是 GPT-2 的实际训练记录' in example
+    assert '验证损失' in example and '近似按幂律下降' in example and '更小的损失改善' in example
+    assert '通用配方' in example and '不是由上面的假设预算推出的' in example
+    assert r'\hyperref[source:scaling-laws]' in example and r'\hyperref[source:chinchilla]' in example
     numerator,denominator=re.search(
         r'\\frac\{D\}\{N\}=\\frac\{([\d.]+)\\times10\^\{12\}\}\{([\d.]+)\\times10\^\{10\}\}',example).groups()
     assert np.isclose(float(numerator)*1e12/(float(denominator)*1e10),20)
-    print('Scaling budget QA: 2.5B tokens, fixed-compute trade-off, fourfold FLOPs and Chinchilla 20:1 passed')
+    print('Scaling QA: assumed 1.2B-token budget, diminishing-returns wording, fourfold FLOPs and separate Chinchilla 20:1 passed')
+
+
+def check_review_followups():
+    """Keep terminology, section pointers, and source citations aligned with reviewed claims."""
+    post=(ROOT/'book/chapters/24-post-training-and-inference.tex').read_text()
+    for term in ('示范答案训练（SFT）','偏好训练（RLHF / DPO）','程序核验训练（RLVR）',
+                 '步骤提示（CoT）','多份候选再筛选（Best-of-$n$）'):
+        assert term in post,term
+    modern=(ROOT/'book/chapters/29-modern-transformers.tex').read_text()
+    assert 'R-13}中的“再读真实配置”部分' in modern
+    assert 'R-13 第二问' not in modern
+    training=(ROOT/'book/chapters/20-language-model-training.tex').read_text()
+    selection=training.split(r'\label{experiment:attention-selection}',1)[1].split(r'\subsection{',1)[0]
+    assert '固定窗口 MLP 或 RNN' in selection and '同样的名字和值历史' in selection
+
+    source_links={
+        '24-post-training-and-inference.tex':('source:test-time-compute',),
+        '28-training-and-deployment.tex':('source:zero','source:pytorch-fsdp','source:gpipe',
+                                          'source:megatron-lm','source:mixed-precision',
+                                          'source:flash-attention','source:integer-quantization'),
+        '29-modern-transformers.tex':('source:yarn','source:qk-norm','source:mhc',
+                                      'source:mamba','source:gated-delta'),
+        '30-evaluating-new-models.tex':('source:scaling-laws','source:chinchilla',
+                                        'source:mamba','source:gated-delta'),
+        '34-nonlinear-memory.tex':('source:dense-associative-memory','source:modern-hopfield-attention'),
+    }
+    appendix=(ROOT/'book/chapters/appendix-f-sources.tex').read_text()
+    audit=json.loads((ROOT/'book/source-audit.json').read_text())
+    audit_by_url={entry['url']:entry for entry in audit}
+    for chapter,labels in source_links.items():
+        text=(ROOT/'book/chapters'/chapter).read_text()
+        for label in labels:
+            assert f'\\hyperref[{label}]' in text,(chapter,label)
+            assert f'\\label{{{label}}}' in appendix,label
+    fsdp=audit_by_url['https://docs.pytorch.org/docs/2.14/fsdp.html']
+    assert fsdp['final_url']=='https://docs.pytorch.org/docs/2.14/fsdp.html'
+    assert 'PyTorch 2.14' in fsdp['method']
+    assert '2.15' not in appendix and '2.15' not in fsdp['url']
+    new_urls={
+        'https://arxiv.org/abs/2309.00071','https://aclanthology.org/2020.findings-emnlp.379/',
+        'https://arxiv.org/abs/2512.24880','https://arxiv.org/abs/2312.00752',
+        'https://arxiv.org/abs/2412.06464','https://arxiv.org/abs/2408.03314',
+        'https://arxiv.org/abs/1710.03740','https://arxiv.org/abs/2205.14135',
+        'https://arxiv.org/abs/1910.02054','https://arxiv.org/abs/1811.06965',
+        'https://arxiv.org/abs/1909.08053','https://arxiv.org/abs/1712.05877',
+        'https://arxiv.org/abs/1606.01164','https://arxiv.org/abs/2008.02217',
+    }
+    for url in new_urls:
+        assert 'abstract review' not in audit_by_url[url]['method'].lower(),url
+    print('Review follow-up QA: acronyms, R-13 wording, alternative sequence models, citations and FSDP version passed')
 
 
 def check_model_comparison():
@@ -641,6 +695,7 @@ def main():
     check_attention_maxima()
     check_distance_reading()
     check_scaling_budget()
+    check_review_followups()
     check_model_comparison()
     check_published_forward()
     check_agent_loop()

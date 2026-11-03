@@ -89,6 +89,8 @@ FP32 表示每个数用 $32$ bit，也就是 $4$ 字节保存。
 \end{tabularx}
 \end{center}
 先找到瓶颈，再选择分摊对象；实际训练可以组合使用这些办法。
+对应实例见附录 F：状态分片有\hyperref[source:zero]{ZeRO}与\hyperref[source:pytorch-fsdp]{PyTorch FSDP}，
+流水线并行见\hyperref[source:gpipe]{GPipe}，层内张量并行见\hyperref[source:megatron-lm]{Megatron-LM}。
 
 \phantomsection\label{concept:mixed-precision}
 \textbf{一个数占多少空间，也可以调整。}
@@ -98,11 +100,13 @@ FP32 表示每个数用 $32$ bit，也就是 $4$ 字节保存。
 浮点数用“有效数字乘以二的某次幂”表示数值：指数位关系到能表示多大或多小，尾数位关系到数值有多精细。
 BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
 但尾数精度更低；采用哪种精度取决于硬件及数值稳定性。
+混合精度训练的一种具体实现还维护 FP32 主权重并使用损失缩放，见\hyperref[source:mixed-precision]{附录 F 的论文来源}。
 
 \textbf{还有一种慢，来自计算与显存之间反复搬运数据。}
 标准 Attention 若把整张分数和权重矩阵写入显存再读出，会产生大量中间数据读写。
 \textbf{FlashAttention} 通过分块和逐块累积的 Softmax 计算，减少这类读写与中间存储，
 提高执行效率；它在适用条件下\textbf{保持相同的注意力数学目标}。
+其分块算法与显存读写分析见\hyperref[source:flash-attention]{附录 F 的论文来源}。
 工程选型要同时测量吞吐、显存、通信、数值误差与最终模型质量。
 
 \subsection{推理部署：权重、缓存、精度与服务}
@@ -185,6 +189,7 @@ $(-1,-0.197,0.197,1)$。
 \end{example}
 
 代价是近似误差：相近权重会落入同一个量化格。模型效果是否受影响，取决于量化方案、模型分布和任务，并不是位数越少越好。
+整数算术推理的一种实现路线见\hyperref[source:integer-quantization]{附录 F 的量化论文}。
 
 \subsubsection*{\texorpdfstring{{\symboliconfont ★}}{★} 进一步阅读：蒸馏与 LoRA}
 

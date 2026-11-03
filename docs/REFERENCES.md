@@ -13,8 +13,8 @@
 | [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) | 2026-10-30 | 已核对递推与直接读取的信息路径比较；正文距离表为手设规则对照 |
 | [www.deeplearningbook.org/](https://www.deeplearningbook.org/) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2005.14165](https://arxiv.org/abs/2005.14165) | 2026-10-24 | 链接可访问 |
-| [arxiv.org/abs/2001.08361](https://arxiv.org/abs/2001.08361) | 2026-10-24 | 链接可访问 |
-| [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-10-30 | 已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算 |
+| [arxiv.org/abs/2001.08361](https://arxiv.org/abs/2001.08361) | 2026-11-03 | 已核对摘要中验证损失随参数量、数据集大小与计算量呈幂律变化的结论 |
+| [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-11-03 | 已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算 |
 | [www.incompleteideas.net/IncIdeas/BitterLesson.html](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) | 2026-10-24 | 链接可访问 |
 | [law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/](https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/) | 2026-10-24 | 访问受限 |
 | [modelcontextprotocol.io/specification](https://modelcontextprotocol.io/specification) | 2026-10-25 | 已核对当前入口指向 2026-07-28 版 |
@@ -71,7 +71,7 @@
 | [arxiv.org/abs/1710.03740](https://arxiv.org/abs/1710.03740) | 2026-11-03 | 已核对半精度训练、单精度主权重与损失缩放方法 |
 | [arxiv.org/abs/2205.14135](https://arxiv.org/abs/2205.14135) | 2026-11-03 | 已核对分块减少 HBM 读写并保持精确 Attention 的方法 |
 | [arxiv.org/abs/1910.02054](https://arxiv.org/abs/1910.02054) | 2026-11-03 | 已核对消除数据并行冗余状态以降低显存占用的做法 |
-| [docs.pytorch.org/docs/2.15/fsdp.html](https://docs.pytorch.org/docs/2.15/fsdp.html) | 2026-11-03 | 已核对 FSDP 的分片策略及其显存／通信权衡 |
+| [docs.pytorch.org/docs/2.14/fsdp.html](https://docs.pytorch.org/docs/2.14/fsdp.html) | 2026-11-03 | 已核对 FSDP 的分片策略及其显存／通信权衡 |
 | [arxiv.org/abs/1811.06965](https://arxiv.org/abs/1811.06965) | 2026-11-03 | 已核对按层分段并在加速器间流水执行的并行方式 |
 | [arxiv.org/abs/1909.08053](https://arxiv.org/abs/1909.08053) | 2026-11-03 | 已核对层内张量并行及其与流水线并行的关系 |
 | [arxiv.org/abs/1712.05877](https://arxiv.org/abs/1712.05877) | 2026-11-03 | 已核对整数算术推理量化方案与精度恢复训练 |

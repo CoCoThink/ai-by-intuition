@@ -186,6 +186,8 @@ Softmax 对每条查询重新归一化，所以它的读出随上下文逐条计
 \frac{\sqrt{T_k}}{d_k}\approx1\ \Rightarrow\ T_k\approx d_k^2.
 \end{equation}
 这就解释了为什么改变相似度的非线性，可以改变理论容量对维度的增长规律。一般的 $p$ 次选择性激活在相应理想假设下可产生 $T_k\approx d_k^p$ 这一类标度。
+高阶相互作用与密集联想记忆的理论联系见\hyperref[source:dense-associative-memory]{Krotov 与 Hopfield 的研究}；
+现代连续状态 Hopfield 更新与 Transformer Attention 的对应关系见\hyperref[source:modern-hopfield-attention]{Ramsauer 等的推导}。
 
 % Start the complete self-check on the closing page, rather than leaving only
 % its final question above the part exit on a sparse continuation page.
