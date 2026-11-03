@@ -84,7 +84,7 @@
 \par\answerpiece{3}{找错}{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}第一个位置的目标就是“花”，本应只利用“春天”来预测；读取第二位置的“花”等于提前看到了答案。目标在评分步骤参与损失计算。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第~\ref*{intro:20c-classification-loss}~章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类损失：预测错了哪一类，怎样调整分数？}}\answercheckpage{20c-classification-loss}\par\nobreak
-\answerpiece{1}{辨析}{先核对概率的取值范围与总和。}logits 可为负且不要求和为一；Softmax 后各项非负、总和为一。
+\answerpiece{1}{辨析}{区分选出一个候选，与衡量正确答案获得多少支持。}只选最高分时，直接比较 $(2,-1,0)$ 就能选第一类。本章训练时采用概率加交叉熵的方案：先把 logits 变成总和为 $1$ 的概率，再按正确答案获得的概率计算损失。这样，即使两次都选对，也能区分正确答案概率为 $0.4$ 与 $0.9$ 的预测，后者损失更小。
 \par\answerpiece{2}{手算}{先找到正确类别的那一项概率。}$-\ln(1/2)=\answerresult{\ln2\approx0.6931}$，该类梯度 $1/2-1=\answerresult{-0.5}$。
 \par\answerpiece{3}{预测}{比较 $-\ln p$ 随 $p$ 增大的方向。}$-\ln0.4<-\ln0.2$，交叉熵下降。
 \par\Needspace{8\baselineskip}
