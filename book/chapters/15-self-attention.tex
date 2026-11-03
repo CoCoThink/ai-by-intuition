@@ -168,6 +168,15 @@ Y_{\rm causal}=A_{\rm causal}V
 若别的掩码（如填充位置）把某一行全部遮住，分母为零，需要实现另行处理。
 
 
+\subsection{缩放分数会怎样改变读取？}
+
+先看两个候选位置，未缩放的匹配分数是 $(8,0)$。
+Softmax 后第一处获得约 $0.9997$ 的权重，几乎独占读取；
+若 Key 有 $64$ 维，常用缩放会把分数除以 $\sqrt{64}=8$，
+变成 $(1,0)$，第一处权重约为 $0.731$，另一处仍有可见贡献。
+这就是缩放的直接作用：控制分数差进入 Softmax 后造成的集中程度。
+为什么选维度的平方根，在\sectionentry{concept:scaled-dot-product}中用波动尺度解释。
+
 \subsection{缩放点积 Attention 的通用式}
 \begin{equation}
 \boxed{\operatorname{Attention}(Q,K,V)
@@ -177,7 +186,7 @@ Y_{\rm causal}=A_{\rm causal}V
 \phantomsection\label{eq:multi-query-attention}
 Softmax 对每个 Query 的一行单独归一化，输出 $T_q\times d_v$。
 除以 $\sqrt{d_k}$ 用于控制高维点积分数的典型量级；
-缩放会改变 Softmax 权重，因此需要根据新的分数重新计算。
+缩放改变了分数，因此 Softmax 权重也要根据缩放后的分数重新计算。
 
 \begin{example}
 若权重为 $(0.75,0.25)$、两条 Value 是 $(2,0)$、$(0,4)$，

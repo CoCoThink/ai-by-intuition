@@ -10,6 +10,10 @@ ROOT=Path(__file__).resolve().parents[1]
 BOOK=ROOT/'book'
 PARTS=('learning','matrices','tokens','context','transformer','assistant','architecture','vision','memory')
 PART_NAMES=('学习','矩阵','文字','上下文','Transformer','助手','架构','视觉','联想记忆')
+APPENDIX_PRACTICE={
+    'optimizer-details': ('app:optimizer-details', '附录 A · 优化器'),
+    'rational-mini': ('app:rational-mini', '附录 B · 二维迷你实验'),
+}
 
 def validate_keys(data):
     """Semantic keys survive printed renumbering; retired fields must not return."""
@@ -26,7 +30,7 @@ def validate_progression(data,chapter_slugs):
     for slug in chapter_slugs:
         rows=[r for r in data if r['slug']==slug and not r.get('part_review')]
         if not any(r['difficulty']=='基础' for r in rows):
-            raise ValueError(f'{slug}: chapter and optimizer practice need a basic entry exercise')
+            raise ValueError(f'{slug}: chapter and appendix practice need a basic entry exercise')
     groups={r['slug'] for r in data if not r.get('part_review')}
     for slug in groups:
         values=[levels[r['difficulty']] for r in data if r['slug']==slug]
@@ -43,10 +47,11 @@ def load_exercises():
     owners,titles=lesson_metadata();primary={}
     for label,slug in owners.items():
         if label.startswith('intro:'):primary.setdefault(slug,label)
+    appendix_owners={label:slug for slug,(label,_) in APPENDIX_PRACTICE.items()}
     for r in data:
         if r['slug'] in primary and r['owner']!=primary[r['slug']]:raise ValueError(f"{r['id']}: chapter metadata points to a subsection")
         expected=('review:'+r['part_review'] if r.get('part_review') and r['owner']=='part:'+r['part_review'] else
-                  owners.get(r['owner'],'optimizer-details' if r['owner']=='app:optimizer-details' else None))
+                  owners.get(r['owner'],appendix_owners.get(r['owner'])))
         if expected!=r['slug']:raise ValueError(f"{r['id']}: wrong ownership")
         if r['difficulty'] not in ('基础','标准','挑战') or not 1<=r['minutes']<=60:raise ValueError(f"{r['id']}: invalid difficulty/time")
         if any(ord(c)<32 and c!='\n' for key in ('question','solution') for c in r[key]):raise ValueError(f"{r['id']}: control character")
@@ -59,7 +64,7 @@ def load_exercises():
         if not step or not step[1].rstrip().endswith(r'\par\nobreak') or step[2]:
             raise ValueError(f"{r['id']}: first step must end with \\par\\nobreak before one answer label")
         if r.get('part_review') and (r['part_review'] not in PARTS or not r.get('review_prompt')):raise ValueError(f"{r['id']}: missing review prompt/part")
-    validate_progression(data,(set(titles)-{'00-guide'})|{'optimizer-details'})
+    validate_progression(data,(set(titles)-{'00-guide'})|set(APPENDIX_PRACTICE))
     by_key={r['key']:r for r in data}
     for part in PARTS:
         reviews=[r for r in data if r.get('part_review')==part]
@@ -71,7 +76,7 @@ def load_exercises():
 
 def printed_regular(data,titles):
     """Validate the order readers actually see, after grouping by real chapters."""
-    order={slug:i for i,slug in enumerate(titles)}
+    order={slug:i for i,slug in enumerate([*titles,*APPENDIX_PRACTICE])}
     rows=sorted([r for r in data if not r.get('part_review')],key=lambda r:(order.get(r['slug'],999),r['id']))
     if [r['id'] for r in rows]!=[f'C-{i:03d}' for i in range(1,len(rows)+1)]:
         raise ValueError('Printed chapter exercise numbers must be contiguous after chapter sorting')
@@ -83,8 +88,9 @@ def group_heading(row, titles):
     review=row.get('part_review')
     if review:
         return '累积复习 · '+PART_NAMES[PARTS.index(review)], r'本部分第~\pageref*{part:'+review+r'}~页起'
-    if row['slug']=='optimizer-details':
-        return '附录 A · 优化器', r'正文第~\pageref*{app:optimizer-details}~页'
+    if row['slug'] in APPENDIX_PRACTICE:
+        label,title=APPENDIX_PRACTICE[row['slug']]
+        return title, r'正文第~\pageref*{'+label+r'}~页'
     if row['slug']=='00-guide':
         return '序章', r'自测第~\pageref*{check:00-guide}~页'
     return r'第~\ref*{'+row['owner']+r'}~章 · '+titles[row['slug']], r'正文第~\pageref*{'+row['owner']+r'}~页'

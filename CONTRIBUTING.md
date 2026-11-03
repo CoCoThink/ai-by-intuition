@@ -24,6 +24,8 @@
 
 阅读路线的页数预算由 [front-reading-routes.tex](book/chapters/front-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步附录 A 的路线细目与这些标签；成品导航检查会核对实际目标页、表中预算及按每次 5 页计算的排期示例，不手填旧版页数。
 
+契约检查同时调用 [check_pedagogy_regressions.py](scripts/check_pedagogy_regressions.py)，检查已登记的路线前置依赖、具体例子与通用公式的顺序，并从正文矩阵复算位置交换和缩放示例。反例自测会跳过前置章、颠倒步骤或篡改展示数值，确认检查确实会失败；这些回归不能代替对全文逻辑的人工评审。
+
 前置顺序为封面（底部合并版权信息）、两页以内目录、一页“写给谁，怎么读”、序章和第一部分。五题数学自检与答案在附录 A 的数学速查中；详细路线和图例在同附录的路线细目中。编号、行列与代码下标的约定在首次使用时引入。
 
 ## 本地构建
@@ -109,7 +111,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 
 正文章文件名中的编号是当前印刷章号；标签和 `exercises.json` 的 `slug` 是稳定的查找键，其中的数字不表示当前章号。`owner` 保存目标标签，`slug` 用于题目分组，两者也可能不同；请按下表找到文件，不按旧键的数字推断位置。
 
-下表列出序章、各章与优化器练习入口，包括保留的 `intro:` 兼容标签和局部入口。同一行中的局部标签只定位到该文件内的小节，不一定代表整章。表格由 `generate_chapter_navigation.py` 从实际输入顺序、正文标签及练习宏生成，`--check` 会检查是否过时。
+下表列出序章、各章与附录练习入口，包括保留的 `intro:` 兼容标签和局部入口。同一行中的局部标签只定位到该文件内的小节，不一定代表整章。表格由 `generate_chapter_navigation.py` 从实际输入顺序、正文标签及练习宏生成，`--check` 会检查是否过时。
 
 <!-- BEGIN GENERATED CHAPTER SOURCE MAP -->
 | 当前章文件 | 入口与兼容标签 | 习题归属键（`slug`） |
@@ -150,6 +152,7 @@ python3 scripts/validate_mathml_af.py book/build/main.pdf --minimum 1000
 | [33-linear-associative-memory.tex](book/chapters/33-linear-associative-memory.tex) | `intro:04-key-value-outer-product`<br>`intro:06-better-linear-memory`<br>`intro:05-memory-interference` | `04-key-value-outer-product` |
 | [34-nonlinear-memory.tex](book/chapters/34-nonlinear-memory.tex) | `intro:09-nonlinearity-and-memory`<br>`intro:13-capacity`<br>`intro:08-stacking-key-value`<br>`intro:14-summary` | `09-nonlinearity-and-memory` |
 | [appendix-a-optimizers.tex](book/chapters/appendix-a-optimizers.tex) | `app:optimizer-details` | `optimizer-details` |
+| [appendix-b-transformer-intermediates.tex](book/chapters/appendix-b-transformer-intermediates.tex) | `app:rational-mini` | `rational-mini` |
 <!-- END GENERATED CHAPTER SOURCE MAP -->
 
 ### 附录
@@ -290,7 +293,7 @@ python3 scripts/print_proof.py book/build/main.pdf --all --scale 1100 --out-dir 
 
 C 题和 R 题各按印刷顺序连续编号，由 `generate_exercise_bank.py` 校验。每题的 `key` 是独立于印刷题号的稳定语义键；脚本按 `key` 查题，正文可链接 `exercise:<key>`，答案可链接 `solution:<key>`。增删题目后重排印刷题号并重新生成题库与章末导航，同步带题号的手写引用；不保留旧编号兼容字段或锚点。
 
-正文章内按“基础、标准、挑战”排列，同档保留知识依赖顺序；每章及优化器附录至少一题可直接计算或辨认的基础入口，不靠改标降低综合题难度。每部分第一道 R 题的 `warmup_key` 指向该部分的一道基础 C 题，生成器据此给出热身入口。标准、挑战题答案按需要展开关键中间步骤、验算方法或具体错因；开放挑战题写明假设、交付物与验收条件，给出一种可复算方案并说明结论的适用范围。题目要求代码时，答案应给出能运行的代码或明确的验收方案。
+正文章内按“基础、标准、挑战”排列，同档保留知识依赖顺序；每章及设有练习的附录至少一题可直接计算或辨认的基础入口，不靠改标降低综合题难度。二维梯度扩展题归入附录 B 的迷你实验组，不挤占主线训练章；题库生成器的 `APPENDIX_PRACTICE` 维护附录组的归属与顺序。每部分第一道 R 题的 `warmup_key` 指向该部分的一道基础 C 题，生成器据此给出热身入口。标准、挑战题答案按需要展开关键中间步骤、验算方法或具体错因；开放挑战题写明假设、交付物与验收条件，给出一种可复算方案并说明结论的适用范围。题目要求代码时，答案应给出能运行的代码或明确的验收方案。
 
 ## 正式发布
 

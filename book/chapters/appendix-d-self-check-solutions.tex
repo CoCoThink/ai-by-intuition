@@ -85,8 +85,9 @@
 \par\Needspace{8\baselineskip}
 \item[\textbf{第~\ref*{intro:20c-classification-loss}~章}] \phantomsection\label{answer:20c-classification-loss}\textbf{\hyperref[check:20c-classification-loss]{分类损失：预测错了哪一类，怎样调整分数？}}\answercheckpage{20c-classification-loss}\par\nobreak
 \answerpiece{1}{辨析}{区分选出一个候选，与衡量正确答案获得多少支持。}只选最高分时，直接比较 $(2,-1,0)$ 就能选第一类。本章训练时采用概率加交叉熵的方案：先把 logits 变成总和为 $1$ 的概率，再按正确答案获得的概率计算损失。这样，即使两次都选对，也能区分正确答案概率为 $0.4$ 与 $0.9$ 的预测，后者损失更小。
-\par\answerpiece{2}{手算}{先找到正确类别的那一项概率。}$-\ln(1/2)=\answerresult{\ln2\approx0.6931}$，该类梯度 $1/2-1=\answerresult{-0.5}$。
-\par\answerpiece{3}{预测}{比较 $-\ln p$ 随 $p$ 增大的方向。}$-\ln0.4<-\ln0.2$，交叉熵下降。
+\par\answerpiece{2}{判断}{逐项检查非负性，再求和。}只有 $\answerresult{(0.2,0.5,0.3)}$ 合法：三项非负且总和为 $1$。第二组总和为 $1.1$；第三组虽总和为 $1$，却含负数，都不能作为类别概率。
+\par\answerpiece{3}{手算}{先找到正确类别的那一项概率。}$-\ln(1/2)=\answerresult{\ln2\approx0.6931}$，该类梯度 $1/2-1=\answerresult{-0.5}$。
+\par\answerpiece{4}{预测}{比较 $-\ln p$ 随 $p$ 增大的方向。}$-\ln0.4<-\ln0.2$，交叉熵下降。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第~\ref*{intro:20-embeddings}~章}] \phantomsection\label{answer:20-embeddings}\textbf{\hyperref[check:20-embeddings]{Embedding：让 Token ID 变成可训练的向量}}\answercheckpage{20-embeddings}\par\nobreak
 \answerpiece{1}{形状}{先数查出的行数与每行宽度。}Embedding 表为 $5\times3$，三个 ID 查表为 $\answerresult{3\times3}$，每行属于输入的一个位置。

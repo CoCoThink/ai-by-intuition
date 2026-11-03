@@ -9,6 +9,20 @@
 
 \input{figures/rag-evidence-coverage}
 
+\subsection{先走一遍检索、补证据、再回答}
+\phantomsection\label{concept:rag}
+
+任务要求比较 Q1、Q2、Q3 三个季度。图中的一次检索只返回 Q1 和 Q3，
+还缺少计算 Q2 环比必需的 Q2 原表；此时不能拿 Q1 代替 Q2。
+应用应继续检索并确认三份获授权的原表，再把相关数值、单位和出处放进本次上下文。
+核对原表后，收入 $100,120,132$ 百万元对应的环比分别是
+$(120-100)/100=20\%$ 与 $(132-120)/120=10\%$，
+回答还要指出每个数值来自哪份报告。
+
+这就是\textbf{检索增强生成（RAG）}的基本路径：
+先从外部资料找证据，再把证据交给模型组织回答；
+检索不完整时，系统应补查或说明缺口，而不是让模型猜。
+
 \subsection{先分清 Prompt、Context 与 Memory}
 
 \phantomsection\label{concept:prompt}\textbf{Prompt（提示输入）}可以包含目标、约束、示例和当前问题；
@@ -59,7 +73,6 @@ RAG 可以检索外部材料，帮助模型获取新证据，
 \end{casebox}
 
 \subsection{RAG 解决“找资料”，工具调用解决“执行动作”}
-\phantomsection\label{concept:rag}
 
 沿用上面的 Q1--Q3 比较任务；只有经过授权的原始报告才有资格成为正式数值来源。
 

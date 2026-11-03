@@ -131,6 +131,16 @@
   },
   {
     "id": "C-014",
+    "key": "relu-output-weight-update",
+    "owner": "intro:07-functions-relu",
+    "slug": "07-functions-relu",
+    "difficulty": "标准",
+    "minutes": 8,
+    "question": "\\textbf{手算与验算：}沿用本章三个点 $(-1,1),(0,0),(1,1)$，令 $\\widehat{y}=a\\relu(x)+c\\relu(-x)$，只训练 $a,c$。从 $a=0,c=1/2$ 出发，用三点平均平方损失和学习率 $\\eta=3/4$ 同步更新一步。求新参数和更新后的损失，再与最佳直线的损失 $2/9$ 比较。",
+    "solution": "\\textbf{第一步：}先分别写出正、负输入对输出权重产生的残差。\\par\\nobreak\\textbf{解题过程：}原点始终预测 $0$，其余两点分别预测 $a,c$，故 $L=((a-1)^2+(c-1)^2)/3$。初值下两个梯度为 $-2/3,-1/3$；同步更新得 $a=1/2,c=3/4$。新损失为 $((1/2-1)^2+(3/4-1)^2)/3=5/48<2/9$。验算：损失从 $5/12$ 降为 $5/48$。负输入激活的是 $\\relu(-x)$，若交换两个单元，就会把 $a,c$ 的更新写反。"
+  },
+  {
+    "id": "C-015",
     "key": "local-chain-gradient",
     "owner": "intro:17-backpropagation",
     "slug": "17-backpropagation",
@@ -140,7 +150,7 @@
     "solution": "\\textbf{第一步：}每往前经过一步，就乘上那一步的局部导数。\\par\\nobreak\n\\textbf{解题过程：}$\\partial\\widehat{y}/\\partial h=3$，所以 $\\partial L/\\partial h=(-2)\\times3=\\answerresult{-6}$；再乘 $\\partial h/\\partial w_1=x=2$，得 $\\partial L/\\partial w_1=(-6)\\times2=\\answerresult{-12}$。"
   },
   {
-    "id": "C-015",
+    "id": "C-016",
     "key": "branch-gradient-sum",
     "owner": "intro:17-backpropagation",
     "slug": "17-backpropagation",
@@ -150,7 +160,7 @@
     "solution": "\\textbf{第一步：}先算 $\\widehat{y}$ 与损失对 $\\widehat{y}$ 的梯度。\\par\\nobreak\n\\textbf{解题过程：}$\\widehat{y}=5$，输出端梯度为 $5-4=1$。两条分支的贡献分别为 $1\\times2=2$、$1\\times3=3$，总梯度相加得 $\\partial L/\\partial h=\\answerresult{5}$。若只取其中一条，就漏掉了 $h$ 对损失的另一条影响路径。"
   },
   {
-    "id": "C-016",
+    "id": "C-017",
     "key": "relu-blocked-gradient",
     "owner": "intro:17-backpropagation",
     "slug": "17-backpropagation",
@@ -160,7 +170,7 @@
     "solution": "\\textbf{第一步：}先判断 $z$ 落在 ReLU 的哪一段。\\par\\nobreak\n\\textbf{解题过程：}$z=-2,h=0,\\widehat{y}=0,L=1/2$。虽然 $\\partial L/\\partial h=(0-1)\\times3=-3$，但 $z<0$ 时 $\\partial h/\\partial z=0$，所以 $\\partial L/\\partial w=(-3)\\times0\\times2=\\answerresult{0}$。损失非零，仍可能被中间某一步的零导数截断。"
   },
   {
-    "id": "C-017",
+    "id": "C-018",
     "key": "scalar-chain-forward",
     "owner": "intro:17-backpropagation",
     "slug": "17-backpropagation",
@@ -170,7 +180,7 @@
     "solution": "\\textbf{第一步：}先算 $h$ 和预测，再用链式法则求权重梯度。\\par\\nobreak\n\\textbf{解答：} $h=6$，$\\widehat{y}=6$，$L=2$；$\\partial L/\\partial w_2=(\\widehat{y}-y)h=(-2)\\times6=-12$。\\par\\textbf{核对：}对 $w_2$ 求导时，$\\partial\\widehat{y}/\\partial w_2=h=6$，不是原输入 $x=3$。若得到 $-6$，通常是跳过了隐藏层，把 $h$ 错换成 $x$。"
   },
   {
-    "id": "C-018",
+    "id": "C-019",
     "key": "branch-gradient-reuse",
     "owner": "intro:17-backpropagation",
     "slug": "17-backpropagation",
@@ -180,7 +190,7 @@
     "solution": "\\textbf{第一步：}先把到达同一节点的各分支梯度汇总。\\par\\nobreak\\textbf{解题过程：}同一节点收到来自多个输出分支的梯度后求和，再向前传播；可复用保存的中间值与局部导数。\\par\\textbf{核对：}可画出 $h\\to u\\to L$ 与 $h\\to v\\to L$ 两条路径，各算一份贡献后相加。只取一条会漏梯度；把两份贡献相乘则把并行分支误当成串联路径。保存前向中间值后，各分支共用这些值与已算出的上游梯度。"
   },
   {
-    "id": "C-019",
+    "id": "C-020",
     "key": "validation-checkpoint-choice",
     "owner": "intro:18-generalization",
     "slug": "18-generalization",
@@ -190,7 +200,7 @@
     "solution": "\\textbf{第一步：}先只比较验证损失，不用训练损失决定胜者。\\par\\nobreak\n\\textbf{解题过程：}应选验证损失最小的 $\\answerresult{\\text{C}}$，而不是训练损失最小的 B。用最终测试结果参与选择后，测试数据已影响选模；应另留独立测试数据做最终评价。"
   },
   {
-    "id": "C-020",
+    "id": "C-021",
     "key": "zero-loss-generalization",
     "owner": "intro:18-generalization",
     "slug": "18-generalization",
@@ -200,7 +210,7 @@
     "solution": "\\textbf{第一步：}先分别看训练样本与独立样本。\\par\\nobreak\n\\textbf{解题过程：}$y=4$ 时 $\\tfrac12(4-4)^2=0$，只说明这一份样本被拟合；仍要用独立验证数据检验，并排除改标签或数据泄漏造成的假象。\\par\\textbf{核对：}本题把目标改成了已有预测，并没有展示模型在新样本上改善。把“标签被改到吻合”当作“训练学到了规律”，会同时混淆监督目标与泛化评估。"
   },
   {
-    "id": "C-021",
+    "id": "C-022",
     "key": "validation-overfitting",
     "owner": "intro:18-generalization",
     "slug": "18-generalization",
@@ -210,7 +220,7 @@
     "solution": "\\textbf{第一步：}对比训练和验证曲线的变化方向。\\par\\nobreak\n\\textbf{解答：} 可能过拟合；可考虑更多合适数据、数据增强、L2 惩罚、Dropout、提前停止等，需用独立验证数据评估。\\par\\textbf{核对：}例如固定数据划分与训练设置，只比较是否采用提前停止，用验证损失最低的检查点选模。若反复依据测试集结果决定停止位置，测试集也参与了选模，最终分数会偏乐观。"
   },
   {
-    "id": "C-022",
+    "id": "C-023",
     "key": "small-data-validation",
     "owner": "intro:18-generalization",
     "slug": "18-generalization",
@@ -220,7 +230,7 @@
     "solution": "\\textbf{第一步：}先把最终测试集保留在选择过程之外。\\par\\nobreak\\textbf{解题过程：}在训练集内部采用交叉验证或重复验证切分做模型选择，最终测试集独立保留；代价是多次训练成本。\\par\\textbf{核对：}可先锁定最终测试集，在其余数据上做五折交叉验证，按五次验证的平均表现选择超参数，再用确定的方案训练并测试。交叉验证中的每一折仍要保持训练与验证分离。"
   },
   {
-    "id": "C-023",
+    "id": "C-024",
     "key": "vector-coordinate-operations",
     "owner": "intro:01-vectors",
     "slug": "01-vectors",
@@ -230,7 +240,7 @@
     "solution": "\\textbf{第一步：}加法与数乘都逐个坐标计算；长度用勾股定理。\\par\\nobreak\n\\textbf{解答：}$\\vect a^\\top+\\vect b^\\top=(4,2)$，$2\\vect a^\\top=(6,8)$，$\\|\\vect a\\|=\\sqrt{3^2+4^2}=\\answerresult{5}$。交换坐标后数值集合不变，但每个位置对应的特征变了，一般不再表示同一对象。"
   },
   {
-    "id": "C-024",
+    "id": "C-025",
     "key": "unit-vector-dot-comparison",
     "owner": "intro:01-vectors",
     "slug": "01-vectors",
@@ -240,7 +250,7 @@
     "solution": "\\textbf{第一步：}按同一特征位置相乘，再把两项相加。\\par\\nobreak\n\\textbf{解题过程：}$\\vect a^\\top\\vect b=1\\times0+0\\times1=\\answerresult{0}$，$\\vect a^\\top\\vect c=1\\times0.6+0\\times0.8=\\answerresult{0.6}$，所以 C 的分数更高。点积计算本身不要求单位长度；本题三条向量恰好长度均为 $1$，因此分数也可直接比较方向的接近程度。"
   },
   {
-    "id": "C-025",
+    "id": "C-026",
     "key": "article-query-ranking",
     "owner": "intro:01-vectors",
     "slug": "01-vectors",
@@ -250,7 +260,7 @@
     "solution": "\\textbf{第一步：}用新的需求分别与三篇文章做点积。\\par\\nobreak\\textbf{解题过程：}$\\vect q^\\top\\vect a=0.8\\times0.8+0.6\\times0.6=\\answerresult{1}$，$\\vect q^\\top\\vect b=\\answerresult{0.8}$，$\\vect q^\\top\\vect c=\\answerresult{0.6}$。排名为 A、B、C；技术项的需求权重高于生活项，因而纯技术的 B 超过纯生活的 C。"
   },
   {
-    "id": "C-026",
+    "id": "C-027",
     "key": "cosine-rescaling",
     "owner": "intro:01-vectors",
     "slug": "01-vectors",
@@ -260,7 +270,7 @@
     "solution": "\\textbf{第一步：}先算原始点积，再除以两个长度的乘积。\\par\\nobreak\\textbf{解题过程：}点积 $3\\times4+4\\times3=\\answerresult{24}$，两个长度均为 $\\sqrt{3^2+4^2}=\\answerresult{5}$；余弦相似度为 $24/(5\\times5)=\\answerresult{0.96}$。两条向量各放大 $5$ 倍，原始点积放大 $25$ 倍，方向与夹角不变；分母也放大 $25$ 倍，所以余弦相似度保持不变。"
   },
   {
-    "id": "C-027",
+    "id": "C-028",
     "key": "cosine-length-control",
     "owner": "intro:01-vectors",
     "slug": "01-vectors",
@@ -270,7 +280,7 @@
     "solution": "\\textbf{第一步：}先把每条向量除以自己的长度。\\par\\nobreak\\textbf{解题过程：}余弦相似度除以两个范数，排除了非零向量整体放大的影响；原始点积则会随长度变化。\\par\\textbf{核对：}设两条非零向量各乘正数 $c,d$，分子点积乘 $cd$，分母两个范数的乘积也乘 $cd$，比值相消。只除以一条向量的长度，会留下另一条的缩放影响；零向量的余弦则没有定义。"
   },
   {
-    "id": "C-028",
+    "id": "C-029",
     "key": "matrix-single-entry",
     "owner": "intro:03-matrix-multiplication",
     "slug": "03-matrix-multiplication",
@@ -280,7 +290,7 @@
     "solution": "\\textbf{第一步：}结果的第 $i$ 行第 $j$ 列，来自左边第 $i$ 行乘右边第 $j$ 列。\\par\\nobreak\n\\textbf{解题过程：}$AB:2\\times3$。$(AB)_{12}=1\\times(-1)+2\\times3=\\answerresult{5}$；$(AB)_{23}=3\\times1+0\\times0=\\answerresult{3}$。它们分别用了 $A$ 的第 $1$ 行与 $B$ 的第 $2$ 列、$A$ 的第 $2$ 行与 $B$ 的第 $3$ 列。"
   },
   {
-    "id": "C-029",
+    "id": "C-030",
     "key": "matrix-batch-calculation",
     "owner": "intro:03-matrix-multiplication",
     "slug": "03-matrix-multiplication",
@@ -290,7 +300,7 @@
     "solution": "\\textbf{第一步：}先让第一行输入乘 $W$ 的两列，再处理第二行。\\par\\nobreak\n\\textbf{解题过程：}$Y=\\answerresult{\\begin{bmatrix}-2&2\\\\5&4\\end{bmatrix}}$，两行结果分别为 $(1-3,2)=(-2,2)$ 与 $(2+3,4)=(5,4)$。每行独立使用同一个 $W$；只改第一行输入，第二行仍为 $(5,4)$。"
   },
   {
-    "id": "C-030",
+    "id": "C-031",
     "key": "matrix-shape-correction",
     "owner": "intro:03-matrix-multiplication",
     "slug": "03-matrix-multiplication",
@@ -300,7 +310,7 @@
     "solution": "\\textbf{第一步：}相乘前先比较左矩阵的列数与右矩阵的行数；不相等时考虑转置哪一个。\\par\\nobreak\n\\textbf{解题过程：}$AB$ 的内侧维度为 $2$ 和 $5$，不能相乘。改为 $AB^\\top:3\\times5$，再乘 $C:5\\times4$，得 $AB^\\top C:\\answerresult{3\\times4}$；其转置 $(AB^\\top C)^\\top=C^\\top BA^\\top$ 为 $4\\times3$。"
   },
   {
-    "id": "C-031",
+    "id": "C-032",
     "key": "batch-matrix-sharing",
     "owner": "intro:03-matrix-multiplication",
     "slug": "03-matrix-multiplication",
@@ -310,7 +320,7 @@
     "solution": "\\textbf{第一步：}先算一行的输出宽度，再数行数。\\par\\nobreak\\textbf{解题过程：}每行 $1\\times2$ 乘 $2\\times3$ 得 $1\\times3$，五行堆叠是 $5\\times3$；整批一次 $XW$ 也得 $5\\times3$。\\par\\textbf{核对：}可写成 $XW=[x_1^\\top W;\\ldots;x_5^\\top W]$。五行共用同一个 $W$，但各自的 $x_i^\\top$ 可以不同；因此共享参数并不要求五行输出相同。"
   },
   {
-    "id": "C-032",
+    "id": "C-033",
     "key": "gram-asymmetry",
     "owner": "intro:03-matrix-multiplication",
     "slug": "03-matrix-multiplication",
@@ -320,7 +330,7 @@
     "solution": "\\textbf{第一步：}$G$ 的第 $i$ 行第 $j$ 列是 $X$ 第 $i$ 行与第 $j$ 行的点积；再用 $(AB)^\\top=B^\\top A^\\top$ 检查。\\par\\nobreak\n\\textbf{解题过程：}$G=\\begin{bmatrix}5&2&-1\\\\2&1&-1\\\\-1&-1&2\\end{bmatrix}$；由 $G^\\top=(X^\\top)^\\top X^\\top=XX^\\top$，它必然对称。$XW=\\begin{bmatrix}1&3\\\\0&1\\\\1&0\\end{bmatrix}$，$S=\\begin{bmatrix}7&3&-2\\\\2&1&-1\\\\1&0&1\\end{bmatrix}$，例如 $S_{13}=-2\\neq S_{31}=1$；因为 $S^\\top=XW^\\top X^\\top$，只有 $W^\\top=W$ 时才等于 $S$。"
   },
   {
-    "id": "C-033",
+    "id": "C-034",
     "key": "mlp-activation-forward",
     "owner": "intro:10-mlp",
     "slug": "10-mlp",
@@ -330,7 +340,7 @@
     "solution": "\\textbf{第一步：}先算两个隐藏单元的加权和，记得分别加偏置。\\par\\nobreak\n\\textbf{解题过程：}$\\vect z^\\top=(2-2+1,-1-2)=(1,-3)$，$\\vect h^\\top=\\answerresult{(1,0)}$，因此 $\\widehat{y}=1\\times2+0\\times(-1)+0.5=\\answerresult{2.5}$。两个隐藏分量只保留了正的第一项。"
   },
   {
-    "id": "C-034",
+    "id": "C-035",
     "key": "mlp-parameter-count",
     "owner": "intro:10-mlp",
     "slug": "10-mlp",
@@ -340,7 +350,7 @@
     "solution": "\\textbf{第一步：}按输入宽度乘输出宽度数权重，每个输出单元再配一个偏置。\\par\\nobreak\n\\textbf{解题过程：}$W_1:2\\times3,\\vect b_1^\\top:1\\times3,W_2:3\\times1,b_2:1\\times1$。总参数为 $2\\times3+3+3\\times1+1=\\answerresult{13}$。五个样本共用参数，参数量仍为 $13$；输入 $5\\times2$ 经隐藏层 $5\\times3$ 后得到输出 $\\answerresult{5\\times1}$。"
   },
   {
-    "id": "C-035",
+    "id": "C-036",
     "key": "mlp-negative-activation",
     "owner": "intro:10-mlp",
     "slug": "10-mlp",
@@ -350,7 +360,7 @@
     "solution": "\\textbf{第一步：}先算上投影，找出会被 ReLU 截断的负分量。\\par\\nobreak\n\\textbf{解答：}上投影是 $(2,1,-1)$，ReLU 后为 $(2,1,0)$，下投影得 $\\answerresult{(4,1)}$；去掉 ReLU 则 $(2,1,-1)$ 直接下投影，得 $(3,0)$。差别全部来自被置零的第三个分量。"
   },
   {
-    "id": "C-036",
+    "id": "C-037",
     "key": "mlp-linear-composition",
     "owner": "intro:10-mlp",
     "slug": "10-mlp",
@@ -360,7 +370,7 @@
     "solution": "\\textbf{第一步：}先试把相邻的两个矩阵合并。\\par\\nobreak\\textbf{解题过程：}无激活时可合并为 $x(W_1W_2)$；含 ReLU 时计算分支依赖输入，能表达固定线性矩阵无法表达的函数。\\par\\textbf{核对：}用标量反例验算：两层权重都为 $1$ 时，$f(x)=\\relu(x)$ 满足 $f(1)=1,f(-1)=0$。若合成固定线性映射 $cx$，由前者得 $c=1$，后者却会得到 $-1$，所以无法对所有输入这样合并。"
   },
   {
-    "id": "C-037",
+    "id": "C-038",
     "key": "token-id-lookup",
     "owner": "intro:20a-tokenizer",
     "slug": "20a-tokenizer",
@@ -370,7 +380,7 @@
     "solution": "\\textbf{第一步：}按文本中 Token 出现的顺序，逐项换成给定 ID。\\par\\nobreak\n\\textbf{解题过程：}ID 序列为 $\\answerresult{[4,5,3]}$，保持原来的文字顺序。ID 用来查词表；按大小重排会改变输入序列。"
   },
   {
-    "id": "C-038",
+    "id": "C-039",
     "key": "bpe-pair-merge",
     "owner": "intro:20a-tokenizer",
     "slug": "20a-tokenizer",
@@ -380,7 +390,7 @@
     "solution": "\\textbf{第一步：}独立序列内部统计相邻对，比较次数。\\par\\nobreak\n\\textbf{解答：} 两段内相邻对的总计数为\n$(a,a):1$，$(a,b):2$；第一轮合并 $a+b\\to ab$，\n得到 \\texttt{a ab} 与 \\texttt{ab}。\n每段单独切分与合并，不跨段统计相邻对。\\par\\textbf{核对：}可以逐段标出相邻对：第一段为 $(a,a),(a,b)$，第二段为 $(a,b)$。若把第一段末尾与第二段开头也配对，就错误地跨越了序列边界。合并后应重新计数下一轮的相邻对。"
   },
   {
-    "id": "C-039",
+    "id": "C-040",
     "key": "tokenizer-attention-cost",
     "owner": "intro:20a-tokenizer",
     "slug": "20a-tokenizer",
@@ -390,7 +400,7 @@
     "solution": "\\textbf{第一步：}先把长度代入 $T\\times T$。\\par\\nobreak\\textbf{解题过程：}分数矩阵由 $T^2$ 增到 $(2T)^2=\\answerresult{4T^2}$，元素数四倍；端到端耗时还受实现、投影、硬件和序列生成方式等影响。\\par\\textbf{核对：}四倍只针对完整分数矩阵的元素数。若直接把测得的总延迟也乘四，就忽略了投影、读写、内核及其他计算所占的比例。应先分别记录长度与这一项的计算量，再测实际耗时。"
   },
   {
-    "id": "C-040",
+    "id": "C-041",
     "key": "shifted-token-targets",
     "owner": "intro:20b-task-contract",
     "slug": "20b-task-contract",
@@ -400,7 +410,7 @@
     "solution": "\\textbf{第一步：}训练时输入序列和目标序列错开一个位置。\\par\\nobreak\n\\textbf{解答：} 输入 $(2,4,1)$，目标 $(4,1,8)$，且所有 ID 均在词表范围内。"
   },
   {
-    "id": "C-041",
+    "id": "C-042",
     "key": "causal-target-visibility",
     "owner": "intro:20b-task-contract",
     "slug": "20b-task-contract",
@@ -410,7 +420,7 @@
     "solution": "\\textbf{第一步：}从当前位置向前列出允许读取的位置，再找到目标与预测汇合的步骤。\\par\\nobreak\n\\textbf{解答：} 三个位置分别允许读取位置 $\\answerresult{\\{1\\}}$、$\\answerresult{\\{1,2\\}}$、$\\answerresult{\\{1,2,3\\}}$。\n第三位置的目标 ID $3$ 指出该行应预测“。”；评分步骤比较该行预测与这个答案，计算预测损失。"
   },
   {
-    "id": "C-042",
+    "id": "C-043",
     "key": "training-generation-data",
     "owner": "intro:20b-task-contract",
     "slug": "20b-task-contract",
@@ -420,7 +430,7 @@
     "solution": "\\textbf{第一步：}分别追踪训练目标和生成时新输入的来源。\\par\\nobreak\\textbf{解题过程：}训练目标来自已有文本：输入 $[2,4,5]$，对应目标是 $[4,5,3]$，即“花、开了、。”。\n生成时只有给定的“春天”，模型先输出下一 Token 的概率，再按选取规则得到一个 Token 并追加到输入；若选出“花”，下一轮输入就是“春天 花”。\n训练目标从文本直接取得，生成时追加的 Token 来自模型的预测与选取。"
   },
   {
-    "id": "C-043",
+    "id": "C-044",
     "key": "single-token-cross-entropy",
     "owner": "intro:20c-classification-loss",
     "slug": "20c-classification-loss",
@@ -430,7 +440,7 @@
     "solution": "\\textbf{第一步：}利用 $-\\ln p=\\ln(1/p)$，先把概率写成倒数。\\par\\nobreak\n\\textbf{解答：} $-\\ln(0.25)=\\ln4\\approx1.386$。"
   },
   {
-    "id": "C-044",
+    "id": "C-045",
     "key": "probability-loss-ratio",
     "owner": "intro:20c-classification-loss",
     "slug": "20c-classification-loss",
@@ -440,7 +450,7 @@
     "solution": "\\textbf{第一步：}先分别取负对数，再用 $\\ln a-\\ln b=\\ln(a/b)$。\\par\\nobreak\n\\textbf{解答：}$-\\ln0.2\\approx1.609$，$-\\ln0.8\\approx0.223$，差约 $\\answerresult{1.386}=\\ln(0.8/0.2)=\\ln4$：正确类概率提高到四倍，惊讶度减少 $\\ln4$。"
   },
   {
-    "id": "C-045",
+    "id": "C-046",
     "key": "softmax-logit-gradient",
     "owner": "intro:20c-classification-loss",
     "slug": "20c-classification-loss",
@@ -450,7 +460,7 @@
     "solution": "\\textbf{第一步：}先把类别 1 写成与 $p$ 同形的 One-hot 向量。\\par\\nobreak\n\\textbf{解答：}$y=(1,0,0)$，$p-y=\\answerresult{(-0.8,0.5,0.3)}$。沿负梯度更新，$z_1$ 升高，$z_2,z_3$ 降低；错误类中概率越大的 $z_2$ 被压低得越多。"
   },
   {
-    "id": "C-046",
+    "id": "C-047",
     "key": "one-hot-gradient-target",
     "owner": "intro:20c-classification-loss",
     "slug": "20c-classification-loss",
@@ -460,7 +470,7 @@
     "solution": "\\textbf{第一步：}先把类别标签写成与 $p$ 同形的向量。\\par\\nobreak\\textbf{解题过程：}$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$；整数 ID 只用于索引。\\par\\textbf{核对：}例如三类、正确 ID 为 $2$ 时，应写 $y=(0,1,0)$。把整数 $2$ 从每个概率上都减去，会错误地把所有分量同样平移；正确的 $p-y$ 分量之和应为零。"
   },
   {
-    "id": "C-047",
+    "id": "C-048",
     "key": "embedding-shape",
     "owner": "intro:20-embeddings",
     "slug": "20-embeddings",
@@ -470,7 +480,7 @@
     "solution": "\\textbf{第一步：}词表项数确定行数，特征宽度确定列数。\\par\\nobreak\n\\textbf{解答：} $E:4\\times3$；每个 Token 嵌入为 3 维。"
   },
   {
-    "id": "C-048",
+    "id": "C-049",
     "key": "embedding-input-change",
     "owner": "intro:20-embeddings",
     "slug": "20-embeddings",
@@ -480,7 +490,7 @@
     "solution": "\\textbf{第一步：}按新输入的三个 ID 依次取表行。\\par\\nobreak\n\\textbf{解题过程：}新的查表结果为\n\\[\\begin{bmatrix}0.15&-0.2&1.25\\\\-0.3&1.1&0.2\\\\0.15&-0.2&1.25\\end{bmatrix}.\\]\n只有第一行查表结果改变；第 1、3 行因为读取同一个 ID 而相同。这里只更换输入，没有优化器更新，Embedding 表中的参数保持不变。"
   },
   {
-    "id": "C-049",
+    "id": "C-050",
     "key": "embedding-update",
     "owner": "intro:20-embeddings",
     "slug": "20-embeddings",
@@ -490,7 +500,7 @@
     "solution": "\\textbf{第一步：}把给定坐标、梯度和学习率代入“参数减去学习率乘梯度”。\\par\\nobreak\n\\textbf{解题过程：}$-0.3-0.04\\times0.257642=\\answerresult{-0.31030568}\\approx-0.31031$。更换输入 ID 只改变读取哪一行；没有参数更新时，$E[4]$ 保持原值。"
   },
   {
-    "id": "C-050",
+    "id": "C-051",
     "key": "rnn-one-step",
     "owner": "intro:21a-context-gap",
     "slug": "21-rnn",
@@ -500,7 +510,7 @@
     "solution": "\\textbf{第一步：}分别找出当前输入项与历史状态项。\\par\\nobreak\n\\textbf{解题过程：}$h_t=3+0.5\\times2=\\answerresult{4}$。这里传入的是上一步状态 $2$，不是把全部历史输入重新求和。"
   },
   {
-    "id": "C-051",
+    "id": "C-052",
     "key": "history-model-comparison",
     "owner": "intro:21a-context-gap",
     "slug": "21-rnn",
@@ -510,7 +520,7 @@
     "solution": "\\textbf{第一步：}分别画出固定窗口包含的输入，以及 RNN 的状态传递箭头。\\par\\nobreak\\textbf{解题过程：}固定窗口把最近若干 Token 的向量拼成输入，窗口外的信息不能直接进入。RNN 每步接收当前输入与上一状态，把部分历史压进固定宽度的摘要；本章的递推不会向当前步骤提供所有历史状态供单独读取。\\par\\textbf{核对：}窗口的输入宽度随窗口长度增长；本章 RNN 的单条状态宽度固定。把“状态含历史信息”理解成“保留了每个历史位置的原向量”，就混淆了摘要与可单独读取的记录。"
   },
   {
-    "id": "C-052",
+    "id": "C-053",
     "key": "window-input-width",
     "owner": "intro:21a-context-gap",
     "slug": "21-rnn",
@@ -520,7 +530,7 @@
     "solution": "\\textbf{第一步：}拼接把各行首尾相接，宽度等于窗口长度乘每行维度。\\par\\nobreak\n\\textbf{解答：}宽度分别为 $2\\times3=6$ 与 $8\\times3=\\answerresult{24}$。$n=2$ 只覆盖前一位置与当前位置，看不到距离 $4$ 的线索；$n=8$ 能看到。但输入宽度和首层权重随 $n$ 线性增长，窗口外的信息仍会丢失。"
   },
   {
-    "id": "C-053",
+    "id": "C-054",
     "key": "rnn-decay",
     "owner": "intro:21a-context-gap",
     "slug": "21-rnn",
@@ -530,7 +540,7 @@
     "solution": "\\textbf{第一步：}只有第一个输入非零，之后每一步状态只乘 $0.8$。\\par\\nobreak\n\\textbf{解答：}$h_1=1,h_2=0.8,h_3=0.64,h_4=0.512$，一般 $h_t=0.8^{t-1}$。$0.8^{10}\\approx0.107$，$0.8^{11}\\approx0.086$，故从 $t=\\answerresult{12}$ 起小于 $0.1$。"
   },
   {
-    "id": "C-054",
+    "id": "C-055",
     "key": "rnn-state-scaling",
     "owner": "intro:21a-context-gap",
     "slug": "21-rnn",
@@ -540,7 +550,17 @@
     "solution": "\\textbf{第一步：}把递推式 $h_t=f(x_t,h_{t-1})$ 的输入与输出形状写出。\\par\\nobreak\\textbf{解题过程：}单个状态仍为 $1\\times d$，更新次数从 $T$ 次增至 $2T$ 次。最后一步直接接收 $h_{2T-1}$；较早的信息须经过中间状态持续保留在摘要里。这要求固定宽度的状态能保住任务所需的历史线索。"
   },
   {
-    "id": "C-055",
+    "id": "C-056",
+    "key": "context-conflicting-labels",
+    "owner": "intro:21a-context-gap",
+    "slug": "21-rnn",
+    "difficulty": "标准",
+    "minutes": 10,
+    "question": "\\textbf{【解释／复算】}本章用“春天、花”和“冬天、花”分别预测“开了”和“谢了”。现在把第二条前文也改成“春天”，仍保留这两个不同目标。即使模型能接收全部前文，两条样本的最优平均交叉熵还能低于 $\\ln2$ 吗？说明理由。可选：修改 \\nolinkurl{scripts/context_contrast_demo.py} 的两条输入，训练后核对。",
+    "solution": "\\textbf{第一步：}比较修改后两条样本的完整输入是否还能区分。\\par\\nobreak\\textbf{解题过程：}两条输入现在都是“春天、花”，模型只能给出同一预测分布。设给“开了”的概率为 $p$，给“谢了”的概率为 $1-p$，平均损失为 $-\\tfrac12\\ln[p(1-p)]$。因为 $p(1-p)\\leq1/4$，最小损失仍为 $\\ln2$，在 $p=1/2$ 时取得。\\textbf{错因诊断：}读取全部前文可以利用输入中的区别，却不能区分完全相同的输入；增加模型容量也不能补回已经删去的信息。"
+  },
+  {
+    "id": "C-057",
     "key": "weighted-value-read",
     "owner": "intro:21c-naive-attention",
     "slug": "21c-naive-attention",
@@ -550,7 +570,7 @@
     "solution": "\\textbf{第一步：}先把两条 Value 按行排成矩阵，输出是两行的加权和。\\par\\nobreak\n\\textbf{解题过程：}$V=\\begin{bmatrix}2&1\\\\0&3\\end{bmatrix}$，$aV=0.8(2,1)+0.2(0,3)=\\answerresult{(1.6,1.4)}$；矩阵相乘逐列得到同样两项。权重和为 $1$。换成 $(0.25,0.75)$ 后得到 $(0.5,0.25+2.25)=\\answerresult{(0.5,2.5)}$。"
   },
   {
-    "id": "C-056",
+    "id": "C-058",
     "key": "query-projection-choice",
     "owner": "intro:21c-naive-attention",
     "slug": "21c-naive-attention",
@@ -560,7 +580,7 @@
     "solution": "\\textbf{第一步：}查询向量可以来自可学习投影。\\par\\nobreak\n\\textbf{解答：} 简化模型直接使用输入作为查询；标准 Transformer 通过可学习投影 $\\vect q^\\top=\\vect x^\\top W_Q$ 得到查询。"
   },
   {
-    "id": "C-057",
+    "id": "C-059",
     "key": "unnormalized-value-read",
     "owner": "intro:21c-naive-attention",
     "slug": "21c-naive-attention",
@@ -570,7 +590,7 @@
     "solution": "\\textbf{第一步：}先取匹配权重，再按行加权求和 Value。\\par\\nobreak\n\\textbf{解答：} $aV=(0,6)$；这是两行 Value 按权重 $0$ 与 $2$ 求和。\\par\\textbf{核对：}逐列验算为 $(0\\times2+2\\times0,\\,0\\times1+2\\times3)=(0,6)$。这里给定权重和为 $2$，题目没有要求 Softmax；若先归一化而得到 $(0,3)$，就是擅自改变了算式。"
   },
   {
-    "id": "C-058",
+    "id": "C-060",
     "key": "self-dot-length",
     "owner": "intro:21c-naive-attention",
     "slug": "21c-naive-attention",
@@ -580,7 +600,7 @@
     "solution": "\\textbf{第一步：}分别计算 $x_1\\cdot x_3$、$x_3\\cdot x_1$ 与 $x_3\\cdot x_3$。\\par\\nobreak\\textbf{解题过程：}$S_{13}=\\answerresult{2}$、$S_{31}=\\answerresult{2}$、$S_{33}=\\answerresult{8}$；$XX^\\top$ 仍然对称。方向相同的 $x_3$ 长度增大一倍，与 $x_1$ 的点积增大一倍，与自身的点积增大四倍，说明分数也受向量长度影响。"
   },
   {
-    "id": "C-059",
+    "id": "C-061",
     "key": "key-value-projections",
     "owner": "intro:21c-naive-attention",
     "slug": "21c-naive-attention",
@@ -590,7 +610,7 @@
     "solution": "\\textbf{第一步：}先比较匹配特征与内容特征是否必须相同。\\par\\nobreak\\textbf{解题过程：}把匹配和内容绑定限制灵活度；独立 $W_Q,W_K,W_V$ 能分别学习匹配视角和提供的内容。\\par\\textbf{核对：}例如“按主题匹配”与“返回价格信息”可以需要不同特征。Key 决定被怎样找到，Value 决定取回什么；分开投影允许二者分别训练。若仅说明增加参数，却没指出这两种角色，就还没有解释灵活性来自哪里。"
   },
   {
-    "id": "C-060",
+    "id": "C-062",
     "key": "attention-shapes",
     "owner": "intro:11-softmax-memory",
     "slug": "11-softmax-memory",
@@ -600,7 +620,7 @@
     "solution": "\\textbf{第一步：}依次核对 $QK^\\top$、权重以及权重乘 $V$ 的形状。\\par\\nobreak\n\\textbf{解答：} $QK^\\top:3\\times5$；权重仍为 $3\\times5$；最终输出 $3\\times6$。"
   },
   {
-    "id": "C-061",
+    "id": "C-063",
     "key": "cross-attention-shapes",
     "owner": "intro:11-softmax-memory",
     "slug": "11-softmax-memory",
@@ -610,7 +630,7 @@
     "solution": "\\textbf{第一步：}先得分矩阵，再看它右乘 $V$ 后的形状。\\par\\nobreak\n\\textbf{解答：} $QK^\\top:2\\times4$，输出 $2\\times5$；Softmax 对每个 Query 的\\textbf{一行} Key 分数分别归一化。\\par\\textbf{核对：}转置后 $K^\\top:3\\times4$，内侧维度 $3$ 消去；随后 $(2\\times4)(4\\times5)$ 才得到 $2\\times5$。若输出写成 $2\\times4$，往往是停在了权重矩阵，没有乘 Value。"
   },
   {
-    "id": "C-062",
+    "id": "C-064",
     "key": "score-value-confusion",
     "owner": "intro:11-softmax-memory",
     "slug": "11-softmax-memory",
@@ -620,7 +640,7 @@
     "solution": "\\textbf{第一步：}先区分分数矩阵与读出矩阵。\\par\\nobreak\\textbf{解题过程：}$QK^\\top$ 只生成分数而非内容，须先用 Softmax 得权重，再右乘 Value 才得到读出表示。\\par\\textbf{核对：}$QK^\\top$ 的列对应 Key 位置，$AV$ 的列对应 Value 特征。即使某个小例子的两种宽度恰好相同，也仍要计算读取；用形状相同证明数值相同是错误的。"
   },
   {
-    "id": "C-063",
+    "id": "C-065",
     "key": "attention-loss-transfer",
     "owner": "intro:11-softmax-memory",
     "slug": "11-softmax-memory",
@@ -630,7 +650,7 @@
     "solution": "\\textbf{第一步：}按点积、Softmax、读出、输出头、交叉熵的顺序算。\\par\\nobreak\n\\textbf{解答：} $qK^\\top=(1,1,2)$；Softmax 为\n$(e,e,e^2)/(2e+e^2)\\approx(0.212,0.212,0.576)$，\n读取 $r\\approx(0.788058,0.788058)$。\n按照题设矩阵右乘，logits 约为\n$z=(1.576117,0.788058,0)$，再做 Softmax，\n第二类概率约 $p_2=0.273684$，所以\n$\\answerresult{L=-\\ln p_2\\approx1.295781}$。\n\\textbf{这次预测真正沿着读取向量和输出头得出}；\n若不给出输出头，Attention 权重本身不足以唯一决定词表概率。\\par\\textbf{核对：}这里有两次 Softmax：第一次把三个位置分数变成读取权重，第二次把三个输出头 logits 变成类别概率。两者在本题恰好都长为 $3$，但含义不同；若把 $0.212$ 当成第二类概率，就跳过了 Value 读取与输出头。"
   },
   {
-    "id": "C-064",
+    "id": "C-066",
     "key": "batch-softmax-recompute",
     "owner": "intro:11-softmax-memory",
     "slug": "11-softmax-memory",
@@ -640,7 +660,7 @@
     "solution": "\\textbf{第一步：}每行先做指数归一化，再右乘同一 $V$。\\par\\nobreak\n\\textbf{解答：} 每行指数分数分别为 $(2,1,1)$、$(1,3,1)$、$(1,1,4)$，\n故 $A'=\\boxed{\\begin{bmatrix}\n1/2&1/4&1/4\\\\\n1/5&3/5&1/5\\\\\n1/6&1/6&2/3\n\\end{bmatrix}}$。\n与题设 $V:3\\times2$ 相乘，\n$Y'=\\boxed{\\begin{bmatrix}\n3/4&1/2\\\\\n2/5&4/5\\\\\n5/6&5/6\n\\end{bmatrix}}$，形状为 $3\\times2$。\n每行权重和为 $1$；本题与正文的分数矩阵不同，不能直接抄原来的 $A$。\\par\\textbf{核对：}先验算 $A\\prime$ 每行和为 $1$，再按 $V$ 的两列分别求和，例如第一行输出为 $(1/2+1/4,\\,1/4+1/4)=(3/4,1/2)$。若按列归一化，单个 Query 的权重通常不再和为 $1$。"
   },
   {
-    "id": "C-065",
+    "id": "C-067",
     "key": "head-concatenation",
     "owner": "intro:22a-position-multihead",
     "slug": "22a-position-multihead",
@@ -650,7 +670,7 @@
     "solution": "\\textbf{第一步：}多头结果按列拼接，再确定输出矩阵的输入宽度。\\par\\nobreak\n\\textbf{解答：} 拼接后 $3\\times4$；若按行向量约定，$W_O:4\\times4$。"
   },
   {
-    "id": "C-066",
+    "id": "C-068",
     "key": "head-projection-diversity",
     "owner": "intro:22a-position-multihead",
     "slug": "22a-position-multihead",
@@ -660,7 +680,7 @@
     "solution": "\\textbf{第一步：}先比较两个头是否拥有独立参数。\\par\\nobreak\\textbf{解题过程：}每个头可以分别训练 Q/K/V 投影，读取不同子空间；复制相同头不创造独立表示能力。\\par\\textbf{核对：}检查两头各自的 $W_Q,W_K,W_V$。复制同一个头只会重复同样的读出；独立训练允许各头形成不同匹配与内容表示，但“独立”也不要求它们一定学到完全不同的功能。"
   },
   {
-    "id": "C-067",
+    "id": "C-069",
     "key": "causal-position-visibility",
     "owner": "intro:22-transformer-architecture",
     "slug": "22-transformer-architecture",
@@ -670,7 +690,7 @@
     "solution": "\\textbf{第一步：}因果掩码只允许当前位置读取自己及此前位置。\\par\\nobreak\n\\textbf{解答：} 第 2 个位置能看到位置 $1,2$；第 1 个位置不能看到位置 $4$。"
   },
   {
-    "id": "C-068",
+    "id": "C-070",
     "key": "block-branch-roles",
     "owner": "intro:22-transformer-architecture",
     "slug": "22-transformer-architecture",
@@ -680,7 +700,7 @@
     "solution": "\\textbf{第一步：}分别标出跨位置、逐位置与保留通路。\\par\\nobreak\\textbf{解题过程：}Attention 进行跨位置读取，FFN 每位置改写特征；残差帮助保留信息与梯度通路。\\par\\textbf{核对：}检查计算是否沿 Token 行发生混合：$AV$ 把多个位置的 Value 加权到一行；FFN 用同一组权重分别处理各行。把“共享 FFN 参数”说成“FFN 交换不同 Token”是常见混淆。"
   },
   {
-    "id": "C-069",
+    "id": "C-071",
     "key": "token-to-loss-pipeline",
     "owner": "intro:22-transformer-architecture",
     "slug": "22-transformer-architecture",
@@ -690,7 +710,7 @@
     "solution": "\\textbf{第一步：}先从 ID 查表画到 logits 和损失。\\par\\nobreak\\textbf{解题过程：}Token ID 查表加位置得到隐藏矩阵，Block 输出上下文化隐藏状态，输出头变 logits，Softmax 变概率；训练把概率与目标比较得到损失，再反传更新参数。\\par\\textbf{核对：}输出头给的是未归一化分数 $Z$，Softmax 后才是概率 $\\Pi$。损失还需要监督目标；若在 logits 后就结束训练流程，便遗漏了比较目标、求梯度和更新这三步。"
   },
   {
-    "id": "C-070",
+    "id": "C-072",
     "key": "ffn-output-shapes",
     "owner": "intro:10b-ffn-output-head",
     "slug": "10b-ffn-output-head",
@@ -700,7 +720,7 @@
     "solution": "\\textbf{第一步：}FFN 先扩宽再恢复 $d_{\\rm model}$；只有输出头才出现词表轴。\\par\\nobreak\n\\textbf{解答：}$W_{\\rm up}:8\\times32$，$W_{\\rm down}:32\\times8$，FFN 输出为 $5\\times8$；$W_{\\rm out}:8\\times50$，logits 为 $\\answerresult{5\\times50}$。"
   },
   {
-    "id": "C-071",
+    "id": "C-073",
     "key": "ffn-weight-count",
     "owner": "intro:10b-ffn-output-head",
     "slug": "10b-ffn-output-head",
@@ -710,7 +730,7 @@
     "solution": "\\textbf{第一步：}分别数两张 FFN 权重表的元素。\\par\\nobreak\\textbf{解题过程：}$6\\cdot18+18\\cdot6=\\answerresult{216}$ 个权重；FFN 宽度与词表大小不同，词表输出头另计。\\par\\textbf{核对：}上投影 $6\\times18$ 与下投影 $18\\times6$ 各有 $108$ 个权重。若得到 $108$，通常只数了一层；若又乘词表大小，就混入了另外的输出头。"
   },
   {
-    "id": "C-072",
+    "id": "C-074",
     "key": "probability-row-greedy",
     "owner": "intro:22b-token-to-output",
     "slug": "22b-token-to-output",
@@ -720,7 +740,7 @@
     "solution": "\\textbf{第一步：}找到最大概率所在的列，再读该列对应的 ID。\\par\\nobreak\n\\textbf{解题过程：}最大值 $0.60$ 在第 $4$ 列，应选 $\\answerresult{4}$。这里的列编号从 $1$ 起；Python 中相同位置的下标是 $3$。"
   },
   {
-    "id": "C-073",
+    "id": "C-075",
     "key": "causal-input-change",
     "owner": "intro:22b-token-to-output",
     "slug": "22b-token-to-output",
@@ -730,7 +750,7 @@
     "solution": "\\textbf{第一步：}按因果 Mask 写出每一行能读取的输入位置。\\par\\nobreak\\textbf{解题过程：}（a）第 $i$ 行只读取前 $i$ 个位置，LayerNorm 与 FFN 又逐行计算，所以第 1、2 行完全不变；第 3 行的输入与读取内容都变了，概率随之改变（复算得第 3 行最高概率改为 ID 4，约 $0.7212$）。（b）$X,H:\\answerresult{4\\times3}$，$A:\\answerresult{4\\times4}$，$Z,\\Pi:\\answerresult{4\\times5}$；但 $P_{\\rm pos}$ 只有 $3$ 行，缺少第 $4$ 个位置向量，主例的上下文窗口只能容纳 $3$ 个 Token。"
   },
   {
-    "id": "C-074",
+    "id": "C-076",
     "key": "output-head-only-training",
     "owner": "intro:22b-token-to-output",
     "slug": "22b-token-to-output",
@@ -740,7 +760,7 @@
     "solution": "\\textbf{第一步：}只训练输出头时，三行隐藏表示 $H$ 保持初值，变化的只有最后的线性读出表。\\par\\nobreak\n\\textbf{解题过程：}实测第 20 步平均交叉熵为 $\\answerresult{0.816707}$，贪心预测 $[4,4,3]$，位置 2 仍错（目标 ID 5）。完整训练同一步为 $0.483173$、$[4,5,3]$，第 9 步起三位置全对。固定的隐藏行限制了只调输出头在 20 步内能达到的结果；改变 $H$ 需要前面各层也接收梯度。"
   },
   {
-    "id": "C-075",
+    "id": "C-077",
     "key": "correct-probability-loss",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -750,17 +770,27 @@
     "solution": "\\textbf{第一步：}比较同一正确类两次的 $-\\ln p$。\\par\\nobreak\\textbf{解题过程：}$-\\ln0.07<-\\ln0.05$，正确类概率上升意味着该位置的交叉熵下降，即使贪心类别暂时未改正。"
   },
   {
-    "id": "C-076",
-    "key": "context-conflicting-labels",
+    "id": "C-078",
+    "key": "joint-loss-average",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
-    "difficulty": "标准",
-    "minutes": 10,
-    "question": "\\textbf{【编程／解释】}运行 \\nolinkurl{scripts/context_contrast_demo.py}。把第二条样本的前文也改成“春天”，保持两个目标不同；训练后上下文版还能低于 $\\ln2$ 吗？先预测，再改代码核对。",
-    "solution": "\\textbf{第一步：}比较两条样本送入输出头的特征是否仍不同。\\par\\nobreak\\textbf{解题过程：}两条前文相同后，当前词、位置和读取结果全部相同，两个版本都只能给出同一分布；等权相反二类标签的最优平均损失为 $\\ln2$。容量不能补回输入中没有的区分信息。"
+    "difficulty": "基础",
+    "minutes": 3,
+    "question": "\\textbf{手算：}三个预测位置给各自正确 Token 的概率分别为 $1/2,1/4,1/2$。求三个位置的平均交叉熵。",
+    "solution": "\\textbf{第一步：}分别对三个正确类概率取负自然对数。\\par\\nobreak\\textbf{解题过程：}三个单位置损失为 $\\ln2,2\\ln2,\\ln2$，平均为 $4\\ln2/3\\approx0.9242$。这里先求每道预测题的损失，再按三个位置平均；对概率先求平均再取对数不是同一个量。"
   },
   {
-    "id": "C-077",
+    "id": "C-079",
+    "key": "shared-parameter-gradient-sum",
+    "owner": "intro:22c-language-training",
+    "slug": "22c-language-training",
+    "difficulty": "基础",
+    "minutes": 3,
+    "question": "\\textbf{手算：}同一个参数 $w$ 用在三个位置。三个位置对平均损失的梯度贡献已经分别算为 $0.3,-0.1,0.4$（其中已包含除以 $3$）。若 $w=2$、学习率为 $0.04$，同步更新后 $w$ 是多少？",
+    "solution": "\\textbf{第一步：}共享参数接收三个位置的梯度贡献之和。\\par\\nobreak\\textbf{解题过程：}总梯度为 $0.3-0.1+0.4=0.6$，更新得 $w=2-0.04\\times0.6=1.976$。题目已将平均系数计入每个贡献，不再除以 $3$；也不逐位置更新三次。"
+  },
+  {
+    "id": "C-080",
     "key": "attention-attribution",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -770,7 +800,7 @@
     "solution": "\\textbf{第一步：}只改变一组参数是否可训练，其余设置保持不变。\\par\\nobreak\\textbf{解题过程：}加 \\texttt{-{}-freeze Wq,Wk} 冻结 $W_Q,W_K$，$A_{3,2}$ 仍升至 $0.324789$；加 \\texttt{-{}-only Wq,Wk} 只训练它们，$A_{3,2}$ 反降至 $0.223962$。变化主要来自 $E$、$P_{\\rm pos}$ 等输入表示的更新，不能归功于 Q/K 学会选择；检验选择能力要用带干扰项的对照实验。"
   },
   {
-    "id": "C-078",
+    "id": "C-081",
     "key": "frozen-output-head-training",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -780,7 +810,7 @@
     "solution": "\\textbf{第一步：}平均交叉熵看三个正确类的概率，贪心预测只看每行最大概率，两者分开记录。\\par\\nobreak\n\\textbf{解题过程：}实测损失由 $1.798430$ 降到 $\\answerresult{0.736445}$；位置 2 在第 12 步改对，但位置 3 从第 13 步起改猜 ID 5，第 20 步贪心预测为 $[4,5,5]$。平均损失持续下降不保证每个位置都预测正确，需要逐位置检查。"
   },
   {
-    "id": "C-079",
+    "id": "C-082",
     "key": "training-rate-transfer",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -790,7 +820,7 @@
     "solution": "\\textbf{第一步：}回想第~\\ref*{intro:16a-gradient-descent}~章：步长过大时，每一步越过谷底的幅度会越来越大。\\par\\nobreak\\textbf{解题过程：}$\\eta=0.2$ 时第 20 步损失为 $\\answerresult{0.035471}$，预测 $[4,5,3]$ 全对；$\\eta=1.0$ 时第 5 步已降到 $0.035315$，第 20 步为 $\\answerresult{0.003354}$；$\\eta=3.0$ 时第 1 步损失升到 $4.080523$，第 2 步 $25.863833$，第 3 步起溢出为 \\texttt{inf}，随后变成 \\texttt{nan}，$\\answerresult{\\text{发散}}$。在这次实验、相同初值与给定步数下，$1.0$ 比 $0.2$ 降得更低，$3.0$ 出现损失急升和数值溢出。第~\\ref*{intro:16a-gradient-descent}~章算出的 $0<\\eta<1$ 只适用于那一个二次损失，不能直接套给本网络；三次运行也不足以确定完整稳定区间。即使两个学习率都能收敛，较大的也可能因振荡而更慢：该章三点例从相同初值训练 10 步，$\\eta=0.75$ 的损失约为 $0.500001$，$\\eta=0.9$ 则约为 $0.511529$。"
   },
   {
-    "id": "C-080",
+    "id": "C-083",
     "key": "training-sentence-change",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -800,27 +830,7 @@
     "solution": "\\textbf{第一步：}平均损失是三个位置 $-\\ln\\Pi_{t,y_t}$ 的均值；先想同一组初始参数给新目标的概率会更高还是更低。\\par\\nobreak\\textbf{解题过程：}初始损失为 $\\answerresult{2.436438}$，高于主例：同一组初始参数给新目标的概率更低。20 步后损失降到 $\\answerresult{0.746673}$，贪心预测为 $[5,4,4]$：前两个位置已对，第三个位置仍把“花”之后预测成“花”（ID 4），而不是句号。同样的步数和学习率，换一组数据收敛快慢就不同；主例的 20 步结果不能直接搬到别的句子。"
   },
   {
-    "id": "C-081",
-    "key": "rational-mini-gradient",
-    "owner": "intro:22c-language-training",
-    "slug": "22c-language-training",
-    "difficulty": "挑战",
-    "minutes": 20,
-    "question": "\\textbf{【手算／复现】}完成\\hyperref[app:rational-mini]{附录~\\ref*{app:rational-mini} 的二维分数迷你版}：先遮住梯度表，求 $g_h$、两条残差汇合的 $g_r$ 和 $\\nabla_{W_K}L$，再用 \\nolinkurl{scripts/mini_transformer_demo.py} 核对。",
-    "solution": "\\textbf{第一步：}从二类交叉熵的 $g_z=(1/2,-1/2)$ 出发。\\par\\nobreak\\textbf{解题过程：}$g_h=(1,-1/3)$；FFN 两个单位投影与正区间 ReLU 传回同一梯度，因此 $g_r=2g_h=(2,-2/3)$；Softmax 分数梯度 $(2/3,-2/3)$ 乘 Query $q=1$，得到 $\\nabla_{W_K}L=(2/3,-2/3)^\\top$。完整参数导数见第~\\pageref*{app:rational-mini}~页。\\par\\textbf{核对：}先在计算图中分别标出残差直通的 $g_h$ 与 FFN 返回的 $g_h$，两者相加才有 $g_r=2g_h$。若 $W_K$ 梯度少了一半，优先查这处汇合；若正负方向相同，检查 Softmax 的两项耦合梯度是否被遗漏。"
-  },
-  {
-    "id": "C-082",
-    "key": "simplified-block-gradient",
-    "owner": "intro:22c-language-training",
-    "slug": "22c-language-training",
-    "difficulty": "挑战",
-    "minutes": 20,
-    "question": "\\phantomsection\\label{exercise:linked-22c-language-training}  \\textbf{【手算】} \\textbf{简化残差梯度：}本题固定注意力权重、关闭两次 Norm，令 $W_{\\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\\relu(rW_{\\rm up})$、$h=r+fW_{\\rm down}$，其中 $x=(0,1)$。设注意力读取权重为\n$a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，\nFFN 下投影为 $W_{\\rm down}=0.5I_2$，第一次残差后向量\n$r=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为\n$g_h=(0.09716,0.72516)$。计算\n$\\partial L/\\partial W_{\\rm down}$ 和\n$\\partial L/\\partial W_V$ 的 $2\\times2$ 数值矩阵。",
-    "solution": "\\textbf{第一步：}先求 $f^\\top g_h$，再沿残差路径反传。\\par\\nobreak\n\\textbf{解答：} 本题已关闭 Norm、固定 $W_{\\rm up}=I_2$；$r=(0.330,1.670)$ 两项为正，故 $f=\\relu(r)=r$，$h=r+fW_{\\rm down}$，\n$\\partial L/\\partial W_{\\rm down}=f^\\top g_h\n\\approx\\begin{bmatrix}0.03206&0.23930\\\\0.16226&1.21102\\end{bmatrix}$。\n上游梯度 $g_r=g_h(I_2+0.5I_2)=1.5g_h$，\n故 $\\partial L/\\partial W_V=a^\\top g_r\n\\approx\\begin{bmatrix}0.04809&0.35895\\\\0.09765&0.72879\\end{bmatrix}$。\\par\\textbf{核对：}两张权重梯度都是“输入列向量乘上游梯度行向量”的外积，结果应为 $2\\times2$。$g_r=g_h+0.5g_h$ 包含直通和 FFN 两条贡献；若只用 $0.5g_h$，Value 梯度会少掉残差直通项。"
-  },
-  {
-    "id": "C-083",
+    "id": "C-084",
     "key": "joint-prefix-loss-floor",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -830,7 +840,7 @@
     "solution": "\\textbf{第一步：}找出两句完全相同的可见前缀，以及这个前缀对应的两个不同目标。\\par\\nobreak\\textbf{解题过程：}因果 Mask 下，首位置都只看到 ID 2，必须输出同一分布。设它给目标 ID 4、5 的概率为 $p_4,p_5$；由 $p_4+p_5\\le1$，首位置的两句平均损失 $-\\tfrac12\\ln(p_4p_5)\\ge\\ln2$。另外四项交叉熵非负，所以全体六个位置的平均损失至少为 $\\answerresult{\\ln2/3}\\approx0.231049$。这是任何确定性因果预测器都要满足的下界，不保证这个有限模型能达到。一次更新须在同一组旧参数上分别计算 $G_1,G_2$，再令 $\\theta\\leftarrow\\theta-0.04(G_1+G_2)/2$。\\par 一种复算结果：第 $0,20,200$ 步损失约为 $2.117434,1.371395,\\answerresult{0.261142}$；末步首位置给 ID 4、5 的概率约为 $0.480729,0.512150$，两句首位置都猜 ID 5，故其中一句必错。运行 \\path{scripts/advanced_exercise_demo.py} 可核对。\\par\\textbf{验收与错因：}核验两个首位置的整行概率相同，并用联合损失的有限差分检查一项参数梯度。若损失低于下界，先查未来信息是否泄漏、两句是否真的共用参数、损失是否仍除以六；先更新第一句再计算第二句不再是题设的同步全批次更新。"
   },
   {
-    "id": "C-084",
+    "id": "C-085",
     "key": "attention-causal-intervention",
     "owner": "intro:22c-language-training",
     "slug": "22c-language-training",
@@ -840,7 +850,7 @@
     "solution": "\\textbf{第一步：}固定已训练参数，只改变读取系数，区分单位置损失与三位置平均损失。\\par\\nobreak\\textbf{解题过程：}第三位置目标是句号 ID 3。各方案的（正确类概率，单位置损失）约为\n\\[\n\\begin{aligned}\n\\text{原模型：}&\\quad(\\answerresult{0.582945},\\answerresult{0.539662}),\\\\\n\\text{方案 A：}&\\quad(\\answerresult{0.624290},\\answerresult{0.471139}),\\\\\n\\text{方案 B：}&\\quad(\\answerresult{0.520865},\\answerresult{0.652265}).\n\\end{aligned}\n\\]\n因此本例去掉对“花”的这一路读取反而降低损失；权重大小本身不能确定这一路对最终目标的净贡献。复算见 \\path{scripts/advanced_exercise_demo.py}。\\par\\textbf{验收与错因：}重算 $r=X+(AV)W_O$、$h=r+\\relu(\\operatorname{LN}(r)W_{\\rm up})W_{\\rm down}$ 和输出概率，检查前两行不变。仅把某个输出概率改掉，或干预后重新训练，都没有隔离这次读取的影响；方案 A 还同时增加了其余位置的相对权重。可进一步在多条带不同干扰项的样本上重复检验，但单句干预只支持该模型、该输入与该干预下的结论。"
   },
   {
-    "id": "C-085",
+    "id": "C-086",
     "key": "generation-prefix-append",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -850,7 +860,7 @@
     "solution": "\\textbf{第一步：}保留已有前缀，把新选出的 ID 接在末尾。\\par\\nobreak\n\\textbf{解题过程：}下一轮输入前缀是 $\\answerresult{[2,4,5]}$。每轮在旧前缀上追加新 Token，已有输入仍是下一步预测的上下文。"
   },
   {
-    "id": "C-086",
+    "id": "C-087",
     "key": "cached-next-token",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -860,7 +870,7 @@
     "solution": "\\textbf{第一步：}先分开数首次 Prefill 和追加一步的 K/V。\\par\\nobreak\\textbf{解题过程：}在前 $1000$ 个 Token 已完成 Prefill 的前提下，追加第 $1001$ 个后，整段重算需 $1001$ 份 K/V，复用缓存只需新算第 $1001$ 个位置的 $1$ 份 K/V。它节省重复运算，但需要保存各层历史 K/V，内存取决于长度、头数、头维及精度；首次 Prefill 仍要计算。"
   },
   {
-    "id": "C-087",
+    "id": "C-088",
     "key": "context-window-memory",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -870,7 +880,7 @@
     "solution": "\\textbf{第一步：}先检查旧会话文本有没有进入本次上下文。\\par\\nobreak\\textbf{解题过程：}昨天另一会话的内容未加入本次上下文，就不能直接读取。获授权的应用可保存／检索历史摘要并重新放入上下文；推理没有永久改变权重。"
   },
   {
-    "id": "C-088",
+    "id": "C-089",
     "key": "greedy-generation",
     "owner": "intro:23-llm-systems",
     "slug": "23-llm-systems",
@@ -880,7 +890,7 @@
     "solution": "\\textbf{第一步：}每一步只取最后一行概率最大的 ID，并把它接回输入。\\par\\nobreak\n\\textbf{解题过程：}实测依次得到 $4$（花，$p=0.8817$）、$5$（开了，$p=0.4566$）、$3$（。，$p=0.5829$），上下文变为 $[2,4,5,3]$。停止是因为教学位置表 $P_{\\rm pos}$ 只有 3 行，无法为第 4 个输入位置查表；这是长度上限，不表示模型学会了结束。"
   },
   {
-    "id": "C-089",
+    "id": "C-090",
     "key": "real-embedding-shape",
     "owner": "intro:23a-from-toy-to-gpt",
     "slug": "23a-from-toy-to-gpt",
@@ -890,7 +900,7 @@
     "solution": "\\textbf{第一步：}行数对应词表项数，列数对应每个 Token 的特征宽度。\\par\\nobreak\n\\textbf{解题过程：}矩阵形状为 $\\answerresult{50{,}257\\times768}$。层数与注意力头数不决定这张查找表的行数。"
   },
   {
-    "id": "C-090",
+    "id": "C-091",
     "key": "uniform-baseline-interpretation",
     "owner": "intro:23a-from-toy-to-gpt",
     "slug": "23a-from-toy-to-gpt",
@@ -900,7 +910,7 @@
     "solution": "\\textbf{第一步：}先检查初始 logits 是否均匀。\\par\\nobreak\\textbf{解题过程：}不构成代码错误证明；初值给出非均匀 logits，检查标签错位、Softmax、平均方式与参数表，再用可复算脚本核对。\\par\\textbf{核对：}均匀基线只对应每个正确类概率都为 $1/5$。非均匀初值可能给正确类更小概率，从而损失超过 $\\ln5$。先用同一份参数、输入与目标复现每行概率，再判断是否有实现差异。"
   },
   {
-    "id": "C-091",
+    "id": "C-092",
     "key": "compute-token-budget",
     "owner": "intro:23a-from-toy-to-gpt",
     "slug": "23a-from-toy-to-gpt",
@@ -910,7 +920,7 @@
     "solution": "\\textbf{第一步：}先算一层 $12d^2$，再乘层数；宽度出现在平方项里。\\par\\nobreak\n\\textbf{解答：}$12\\times12\\times768^2=84{,}934{,}656$，约 $85$ M。宽度翻倍时每层 $12d^2$ 变为 $\\answerresult{4}$ 倍；层数翻倍只使总量变为 $2$ 倍。\\par\\textbf{核对：}这里的两个 $12$ 含义不同：一个是每层主导项的系数，一个是层数。把宽度翻倍后若只算两倍，通常是漏了平方；把结果当成全部模型参数，则遗漏了本题明确排除的词表、偏置与 Norm。"
   },
   {
-    "id": "C-092",
+    "id": "C-093",
     "key": "icl-context-budget",
     "owner": "intro:23aa-pretraining-icl",
     "slug": "23aa-pretraining-icl",
@@ -920,7 +930,7 @@
     "solution": "\\textbf{第一步：}把原任务与两条示例的 Token 数相加。\\par\\nobreak\n\\textbf{解题过程：}输入总长为 $8+2\\times6=\\answerresult{20}$ 个 Token。示例作为输入进入本次上下文，增加的是输入长度。"
   },
   {
-    "id": "C-093",
+    "id": "C-094",
     "key": "prompt-or-training",
     "owner": "intro:23aa-pretraining-icl",
     "slug": "23aa-pretraining-icl",
@@ -930,7 +940,7 @@
     "solution": "\\textbf{第一步：}先区分格式需求与新季度事实来源。\\par\\nobreak\\textbf{解题过程：}格式变化可先采用 Prompt／Few-shot，大量稳定格式样本可考虑 SFT；读取新季度事实则必须通过授权检索／工具并核对出处。\\par\\textbf{核对：}一份可行方案是先用 Prompt 规定字段，再检索并核验本季度报告；只有当稳定格式需要反复学习时才考虑 SFT。把新季度数字写进模板，可以改变本次输入，不能代替对原始报告的核验。"
   },
   {
-    "id": "C-094",
+    "id": "C-095",
     "key": "icl-query-transfer",
     "owner": "intro:23aa-pretraining-icl",
     "slug": "23aa-pretraining-icl",
@@ -940,7 +950,7 @@
     "solution": "\\textbf{第一步：}先算缩放分数，再做 Softmax 与读出，最后乘输出头。\\par\\nobreak\n\\textbf{解题过程：}（a）$s=(0,\\ln9)$，$\\alpha=(0.1,0.9)$，读出 $(0.1,0.9)$，$Z=(0.5,4.5)$，$\\Pr(D)\\approx\\answerresult{0.982014}$，与查询 $A$ 的情形对称。（b）$s=(\\ln3,0)$，$\\alpha=(0.75,0.25)$，$Z=(3.75,1.25)$，$\\Pr(B)=1/(1+e^{-2.5})\\approx\\answerresult{0.924142}$。参数没变，查询与示例决定读出；匹配越弱，选择越不尖锐。"
   },
   {
-    "id": "C-095",
+    "id": "C-096",
     "key": "reference-policy-role",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -950,7 +960,7 @@
     "solution": "\\textbf{第一步：}看训练是否会更新权重，还是只改变当前上下文。\\par\\nobreak\n\\textbf{解答：} SFT 使用示范数据训练；RLVR 利用可验证奖励进行训练；\nCoT 提示改变输入或生成形式，本身保持参数固定。"
   },
   {
-    "id": "C-096",
+    "id": "C-097",
     "key": "reasoning-interventions",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -960,7 +970,7 @@
     "solution": "\\textbf{第一步：}逐项检查改变的是上下文、参数还是候选选择。\\par\\nobreak\\textbf{解题过程：}Prompt 分步改变本次上下文，SFT 在示例上更新参数，可验证奖励通过可检查结果优化策略；三者都不天然保证每一步推理真实。\\par\\textbf{核对：}可分别记录：Prompt 改的是输入；SFT 用示范序列更新权重；可验证奖励用结果评分参与训练。若只写“输出更像推理”，就没有说明改变发生在哪个环节，也没有验证步骤是否正确。"
   },
   {
-    "id": "C-097",
+    "id": "C-098",
     "key": "candidate-success-budget",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -970,7 +980,7 @@
     "solution": "\\textbf{第一步：}先要求全部失败的概率 $0.7^n\\le0.1$。\\par\\nobreak\n\\textbf{解题过程：}$n\\ge\\ln10/\\ln(1/0.7)\\approx6.456$，最少 $\\answerresult{7}$ 份：六份成功率 $1-0.7^6\\approx88.2\\%$，七份约 $91.8\\%$。完全相关时成功率仍只有 $30\\%$，复制结果没有独立试错收益。"
   },
   {
-    "id": "C-098",
+    "id": "C-099",
     "key": "faulty-verifier-limit",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -980,7 +990,7 @@
     "solution": "\\textbf{第一步：}先求“至少一份通过”的概率，再看第一份通过的候选是 42 的条件概率。\\par\\nobreak\\textbf{解题过程：}每份候选不通过的概率是 $1/4$，所以至少一份通过的概率为 $1-0.25^n$；第一份通过的候选在 41、42、43 中等可能，是 42 的概率为 $1/3$。于是 $P_n=(1-0.25^n)/3$：（a）$P_2=0.9375/3=\\answerresult{0.3125}$；（b）趋于 $\\answerresult{1/3}$；（c）验证器分不出 41、43 与 42，多采样只让“有候选通过”几乎必然发生，却不改变通过者中正确答案只占三分之一。要提高上限，得先改进验证器。"
   },
   {
-    "id": "C-099",
+    "id": "C-100",
     "key": "verifier-budget-design",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -990,7 +1000,7 @@
     "solution": "\\textbf{第一步：}每份成本同时包含生成与验证；把“通过且正确”“通过但错误”“不通过”分开计数。\\par\\nobreak\\textbf{解题过程：}粗验证最多 $12/(1+1)=6$ 份，每份正确通过率 $a=0.3$，错误通过率 $b=0.7\\times0.2=0.14$。六份中正确交付概率为 $\\frac{a}{a+b}[1-(1-a-b)^6]\\approx\\answerresult{0.660790}$；错误交付概率为 $\\frac{b}{a+b}[1-(1-a-b)^6]\\approx\\answerresult{0.308369}$。严格验证最多四份，每份正确通过率 $0.3\\times0.8=0.24$，因此正确交付概率 $1-0.76^4\\approx\\answerresult{0.666378}$，错误交付率为零。按正确交付率比较，本例严格验证略优。\\par\\textbf{一种验证方案：}枚举每份候选的三类事件，累加首个通过者的概率，见 \\path{scripts/advanced_exercise_demo.py}。\\par\\textbf{选择何时改变？}设粗验证误过率为 $q$。前面每份未通过的概率是 $0.7(1-q)$，第 $k+1$ 份才正确交付的概率是 $[0.7(1-q)]^k\\times0.3$。因此\n\\[\nP_{\\text{粗}}(q)=0.3\\sum_{k=0}^{5}[0.7(1-q)]^k\n=\\frac{0.3}{0.3+0.7q}\\left\\{1-[0.7(1-q)]^6\\right\\}.\n\\]\n$q$ 越大，错误候选越容易抢先通过，正确交付率越低。以严格验证的 $1-0.76^4=0.66637824$ 为基准，在 $[0,1]$ 上二分求解两者相等的位置，得 $q_*\\approx\\answerresult{0.193787}$（约 $19.38\\%$）。只按正确交付率比较：$q<q_*$ 时粗验证更优，$q>q_*$ 时严格验证更优；相等时正确交付率持平，但严格验证的错误交付率仍为零。可代入 $q=0.193$ 和 $q=0.194$，粗验证正确交付率分别约为 $0.667091$ 和 $0.666185$，分界确实在两者之间。题设 $q=0.2$ 仅略高于临界值，所以严格验证的优势约为 $0.005588$，即 $0.56$ 个百分点。$q=0$ 时则有 $P_{\\text{粗}}(0)=1-0.7^6\\approx0.882351$。若目标还惩罚错误交付，应重新计算选择分界。\\par\\textbf{验收与错因：}每方案的正确交付、错误交付、未完成概率之和应为 $1$；达到预算上限即停止。不能用“至少有一份正确”代替交付成功，因为更早误过的错误候选会抢先被交付。"
   },
   {
-    "id": "C-100",
+    "id": "C-101",
     "key": "reward-verifier-audit",
     "owner": "intro:23c-post-training",
     "slug": "23c-post-training",
@@ -1000,7 +1010,7 @@
     "solution": "\\textbf{第一步：}先分别列出真实奖励和缺陷奖励，采样动作固定，优势也在求梯度时固定。\\par\\nobreak\\textbf{解题过程：}正确奖励为 $(1,0,1,0)$，优势为 $(1,-1,1,-1)$，平均梯度 $(-0.5,0.25,0.25)$；更新后正确答案概率约为 $\\answerresult{0.367456}$。缺陷奖励为 $(0,1,0,0)$，均值 $1/4$、总体标准差 $\\sqrt3/4$，优势为 $(-1/\\sqrt3,\\sqrt3,-1/\\sqrt3,-1/\\sqrt3)$。平均梯度约为 $(0.288675,-0.433013,0.144338)$，一步后答案 $(42,41,50)$ 的概率约为 $(\\answerresult{0.314015},\\answerresult{0.362773},0.323212)$：真实正确率下降，缺陷通过率却上升。复算见 \\path{scripts/advanced_exercise_demo.py}。\\par\\textbf{一种核验方案：}在更新之外，用准确乘法结果核查 $6\\times7$ 的答案 $40,41,42,43,50$，比较两个验证器的接受集合；40、41 被缺陷规则误收，42 被误拒。再检查其他乘法题是否按各自正确答案判定，而不是沿用阈值。\\par\\textbf{验收与错因：}分别报告训练奖励和独立判据下的正确率；奖励全相同时另处理零标准差。这里展示固定动作的一步代理梯度，不是完整 GRPO 训练，也不能据此推断多步训练的最终效果。"
   },
   {
-    "id": "C-101",
+    "id": "C-102",
     "key": "missing-evidence-response",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -1010,7 +1020,7 @@
     "solution": "\\textbf{第一步：}先标出缺失证据影响哪一步计算。\\par\\nobreak\\textbf{解题过程：}明确列出“Q2 原始证据缺失”，暂不计算依赖 Q2 的环比。"
   },
   {
-    "id": "C-102",
+    "id": "C-103",
     "key": "rag-failure-modes",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -1020,7 +1030,7 @@
     "solution": "\\textbf{第一步：}分别检查检索、来源和生成步骤可能引入的错误。\\par\\nobreak\n\\textbf{解答：} 不能。检索可能找错、漏掉或返回过期文档；生成可能误读检索内容或编造未被支持的细节，仍需要校验与来源。\\par\\textbf{核对：}可以先核查检索是否含所需季度及版本，再把回答中的每个数字对应到原表。若检索漏了 Q2，即使引用了真实 Q1 文件，也仍不能据此补出 Q2。"
   },
   {
-    "id": "C-103",
+    "id": "C-104",
     "key": "quarterly-evidence-update",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -1030,7 +1040,7 @@
     "solution": "\\textbf{第一步：}先固定相邻季度的分母，再分别算两个增长率。\\par\\nobreak\n\\textbf{解题过程：}Q2 环比为 $(125-100)/100=\\answerresult{25\\%}$；\nQ3 环比为 $(132-125)/125=\\answerresult{5.6\\%}$。\n仅修改 Prompt 输入数据不改变网络权重；\n实际执行 SFT 训练才会进行参数更新。"
   },
   {
-    "id": "C-104",
+    "id": "C-105",
     "key": "rag-query-ranking",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -1040,7 +1050,7 @@
     "solution": "\\textbf{第一步：}先把查询行向量右乘文档矩阵的转置，再排序。\\par\\nobreak\n\\textbf{解题过程：}$q=(0.2,1)$，\n$qD^\\top=(0.2\\cdot1+1\\cdot0,\\;0.2\\cdot0+1\\cdot1,\\;\n0.2\\cdot0.8+1\\cdot0.8)=(0.2,1,0.96)$。\nTop-2 为 Q2、Q3；\nQ1 因 $k=2$ 被遗漏。若任务要求三个季度，仍不能据此完成核对。"
   },
   {
-    "id": "C-105",
+    "id": "C-106",
     "key": "rag-versioned-evidence-audit",
     "owner": "intro:23d-agent-systems",
     "slug": "23d-agent-rag",
@@ -1050,7 +1060,7 @@
     "solution": "\\textbf{第一步：}先统一单位，再按题设的最新口径为三个季度选择数值，保留原值与重述来源。\\par\\nobreak\\textbf{解题过程：}转为百万元后，可比收入为 $(100,125,132)$，故 Q2 环比 $\\answerresult{25\\%}$，Q3 环比 $\\answerresult{5.6\\%}$。记录至少包括季度、原值、原单位、换算值、口径、报告版本、原表或附注位置；Q2 的 $125$ 来自 Q3 的重述附注，不能标成 Q2 旧表原值。两项环比分别依赖 Q1/Q2 与 Q2/Q3 的同口径证据，旧摘要的检索排名不改变题设来源优先级。\\par\\textbf{一种验收方案：}删除 Q3 最新原表时报告最新证据缺失，不用旧摘要补位；保留 Q3 收入却删除重述附注时标记 Q2 可比口径待核验；把万元误当百万元时由单位断言拦截。再构造两份同版本原表数值冲突，要求暂停依赖该字段的计算并请求核对。\\par\\textbf{核对：}最终答案同时列出数值、口径、来源与缺口；检索召回率为 $100\\%$ 仍不能替代版本选择和单位检查。"
   },
   {
-    "id": "C-106",
+    "id": "C-107",
     "key": "fixed-workflow-audit",
     "owner": "intro:23d-agent-tools",
     "slug": "23d-agent-tools",
@@ -1060,7 +1070,7 @@
     "solution": "\\textbf{第一步：}先看步骤和输入格式能否预先确定。\\par\\nobreak\\textbf{解题过程：}固定 Workflow 更易测试、审计与限制成本。\\par\\textbf{评分要点：}(1)依据是步骤与输入格式能否预先确定；(2)Workflow 可逐步测试、日志可重放；(3)调用次数、成本与权限可预先限定；(4)指出例外：出现未知格式时再引入 Agent 或人工处理。"
   },
   {
-    "id": "C-107",
+    "id": "C-108",
     "key": "workflow-agent-choice",
     "owner": "intro:23d-agent-tools",
     "slug": "23d-agent-tools",
@@ -1070,7 +1080,7 @@
     "solution": "\\textbf{第一步：}判断任务是否有稳定步骤，及如何独立复核。\\par\\nobreak\n\\textbf{解答：} 示例：固定格式的发票字段抽取可以使用确定工作流并做字段校验；\n跨多种格式的资料比较可以用 Agent 选择读取工具，\n最终均需核对来源、单位与输出内容。\\par\\textbf{评分要点：}(1)固定任务写明可预先确定的步骤与格式；(2)动态任务说明为什么要按中间结果选择工具；(3)两者都给出可独立执行的验证，如字段校验、来源核对；(4)指出权限或成本边界。\\par\\textbf{核对：}例如固定月报可以依次解析、统一单位、计算、校验；未知格式材料可能需要模型先识别格式再选择工具。答案应同时给出验收条件，例如每个结果能追溯到输入字段，失败时明确返回缺口。"
   },
   {
-    "id": "C-108",
+    "id": "C-109",
     "key": "agent-bounded-retry-design",
     "owner": "intro:23d-agent-tools",
     "slug": "23d-agent-tools",
@@ -1080,7 +1090,7 @@
     "solution": "\\textbf{第一步：}把模型调用预算与工具执行预算分开，先检查授权，再决定是否执行和重试。\\par\\nobreak\\textbf{解题过程：}一种方案：第一次模型调用提出三个不同 ID 的读取请求；应用逐项校验并执行，只有超时且尚未重试时才重试；每次实际执行都扣工具预算。每个调用 ID 最终向对话追加一条成功或失败的工具结果，内部尝试次数另记审计日志。三份证据成功后才进行第二次模型调用，随后由应用检查季度、单位、来源和环比。\\par\\textbf{预期验收：}正常路径为两次模型调用、三次工具执行；Q2 一次超时恢复为两次与四次，交付环比 $20\\%$、$10\\%$。若按 Q1、Q2、Q3 顺序执行且 Q2 持续超时，Q1 执行一次、Q2 执行两次后即停止，为一次模型调用、三次执行，状态未完成。Q2 权限拒绝时仍在第一次模型调用内终止，只执行过 Q1 一次，被拒绝的 Q2 执行次数为零，不能靠重试绕过；最终数字伪造时即使三份读取成功，也须在第二次模型调用后的应用核验中判为未完成。\\par\\textbf{核对：}预算包含失败执行；首次超时日志不能冒充成功工具结果，错误状态不能被模型自己的“完成”覆盖。测试还应断言每次响应关联正确的调用 ID，并检查越界前已停止；改变执行顺序或并行策略时，写明相应计数口径。"
   },
   {
-    "id": "C-109",
+    "id": "C-110",
     "key": "retrieved-instruction-boundary",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1090,7 +1100,7 @@
     "solution": "\\textbf{第一步：}先区分工具返回数据与用户授权指令。\\par\\nobreak\n\\textbf{解答：} 那句话是\\textbf{不可信外部内容}而非用户授权指令；\n未经适当验证和明确授权，不应执行向陌生外部地址发送文件的动作。"
   },
   {
-    "id": "C-110",
+    "id": "C-111",
     "key": "source-permission-boundaries",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1100,7 +1110,7 @@
     "solution": "\\textbf{第一步：}把“排名高”“来源可信”“获得授权”拆成三个独立问题。\\par\\nobreak\n\\textbf{解答：}检索排名只反映与查询的相关程度，不等于来源可信或获得授权；网页内容是低信任数据，必须核验来源，并由应用层单独校验工具调用和外发权限。\\par\\textbf{核对：}可信来源可以提供合同事实，却仍没有替用户批准外发资料的权限。核查事实看原文、日期与出处；执行外部动作另查用户授权、目标地址与允许发送的内容。两项检查应分别给出结果。"
   },
   {
-    "id": "C-111",
+    "id": "C-112",
     "key": "skill-subagent-design",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1110,7 +1120,7 @@
     "solution": "\\textbf{第一步：}先列出 Skill 的交付物与子任务的验收条件。\\par\\nobreak\\textbf{解题过程：}Skill 记录报表字段、单位换算、出处格式和检查脚本；分派给 Subagent 的单位检查任务还需限定可读报告、返回字段及来源，由主任务复核后汇总。若三个文件格式和步骤固定，也可直接运行既定工作流。\\par\\textbf{核对：}具体可交付两项 Skill 材料：字段与单位对照表、带输入输出例子的核查脚本。单位检查子任务只读取指定报告，不外发、不改原文件；返回“文件与页码、字段、原值与原单位、换算值与目标单位、异常”供主任务核对。只写“返回检查结果”不足以让双方验证同一件事。"
   },
   {
-    "id": "C-112",
+    "id": "C-113",
     "key": "a2a-result-verification",
     "owner": "intro:23d-agent-protocols",
     "slug": "23d-agent-systems",
@@ -1120,7 +1130,7 @@
     "solution": "\\textbf{第一步：}先列出协议传输之外尚未解决的信任问题。\\par\\nobreak\\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。\\par\\textbf{核对：}可要求对方返回原表出处、页码、数值与单位；证据未补齐时，将该字段标为待核验并停止依赖它的计算。外发请求进入应用自身的授权检查，协议消息中的“成功”状态不能代替内容核验或用户批准。"
   },
   {
-    "id": "C-113",
+    "id": "C-114",
     "key": "weight-memory-budget",
     "owner": "intro:23b-deployment-and-ecosystem",
     "slug": "23b-deployment-and-ecosystem",
@@ -1130,7 +1140,7 @@
     "solution": "\\textbf{第一步：}参数个数乘每个参数的字节数；4 bit 是半个字节。\\par\\nobreak\n\\textbf{解答：}fp16 约 $14$ GB；4 bit 约 $\\answerresult{3.5}$ GB（未计量化缩放因子等元数据）。部署还需 KV Cache、激活与运行时缓冲，并随上下文长度和并发增长。"
   },
   {
-    "id": "C-114",
+    "id": "C-115",
     "key": "kv-cache-bytes",
     "owner": "intro:23b-deployment-and-ecosystem",
     "slug": "23b-deployment-and-ecosystem",
@@ -1140,7 +1150,7 @@
     "solution": "\\textbf{第一步：}先按 K/V、层、头、维、位置、字节展开。\\par\\nobreak\\textbf{解题过程：}$2\\text{(K/V)}\\cdot2\\text{层}\\cdot2\\text{头}\\cdot8\\text{维}\\cdot10\\text{位置}\\cdot2\\text{字节}=\\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。\\par\\textbf{核对：}先数 K 和 V 两份，再把层数、KV 头数、头宽、位置数和每元素字节数相乘。若得到 $640$，只是元素数，尚未乘两字节；若把权重内存也加进来，已经超出本题的缓存数据本体。"
   },
   {
-    "id": "C-115",
+    "id": "C-116",
     "key": "moe-routing",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1150,7 +1160,7 @@
     "solution": "\\textbf{第一步：}对分数排序即可确定 Top-1 与 Top-2。\\par\\nobreak\n\\textbf{解答：} Top-1 选专家 2；Top-2 选专家 2 和 3。\n每次只激活路由选中的专家。"
   },
   {
-    "id": "C-116",
+    "id": "C-117",
     "key": "sliding-window-pairs",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1160,7 +1170,7 @@
     "solution": "\\textbf{第一步：}窗口包含当前位置，前两行还未填满窗口。\\par\\nobreak\n\\textbf{解题过程：}五行可见位置数为 $(1,2,2,2,2)$，\n允许位置对总数 $1+2+2+2+2=\\answerresult{9}$；\n这里包含查询自己的当前位置。\\par\\textbf{核对：}逐行窗口只向左看，并包含当前位置。若得到 $10$，检查是否把第一行也当成已填满两个位置；若把当前位置排除，又会少数对角线。"
   },
   {
-    "id": "C-117",
+    "id": "C-118",
     "key": "sliding-window-code",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1170,7 +1180,7 @@
     "solution": "\\textbf{第一步：}修改窗口宽度，逐行数出允许位置对。\\par\\nobreak\n\\textbf{解题过程：}将 $w=3$ 代入五行因果滑窗，\n逐行可见位置数为 $(1,2,3,3,3)$，\n允许位置对共 $\\answerresult{12}$ 个，比 $w=2$ 多 $3$ 个。\n可添加 \\texttt{assert sum(map(sum, sliding\\_mask(5, 3))) == 12}。"
   },
   {
-    "id": "C-118",
+    "id": "C-119",
     "key": "gqa-cache-ratio",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1180,7 +1190,7 @@
     "solution": "\\textbf{第一步：}缓存有 K 和 V 两份，再乘位置数、头数和每头宽度。\\par\\nobreak\n\\textbf{解答：} MHA：$2\\times120\\times6\\times4=5{,}760$ 个数；\nGQA：$2\\times120\\times2\\times4=1{,}920$ 个数；\n每个两字节时是 $3{,}840$ 字节（仅本层这些缓存数值）。\\par\\textbf{核对：}先区分“几个数”与“多少字节”：GQA 的 $1920$ 个元素需再乘 $2$ 字节。缓存使用 K/V 头数，若仍把 Query 头数 $6$ 代入 GQA，就不会得到应有的三倍差别。"
   },
   {
-    "id": "C-119",
+    "id": "C-120",
     "key": "rope-relative-position",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1190,7 +1200,7 @@
     "solution": "\\textbf{第一步：}Query 旋转 $m\\theta$、Key 旋转 $n\\theta$；点积只依赖两者之间的夹角。\\par\\nobreak\n\\textbf{解答：} 相对角为 $(5-2)\\theta=3\\theta$。\\par\\textbf{核对：}可从 $(R_{m\\theta}q)^\\top R_{n\\theta}k=q^\\top R_{(n-m)\\theta}k$ 核对旋转顺序。本题为 $(5-2)\\theta$，若写成 $(2+5)\\theta$，通常是漏掉了转置会将第一项旋转取反。"
   },
   {
-    "id": "C-120",
+    "id": "C-121",
     "key": "architecture-fair-comparison",
     "owner": "intro:22d-modern-transformers",
     "slug": "22d-modern-transformers",
@@ -1200,7 +1210,7 @@
     "solution": "\\textbf{第一步：}先固定质量、数据、硬件和负载条件。\\par\\nobreak\\textbf{解题过程：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。\\par\\textbf{评分要点：}(1)每次只改一个模块，其余配置相同；(2)质量与资源指标同时报告；(3)负载、长度、精度与硬件固定并写明；(4)多次运行给出波动或置信区间。\\par\\textbf{核对：}可分别记录相同质量阈值下的峰值显存与延迟，并对单项替换重复测量。缓存下降只支持缓存这一项改善；若质量、长度或硬件同时变化，就无法把总收益归因于所研究的模块。"
   },
   {
-    "id": "C-121",
+    "id": "C-122",
     "key": "metric-percentage-points",
     "owner": "intro:23e-tech-judgement",
     "slug": "23e-tech-judgement",
@@ -1210,7 +1220,7 @@
     "solution": "\\textbf{第一步：}先分别除以同一个总题数，再相减。\\par\\nobreak\n\\textbf{解题过程：}准确率分别为 $80\\%$、$82\\%$，相差 $\\answerresult{2}$ 个百分点。这里报告的是准确率的绝对差；相对于 A 的增幅才是 $20/800=2.5\\%$。"
   },
   {
-    "id": "C-122",
+    "id": "C-123",
     "key": "benchmark-count-gap",
     "owner": "intro:23e-tech-judgement",
     "slug": "23e-tech-judgement",
@@ -1220,7 +1230,7 @@
     "solution": "\\textbf{第一步：}用 $\\sqrt{p(1-p)/n}$ 估计标准误，再与差值比较。\\par\\nobreak\n\\textbf{解题过程：}$\\sqrt{0.81\\times0.19/500}\\approx0.0175$，约 $1.8$ 个百分点；若按两份独立估计近似，差值的标准误约 $2.5$ 个百分点，$0.8$ 远小于它，不能断言前者更好。还应做同题配对比较、报告多次运行的波动，并排查评测污染与提示格式差异。"
   },
   {
-    "id": "C-123",
+    "id": "C-124",
     "key": "production-architecture-evaluation",
     "owner": "intro:23e-tech-judgement",
     "slug": "23e-tech-judgement",
@@ -1230,7 +1240,7 @@
     "solution": "\\textbf{第一步：}先写出双方共用的测试条件表。\\par\\nobreak\\textbf{解题过程：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。\\par\\textbf{评分要点：}(1)至少四项可复现的控制条件；(2)同时报告质量与延迟、吞吐、显存、成本；(3)说明榜单可能受污染或与业务分布不同；(4)给出失败案例或统计波动。\\par\\textbf{核对：}可用同一批业务输入先比较质量、失败类型与服务延迟，再核算给定并发下的总成本。只列四个指标名称而不给双方共用的条件，仍不能复现实验；榜单任务与实际业务不一致时，还需业务验证集。"
   },
   {
-    "id": "C-124",
+    "id": "C-125",
     "key": "convolution-output-shape",
     "owner": "intro:19-cnn",
     "slug": "19-cnn",
@@ -1240,7 +1250,7 @@
     "solution": "\\textbf{第一步：}用 $(4-2)/1+1$ 求每个空间方向的输出尺寸。\\par\\nobreak\n\\textbf{解答：} 宽高为 $3\\times3$；卷积核权重 $2\\times2=4$ 个（不含偏置）。"
   },
   {
-    "id": "C-125",
+    "id": "C-126",
     "key": "convolution-shared-kernel",
     "owner": "intro:19-cnn",
     "slug": "19-cnn",
@@ -1250,7 +1260,7 @@
     "solution": "\\textbf{第一步：}分别取左上与右上两个 $2\\times2$ 窗口，各与同一个核对应相乘。\\par\\nobreak\n\\textbf{解题过程：}左上输出为 $1\\times1+2\\times0+0\\times0+1\\times(-1)=\\answerresult{0}$；右上输出为 $2\\times1+0\\times0+1\\times0+3\\times(-1)=\\answerresult{-1}$。两个位置共用一组 $4$ 个核权重，不是各有一组；输入窗口不同，输出可以不同。"
   },
   {
-    "id": "C-126",
+    "id": "C-127",
     "key": "pooling-detail-loss",
     "owner": "intro:19-cnn",
     "slug": "19-cnn",
@@ -1260,7 +1270,7 @@
     "solution": "\\textbf{第一步：}先看下采样保留了哪些空间信息。\\par\\nobreak\\textbf{解题过程：}池化可降低空间尺寸与后续成本，但可能丢失精细位置、边缘或小目标信息。\\par\\textbf{核对：}例如 $2\\times2$ 窗口取平均后，不同像素排列可能得到同一数值，位置差异已丢失。若任务要定位小物体，仅报告更小的特征图不足以说明这种下采样合适，还要检验目标是否仍可识别。"
   },
   {
-    "id": "C-127",
+    "id": "C-128",
     "key": "rectangular-patch-count",
     "owner": "intro:19b-vit",
     "slug": "19b-vit",
@@ -1270,7 +1280,7 @@
     "solution": "\\textbf{第一步：}分别数高、宽方向能切几块，再相乘。\\par\\nobreak\n\\textbf{解题过程：}共有 $(48/8)\\times(32/8)=6\\times4=\\answerresult{24}$ 个 Patch。RGB 的三个通道都属于每个 Patch，不把 Patch 数再乘 $3$。"
   },
   {
-    "id": "C-128",
+    "id": "C-129",
     "key": "vit-spatial-order",
     "owner": "intro:19b-vit",
     "slug": "19b-vit",
@@ -1280,7 +1290,7 @@
     "solution": "\\textbf{第一步：}先问平均后是否还能定位原来的区域。\\par\\nobreak\\textbf{解题过程：}无序平均抹掉空间身份，难定位左上区域；可加入二维位置编码或保留 Patch 序列及相应位置标识。\\par\\textbf{核对：}将左上与右下两个 Patch 交换，四条向量的无序平均不变，但问题的正确答案可能改变。这提供了一个直接反例：平均后的表示无法区分两幅图。"
   },
   {
-    "id": "C-129",
+    "id": "C-130",
     "key": "patch-projection-count",
     "owner": "intro:19b-vit",
     "slug": "19b-vit",
@@ -1290,7 +1300,7 @@
     "solution": "\\textbf{第一步：}先数行、列方向各能切几块，再把一块的高、宽、通道数相乘。\\par\\nobreak\n\\textbf{解答：}$(32/8)^2=16$ 个 Patch；每块展平为 $8\\times8\\times3=192$；投影矩阵 $192\\times64$，共 $\\answerresult{12{,}288}$ 个权重，所有 Patch 共用；加 CLS 后序列长度为 $17$。\\par\\textbf{核对：}Patch 数 $16$ 与每块宽度 $192$ 分别是序列轴和特征轴。投影权重由所有 Patch 共用，因此只数 $192\\times64$，不再乘 $16$；CLS 只使序列多一行。"
   },
   {
-    "id": "C-130",
+    "id": "C-131",
     "key": "memory-single-write",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1300,7 +1310,7 @@
     "solution": "\\textbf{第一步：}先用 Key 的每个分量分别乘整条 Value，形成状态矩阵的两行。\\par\\nobreak\n\\textbf{解题过程：}$\\mathcal{M}=\\begin{bmatrix}1.2&-0.6\\\\1.6&-0.8\\end{bmatrix}$；读取结果为 $(0.6\\times1.2+0.8\\times1.6,\\,-0.6\\times0.6-0.8\\times0.8)=\\answerresult{(2,-1)}$。一般有 $\\vect k^\\top\\mathcal{M}=(\\vect k^\\top\\vect k)\\vect v^\\top$；单位 Key 的自身点积为 $1$，所以读回 $\\vect v^\\top$。"
   },
   {
-    "id": "C-131",
+    "id": "C-132",
     "key": "memory-cross-talk",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1310,7 +1320,7 @@
     "solution": "\\textbf{第一步：}将查询对两条外积的读取分别展开，再相加。\\par\\nobreak\n\\textbf{解题过程：}$\\mathcal{M}=\\begin{bmatrix}1&0.6\\\\0&0.8\\end{bmatrix}$，$\\vect k_A^\\top\\mathcal{M}=\\answerresult{(1,0.6)}$，多出的 $(0,0.6)$ 来自 B。一般交叉项是 $(\\vect k_A^\\top\\vect k_B)\\vect v_B^\\top$；非零交叉点积把别条 Value 混进读出。"
   },
   {
-    "id": "C-132",
+    "id": "C-133",
     "key": "memory-outer-shape",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1320,7 +1330,7 @@
     "solution": "\\textbf{第一步：}先写出 $\\vect{v}^\\top$ 与 $\\vect{k}$ 的形状，比较内侧维度。\\par\\nobreak\n\\textbf{解题过程：}$\\vect{v}^\\top:1\\times3$ 乘 $\\vect{k}:2\\times1$，内侧维度 $3\\neq2$，无法相乘；正确写入 $\\vect{k} \\vect{v}^\\top$ 为 $2\\times3$，供 $\\vect{q}^\\top:1\\times2$ 读出 $1\\times3$。若 $d_k=d_v$，$\\vect{v}^\\top\\vect{k}$ 是 $1\\times1$ 标量（两向量的内积），不是 $d_k\\times d_v$ 的状态矩阵。"
   },
   {
-    "id": "C-133",
+    "id": "C-134",
     "key": "memory-write-strategies",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1330,7 +1340,7 @@
     "solution": "\\textbf{第一步：}先检查修正 B 时会不会同时改变 A 的读出。\\par\\nobreak\n\\textbf{解题过程：}接近正交会减小不同 Key 的交叉点积；Delta 写入则按当前读出与目标 Value 的差补写。非正交时，修正新记忆也可能扰动旧记忆，因此单遍修正不保证同时读准。可以监测全部读出误差并尝试反复校正；若 Key 与目标允许同一个线性状态精确表示，也可求联立方程。反复校正的收敛仍取决于更新规则与步长。"
   },
   {
-    "id": "C-134",
+    "id": "C-135",
     "key": "delta-write-order",
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
@@ -1340,7 +1350,7 @@
     "solution": "\\textbf{第一步：}依次写入 B、计算 A 的残差、再重读旧 B。\\par\\nobreak\n\\textbf{解答：} 先写 B 得\n$\\mathcal{M}_1=\\vect{k}_B \\vect{v}_B^\\top=\\begin{bmatrix}0&0.6\\\\0&0.8\\end{bmatrix}$；\n再写 A 时，$\\vect{k}_A^\\top\\mathcal{M}_1=(0,0.6)$，残差\n$\\vect{r}_A^\\top=(1,-0.6)$，因此\n$\\mathcal{M}_2=\\mathcal{M}_1+\\vect{k}_A \\vect{r}_A^\\top=\n\\boxed{\\begin{bmatrix}1&0\\\\0&0.8\\end{bmatrix}}$。\n最新的 A 读取为 $\\vect{k}_A^\\top\\mathcal{M}_2=\\answerresult{(1,0)}$；\n旧的 B 读取为 $\\vect{k}_B^\\top\\mathcal{M}_2=\\answerresult{(0.6,0.64)}$，\n误差 $\\sqrt{0.6^2+(-0.36)^2}\\approx\\answerresult{0.700}$。\n与正文先 A 后 B 对称：\\textbf{最后写入的 Key 当次精确，旧 Key 被扰动}，\n不能推断两条同时精确。"
   },
   {
-    "id": "C-135",
+    "id": "C-136",
     "key": "memory-relu-read",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1350,7 +1360,7 @@
     "solution": "\\textbf{第一步：}先让 $\\vect{x}^\\top$ 分别与 $K$ 的两行做点积，再逐项过 ReLU。\\par\\nobreak\n\\textbf{解答：}$\\vect{x}^\\top K^\\top=(1-2,\\,3-1)=(-1,2)$，所以 $\\relu(\\vect{x}^\\top K^\\top)=\\answerresult{(0,2)}$：负匹配的第 1 条记忆被关闭，第 2 条按分数 $2$ 保留。"
   },
   {
-    "id": "C-136",
+    "id": "C-137",
     "key": "memory-pairing-shape",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1360,7 +1370,7 @@
     "solution": "\\textbf{第一步：}先核对权重列数与 Value 行数。\\par\\nobreak\\textbf{解题过程：}四条 Key 会得到 $1\\times4$ 匹配权重，而三条 Value 只有三行，$1\\times4$ 与 $3\\times4$ 不能相乘。\\par\\textbf{核对：}Key 的第 $i$ 行权重必须乘同一条记录的第 $i$ 行 Value。若为了让形状相乘而随意补一行，仍没有说明缺少的第 $4$ 条 Value 来自哪条记忆；应先修正配对数据。"
   },
   {
-    "id": "C-137",
+    "id": "C-138",
     "key": "memory-selectivity",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1370,7 +1380,7 @@
     "solution": "\\textbf{第一步：}先比较幂运算后的弱／强比值；Softmax 则比较两个指数的商。\\par\\nobreak\n\\textbf{解题过程：}幂运算后的弱／强比值依次为 $\\answerresult{0.5,0.25,0.125}$，强匹配仍为 $1$。Softmax 的第一条与第二条权重之比为 $e^{\\beta(1-0.6)}$，从 $e^{0.4}$ 增至 $e^{0.8}$，因此第一条权重上升。这两种方法都让已有分数的差异更突出；本题的幂运算比较限于 $[0,1]$ 内的非负分数。\\par\\textbf{核对：}幂运算的比较用的是本题给定的 $[0,1]$ 非负分数。若忽略这个条件，例如把绝对值大于 $1$ 的分数也解释成“越乘越小”，结论就会反过来。Softmax 则应比较归一化后的相对权重，而不是只看指数是否增大。"
   },
   {
-    "id": "C-138",
+    "id": "C-139",
     "key": "memory-mlp-interpretation",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1380,7 +1390,7 @@
     "solution": "\\textbf{第一步：}先区分对计算机制的解释与对输出事实的验证。\\par\\nobreak\n\\textbf{解题过程：}这种对应把各隐藏分量的激活和输出贡献联系起来，帮助理解网络怎样组合特征。它并未建立单个神经元与一条真实事实的一一对应。确认回答仍要核查原始来源、语境与实际输出；单个激活不是事实证据。"
   },
   {
-    "id": "C-139",
+    "id": "C-140",
     "key": "memory-random-capacity",
     "owner": "intro:09-nonlinearity-and-memory",
     "slug": "09-nonlinearity-and-memory",
@@ -1390,7 +1400,7 @@
     "solution": "\\textbf{第一步：}先用正交向量条数不超过维度，区分精确上限与随机量级估计。\\par\\nobreak\n\\textbf{解题过程：}最多 $4$ 条；前四条若两两正交，第 $5$ 条非零 Key 必与其中某条有非零点积。随机交叉点积的典型量级分别为 $\\answerresult{0.125}$ 与 $\\answerresult{0.03125}$。应用于真实模型前，应检查真实 Key 的相关性是否符合随机假设，并测随记忆数变化的读出误差及 Value 尺度；维度量级不能直接解释成能记住的可靠事实数。"
   },
   {
-    "id": "C-140",
+    "id": "C-141",
     "key": "optimizer-basic-step",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",
@@ -1400,7 +1410,7 @@
     "solution": "\\textbf{第一步：}保留梯度的负号，再计算“原参数减去学习率乘梯度”。\\par\\nobreak\\textbf{解题过程：}$w_{\\rm new}=2-0.1\\times(-3)=\\answerresult{2.3}$，参数增大 $0.3$。负梯度方向在这里指向较大的 $w$；不能把“下降”理解成每个参数的数值都变小。"
   },
   {
-    "id": "C-141",
+    "id": "C-142",
     "key": "optimizer-clipping",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",
@@ -1410,7 +1420,7 @@
     "solution": "\\textbf{第一步：}先求长度 $\\sqrt{5^2+12^2}$，只有超过阈值才整体缩放。\\par\\nobreak\n\\textbf{解题过程：}$\\|(5,12)\\|_2=13$，乘 $6.5/13=0.5$ 得 $\\answerresult{(2.5,6)}$，方向不变；阈值为 $20$ 时长度未超限，梯度保持 $(5,12)$。梯度裁剪作用于更新前的梯度，不是对预测概率归一化。高级优化器手算见附录 A。"
   },
   {
-    "id": "C-142",
+    "id": "C-143",
     "key": "optimizer-warmup",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",
@@ -1420,7 +1430,7 @@
     "solution": "\\textbf{第一步：}每一步先用上一步的 $w$ 重新算梯度，再乘该步的学习率。\\par\\nobreak\n\\textbf{解题过程：}$w_1=1-0.01\\times2=\\answerresult{0.98}$，$w_2=0.98(1-0.04)=\\answerresult{0.9408}$，$w_3=0.9408(1-0.06)\\approx\\answerresult{0.8844}$。恒定 $\\eta=0.03$ 时 $w_3=0.94^3\\approx0.8306$，下降更快。Warmup 只改变步长 $\\eta_t$，不更换损失函数；初期步子小，前几步下降也较慢。"
   },
   {
-    "id": "C-143",
+    "id": "C-144",
     "key": "optimizer-adamw",
     "owner": "app:optimizer-details",
     "slug": "optimizer-details",
@@ -1428,6 +1438,36 @@
     "minutes": 8,
     "question": "\\phantomsection\\label{exercise:adamw-decay} \\textbf{【迁移】} 比较两种“权重衰减”。参数 $w_0=4$、$\\eta=0.1$、$\\lambda=0.05$，第一步梯度 $g_1=0.5$，忽略 $\\varepsilon$。（a）AdamW：按附录 A 的解耦公式求 $w_1$；（b）把 L2 项直接加进梯度，$g_1'=g_1+\\lambda w_0$，再走一步 Adam。两种做法的结果为何不同？",
     "solution": "\\textbf{第一步：}第一步偏置校正后 $\\widehat{m}_1/\\sqrt{\\widehat{v}_1}=g_1/|g_1|$，先算出这一方向。\\par\\nobreak\n\\textbf{解题过程：}（a）方向为 $1$，$w_1=(1-0.1\\times0.05)\\times4-0.1\\times1=\\answerresult{3.88}$。（b）$g_1'=0.5+0.2=0.7$，但 $\\widehat{m}_1/\\sqrt{\\widehat{v}_1}=0.7/0.7=1$，$w_1=4-0.1=\\answerresult{3.9}$：衰减在第一步被自适应归一化抵消。AdamW 把缩小项放在梯度统计之外，才保证每步都按 $\\eta\\lambda w$ 衰减。"
+  },
+  {
+    "id": "C-145",
+    "key": "rational-mini-residual-warmup",
+    "owner": "app:rational-mini",
+    "slug": "rational-mini",
+    "difficulty": "基础",
+    "minutes": 3,
+    "question": "\\textbf{手算：}二维迷你实验中，第一次残差后 $r=(1/2,3/2)$，$W_{\\rm up}=W_{\\rm down}=I_2$，$f=\\relu(rW_{\\rm up})$、$h=r+fW_{\\rm down}$。求 $f,h$。",
+    "solution": "\\textbf{第一步：}先逐项判断 ReLU 的输入是否为正。\\par\\nobreak\\textbf{解题过程：}两项均为正，故 $f=r=(1/2,3/2)$；再加残差直通的 $r$，得 $h=(1,3)$。若只得到 $(1/2,3/2)$，就是遗漏了相加的另一条路径。"
+  },
+  {
+    "id": "C-146",
+    "key": "rational-mini-gradient",
+    "owner": "app:rational-mini",
+    "slug": "rational-mini",
+    "difficulty": "挑战",
+    "minutes": 20,
+    "question": "\\textbf{【手算／复现】}完成\\hyperref[app:rational-mini]{附录~\\ref*{app:rational-mini} 的二维分数迷你版}：先遮住梯度表，求 $g_h$、两条残差汇合的 $g_r$ 和 $\\nabla_{W_K}L$，再用 \\nolinkurl{scripts/mini_transformer_demo.py} 核对。",
+    "solution": "\\textbf{第一步：}从二类交叉熵的 $g_z=(1/2,-1/2)$ 出发。\\par\\nobreak\\textbf{解题过程：}$g_h=(1,-1/3)$；FFN 两个单位投影与正区间 ReLU 传回同一梯度，因此 $g_r=2g_h=(2,-2/3)$；Softmax 分数梯度 $(2/3,-2/3)$ 乘 Query $q=1$，得到 $\\nabla_{W_K}L=(2/3,-2/3)^\\top$。完整参数导数见第~\\pageref*{app:rational-mini}~页。\\par\\textbf{核对：}先在计算图中分别标出残差直通的 $g_h$ 与 FFN 返回的 $g_h$，两者相加才有 $g_r=2g_h$。若 $W_K$ 梯度少了一半，优先查这处汇合；若正负方向相同，检查 Softmax 的两项耦合梯度是否被遗漏。"
+  },
+  {
+    "id": "C-147",
+    "key": "simplified-block-gradient",
+    "owner": "app:rational-mini",
+    "slug": "rational-mini",
+    "difficulty": "挑战",
+    "minutes": 20,
+    "question": "\\textbf{【手算】} \\textbf{简化残差梯度：}本题固定注意力权重、关闭两次 Norm，令 $W_{\\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\\relu(rW_{\\rm up})$、$h=r+fW_{\\rm down}$，其中 $x=(0,1)$。设注意力读取权重为\n$a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，\nFFN 下投影为 $W_{\\rm down}=0.5I_2$，第一次残差后向量\n$r=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为\n$g_h=(0.09716,0.72516)$。计算\n$\\partial L/\\partial W_{\\rm down}$ 和\n$\\partial L/\\partial W_V$ 的 $2\\times2$ 数值矩阵。",
+    "solution": "\\textbf{第一步：}先求 $f^\\top g_h$，再沿残差路径反传。\\par\\nobreak\n\\textbf{解答：} 本题已关闭 Norm、固定 $W_{\\rm up}=I_2$；$r=(0.330,1.670)$ 两项为正，故 $f=\\relu(r)=r$，$h=r+fW_{\\rm down}$，\n$\\partial L/\\partial W_{\\rm down}=f^\\top g_h\n\\approx\\begin{bmatrix}0.03206&0.23930\\\\0.16226&1.21102\\end{bmatrix}$。\n上游梯度 $g_r=g_h(I_2+0.5I_2)=1.5g_h$，\n故 $\\partial L/\\partial W_V=a^\\top g_r\n\\approx\\begin{bmatrix}0.04809&0.35895\\\\0.09765&0.72879\\end{bmatrix}$。\\par\\textbf{核对：}两张权重梯度都是“输入列向量乘上游梯度行向量”的外积，结果应为 $2\\times2$。$g_r=g_h+0.5g_h$ 包含直通和 FFN 两条贡献；若只用 $0.5g_h$，Value 梯度会少掉残差直通项。"
   },
   {
     "id": "R-01",

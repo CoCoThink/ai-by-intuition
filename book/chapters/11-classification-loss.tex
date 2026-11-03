@@ -33,6 +33,7 @@
 再按正确答案获得的概率计算损失。}后面将算出 B 的损失小于 A，
 让训练倾向于把更多份额分给正确答案。这些概率表示模型当前的预测，要用训练文本里的答案来检验。
 
+\subsection{Logits：模型先给出未归一化分数}
 \phantomsection\label{concept:logits}
 网络直接输出的实数分数称为 \textbf{logits（未归一化分数）}。
 分数只表示候选之间的相对偏好，还不是上表那样的概率份额。
@@ -205,6 +206,7 @@ L_1=-\ln\Pi_{1,4}.
 
 \chapterchecktasks{20c-classification-loss}{理解与复算}{
 \item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。若只选最高分，是否要先变成概率？本章训练时又为什么使用概率？\chapterinlinehint{区分选出一个候选，与衡量正确答案获得多少支持。}
+\item \textbf{判断：}$(0.2,0.5,0.3)$、$(0.2,0.5,0.4)$ 和 $(1.1,-0.1,0)$，哪些能作为三个互斥类别的概率？\chapterinlinehint{逐项检查是否非负，再检查总和是否为 $1$。}
 \item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}
 \item \textbf{预测：}标签固定不变时，正确类概率从 $0.2$ 升到 $0.4$，交叉熵的变化方向是什么？\chapterinlinehint{比较负对数函数在这两个概率处的大小。}
 }

@@ -6,7 +6,7 @@
 \noindent\emph{从概率分布到连续的文字输出}\par
 
 训练时有完整文本可构造每个位置的预测目标；生成时只有当前上下文。
-模型先为下一 Token 计算概率，选择一个候选并接到上下文末尾，
+模型先为下一 Token 计算候选分数，选择一个候选并接到上下文末尾，
 再重复这个过程。\textbf{训练可以并行计算多个预测位置，生成则依赖前一步选出的 Token。}
 \end{idea}
 
@@ -14,14 +14,45 @@
 
 Transformer 的最后位置产生一条隐藏向量，
 通过 \conceptlink{output-head}{词表输出头} 变成 $|\mathcal V|$ 个 \conceptlink{logits}{logits}。
-这些分数并不是概率，必须经过 \conceptlink{softmax}{Softmax} 归一化。
-比如只看三个候选，例如概率为
+这些分数还不是概率。若只取分数最高的候选，直接比较 logits 即可；
+若要按可能性随机选择，才需要先用 \conceptlink{softmax}{Softmax} 把分数变成概率。
+例如三个候选的概率为
 \[
 p=(0.6,\ 0.3,\ 0.1).
 \]
 \textbf{贪心解码}总选择概率最大的候选；\textbf{采样}
 则允许按这组概率随机选取一个。
 选出的 Token ID 再由分词器的解码规则转换成文字。
+
+\subsection{为什么训练能一次算多个位置，生成却要逐个产生？}
+\phantomsection\label{concept:autoregressive}
+
+先用训练好的主例走一遍生成。训练时，“春天 / 花 / 开了 / 。”的正确 Token
+已经在数据中，因此 \conceptlink{causal-mask}{因果掩码} 可以让各位置在同一次前向计算中同时预测下一 Token。
+生成时没有现成的后续答案：模型必须先为当前前缀选出一个 Token，
+把它接到输入末尾，才能继续预测。
+
+取第~\ref*{intro:22c-language-training}~章训练 $20$ 步后的全部参数，此后不再更新。
+只给 Prompt“春天”（ID $2$），每一步取最后位置分数最高的 ID：
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular}{@{}clcc@{}}\toprule
+步 & 当前上下文 ID & 选出的 ID & 对应概率\\\midrule
+$1$ & $[2]$ & $4$“花” & $0.8817$\\
+$2$ & $[2,4]$ & $5$“开了” & $0.4566$\\
+$3$ & $[2,4,5]$ & $3$“。” & $0.5829$\\\bottomrule
+\end{tabular}
+\end{center}
+三步依次接出“花”“开了”“。”，复现了训练句子。
+第 $3$ 步最后一个 Query 的读取权重为 $(0.1188,0.3256,0.5556)$，
+与第~\ref*{intro:22c-language-training}~章 Attention 表中第 $20$ 步的第三行相同：
+因果掩码让第 $t$ 行只依赖前 $t$ 个 Token，
+所以训练时并行算出的各行，正是逐词生成时每一步的最后一行。
+区别在于训练的输入来自数据，生成的输入来自上一步的选择。
+运行 \texttt{python3 scripts/teaching\_trace.py --generate} 复算本表。
+
+这叫\textbf{自回归生成}：模型反复使用已经学好的参数做前向计算，
+把新选出的 Token 追加到上下文，再预测下一个 Token。
 
 \subsection{为什么有温度、Top-k 和 Top-p？}
 \phantomsection\label{concept:sampling}
@@ -63,46 +94,6 @@ $0.665+0.245=0.910\ge0.8$，也保留 A、B。
 若 Top-$p$ 阈值为 $0.6$，只保留 A，
 重新归一化后为 $(1,0,0)$。
 这两种方法的截断集合依赖具体分布，并不总相同。
-
-\subsection{为什么训练能一次算多个位置，自回归生成却要逐个产生？}
-\phantomsection\label{concept:autoregressive}
-
-训练时，“春天 / 花 / 开了 / 。”的正确 Token
-已经在数据中，因此 \conceptlink{causal-mask}{因果掩码} 可以让各位置在同一次前向计算中
-同时预测它们各自的下一 Token。
-
-而生成时，模型先看“春天、花”，
-在多个候选中选出下一 Token；
-这个新 Token 成为下一步上下文的一部分，
-才有条件选择之后的 Token：
-\[
-(t_1,\ldots,t_t)
-\longrightarrow p(t_{t+1}\mid t_{\le t})
-\longrightarrow t_{t+1}
-\longrightarrow\text{继续预测}.
-\]
-这叫\textbf{自回归生成}。
-它不是重复训练，而是反复使用已经学好的参数做前向计算。
-
-\subsubsection*{主例：训练 20 步后的模型逐词续写}
-取第~\ref*{intro:22c-language-training}~章训练 $20$ 步后的全部参数，此后不再更新。
-只给 Prompt“春天”（ID $2$），每步取最后一行概率最大的 ID：
-\begin{center}\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabular}{@{}clcc@{}}\toprule
-步 & 当前上下文 ID & 选出的 ID & 它的概率\\\midrule
-$1$ & $[2]$ & $4$“花” & $0.8817$\\
-$2$ & $[2,4]$ & $5$“开了” & $0.4566$\\
-$3$ & $[2,4,5]$ & $3$“。” & $0.5829$\\\bottomrule
-\end{tabular}
-\end{center}
-三步依次接出“花”“开了”“。”，复现了训练句子。
-第 $3$ 步最后一个 Query 的读取权重为 $(0.1188,0.3256,0.5556)$，
-与第~\ref*{intro:22c-language-training}~章 Attention 表中第 $20$ 步的第三行相同：
-因果掩码让第 $t$ 行只依赖前 $t$ 个 Token，
-所以训练时并行算出的各行，正是逐词生成时每一步的最后一行。
-区别在于训练的输入来自数据，生成的输入来自上一步的选择。
-运行 \texttt{python3 scripts/teaching\_trace.py --generate} 复算本表。
 
 \subsection{从哪里开始，到哪里停止：BOS、EOS 与长度预算}
 \phantomsection\label{concept:bos-eos}

@@ -97,7 +97,7 @@ def rendered_source_map() -> str:
         slugs = re.findall(r'\\(?:chapterchecktasks|chapterpracticejump)\{([^}]+)\}', body)
         if not slugs:
             continue
-        labels = re.findall(r'\\label\{(intro:[^}]+|front:prologue|app:optimizer-details)\}', body)
+        labels = re.findall(r'\\label\{(intro:[^}]+|front:prologue|app:optimizer-details|app:rational-mini)\}', body)
         label_cell = '<br>'.join(f'`{label}`' for label in labels)
         slug_cell = '<br>'.join(f'`{slug}`' for slug in dict.fromkeys(slugs))
         lines.append(f'| [{name}.tex](book/chapters/{name}.tex) | {label_cell} | {slug_cell} |')

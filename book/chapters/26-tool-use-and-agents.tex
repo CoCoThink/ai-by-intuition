@@ -73,6 +73,28 @@
 模型读消息、提出下一步动作，应用授权并执行，再把结果交回模型。
 本节采用一条便于追踪的规则：工具被拒绝或执行失败时立即停止，由应用报告缺失信息；
 模型直接给出答复时，应用核验后交付，预算用尽时也由应用报告未完成状态。
+
+先看处理 Q1--Q3 报表时消息怎样变化：每次工具结果都会追加到消息列表，
+模型再读取已有消息决定下一步。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{15mm}>{\raggedright\arraybackslash}p{39mm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+回合 & 消息角色／动作 & 追加到消息列表的内容（教学简写）\\\midrule
+0 & system + user & 仅读授权季度报告；比较 Q1--Q3，必须保留单位与来源\\
+1 & assistant / tool call & 请求 \texttt{read\_report(Q1)}\\
+2 & tool / result & Q1 = 100，单位百万元，来源 Q1-report/table-A\\
+3 & assistant / tool call & 请求 \texttt{read\_report(Q2)}\\
+4 & tool / result & Q2 = 120，单位百万元，来源 Q2-report/table-A\\
+5 & assistant / tool call & 请求 \texttt{read\_report(Q3)}\\
+6 & tool / result & Q3 = 132，单位百万元，来源 Q3-report/table-A\\
+7 & assistant / final & 环比 20\%、10\%；分别注明 Q1--Q3 来源\\
+\bottomrule
+\end{tabularx}
+\end{center}
+这些是\textbf{应用层消息记录}，不是模型内部神经元状态。
+若 Q2 工具失败或无权限，应返回错误，不能跳过证据仍声称得到了可靠环比。
+下面的循环图把这段轨迹抽象成预算检查、模型决策、应用执行和结果回传。
 \par\medskip
 \noindent\begin{minipage}{\linewidth}
 \tagstructbegin{tag=Figure,alttext={Agent 循环从应用检查步数预算开始。有预算则调用模型：模型直接答复时进入应用核验，模型请求工具时进入权限与参数检查。授权后执行工具，成功则将结果及来源追加到消息并返回预算检查。授权被拒绝或工具失败时立即停止，由应用报告错误与缺失；预算用尽也由应用报告未完成。工具结果必须先返回模型，不能直接绕过模型成为最终答复。}}
@@ -132,26 +154,7 @@ return app_finish("step_budget_exceeded", messages)
 \texttt{app\_finish} 核验已有来源、数值与任务要求，返回完成状态或缺失清单。
 它是应用逻辑，不额外调用模型；循环次数和权限检查也由应用控制。
 这里一步指一次模型调用，同一次调用可以提出多个工具请求。
-示例中使用本地模拟的“模型决策”，不连接外部 API。逐轮消息可记成：
-
-\begin{center}\small
-\tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{15mm}>{\raggedright\arraybackslash}p{39mm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-回合 & 消息角色／动作 & 追加到消息列表的内容（教学简写）\\\midrule
-0 & system + user & 仅读授权季度报告；比较 Q1--Q3，必须保留单位与来源\\
-1 & assistant / tool call & 请求 \texttt{read\_report(Q1)}\\
-2 & tool / result & Q1 = 100，单位百万元，来源 Q1-report/table-A\\
-3 & assistant / tool call & 请求 \texttt{read\_report(Q2)}\\
-4 & tool / result & Q2 = 120，单位百万元，来源 Q2-report/table-A\\
-5 & assistant / tool call & 请求 \texttt{read\_report(Q3)}\\
-6 & tool / result & Q3 = 132，单位百万元，来源 Q3-report/table-A\\
-7 & assistant / final & 环比 20\%、10\%；分别注明 Q1--Q3 来源\\
-\bottomrule
-\end{tabularx}
-\end{center}
-这八条是\textbf{应用层消息记录}，不是模型内部神经元状态。
-若 Q2 工具失败或无权限，应返回错误，不能跳过证据仍声称得到了可靠环比。
+示例中使用本地模拟的“模型决策”，不连接外部 API。
 
 \par\smallskip\noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}\enspace
 运行 \texttt{python3 scripts/agent\_loop.py} 可以在本地重放教学轨迹，并复算下文每次模型调用的输入 Token。

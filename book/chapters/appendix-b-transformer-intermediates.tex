@@ -34,6 +34,7 @@ $\nabla_{W_K}L=(2/3,-2/3)^\top$、$\nabla_{W_Q}L=(0,0)^\top$。
 Query 梯度为零来自本次 $K=0$ 的参数点，不表示 Query 永远学不到。
 用 $W\leftarrow W-\eta\nabla_WL$ 同步更新即可完成一步。
 \texttt{python3 scripts/mini\_transformer\_demo.py} 逐一用有限差分核对全部 $24$ 个参数导数，并验证小步更新后损失下降。
+\chapterpracticejump{rational-mini}
 \medskip
 
 \subsection{三维贯通实验：完整参数表与逐层中间值}

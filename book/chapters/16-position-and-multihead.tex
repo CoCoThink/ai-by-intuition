@@ -11,13 +11,17 @@
 \setlength{\belowdisplayshortskip}{2pt}
 \subsection{交换两个 Token：统一三维参数为什么需要位置？}
 
+只交换两个 Token，模型能分清谁先谁后吗？
+先不加位置、因果掩码、Norm 与残差，用主线参数检查输出是否仅随输入换行；
+再加入位置向量，对比结果。
+
 取“春天、花”的两行 Embedding，再交换行得到 $X' $：
 \[
 X=\begin{bmatrix}1.2&0&-0.2\\-0.3&1.1&0.2\end{bmatrix}
 \in\R^{2\times3},\qquad
 X'=\begin{bmatrix}-0.3&1.1&0.2\\1.2&0&-0.2\end{bmatrix}.
 \]
-固定主例的 $W_Q,W_K,W_V$，暂不加位置、因果掩码、Norm 与残差：
+固定主例的 $W_Q,W_K,W_V$，先不加入显式位置表示：
 \[
 W_Q=\begin{bmatrix}.8&.2&-.1\\.1&.9&.25\\-.1&.15&.8\end{bmatrix},\quad
 W_K=\begin{bmatrix}.85&0&.2\\-.1&.9&0\\.15&.2&.75\end{bmatrix},\quad
@@ -76,8 +80,6 @@ O(X'_+)\approx\begin{bmatrix}
 
 Q/K 各维独立、等概率取 $\pm1$ 时，点积均值为 $0$、方差为 $d_k$，
 标准差为 $\sqrt{d_k}$（见\hyperref[app:variance-scaling]{数学速查中的四结果算例}）。
-分数 $(8,0)$ 的第一项概率为 $e^8/(e^8+1)\approx0.9997$；
-当 $d_k=64$，$\sqrt{64}=8$，除以 $8$ 后分数变成 $(1,0)$，概率为 $e/(e+1)\approx0.731$。
 缩放控制的是典型分数的量级，并未规定分数的上限。
 若分数差仍很大，权重仍会接近 $0/1$，此时对分数的小变化不敏感（称为饱和）。
 

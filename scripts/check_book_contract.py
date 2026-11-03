@@ -256,11 +256,14 @@ def validate_contract():
     require('阅读指南' not in main and '阅读指南' not in sources['10-language-model-task'],'Prelude must be called 序章')
     errors.extend(ten_step_errors(sources['17-transformer-architecture']))
     for filename,label,heading in (
+        ('11-classification-loss','concept:logits','Logits：模型先给出未归一化分数'),
         ('28-training-and-deployment','concept:evaluation-contamination','训练数据工程：来源、清洗、去重与配比'),
         ('30-evaluating-new-models','concept:evaluation-contamination-benchmark','为什么 Benchmark 高分仍需要复核？'),
-        ('21-autoregressive-generation','concept:autoregressive','为什么训练能一次算多个位置，自回归生成却要逐个产生？'),
+        ('21-autoregressive-generation','concept:autoregressive','为什么训练能一次算多个位置，生成却要逐个产生？'),
     ):
         errors.extend(concept_anchor_errors(sources[filename],label,heading))
+    from check_pedagogy_regressions import validate_pedagogy
+    errors.extend(validate_pedagogy(main,sources))
     combined={'main':main,**sources,'part-maps':(BOOK/'part-maps.tex').read_text(),
               'part-reviews':(BOOK/'part-reviews.tex').read_text()}
     for p in (BOOK/'figures').glob('*.tex'):combined['figures/'+p.name]=uncomment(p.read_text())
@@ -457,6 +460,8 @@ def validate_contract():
 
 
 def self_test():
+    from check_pedagogy_regressions import self_test as pedagogy_self_test
+    pedagogy_self_test()
     layout=(r'\input{chapters/01-first}' r'\input{chapters/02-second}'
             r'\appendix\section{A}\input{chapters/appendix-a-formulas}')
     sources={'01-first':r'\section{First}','02-second':r'\section{Second}',
@@ -475,7 +480,9 @@ def self_test():
     for invalid,required in ((progression[::-1],{'first'}),
                              ([dict(slug='first',difficulty='标准')],{'first'}),
                              (progression+[dict(slug='optimizer-details',difficulty='标准')],
-                              {'first','optimizer-details'})):
+                              {'first','optimizer-details'}),
+                             (progression+[dict(slug='rational-mini',difficulty='挑战')],
+                              {'first','rational-mini'})):
         try:validate_progression(invalid,required)
         except ValueError:pass
         else:raise AssertionError('Challenge-first order and chapters without a basic entry must be rejected')

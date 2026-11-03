@@ -38,9 +38,11 @@
 \boxed{A=\softmax\!\left(\frac{QK^\top}{\sqrt3}+C\right).}
 \label{eq:masked-language-model}
 \end{equation}
-这是\textbf{因果掩码}，约束“能读取哪些 Token”；
-实际训练还可使用\textbf{损失掩码}，
-只让某些位置参与计分。两种掩码的作用不同。
+这是\textbf{因果掩码}，约束“能读取哪些 Token”。
+但“能读取”与“要计分”是两回事。例如对话微调时，
+用户问题要供模型读取，一种常见设置却是只评价助手答案。
+怎样让问题位置不计分？训练时再用一份\textbf{损失掩码}，
+选出参与损失的位置；它不会改变模型读取哪些上下文。
 本章的三个位置\textbf{全部参与损失}，因此平均时除以 $3$。
 
 \subsection{所有位置输出同一个词表的五项分数}
