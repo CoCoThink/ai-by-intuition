@@ -21,6 +21,9 @@ from pathlib import Path
 import re
 import sys
 
+from check_editorial_style import (budget_errors, collect_book_sources,
+                                   find_disclaimers, self_test as editorial_self_test)
+
 ROOT = Path(__file__).resolve().parents[1]
 BOOK = ROOT / "book"
 CONTROL = re.compile(r"[\x00-\x09\x0b-\x1f\x7f]")
@@ -140,15 +143,24 @@ def main() -> int:
     args = parser.parse_args()
     if args.self_test:
         self_test()
+        editorial_self_test()
         print("Source hygiene self-test passed: control characters, orphaned "
               "punctuation, ligatured command options and breakable boxes in "
               "minipages are rejected")
     errors = lint(collect())
+    disclaimers = find_disclaimers(collect_book_sources())
+    editorial_errors = budget_errors(disclaimers)
+    if editorial_errors:
+        errors.extend(f"book/{finding.source}:{finding.line}: {finding.passage[:160]}"
+                      for finding in disclaimers)
+        errors.extend(editorial_errors)
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
     print("Source hygiene QA passed: no control characters, orphaned display "
           "punctuation, ligatured command options or breakable boxes in minipages")
+    print(f"Editorial style QA passed: {len(disclaimers)} defensive passages "
+          "(whole-book maximum 3)")
     return 0
 
 

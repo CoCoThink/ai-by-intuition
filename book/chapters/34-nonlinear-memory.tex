@@ -95,7 +95,7 @@ f(\vect{x}^\top)=\sum_i\phi(\vect{x}^\top\vect{k}_i)\vect{v}_i^\top
 与两层 MLP 的计算
 $\phi(\vect{x}^\top W_1)W_2$ 对照：
 第一层的列可扮演匹配模板，第二层的行可扮演输出模板；
-偏置在这里只为突出结构而省略。
+本节将偏置设为零。
 这是一种\textbf{计算视角}：整组参数共同实现匹配与读出，单个神经元不必对应一条独立事实。
 
 \begin{idea}

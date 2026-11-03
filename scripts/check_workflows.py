@@ -50,6 +50,8 @@ def main() -> None:
     for event in ("push", "pull_request"):
         check(f"book dependency changes trigger {event} validation",
               "requirements-book.txt" in build["on"][event]["paths"])
+        check(f"build cache changes trigger {event} validation",
+              "scripts/book_build_cache.sh" in build["on"][event]["paths"])
     python_setup = [i for i, step in enumerate(steps)
                     if step.get("uses", "").startswith("actions/setup-python@")]
     dependency_install = [i for i, step in enumerate(steps)
@@ -60,6 +62,38 @@ def main() -> None:
     check("select Python once, then install declared book dependencies before source checks",
           len(python_setup) == len(dependency_install) == 1 and bool(source_checks)
           and python_setup[0] < dependency_install[0] < min(source_checks))
+    cache_steps = [(i, step) for i, step in enumerate(steps)
+                   if step.get("uses", "").startswith("actions/cache@")]
+    tex_steps = [(i, step) for i, step in enumerate(steps)
+                 if step.get("uses", "").startswith("xu-cheng/texlive-action@")]
+    check("restore one staged cache before the TeX container",
+          len(cache_steps) == len(tex_steps) == 1 and cache_steps[0][0] < tex_steps[0][0])
+    cache = cache_steps[0][1]["with"]
+    check("cache only the staging directory, not final PDF or build state",
+          cache.get("path") == "book/build/.ci-cache")
+    check("save new auxiliary data per commit with a compatible fallback",
+          "${{ github.sha }}" in cache.get("key", "")
+          and "hashFiles(" in cache.get("key", "")
+          and cache.get("restore-keys", "").strip()
+          == cache["key"].removesuffix("${{ github.sha }}"))
+    check("failed validation must not publish the cache",
+          cache.get("save-always", "false") == "false")
+    tex_run = tex_steps[0][1]["with"]["run"]
+    cache_stages = ("book_build_cache.sh environment", "book_build_cache.sh restore",
+                    "bash ../scripts/build_book.sh", "book_build_cache.sh save")
+    check("check actual environment before restoring auxiliary files",
+          all(stage in tex_run for stage in cache_stages)
+          and [tex_run.index(stage) for stage in cache_stages]
+          == sorted(tex_run.index(stage) for stage in cache_stages))
+    check("Lua font cache is partitioned by actual environment",
+          'export TEXMFCACHE="build/.ci-cache/fonts/$book_cache_environment"' in tex_run)
+    check("font cache uses a relative path without changing format lookup",
+          "cd book" in tex_run
+          and tex_run.index("cd book") < tex_run.index("export TEXMFCACHE=")
+          and "export TEXMFVAR=" not in tex_run)
+    check("output directory and cache boundary regression tests run before TeX",
+          any("python3 scripts/check_build_book.py" in step.get("run", "")
+              for step in steps[:tex_steps[0][0]]))
     uploads = [step for step in steps if (step.get("uses") or "").startswith("actions/upload-artifact@")]
     artifact_names = [step["with"]["name"] for step in uploads]
     check("only one successful PDF artifact", artifact_names.count("ai-by-intuition-book") == 1)

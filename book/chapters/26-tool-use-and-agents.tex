@@ -48,9 +48,9 @@
 
 \subsection{请求和返回值长什么样？}
 
-例如要读取一份允许访问的 Q3 教学报表，模型可以\textbf{提出}下述 JSON 请求；
-\textbf{这是本书的应用层示意格式，不是任一厂商的可直接调用 API。}\texttt{id} 用于关联请求与结果；
-应用程序仍需验证参数并决定是否执行：
+要读取一份允许访问的 Q3 报表，先由本例应用约定 JSON 请求的字段：
+\texttt{id} 关联请求与结果，\texttt{tool} 指定工具，\texttt{arguments} 保存参数。
+模型\textbf{提出}请求，应用验证参数并决定是否执行；对接具体服务时，再将这些字段映射到服务的 API：
 \begin{tcolorbox}[colback=paper,colframe=linegray,boxrule=.5pt,arc=1mm,left=3mm,right=3mm]
 \begin{Verbatim}[numbers=left,numbersep=4pt,fontsize=\footnotesize]
 {"id":"call_q3_01","tool":"read_report",

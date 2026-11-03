@@ -172,14 +172,15 @@ def attention_boundary_errors(pages):
 
 
 def distance_condition_errors(pages):
-    """Keep the hand-set-score qualification beside the distance table."""
-    compact=[re.sub(r'\s+','',page) for page in pages]
+    """Keep the fixed-score experiment setting beside the distance table."""
+    # PDF math fonts extract Q/K as mathematical italic Unicode letters.
+    compact=lambda text:re.sub(r'\s+','',normalize('NFKC',text))
+    normalized=[compact(page) for page in pages]
     markers=(
-        '这些分数是本实验手工指定的条件',
+        '固定上述匹配分数，不训练Q、K，只改变距离',
         '直接读取（手设分数）',
-        '右列是上述手设分数条件下的直接读取结果',
     )
-    found=[[i+1 for i,page in enumerate(compact) if marker in page]
+    found=[[i+1 for i,page in enumerate(normalized) if compact(marker) in page]
            for marker in markers]
     if any(len(locations)!=1 for locations in found) or len({locations[0] for locations in found})!=1:
         return [f'Distance experiment qualification/table split or missing: pages {found}']
@@ -777,12 +778,14 @@ def self_test():
     assert not attention_boundary_errors([attention_start+attention_end])
     assert attention_boundary_errors([attention_start,attention_end])
     assert attention_boundary_errors([attention_start])
-    distance_start='这些分数是本实验手工指定的条件'
+    distance_start='固定上述匹配分数，不训练Q、K，只改变距离'
     distance_header='直接读取（手设分数）'
-    distance_note='右列是上述手设分数条件下的直接读取结果'
-    assert not distance_condition_errors([distance_start+distance_header+distance_note])
-    assert distance_condition_errors([distance_start+distance_header,distance_note])
-    assert distance_condition_errors([distance_start,distance_header,distance_note])
+    assert not distance_condition_errors([distance_start+distance_header])
+    distance_math='固定上述匹配分数，不训练𝑄、𝐾，只改变距离'
+    assert not distance_condition_errors([distance_math+distance_header])
+    assert distance_condition_errors([distance_math,distance_header])
+    assert distance_condition_errors([distance_start,distance_header])
+    assert distance_condition_errors([distance_header])
     assert not toc_folio_errors([(64,'subsection.21.7')],{'subsection.21.7'})
     assert toc_folio_errors([(64,'subsection.21.7')],set())
     ellipse=(0,0,4,2)

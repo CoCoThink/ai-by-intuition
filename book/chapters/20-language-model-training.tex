@@ -260,7 +260,7 @@ E_{20}[5]&\approx(0.1734,\,-0.2188,\,1.3136).
 这些坐标记录了梯度怎样推动输入向量。
 
 
-\subsection{怎样独立检查数值不是手工凑的？}
+\subsection{怎样独立复算数值与梯度？}
 
 在仓库根目录运行：
 \begin{center}
@@ -424,8 +424,7 @@ $W_V=I$；Attention 不增加可训练参数，只提供一条前文读取通路
 Attention 版把两份前文送入输出头，损失便能继续下降。
 固定窗口 MLP 或 RNN 若能接收区分这两例的历史，也能拟合；
 这个实验说明上下文读取的必要性，不是 Attention 相对所有架构的优越性证明。
-运行 \texttt{python3 scripts/context\_contrast\_demo.py} 可复现；
-CI 同时检查不可区分性、理论下界和训练后的正确类概率。
+运行 \texttt{python3 scripts/context\_contrast\_demo.py} 可复算两版的损失和正确类概率。
 
 \subsubsection*{第二级：有干扰时，Q/K 能学会看哪里吗？}
 \phantomsection\label{experiment:attention-selection}
@@ -484,9 +483,8 @@ z=wc+b,\quad p(+1)=\frac{1}{1+e^{-z}}.
 这次改进来自学出的非均匀匹配；把前两行交换顺序，模型仍按名字选择，八种名字和值的组合都答对。
 交叉熵在有限步后是上表的小正数；已有正确的非零读出时，继续增大分类间隔可使它趋近零。
 
-运行 \texttt{python3 scripts/attention\_selection\_demo.py} 复算。
-CI 核对均值不可区分、两种查询的权重、恢复均匀后的退化、
-交换记录顺序及全部 $10$ 个可训练标量的有限差分梯度。
+运行 \texttt{python3 scripts/attention\_selection\_demo.py} 可复算损失、查询权重
+与交换记录顺序后的预测，并用有限差分核对全部 $10$ 个可训练标量的梯度。
 
 \chapterchecktasks{22c-language-training}{理解与复算}{
 \item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果掩码与损失掩码。\chapterinlinehint{先错位对齐目标，再分别追踪可见性和计损位置。}

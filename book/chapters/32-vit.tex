@@ -13,11 +13,7 @@
 
 \subsection{第一步：把一张图片切成 Patch}\phantomsection\label{concept:patch}
 
-先用一张只有一个通道的 $4\times4$ 小图，
-不涉及颜色，也不用真实照片。
-第~\ref*{intro:19-cnn}~章的 $X$ 在每个 $2\times2$ 块内数值相同，
-切块后只剩全 $1$ 与全 $0$ 两种行，看不出块内按什么顺序展开；
-这里换一张每块内容都不同的小图：
+另取一张单通道的 $4\times4$ 图像 $I$：
 \[
 I=\begin{bmatrix}
 1&1&0&0\\
@@ -69,7 +65,7 @@ X_{\rm patch}=
 \subsection{第二步：给每个 Patch 学一条短向量}
 
 文字的 Embedding 使用 Token ID 查表，
-图像的 Patch 使用一套\textbf{共享的线性投影}：
+图像的 Patch 使用一套\textbf{共享的线性投影}。本次计算取：
 \[
 W_{\rm patch}=
 \begin{bmatrix}
@@ -92,7 +88,6 @@ E_{\rm patch}=X_{\rm patch}W_{\rm patch}
 }
 \label{eq:vit-patch-embedding}
 \end{equation}
-这里的矩阵是\textbf{人为设置的教学权重}。
 可训练的 $W_{\rm patch}$ 将像素块变成特征；
 行数由 Patch 数决定，列数由投影宽度决定。
 
@@ -101,9 +96,9 @@ E_{\rm patch}=X_{\rm patch}W_{\rm patch}
 \hyperref[intro:22a-position-multihead]{前文的换位与 Attention 实验}表明：
 不含位置信息的 Self-Attention 对输入行置换等变。
 ViT 因此也要标明\textbf{空间位置}。
-若改用 CNN 那张图，左上与右下两块的像素完全相同，$E_{\rm patch}$ 的两行也相同，
-只有位置信息能说明它们来自哪里。
-给四行向量加入 $P_{\rm patch}\in\R^{4\times3}$：
+例如，第~\ref*{intro:19-cnn}~章图像 $X$ 的左上与右下两块像素完全相同，
+经过共享投影会得到相同的行向量，还需要位置信息说明它们各自来自哪里。
+对本章图像 $I$ 算出的 $E_{\rm patch}$，给四行向量加入 $P_{\rm patch}\in\R^{4\times3}$：
 \[
 X_{\rm vis}=E_{\rm patch}+P_{\rm patch}\in\R^{4\times3}.
 \]
@@ -182,10 +177,10 @@ X_{\rm LLM}=
 \input{figures/vision-language-prefix}
 
 \begin{boundarybox}
-\textbf{这是视觉前缀路线的一种教学简化。}
-实际多模态系统还可重采样视觉 Token、
+\textbf{视觉特征还有哪些接入方式？}
+多模态系统还可重采样视觉 Token、
 通过 Cross-Attention 注入视觉信息，或采用专门的融合模块；
-ViT 本身输出向量，不会直接生成自然语言。
+ViT 输出视觉向量，语言模型根据接入的向量生成文字。
 \end{boundarybox}
 
 \noindent{\sffamily\footnotesize\color{blue}\textbf{［复算］}}
@@ -218,6 +213,8 @@ $-\ln0.881\approx0.127$；若交换两段文字而不改匹配标签，损失就
 对比目标用于学习匹配，回答目标用于学习生成；两者共同说明图文对齐需要配对数据和训练，
 仅把维度投影成相同宽度还没有完成语义学习。
 
+% Keep the final comparison beside the exercises, avoiding a review-only tail.
+\par\Needspace{12\baselineskip}
 \subsection{与 CNN 的区别，以及现实尺寸}
 
 CNN 直接引入\textbf{局部性与权重共享}；

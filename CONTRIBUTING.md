@@ -13,6 +13,7 @@
 - **同一组数据贯穿推导。**三维主例的参数只取自 [teaching_reference.py](scripts/teaching_reference.py)。切换算例时，直接在问题或计算旁给出所需数据、维度与假设；避免“独立例”提示条和反复声明与主线无关。
 - **行向量约定：**每个 Token 占一行，投影写 `XW`；教学词表 ID、位置和矩阵行列从 1 起，Python 索引减 1。符号以[符号表](book/chapters/appendix-a-symbols.tex)为准。
 - **区分等式、近似、启发式解释与真实系统行为。**保留会改变结论的限制，合并重复提醒。版本与核验记录集中在来源附录，正文只保留影响理解或复算的版本条件。
+- **直接交代实验条件，不反复免责。**全书“只是教学示意”“并非真实表现”等防御性表述合计最多三处。优先写明输入、固定参数、训练范围和结果；数学反例、权限约束与显存预算等必要条件照常说明。
 - **不写死章号、页码和题号。**用 `\ref`、`\pageref`、`\hyperref`；CI 会拦截“第 3 章”“第三章”“第 24.10 节”这类字面编号。
 - 新增数学、术语或算法时给出可复算的检查；练习和答案保持一一对应。
 
@@ -25,6 +26,8 @@
 阅读路线的页数预算由 [front-reading-routes.tex](book/chapters/front-reading-routes.tex) 中 `\setroutebudget` 指定的起止标签自动统计，同页去重。调整阅读范围时同步附录 A 的路线细目与这些标签；成品导航检查会核对实际目标页、表中预算及按每次 5 页计算的排期示例，不手填旧版页数。
 
 契约检查同时调用 [check_pedagogy_regressions.py](scripts/check_pedagogy_regressions.py)，检查已登记的路线前置依赖、具体例子与通用公式的顺序，并从正文矩阵复算位置交换和缩放示例。反例自测会跳过前置章、颠倒步骤或篡改展示数值，确认检查确实会失败；这些回归不能代替对全文逻辑的人工评审。
+
+源码卫生检查同时调用 [check_editorial_style.py](scripts/check_editorial_style.py)，从整书入口递归扫描实际引入的正文、图注、题解与术语附录，按句计数，多条规则命中同一句只计一处。生成文件与其 JSON／术语来源不重复计数，注释、代码和不印出的提示不计入。自测覆盖同义表达、LaTeX 强调与换行、必要条件的误报，以及全书三处通过、四处失败的边界；也可单独运行 `python3 scripts/check_editorial_style.py --self-test` 查看命中位置。
 
 前置顺序为封面（底部合并版权信息）、两页以内目录、一页“写给谁，怎么读”、序章和第一部分。五题数学自检与答案在附录 A 的数学速查中；详细路线和图例在同附录的路线细目中。编号、行列与代码下标的约定在首次使用时引入。
 
@@ -41,6 +44,22 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 
 产物为 `book/build/main.pdf`。等 `latexmk` 全部轮次完成后再读取 PDF 与 `.aux`；改动后的本地预览不作为对应提交的最终 CI 产物。依赖维护与机器审计见[构建与依赖固定](#构建与依赖固定)。
 
+默认保留 `book/build/` 中的辅助文件，`latexmk` 会按需重编，目录和交叉引用稳定后才结束。日常修订不必删除整个输出目录。
+
+可用 `BOOK_BUILD_DIR` 指定输出目录；相对路径从仓库根目录计算，绝对路径可以放在仓库之外。WSL 用户可将输出目录放在 Linux 文件系统中，对比不同位置的实际构建耗时，例如：
+
+```bash
+BOOK_BUILD_DIR="$HOME/.cache/ai-by-intuition/build" bash scripts/build_book.sh
+python3 scripts/validate_book.py --pdf "$HOME/.cache/ai-by-intuition/build/main.pdf"
+python3 scripts/check_section_navigation.py \
+  --pdf "$HOME/.cache/ai-by-intuition/build/main.pdf" \
+  --aux "$HOME/.cache/ai-by-intuition/build/main.aux"
+```
+
+其余成品检查也使用该目录内的 PDF、日志和 `.aux`；切换目录后的首次构建需要重新生成辅助文件。提交号标记随输出目录保存，只在构建成功后更新。
+
+CI 将辅助文件与 Lua 字体缓存暂存到 `book/build/.ci-cache/`，只在全部门禁通过后保存。缓存按工作流、构建脚本及提交号查找，可回退到最近一次兼容提交；容器内再核对实际 TeX 包和 Noto 字体版本，环境不匹配时从零生成。每次 CI 都重新生成当前提交的 PDF，不缓存 PDF、最终日志、提交号标记或 `latexmk` 的免编译状态；全部成品验收照常运行。缓存只减少重复工作，首次构建及影响分页的大改仍可能需要多轮排版。
+
 源码检查、生成器与 PDF 审计的 Python 依赖统一列在 [requirements-book.txt](requirements-book.txt)。其中 `pypinyin` 用于术语表排序，`check_book_contract.py` 通过术语表生成器间接使用它；运行下列源码检查前也需要先安装该清单。
 
 ## 提交前检查
@@ -51,6 +70,7 @@ python3 scripts/validate_book.py --pdf book/build/main.pdf
 python3 scripts/generate_exercise_bank.py --check
 python3 scripts/generate_chapter_navigation.py --check
 python3 scripts/generate_bilingual_glossary.py --check
+python3 scripts/check_build_book.py
 python3 scripts/check_book_contract.py --self-test
 python3 scripts/check_notebook.py
 python3 scripts/check_source_hygiene.py --self-test

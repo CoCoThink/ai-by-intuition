@@ -88,7 +88,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 检索增强生成 & Retrieval-augmented generation & 检索外部资料并将结果提供给生成模型。 & \hyperref[concept:rag]{\ref*{concept:rag}/\pageref*{concept:rag}}\\
 键向量 & Key & 与 Query 做匹配的向量。 & \hyperref[concept:qkv]{\ref*{concept:qkv}/\pageref*{concept:qkv}}\\
 键值缓存 & KV cache & 保存过去 Token 的 Key/Value 表示供自回归解码复用。 & \hyperref[concept:kv-cache]{\ref*{concept:kv-cache}/\pageref*{concept:kv-cache}}\newline \hyperref[concept:prefill-decode]{\ref*{concept:prefill-decode}/\pageref*{concept:prefill-decode}}\newline \hyperref[example:gqa-budget]{\ref*{example:gqa-budget}/\pageref*{example:gqa-budget}}\\
-奖励模型 & Reward model & 从评价或偏好数据学习对候选回答的评分，不保证评分等同事实真值。 & \hyperref[concept:reward-model]{\ref*{concept:reward-model}/\pageref*{concept:reward-model}}\\
+奖励模型 & Reward model & 从评价或偏好数据学习对候选回答的评分；分数反映学到的评价标准，事实正确性需另行核验。 & \hyperref[concept:reward-model]{\ref*{concept:reward-model}/\pageref*{concept:reward-model}}\\
 交叉熵 & Cross-entropy & 衡量预测概率分布与目标之间差距的常用损失。 & \hyperref[concept:cross-entropy]{\ref*{concept:cross-entropy}/\pageref*{concept:cross-entropy}}\\
 交叉注意力 & Cross-attention & Query 来自一个序列，Key/Value 来自另一序列的注意力。 & \hyperref[concept:cross-attention]{\ref*{concept:cross-attention}/\pageref*{concept:cross-attention}}\\
 教师强制 & Teacher forcing & 训练时以已知真实序列作为条件，一次预测多个后续位置。 & \hyperref[concept:teacher-forcing]{\ref*{concept:teacher-forcing}/\pageref*{concept:teacher-forcing}}\\

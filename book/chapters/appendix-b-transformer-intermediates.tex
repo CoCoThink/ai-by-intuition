@@ -3,7 +3,7 @@
 先用本例练计算链，再查下面的三维 Pre-Norm 主例。
 本例固定 $X=I_2$，只监督第二位置、目标为第二类；
 一个因果头的匹配宽度为 $1$、Value 宽度为 $2$，关闭 Norm 与偏置。
-这是结构简化；主例的 LayerNorm 梯度仍要按第~\ref*{intro:22c-language-training}~章计算。
+三维主例保留 LayerNorm，其梯度计算见第~\ref*{intro:22c-language-training}~章。
 取
 \[
 W_Q=\begin{bmatrix}0\\1\end{bmatrix},\quad W_K=\begin{bmatrix}0\\0\end{bmatrix},\quad
@@ -187,8 +187,9 @@ Z=HW_{\rm out}\approx
 目标 $[4,5,3]$ 的三行概率平均交叉熵约 $1.798430$。
 
 
-\subsubsection*{输出头梯度矩阵（从第~\ref*{intro:22c-language-training}~章移入）}
-正文只保留代表梯度与形状，这里保留十五个元素供逐项复算。
+\subsubsection*{输出头梯度矩阵}
+第~\ref*{intro:22c-language-training}~章中，$W_{\rm out}$ 的梯度形状为 $3\times5$，
+十五个元素为：
 \[
 \frac{\partial L}{\partial W_{\rm out}}
 \approx\begin{bmatrix}
@@ -204,5 +205,5 @@ Z=HW_{\rm out}\approx
 $E_{\mathrm{ids}}(3\times3)\to X(3\times3)\to
 Q,K,V(3\times3)\to A(3\times3)\to H(3\times3)
 \to Z(3\times5)\to\Pi(3\times5)$。
-正文负责解释\textbf{为什么这样算}，本附录负责回答\textbf{数字从哪里来}。
+按此顺序逐项核对行数与列数，可以检查投影、读取和输出头的矩阵乘法是否匹配。
 \end{idea}

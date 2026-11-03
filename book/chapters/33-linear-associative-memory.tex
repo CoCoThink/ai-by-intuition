@@ -221,15 +221,14 @@ A 的误差随完整轮次缩小；在这两条线性无关的单位 Key、固�
 
 \begin{boundarybox}
 Delta 写入按残差修正当前读取；每次修正都可能改变旧记忆。
-本例的改善来自反复重访，不能据此推断每次写入后所有记忆都更准确。
+因此要在每次更新后检查全部 Key 的读出，并按完整轮次比较误差。
 \end{boundarybox}
 
 \begin{idea}
 最小二乘是一个全局优化目标；Delta 写入是一种依赖当前状态的局部更新。
 两者都在减少干扰：前者一次求联立解，后者逐条修正当前读出。
-\hyperref[sec:modern-delta-rule]{现代架构章}给出了残差写入的动机；
-这里完整展开两种写入，算出 B 被修正时旧 Key A 怎样受扰动，并说明反复重访的作用。
-Gated DeltaNet 的遗忘门控就在调节旧记忆保留多少。
+\hyperref[sec:modern-delta-rule]{现代架构章中的 Delta 写入}也按当前读出的残差更新状态；
+Gated DeltaNet 则加入遗忘门控，调节旧记忆保留多少。
 \end{idea}
 
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{交换写入次序的迁移题}

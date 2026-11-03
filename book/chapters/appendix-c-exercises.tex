@@ -354,7 +354,7 @@ $\mathcal{M}_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-145.}] \leavevmode\phantomsection\label{exercise:C-145}\label{exercise:rational-mini-residual-warmup}\exercisemeta{基础}{3}{\hyperref[solution:C-145]{解答第~\pageref*{solution:C-145}~页}}\textbf{手算：}二维迷你实验中，第一次残差后 $r=(1/2,3/2)$，$W_{\rm up}=W_{\rm down}=I_2$，$f=\relu(rW_{\rm up})$、$h=r+fW_{\rm down}$。求 $f,h$。
 \item[\textbf{C-146.}] \leavevmode\phantomsection\label{exercise:C-146}\label{exercise:rational-mini-gradient}\exercisemeta{挑战}{20}{\hyperref[solution:C-146]{解答第~\pageref*{solution:C-146}~页}}\textbf{【手算／复现】}完成\hyperref[app:rational-mini]{附录~\ref*{app:rational-mini} 的二维分数迷你版}：先遮住梯度表，求 $g_h$、两条残差汇合的 $g_r$ 和 $\nabla_{W_K}L$，再用 \nolinkurl{scripts/mini_transformer_demo.py} 核对。
-\item[\textbf{C-147.}] \leavevmode\phantomsection\label{exercise:C-147}\label{exercise:simplified-block-gradient}\exercisemeta{挑战}{20}{\hyperref[solution:C-147]{解答第~\pageref*{solution:C-147}~页}}\textbf{【手算】} \textbf{简化残差梯度：}本题固定注意力权重、关闭两次 Norm，令 $W_{\rm up}=I_2$，$W_O=I_2$，无偏置；只检查 Value 与 FFN 支路，不是完整 Pre-Norm Block。定义 $r=x+aXW_V$、$f=\relu(rW_{\rm up})$、$h=r+fW_{\rm down}$，其中 $x=(0,1)$。设注意力读取权重为
+\item[\textbf{C-147.}] \leavevmode\phantomsection\label{exercise:C-147}\label{exercise:simplified-block-gradient}\exercisemeta{挑战}{20}{\hyperref[solution:C-147]{解答第~\pageref*{solution:C-147}~页}}\textbf{【手算】} \textbf{简化残差梯度：}本题固定注意力权重、关闭两次 Norm，令 $W_{\rm up}=I_2$，$W_O=I_2$，无偏置；计算 Value 与 FFN 支路的梯度。定义 $r=x+aXW_V$、$f=\relu(rW_{\rm up})$、$h=r+fW_{\rm down}$，其中 $x=(0,1)$。设注意力读取权重为
 $a=(0.330,0.670)$、输入 $X=I_2$、$W_V=I_2$，
 FFN 下投影为 $W_{\rm down}=0.5I_2$，第一次残差后向量
 $r=(0.330,1.670)$，输出头反传至最终隐藏向量的梯度为

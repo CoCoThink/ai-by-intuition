@@ -45,8 +45,8 @@ $X_0=X_{\rm token}+P_{\rm pos}$。现在进一步问：同样的两个词整体�
 \textbf{分数只随相对距离变化}，而加在输入上的绝对位置向量一般不具备这种平移不变性。
 \end{example}
 
-图~\ref{fig:rope-relative-rotation} 把上面两次计算画在一起：
-内容向量、角频率与位置取值相同，两次点积都为 $1/2$。
+图~\ref{fig:rope-relative-rotation} 展示这两组位置：$(1,2)$ 与 $(3,4)$。
+内容向量与角频率不变，两组位置都相隔一位，点积均为 $1/2$。
 \input{figures/rope-relative-rotation}
 
 \noindent\textbf{\texorpdfstring{{\symboliconfont ★}}{★} 选读推导：为什么一般向量也只留下位置差？}\par
@@ -103,7 +103,7 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 \[
 \operatorname{LN}(\vect x^\top)\approx(1.3833,-0.4368,-0.9464).
 \]
-如果\textbf{仅为了比较数值}，在同一输入上改算
+在同一输入上取 RMSNorm 的逐特征缩放为 $1$、$\varepsilon=10^{-5}$，得到
 \[
 \operatorname{RMSNorm}(\vect x^\top)
 =\frac{\vect x^\top}{
@@ -112,9 +112,9 @@ $\vect x^\top=(1.30,0.05,-0.30)$。
 \]
 两种归一化\textbf{同样输出 $1\times3$}，
 但 LayerNorm 先减均值、RMSNorm 不减均值，
-因此下一步 $Q=XW_Q$ 的输入数值会改变。
-上面只是\textbf{单组件数值对比}；
-真正替换架构后，要在相同训练设置和任务上检验收敛速度与输出质量。
+若用 RMSNorm 替换 LayerNorm，下一步 $Q=XW_Q$ 的输入数值就会改变。
+三维贯通主例仍沿用原来的 LayerNorm 数值。
+比较两种归一化对收敛速度与输出质量的影响时，要固定训练设置与任务。
 
 \end{example}
 

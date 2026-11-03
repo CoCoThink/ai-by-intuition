@@ -71,7 +71,7 @@
         "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls"
       }
     ],
-    "scope": "已核对必填请求体、认证与版本头及离线多轮闭环；未调用付费模型，不表示已在线实测。",
+    "scope": "核验方式为官方规范对照与离线多轮闭环，覆盖必填请求体、认证与版本头。",
     "review_interval_days": 90,
     "review_on_new_revision": true,
     "evidence": [
@@ -92,7 +92,7 @@
         "url": "https://a2a-protocol.org/v1.0.0/specification/"
       }
     ],
-    "scope": "已核对本书采用的固定版本；未声称它是最新版本，也未作跨实现互操作测试。",
+    "scope": "核验对象为本书采用的 v1.0.0 规范；核验方式为固定版本的字段与流程对照。",
     "review_interval_days": 90,
     "review_on_new_revision": true,
     "evidence": [
@@ -186,7 +186,7 @@
         "url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/"
       }
     ],
-    "scope": "已核对公开结构描述；不将厂商公布的速度或基准成绩当成本书独立复测。",
+    "scope": "已核对厂商公开的结构描述；速度与基准成绩的来源为厂商公布的测评记录。",
     "review_interval_days": 90,
     "review_on_new_revision": true,
     "evidence": [
@@ -230,7 +230,7 @@
         "url": "https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html"
       }
     ],
-    "scope": "已核对该版官方文档并复算缩放例子；未运行该版 PyTorch。",
+    "scope": "核验方式为该版官方文档对照与缩放例子的手算复核。",
     "review_interval_days": 90,
     "review_on_new_revision": true,
     "evidence": [

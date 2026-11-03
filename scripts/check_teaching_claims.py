@@ -449,8 +449,9 @@ def check_distance_reading():
     source=(ROOT/'book/chapters/14-attention-qkv.tex').read_text()
     example=source.split(r'\label{experiment:distance-reading}',1)[1].split(r'\subsection{',1)[0]
     target_score=np.log(float(re.search(r's_1=\\ln(\d+)',example)[1]))
-    assert '这些分数是本实验手工指定的条件' in example
-    assert '不是由 $Q、K$ 计算出来的，也不是训练后的模型结果' in example
+    setting='固定上述匹配分数，不训练 $Q、K$，只改变距离'
+    assert setting in example
+    assert example.index(setting) < example.index(r'\begin{tabularx}')
     assert '直接读取（手设分数）' in example
     rows=re.findall(r'^\$(\d+)\$ & \$([\d.]+)\$ & \$([\d.]+)\$',example,re.M)
     assert [int(row[0]) for row in rows]==[1,2,4,8]

@@ -10,6 +10,7 @@ on:
       - 'scripts/**/*.py'
       - 'scripts/**/*.json'
       - 'scripts/build_book.sh'
+      - 'scripts/book_build_cache.sh'
       - 'notebooks/pytorch_starter.ipynb'
       - 'requirements-book.txt'
       - 'requirements-teaching.txt'
@@ -21,6 +22,7 @@ on:
       - 'scripts/**/*.py'
       - 'scripts/**/*.json'
       - 'scripts/build_book.sh'
+      - 'scripts/book_build_cache.sh'
       - 'notebooks/pytorch_starter.ipynb'
       - 'requirements-book.txt'
       - 'requirements-teaching.txt'
@@ -52,6 +54,7 @@ jobs:
           python3 scripts/generate_bilingual_glossary.py --check
       - name: Check chapter structure before compilation
         run: |
+          python3 scripts/check_build_book.py
           python3 scripts/check_book_contract.py --self-test
           python3 scripts/check_notebook.py
           python3 scripts/validate_book.py
@@ -68,6 +71,13 @@ jobs:
           python3 scripts/check_chapter_crossrefs.py
           python3 scripts/check_part_references.py --self-test
           python3 scripts/check_part_references.py
+      - name: Restore TeX auxiliary and font cache
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: book/build/.ci-cache
+          key: book-texlive2026-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/workflows/build-latex.yml', 'scripts/build_book.sh', 'scripts/book_build_cache.sh') }}-${{ github.sha }}
+          restore-keys: |
+            book-texlive2026-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/workflows/build-latex.yml', 'scripts/build_book.sh', 'scripts/book_build_cache.sh') }}-
       - name: Build tagged PDF with TeX Live 2026
         uses: xu-cheng/texlive-action@22c04326a5d855880f9d39bb955138bf11c6df80 # v3
         with:
@@ -79,6 +89,13 @@ jobs:
             apt-get update -qq
             apt-get install -y -qq fonts-noto-cjk fonts-noto-core poppler-utils
             fc-cache -f
+            book_cache_root="$PWD/book/build/.ci-cache"
+            book_cache_environment="$(bash scripts/book_build_cache.sh environment)"
+            # Partition Lua font data by actual TeX packages and font versions;
+            # the action's 2026 image can receive updates between commits.
+            mkdir -p "$book_cache_root/fonts/$book_cache_environment"
+            bash scripts/book_build_cache.sh restore \
+              "$book_cache_root/aux" "$PWD/book/build" "$book_cache_environment"
             mkdir -p pdfua-audit
             # TeX Live action runs as container root; restore runner ownership so
             # subsequent host-side audit steps can write in this directory.
@@ -89,14 +106,20 @@ jobs:
               latexmk -v | head -n 2
               dpkg-query -W -f='${binary:Package}=${Version}\n' fonts-noto-cjk fonts-noto-core poppler-utils
               fc-match -f '%{family}: %{style}\n' 'Noto Serif CJK SC' | head -n 1
+              echo "cache_environment=$book_cache_environment"
             } > pdfua-audit/texlive-environment.txt
             lualatex --version | head -1
             cd book
+            # Relative cache paths work with restricted Lua writes without
+            # changing TEXMFVAR, which also selects the LaTeX format.
+            export TEXMFCACHE="build/.ci-cache/fonts/$book_cache_environment"
             mkdir -p build/smoke
             latexmk -lualatex -interaction=nonstopmode -halt-on-error \
               -file-line-error -outdir=build/smoke smoke-tagging.tex
             pdfinfo build/smoke/smoke-tagging.pdf | grep -Eq '^Tagged:[[:space:]]+yes'
             bash ../scripts/build_book.sh
+            bash ../scripts/book_build_cache.sh save \
+              "$book_cache_root/aux" "$PWD/build" "$book_cache_environment"
             # Production must not regress to the earlier bad figure hierarchy or overflow.
             if grep -Eq 'Package tagpdf Warning: Parent-Child|Overfull \\hbox|Missing character:' build/main.log; then
               echo "::error::Invalid tagpdf relation, overfull box or missing glyph in book"

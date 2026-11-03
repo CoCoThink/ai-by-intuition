@@ -17,7 +17,7 @@
 \item \textbf{标签错位（Shifted Targets）}：每个输入位置的目标为下一位置 Token。 \termref{concept:shifted-targets}
 \item \textbf{损失掩码}：选择哪些位置参与损失统计，区别于因果注意力掩码。 \termref{concept:loss-mask}
 \item \textbf{RLVR}：利用可程序化核验的任务奖励进行学习。 \termref{concept:rlvr}
-\item \textbf{奖励模型}：从评价或偏好数据学习对候选回答的评分，不保证评分等同事实真值。 \termref{concept:reward-model}
+\item \textbf{奖励模型}：从评价或偏好数据学习对候选回答的评分；分数反映学到的评价标准，事实正确性需另行核验。 \termref{concept:reward-model}
 \item \textbf{GRPO}：以组内相对奖励构造策略更新信号；还涉及归一化和裁剪等训练步骤。 \termref{concept:grpo}
 \item \textbf{Warmup（学习率升温）}：训练前几步由小到大调度学习率，控制初期更新步长。 \termref{concept:lr-warmup}
 \item \textbf{AdamW}：保留 Adam 的自适应更新并独立施加权重衰减。 \termref{concept:adamw}
