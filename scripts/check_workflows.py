@@ -70,7 +70,7 @@ def main() -> None:
           len(cache_steps) == len(tex_steps) == 1 and cache_steps[0][0] < tex_steps[0][0])
     cache = cache_steps[0][1]["with"]
     check("cache only the staging directory, not final PDF or build state",
-          cache.get("path") == "book/build/.ci-cache")
+          cache.get("path") == "book/build/ci-cache")
     check("save new auxiliary data per commit with a compatible fallback",
           "${{ github.sha }}" in cache.get("key", "")
           and "hashFiles(" in cache.get("key", "")
@@ -86,7 +86,7 @@ def main() -> None:
           and [tex_run.index(stage) for stage in cache_stages]
           == sorted(tex_run.index(stage) for stage in cache_stages))
     check("Lua font cache is partitioned by actual environment",
-          'export TEXMFCACHE="build/.ci-cache/fonts/$book_cache_environment"' in tex_run)
+          'export TEXMFCACHE="build/ci-cache/fonts/$book_cache_environment"' in tex_run)
     check("font cache uses a relative path without changing format lookup",
           "cd book" in tex_run
           and tex_run.index("cd book") < tex_run.index("export TEXMFCACHE=")

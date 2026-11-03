@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -141,6 +142,25 @@ class CacheTests(unittest.TestCase):
         (self.build / "main.toc").unlink()
         self.assertEqual(self.cache_action("save").returncode, 0)
         self.assertFalse((self.cache / "main.toc").exists())
+
+
+class TexCacheTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("texlua"), "TeX is checked separately in the production container")
+    def test_workflow_font_cache_is_allowed_by_restricted_tex_writes(self):
+        workflow = (ROOT / ".github/workflows/build-latex.yml").read_text()
+        match = re.search(r'^\s*export TEXMFCACHE="([^"]+)"', workflow, re.MULTILINE)
+        self.assertIsNotNone(match)
+        cache = match.group(1).replace("$book_cache_environment", "a" * 64)
+        self.assertNotIn("$", cache, "resolve all cache variables before testing the TeX path")
+        with tempfile.TemporaryDirectory(prefix="book-tex-cache-test-") as temp:
+            probe = Path(temp) / "check.lua"
+            probe.write_text('''kpse.set_program_name("luatex")
+assert(kpse.out_name_ok(arg[1]), "font cache is blocked by TeX write rules: " .. arg[1])
+''')
+            result = subprocess.run(["texlua", str(probe), f"{cache}/m_t_x_t_e_s_t.tmp"],
+                                    env=dict(os.environ, openout_any="p"),
+                                    capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
