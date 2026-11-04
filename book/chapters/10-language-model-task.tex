@@ -1,107 +1,97 @@
 \Needspace{13\baselineskip}
 \chapterrule
-\section{把语言练习变成一道可计算的预测题}
+\section{下一 Token 预测：训练与生成为何不同？}
 \label{intro:20b-task-contract}
 
-下一 Token 预测把已有文本变成训练答案，把新 Token 接回输入又能继续生成。
-现在把这个任务写成一份\textbf{任务契约（Task Contract）}：
-先确定输入、目标、输出形状和计分方式。\phantomsection\label{concept:task-contract}
-模型结构随后遵守这份约定。
-
-\subsection{一句话怎样拆成三道预测题？}
+下一 Token 预测在\textbf{生成}和\textbf{训练}中用法不同：生成时，模型根据当前上下文预测一个 Token；训练时，一段已知文本可以同时提供多个位置的正确答案。
+先分清这两种场景，再约定任务的输入、目标、输出形状和计分方式。\phantomsection\label{concept:task-contract}
 
 沿用五项教学词表：$1=\text{其他}$、$2=\text{春天}$、
 $3=\text{。}$、$4=\text{花}$、$5=\text{开了}$。
-本次句子使用其中四个 Token“春天／花／开了／。”，编号为
-\[
-(t_1,t_2,t_3,t_4)=(2,4,5,3).
-\]
-在实际模型中，Token 的单位包括单字、词的一部分和标点。
+在实际模型中，Token 的单位还包括单字、词的一部分和标点。
 
-先看文字怎样变成题目。沿着原句从左向右读，\textbf{每读到一个 Token，
-就停下来问：“紧接着的下一个 Token 是什么？”}原文中紧跟在后面的 Token，
-就是这道题的正确答案，也叫\textbf{目标}。这句话可以提供三道题：
+\subsection{生成时：读完提示，只预测一个下一 Token}
 
-\begin{center}
-\small
+若当前提示是“春天／花／开了”，输入 ID 为 $[2,4,5]$。
+模型要回答的就是：\textbf{“开了”后面接什么？}
+它根据整段提示计算候选分数，生成时只取\textbf{提示末尾对应的最后一行}来选择一个 Token。
+假设这一步选中句号 ID $3$，下一轮才把它追加到上下文，输入变成 $[2,4,5,3]$。
+因此，一次生成只需要当前提示末尾的那道题；不会要求模型再回答“春天”或“春天、花”后面接什么。
+
+\subsection{训练时：完整文本提供多个位置的正确答案}
+
+训练时，正确后继已经写在文本里。以完整序列“春天／花／开了／。”为例，
+ID 是 $[2,4,5,3]$。沿序列取每个位置及其右边紧邻的一项，可以得到三道训练题：
+
+\begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
-\begin{tabularx}{\linewidth}{@{}p{22mm}Xp{35mm}@{}}
+\begin{tabularx}{\linewidth}{@{}p{19mm}Xp{38mm}@{}}
 \toprule
-预测位置 & 读到这里，可以利用的文字 & 正确答案（目标）\\
-\midrule
-1 & 春天 & 花（ID $4$）\\
-2 & 春天、花 & 开了（ID $5$）\\
-3 & 春天、花、开了 & 。\quad（ID $3$）\\
+预测位置 & 本行可用的前缀 & 下一 Token 的训练目标\\\midrule
+1 & 春天（$[2]$） & 花（ID $4$）\\
+2 & 春天、花（$[2,4]$） & 开了（ID $5$）\\
+3 & 春天、花、开了（$[2,4,5]$） & 。\quad（ID $3$）\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-“位置”按输入 Token 的先后顺序编号。位置~2 就是读到第二个 Token“花”的时候；
-此时已经读过“春天、花”，要预测的是它们后面的“开了”。
-位置~3 读到“开了”，下一项是句号。句号在这次练习中用作最后一道题的答案。
-
-按预测位置依次记录\textbf{当前读到的 Token}，得到输入“春天、花、开了”；
-再按相同顺序记录\textbf{各位置要预测的下一 Token}，得到目标“花、开了、。”。用 ID 表示：
+所以第三道题确实是在回答“ID $5$ 后面是什么”；前两道题则分别从较短的前缀预测后继。
+\Needspace{11\baselineskip}
+训练把这些题并行计算，输入和目标按位置对齐：输入取完整序列的前三项，
+目标取它们右边紧邻的一项，得到
 \[
-\underbrace{[2,\ 4,\ 5]}_{\text{三个位置的输入 ID}}
+\underbrace{[2,\ 4,\ 5]}_{\text{训练输入}}
 \qquad
-\underbrace{[4,\ 5,\ 3]}_{\text{逐位置的目标 ID}}.
+\underbrace{[4,\ 5,\ 3]}_{\text{逐位置的训练目标}}.
 \]
-输入取原文的前三项，目标取各输入右边紧邻的一项，\textbf{按位置一一配对}。
-例如，位置~2 的当前输入是“花”（ID $4$），目标是“开了”（ID $5$），
-做预测时还可读取前面的“春天”；三个位置可利用的前文分别见表中的范围。
+输入数组中有三个 Token，是为了同时计算三个位置；这不表示每一行都要预测“开了”之后的 Token。
 
-\subsection{模型接收什么，每个位置输出什么？}
+\subsection{训练算三行，生成只用最后一行}
 
-把预测模型暂时看成一个待展开的盒子。输入是 $[2,4,5]$，
-它要对三个位置各回答一次“下一 Token 是谁”。
-每道题都有五个候选，所以每个位置输出五项分数，合起来是一个 $3\times5$ 的矩阵。
-\textbf{每一行放一道题的五项分数}：第~1 行对应位置~1，评价“春天”后面接谁；
-第~2 行对应位置~2，评价“春天、花”后面接谁；第~3 行对应位置~3，评价“春天、花、开了”后面接谁。
-矩阵的三行与前表中的三个预测位置一一对应，五列依次对应五个词表 ID。
-
-分数怎样变成概率、怎样与正确答案比较，将在下一章计算；
-整数 ID 怎样变成可训练的向量，再由 Embedding 一章展开。
-训练时，用每行目标 ID 指出的答案评价该行预测，再汇总成损失 $L$。
-例如第一行评价“花”，第二行评价“开了”，第三行评价“。”。
-目标分支进入评分步骤；模型做预测时，只能使用本题允许读取的输入。
+训练时，预测模型为每个输入位置各输出五个候选分数，合成一个 $3\times5$ 矩阵。
+\textbf{每一行对应一道训练题：}第一行用“春天”预测“花”，
+第二行用“春天、花”预测“开了”，第三行用“春天、花、开了”预测句号。
+损失计算时，分别用目标 ID $4$、$5$、$3$ 评价对应行的分数，再汇总成损失 $L$。
+回到生成场景，提示 $[2,4,5]$ 仍然对应第三行；只取这一行预测提示之后的一个 Token。
 
 \par\noindent\begin{minipage}{\linewidth}
-\tagstructbegin{tag=Figure,alttext={下一 Token 预测的训练任务：输入 Token ID 二、四、五经过预测模型，得到三行五列的候选分数。预测与另一分支上的目标 ID 四、五、三共同进入评分步骤，得到损失 L。目标只进入评分步骤。}}
+\tagstructbegin{tag=Figure,alttext={训练输入 Token ID 二、四、五经过带因果遮罩的预测模型，得到三行五列候选分数；第 1、2、3 行分别预测 ID 四、五、三。目标用于评分。生成时只取提示末尾的第 3 行，预测一个下一 Token。}}
 \begin{center}
 \begin{tikzpicture}[>=Latex,node distance=6mm,
  n/.style={draw=linegray,rounded corners=2pt,fill=white,align=center,
  font=\sffamily\footnotesize,minimum height=12mm,minimum width=28mm,inner sep=1mm}]
-\node[n,fill=paper] (input) {输入 Token ID\\ $[2,4,5]$};
-\node[n,right=of input,minimum width=32mm] (model) {预测模型\\ 内部随后展开};
-\node[n,right=of model] (probability) {五项候选分数\\ 共 $3\times5$};
-\node[n,right=of probability,fill=linegray!15] (loss) {比较预测与目标\\ 得到损失 $L$};
-\node[n,below=6mm of probability,fill=paper] (target) {目标 Token ID\\ $[4,5,3]$};
+\node[n,fill=paper] (input) {训练输入\\ $[2,4,5]$};
+\node[n,right=of input,minimum width=38mm] (model) {预测模型\\第 $i$ 行只读前缀};
+\node[n,right=of model,minimum width=32mm] (probability) {五项候选分数\\训练共 $3\times5$};
+\node[n,right=of probability] (loss) {逐行比较目标\\得到损失 $L$};
+\node[n,below=6mm of probability,fill=paper] (target) {训练目标\\ $[4,5,3]$};
 \foreach \a/\b in {input/model,model/probability,probability/loss}{\draw[->,flowcolor,thick] (\a.east)--(\b.west);}
 \draw[->,flowcolor,thick] (target.east)-|(loss.south);
 \end{tikzpicture}
-\captionof{figure}{先确定预测题：模型输出三行候选分数，错开一位的目标用于评价预测}
+\captionof{figure}{训练并行计算三个位置；生成时只取最后一行预测提示之后的 Token}
 \label{fig:token-ffn-output-pipeline}
 \end{center}
 \tagstructend
 \end{minipage}\par
 
+虽然训练输入数组 $[2,4,5]$ 同时含有三个位置，\textbf{每行能读取的范围不同}。
+因果遮罩让第~1 行只读第~1 个位置，第~2 行读前两个位置，第~3 行读全部三个位置。
+例如，第一行的正确目标 ID $4$ 恰好出现在输入的第~2 个位置，
+但第一行不能读取那里；目标只在后续评分时使用，不会泄漏给预测模型。
+这也解释了训练和生成的区别：训练已知整段文本，能评价所有位置；生成没有后续答案，只用提示末尾那行继续预测。
+
 真实 GPT-2 small 的词表有 $50{,}257$ 项，仍沿用下一 Token 目标；
 规模与配置见第~\ref*{intro:23a-from-toy-to-gpt}~章。
-
-\subsection{每个位置能看到哪些输入？}
-
-预测下一 Token 时，每个位置可以利用\textbf{当前位置及之前}的输入。
-这就是前表中三种可见范围的来由：读到哪里，就用截至那里的文字预测下一项。
-把三道题一起计算时，虽然输入 $[2,4,5]$ 已经包含“花”和“开了”，
-位置~1 的预测仍只能使用“春天”，位置~2 的预测可以使用“春天、花”。
-例如，位置~1 要预测“花”，若计算预测时已经读到了位置~2 的“花”，
-就提前看到了答案，造成\textbf{信息泄漏}。
-目标应当参与损失计算；预测模型怎样利用允许读取的前文，将从下一部分逐步展开。
-下一章先解决评分问题：五项实数分数怎样变成概率，怎样衡量它们与正确答案的差距？
+分数怎样变成概率、怎样与目标比较，将在下一章计算；
+整数 ID 怎样变成可训练的向量，再由 Embedding 一章展开。
 
 \chapterchecktasks{20b-task-contract}{理解与复算}{
 \item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{在完整文本中找到每个输入 Token，取它右边紧邻的一项作目标。}
 \item \textbf{形状：}词表大小为 $5$，这条示例的三个位置各输出五类分数。把这些分数组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
 \item \textbf{找错：}同学让第一个位置直接读取第二个位置的“花”，再预测第一个位置的下一 Token。哪里发生信息泄漏？\chapterinlinehint{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}
 }
+
+
+\par\smallskip
+下一 Token 目标来自完整文本中每个输入位置右边的一项；训练可并行评价多个位置，生成则从提示末尾逐个继续。
+下一章先计算每个位置的分数怎样变成概率，以及概率与正确目标之间的差距。

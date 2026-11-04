@@ -88,15 +88,14 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-040.}] \leavevmode\phantomsection\label{exercise:C-040}\label{exercise:tokenizer-attention-cost}\exercisemeta{标准}{5}{\hyperref[solution:C-040]{解答第~\pageref*{solution:C-040}~页}}\textbf{权衡：}一个更细的 Tokenizer 把同一段文本切成 $T$ 的两倍；若使用全序列 $T\times T$ 自注意力分数矩阵，元素数变成多少倍？这能否直接推出总推理时间也变为同样倍数？
 \end{enumerate}
 \Needspace{6\baselineskip}
-\subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 把语言练习变成一道可计算的预测题\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20b-task-contract}~页）}}
+\subsubsection*{第~\ref*{intro:20b-task-contract}~章 · 下一 Token 预测：训练与生成为何不同？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20b-task-contract}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-041.}] \leavevmode\phantomsection\label{exercise:C-041}\label{exercise:shifted-token-targets}\exercisemeta{基础}{3}{\hyperref[solution:C-041]{解答第~\pageref*{solution:C-041}~页}}\phantomsection\label{exercise:linked-20b-task-contract}  \textbf{【手算】} 词表有 $10$ 个 Token，编号从 $1$ 到 $10$。
 一个序列的 Token ID 是 $(2,4,1,8)$。
 采用“错开一格”的语言建模目标，写出长度为 $3$ 的输入与标签。
 \item[\textbf{C-042.}] \leavevmode\phantomsection\label{exercise:C-042}\label{exercise:causal-target-visibility}\exercisemeta{基础}{5}{\hyperref[solution:C-042]{解答第~\pageref*{solution:C-042}~页}}\textbf{【回忆】} 输入 Token ID 为 $[2,4,5]$，对应目标为 $[4,5,3]$。
 分别列出三个预测位置允许读取的输入位置编号，并说明第三个位置的目标 ID $3$ 在哪里参与训练计算。
-\item[\textbf{C-043.}] \leavevmode\phantomsection\label{exercise:C-043}\label{exercise:training-generation-data}\exercisemeta{标准}{5}{\hyperref[solution:C-043]{解答第~\pageref*{solution:C-043}~页}}\textbf{辨析：}用“春天 花 开了 。”训练下一 Token 预测时，三个位置的目标从哪里来？
-若生成时只给“春天”作为开头，下一轮追加到输入中的 Token 又从哪里来？用这个例子说明两种数据来源的区别。
+\item[\textbf{C-043.}] \leavevmode\phantomsection\label{exercise:C-043}\label{exercise:training-generation-data}\exercisemeta{标准}{5}{\hyperref[solution:C-043]{解答第~\pageref*{solution:C-043}~页}}\textbf{辨析：}完整文本“春天 花 开了 。”对应训练输入 $[2,4,5]$、目标 $[4,5,3]$。训练时三个位置都参与预测；若生成提示已经是“春天 花 开了”，应取哪一行预测下一个 Token？若模型选中句号 ID $3$，下一轮输入是什么？说明训练目标与生成新输入分别从哪里来。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20c-classification-loss}~章 · 分类损失：预测错了哪一类，怎样调整分数？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20c-classification-loss}~页）}}

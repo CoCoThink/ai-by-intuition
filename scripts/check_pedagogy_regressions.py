@@ -38,6 +38,25 @@ def bpe_comparison_errors(body):
     ])
 
 
+def token_task_errors(body):
+    """Keep training's parallel rows distinct from generation's final row."""
+    return ordered_content_errors(body,[
+        ('generation uses final row',
+         r'生成时只取\\textbf\{提示末尾对应的最后一行\}'),
+        ('training row 1 predicts ID 4',
+         r'1 & 春天（\$\[2\]\$） & 花（ID \$4\$）'),
+        ('training row 2 predicts ID 5',
+         r'2 & 春天、花（\$\[2,4\]\$） & 开了（ID \$5\$）'),
+        ('training row 3 predicts ID 3 after ID 5',
+         r'3 & 春天、花、开了（\$\[2,4,5\]\$） & 。\\quad（ID \$3\$）'),
+        ('paired input and target IDs',
+         r'\\underbrace\{\[2,\\ 4,\\ 5\]\}.*?\\underbrace\{\[4,\\ 5,\\ 3\]\}'),
+        ('three-position score matrix',r'3\\times5'),
+        ('causal mask limits each row to its prefix',
+         r'因果遮罩让第~1 行只读第~1 个位置，第~2 行读前两个位置，第~3 行读全部三个位置'),
+    ])
+
+
 def route_prerequisite_errors(main, sources, dependencies):
     """Use source spans, not PDF pages: skipped chapters may share a page."""
     positions={};ends={};offset=0
@@ -117,15 +136,13 @@ def validate_pedagogy(main, sources):
         ('intro:21a-context-gap','intro:21c-naive-attention')])
     errors.extend(f'09-tokenization: {error}'
                   for error in bpe_comparison_errors(sources['09-tokenization']))
+    errors.extend(f'10-language-model-task: {error}'
+                  for error in token_task_errors(sources['10-language-model-task']))
     sequences={
         '09-tokenization': [
             ('merge example',r'\[\\text\{今天\},\\text\{天气\},\\text\{好\}\]'),
             ('BPE definition',r'\\textbf\{BPE（'),
             ('vocabulary/sequence tradeoff',r'\\textbf\{词表大小与序列长度\}')],
-        '10-language-model-task': [
-            ('three prediction questions',r'1 & 春天 & 花'),
-            ('paired input IDs',r'\\underbrace\{\[2,\\ 4,\\ 5\]\}'),
-            ('score matrix',r'3\\times5')],
         '11-classification-loss': [
             ('probability comparison',r'预测 A & \$0\.30\$'),
             ('logits definition',r'\\label\{concept:logits\}'),
@@ -179,6 +196,10 @@ def self_test():
     # Break the printed result while keeping all labels and prose intact.
     from pathlib import Path
     chapters=Path(__file__).resolve().parents[1]/'book/chapters'
+    task=(chapters/'10-language-model-task.tex').read_text()
+    assert not token_task_errors(task)
+    assert token_task_errors(task.replace(
+        r'生成时只取\textbf{提示末尾对应的最后一行}',r'生成时使用三行'))
     positions=(chapters/'16-position-and-multihead.tex').read_text()
     assert not position_example_errors(positions)
     assert position_example_errors(positions.replace('0.2812&0.7145','0.2324&0.6726'))
