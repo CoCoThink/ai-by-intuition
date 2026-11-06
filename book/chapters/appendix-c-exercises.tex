@@ -4,6 +4,7 @@
 C 题按章排列；R 题按部分排列，连接多个章节，不计入末章题号。
 章内按“基础、标准、挑战”排列，同档内按知识依赖排序。初读先做基础题；标准题用于完整计算与迁移；挑战题及扩展路径按需完成。R 题保留综合任务，每部分先给出一道基础热身题入口。预计耗时是逐题估计，不是要求连续完成的学习时长。
 各组标题给出章号与正文页码；每题标明提示入口、解答页码、难度和预计耗时。提示与解答均在附录 D.1，第~\pageref*{app:answers}~页起。
+\par\textbf{动手题的运行入口。}\phantomsection\label{app:exercise-runtime}NumPy 题需要 Python 与 NumPy。题面要求运行 \path{scripts/} 下的脚本时，先从版权页的仓库入口获取代码，按\hyperref[app:pytorch-lab]{附录 B 的运行环境}安装依赖，并在仓库根目录执行所列命令。含 \texttt{from scripts...} 的解答，应在从根目录启动的交互解释器或放在根目录的解答文件中运行；仅切换工作目录，不能使子目录里的解答文件自动找到仓库模块。只有 PDF 时，可复制\hyperref[app:parameter-literal]{附录 B 的 \texttt{parameters()} 字面量}，在独立文件或 Notebook 中完成只需初始参数的题；依赖仓库前向、反向或训练脚本的实验仍需获取代码。
 \Needspace{6\baselineskip}
 \subsubsection*{序章\enspace{\mdseries\footnotesize（自测第~\pageref*{check:prologue}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
@@ -116,7 +117,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-048.}] \leavevmode\phantomsection\label{exercise:C-048}\label{exercise:embedding-shape}\exercisemeta{基础}{3}{\hyperref[hint:embedding-shape]{提示} · \hyperref[solution:C-048]{解答第~\pageref*{solution:C-048}~页}}\textbf{【回忆】} 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
 \item[\textbf{C-049.}] \leavevmode\phantomsection\label{exercise:C-049}\label{exercise:embedding-input-change}\exercisemeta{标准}{20}{\hyperref[hint:embedding-input-change]{提示} · \hyperref[solution:C-049]{解答第~\pageref*{solution:C-049}~页}}\textbf{【NumPy 从零实现／查表与梯度累加】}沿用正文 $5\times3$ 的初始 Embedding，输入由 $[2,4,5]$ 改为 $[5,4,5]$。
-可从 \path{scripts/teaching_reference.py} 导入 \texttt{parameters} 读取原表，不调用现成 Embedding 层。
+可使用\hyperref[app:parameter-literal]{附录 B 的 \texttt{parameters()} 字面量}读取原表，或从 \path{scripts/teaching_reference.py} 导入 \texttt{parameters}；不调用现成 Embedding 层。
 实现查表；再设三个位置传回的梯度为 $(1,0,-1),(0,2,0),(3,0,1)$，累加成整张表的梯度。
 解释重复 ID 为何应相加，以及查表与参数更新各改变了什么。
 \item[\textbf{C-050.}] \leavevmode\phantomsection\label{exercise:C-050}\label{exercise:embedding-update}\exercisemeta{标准}{5}{\hyperref[hint:embedding-update]{提示} · \hyperref[solution:C-050]{解答第~\pageref*{solution:C-050}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。沿负梯度更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
@@ -193,7 +194,7 @@ $Y'=A'V$；列出三行权重和三行输出，检查形状。 再用 NumPy 编�
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-074.}] \leavevmode\phantomsection\label{exercise:C-074}\label{exercise:probability-row-greedy}\exercisemeta{基础}{2}{\hyperref[hint:probability-row-greedy]{提示} · \hyperref[solution:C-074]{解答第~\pageref*{solution:C-074}~页}}\textbf{【读一行概率】} 输出概率矩阵的最后一行为 $(0.05,0.15,0.10,0.60,0.10)$，五列依次对应词表 ID $1$ 到 $5$。若选择概率最大的 Token，应得到哪个 ID？
 \item[\textbf{C-075.}] \leavevmode\phantomsection\label{exercise:C-075}\label{exercise:output-head-only-training}\exercisemeta{标准}{10}{\hyperref[hint:output-head-only-training]{提示} · \hyperref[solution:C-075]{解答第~\pageref*{solution:C-075}~页}}\textbf{【实验】}先预测：只训练输出头 $W_{\rm out}$、冻结其余八组参数，20 步后三个位置能否全部预测正确？再运行 \texttt{python3} \path{scripts/teaching_trace.py} \texttt{-{}-only Wout} 核对，并与完整训练的第 20 步比较。
-\item[\textbf{C-076.}] \leavevmode\phantomsection\label{exercise:C-076}\label{exercise:causal-input-change}\exercisemeta{挑战}{40}{\hyperref[hint:causal-input-change]{提示} · \hyperref[solution:C-076]{解答第~\pageref*{solution:C-076}~页}}\textbf{【NumPy 从零实现／因果 Block】}仅从 \path{scripts/teaching_reference.py} 导入 \texttt{parameters}，读取三维主例初值。
+\item[\textbf{C-076.}] \leavevmode\phantomsection\label{exercise:C-076}\label{exercise:causal-input-change}\exercisemeta{挑战}{40}{\hyperref[hint:causal-input-change]{提示} · \hyperref[solution:C-076]{解答第~\pageref*{solution:C-076}~页}}\textbf{【NumPy 从零实现／因果 Block】}使用\hyperref[app:parameter-literal]{附录 B 的 \texttt{parameters()} 字面量}，或仅从 \path{scripts/teaching_reference.py} 导入 \texttt{parameters}，读取三维主例初值。
 自行实现逐行 LayerNorm、因果 Attention、两次残差、ReLU FFN 和词表 Softmax；不调用已有前向函数或网络层。
 比较输入 $[2,4,5]$ 与 $[2,4,4]$ 的 $A,H,\Pi$，验收前两行不变，并报告第三行最高概率 ID。
 再解释为何现有位置表无法直接处理 $[2,4,5,3]$，写出扩展位置表后各张量的形状。

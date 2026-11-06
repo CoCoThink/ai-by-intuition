@@ -73,10 +73,16 @@ Distill (2016)：
 \sourcecheck{2026-10-25}{已核对归纳头的两阶段匹配与复制机制}
 \item \phantomsection\label{source:scaling-laws}Kaplan et al., \emph{Scaling Laws for Neural Language Models} (2020)：
 \sourceurl{https://arxiv.org/abs/2001.08361}
-\sourcecheck{2026-11-03}{已核对验证损失随模型、数据与算力呈幂律变化的实验结论}
+\sourcecheck{2026-11-06}{已核对论文 Sec.~6.1 的 $0.73$ 指数及非 Embedding 参数、算力的定义}
 \item \phantomsection\label{source:chinchilla}Hoffmann et al., \emph{Training Compute-Optimal Large Language Models} (2022)：
 \sourceurl{https://arxiv.org/abs/2203.15556}
-\sourcecheck{2026-11-03}{已核对计算最优训练设置、70B 参数与 1.4T Token 的模型规模}
+\sourcecheck{2026-11-06}{已核对第 3 节表 2 的分配指数、第 4 节规模及附录 F 的 FLOPs 口径}
+\item \phantomsection\label{source:scaling-reconciliation}Pearce and Song, \emph{Reconciling Kaplan and Chinchilla Scaling Laws}（TMLR 2024，v3）：
+\sourceurl{https://arxiv.org/abs/2406.12907v3}
+\sourcecheck{2026-11-06}{已核对第 2--4 节对参数／算力计数、小规模拟合与局部指数的分析}
+\item \phantomsection\label{source:scaling-discrepancies}Porian et al., \emph{Resolving Discrepancies in Compute-Optimal Scaling of Language Models}（NeurIPS 2024，v4）：
+\sourceurl{https://arxiv.org/abs/2406.19146v4}
+\sourcecheck{2026-11-06}{已核对第 3 节、表 1 的输出层 FLOPs、warmup 与优化器调参消融}
 \item Sutton, \emph{The Bitter Lesson} (2019)：
 \sourceurl{http://www.incompleteideas.net/IncIdeas/BitterLesson.html}
 \sourcecheck{2026-10-24}{链接可访问}
@@ -235,7 +241,7 @@ Qwen3 的 Dense/MoE 技术报告（2025）和 DeepSeek-V4.1-Flash
 \sourcecheck{2026-11-06}{已核对分块 Prefill、与 Decode 混排以及逐轮 Token 预算的调度机制}
 \item \phantomsection\label{source:speculative-decoding}Leviathan, Kalman and Matias, \emph{Fast Inference from Transformers via Speculative Decoding}：
 \sourceurl{https://proceedings.mlr.press/v202/leviathan23a.html}
-\sourcecheck{2026-11-06}{已核对精确接受与校正、生成数量分析及计入草稿耗时的加速比}
+\sourcecheck{2026-11-06}{已核对精确接受与校正、论文 Sec.~3.1 的独立接受假设、定理 3.8 的耗时比与 Sec.~3.5 的长度选择}
 \item \phantomsection\label{source:mixed-precision}Micikevicius et al., \emph{Mixed Precision Training}:
 \sourceurl{https://arxiv.org/abs/1710.03740}
 \sourcecheck{2026-11-03}{已核对 FP32 主权重与损失缩放的实现章节}

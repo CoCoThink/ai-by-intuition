@@ -13,8 +13,8 @@
 | [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) | 2026-11-06 | 已核对第 4 节及表 1 的信息路径比较，以及第 3.5 节的正弦位置编码 |
 | [www.deeplearningbook.org/](https://www.deeplearningbook.org/) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2005.14165](https://arxiv.org/abs/2005.14165) | 2026-10-24 | 链接可访问 |
-| [arxiv.org/abs/2001.08361](https://arxiv.org/abs/2001.08361) | 2026-11-03 | 已核对摘要中验证损失随参数量、数据集大小与计算量呈幂律变化的结论 |
-| [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-11-03 | 已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算 |
+| [arxiv.org/abs/2001.08361](https://arxiv.org/abs/2001.08361) | 2026-11-06 | 已核对 N_opt 随计算预算的 0.73 指数及非 Embedding 参数／算力定义 |
+| [arxiv.org/abs/2203.15556](https://arxiv.org/abs/2203.15556) | 2026-11-06 | 已核对 0.50/0.50 等分配拟合、70B/1.4T 设置及 C≈6ND 的近似口径；同预算两种切分为教材复算 |
 | [www.incompleteideas.net/IncIdeas/BitterLesson.html](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) | 2026-10-24 | 链接可访问 |
 | [law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/](https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/) | 2026-10-24 | 访问受限 |
 | [modelcontextprotocol.io/specification](https://modelcontextprotocol.io/specification) | 2026-10-25 | 已核对当前入口指向 2026-07-28 版 |
@@ -84,5 +84,7 @@
 | [arxiv.org/abs/1604.06174](https://arxiv.org/abs/1604.06174) | 2026-11-06 | 已核对第 4 节及算法 1 的分段保存与反向重计算 |
 | [arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101) | 2026-11-06 | 已核对第 2 节的自适应梯度更新与解耦权重衰减 |
 | [arxiv.org/abs/2309.06180](https://arxiv.org/abs/2309.06180) | 2026-11-06 | 已核对第 2.3 节的逐轮批处理与第 4 节的分页 KV 缓存管理 |
-| [proceedings.mlr.press/v202/leviathan23a.html](https://proceedings.mlr.press/v202/leviathan23a.html) | 2026-11-06 | 已核对第 2 节的精确接受与校正，以及第 3.1、3.3 节在独立接受率假设下的期望产出与计入草稿耗时的加速比 |
+| [proceedings.mlr.press/v202/leviathan23a.html](https://proceedings.mlr.press/v202/leviathan23a.html) | 2026-11-06 | 已核对独立接受假设、期望产出、含草稿成本的加速比及整数草稿长度选择；表格与临界点由教材复算 |
 | [arxiv.org/abs/2403.02310](https://arxiv.org/abs/2403.02310) | 2026-11-06 | 已核对分块 Prefill、与 Decode 混排以及逐轮 Token 预算的调度机制 |
+| [arxiv.org/abs/2406.12907v3](https://arxiv.org/abs/2406.12907v3) | 2026-11-06 | 已核对非 Embedding 与总参数／算力定义、小规模局部指数分析和模拟复现；TMLR 2024 |
+| [arxiv.org/abs/2406.19146v4](https://arxiv.org/abs/2406.19146v4) | 2026-11-06 | 已核对输出层计算、warmup 时长和规模相关优化器调参的复现实验及消融；NeurIPS 2024 |

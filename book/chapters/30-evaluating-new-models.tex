@@ -84,6 +84,24 @@ $700$ 亿参数训练了 $1.4$ 万亿 Token，比例为
 该 $20:1$ 比例属于论文的特定训练设置，不是由上面的假设预算推出的通用配方。
 参数和 Token 同时翻倍需要 $4$ 倍算力；具体比例还要结合数据质量、上下文长度与部署成本做实验比较。
 
+\textbf{两篇研究给出的最优分配曾明显不同。}
+Kaplan 报告 $N_{\rm opt}\propto C^{0.73}$，Chinchilla 的训练曲线拟合给出约 $C^{0.50}$。
+在各自的参数与算力口径下，由 $C\approx6ND$ 可得 $D_{\rm opt}$ 分别约按 $C^{0.27}$ 与 $C^{0.50}$ 增长。
+从各自基点把算力放大 $100$ 倍，前者给出参数约 $100^{0.73}=28.8$ 倍、Token 约 $100^{0.27}=3.5$ 倍；后者两者各约 $10$ 倍。
+\hyperref[source:scaling-reconciliation]{Pearce 与 Song} 将很大一部分差异归因于非 Embedding 参数／算力的计数口径与小规模拟合；
+\hyperref[source:scaling-discrepancies]{Porian 等}通过复现实验，指出输出层计算成本、warmup 时长及随规模调整的优化器超参数也会改变结果，校正后与 Chinchilla 接近。
+比较这些指数前要先对齐口径；这与\hyperref[sec:toy-real-model-comparison]{模型参数量比较}中核对实际可训练元素、输出头是否共享是同一个问题。
+
+\par\Needspace{9\baselineskip}
+\begin{samepage}
+回到本节的 $9\times10^{17}$ FLOPs 预算，若另设 $D=20N$，则
+\[
+N\approx\sqrt{\frac{9\times10^{17}}{6\times20}}
+\approx8.7\times10^7,\qquad D=20N\approx1.7\times10^9.
+\]
+它与上面的 $1.25\times10^8$ 参数、$1.2\times10^9$ Token 是同一粗略预算下的两种切分，哪种损失更低要实验比较。
+\end{samepage}
+
 \subsection{Bitter Lesson：计算与通用方法为何常被重视？}
 
 Richard Sutton 在

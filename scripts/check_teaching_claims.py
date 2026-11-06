@@ -548,6 +548,27 @@ def check_immediate_retrieval_and_serving():
     assert np.isclose(sum(probabilities),1) and f'{expectation:.4f}' in deployment
     assert np.isclose(expectation,sum(alpha**j for j in range(k+1)))
     assert f'{expectation/(1+k*.05):.2f}' in deployment
+    # Compare every printed speedup with the capped geometric distribution.
+    speed_table=deployment.split('接受率 $\\alpha$ &',1)[1].split(r'\end{tabular}',1)[0]
+    rows=re.findall(r'^(0\.\d+) & ([\d.]+) & ([\d.]+) & ([\d.]+) & ([\d.]+)\\\\',speed_table,re.M)
+    assert len(rows)==4
+    for row in rows:
+        acceptance=float(row[0])
+        for length,published in zip((1,2,4,8),row[1:]):
+            mass=[acceptance**j*(1-acceptance) for j in range(length)]+[acceptance**length]
+            outputs=np.dot(np.arange(1,length+2),mass)
+            assert published==f'{outputs/(1+.05*length):.2f}'
+    for cost in (.05,.2,.5):
+        lo,hi=0.,1.
+        for _ in range(60):
+            mid=(lo+hi)/2
+            if sum(mid**j for j in range(5))<1+4*cost:lo=mid
+            else:hi=mid
+        assert f'{(lo+hi)/2:.3f}' in deployment
+    speed=lambda length: sum(alpha**j for j in range(length+1))/(1+.05*length)
+    assert max(range(1,100),key=speed)==8 and speed(12)<speed(8)
+    assert f'{speed(12):.2f}' in deployment
+    assert sum(.1**j for j in range(5))/1.2<1
     # Two service slots, one exclusive Prefill round, lengths A=1, B=4, C=2.
     expected_static=[('A','B'),('B',),('B',),('B',),('P',),('C',),('C',)]
     expected_dynamic=[('A','B'),('P',),('B','C'),('B','C'),('B',)]
@@ -565,7 +586,7 @@ def check_immediate_retrieval_and_serving():
             if 'Prefill' in row[col]:actual=('P',)
             assert actual==(schedule[i] if i<len(schedule) else ()),(i,col,actual)
     print('Immediate examples QA: two-record selection, all seven scheduling rows, '
-          'speculative expectation and conditional speedup passed')
+          'all 16 speculative speedups, three break-even rates and best draft length passed')
 
 
 def check_scaling_budget():
@@ -591,7 +612,16 @@ def check_scaling_budget():
     numerator,denominator=re.search(
         r'\\frac\{D\}\{N\}=\\frac\{([\d.]+)\\times10\^\{12\}\}\{([\d.]+)\\times10\^\{10\}\}',example).groups()
     assert np.isclose(float(numerator)*1e12/(float(denominator)*1e10),20)
-    print('Scaling QA: assumed 1.2B-token budget, diminishing-returns wording, fourfold FLOPs and separate Chinchilla 20:1 passed')
+    for exponent in (.73,.27,.50):
+        assert f'{100**exponent:.1f}'.removesuffix('.0') in example
+    assert np.isclose(100**.73*100**.27,100)
+    alternate_parameters=np.sqrt(budget/(6*20))
+    alternate_tokens=20*alternate_parameters
+    assert np.isclose(6*alternate_parameters*alternate_tokens,budget)
+    assert f'{alternate_parameters/1e7:.1f}'+r'\times10^7' in example
+    assert f'{alternate_tokens/1e9:.1f}'+r'\times10^9' in example
+    assert 'source:scaling-reconciliation' in example and 'source:scaling-discrepancies' in example
+    print('Scaling QA: same-budget allocations, 100x-compute exponents and separately attributed reconciliation studies passed')
 
 
 def check_review_followups():

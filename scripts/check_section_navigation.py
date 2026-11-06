@@ -10,6 +10,7 @@ from html import unescape
 from pathlib import Path
 import re
 import subprocess
+from textwrap import dedent
 from unicodedata import normalize
 from check_chapter_crossrefs import uncomment
 from generate_chapter_navigation import argument
@@ -475,6 +476,49 @@ def check_exercise_destinations(reader,path,labels):
     return failures
 
 
+def scaling_allocation_errors(pages):
+    """Keep the alternative compute allocation and its interpretation together."""
+    compact=[re.sub(r'\s+','',page) for page in pages]
+    starts=[i for i,page in enumerate(compact) if 'FLOPs预算，若另设' in page]
+    if len(starts)!=1:
+        return ['Alternative scaling allocation must appear exactly once in the PDF']
+    page=starts[0]
+    if '哪种损失更低要实验比较。' not in compact[page]:
+        return [f'Scaling allocation on page {page+1} is split from its concluding interpretation']
+    return []
+
+
+def parameter_literal_code(page_text):
+    """Keep the code's indentation when copying from one rendered PDF page."""
+    start=re.search(r'(?m)^ *import numpy as np *$',page_text)
+    if not start:raise ValueError('parameter code does not start on this page')
+    end=re.search(r'(?m)^ *\} *$',page_text[start.start():])
+    if not end:raise ValueError('parameter code is split across pages')
+    return dedent(page_text[start.start():start.start()+end.end()])
+
+
+def check_parameter_literal(reader,path,labels):
+    """The PDF, not only the TeX source, must provide executable initial weights."""
+    import numpy as np
+    from teaching_reference import parameters
+    dest=reader.named_destinations[labels['app:parameter-literal'][3]]
+    first=reader.get_destination_page_number(dest)+1
+    for page in range(first,min(first+2,len(reader.pages))+1):
+        text=subprocess.check_output(['pdftotext','-f',str(page),'-l',str(page),'-layout',str(path),'-'],text=True)
+        if not re.search(r'(?m)^ *import numpy as np *$',text):continue
+        try:
+            namespace={}
+            exec(compile(parameter_literal_code(text),'PDF:parameter-literal','exec'),namespace)
+            actual,expected=namespace['parameters'](),parameters()
+            assert actual.keys()==expected.keys()
+            assert all(np.array_equal(actual[key],expected[key]) for key in expected)
+        except (ValueError,SyntaxError,NameError,KeyError,AssertionError) as error:
+            return [f'Parameter literal on page {page} cannot be copied verbatim: {error}']
+        print(f'PDF parameter QA: executable code on page {page}; all 99 initial values match the canonical arrays')
+        return []
+    return [f'Parameter literal code missing after actual destination page {first}']
+
+
 def check_reproduction_and_definitions(reader,labels):
     """Verify actual page contents and the executable-code link, beyond valid labels."""
     failures=[]
@@ -673,6 +717,7 @@ def check_pdf(path, aux, used):
     failures.extend(softmax_note_errors(raw_text.split('\f')))
     failures.extend(attention_boundary_errors(raw_text.split('\f')))
     failures.extend(distance_condition_errors(raw_text.split('\f')))
+    failures.extend(scaling_allocation_errors(raw_text.split('\f')))
     text=re.sub(r'\s+','',raw_text)
     labels={}
     for line in aux.read_text().splitlines():
@@ -697,6 +742,7 @@ def check_pdf(path, aux, used):
         if primary not in labels or legacy not in labels or labels[primary][3]!=labels[legacy][3]:
             failures.append(f'Merged compatibility link resolves to a different destination: {primary}/{legacy}')
     failures.extend(check_exercise_destinations(reader,path,labels))
+    failures.extend(check_parameter_literal(reader,path,labels))
     failures.extend(check_reproduction_and_definitions(reader,labels))
     failures.extend(check_chapter_dividers(reader,labels))
     failures.extend(check_front_matter(reader,labels))
@@ -724,6 +770,20 @@ def check_pdf(path, aux, used):
 
 
 def self_test():
+    allocation='回到本节的 FLOPs 预算，若另设 D=20N，则 N=8.7e7，D=1.7e9。'
+    interpretation='同一预算下的两种切分，哪种损失更低要实验比较。'
+    assert not scaling_allocation_errors([allocation+interpretation])
+    assert scaling_allocation_errors([allocation,interpretation])
+    assert scaling_allocation_errors([allocation+interpretation[:-4],interpretation[-4:]])
+    assert scaling_allocation_errors([interpretation])
+    printed_code='    import numpy as np\n\n    def parameters():\n        return {\n            "E": np.array([[1., 2., 3.]]),\n        }'
+    namespace={}
+    exec(parameter_literal_code('Page heading\n'+printed_code+'\nPage footer'),namespace)
+    assert namespace['parameters']()['E'].tolist()==[[1.,2.,3.]]
+    for truncated in (printed_code.rsplit('\n',1)[0], 'def parameters():\n    return {}'):
+        try:parameter_literal_code(truncated)
+        except ValueError:pass
+        else:raise AssertionError('Missing or split PDF parameter code must fail')
     front_pages=['cover/copyright','contents','可选读 纸笔复算 运行脚本 核对条件与易错步骤',
                  '写给谁，怎么读','prologue','Part 1',
                  '五题数学自检 解 2𝑤 + 1 = 5 核对结果与补读建议 第一步 结果 补读','按路线阅读与查阅']

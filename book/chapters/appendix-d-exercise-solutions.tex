@@ -256,7 +256,7 @@ loss, g = loss_grad(z, ids)
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{\hyperref[exercise:embedding-shape]{C-048.}}] \leavevmode\phantomsection\label{solution:C-048}\label{solution:embedding-shape}$E:4\times3$；每个 Token 嵌入为 3 维。
 \item[\textbf{\hyperref[exercise:embedding-input-change]{C-049.}}] \leavevmode\phantomsection\label{solution:C-049}\label{solution:embedding-input-change}查表输出为 $\left[\begin{smallmatrix}0.15&-0.2&1.25\\-0.3&1.1&0.2\\0.15&-0.2&1.25\end{smallmatrix}\right]$。
-\par\Needspace{17\baselineskip}第 $1,3$ 个位置共用 ID $5$，同一参数的两条梯度路径应相加：\par\nobreak
+\par\Needspace{17\baselineskip}第 $1,3$ 个位置共用 ID $5$，同一参数的两条梯度路径应相加。以下导入也可替换为\hyperref[app:parameter-literal]{附录 B 的参数字面量定义}：\par\nobreak
 \begin{samepage}\begin{verbatim}
 import numpy as np
 from scripts.teaching_reference import parameters
@@ -410,7 +410,7 @@ ac, yc = read(scores, values, causal=True)
 \item[\textbf{\hyperref[exercise:probability-row-greedy]{C-074.}}] \leavevmode\phantomsection\label{solution:C-074}\label{solution:probability-row-greedy}最大值 $0.60$ 在第 $4$ 列，应选 $\answerresult{4}$。这里的列编号从 $1$ 起；Python 中相同位置的下标是 $3$。
 \item[\textbf{\hyperref[exercise:output-head-only-training]{C-075.}}] \leavevmode\phantomsection\label{solution:C-075}\label{solution:output-head-only-training}实测第 20 步平均交叉熵为 $\answerresult{0.816707}$，贪心预测 $[4,4,3]$，位置 2 仍错（目标 ID 5）。完整训练同一步为 $0.483173$、$[4,5,3]$，第 9 步起三位置全对。固定的隐藏行限制了只调输出头在 20 步内能达到的结果；改变 $H$ 需要前面各层也接收梯度。
 \item[\textbf{\hyperref[exercise:causal-input-change]{C-076.}}] \leavevmode\phantomsection\label{solution:C-076}\label{solution:causal-input-change}实现中每行只读取自己及前面的记录，两次残差都接回对应子层的输入。
-\par\Needspace{28\baselineskip}只导入初值能保证参数一致；计算链由下面的函数完成：\par\nobreak
+\par\Needspace{28\baselineskip}以下导入也可替换为\hyperref[app:parameter-literal]{附录 B 的参数字面量定义}；计算链由下面的函数完成：\par\nobreak
 \begin{samepage}\begin{verbatim}
 import numpy as np
 from scripts.teaching_reference import parameters
@@ -863,7 +863,7 @@ assert not np.allclose(linear, nonlinear)
 \end{answerhints}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{\hyperref[exercise:review-training-generation]{R-09.}}] \leavevmode\phantomsection\label{solution:R-09}\label{solution:review-training-generation}训练有错位目标，因果 Mask 防止偷看，反传更新参数。生成只有前缀，选出的 Token 成为下一输入，参数固定；遇结束 ID 或长度等条件停止。\par 训练输入的后续真实词已经在数据中，但 Mask 仍限制每个位置的读取范围。生成时后续词尚未知，要把本轮选出的 Token 接回前缀；因果 Mask 不能凭空提供这些未知输入。
-\item[\textbf{\hyperref[exercise:review-cache-output-head]{R-10.}}] \leavevmode\phantomsection\label{solution:R-10}\label{solution:review-cache-output-head}Prefill 处理已知前缀并写入各层 K/V；Decode 为新 Token 计算 K/V，再读历史缓存。改动前文会改变该位置及后续各层状态，只有完全匹配的前缀可按实现复用。输出头不变并不足以保证缓存有效。\par\Needspace{13\baselineskip}以下代码从仓库根目录运行，分别用相同初值训练全部参数与冻结输出头，记录每次更新前的损失和第三位置权重：\par\nobreak
+\item[\textbf{\hyperref[exercise:review-cache-output-head]{R-10.}}] \leavevmode\phantomsection\label{solution:R-10}\label{solution:review-cache-output-head}Prefill 处理已知前缀并写入各层 K/V；Decode 为新 Token 计算 K/V，再读历史缓存。改动前文会改变该位置及后续各层状态，只有完全匹配的前缀可按实现复用。输出头不变并不足以保证缓存有效。\par\Needspace{13\baselineskip}本题还调用仓库的前向与反向实现，参数字面量不能替代这些函数。按\hyperref[app:exercise-runtime]{动手题运行入口}准备仓库后，以下代码从根目录运行，分别用相同初值训练全部参数与冻结输出头，记录每次更新前的损失和第三位置权重：\par\nobreak
 \begin{samepage}\begin{verbatim}
 from scripts.teaching_reference import parameters, forward, backward, LR
 for frozen in (False, True):

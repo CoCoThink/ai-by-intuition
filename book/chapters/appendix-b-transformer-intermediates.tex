@@ -46,7 +46,7 @@ $X,A,H,\Pi$ 四张最小矩阵。本附录给出
 
 数值由 \nolinkurl{scripts/teaching_reference.py} 中的
 \texttt{parameters()} 生成，展示时保留四位小数；
-复算请使用未舍入的数。
+复算请使用未舍入的数；下文的\hyperref[app:parameter-literal]{可复制参数字典}保留全部初值。
 
 \textbf{输入与位置。}词表大小 $5$，隐藏宽度 $3$，
 输入 ID $[2,4,5]$，目标 ID $[4,5,3]$：
@@ -186,7 +186,6 @@ Z=HW_{\rm out}\approx
 正文的 $\Pi=\operatorname{softmax}(Z)$ 为 $3\times5$，
 目标 $[4,5,3]$ 的三行概率平均交叉熵约 $1.798430$。
 
-
 \subsubsection*{输出头梯度矩阵}
 第~\ref*{intro:language-model-training}~章中，$W_{\rm out}$ 的梯度形状为 $3\times5$，
 十五个元素为：
@@ -207,3 +206,37 @@ Q,K,V(3\times3)\to A(3\times3)\to H(3\times3)
 \to Z(3\times5)\to\Pi(3\times5)$。
 按此顺序逐项核对行数与列数，可以检查投影、读取和输出头的矩阵乘法是否匹配。
 \end{idea}
+
+\begin{samepage}
+\subsubsection*{可复制的初始参数：只有 PDF 也能运行}
+\phantomsection\label{app:parameter-literal}
+下面的 \texttt{parameters()} 与上面的九张参数表逐项相同，共 $99$ 个可训练数值；
+键名 \texttt{P} 对应 $P_{\rm pos}$，\texttt{Wq/Wk/Wv/Wo} 对应 $W_Q/W_K/W_V/W_O$，
+其余键为 \texttt{E/Wup/Wdown/Wout}。
+把整个代码块复制到独立解答文件或 Notebook 单元格中，即可取得同一组初值；只依赖 NumPy。
+每次调用都返回新的数组，便于从相同参数点比较两次实验。
+\par\nobreak
+\begin{verbatim}
+import numpy as np
+
+def parameters():
+    return {
+        'E': np.array([[0., 0., 0.], [1.2, 0., -.2], [.2, -.4, .7],
+                       [-.3, 1.1, .2], [.15, -.2, 1.25]]),
+        'P': np.array([[.1, .05, -.1], [0., -.05, .12], [-.12, .1, .07]]),
+        'Wq': np.array([[.8, .2, -.1], [.1, .9, .25], [-.1, .15, .8]]),
+        'Wk': np.array([[.85, 0., .2], [-.1, .9, 0.], [.15, .2, .75]]),
+        'Wv': np.array([[1., .2, 0.], [0., .9, .15], [.1, -.2, .85]]),
+        'Wo': np.array([[.9, 0., .1], [.1, .85, 0.], [0., .15, .95]]),
+        'Wup': np.array([[.4, .2, -.3, .1], [-.1, .5, .15, -.25],
+                         [.2, .1, .45, .3]]),
+        'Wdown': np.array([[.25, -.1, .15], [-.05, .2, .1],
+                           [.1, .15, .15], [.1, -.12, .18]]),
+        'Wout': np.array([[0., .2, 0., .2, -.2],
+                          [0., .2, 0., 1.2, -.4],
+                          [0., -.1, .4, .1, .2]]),
+    }
+\end{verbatim}
+在只导入 \texttt{parameters} 的参考答案中，使用本段定义代替那一行仓库导入即可；
+前向与梯度计算仍由题目要求的实现完成。
+\end{samepage}

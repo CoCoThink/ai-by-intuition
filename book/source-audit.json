@@ -67,17 +67,17 @@
     "url": "https://arxiv.org/abs/2001.08361",
     "status": 200,
     "final_url": "https://arxiv.org/abs/2001.08361",
-    "checked_utc": "2026-11-03",
-    "method": "Primary source abstract review",
-    "result": "已核对摘要中验证损失随参数量、数据集大小与计算量呈幂律变化的结论"
+    "checked_utc": "2026-11-06",
+    "method": "Primary source full-text review: https://arxiv.org/html/2001.08361v1, Sections 1.2, 2.1 and 6.1",
+    "result": "已核对 N_opt 随计算预算的 0.73 指数及非 Embedding 参数／算力定义"
   },
   {
     "url": "https://arxiv.org/abs/2203.15556",
     "status": 200,
     "final_url": "https://arxiv.org/abs/2203.15556",
-    "checked_utc": "2026-11-03",
-    "method": "HTTP GET and paper reading; verified Appendix F FLOPs approximation C~6ND and 70B parameters / 1.4T training tokens in Section 4",
-    "result": "已核对训练 FLOPs 预算及 Chinchilla 参数／Token 比例；GPT-2 量级为教学估算"
+    "checked_utc": "2026-11-06",
+    "method": "Primary source full-text review: https://arxiv.org/html/2203.15556v1, Section 3 Table 2, Section 4 and Appendix F",
+    "result": "已核对 0.50/0.50 等分配拟合、70B/1.4T 设置及 C≈6ND 的近似口径；同预算两种切分为教材复算"
   },
   {
     "url": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html",
@@ -618,8 +618,8 @@
     "status": 200,
     "final_url": "https://proceedings.mlr.press/v202/leviathan23a.html",
     "checked_utc": "2026-11-06",
-    "method": "Primary source content review: https://arxiv.org/html/2211.17192v2",
-    "result": "已核对第 2 节的精确接受与校正，以及第 3.1、3.3 节在独立接受率假设下的期望产出与计入草稿耗时的加速比"
+    "method": "Primary source full-text review: https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf, Sections 3.1, 3.3 and 3.5, Theorem 3.8",
+    "result": "已核对独立接受假设、期望产出、含草稿成本的加速比及整数草稿长度选择；表格与临界点由教材复算"
   },
   {
     "url": "https://arxiv.org/abs/2403.02310",
@@ -628,5 +628,21 @@
     "checked_utc": "2026-11-06",
     "method": "Primary source content review: https://arxiv.org/html/2403.02310v3",
     "result": "已核对分块 Prefill、与 Decode 混排以及逐轮 Token 预算的调度机制"
+  },
+  {
+    "url": "https://arxiv.org/abs/2406.12907v3",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2406.12907v3",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source full-text review: https://arxiv.org/html/2406.12907v3, Sections 2–4",
+    "result": "已核对非 Embedding 与总参数／算力定义、小规模局部指数分析和模拟复现；TMLR 2024"
+  },
+  {
+    "url": "https://arxiv.org/abs/2406.19146v4",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2406.19146v4",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source full-text review: https://arxiv.org/html/2406.19146v4, Section 3 and Table 1",
+    "result": "已核对输出层计算、warmup 时长和规模相关优化器调参的复现实验及消融；NeurIPS 2024"
   }
 ]

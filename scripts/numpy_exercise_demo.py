@@ -7,15 +7,61 @@ No model download, paid API, or automatic differentiation is needed.
 """
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
+import tempfile
 
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+
+
+def check_pdf_only_parameters(exercises):
+    """Copy the printed literal and answers into files outside the checkout."""
+    appendix = (ROOT / 'book/chapters/appendix-b-transformer-intermediates.tex').read_text()
+    section = appendix.split(r'\label{app:parameter-literal}', 1)[1]
+    literal = re.search(r'\\begin\{verbatim\}\n(.*?)\\end\{verbatim\}', section, re.S)[1]
+    namespace = {}
+    exec(compile(literal, 'appendix:parameter-literal', 'exec'), namespace)
+    from scripts.teaching_reference import parameters
+    printed, expected = namespace['parameters'](), parameters()
+    assert printed.keys() == expected.keys()
+    assert sum(value.size for value in printed.values()) == 99
+    for key in expected:
+        assert np.array_equal(printed[key], expected[key]), key
+    printed['E'][0, 0] = 99
+    assert namespace['parameters']()['E'][0, 0] == 0, 'calls must return fresh arrays'
+    for key in ('embedding-input-change', 'causal-input-change'):
+        body = exercises[key]['solution']
+        code = re.search(r'\\begin\{verbatim\}\n(.*?)\\end\{verbatim\}', body, re.S)[1]
+        # The exercise implementation may import NumPy and initial parameters,
+        # but must compute the lookup/Block itself rather than import forward.
+        for node in ast.walk(ast.parse(code)):
+            if isinstance(node, ast.ImportFrom):
+                assert node.module == 'scripts.teaching_reference'
+                assert [(alias.name, alias.asname) for alias in node.names] == [('parameters', None)]
+            elif isinstance(node, ast.Import):
+                assert [alias.name for alias in node.names] == ['numpy']
+        marker = 'from scripts.teaching_reference import parameters\n'
+        assert code.count(marker) == 1
+        code = code.replace(marker, literal + '\n', 1)
+        if key == 'embedding-input-change':
+            code += '\nassert np.array_equal(gradient[4], [4, 0, 0])\n'
+            code += 'assert np.array_equal(output, table[[4, 3, 4]])\n'
+        else:
+            code += '\nassert after[2][2].argmax() == 3\n'
+            code += 'assert np.isclose(after[2][2, 3], .7212, atol=5e-5)\n'
+            code += 'assert all(np.allclose(a[:2], b[:2]) for a, b in zip(before, after))\n'
+        with tempfile.TemporaryDirectory(prefix='pdf-only-exercise-') as directory:
+            script = Path(directory) / 'answer.py'
+            script.write_text(code)
+            subprocess.run([sys.executable, '-I', str(script)], cwd=directory, check=True)
+    print('PDF-only exercise QA: all 99 printed parameters match; C-049/C-076 run in isolated files without repository imports')
 
 
 def check_extended_programs(exercises):
@@ -125,6 +171,7 @@ def printed_program(exercises, key):
 
 def run_checks():
     exercises = {r['key']: r for r in json.loads((ROOT / 'book/exercises.json').read_text())}
+    check_pdf_only_parameters(exercises)
     check_extended_programs(exercises)
     ce = printed_program(exercises, 'one-hot-gradient-target')
     objective, z, ids = ce['loss_grad'], ce['z'], ce['ids']
