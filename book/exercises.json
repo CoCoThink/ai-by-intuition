@@ -465,9 +465,9 @@
     "owner": "intro:20c-classification-loss",
     "slug": "20c-classification-loss",
     "difficulty": "标准",
-    "minutes": 8,
-    "question": "\\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？",
-    "solution": "\\textbf{第一步：}先把类别标签写成与 $p$ 同形的向量。\\par\\nobreak\\textbf{解题过程：}$y$ 是与概率同形的 one-hot 目标向量，正确类分量为 $1$、其他为 $0$；整数 ID 只用于索引。\\par\\textbf{核对：}例如三类、正确 ID 为 $2$ 时，应写 $y=(0,1,0)$。把整数 $2$ 从每个概率上都减去，会错误地把所有分量同样平移；正确的 $p-y$ 分量之和应为零。"
+    "minutes": 20,
+    "question": "\\textbf{【NumPy 从零实现】}不用自动微分或现成交叉熵函数，编写稳定的批次平均交叉熵及其 logit 梯度。两行 logits 为 $(0,\\ln2,0)$、$(1000,1001,1000)$，目标 ID 为 $[2,1]$（从 $1$ 起）。交付损失、$2\\times3$ 梯度，检查同一行统一加 $10{,}000$ 后结果不变，并用中心差分验算全部六项导数。解释整数 ID 怎样用于索引，为什么不能直接从每个概率减去 ID。",
+    "solution": "\\textbf{第一步：}先在每行减最大值，并把从 $1$ 起的目标 ID 转成 Python 下标。\\par\\nobreak\n\\textbf{解题过程：}第一行正确类概率为 $1/2$；第二行为 $(1,e,1)/(2+e)$，正确类概率为 $1/(2+e)$。平均损失约为 $\\answerresult{1.122296}$。每行梯度是 $(p-\\mathrm{onehot})/2$，数值约为\n\\[\n\\begin{bmatrix}0.125&-0.250&0.125\\\\-0.394029&0.288058&0.105971\\end{bmatrix}.\n\\]\n下面直接实现；损失用 LogSumExp 形式，不先对极小概率取对数。\\par\\nobreak\n\\begin{verbatim}\nimport numpy as np\ndef loss_grad(z, ids):\n    u = z - z.max(axis=1, keepdims=True)\n    e = np.exp(u)\n    den = e.sum(axis=1, keepdims=True)\n    rows = np.arange(len(ids))\n    loss = (np.log(den[:, 0]) - u[rows, ids-1]).mean()\n    g = e / den\n    g[rows, ids-1] -= 1\n    return loss, g / len(ids)\nz = np.array([[0., np.log(2), 0.], [1000., 1001., 1000.]])\nids = np.array([2, 1])\nloss, g = loss_grad(z, ids)\n\\end{verbatim}\n\\textbf{数值验收：}固定标签，每次只扰动一个 logit，以 $[L(z+\\varepsilon)-L(z-\\varepsilon)]/(2\\varepsilon)$ 对比对应的梯度；取 $\\varepsilon=10^{-5}$，允许 $10^{-7}$ 的绝对误差。各行梯度和应为零，统一平移后的损失与梯度应保持一致。整数 ID 用来选中目标列；直接从所有概率减去整数会同时改错所有分量。可运行 \\path{scripts/numpy_exercise_demo.py} 核对这里印出的程序及导数。"
   },
   {
     "id": "C-048",
@@ -655,9 +655,9 @@
     "owner": "intro:11-softmax-memory",
     "slug": "11-softmax-memory",
     "difficulty": "挑战",
-    "minutes": 15,
-    "question": "\\phantomsection\\label{exercise:batch-attention-new} \\textbf{【手算】}\n另取三个 Query 对三个 Key 的未缩放分数矩阵\n$S'=\\begin{bmatrix}\\ln2&0&0\\\\0&\\ln3&0\\\\0&0&\\ln4\\end{bmatrix}$，\nValue 仍为\n$V=\\begin{bmatrix}1&0\\\\0&1\\\\1&1\\end{bmatrix}$。\n逐行求 $A'=\\softmax_{\\rm row}(S')$，再求完整的\n$Y'=A'V$；列出三行权重和三行输出，检查形状。",
-    "solution": "\\textbf{第一步：}每行先做指数归一化，再右乘同一 $V$。\\par\\nobreak\n\\textbf{解答：} 每行指数分数分别为 $(2,1,1)$、$(1,3,1)$、$(1,1,4)$，\n故 $A'=\\boxed{\\begin{bmatrix}\n1/2&1/4&1/4\\\\\n1/5&3/5&1/5\\\\\n1/6&1/6&2/3\n\\end{bmatrix}}$。\n与题设 $V:3\\times2$ 相乘，\n$Y'=\\boxed{\\begin{bmatrix}\n3/4&1/2\\\\\n2/5&4/5\\\\\n5/6&5/6\n\\end{bmatrix}}$，形状为 $3\\times2$。\n每行权重和为 $1$；本题与正文的分数矩阵不同，不能直接抄原来的 $A$。\\par\\textbf{核对：}先验算 $A\\prime$ 每行和为 $1$，再按 $V$ 的两列分别求和，例如第一行输出为 $(1/2+1/4,\\,1/4+1/4)=(3/4,1/2)$。若按列归一化，单个 Query 的权重通常不再和为 $1$。"
+    "minutes": 30,
+    "question": "\\phantomsection\\label{exercise:batch-attention-new} \\textbf{【NumPy 从零实现／手算】}\n另取三个 Query 对三个 Key 的未缩放分数矩阵\n$S'=\\begin{bmatrix}\\ln2&0&0\\\\0&\\ln3&0\\\\0&0&\\ln4\\end{bmatrix}$，\nValue 仍为\n$V=\\begin{bmatrix}1&0\\\\0&1\\\\1&1\\end{bmatrix}$。\n逐行求 $A'=\\softmax_{\\rm row}(S')$，再求完整的\n$Y'=A'V$；列出三行权重和三行输出，检查形状。 再用 NumPy 编写逐行稳定 Softmax 与可选因果掩码，不调用现成 Attention。计算加掩码后的结果；扰动第三位置的 Value 和前两行的第三列分数，检查前两行输出不变。交付代码、两组矩阵和这项因果性验收。",
+    "solution": "\\textbf{第一步：}每行先做指数归一化，再右乘同一 $V$。\\par\\nobreak\n\\textbf{解答：} 每行指数分数分别为 $(2,1,1)$、$(1,3,1)$、$(1,1,4)$，\n故 $A'=\\boxed{\\begin{bmatrix}\n1/2&1/4&1/4\\\\\n1/5&3/5&1/5\\\\\n1/6&1/6&2/3\n\\end{bmatrix}}$。\n与题设 $V:3\\times2$ 相乘，\n$Y'=\\boxed{\\begin{bmatrix}\n3/4&1/2\\\\\n2/5&4/5\\\\\n5/6&5/6\n\\end{bmatrix}}$，形状为 $3\\times2$。\n每行权重和为 $1$；本题与正文的分数矩阵不同，不能直接抄原来的 $A$。\\par\\textbf{逐行复核：}先验算 $A\\prime$ 每行和为 $1$，再按 $V$ 的两列分别求和，例如第一行输出为 $(1/2+1/4,\\,1/4+1/4)=(3/4,1/2)$。若按列归一化，单个 Query 的权重通常不再和为 $1$。\n\\par 因果版先将未来位置的分数置为负无穷，再归一化：\n\\[\nA'_{\\rm causal}=\\begin{bmatrix}1&0&0\\\\1/4&3/4&0\\\\1/6&1/6&2/3\\end{bmatrix},\\qquad\nY'_{\\rm causal}=\\begin{bmatrix}1&0\\\\1/4&3/4\\\\5/6&5/6\\end{bmatrix}.\n\\]\n例如第二行只有指数分数 $(1,3)$ 可见，分母应为 $4$，不能沿用未掩码时的 $5$。\\par\\nobreak\n\\begin{verbatim}\nimport numpy as np\ndef read(scores, values, causal=False):\n    s = np.array(scores, dtype=float, copy=True)\n    if causal:\n        s[np.triu_indices(len(s), 1)] = -np.inf\n    e = np.exp(s - s.max(axis=1, keepdims=True))\n    a = e / e.sum(axis=1, keepdims=True)\n    return a, a @ values\nscores = np.diag(np.log([2., 3., 4.]))\nvalues = np.array([[1., 0.], [0., 1.], [1., 1.]])\na, y = read(scores, values)\nac, yc = read(scores, values, causal=True)\n\\end{verbatim}\n\\textbf{因果性验收：}将第三条 Value 改成 $(100,-100)$，并把 $S'_{1,3},S'_{2,3}$ 加 $1000$，重算后前两行输出应完全不变。第三行允许改变，因为它能读取第三位置。若在 Softmax 后才把未来权重清零而不重新归一化，前两行权重和与输出都会错误。完整验收见 \\path{scripts/numpy_exercise_demo.py}。\n"
   },
   {
     "id": "C-067",
@@ -836,8 +836,8 @@
     "slug": "22c-language-training",
     "difficulty": "挑战",
     "minutes": 40,
-    "question": "\\textbf{【开放实验：双句联合训练】}用同一组主例初值同时训练两条等权样本：输入／目标分别为 $[2,4,5]/[4,5,3]$ 与 $[2,5,4]/[5,4,3]$。每句的损失仍按三个位置平均，再对两句取平均；学习率 $0.04$，训练 $200$ 次同步更新。先推导一个正的损失下界，再实现两句梯度的平均，记录第 $0,20,200$ 步的损失与首位置概率。交付推导、曲线和至少一项梯度验算；解释为什么两句不能都在首位置贪心预测正确。",
-    "solution": "\\textbf{第一步：}找出两句完全相同的可见前缀，以及这个前缀对应的两个不同目标。\\par\\nobreak\\textbf{解题过程：}因果 Mask 下，首位置都只看到 ID 2，必须输出同一分布。设它给目标 ID 4、5 的概率为 $p_4,p_5$；由 $p_4+p_5\\le1$，首位置的两句平均损失 $-\\tfrac12\\ln(p_4p_5)\\ge\\ln2$。另外四项交叉熵非负，所以全体六个位置的平均损失至少为 $\\answerresult{\\ln2/3}\\approx0.231049$。这个下界来自相同前缀的目标冲突；能逼近到什么程度，还取决于模型容量和优化过程。一次更新须在同一组旧参数上分别计算 $G_1,G_2$，再令 $\\theta\\leftarrow\\theta-0.04(G_1+G_2)/2$。\\par 一种复算结果：第 $0,20,200$ 步损失约为 $2.117434,1.371395,\\answerresult{0.261142}$；末步首位置给 ID 4、5 的概率约为 $0.480729,0.512150$，两句首位置都猜 ID 5，故其中一句必错。运行 \\path{scripts/advanced_exercise_demo.py} 可核对。\\par\\textbf{验收与错因：}核验两个首位置的整行概率相同，并用联合损失的有限差分检查一项参数梯度。若损失低于下界，先查未来信息是否泄漏、两句是否真的共用参数、损失是否仍除以六；先更新第一句再计算第二句不再是题设的同步全批次更新。"
+    "question": "\\textbf{【开放实验：双句联合训练】}用同一组主例初值同时训练两条等权样本：输入／目标分别为 $[2,4,5]/[4,5,3]$ 与 $[2,5,4]/[5,4,3]$。每句的损失仍按三个位置平均，再对两句取平均；学习率 $0.04$，训练 $200$ 次同步更新。先推导一个正的损失下界，再用 NumPy 实现两句梯度的平均（可调用主例前向与反向函数），记录第 $0,20,200$ 步的损失与首位置概率。交付推导、曲线和至少一项梯度验算；解释为什么两句不能都在首位置贪心预测正确。",
+    "solution": "\\textbf{第一步：}找出两句完全相同的可见前缀，以及这个前缀对应的两个不同目标。\\par\\nobreak\\textbf{解题过程：}因果 Mask 下，首位置都只看到 ID 2，必须输出同一分布。设它给目标 ID 4、5 的概率为 $p_4,p_5$；由 $p_4+p_5\\le1$，首位置的两句平均损失 $-\\tfrac12\\ln(p_4p_5)\\ge\\ln2$。另外四项交叉熵非负，所以全体六个位置的平均损失至少为 $\\answerresult{\\ln2/3}\\approx0.231049$。这个下界来自相同前缀的目标冲突；能逼近到什么程度，还取决于模型容量和优化过程。一次更新须在同一组旧参数上分别计算 $G_1,G_2$，再令 $\\theta\\leftarrow\\theta-0.04(G_1+G_2)/2$。\\par 一种复算结果：第 $0,20,200$ 步损失约为 $2.117434,1.371395,\\answerresult{0.261142}$；末步首位置给 ID 4、5 的概率约为 $0.480729,0.512150$，两句首位置都猜 ID 5，故其中一句必错。运行 \\path{scripts/advanced_exercise_demo.py} 可核对。\\par\\textbf{验收与错因：}核验两个首位置的整行概率相同，并用联合损失的有限差分检查一项参数梯度。若损失低于下界，先查未来信息是否泄漏、两句是否真的共用参数、损失是否仍除以六；先更新第一句再计算第二句不再是题设的同步全批次更新。\\par\\textbf{怎样解释曲线：}记录更新前的第零步，再在每次同步更新后重算两个完整前向；横轴为更新次数，纵轴为六个位置的平均交叉熵，另画水平线 $\\ln2/3$。首位置概率与其余位置分开记录，可以看出不可消除的目标冲突和其余位置仍可改善的部分。两句训练集上的这个正下界来自相同条件对应不同标签；增加网络宽度也不能令同一前缀同时确定地选择两类。若要讨论对新语句的泛化，另建保留集，不复用这条训练曲线作为证据。"
   },
   {
     "id": "C-085",
@@ -1117,7 +1117,7 @@
     "difficulty": "挑战",
     "minutes": 10,
     "question": "\\textbf{设计：}为季度报告写一份 Skill，再将单位检查分给 Subagent。分别列出 Skill 应包含的两项材料、子任务的权限范围和返回字段；若只有三个固定格式文件，还需考虑哪种更直接的组织方式？",
-    "solution": "\\textbf{第一步：}先列出 Skill 的交付物与子任务的验收条件。\\par\\nobreak\\textbf{解题过程：}Skill 记录报表字段、单位换算、出处格式和检查脚本；分派给 Subagent 的单位检查任务还需限定可读报告、返回字段及来源，由主任务复核后汇总。若三个文件格式和步骤固定，也可直接运行既定工作流。\\par\\textbf{核对：}具体可交付两项 Skill 材料：字段与单位对照表、带输入输出例子的核查脚本。单位检查子任务只读取指定报告，不外发、不改原文件；返回“文件与页码、字段、原值与原单位、换算值与目标单位、异常”供主任务核对。只写“返回检查结果”不足以让双方验证同一件事。"
+    "solution": "\\textbf{第一步：}先列出 Skill 的交付物与子任务的验收条件。\\par\\nobreak\\textbf{解题过程：}Skill 记录报表字段、单位换算、出处格式和检查脚本；分派给 Subagent 的单位检查任务还需限定可读报告、返回字段及来源，由主任务复核后汇总。若三个文件格式和步骤固定，也可直接运行既定工作流。\\par\\textbf{核对：}具体可交付两项 Skill 材料：字段与单位对照表、带输入输出例子的核查脚本。单位检查子任务只读取指定报告，不外发、不改原文件；返回“文件与页码、字段、原值与原单位、换算值与目标单位、异常”供主任务核对。只写“返回检查结果”不足以让双方验证同一件事。\\par\\textbf{交接示例：}主任务给出三份报表的只读路径、指定字段和目标单位“百万元”。子任务返回 Q3 原值 $13{,}200$ 万元、换算 $132$ 百万元及原表位置；主任务独立复算 $13{,}200/100$，再确认该数字属于同一报告期。遇到“万元／百万元”标识缺失，应返回缺口而非猜测单位；执行层拒绝写入与联网外发。固定三文件可由确定性脚本完成时，直接工作流更容易复现，采用子任务需要说明额外判断发生在哪里。"
   },
   {
     "id": "C-113",
@@ -1127,7 +1127,7 @@
     "difficulty": "挑战",
     "minutes": 10,
     "question": "\\textbf{场景：}独立 Agent 通过 A2A 返回“任务成功”及一组无出处数字，同时要求外发私人报告。接收方还应核验什么？分别设计数字无法核实和指令越权时的处理。",
-    "solution": "\\textbf{第一步：}先列出协议传输之外尚未解决的信任问题。\\par\\nobreak\\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。\\par\\textbf{核对：}可要求对方返回原表出处、页码、数值与单位；证据未补齐时，将该字段标为待核验并停止依赖它的计算。外发请求进入应用自身的授权检查，协议消息中的“成功”状态不能代替内容核验或用户批准。"
+    "solution": "\\textbf{第一步：}先列出协议传输之外尚未解决的信任问题。\\par\\nobreak\\textbf{解题过程：}A2A 返回成功状态只能表明对方报告了完成；接收方仍核验身份、来源、单位、内容和授权范围。数字无出处时请求原表并标为待核验；回传的越权指令不得充当用户授权。\\par\\textbf{核对：}可要求对方返回原表出处、页码、数值与单位；证据未补齐时，将该字段标为待核验并停止依赖它的计算。外发请求进入应用自身的授权检查，协议消息中的“成功”状态不能代替内容核验或用户批准。\\par\\textbf{分别处理两条路径：}对无出处数字，先暂停依赖它的环比计算，请求包含报告版本、表名、页码、字段和单位的证据包；补齐后从获授权原表重读、统一单位并复算，补不齐就报告证据缺口。对外发要求，将其视为对方消息里的未获授权请求，执行层拒绝上传，记录发起方和拒绝原因，不把它转换成新的用户指令。身份核验只能说明消息来自谁，仍需分别验证事实与行动权限。"
   },
   {
     "id": "C-114",
@@ -1145,9 +1145,9 @@
     "owner": "intro:23b-deployment-and-ecosystem",
     "slug": "23b-deployment-and-ecosystem",
     "difficulty": "标准",
-    "minutes": 5,
-    "question": "\\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？",
-    "solution": "\\textbf{第一步：}先按 K/V、层、头、维、位置、字节展开。\\par\\nobreak\\textbf{解题过程：}$2\\text{(K/V)}\\cdot2\\text{层}\\cdot2\\text{头}\\cdot8\\text{维}\\cdot10\\text{位置}\\cdot2\\text{字节}=\\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。\\par\\textbf{核对：}先数 K 和 V 两份，再把层数、KV 头数、头宽、位置数和每元素字节数相乘。若得到 $640$，只是元素数，尚未乘两字节；若把权重内存也加进来，已经超出本题的缓存数据本体。"
+    "minutes": 15,
+    "question": "\\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ 再按正文 $B=2,T=2048,d=1024$、BF16、$24$ 层估算每层一张隐藏表的合计空间。解释梯度检查点与分页 KV 缓存分别省在哪一项，是否可以把两者的节省直接相加。",
+    "solution": "\\textbf{第一步：}先按 K/V、层、头、维、位置、字节展开。\\par\\nobreak\\textbf{解题过程：}$2\\text{(K/V)}\\cdot2\\text{层}\\cdot2\\text{头}\\cdot8\\text{维}\\cdot10\\text{位置}\\cdot2\\text{字节}=\\answerresult{1280}$ 字节；KV Cache 随请求长度／并发变化，权重存储由固定模型的参数量与精度决定。\\par\\textbf{核对：}先数 K 和 V 两份，再把层数、KV 头数、头宽、位置数和每元素字节数相乘。若得到 $640$，只是元素数，尚未乘两字节；若把权重内存也加进来，已经超出本题的缓存数据本体。\\par 一张隐藏表是 $2\\times2048\\times1024\\times2=8$ MiB，$24$ 张合计 $192$ MiB；这只是按题设保留一张表的分项估算。梯度检查点减少训练反向所需的激活保存，用重算补回；分页 KV 缓存改善推理请求缓存的按需分配与碎片。两者作用于不同阶段和存储对象，应按同一实际运行的峰值预算核算，不能直接累加成一项模型节省比例。"
   },
   {
     "id": "C-116",
@@ -1207,7 +1207,7 @@
     "difficulty": "挑战",
     "minutes": 10,
     "question": "\\textbf{设计：}面对 RoPE、GQA、MoE 或其他新模块，如何设计公平对照，避免只看到缓存或参数量的局部指标就宣布技术更好？",
-    "solution": "\\textbf{第一步：}先固定质量、数据、硬件和负载条件。\\par\\nobreak\\textbf{解题过程：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。\\par\\textbf{评分要点：}(1)每次只改一个模块，其余配置相同；(2)质量与资源指标同时报告；(3)负载、长度、精度与硬件固定并写明；(4)多次运行给出波动或置信区间。\\par\\textbf{核对：}可分别记录相同质量阈值下的峰值显存与延迟，并对单项替换重复测量。缓存下降只支持缓存这一项改善；若质量、长度或硬件同时变化，就无法把总收益归因于所研究的模块。"
+    "solution": "\\textbf{第一步：}先固定质量、数据、硬件和负载条件。\\par\\nobreak\\textbf{解题过程：}固定数据、质量指标、硬件、精度、负载和输入／生成长度，联合比较准确性、显存、延迟、吞吐及成本。\\par\\textbf{评分要点：}(1)每次只改一个模块，其余配置相同；(2)质量与资源指标同时报告；(3)负载、长度、精度与硬件固定并写明；(4)多次运行给出波动或置信区间。\\par\\textbf{核对：}可分别记录相同质量阈值下的峰值显存与延迟，并对单项替换重复测量。缓存下降只支持缓存这一项改善；若质量、长度或硬件同时变化，就无法把总收益归因于所研究的模块。\\par\\textbf{按改动分两种比较：}若替换 GQA 或 MoE 需要重新训练，应固定数据、Token 数和训练计算预算，报告总参数、激活参数及质量差异；只改推理缓存实现时，则固定同一份权重。服务测试统一输入长度与输出上限，逐档增加并发，测首 Token 延迟、生成间隔的中位数和高分位数、吞吐与峰值显存。显存更省却尾延迟变差时，应按应用的质量和延迟门槛选取可用方案，再比较成本，而不是把单个指标当作总分。"
   },
   {
     "id": "C-122",
@@ -1237,7 +1237,7 @@
     "difficulty": "挑战",
     "minutes": 10,
     "question": "\\textbf{设计：}要判断一种架构是否值得迁移到生产系统，提出至少四项必须控制或并列报告的条件，并说明为什么不能只看榜单。",
-    "solution": "\\textbf{第一步：}先写出双方共用的测试条件表。\\par\\nobreak\\textbf{解题过程：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。\\par\\textbf{评分要点：}(1)至少四项可复现的控制条件；(2)同时报告质量与延迟、吞吐、显存、成本；(3)说明榜单可能受污染或与业务分布不同；(4)给出失败案例或统计波动。\\par\\textbf{核对：}可用同一批业务输入先比较质量、失败类型与服务延迟，再核算给定并发下的总成本。只列四个指标名称而不给双方共用的条件，仍不能复现实验；榜单任务与实际业务不一致时，还需业务验证集。"
+    "solution": "\\textbf{第一步：}先写出双方共用的测试条件表。\\par\\nobreak\\textbf{解题过程：}固定任务、精度、硬件、输入／输出长度及并发；共同报告质量、延迟、吞吐、显存与成本，分析失败案例与统计波动。\\par\\textbf{评分要点：}(1)至少四项可复现的控制条件；(2)同时报告质量与延迟、吞吐、显存、成本；(3)说明榜单可能受污染或与业务分布不同；(4)给出失败案例或统计波动。\\par\\textbf{核对：}可用同一批业务输入先比较质量、失败类型与服务延迟，再核算给定并发下的总成本。只列四个指标名称而不给双方共用的条件，仍不能复现实验；榜单任务与实际业务不一致时，还需业务验证集。\\par\\textbf{可执行的迁移决定：}先封存未参与调参的业务测试集，规定任务完成率和尾延迟门槛。候选与现用系统使用同一批请求、相同硬件与精度，分别报告低并发及拥挤时的结果，区分平均收益与失败集中在哪些用户或长度段。再把模型服务、工具调用与重试纳入每个成功任务的成本，记录新增运维要求；达不到质量或延迟门槛就继续定位问题，达到后再用小范围流量复测。这样才能把榜单上的模型能力连接到实际系统收益。"
   },
   {
     "id": "C-125",
@@ -1345,9 +1345,9 @@
     "owner": "intro:04-key-value-outer-product",
     "slug": "04-key-value-outer-product",
     "difficulty": "挑战",
-    "minutes": 10,
-    "question": "\\phantomsection\\label{exercise:delta-reverse}\n\\textbf{【手算／迁移】} 沿用第~\\ref*{intro:06-better-linear-memory}~章 Delta 规则：\n$\\vect{k}_A^\\top=(1,0),\\vect{v}_A^\\top=(1,0)$，$\\vect{k}_B^\\top=(0.6,0.8),\\vect{v}_B^\\top=(0,1)$，\n$\\mathcal{M}_0=0$、$\\eta=1$。交换写入顺序，先写 B 再写 A。\n求两次写入后的 $\\mathcal{M}_2$、$\\vect{k}_A^\\top\\mathcal{M}_2$、$\\vect{k}_B^\\top\\mathcal{M}_2$ 和 B 的误差范数；\n与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。",
-    "solution": "\\textbf{第一步：}依次写入 B、计算 A 的残差、再重读旧 B。\\par\\nobreak\n\\textbf{解答：} 先写 B 得\n$\\mathcal{M}_1=\\vect{k}_B \\vect{v}_B^\\top=\\begin{bmatrix}0&0.6\\\\0&0.8\\end{bmatrix}$；\n再写 A 时，$\\vect{k}_A^\\top\\mathcal{M}_1=(0,0.6)$，残差\n$\\vect{r}_A^\\top=(1,-0.6)$，因此\n$\\mathcal{M}_2=\\mathcal{M}_1+\\vect{k}_A \\vect{r}_A^\\top=\n\\boxed{\\begin{bmatrix}1&0\\\\0&0.8\\end{bmatrix}}$。\n最新的 A 读取为 $\\vect{k}_A^\\top\\mathcal{M}_2=\\answerresult{(1,0)}$；\n旧的 B 读取为 $\\vect{k}_B^\\top\\mathcal{M}_2=\\answerresult{(0.6,0.64)}$，\n误差 $\\sqrt{0.6^2+(-0.36)^2}\\approx\\answerresult{0.700}$。\n与正文先 A 后 B 对称：\\textbf{最后写入的 Key 当次精确，旧 Key 被扰动}，\n不能推断两条同时精确。"
+    "minutes": 30,
+    "question": "\\phantomsection\\label{exercise:delta-reverse}\n\\textbf{【NumPy 从零实现／迁移】} 沿用第~\\ref*{intro:06-better-linear-memory}~章 Delta 规则：\n$\\vect{k}_A^\\top=(1,0),\\vect{v}_A^\\top=(1,0)$，$\\vect{k}_B^\\top=(0.6,0.8),\\vect{v}_B^\\top=(0,1)$，\n$\\mathcal{M}_0=0$、$\\eta=1$。交换写入顺序，先写 B 再写 A。\n求两次写入后的 $\\mathcal{M}_2$、$\\vect{k}_A^\\top\\mathcal{M}_2$、$\\vect{k}_B^\\top\\mathcal{M}_2$ 和 B 的误差范数；\n与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。 用 NumPy 从零实现顺序 Delta 写入，交付两种写入次序的最终状态、两条重读值及误差范数；解释为什么交换次序后旧记录的误差不会自动消失。",
+    "solution": "\\textbf{第一步：}依次写入 B、计算 A 的残差、再重读旧 B。\\par\\nobreak\n\\textbf{解答：} 先写 B 得\n$\\mathcal{M}_1=\\vect{k}_B \\vect{v}_B^\\top=\\begin{bmatrix}0&0.6\\\\0&0.8\\end{bmatrix}$；\n再写 A 时，$\\vect{k}_A^\\top\\mathcal{M}_1=(0,0.6)$，残差\n$\\vect{r}_A^\\top=(1,-0.6)$，因此\n$\\mathcal{M}_2=\\mathcal{M}_1+\\vect{k}_A \\vect{r}_A^\\top=\n\\boxed{\\begin{bmatrix}1&0\\\\0&0.8\\end{bmatrix}}$。\n最新的 A 读取为 $\\vect{k}_A^\\top\\mathcal{M}_2=\\answerresult{(1,0)}$；\n旧的 B 读取为 $\\vect{k}_B^\\top\\mathcal{M}_2=\\answerresult{(0.6,0.64)}$，\n误差 $\\sqrt{0.6^2+(-0.36)^2}\\approx\\answerresult{0.700}$。\n与正文先 A 后 B 对称：\\textbf{最后写入的 Key 当次精确，旧 Key 被扰动}，\n不能推断两条同时精确。\n\\par\\textbf{实现与解释：}每次先用旧状态计算预测与残差，再作外积更新。这里 Key 均为单位向量，$\\eta=1$ 时，新 Key 的重读值为旧预测加整个残差，所以当次精确。另一条 Key 与它的点积为 $0.6$，也会收到更新的一部分，旧记录因此被扰动。下面的向量都用一维数组表示行；\\texttt{outer} 明确生成写入矩阵。\\par\\nobreak\n\\begin{verbatim}\nimport numpy as np\ndef write(keys, values):\n    memory = np.zeros((keys.shape[1], values.shape[1]))\n    for k, v in zip(keys, values):\n        residual = v - k @ memory\n        memory += np.outer(k, residual)\n    return memory\nkeys = np.array([[1., 0.], [.6, .8]])\nvalues = np.eye(2)\nab = write(keys, values)\nba = write(keys[::-1], values[::-1])\n\\end{verbatim}\nA 后 B 的状态为 $\\left[\\begin{smallmatrix}0.64&0.6\\\\-0.48&0.8\\end{smallmatrix}\\right]$；A 重读 $(0.64,0.6)$、B 重读 $(0,1)$。B 后 A 则是前述的对角状态。两种次序下旧记录误差范数都为 $\\sqrt{0.4896}\\approx0.700$，但误差落在不同记录。将两条 Key 换成正交基后，两种次序都应精确恢复两条 Value；这项对照能检查串扰来自非正交键。运行 \\path{scripts/numpy_exercise_demo.py} 可复算。\n"
   },
   {
     "id": "C-136",

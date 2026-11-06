@@ -45,9 +45,9 @@
     "url": "https://arxiv.org/abs/1706.03762",
     "status": 200,
     "final_url": "https://arxiv.org/abs/1706.03762",
-    "checked_utc": "2026-10-30",
-    "method": "HTTP GET and paper reading; verified Section 4 and Table 1 on recurrent versus self-attention information paths",
-    "result": "已核对递推与直接读取的信息路径比较；正文距离表为手设规则对照"
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/1706.03762v7",
+    "result": "已核对第 4 节及表 1 的信息路径比较，以及第 3.5 节的正弦位置编码"
   },
   {
     "url": "https://www.deeplearningbook.org/",
@@ -338,9 +338,9 @@
     "url": "https://modelcontextprotocol.io/specification/2026-07-28/changelog",
     "status": 200,
     "final_url": "https://modelcontextprotocol.io/specification/2026-07-28/changelog",
-    "checked_utc": "2026-10-25",
-    "method": "Primary source content review: mcp; see book/dated-claims.json for the reviewed scope",
-    "result": "已核对移除初始化与协议级会话的变更"
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://modelcontextprotocol.io/specification/2026-07-28/changelog",
+    "result": "已核对无状态改动与 Sampling、Roots、Logging、OAuth 动态客户端注册的弃用状态和迁移说明"
   },
   {
     "url": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
@@ -556,5 +556,77 @@
     "checked_utc": "2026-11-03",
     "method": "Primary paper PDF review (continuous-state update, capacity results, and Transformer-attention equivalence in equation 10)",
     "result": "已核对指数容量结论及与 Transformer Attention 的联系"
+  },
+  {
+    "url": "https://arxiv.org/abs/1211.5063",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1211.5063",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/1211.5063v2",
+    "result": "已核对第 2 节的跨时间导数连乘与梯度消失、爆炸分析"
+  },
+  {
+    "url": "https://arxiv.org/abs/2108.12409",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2108.12409",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/2108.12409v2",
+    "result": "已核对第 3 节按头设置距离线性负偏置的做法"
+  },
+  {
+    "url": "https://arxiv.org/abs/1707.06347",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1707.06347",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/pdf/1707.06347",
+    "result": "已核对裁剪代理目标、优势估计与算法 1 的采样和小批次更新循环"
+  },
+  {
+    "url": "https://arxiv.org/abs/2203.02155",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2203.02155",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/2203.02155v1",
+    "result": "已核对第 3.1 节的 SFT、奖励模型、PPO 三阶段及相对参考策略的 KL 代价"
+  },
+  {
+    "url": "https://arxiv.org/abs/1604.06174",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1604.06174",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/1604.06174v2",
+    "result": "已核对第 4 节及算法 1 的分段保存与反向重计算"
+  },
+  {
+    "url": "https://arxiv.org/abs/1711.05101",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1711.05101",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/1711.05101v3",
+    "result": "已核对第 2 节的自适应梯度更新与解耦权重衰减"
+  },
+  {
+    "url": "https://arxiv.org/abs/2309.06180",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2309.06180",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/2309.06180v1",
+    "result": "已核对第 2.3 节的逐轮批处理与第 4 节的分页 KV 缓存管理"
+  },
+  {
+    "url": "https://proceedings.mlr.press/v202/leviathan23a.html",
+    "status": 200,
+    "final_url": "https://proceedings.mlr.press/v202/leviathan23a.html",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/2211.17192v2",
+    "result": "已核对第 2 节的草稿、并行验证、拒绝后校正及保持采样分布的条件"
+  },
+  {
+    "url": "https://arxiv.org/abs/2403.02310",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/2403.02310",
+    "checked_utc": "2026-11-06",
+    "method": "Primary source content review: https://arxiv.org/html/2403.02310v3",
+    "result": "已核对分块 Prefill、与 Decode 混排以及逐轮 Token 预算的调度机制"
   }
 ]

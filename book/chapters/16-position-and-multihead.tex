@@ -75,6 +75,15 @@ O(X'_+)\approx\begin{bmatrix}
 交换前“花”在第二行，交换后“花”移到第一行；同一个 Token 的输出首坐标由 $0.2324$ 变为 $0.2812$，所以结果不只是把原输出换行。位置表提供了独立于内容的顺序信号。
 完整自回归 Block 还会接回因果掩码、Norm 与残差。
 
+\textbf{位置表示还有不同的注入方式。}
+\hyperref[source:attention-original]{原始 Transformer}用固定的正弦、余弦函数生成位置向量，
+再加到输入上；这与本例逐行学习位置表的方式不同。
+\phantomsection\label{concept:alibi}%
+\hyperref[source:alibi]{ALiBi}则在每个头的匹配分数上加入与距离成正比的负偏置：
+距查询越远，扣分越多，不另加输入位置向量。
+RoPE 对 Q/K 分量作位置相关旋转，见第~\ref*{intro:22d-modern-transformers}~章。
+这些办法分别改动输入、分数或 Q/K；长上下文效果需在相同长度和任务上比较。
+
 \subsection{\texorpdfstring{为什么点积要除以 $\sqrt{d_k}$？算一次波动尺度}{为什么点积要除以 Key 维度平方根？}}
 \label{concept:scaled-dot-product}
 
@@ -116,6 +125,8 @@ V^{(2)}=\begin{bmatrix}0&1\\1&0\end{bmatrix}.
 \vect o^{(2)\top}&\approx(0.330,0.670).
 \end{aligned}
 \]
+% Keep the output projection with its explanation and the chapter ending.
+\Needspace{17\baselineskip}
 头 1 把 $0.670$ 的权重放在位置 2，头 2 则把 $0.670$ 放在位置 1：
 \textbf{同一个位置的 Query 在两个子空间里重点读取了不同位置。}
 沿\textbf{特征列}拼接，得到

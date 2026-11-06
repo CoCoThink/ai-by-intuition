@@ -113,7 +113,13 @@ Delta 更新规则 | Delta rule
 选择性状态空间模型 | Mamba
 RoPE 长上下文扩展 | YaRN
 查询键归一化 | Query-Key Normalization (QK-Norm)
-互相关 | Cross-correlation""".strip().splitlines()
+互相关 | Cross-correlation
+近端策略优化 | Proximal Policy Optimization (PPO)
+注意力线性偏置 | Attention with Linear Biases (ALiBi)
+激活重计算 | Activation checkpointing
+连续批处理 | Continuous batching
+分页注意力 | PagedAttention
+投机解码 | Speculative decoding""".strip().splitlines()
 OVERRIDES = """Dropout=随机失活
 Mini-batch=小批次
 Epoch=训练轮次

@@ -87,6 +87,16 @@
 \item \textbf{互相关}：卷积核不翻转，直接与局部窗口逐项相乘再求和。 \termref{concept:cross-correlation}
 \end{itemize}
 
+\subsubsection*{策略优化与服务资源}
+\begin{itemize}
+\item \textbf{PPO}：从旧策略采样，用优势与裁剪概率比构造代理目标，再更新策略参数。 \termref{concept:ppo}
+\item \textbf{ALiBi}：在注意力分数上加入按距离线性增长的负偏置。 \termref{concept:alibi}
+\item \textbf{激活重计算}：保存选定边界，在反向时重算中间激活，用计算换存储。 \termref{concept:activation-checkpoint}
+\item \textbf{连续批处理}：按生成轮次移走已完成请求、加入新请求，减少整批等待。 \termref{concept:continuous-batching}
+\item \textbf{PagedAttention}：通过块表管理分页 KV 缓存，按需分配并减少碎片。 \termref{concept:paged-attention}
+\item \textbf{投机解码}：草稿提出多个 Token，目标模型并行验证并按规则接受或校正。 \termref{concept:speculative-decoding}
+\end{itemize}
+
 \par\smallskip
 遇到新缩写，先问它改变了\textbf{数据、模型层、训练信号、
 计算复杂度、缓存，还是系统权限}。

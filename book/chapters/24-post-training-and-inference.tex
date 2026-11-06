@@ -123,7 +123,34 @@ D_{\rm KL}(\pi_\theta\Vert\pi_{\rm ref})
 =0.7\ln\frac{0.7}{0.5}+0.3\ln\frac{0.3}{0.5}\approx0.0823.
 \]
 两份分布相同时此值为零；本例的 $0.0823$ 量出了这次概率调整的偏离程度。
-下文的直接偏好优化（DPO）把偏好损失直接写到模型概率上，跳过单独的奖励模型。
+
+\subsubsection*{PPO：奖励怎样变成语言模型的参数更新？}
+\phantomsection\label{concept:ppo}
+上述目标规定了想提高什么，还需要优化算法决定怎样更新。
+经典 RLHF 可以用\textbf{近端策略优化（PPO）}完成这一步：
+冻结一份采样用的旧策略 $\pi_{\rm old}$，采样回答；
+用奖励模型评分，并计入相对参考策略的 KL 代价；
+再借助价值模型估计的基线，得到每个生成步骤比预期好多少的\textbf{优势} $\mathcal A_t$。
+价值模型从当前前缀估计后续回报，提供这个比较的参照。
+正优势鼓励这次选择，负优势抑制它。
+旧策略记录本轮数据来自哪里，参考策略提供偏离代价，两者作用不同。
+
+以一个生成位置为例，在固定前缀 $s_t$ 下，已采样 Token 为 $a_t$，
+令当前与旧策略的概率比为 $\rho_t=\pi_\theta(a_t\mid s_t)/\pi_{\rm old}(a_t\mid s_t)$。
+PPO 最大化如下裁剪代理目标的样本平均：
+\[
+\min\!\left(\rho_t\mathcal A_t,
+\operatorname{clip}(\rho_t,1-\epsilon_{\rm PPO},1+\epsilon_{\rm PPO})\mathcal A_t\right).
+\]
+若旧概率为 $0.2$、新概率为 $0.3$、$\mathcal A_t=1$、$\epsilon_{\rm PPO}=0.2$，
+概率比为 $1.5$，两项分别为 $1.5$ 和 $1.2$，取较小的 $1.2$。
+这会截住继续提高该样本概率带来的代理收益，限制一次更新的激励；
+它没有把实际概率变化硬性锁在 $20\%$ 内。
+将代理目标的负数作为损失，梯度沿 Token 概率反传到权重，
+用小批次更新策略参数，同时用回报训练价值模型；
+若干轮后重新采样，继续循环。奖励模型在这个阶段固定。
+完整算法见\hyperref[source:ppo]{PPO 原论文}，语言模型中的三阶段应用见\hyperref[source:rlhf-ppo]{InstructGPT 论文}；
+下文的直接偏好优化（DPO）把偏好损失直接写到模型概率上，跳过单独的奖励模型与这套在线采样更新。
 
 \subsubsection*{\texorpdfstring{{\symboliconfont ★}}{★} 选读 DPO：让对数概率比充当隐式奖励}
 \phantomsection\label{concept:dpo}

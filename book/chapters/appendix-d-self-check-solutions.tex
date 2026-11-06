@@ -29,7 +29,7 @@
 \answerpiece{1}{预测}{先只计算 $w$ 增加的那一份输出。}变化量 $(3-2)\cdot3=3$；原输出 $7$，新输出 $\answerresult{10}$。
 \answerpiece{2}{找错}{先问参数有没有被更新。}推理是固定当前参数计算新输入；训练要用数据、损失和梯度更新参数，不能因更换推理输入便认为已再次训练。
 \answerpiece{3}{解释}{分别检查前两个样本是否猜对。}残差 $1$ 和 $-1$ 相抵，但对应两个错误预测；均方误差为 $(1^2+(-1)^2+0^2)/3=\answerresult{2/3}>0$。
-\answerpiece{4}{手算}{按样本顺序计算三项预测。}$w=2,b=1$ 的预测为 $\answerresult{(-1,1,3)}$，残差为 $(0,-1,1)$，均方误差 $\answerresult{2/3}$，与候选 B 相同。
+\answerpiece{4}{手算与辨析}{按样本顺序计算三项预测。}$w=2,b=1$ 的预测为 $\answerresult{(-1,1,3)}$，残差为 $(0,-1,1)$，均方误差 $\answerresult{2/3}$，与候选 B 相同。本题用相同损失比较不同预测：B 的预测是 $(0,1,2)$，误差分布与这条直线不同。两组参数在损失等高线上有相同高度，并未得到同一个函数；在新输入 $x=2$ 处，两者还分别预测 $3$ 与 $5$。
 \answerpiece{5}{找错}{区分候选集合与全部参数。}B 只是已经比较的三个候选中损失最小的一个。要说明全局最优，还需证明其他任意参数都无法得到更小的损失。
 \par\Needspace{8\baselineskip}
 \item[\textbf{第 2 章}] \phantomsection\label{answer:16-loss-gradient}\textbf{\hyperref[check:16-loss-gradient]{怎样让损失变小？梯度下降调参数}}\answercheckpage{16-loss-gradient}\par\nobreak

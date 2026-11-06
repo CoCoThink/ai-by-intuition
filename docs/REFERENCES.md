@@ -10,7 +10,7 @@
 | [zh.d2l.ai/](https://zh.d2l.ai/) | 2026-10-24 | 链接可访问 |
 | [distill.pub/2016/augmented-rnns/](https://distill.pub/2016/augmented-rnns/) | 2026-10-24 | 链接可访问 |
 | [alexwang.ai/posts/associative-memory](https://alexwang.ai/posts/associative-memory) | 2026-10-25 | 链接可访问 |
-| [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) | 2026-10-30 | 已核对递推与直接读取的信息路径比较；正文距离表为手设规则对照 |
+| [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) | 2026-11-06 | 已核对第 4 节及表 1 的信息路径比较，以及第 3.5 节的正弦位置编码 |
 | [www.deeplearningbook.org/](https://www.deeplearningbook.org/) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2005.14165](https://arxiv.org/abs/2005.14165) | 2026-10-24 | 链接可访问 |
 | [arxiv.org/abs/2001.08361](https://arxiv.org/abs/2001.08361) | 2026-11-03 | 已核对摘要中验证损失随参数量、数据集大小与计算量呈幂律变化的结论 |
@@ -49,7 +49,7 @@
 | [arxiv.org/abs/2103.00020](https://arxiv.org/abs/2103.00020) | 2026-10-25 | 链接可访问 |
 | [arxiv.org/abs/2304.08485](https://arxiv.org/abs/2304.08485) | 2026-10-25 | 链接可访问 |
 | [modelcontextprotocol.io/specification/2026-07-28/basic/index](https://modelcontextprotocol.io/specification/2026-07-28/basic/index) | 2026-10-25 | 已核对每次请求的版本与能力元数据 |
-| [modelcontextprotocol.io/specification/2026-07-28/changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog) | 2026-10-25 | 已核对移除初始化与协议级会话的变更 |
+| [modelcontextprotocol.io/specification/2026-07-28/changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog) | 2026-11-06 | 已核对无状态改动与 Sampling、Roots、Logging、OAuth 动态客户端注册的弃用状态和迁移说明 |
 | [modelcontextprotocol.io/specification/2026-07-28/server/tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools) | 2026-10-25 | 已核对 tools/call 字段 |
 | [platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools) | 2026-10-25 | 已核对名称、描述与输入模式的作用 |
 | [platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls](https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls) | 2026-10-25 | 已核对多轮调用与工具结果对应规则 |
@@ -77,3 +77,12 @@
 | [arxiv.org/abs/1712.05877](https://arxiv.org/abs/1712.05877) | 2026-11-03 | 已核对整数算术推理量化方案与精度恢复训练 |
 | [arxiv.org/abs/1606.01164](https://arxiv.org/abs/1606.01164) | 2026-11-03 | 已核对高阶激活与密集联想记忆的理论联系 |
 | [arxiv.org/abs/2008.02217](https://arxiv.org/abs/2008.02217) | 2026-11-03 | 已核对指数容量结论及与 Transformer Attention 的联系 |
+| [arxiv.org/abs/1211.5063](https://arxiv.org/abs/1211.5063) | 2026-11-06 | 已核对第 2 节的跨时间导数连乘与梯度消失、爆炸分析 |
+| [arxiv.org/abs/2108.12409](https://arxiv.org/abs/2108.12409) | 2026-11-06 | 已核对第 3 节按头设置距离线性负偏置的做法 |
+| [arxiv.org/abs/1707.06347](https://arxiv.org/abs/1707.06347) | 2026-11-06 | 已核对裁剪代理目标、优势估计与算法 1 的采样和小批次更新循环 |
+| [arxiv.org/abs/2203.02155](https://arxiv.org/abs/2203.02155) | 2026-11-06 | 已核对第 3.1 节的 SFT、奖励模型、PPO 三阶段及相对参考策略的 KL 代价 |
+| [arxiv.org/abs/1604.06174](https://arxiv.org/abs/1604.06174) | 2026-11-06 | 已核对第 4 节及算法 1 的分段保存与反向重计算 |
+| [arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101) | 2026-11-06 | 已核对第 2 节的自适应梯度更新与解耦权重衰减 |
+| [arxiv.org/abs/2309.06180](https://arxiv.org/abs/2309.06180) | 2026-11-06 | 已核对第 2.3 节的逐轮批处理与第 4 节的分页 KV 缓存管理 |
+| [proceedings.mlr.press/v202/leviathan23a.html](https://proceedings.mlr.press/v202/leviathan23a.html) | 2026-11-06 | 已核对第 2 节的草稿、并行验证、拒绝后校正及保持采样分布的条件 |
+| [arxiv.org/abs/2403.02310](https://arxiv.org/abs/2403.02310) | 2026-11-06 | 已核对分块 Prefill、与 Decode 混排以及逐轮 Token 预算的调度机制 |

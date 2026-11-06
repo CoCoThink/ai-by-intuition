@@ -28,6 +28,26 @@
     ]
   },
   {
+    "id": "mcp-deprecations",
+    "target": "concept:mcp",
+    "claim": "Sampling、Roots、Logging 与 OAuth 动态客户端注册已弃用，兼容窗口内仍可用",
+    "version": "2026-07-28",
+    "checked_utc": "2026-11-06",
+    "sources": [
+      {
+        "name": "官方变更记录的 Deprecated 清单",
+        "url": "https://modelcontextprotocol.io/specification/2026-07-28/changelog"
+      }
+    ],
+    "scope": "已阅读弃用清单与迁移说明；区分弃用窗口内可用的特性与已移除的初始化和协议级会话。",
+    "review_interval_days": 90,
+    "review_on_new_revision": true,
+    "evidence": [
+      "Sampling、Roots、Logging 与 OAuth 动态客户端注册列为弃用特性",
+      "弃用窗口内仍可用"
+    ]
+  },
+  {
     "id": "mcp-roles",
     "target": "concept:mcp",
     "claim": "MCP 宿主管理客户端；每个客户端与一个服务端通信",

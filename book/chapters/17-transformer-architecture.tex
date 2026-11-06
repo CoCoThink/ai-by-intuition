@@ -11,6 +11,10 @@ Attention 能让 Token 从上下文读取信息，
 再经过词表输出头，才得到可以逐位置预测 Token 的网络。
 \end{idea}
 
+数值主线为了逐项复算，省去线性层偏置，固定 LayerNorm 的缩放与平移，
+使用 ReLU 和独立输出头；这些选择会影响参数量与计算结果，
+与 GPT-2 的逐项对照见\sectionentry{sec:toy-real-model-comparison}。
+
 \subsection{先核对 Q/K/V 的形状}
 
 设当前层输入为 $X$，每个 Token 是一行：

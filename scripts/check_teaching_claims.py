@@ -474,7 +474,49 @@ def check_distance_reading():
     state=1.
     for _ in range(8):state=1.*state
     assert state==1. and np.isclose(coefficient**8,1/256)
+    # A non-decaying sum still loses order: the next question can distinguish
+    # histories that the printed scalar state has already merged.
+    histories=((1.,0.),(0.,1.))
+    states=[]
+    for history in histories:
+        state=0.
+        for value in history:state=value+state
+        states.append(state)
+    assert states[0]==states[1] and histories[0][0]!=histories[1][0]
     print('Distance reading QA: four recurrence/Softmax rows and coefficient-1 counterexample passed')
+
+
+def check_feedback_examples():
+    """Recompute the new statistical, loss-baseline, and activation examples."""
+    security=(ROOT/'book/chapters/27-protocols-and-multi-agent.tex').read_text()
+    n=int(re.search(r'假设用 \$(\d+)\$ 份夹带',security)[1])
+    exact=1-.05**(1/n)
+    assert np.isclose((1-exact)**n,.05)
+    assert f'{100*exact:.1f}'+r'\%' in security
+    assert f'{300/n:g}'+r'\%' in security
+    assert f'0.05^{{1/{n}}}' in security
+    training=(ROOT/'book/chapters/20-language-model-training.tex').read_text()
+    state=forward(parameters())
+    gradient=backward(parameters(),state)
+    updated=forward({k:v-LR*gradient[k] for k,v in parameters().items()})
+    assert state['loss'] > updated['loss'] > np.log(5)
+    assert f"{updated['loss']-np.log(5):.5f}" in training
+    deployment=(ROOT/'book/chapters/28-training-and-deployment.tex').read_text()
+    hidden=2*2048*1024*2
+    attention=2*16*2048**2*2
+    assert f'{hidden:,}' in deployment.replace('{,}',',')
+    assert f'{24*hidden//2**20}' in deployment
+    assert f'{(24//4)*hidden//2**20}' in deployment
+    assert f'{attention//2**20}' in deployment
+    assert 2*16*(2*2048)**2*2 == 4*attention
+    # PPO clipping caps this sample's positive-advantage surrogate incentive.
+    post=(ROOT/'book/chapters/24-post-training-and-inference.tex').read_text()
+    ratio=.3/.2
+    clipped=min(ratio,np.clip(ratio,.8,1.2))
+    assert np.isclose(clipped,1.2) and '$1.5$ 和 $1.2$' in post
+    from numpy_exercise_demo import run_checks
+    run_checks()
+    print('Feedback examples: zero-event probability bound, uniform baseline, activation bytes and PPO clipping passed')
 
 
 def check_scaling_budget():
@@ -694,6 +736,7 @@ def main():
     check_motivation_examples()
     check_attention_maxima()
     check_distance_reading()
+    check_feedback_examples()
     check_scaling_budget()
     check_review_followups()
     check_model_comparison()

@@ -103,7 +103,7 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-044.}] \leavevmode\phantomsection\label{exercise:C-044}\label{exercise:single-token-cross-entropy}\exercisemeta{基础}{3}{\hyperref[solution:C-044]{解答第~\pageref*{solution:C-044}~页}}\textbf{【手算】} 若某 Token 的真实下一词概率为 $0.25$，\conceptlink{cross-entropy}{交叉熵}单位置损失 $-\ln p$ 约为多少？
 \item[\textbf{C-045.}] \leavevmode\phantomsection\label{exercise:C-045}\label{exercise:probability-loss-ratio}\exercisemeta{基础}{4}{\hyperref[solution:C-045]{解答第~\pageref*{solution:C-045}~页}}\phantomsection\label{exercise:linked-20c-classification-loss}  \textbf{【比较】} 两个模型为同一位置的正确 Token 分别分配概率 $0.2$ 和 $0.8$。求两者的交叉熵 $L=-\ln p_{\rm true}$ 与损失差；这个差等于哪个概率比的对数？
 \item[\textbf{C-046.}] \leavevmode\phantomsection\label{exercise:C-046}\label{exercise:softmax-logit-gradient}\exercisemeta{标准}{5}{\hyperref[solution:C-046]{解答第~\pageref*{solution:C-046}~页}}\textbf{【手算】} 三类 logits 经 Softmax 得 $p=(0.2,0.5,0.3)$，真实类别是第 1 类（从 1 起编号）。写出 One-hot 目标 $y$、梯度 $\partial L/\partial z=p-y$，并判断一次梯度下降后三个 logit 分别升高还是降低。
-\item[\textbf{C-047.}] \leavevmode\phantomsection\label{exercise:C-047}\label{exercise:one-hot-gradient-target}\exercisemeta{标准}{8}{\hyperref[solution:C-047]{解答第~\pageref*{solution:C-047}~页}}\textbf{找错：}有人把 $p-y$ 中的标签 $y$ 写成词表 ID 整数 $2$，直接计算梯度。应使用什么形式的 $y$？
+\item[\textbf{C-047.}] \leavevmode\phantomsection\label{exercise:C-047}\label{exercise:one-hot-gradient-target}\exercisemeta{标准}{20}{\hyperref[solution:C-047]{解答第~\pageref*{solution:C-047}~页}}\textbf{【NumPy 从零实现】}不用自动微分或现成交叉熵函数，编写稳定的批次平均交叉熵及其 logit 梯度。两行 logits 为 $(0,\ln2,0)$、$(1000,1001,1000)$，目标 ID 为 $[2,1]$（从 $1$ 起）。交付损失、$2\times3$ 梯度，检查同一行统一加 $10{,}000$ 后结果不变，并用中心差分验算全部六项导数。解释整数 ID 怎样用于索引，为什么不能直接从每个概率减去 ID。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20-embeddings}~章 · Embedding：让 Token ID 变成可训练的向量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20-embeddings}~页）}}
@@ -151,13 +151,13 @@ W_{\rm out}=\begin{bmatrix}
 真实标签是第 2 类（从 1 开始计数），求交叉熵
 $L=-\ln p_2$。解释为什么\textbf{没有输出头矩阵}时，
 Attention 权重自身不足以唯一决定候选词概率。
-\item[\textbf{C-066.}] \leavevmode\phantomsection\label{exercise:C-066}\label{exercise:batch-softmax-recompute}\exercisemeta{挑战}{15}{\hyperref[solution:C-066]{解答第~\pageref*{solution:C-066}~页}}\phantomsection\label{exercise:batch-attention-new} \textbf{【手算】}
+\item[\textbf{C-066.}] \leavevmode\phantomsection\label{exercise:C-066}\label{exercise:batch-softmax-recompute}\exercisemeta{挑战}{30}{\hyperref[solution:C-066]{解答第~\pageref*{solution:C-066}~页}}\phantomsection\label{exercise:batch-attention-new} \textbf{【NumPy 从零实现／手算】}
 另取三个 Query 对三个 Key 的未缩放分数矩阵
 $S'=\begin{bmatrix}\ln2&0&0\\0&\ln3&0\\0&0&\ln4\end{bmatrix}$，
 Value 仍为
 $V=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}$。
 逐行求 $A'=\softmax_{\rm row}(S')$，再求完整的
-$Y'=A'V$；列出三行权重和三行输出，检查形状。
+$Y'=A'V$；列出三行权重和三行输出，检查形状。 再用 NumPy 编写逐行稳定 Softmax 与可选因果掩码，不调用现成 Attention。计算加掩码后的结果；扰动第三位置的 Value 和前两行的第三列分数，检查前两行输出不变。交付代码、两组矩阵和这项因果性验收。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:22a-position-multihead}~章 · 位置编码、缩放与多头注意力的手算\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:22a-position-multihead}~页）}}
@@ -196,7 +196,7 @@ $Y'=A'V$；列出三行权重和三行输出，检查形状。
 \item[\textbf{C-081.}] \leavevmode\phantomsection\label{exercise:C-081}\label{exercise:frozen-output-head-training}\exercisemeta{标准}{10}{\hyperref[solution:C-081]{解答第~\pageref*{solution:C-081}~页}}\textbf{【实验】}先预测：冻结输出头 $W_{\rm out}$、其余参数照常训练 20 步，平均损失还会下降吗？三个位置的贪心预测是否一定都对？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-freeze Wout} 核对。
 \item[\textbf{C-082.}] \leavevmode\phantomsection\label{exercise:C-082}\label{exercise:training-rate-transfer}\exercisemeta{标准}{10}{\hyperref[solution:C-082]{解答第~\pageref*{solution:C-082}~页}}\textbf{【实验】}先预测：把学习率从 $0.04$ 依次改成 $0.2$、$1.0$、$3.0$，各训练 20 步，最终平均损失和三个位置的贪心预测会怎样？哪一个会发散？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-lr 0.2}（及另两个值）核对，联系第~\ref*{intro:16a-gradient-descent}~章的振荡与发散现象解释：为什么步长过大可能失稳？这些实验能确定本网络的完整稳定区间吗？
 \item[\textbf{C-083.}] \leavevmode\phantomsection\label{exercise:C-083}\label{exercise:training-sentence-change}\exercisemeta{标准}{10}{\hyperref[solution:C-083]{解答第~\pageref*{solution:C-083}~页}}\textbf{【实验】}把训练句换成“春天 开了 花 。”：输入 ID $[2,5,4]$、目标 $[5,4,3]$，初始参数与学习率不变。先预测：初始平均损失比主例的 $1.798430$ 高还是低？训练 20 步后三个位置的贪心预测都会对吗？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-ids 2,5,4} 核对。
-\item[\textbf{C-084.}] \leavevmode\phantomsection\label{exercise:C-084}\label{exercise:joint-prefix-loss-floor}\exercisemeta{挑战}{40}{\hyperref[solution:C-084]{解答第~\pageref*{solution:C-084}~页}}\textbf{【开放实验：双句联合训练】}用同一组主例初值同时训练两条等权样本：输入／目标分别为 $[2,4,5]/[4,5,3]$ 与 $[2,5,4]/[5,4,3]$。每句的损失仍按三个位置平均，再对两句取平均；学习率 $0.04$，训练 $200$ 次同步更新。先推导一个正的损失下界，再实现两句梯度的平均，记录第 $0,20,200$ 步的损失与首位置概率。交付推导、曲线和至少一项梯度验算；解释为什么两句不能都在首位置贪心预测正确。
+\item[\textbf{C-084.}] \leavevmode\phantomsection\label{exercise:C-084}\label{exercise:joint-prefix-loss-floor}\exercisemeta{挑战}{40}{\hyperref[solution:C-084]{解答第~\pageref*{solution:C-084}~页}}\textbf{【开放实验：双句联合训练】}用同一组主例初值同时训练两条等权样本：输入／目标分别为 $[2,4,5]/[4,5,3]$ 与 $[2,5,4]/[5,4,3]$。每句的损失仍按三个位置平均，再对两句取平均；学习率 $0.04$，训练 $200$ 次同步更新。先推导一个正的损失下界，再用 NumPy 实现两句梯度的平均（可调用主例前向与反向函数），记录第 $0,20,200$ 步的损失与首位置概率。交付推导、曲线和至少一项梯度验算；解释为什么两句不能都在首位置贪心预测正确。
 \item[\textbf{C-085.}] \leavevmode\phantomsection\label{exercise:C-085}\label{exercise:attention-causal-intervention}\exercisemeta{挑战}{40}{\hyperref[solution:C-085]{解答第~\pageref*{solution:C-085}~页}}\textbf{【开放实验：权重大就有帮助吗？】}用主例初值与学习率训练 $20$ 步后冻结全部参数。只干预第三位置的读取权重：方案 A 将 $A_{3,2}$ 置零并把该行其余权重重新归一化；方案 B 将第三行改成 $(1/3,1/3,1/3)$。保留原有 Value、残差输入和其他位置，从读取结果开始重算后续 FFN 与输出头。交付三组第三位置正确类概率、单位置损失，以及你对“读花的权重大，所以它降低了本次损失”的判断；再提出一个需要额外样本才能检验的结论。
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -270,7 +270,7 @@ Top-2 文档次序与缺失的季度证据。
 \subsubsection*{第~\ref*{intro:23b-deployment-and-ecosystem}~章 · 数据、训练系统与部署：资源怎样分配？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:23b-deployment-and-ecosystem}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-114.}] \leavevmode\phantomsection\label{exercise:C-114}\label{exercise:weight-memory-budget}\exercisemeta{基础}{4}{\hyperref[solution:C-114]{解答第~\pageref*{solution:C-114}~页}}\textbf{【估算】} 一个 $7\times10^9$ 参数的模型用 fp16（每个参数 2 字节）保存权重，约需多少 GB（按 $10^9$ 字节计）？量化为 4 bit 后呢？为什么这仍不等于部署所需的全部显存？
-\item[\textbf{C-115.}] \leavevmode\phantomsection\label{exercise:C-115}\label{exercise:kv-cache-bytes}\exercisemeta{标准}{5}{\hyperref[solution:C-115]{解答第~\pageref*{solution:C-115}~页}}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？
+\item[\textbf{C-115.}] \leavevmode\phantomsection\label{exercise:C-115}\label{exercise:kv-cache-bytes}\exercisemeta{标准}{15}{\hyperref[solution:C-115]{解答第~\pageref*{solution:C-115}~页}}\textbf{权衡：}假设 KV Cache 为 $2$ 层、每层 $2$ 个 KV 头、头维 $8$、序列长 $10$，K 和 V 各用 2 字节存数。缓存数据本体共多少字节？这与权重常驻内存有何不同？ 再按正文 $B=2,T=2048,d=1024$、BF16、$24$ 层估算每层一张隐藏表的合计空间。解释梯度检查点与分页 KV 缓存分别省在哪一项，是否可以把两者的节省直接相加。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:22d-modern-transformers}~章 · 现代 Transformer 为什么看起来越来越不像原版？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:22d-modern-transformers}~页）}}
@@ -324,12 +324,12 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 \item[\textbf{C-132.}] \leavevmode\phantomsection\label{exercise:C-132}\label{exercise:memory-cross-talk}\exercisemeta{标准}{6}{\hyperref[solution:C-132]{解答第~\pageref*{solution:C-132}~页}}\textbf{【找出串扰】} 取 $\vect k_A^\top=(1,0)$、$\vect k_B^\top=(0.6,0.8)$、$\vect v_A^\top=(1,0)$、$\vect v_B^\top=(0,1)$。将两条外积相加写入 $\mathcal{M}$，求 $\vect k_A^\top\mathcal{M}$。哪一项来自 B？再写出一般的交叉项，解释 Key 不正交时为什么会串扰。
 \item[\textbf{C-133.}] \leavevmode\phantomsection\label{exercise:C-133}\label{exercise:memory-outer-shape}\exercisemeta{标准}{5}{\hyperref[solution:C-133]{解答第~\pageref*{solution:C-133}~页}}\textbf{找错：}设 Key $\vect{k}^\top:1\times2$、Value $\vect{v}^\top:1\times3$。同学把 $\mathcal{M}$ 写成 $\vect{v}^\top\vect{k}$，仍称它是按行向量约定可供 $\vect{q}^\top\mathcal{M}$ 查询的状态。说明为何形状或方向不匹配；若 $d_k=d_v$，$\vect{v}^\top\vect{k}$ 又是什么？
 \item[\textbf{C-134.}] \leavevmode\phantomsection\label{exercise:C-134}\label{exercise:memory-write-strategies}\exercisemeta{标准}{8}{\hyperref[solution:C-134]{解答第~\pageref*{solution:C-134}~页}}\textbf{【写入策略】} 比较“让 Key 更接近正交”与“每次按当前读出误差做 Delta 修正”：它们分别怎样减小串扰？若两条 Key 不正交，把每条记忆各修正一次，能否保证两条都同时读准？还可以怎样继续求解？
-\item[\textbf{C-135.}] \leavevmode\phantomsection\label{exercise:C-135}\label{exercise:delta-write-order}\exercisemeta{挑战}{10}{\hyperref[solution:C-135]{解答第~\pageref*{solution:C-135}~页}}\phantomsection\label{exercise:delta-reverse}
-\textbf{【手算／迁移】} 沿用第~\ref*{intro:06-better-linear-memory}~章 Delta 规则：
+\item[\textbf{C-135.}] \leavevmode\phantomsection\label{exercise:C-135}\label{exercise:delta-write-order}\exercisemeta{挑战}{30}{\hyperref[solution:C-135]{解答第~\pageref*{solution:C-135}~页}}\phantomsection\label{exercise:delta-reverse}
+\textbf{【NumPy 从零实现／迁移】} 沿用第~\ref*{intro:06-better-linear-memory}~章 Delta 规则：
 $\vect{k}_A^\top=(1,0),\vect{v}_A^\top=(1,0)$，$\vect{k}_B^\top=(0.6,0.8),\vect{v}_B^\top=(0,1)$，
 $\mathcal{M}_0=0$、$\eta=1$。交换写入顺序，先写 B 再写 A。
 求两次写入后的 $\mathcal{M}_2$、$\vect{k}_A^\top\mathcal{M}_2$、$\vect{k}_B^\top\mathcal{M}_2$ 和 B 的误差范数；
-与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。
+与正文的 A 后 B 结果比较，判断哪条最新记忆被精确修正。 用 NumPy 从零实现顺序 Delta 写入，交付两种写入次序的最终状态、两条重读值及误差范数；解释为什么交换次序后旧记录的误差不会自动消失。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:09-nonlinearity-and-memory}~章 · 非线性检索：从 MLP 视角到记忆容量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:09-nonlinearity-and-memory}~页）}}
