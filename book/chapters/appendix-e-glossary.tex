@@ -29,7 +29,7 @@ Softmax 归一化 & Softmax & 将分数转成非负且总和为一的一组权�
 SwiGLU 门控 & SwiGLU & 使用两个投影分支与逐元素门控的 FFN 变体。 & \hyperref[concept:swiglu]{\ref*{concept:swiglu}/\pageref*{concept:swiglu}}\\
 Top-k 采样 & Top-k sampling & 只在概率最高的若干候选中继续采样。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\
 Top-p 采样 & Top-p sampling & 保留累积概率达到阈值的一组高概率候选。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\
-Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归一化等组合的架构。 & \hyperref[intro:22-transformer-architecture]{\ref*{intro:22-transformer-architecture}/\pageref*{intro:22-transformer-architecture}}\\
+Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归一化等组合的架构。 & \hyperref[intro:transformer-architecture]{\ref*{intro:transformer-architecture}/\pageref*{intro:transformer-architecture}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 B}\\*
 编码器 & Encoder & 用于将输入转成上下文化表示的网络部分。 & \hyperref[elective:original-paper]{\ref*{elective:original-paper}/\pageref*{elective:original-paper}}\\
@@ -49,7 +49,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 词元 & Token & 模型分词器定义的文本处理单元，不一定是一个完整词。 & \hyperref[concept:token]{\ref*{concept:token}/\pageref*{concept:token}}\newline \hyperref[experiment:real-chinese-tokenizer]{\ref*{experiment:real-chinese-tokenizer}/\pageref*{experiment:real-chinese-tokenizer}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 D}\\*
-导数 & Derivative & 衡量函数在某一点的局部变化率。 & \hyperref[intro:16a-gradient-descent]{\ref*{intro:16a-gradient-descent}/\pageref*{intro:16a-gradient-descent}}\\
+导数 & Derivative & 衡量函数在某一点的局部变化率。 & \hyperref[intro:gradient-descent]{\ref*{intro:gradient-descent}/\pageref*{intro:gradient-descent}}\\
 低秩适配 & Low-rank adaptation & 冻结多数基础权重并训练低秩参数的微调方法。 & \hyperref[concept:lora]{\ref*{concept:lora}/\pageref*{concept:lora}}\\
 点积 & Dot product & 对应分量相乘后求和；两条单位向量的点积等于夹角余弦。 & \hyperref[concept:dot-product]{\ref*{concept:dot-product}/\pageref*{concept:dot-product}}\\
 独热编码 & One-hot encoding & 只有对应类别位置为一，其余为零的编码。 & \hyperref[concept:cross-entropy]{\ref*{concept:cross-entropy}/\pageref*{concept:cross-entropy}}\\
@@ -62,8 +62,8 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 反向传播 & Backpropagation & 利用链式法则高效计算计算图中全部参数的梯度。 & \hyperref[concept:backprop]{\ref*{concept:backprop}/\pageref*{concept:backprop}}\\
 泛化 & Generalization & 从已见样本学到能应用于新样本的规律。 & \hyperref[concept:generalization]{\ref*{concept:generalization}/\pageref*{concept:generalization}}\\
 范数 & Norm & 衡量向量长度或大小的一类函数。 & \hyperref[concept:vector-length]{\ref*{concept:vector-length}/\pageref*{concept:vector-length}}\\
-非线性 & Nonlinearity & 不满足简单线性叠加的变化，例如 ReLU。 & \hyperref[intro:07-functions-relu]{\ref*{intro:07-functions-relu}/\pageref*{intro:07-functions-relu}}\\
-分词器 & Tokenizer & 将文本切成 Token 并映射到整数 ID 的方法。 & \hyperref[intro:20a-tokenizer]{\ref*{intro:20a-tokenizer}/\pageref*{intro:20a-tokenizer}}\newline \hyperref[experiment:real-chinese-tokenizer]{\ref*{experiment:real-chinese-tokenizer}/\pageref*{experiment:real-chinese-tokenizer}}\\
+非线性 & Nonlinearity & 不满足简单线性叠加的变化，例如 ReLU。 & \hyperref[intro:nonlinearity]{\ref*{intro:nonlinearity}/\pageref*{intro:nonlinearity}}\\
+分词器 & Tokenizer & 将文本切成 Token 并映射到整数 ID 的方法。 & \hyperref[intro:tokenization]{\ref*{intro:tokenization}/\pageref*{intro:tokenization}}\newline \hyperref[experiment:real-chinese-tokenizer]{\ref*{experiment:real-chinese-tokenizer}/\pageref*{experiment:real-chinese-tokenizer}}\\
 分页注意力 & PagedAttention & 通过块表管理分页 KV 缓存，按需分配并减少碎片。 & \hyperref[concept:paged-attention]{\ref*{concept:paged-attention}/\pageref*{concept:paged-attention}}\\
 分组查询注意力 & Grouped-query attention (GQA) & 让一组 Query 头共享 K/V 头，降低缓存规模。 & \hyperref[concept:gqa]{\ref*{concept:gqa}/\pageref*{concept:gqa}}\\
 \addlinespace[4pt]
@@ -83,7 +83,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 混合专家 & Mixture of experts (MoE) & 让不同 Token 按路由选择少数专家网络进行计算。 & \hyperref[concept:moe]{\ref*{concept:moe}/\pageref*{concept:moe}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 J}\\*
-激活函数 & Activation function & 应用在线性层输出上的函数，扩展模型表达能力。 & \hyperref[intro:07-functions-relu]{\ref*{intro:07-functions-relu}/\pageref*{intro:07-functions-relu}}\\
+激活函数 & Activation function & 应用在线性层输出上的函数，扩展模型表达能力。 & \hyperref[intro:nonlinearity]{\ref*{intro:nonlinearity}/\pageref*{intro:nonlinearity}}\\
 激活重计算 & Activation checkpointing & 保存选定边界，在反向时重算中间激活，用计算换存储。 & \hyperref[concept:activation-checkpoint]{\ref*{concept:activation-checkpoint}/\pageref*{concept:activation-checkpoint}}\\
 监督微调 & Supervised fine-tuning & 利用示范输入输出对继续调整模型。 & \hyperref[concept:sft]{\ref*{concept:sft}/\pageref*{concept:sft}}\\
 剪枝 & Pruning & 移除或稀疏化部分权重、连接或结构，再评测质量与成本。 & \hyperref[concept:pruning]{\ref*{concept:pruning}/\pageref*{concept:pruning}}\\
@@ -98,12 +98,12 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 近端策略优化 & Proximal Policy Optimization (PPO) & 从旧策略采样，用优势与裁剪概率比构造代理目标，再更新策略参数。 & \hyperref[concept:ppo]{\ref*{concept:ppo}/\pageref*{concept:ppo}}\\
 矩阵 & Matrix & 按行和列排列的数字表；可同时执行多个点积。 & \hyperref[concept:matrix]{\ref*{concept:matrix}/\pageref*{concept:matrix}}\\
 卷积核 & Convolution kernel & 在图片局部区域滑动的可训练权重小矩阵。 & \hyperref[concept:kernel]{\ref*{concept:kernel}/\pageref*{concept:kernel}}\\
-卷积神经网络 & Convolutional neural network & 利用局部窗口运算和共享权重处理图像等空间模式的网络。 & \hyperref[intro:19-cnn]{\ref*{intro:19-cnn}/\pageref*{intro:19-cnn}}\\
+卷积神经网络 & Convolutional neural network & 利用局部窗口运算和共享权重处理图像等空间模式的网络。 & \hyperref[intro:cnn]{\ref*{intro:cnn}/\pageref*{intro:cnn}}\\
 均方根归一化 & Root Mean Square Normalization (RMSNorm) & 按特征的均方根控制数值尺度。 & \hyperref[concept:rmsnorm]{\ref*{concept:rmsnorm}/\pageref*{concept:rmsnorm}}\\
 均方误差 & Mean squared error & 误差平方再取平均，常用于回归。 & \hyperref[concept:loss]{\ref*{concept:loss}/\pageref*{concept:loss}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 K}\\*
-开放权重 & Open weights & 允许获取模型权重；不必然意味着训练代码和数据完全开放。 & \hyperref[intro:23b-deployment-and-ecosystem]{\ref*{intro:23b-deployment-and-ecosystem}/\pageref*{intro:23b-deployment-and-ecosystem}}\\
+开放权重 & Open weights & 允许获取模型权重；不必然意味着训练代码和数据完全开放。 & \hyperref[intro:training-and-deployment]{\ref*{intro:training-and-deployment}/\pageref*{intro:training-and-deployment}}\\
 开始与结束标记 & BOS/EOS & 词表中的开始或结束标记，使用方式和结束 ID 由模型配置规定。 & \hyperref[concept:bos-eos]{\ref*{concept:bos-eos}/\pageref*{concept:bos-eos}}\\
 可复用技能 & Reusable skill & 把一类任务的说明、约束和脚本包装为可复用能力。 & \hyperref[concept:skill]{\ref*{concept:skill}/\pageref*{concept:skill}}\\
 可验证奖励强化学习 & Reinforcement learning with verifiable rewards (RLVR) & 利用可程序化核验的任务奖励进行学习。 & \hyperref[concept:rlvr]{\ref*{concept:rlvr}/\pageref*{concept:rlvr}}\\
@@ -124,11 +124,11 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 P}\\*
 批量大小 & Batch size & 一个批次包含多少训练样本。 & \hyperref[concept:batch-size]{\ref*{concept:batch-size}/\pageref*{concept:batch-size}}\\
 偏导数 & Partial derivative & 多变量函数对某个变量求变化率，其他变量暂时固定。 & \hyperref[concept:gradient]{\ref*{concept:gradient}/\pageref*{concept:gradient}}\\
-偏置 & Bias & 线性变换后添加的常数或向量，使模型不必经过原点。 & \hyperref[intro:10-mlp]{\ref*{intro:10-mlp}/\pageref*{intro:10-mlp}}\\
+偏置 & Bias & 线性变换后添加的常数或向量，使模型不必经过原点。 & \hyperref[intro:mlp]{\ref*{intro:mlp}/\pageref*{intro:mlp}}\\
 评测污染 & Evaluation contamination & 测试题、答案或近重复版本进入训练数据，导致评测高估泛化。 & \hyperref[concept:evaluation-contamination]{\ref*{concept:evaluation-contamination}/\pageref*{concept:evaluation-contamination}}\newline \hyperref[concept:evaluation-contamination-benchmark]{\ref*{concept:evaluation-contamination-benchmark}/\pageref*{concept:evaluation-contamination-benchmark}}\\
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 Q}\\*
-前向传播 & Forward propagation & 从输入沿计算图得到输出与损失。 & \hyperref[intro:17-backpropagation]{\ref*{intro:17-backpropagation}/\pageref*{intro:17-backpropagation}}\\
+前向传播 & Forward propagation & 从输入沿计算图得到输出与损失。 & \hyperref[intro:backpropagation]{\ref*{intro:backpropagation}/\pageref*{intro:backpropagation}}\\
 前置归一化 & Pre-Norm & 在某个计算子层之前进行归一化。 & \hyperref[concept:pre-norm]{\ref*{concept:pre-norm}/\pageref*{concept:pre-norm}}\\
 嵌入 & Embedding & 把离散 Token ID 映射到可学习的稠密向量。 & \hyperref[concept:embedding]{\ref*{concept:embedding}/\pageref*{concept:embedding}}\\
 嵌入矩阵 & Embedding matrix & 存放词表各 Token 向量的一张权重表。 & \hyperref[concept:embedding]{\ref*{concept:embedding}/\pageref*{concept:embedding}}\\
@@ -142,7 +142,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 S}\\*
 上下文 & Context & 一次推理中模型能读取的全部 Token：对话历史、检索片段、工具结果与当前请求。 & \hyperref[concept:context]{\ref*{concept:context}/\pageref*{concept:context}}\\
-上下文窗口 & Context window & 单次处理所允许使用的 Token 长度范围。 & \hyperref[intro:23-llm-systems]{\ref*{intro:23-llm-systems}/\pageref*{intro:23-llm-systems}}\\
+上下文窗口 & Context window & 单次处理所允许使用的 Token 长度范围。 & \hyperref[intro:autoregressive-generation]{\ref*{intro:autoregressive-generation}/\pageref*{intro:autoregressive-generation}}\\
 上下文学习 & In-context learning (ICL) & 利用当前请求中的任务说明和示例适配输出，不直接更新模型权重。 & \hyperref[concept:in-context-learning]{\ref*{concept:in-context-learning}/\pageref*{concept:in-context-learning}}\\
 少样本提示 & Few-shot prompting & 在 Prompt 中放入少量示例以引导任务格式，是上下文学习的常见形式。 & \hyperref[concept:few-shot]{\ref*{concept:few-shot}/\pageref*{concept:few-shot}}\\
 时间步 & Time step & RNN 递推中当前处理到的序列位置。 & \hyperref[concept:time-step]{\ref*{concept:time-step}/\pageref*{concept:time-step}}\\
@@ -174,7 +174,7 @@ Transformer 架构 & Transformer & 把注意力、逐位置 MLP、残差和归�
 \addlinespace[4pt]
 \multicolumn{4}{@{}l}{\sffamily\bfseries\color{blue} 拼音 W}\\*
 外积 & Outer product & 将列形式 Key 与行形式 Value 相乘，写成关联矩阵。 & \hyperref[concept:outer-product]{\ref*{concept:outer-product}/\pageref*{concept:outer-product}}\\
-微调 & Fine-tuning & 在已有模型权重上针对任务或行为继续训练。 & \hyperref[intro:23c-post-training]{\ref*{intro:23c-post-training}/\pageref*{intro:23c-post-training}}\\
+微调 & Fine-tuning & 在已有模型权重上针对任务或行为继续训练。 & \hyperref[intro:post-training]{\ref*{intro:post-training}/\pageref*{intro:post-training}}\\
 维度 & Dimension & 向量有几个数，或矩阵有几行几列。 & \hyperref[concept:vector]{\ref*{concept:vector}/\pageref*{concept:vector}}\\
 未归一化分数 & Logits & 进入 Softmax 前、还没归一化的分数。 & \hyperref[concept:logits]{\ref*{concept:logits}/\pageref*{concept:logits}}\\
 温度 & Temperature & 通过缩放 logits 控制输出分布尖锐程度的参数。 & \hyperref[concept:sampling]{\ref*{concept:sampling}/\pageref*{concept:sampling}}\\

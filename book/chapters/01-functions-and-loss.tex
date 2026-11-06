@@ -1,7 +1,6 @@
 \chapterrule
 \section{从可调函数到损失：怎样比较预测？}
-\label{intro:00-functions}
-\label{intro:16-loss-gradient}
+\label{intro:functions-and-loss}
 
 序章里，“下雨”“出门”“一把”让“伞”成为一个合理的后续候选。
 换一种表达或上下文，合适的后续内容也可能变化。
@@ -173,8 +172,8 @@ L(w,b)=\frac{(-w+b+1)^2+(b-2)^2+(w+b-2)^2}{3}.
 三个平方项按顺序对应 $x=-1,0,1$ 的样本。
 给定一组参数，我们已经能计算它的分数；接下来要让当前误差帮助我们决定怎样调整参数。
 
-\chapterchecktasks{00-functions}{理解、手算与判断}{
-\label{check:16-loss-analytic}
+\chapterchecktasks{functions-and-loss}{理解、手算与判断}{
+\label{check:loss-analytic}
 \item\textbf{预测：}取 $y=wx+b$，固定 $x=3$、$b=1$，把 $w$ 从 $2$ 增到 $3$，输出怎样变化？先写变化量，再算新输出。\chapterinlinehint{固定输入，先算权重增量乘以输入。}
 \item\textbf{找错：}同学说“推理时输入变了，训练好的 $w,b$ 也会自动再训练一遍”。请分别指出训练与推理究竟改变什么。\chapterinlinehint{分别列出训练阶段和推理阶段的可变量。}
 \item\textbf{解释：}候选 B 的残差为 $(1,-1,0)$，相加为零。为什么均方误差仍大于零？\chapterinlinehint{先分别判断前两个样本是否预测正确，再平方取平均。}

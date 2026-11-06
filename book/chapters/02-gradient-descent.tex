@@ -1,7 +1,7 @@
 
 \chapterrule
 \section{怎样让损失变小？梯度下降调参数}
-\label{intro:16a-gradient-descent}
+\label{intro:gradient-descent}
 
 上一章比较了几组参数，却还没有找到最佳直线。
 这个三点直线拟合问题可以直接求出最优参数；如果只要这两个数，直接解更简便。
@@ -289,7 +289,7 @@ L(w,b)&=\frac{2w^2-6w+3b^2-6b+9}{3}\\
 \end{example}
 
 \subsection{样本多时，为什么每次只用一部分数据？}
-\label{intro:18c-training-engineering}
+\label{intro:mini-batch-training}
 
 前面每一步都用全部三个样本求梯度，叫作\textbf{全批次梯度下降}。
 样本很多时，每走一步都遍历全部数据，计算量可能很大。
@@ -376,7 +376,7 @@ L(w,b)&=\frac{2w^2-6w+3b^2-6b+9}{3}\\
 动量、Adam、梯度裁剪与训练不稳定的诊断要用到梯度向量和多步历史，
 放在\hyperref[app:optimizer-details]{附录~\ref*{app:optimizer-details}（第~\pageref*{app:optimizer-details}~页）}逐步手算，学完向量后再读。\par\medskip
 
-\chapterchecktasks{16-loss-gradient}{理解与复算}{
+\chapterchecktasks{gradient-descent}{理解与复算}{
 \item \textbf{预测：}沿用三点损失 $L(w,b)=\frac23(w-\frac32)^2+(b-1)^2+\frac12$，从 $(1,0)$ 出发。若学习率由 $0.3$ 改为 $0$，参数与损失会怎样变化？这为什么不等于“模型已收敛”？\chapterinlinehint{把零学习率代入更新式，再检查梯度。}
 \item \textbf{手算：}写出 $(w,b)=(1,0)$ 的两个偏导数；以 $\eta=0.3$ 同步更新 $w,b$，再代回损失函数。\chapterinlinehint{先在旧参数处求梯度，再同步更新并复算损失。}
 \item \textbf{找错：}先更新 $w$，再用新 $w$ 与旧 $b$ 求另一个梯度，为什么不算同一次同步更新？\chapterinlinehint{给本次迭代的所有参数标上同一个步数。}

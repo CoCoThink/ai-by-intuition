@@ -1,7 +1,7 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{训练得很好，为什么新题反而做错？}
-\label{intro:18-generalization}
+\label{intro:generalization}
 
 \subsection{欠拟合、合适的拟合、过拟合}
 \phantomsection\label{concept:underfitting}
@@ -25,7 +25,7 @@
 它们也带有观测噪声，且都位于训练输入的区间 $[-1,1]$ 内。
 比较两个模型：
 \begin{itemize}
-\item \textbf{直线}：按\hyperref[intro:16a-gradient-descent]{第~\ref*{intro:16a-gradient-descent}~章}的方法最小化均方误差，
+\item \textbf{直线}：按\hyperref[intro:gradient-descent]{第~\ref*{intro:gradient-descent}~章}的方法最小化均方误差，
 三点输入仍围绕零对称，令两个偏导数为零可得：$b$ 是三个 $y$ 的平均 $1$，
 $w=(2.5-(-1.5))/2=2$，恰好还是 $\widehat{y}=2x+1$；
 \item \textbf{二次曲线}：令 $\widehat{y}=a_2x^2+a_1x+a_0$ 精确穿过三点，
@@ -166,7 +166,7 @@ $\lambda\ge0$ 控制惩罚力度，称为\textbf{正则化系数}，也是需要
 机制与实现来源见附录中的\hyperref[source:dropout]{原论文}与\hyperref[source:pytorch-dropout]{官方说明}。}\par
 
 
-\chapterchecktasks{18-generalization}{理解与复算}{
+\chapterchecktasks{generalization}{理解与复算}{
 \item \textbf{预测：}训练损失持续下降，验证损失却开始上升，模型更可能在欠拟合、过拟合、还是健康泛化？先提出一种排查办法。\chapterinlinehint{先比较训练曲线与验证曲线的方向。}
 \item \textbf{手算：}三轮验证损失为 $(0.6,0.4,0.5)$。按最低验证损失早停，选哪一轮？最低是多少？\chapterinlinehint{在验证记录中找最小值及其所在轮次。}
 \item \textbf{找错：}同学说“Dropout 训练时随机删除一些权重参数，再由测试集挑最佳 Dropout 率”。指出两处错误。\chapterinlinehint{分别核对 Dropout 的作用对象与调参数据集。}

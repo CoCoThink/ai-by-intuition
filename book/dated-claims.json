@@ -121,7 +121,7 @@
   },
   {
     "id": "gpt2-config",
-    "target": "intro:23a-from-toy-to-gpt",
+    "target": "intro:real-models",
     "claim": "GPT-2 small：12 层、12 头、隐藏宽度 768，约 1.244 亿参数；GELU、可学习 LayerNorm 与共享输出头",
     "version": "607a30d",
     "checked_utc": "2026-10-29",

@@ -1,6 +1,6 @@
 \chapterrule
 \section{现代 Transformer 为什么看起来越来越不像原版？}
-\label{intro:22d-modern-transformers}
+\label{intro:modern-transformers}
 \chaptercompass{现代架构替换了哪些 Transformer 部件？}{用明确的头数、缓存和计算形状比较 MHA、GQA、FFN 等设计。}{$Q:T\times H_Q\times d_k,\quad KV:T\times H_{KV}\times d_k$}{Q/K/V 投影、Norm 与 FFN 参数由具体配置确定}
 本章的真实模型配置与架构案例按所引版本比较；内容核验日期与范围见\hyperref[app:dated-claims]{附录 G 的带日期断言清单}。
 
@@ -10,7 +10,7 @@
 \item \hyperref[sec:modern-rmsnorm]{RMSNorm}：算 $(3,4)$ 的归一化，理解怎样控制数值尺度。
 \item \hyperref[sec:modern-gqa]{GQA}：看共享示意图，算缓存如何从 $12{,}800$ 减到 $3{,}200$ 个数，再学习从配置字段取数。
 \end{enumerate}
-再读\hyperref[sec:modern-core-comparison]{三项改动的对照与适用条件}，完成紧随其后的\hyperref[check:22d-modern-transformers]{基础自测}，即可进入\hyperref[intro:23e-tech-judgement]{下一章}。
+再读\hyperref[sec:modern-core-comparison]{三项改动的对照与适用条件}，完成紧随其后的\hyperref[check:modern-transformers]{基础自测}，即可进入\hyperref[intro:evaluating-models]{下一章}。
 标星推导、三维 Norm 复算与后面的专题均可按需回来读。
 \end{boundarybox}
 
@@ -92,7 +92,7 @@ RMSNorm 的两项则仍为正。RMSNorm 省去中心化、简化计算；
 
 “归一化怎么算”与“放在子层前还是后”是两项选择。
 LayerNorm/RMSNorm 回答前一个问题；Pre-Norm/Post-Norm 回答后一个问题，
-位置与残差路径见\hyperref[intro:22-transformer-architecture]{Block 章}。
+位置与残差路径见\hyperref[intro:transformer-architecture]{Block 章}。
 
 \begin{example}[breakable]
 \noindent\emph{\texorpdfstring{{\symboliconfont ★}}{★} 选读复算：只替换一次 Norm，核对三维数字}\par
@@ -236,7 +236,7 @@ K/V 共享（GQA） & K/V 头有多少？ & 缓存、质量、吞吐\\
 计数节省先解释瓶颈，实际收益由实现与负载决定。
 \end{boundarybox}
 
-\chapterchecktasks{22d-modern-transformers}{基础理解与复算}{
+\chapterchecktasks{modern-transformers}{基础理解与复算}{
 \item \textbf{比较：}RoPE 与 RMSNorm 分别主要改动位置表示还是归一化？RMSNorm 是否和 LayerNorm 一样先减去均值？\chapterinlinehint{分别对照位置旋转与归一化公式。}
 \item \textbf{手算：}保持层数与头维不变，MHA 有 $12$ 个 K/V 头，GQA 只有 $3$ 个，单 Token 的 K/V 缓存元素比是多少？如果长度翻倍，相对原 MHA、原长度的缓存规模是多少？\chapterinlinehint{只保留缓存公式中的头数与长度变化项。}
 \item \textbf{找错：}团队说“KV 元素数减少四分之三，所以端到端生成必定快四倍”。至少列出两个尚未控制的影响因素。\chapterinlinehint{列出缓存之外的运算、带宽与调度成本。}
@@ -244,7 +244,7 @@ K/V 共享（GQA） & K/V 头有多少？ & 缓存、质量、吞吐\\
 
 \par\smallskip
 到这里，已经可以说明位置表示、数值尺度与 K/V 共享分别改变了什么。
-首次阅读可直接进入\hyperref[intro:23e-tech-judgement]{下一章：怎样判断新技术}；
+首次阅读可直接进入\hyperref[intro:evaluating-models]{下一章：怎样判断新技术}；
 需要比较多份模型配置或解决具体瓶颈时，再按下面的入口选读。
 
 \subsection*{按问题选择专题}
@@ -520,7 +520,7 @@ $\vect k_2^\top=(0,1)$、$\vect v_2^\top=(0,3)$。
 \]
 此后只需 $\vect q^\top\mathcal{M}_2=(2,3)$，结果相同。
 “Key 列乘 Value 行”的外积逐项写法，在
-\hyperref[intro:04-key-value-outer-product]{联想记忆部分}继续展开。
+\hyperref[intro:key-value-outer-product]{联想记忆部分}继续展开。
 \end{example}
 
 为什么能合并？把 Key、Value 按行排成 $K,V$，结合律给出
@@ -605,7 +605,7 @@ Dense 全量 Attention & 局部/稀疏 Attention、Gated DeltaNet、Mamba 或混
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★} 选读案例：因果编码器—解码器重新分工}
 \phantomsection\label{elective:causal-encoder-decoder}
 
-第~\ref*{intro:22-transformer-architecture}~章区分了原始 Encoder--Decoder 与 Decoder-only。
+第~\ref*{intro:transformer-architecture}~章区分了原始 Encoder--Decoder 与 Decoder-only。
 新架构也会重新组合编码与解码：截至 2026-10-25（UTC），
 \href{https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash}{DeepSeek-V4.1-Flash 官方模型卡}
 介绍的\textbf{因果编码器—解码器（Causal Encoder--Decoder, CED）}

@@ -247,15 +247,15 @@ def validate_existing_regressions(main, sources):
 
     # Self-checks follow the complete chapter, including its optional sections.
     for name, check_id in (
-        ("01-functions-and-loss", "00-functions"),
-        ("02-gradient-descent", "16-loss-gradient"),
-        ("04-backpropagation", "17-backpropagation"),
-        ("06-vectors-and-dot-products", "01-vectors"),
-        ("13-context-and-rnn", "21-rnn"),
-        ("14-attention-qkv", "21c-naive-attention"),
-        ("24-post-training-and-inference", "23c-post-training"),
-        ("33-linear-associative-memory", "04-key-value-outer-product"),
-        ("34-nonlinear-memory", "09-nonlinearity-and-memory"),
+        ("01-functions-and-loss", "functions-and-loss"),
+        ("02-gradient-descent", "gradient-descent"),
+        ("04-backpropagation", "backpropagation"),
+        ("06-vectors-and-dot-products", "vectors"),
+        ("13-context-and-rnn", "context-and-rnn"),
+        ("14-attention-qkv", "attention-qkv"),
+        ("24-post-training-and-inference", "post-training"),
+        ("33-linear-associative-memory", "key-value-outer-product"),
+        ("34-nonlinear-memory", "nonlinear-memory"),
     ):
         marker = r"\chapterchecktasks{" + check_id + "}"
         body = sources[name]

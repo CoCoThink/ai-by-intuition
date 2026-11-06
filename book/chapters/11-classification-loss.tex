@@ -1,7 +1,7 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{分类损失：预测错了哪一类，怎样调整分数？}
-\label{intro:20c-classification-loss}
+\label{intro:classification-loss}
 
 预测下一 Token 是一个\textbf{多类别预测}问题：
 上一章已经列好每道题的正确答案，现在要评价模型的预测。
@@ -114,7 +114,7 @@ p_\theta(y_1,\ldots,y_T)=\prod_{t=1}^T p_\theta(y_t\mid y_{<t}).
 \]
 对数把乘积化为和，便于分位置计分和反传，也避免直接连乘许多小数。
 本章先用平均负对数损失衡量预测。
-第~\ref*{intro:23e-tech-judgement}~章再介绍由它得到的困惑度，以及评测时需要统一的口径。
+第~\ref*{intro:evaluating-models}~章再介绍由它得到的困惑度，以及评测时需要统一的口径。
 
 \begin{example}
 \noindent\emph{{\symboliconfont ★} 选读：计算机怎样避免指数溢出？}\par
@@ -190,7 +190,7 @@ $\ln u$ 对 $u$ 的导数是 $1/u$（$u>0$）。
 每个输入位置输出一行五个 logits，逐行 Softmax 后排成概率矩阵 $\Pi$，
 第 $i$ 行第 $j$ 列记作 $\Pi_{i,j}$。
 读到“春天”时，下一 Token 应是“花”，即第一行的目标 ID 为 $4$
-（三个位置的完整对齐见\hyperref[intro:20b-task-contract]{预测任务章}）。
+（三个位置的完整对齐见\hyperref[intro:language-model-task]{预测任务章}）。
 交叉熵只读取目标列：
 \[
 L_1=-\ln\Pi_{1,4}.
@@ -210,7 +210,7 @@ L_1=-\ln\Pi_{1,4}.
 不是所有任务都必须改写成分类；连续数值预测等任务可以使用其他输出与损失。
 \end{warningbox}
 
-\chapterchecktasks{20c-classification-loss}{理解与复算}{
+\chapterchecktasks{classification-loss}{理解与复算}{
 \item \textbf{辨析：}三类 logits 为 $(2,-1,0)$。若只选最高分，是否要先变成概率？本章训练时又为什么使用概率？\chapterinlinehint{区分选出一个候选，与衡量正确答案获得多少支持。}
 \item \textbf{判断：}$(0.2,0.5,0.3)$、$(0.2,0.5,0.4)$ 和 $(1.1,-0.1,0)$，哪些能作为三个互斥类别的概率？\chapterinlinehint{逐项检查是否非负，再检查总和是否为 $1$。}
 \item \textbf{手算：}三分类概率 $(1/4,1/2,1/4)$，正确类为第二类。求交叉熵以及正确类 logit 的梯度。\chapterinlinehint{使用负对数损失与正确类的 $p-y$。}

@@ -1,6 +1,6 @@
 \chapterrule
 \section{预训练已经学会续写，为什么还能临时学会新任务？}
-\label{intro:23aa-pretraining-icl}
+\label{intro:pretraining-icl}
 
 \phantomsection\label{concept:pretraining}
 \phantomsection\label{concept:in-context-learning}
@@ -113,7 +113,7 @@ $K$ 的两行表示前驱 $A,C$，$V$ 的两行表示同一记录中的后继 $B
 后面还要除以 $\sqrt2$，所以先把末尾 $A$ 的前两项乘上固定的 $\sqrt2\ln9$，形成查询
 $\vect{q}_A^\top=(\sqrt2\ln9,0)$。
 现在用这个查询匹配前驱，再读出对应的后继：
-沿用第~\ref*{intro:22a-position-multihead}~章的缩放点积 Attention 计算：
+沿用第~\ref*{intro:position-multihead}~章的缩放点积 Attention 计算：
 \[
 s=\frac{\vect{q}_A^\top K^\top}{\sqrt2}=(\ln9,0),\qquad
 \alpha=\softmax(s)=(0.9,0.1),\qquad c=\alpha V=(0.9,0.1).
@@ -150,7 +150,7 @@ Few-shot 能让某些任务在不更新参数的情况下改善表现，
 \href{https://arxiv.org/abs/2005.14165}{Language Models are Few-Shot Learners}；
 其中的实验结论有其模型、数据和评测范围。
 
-\chapterchecktasks{23aa-pretraining-icl}{理解与复算}{
+\chapterchecktasks{pretraining-icl}{理解与复算}{
 \item \textbf{比较：}预训练与 Few-shot ICL 中哪个需要修改参数？“有训练目标”与“在提示里临时提供例子”的差别在哪里？\chapterinlinehint{分别检查是否有反传、更新与仅改变输入。}
 \item \textbf{手算：}Prompt 中放两条示例及一条待回答输入，模型本次能看到几条任务记录？若另开一个没有带入示例的新会话，原来的两条例子是否仍在上下文？\chapterinlinehint{先数本次任务记录，再列出新会话实际携带的消息。}
 \item \textbf{找错：}某人把新的 Q3 数字复制进 Few-shot 示例后宣称“模型权重已经永久更新”。指出错误，并说出如何得到可信 Q3 资料。\chapterinlinehint{比较提示输入与优化器更新，并追踪资料来源。}

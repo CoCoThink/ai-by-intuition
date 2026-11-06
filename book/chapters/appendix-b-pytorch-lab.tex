@@ -137,26 +137,26 @@ $0$ 到 $20$ 步的平均交叉熵与每个位置的贪心预测：
 \toprule 章节 & 脚本 & 依赖 & 核对什么 & 预期输出\\\midrule
 \endhead
 \bottomrule\endfoot
-\ref*{intro:16-loss-gradient}--\ref*{intro:07-functions-relu} & \path{beginner_training_demo.py} & 标准库 & 双参数迭代、步长、ReLU 拟合 & 直线下界 2/9\\
-\ref*{intro:20b-task-contract}、\ref*{intro:22b-token-to-output}--\ref*{intro:22c-language-training} & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
-\ref*{intro:22c-language-training}、\ref*{intro:23-llm-systems} & \path{teaching_trace.py} & NumPy & 0--20 步；\texttt{-{}-attention} 看权重，\texttt{-{}-freeze}/\texttt{-{}-only} 冻结参数，\texttt{-{}-lr}、\texttt{-{}-ids} 换学习率或句子，\texttt{-{}-generate} 贪心生成 & 末步 0.483173\\
-\ref*{intro:22c-language-training}、\ref*{intro:23c-post-training} & \path{advanced_exercise_demo.py} & NumPy & 双句联合梯度、读取干预、核验预算与奖励漏洞 & 联合损失 0.261142\\
-\ref*{intro:22c-language-training}、\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
-\ref*{intro:20a-tokenizer} & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
-\ref*{intro:20a-tokenizer} & \path{chinese_tokenizer_demo.py} \texttt{-{}-real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\
-\ref*{intro:21a-context-gap}、\ref*{intro:22c-language-training} & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 ln 2\\
-\ref*{intro:22c-language-training} & \path{attention_selection_demo.py} & NumPy & Q/K 选择与均匀退化 & 损失 0.000502\\
-\ref*{intro:23aa-pretraining-icl}--\ref*{intro:23c-post-training} & \path{icl_policy_demo.py} & NumPy & 前缀读取、优势梯度 & 0.982014／0.367456\\
-\ref*{intro:23cc-test-time-compute} & \path{test_time_compute_demo.py} & 标准库 & 多采样与错误验证器 & 成功率断言通过\\
-\ref*{intro:23d-agent-systems} & \path{rag_demo.py} & 标准库 & 点积排序与环比 & Q3、Q1；10\%\\
-\ref*{intro:23d-agent-tools} & \path{claude_function_call_demo.py} & 标准库 & 离线多轮、并行调用与停止原因 & 10\% 与预算检查\\
-\ref*{intro:23d-agent-tools}--\ref*{intro:23d-agent-protocols} & \path{agent_loop.py} & 标准库 & 工具循环与失败处理 & 受控任务轨迹\\
-\ref*{intro:23b-deployment-and-ecosystem} & \path{pretraining_data_demo.py} & 标准库 & 规范化、哈希、近重复 & 去重断言通过\\
-\ref*{intro:22d-modern-transformers} & \path{config_table.py} & 标准库 & 固定公开配置 & 24 层、2 KV 头\\
-\ref*{intro:22d-modern-transformers} & \path{architecture_demo.py} & 标准库 & 位置与头分组 & 架构断言通过\\
-\ref*{intro:22d-modern-transformers} & \path{cache_budget_demo.py} & 标准库 & 真实 KV 预算与练习 & 12,288 字节/Token\\
-\ref*{intro:22d-modern-transformers}、\ref*{intro:19b-vit} & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
-\ref*{intro:04-key-value-outer-product}--\ref*{intro:13-capacity} & \path{memory_demo.py} & 标准库 & 外积与 Delta 残差 & 记忆断言通过\\
+\ref*{intro:functions-and-loss}--\ref*{intro:nonlinearity} & \path{beginner_training_demo.py} & 标准库 & 双参数迭代、步长、ReLU 拟合 & 直线下界 2/9\\
+\ref*{intro:language-model-task}、\ref*{intro:transformer-forward-pass}--\ref*{intro:language-model-training} & \path{teaching_reference.py} & NumPy & 前向、反传、一次更新 & 损失 1.611377\\
+\ref*{intro:language-model-training}、\ref*{intro:autoregressive-generation} & \path{teaching_trace.py} & NumPy & 0--20 步；\texttt{-{}-attention} 看权重，\texttt{-{}-freeze}/\texttt{-{}-only} 冻结参数，\texttt{-{}-lr}、\texttt{-{}-ids} 换学习率或句子，\texttt{-{}-generate} 贪心生成 & 末步 0.483173\\
+\ref*{intro:language-model-training}、\ref*{intro:post-training} & \path{advanced_exercise_demo.py} & NumPy & 双句联合梯度、读取干预、核验预算与奖励漏洞 & 联合损失 0.261142\\
+\ref*{intro:language-model-training}、\hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & \path{pytorch_starter.py} & NumPy、PyTorch & 自动求导对照手写梯度 & 梯度一致\\
+\ref*{intro:tokenization} & \path{bpe_demo.py} & 标准库 & 两轮相邻对合并 & a+b 共 3 次\\
+\ref*{intro:tokenization} & \path{chinese_tokenizer_demo.py} \texttt{-{}-real} & tokenizers & 固定 Qwen 中文切分 & 105303 等四项\\
+\ref*{intro:context-gap}、\ref*{intro:language-model-training} & \path{context_contrast_demo.py} & NumPy & 有无前文通路 & 下界 ln 2\\
+\ref*{intro:language-model-training} & \path{attention_selection_demo.py} & NumPy & Q/K 选择与均匀退化 & 损失 0.000502\\
+\ref*{intro:pretraining-icl}--\ref*{intro:post-training} & \path{icl_policy_demo.py} & NumPy & 前缀读取、优势梯度 & 0.982014／0.367456\\
+\ref*{intro:test-time-compute} & \path{test_time_compute_demo.py} & 标准库 & 多采样与错误验证器 & 成功率断言通过\\
+\ref*{intro:rag} & \path{rag_demo.py} & 标准库 & 点积排序与环比 & Q3、Q1；10\%\\
+\ref*{intro:tool-use-and-agents} & \path{claude_function_call_demo.py} & 标准库 & 离线多轮、并行调用与停止原因 & 10\% 与预算检查\\
+\ref*{intro:tool-use-and-agents}--\ref*{intro:protocols-and-multi-agent} & \path{agent_loop.py} & 标准库 & 工具循环与失败处理 & 受控任务轨迹\\
+\ref*{intro:training-and-deployment} & \path{pretraining_data_demo.py} & 标准库 & 规范化、哈希、近重复 & 去重断言通过\\
+\ref*{intro:modern-transformers} & \path{config_table.py} & 标准库 & 固定公开配置 & 24 层、2 KV 头\\
+\ref*{intro:modern-transformers} & \path{architecture_demo.py} & 标准库 & 位置与头分组 & 架构断言通过\\
+\ref*{intro:modern-transformers} & \path{cache_budget_demo.py} & 标准库 & 真实 KV 预算与练习 & 12,288 字节/Token\\
+\ref*{intro:modern-transformers}、\ref*{intro:vit} & \path{vision_bridge_demo.py} & 标准库 & 视觉前缀投影 & 投影形状一致\\
+\ref*{intro:key-value-outer-product}--\ref*{intro:memory-capacity} & \path{memory_demo.py} & 标准库 & 外积与 Delta 残差 & 记忆断言通过\\
 \hyperref[app:transformer-intermediates]{附录~\ref*{app:transformer-intermediates}} & \path{mini_transformer_demo.py} & NumPy & 分数参数前向与反传 & 24 个导数一致\\
 附录 C & \path{review_exercises_demo.py} & 标准库 & 综合练习中间数值 & 习题断言通过\\
 \end{longtable}\endgroup

@@ -1,7 +1,7 @@
 \chapterrule
 \section{怎样改进回答：训练反馈与推理时计算}
-\label{intro:23c-post-training}
-\label{intro:23cc-test-time-compute}
+\label{intro:post-training}
+\label{intro:test-time-compute}
 
 \begin{idea}
 \noindent\emph{任务目标改变，训练信号也需要改变}\par
@@ -238,7 +238,7 @@ GRPO 指更新算法，奖励既可以来自程序验证器，也可以来自奖
 \frac{\partial\ell_i}{\partial Z_j}
 =\mathcal A_i\bigl(p_j-\mathbf1_{j=y_i}\bigr).
 \]
-它就是第~\ref*{intro:20c-classification-loss}~章的 $p-\mathrm{onehot}$ 乘上优势：
+它就是第~\ref*{intro:classification-loss}~章的 $p-\mathrm{onehot}$ 乘上优势：
 正优势提高所选答案的分数，负优势压低它。
 仅就单样本形式而言，$\mathcal A_i=+1$ 时得到 SFT 的交叉熵梯度；
 SFT 的示范来自数据集，策略学习的动作来自采样、反馈来自奖励。
@@ -352,11 +352,11 @@ CoT 提示只改变输入，训练才修改参数，推理时搜索则额外花�
 \paragraph{回到季度报告任务}
 Few-shot 给格式示例，SFT 用核对过的示范训练格式与缺证据时的回应，偏好反馈比较来源与单位是否清楚，
 可验证奖励检查数值、公式与出处。读取报告的权限与原表证据仍由应用提供；
-\hyperref[intro:23d-agent-systems]{检索与任务系统}一章将接着说明证据怎样进入上下文。
+\hyperref[intro:rag]{检索与任务系统}一章将接着说明证据怎样进入上下文。
 
 
-\chapterchecktasks{23c-post-training}{理解、手算与判断}{
-\label{check:23cc-test-time-compute}
+\chapterchecktasks{post-training}{理解、手算与判断}{
+\label{check:test-time-compute}
 \item\textbf{比较：}预训练、SFT 与 Few-shot ICL 中哪些更新参数？再比较 SFT、成对偏好学习与可验证奖励各收到什么反馈。\chapterinlinehint{先检查是否反传更新，再列示范、比较与核验结果。}
 \item\textbf{手算：}SFT 目标 Token 的概率为 $0.25$，求单位置交叉熵；若四个组内奖励是 $(1,0,1,0)$，按总体标准差标准化得到哪些相对优势？\chapterinlinehint{先算负对数，再用奖励减均值并除标准差。}
 \item\textbf{{\symboliconfont ★} 找错：}同学把这四个相对优势直接当成完整 GRPO 更新，遗漏了什么策略目标与数值边界？\chapterinlinehint{在相对优势之后继续写策略目标，并检查零方差。}

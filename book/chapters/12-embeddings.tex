@@ -1,7 +1,7 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{Embedding：让 Token ID 变成可训练的向量}
-\label{intro:20-embeddings}
+\label{intro:embeddings}
 \phantomsection\label{concept:embedding}
 
 前面已把文字转成整数 ID，并学过分类损失，但编号本身没有语义大小：
@@ -104,7 +104,7 @@ X=\begin{bmatrix}
 随机数大小也要与层宽和激活函数匹配，避免层层运算后数值过大或过小。
 \textbf{选读名词：}Xavier、He 等初始化按层的维度控制随机权重的方差，具体选择取决于网络设计。
 查出的向量所在特征空间也叫\textbf{嵌入空间或潜在表示空间}；
-后续网络怎样扩宽、缩回特征，在\hyperref[intro:10b-ffn-output-head]{FFN 与输出头一章}结合矩阵形状说明。
+后续网络怎样扩宽、缩回特征，在\hyperref[intro:ffn-output-head]{FFN 与输出头一章}结合矩阵形状说明。
 
 接下来先看这些向量怎样读取前文、完成预测。
 等完整网络建立后，\hyperref[sec:embedding-training-snapshot]{联合训练章中的向量变化实验}
@@ -120,7 +120,7 @@ X=\begin{bmatrix}
 
 词向量类比是特定语料和表示空间中的经验现象，也会反映语料偏差。
 
-\chapterchecktasks{20-embeddings}{理解与复算}{
+\chapterchecktasks{embeddings}{理解与复算}{
 \item \textbf{形状：}词表有 $5$ 个 ID，Embedding 宽为 $3$，三个 Token 输入 ID 为 $[2,4,5]$。查表后形状是多少？解释每一行对应什么。\chapterinlinehint{每个输入 ID 选一行，向量宽度保持不变。}
 \item \textbf{比较：}为什么直接拿 ID 数值相乘不能代替 Embedding 查表？one-hot 乘 Embedding 矩阵又为何可以得到同一向量？\chapterinlinehint{把 one-hot 与矩阵相乘展开为各行加权和。}
 \item \textbf{预测：}一句话中同一 ID 出现在位置 $1$ 和 $3$，原始查表向量是否相同？训练更新了这个 ID 对应的表行后，下次在这两个位置查表会得到什么？\chapterinlinehint{两个位置都用同一个 ID 读取同一张表。}

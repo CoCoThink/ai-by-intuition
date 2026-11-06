@@ -1,7 +1,7 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{检索与证据：RAG 怎样回答有来源的问题？}
-\label{intro:23d-agent-systems}
+\label{intro:rag}
 
 \subsection{先确定证据覆盖，再做计算}
 任务是从三份季度报表提取收入、单位与原表出处，再计算 Q2、Q3 环比。
@@ -95,7 +95,7 @@ Agent 是组织模型决策与工具动作的系统方式。
 \subsection{［复算］三个二维文档块怎样决定检索结果？}
 \phantomsection\label{concept:vector-retrieval}
 
-先用第~\ref*{intro:02-dot-product}~章的点积代替真实系统中复杂的向量检索：查询
+先用第~\ref*{intro:dot-product}~章的点积代替真实系统中复杂的向量检索：查询
 $q=(1,0.5)$；三个文档块（分别来自 Q1、Q2、Q3 报表）的教学向量排成三行：
 \[
 D=\begin{bmatrix}1&0\\0&1\\0.8&0.8\end{bmatrix}
@@ -121,7 +121,7 @@ qD^\top
 补齐三季度证据后再计算环比。
 文档向量可由
 \textbf{文本 Embedding 编码器}生成：分块文本先 Token 化，再通过训练过的网络得到整块表示。
-它沿用第~\ref*{intro:20-embeddings}~章“离散文本进入向量”的思路，但检索编码器通常还针对查询与文档匹配训练。
+它沿用第~\ref*{intro:embeddings}~章“离散文本进入向量”的思路，但检索编码器通常还针对查询与文档匹配训练。
 
 更隐蔽的失败是\textbf{资料找到了，口径却不一致}：若 Q2 原表为 $120$ 百万元，
 Q3 附注将 Q2 追溯重述为 $125$ 百万元，那么可比口径的 Q3 环比是
@@ -165,7 +165,7 @@ $(132-120)/120=\boxed{10\%}$。
 分类校准的基础定义见\href{https://proceedings.mlr.press/v70/guo17a.html}{Guo 等（2017）}；
 应用到生成任务时，先定义主张与判定标准，再估计其正确频率。
 
-\chapterchecktasks{23d-agent-rag}{理解与复算}{
+\chapterchecktasks{rag}{理解与复算}{
 \item \textbf{证据：}要比较 Q1--Q3，Top-2 只返回 Q3 和 Q1。先不计算增长率，指出缺哪份证据，以及系统下一步该怎样办。\chapterinlinehint{把任务所需季度与已返回季度做集合对照。}
 \item \textbf{手算：}任务需要 Q1--Q4 四份报表，Top-3 返回 Q4、Q2、去年 Q4（不在任务范围内）。求必需证据的 recall@3；若改取 Top-5 后又命中 Q1、Q3，recall@5 是多少？\chapterinlinehint{先写出必需集合，再数前 $k$ 个结果中命中的必需文档。}
 \item \textbf{找错：}相似度第一名的文档声称“收入 $150$”，是否可以直接替代带来源的 Q3 原表？\chapterinlinehint{分别检查相关性排名、出处、单位与原表口径。}

@@ -697,7 +697,7 @@ def validate_pdf(path: Path) -> None:
         page=reader.get_destination_page_number(destination)
         owner=chapter_at_position(chapter_anchors,page,float(destination.top))
         starts_by_chapter.setdefault(owner,[]).append(page)
-    for slug in ('10-mlp','20b-task-contract'):
+    for slug in ('mlp','language-model-task'):
         number=chapter_checks[slug]
         starts=starts_by_chapter.get(number,[])
         ends={page for page,top in answer_link_positions

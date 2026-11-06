@@ -87,11 +87,11 @@
 \item 给一组样本和一条直线，算出“错了多少”，再判断参数该往哪个方向改、改多大一步。
 \item 让两层网络从输出的误差倒推每个参数该怎么改；再用没参与训练的样本检查，它是学会了规律，还是只背下了答案。
 }{%
-\mapchapter{00-functions}{函数与损失} & 参数怎样改变预测，损失怎样比较整体表现？\\
-\mapchapter{16a-gradient-descent}{梯度下降} & 沿哪个方向、走多大一步才能降低损失？\\
-\mapchapter{07-functions-relu}{非线性} & 为什么两层直线仍不够，ReLU 改变了什么？\\
-\mapchapter{17-backpropagation}{反向传播} & 怎样把输出误差逐层传回每个参数？\\
-\mapchapter{18-generalization}{泛化} & 为什么训练成绩好，还要看验证集？\\
+\mapchapter{functions-and-loss}{函数与损失} & 参数怎样改变预测，损失怎样比较整体表现？\\
+\mapchapter{gradient-descent}{梯度下降} & 沿哪个方向、走多大一步才能降低损失？\\
+\mapchapter{nonlinearity}{非线性} & 为什么两层直线仍不够，ReLU 改变了什么？\\
+\mapchapter{backpropagation}{反向传播} & 怎样把输出误差逐层传回每个参数？\\
+\mapchapter{generalization}{泛化} & 为什么训练成绩好，还要看验证集？\\
 }}
 \newcommand{\partexitlearning}{\partexit{learning}{\partthinklearning}{%
 前两个样本仍然猜错。正负残差会相抵；把残差平方后取平均，得到均方误差 $2/3$，才把两项偏差都计入了分数。
@@ -107,9 +107,9 @@
 \item 不算具体数值，先判断两个矩阵能否相乘、结果是几行几列。
 \item 把一批样本写成矩阵，手算一次两层网络，并说明各行共用同一组权重，为什么仍得到不同的输出。
 }{%
-\mapchapter{01-vectors}{向量与点积} & 怎样按需求给文章打分？为什么放大数字会改变排名，归一化又改变了什么？\\
-\mapchapter{03-matrix-multiplication}{矩阵乘法} & 一行乘一列，怎样组成一整张结果表？\\
-\mapchapter{10-mlp}{矩阵 MLP} & 怎样让一批输入共享两层权重和激活函数？\\
+\mapchapter{vectors}{向量与点积} & 怎样按需求给文章打分？为什么放大数字会改变排名，归一化又改变了什么？\\
+\mapchapter{matrix-multiplication}{矩阵乘法} & 一行乘一列，怎样组成一整张结果表？\\
+\mapchapter{mlp}{矩阵 MLP} & 怎样让一批输入共享两层权重和激活函数？\\
 }}
 \newcommand{\partexitmatrices}{\partexit{matrices}{\partthinkmatrices}{%
 能一次算完。把三篇文章的特征摆成 $3\times2$ 矩阵，把需求写成 $2\times1$ 列向量；矩阵乘法一次得到三篇文章的匹配分数。
@@ -125,10 +125,10 @@
 \item 把一句话切成 Token、写出编号，并为每个位置写出要预测的下一个 Token。
 \item 把一行分数变成概率并算出损失，分清一个 Token 的编号、向量和输出概率是三种不同的表示。
 }{%
-\mapchapter{20a-tokenizer}{Token 与 ID} & “春天 花 开了”怎样切分并编号？\\
-\mapchapter{20b-task-contract}{预测任务} & 训练时为什么三个输入位置各有一个目标，生成时又该取哪一行？\\
-\mapchapter{20c-classification-loss}{分类损失} & 一行分数怎样变成概率与损失？主线五个候选又怎样计分？\\
-\mapchapter{20-embeddings}{Embedding} & 为什么用 ID 查向量，而不直接计算 ID 的距离？\\
+\mapchapter{tokenization}{Token 与 ID} & “春天 花 开了”怎样切分并编号？\\
+\mapchapter{language-model-task}{预测任务} & 训练时为什么三个输入位置各有一个目标，生成时又该取哪一行？\\
+\mapchapter{classification-loss}{分类损失} & 一行分数怎样变成概率与损失？主线五个候选又怎样计分？\\
+\mapchapter{embeddings}{Embedding} & 为什么用 ID 查向量，而不直接计算 ID 的距离？\\
 }}
 \newcommand{\partexittokens}{\partexit{tokens}{\partthinktokens}{%
 不能。编号只表示身份，大小没有意义；直接当特征会引入虚假的倍数关系。所以要按编号查出一行可训练的向量。
@@ -144,10 +144,10 @@
 \item 用一组对照例子说明，只看当前词为什么不够。
 \item 说明怎样让一个位置按需读取前文，以及为什么只能读已经出现的词。
 }{%
-\mapchapter{21a-context-gap}{上下文缺口与 RNN} & 逐行 MLP 为什么看不到别的 Token？怎样把历史压进逐步传递的状态？\\
-\mapchapter{21c-naive-attention}{Attention 与 Q/K/V} & 直接读取怎样计算，三组投影怎样改变匹配与内容？\\
-\mapchapter{11-softmax-memory}{批量与因果注意力} & 所有位置怎样一起算？因果 Mask 怎样只读前缀？\\
-\mapchapter{22a-position-multihead}{位置与多头} & 怎样标明顺序，并行使用不同匹配方式？\\
+\mapchapter{context-gap}{上下文缺口与 RNN} & 逐行 MLP 为什么看不到别的 Token？怎样把历史压进逐步传递的状态？\\
+\mapchapter{attention-qkv}{Attention 与 Q/K/V} & 直接读取怎样计算，三组投影怎样改变匹配与内容？\\
+\mapchapter{self-attention}{批量与因果注意力} & 所有位置怎样一起算？因果 Mask 怎样只读前缀？\\
+\mapchapter{position-multihead}{位置与多头} & 怎样标明顺序，并行使用不同匹配方式？\\
 }}
 \newcommand{\partexitcontext}{\partexit{context}{\partthinkcontext}{%
 不能。两句的当前词相同，同一个函数只看这一行，输出必然相同；要区分两句，必须读到前文。
@@ -163,12 +163,12 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 \item 沿“春天、花、开了”走完一次前向，得到概率和损失，并指出训练更新了哪些共用的参数。
 \item 说明生成时怎样把新词接回输入，以及为什么不必每一步都从头重算。
 }{%
-\mapchapter{22-transformer-architecture}{完整结构} & Attention、Norm 与残差怎样连接？\\
-\mapchapter{10b-ffn-output-head}{FFN 与输出头} & 特征变换和词表打分为何要分开？\\
-\mapchapter{22b-token-to-output}{三维前向} & 三个 Token 怎样得到三行五类概率？\\
-\mapchapter{22c-language-training}{联合训练} & 三个位置怎样共同更新共享参数？\\
-\mapchapter{23-llm-systems}{逐词生成} & 下一 Token 如何成为下一轮的输入？\\
-\mapchapter{23a-from-toy-to-gpt}{真实尺度} & 教学网络与 GPT 的参数、词表和层数差在哪？\\
+\mapchapter{transformer-architecture}{完整结构} & Attention、Norm 与残差怎样连接？\\
+\mapchapter{ffn-output-head}{FFN 与输出头} & 特征变换和词表打分为何要分开？\\
+\mapchapter{transformer-forward-pass}{三维前向} & 三个 Token 怎样得到三行五类概率？\\
+\mapchapter{language-model-training}{联合训练} & 三个位置怎样共同更新共享参数？\\
+\mapchapter{autoregressive-generation}{逐词生成} & 下一 Token 如何成为下一轮的输入？\\
+\mapchapter{real-models}{真实尺度} & 教学网络与 GPT 的参数、词表和层数差在哪？\\
 }}
 \newcommand{\partexittransformer}{\partexit{transformer}{\partthinktransformer}{%
 先经 FFN 逐行变换，再由输出头 $W_{\rm out}$ 给五个候选各打一个分数（logits），最后用 Softmax 把分数变成概率。
@@ -184,12 +184,12 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 \item 区分临时给样例、再训练模型和提供检索资料，各自改变了系统的哪一部分。
 \item 给报告中的每个数字找到来源，并说明工具调用由谁提出、由谁执行、失败了怎么办。
 }{%
-\mapchapter{23aa-pretraining-icl}{ICL} & 更新权重和临时提供样例有何区别？\\
-\mapchapter{23c-post-training}{训练反馈与推理时计算} & 奖励怎样更新参数，验证又怎样筛选本次候选？\\
-\mapchapter{23d-agent-systems}{RAG} & 报告中的数字怎样找到可核查的来源？\\
-\mapchapter{23d-agent-tools}{工具与 Agent} & 谁提出调用，谁执行，怎样处理失败？\\
-\mapchapter{23d-agent-protocols}{协作边界} & 协议、Skill 和多个 Agent 怎样分工？\\
-\mapchapter{23b-deployment-and-ecosystem}{数据、训练与部署} & 语料如何进入训练，训练和上线各花什么资源？\\
+\mapchapter{pretraining-icl}{ICL} & 更新权重和临时提供样例有何区别？\\
+\mapchapter{post-training}{训练反馈与推理时计算} & 奖励怎样更新参数，验证又怎样筛选本次候选？\\
+\mapchapter{rag}{RAG} & 报告中的数字怎样找到可核查的来源？\\
+\mapchapter{tool-use-and-agents}{工具与 Agent} & 谁提出调用，谁执行，怎样处理失败？\\
+\mapchapter{protocols-and-multi-agent}{协作边界} & 协议、Skill 和多个 Agent 怎样分工？\\
+\mapchapter{training-and-deployment}{数据、训练与部署} & 语料如何进入训练，训练和上线各花什么资源？\\
 }}
 \newcommand{\partexitassistant}{\partexit{assistant}{\partthinkassistant}{%
 不可信。流畅只说明续写的概率高，不说明数字有出处；要先检索真实报表、逐项核对来源，再做计算。
@@ -198,15 +198,15 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 }}
 
 % ---- 第七部分 ----
-\newcommand{\partthinkarchitecture}{生成时，模型为每个旧 Token 缓存一份 K 和 V（\hyperref[intro:23-llm-systems]{第~\ref*{intro:23-llm-systems}~章}的 KV Cache）。有 $4$ 个提问头，能不能让它们共用 $2$ 份 K/V？会省下什么，又可能损失什么？}
+\newcommand{\partthinkarchitecture}{生成时，模型为每个旧 Token 缓存一份 K 和 V（\hyperref[intro:autoregressive-generation]{第~\ref*{intro:autoregressive-generation}~章}的 KV Cache）。有 $4$ 个提问头，能不能让它们共用 $2$ 份 K/V？会省下什么，又可能损失什么？}
 \newcommand{\partentryarchitecture}{\partentry{%
 “忒修斯之船”问：船的部件逐块换掉以后，还是原来那条船吗？今天的大模型几乎把位置表示、归一化、Attention 和 FFN 都换过一轮。是否还算同一种架构，要看计算结构；换得值不值，要看相同条件下的质量、延迟与成本。
 }{\partthinkarchitecture}{%
 \item 指出现代大模型替换了原版 Transformer 的哪些部件，各自为了解决什么瓶颈。
 \item 遇到“新架构更快”的说法时，列出比较时必须保持一致的条件。
 }{%
-\mapchapter{22d-modern-transformers}{现代架构} & 首读 RoPE、RMSNorm、GQA，分别改了哪一步？其余专题按需选读。\\
-\mapchapter{23e-tech-judgement}{技术判断} & 怎样用同条件实验判断一项改动是否值得？\\
+\mapchapter{modern-transformers}{现代架构} & 首读 RoPE、RMSNorm、GQA，分别改了哪一步？其余专题按需选读。\\
+\mapchapter{evaluating-models}{技术判断} & 怎样用同条件实验判断一项改动是否值得？\\
 }}
 \newcommand{\partexitarchitecture}{\partexit{architecture}{\partthinkarchitecture}{%
 能，这就是 GQA：每两个提问头共用一份 K/V，缓存减半。它是“完全独立”与“全部共享”之间的折中，质量损失多少，要在同条件下对照。
@@ -222,8 +222,8 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 \item 说明小窗口扫描图片时，为什么不同位置能共用一组参数。
 \item 把一张 $4\times4$ 小图切成四块，写出每一步的形状，将视觉向量作为前缀，与文字向量拼接。
 }{%
-\mapchapter{19-cnn}{CNN} & 小卷积核怎样扫描图像并共享参数？\\
-\mapchapter{19b-vit}{ViT 与视觉桥接} & 图像块怎样成为 Token，再接到语言模型？\\
+\mapchapter{cnn}{CNN} & 小卷积核怎样扫描图像并共享参数？\\
+\mapchapter{vit}{ViT 与视觉桥接} & 图像块怎样成为 Token，再接到语言模型？\\
 }}
 \newcommand{\partexitvision}{\partexit{vision}{\partthinkvision}{%
 相邻像素的位置关系不再显式保留；同一个边缘出现在不同位置，全连接层还要分别学习。CNN 用小窗口扫描并共享参数，ViT 把图切块后当作 Token。
@@ -239,8 +239,8 @@ Attention 已能让“开了”读到“春天、花”。但读完只得到一�
 \item 把两条记录写进同一张表，算出读取时它们互相干扰了多少。
 \item 解释按读出的误差修正写入时，为什么修正一条会扰动其他记录。
 }{%
-\mapchapter{04-key-value-outer-product}{写入与误差修正} & 怎样写入、读出串扰，再联立求解或逐条修正？\\
-\mapchapter{09-nonlinearity-and-memory}{非线性检索与容量} & 筛选怎样改变读出，{\symboliconfont ★}随机容量估计有哪些条件？\\
+\mapchapter{key-value-outer-product}{写入与误差修正} & 怎样写入、读出串扰，再联立求解或逐条修正？\\
+\mapchapter{nonlinear-memory}{非线性检索与容量} & 筛选怎样改变读出，{\symboliconfont ★}随机容量估计有哪些条件？\\
 }}
 \newcommand{\partexitmemory}{\partexit{memory}{\partthinkmemory}{%
 两把钥匙不垂直、匹配分数不为零时，会混进第二条，这就是串扰；两把钥匙垂直时互不干扰。

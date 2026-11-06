@@ -1,8 +1,8 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{前文怎样传到当前词？从逐行处理到 RNN}
-\label{intro:21a-context-gap}
-\label{intro:21-rnn}
+\label{intro:context-gap}
+\label{intro:context-and-rnn}
 
 独立处理每个 Token 的 MLP，只接收当前位置的向量。
 如果下一 Token 的正确预测还取决于\textbf{前面说过什么}，
@@ -212,7 +212,7 @@ LSTM 和 GRU 可以改善一部分信息保留问题，
 但仍然使用递推机制。
 
 
-\chapterchecktasks{21-rnn}{正文基础六题}{
+\chapterchecktasks{context-and-rnn}{正文基础六题}{
 \item \textbf{预测：}两句话的最后 Token 相同，但前文一个是否定、一个是肯定。只看最后一个 Token 的网络能否自动区分两句？为什么？\chapterinlinehint{检查函数实际收到的输入是否含有前文。}
 \item \textbf{手算：}两个序列末尾输入均为 $x=3$，同一个逐位置函数 $f(x)=2x+1$ 分别输出什么？\chapterinlinehint{把相同输入代入同一个函数两次。}
 \item \textbf{找错：}同学把过去三个 Token 拼起来当特征，就宣布“任意长历史都能无代价地读到”。还缺少哪两个工程条件？\chapterinlinehint{检查窗口长度和输入维度随历史怎样增长。}

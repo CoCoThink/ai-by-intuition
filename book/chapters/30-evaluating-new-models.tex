@@ -1,6 +1,6 @@
 \chapterrule
 \section{面对新模型与新缩写，怎么判断它值不值得学？}
-\label{intro:23e-tech-judgement}
+\label{intro:evaluating-models}
 
 
 
@@ -44,7 +44,7 @@ MoE 在专家宽度与每 Token 选取的专家数固定时，可增加总专家
 实际耗时还包括路由、负载分配与通信，
 固定 Workflow 主要减少人工操作；\textbf{三者应按各自的瓶颈与指标比较}。
 
-例如，在层数、头维、序列长度和精度相同的条件下，把 $12$ 个 K/V 头改为 $3$ 个，KV Cache 元素数降为四分之一；这能复算缓存节省，不能单独证明质量或速度改善。质量与延迟仍须在相同任务和负载下测量；缓存细算见第~\ref*{intro:22d-modern-transformers}~章。
+例如，在层数、头维、序列长度和精度相同的条件下，把 $12$ 个 K/V 头改为 $3$ 个，KV Cache 元素数降为四分之一；这能复算缓存节省，不能单独证明质量或速度改善。质量与延迟仍须在相同任务和负载下测量；缓存细算见第~\ref*{intro:modern-transformers}~章。
 
 \subsection{Scaling Laws：更多参数一定更聪明吗？}
 \label{sec:scaling-compute-budget}
@@ -151,7 +151,7 @@ Richard Sutton 在
 
 \begin{example}[breakable=false]
 \noindent\emph{沿用三位置前向实验的损失}\par
-第~\ref*{intro:22c-language-training}~章训练前的三维贯通例，在该训练样本上三个预测位置的平均交叉熵为 $L=1.798430$，
+第~\ref*{intro:language-model-training}~章训练前的三维贯通例，在该训练样本上三个预测位置的平均交叉熵为 $L=1.798430$，
 因此
 \[
 \mathrm{PPL}=e^{1.798430}\approx 6.04.
@@ -208,7 +208,7 @@ Agent 还需记录工具成功率、越权率、延迟、成本和失败恢复�
 缩放趋势与研究观点各有实验范围。证据缺项时保留该项为待测，不把局部收益外推到所有任务。
 \end{boundarybox}
 
-\chapterchecktasks{23e-tech-judgement}{理解与复算}{
+\chapterchecktasks{evaluating-models}{理解与复算}{
 \item \textbf{分类：}某产品宣布“更聪明又更便宜”，至少指出三种不同层级的改动来源。\chapterinlinehint{沿模型到产品的各层逐项列出可改动因素。}
 \item \textbf{手算：}缓存元素由 $100$ 降到 $50$，降幅多少？能据此推出准确率或首 Token 延迟吗？\chapterinlinehint{先用减少量除以原量，再核对该指标的含义。}
 \item \textbf{找错：}A 用长输入、旧硬件，B 用短输入、新硬件。为何不能把差距全归因于架构？\chapterinlinehint{列出两次测试中同时发生变化的条件。}

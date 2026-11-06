@@ -1,6 +1,6 @@
 \chapterrule
 \section{矩阵乘法到底在算什么？}
-\label{intro:03-matrix-multiplication}
+\label{intro:matrix-multiplication}
 
 上一章为需求与一篇文章算出一个匹配分数。如果有一万篇候选，
 能不能把这些点积一次排好？先沿用原来的三篇文章，看看怎样从一个分数得到一整行分数。
@@ -115,7 +115,7 @@ $\vect h=W^\top\vect x$ 与 $\vect h^\top=\vect x^\top W$ 是同一次计算，
 因为 $(AB)^\top=B^\top A^\top$。
 主线继续使用行向量右乘权重。
 
-\chapterchecktasks{03-matrix-multiplication}{理解与复算}{
+\chapterchecktasks{matrix-multiplication}{理解与复算}{
 \item \textbf{形状：}若 $A:2\times3$、$B:3\times4$，说明为什么 $AB$ 合法，并给出输出形状。若 $B$ 换为 $4\times3$ 呢？\chapterinlinehint{先核对内侧维度，再保留外侧维度。}
 \item \textbf{手算：}沿用本章文章表 $K$，新需求为 $(1,0)$。求三个匹配分数，并说明为何要乘 $K^\top$。\chapterinlinehint{让需求行分别与三篇文章的特征列做点积。}
 \item \textbf{找错：}某人断言“矩阵相乘和数字相乘一样，可以把 $AB$ 随意换成 $BA$”。用形状或一次反例指出问题。\chapterinlinehint{分别列出两个乘法的内侧维度。}

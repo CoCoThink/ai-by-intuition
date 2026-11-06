@@ -26,12 +26,12 @@
 \begin{tabularx}{\linewidth}{@{}p{20mm}p{30mm}X p{17mm}@{}}
 \toprule
 中文 & English & 一句话定义 & 章节\\\midrule
-分词器 & Tokenizer & 把文字映射为 Token ID。 & \termref{intro:20a-tokenizer}\\
-嵌入 & Embedding & 让离散 ID 对应可训练向量。 & \termref{intro:20-embeddings}\\
-朴素注意力 & Naive attention & 无投影直接点积并加权读出。 & \termref{intro:21c-naive-attention}\\
+分词器 & Tokenizer & 把文字映射为 Token ID。 & \termref{intro:tokenization}\\
+嵌入 & Embedding & 让离散 ID 对应可训练向量。 & \termref{intro:embeddings}\\
+朴素注意力 & Naive attention & 无投影直接点积并加权读出。 & \termref{intro:attention-qkv}\\
 自注意力 & Self-attention & Query 匹配上下文 Key，再读 Value。 & \termref{concept:self-attention}\\
 前馈网络 & FFN & 对各 Token 行做共享非线性变换。 & \termref{concept:ffn}\\
-关联记忆 & Associative memory & 将 Key--Value 关联写入可读状态。 & \termref{intro:04-key-value-outer-product}\\
+关联记忆 & Associative memory & 将 Key--Value 关联写入可读状态。 & \termref{intro:key-value-outer-product}\\
 线性注意力 & Linear attention & 采用不同于全量 Softmax 的状态或特征计算。 & \termref{concept:linear-attention}\\
 多头潜在注意力 & MLA & 将部分 K/V 表示压缩为可缓存潜在量。 & \termref{concept:mla}\\
 检索增强生成 & RAG & 将检索证据放入模型生成上下文。 & \termref{concept:rag}\\
@@ -46,7 +46,7 @@
 \item \textbf{模型}：为完成任务选定的一套计算结构和参数。 \termref{concept:model}
 \item \textbf{参数}：训练中直接学习的数，如权重 $w$ 和偏置 $b$。 \termref{concept:parameter}
 \item \textbf{权重}：控制输入特征对输出贡献的参数。 \termref{concept:weight}
-\item \textbf{偏置}：线性变换后添加的常数或向量，使模型不必经过原点。 \termref{intro:10-mlp}
+\item \textbf{偏置}：线性变换后添加的常数或向量，使模型不必经过原点。 \termref{intro:mlp}
 \item \textbf{超参数}：控制训练或结构的设置，如学习率、层数与批量大小。 \termref{concept:hyperparameter}
 \item \textbf{训练}：利用数据和损失函数更新模型参数。 \termref{concept:training}
 \item \textbf{推理}：用已训练的模型对新输入产生输出。 \termref{concept:inference}
@@ -64,17 +64,17 @@
 \item \textbf{范数}：衡量向量长度或大小的一类函数。 \termref{concept:vector-length}
 \item \textbf{余弦相似度}：两条非零向量的点积除以长度乘积，关注方向。 \termref{concept:cosine-similarity}
 \item \textbf{线性变换}：按本书行向量约定写作 $\vect x^\top W$（整批为 $XW$）的运算；满足叠加规则。 \termref{concept:linear-map}
-\item \textbf{非线性}：不满足简单线性叠加的变化，例如 ReLU。 \termref{intro:07-functions-relu}
-\item \textbf{激活函数}：应用在线性层输出上的函数，扩展模型表达能力。 \termref{intro:07-functions-relu}
+\item \textbf{非线性}：不满足简单线性叠加的变化，例如 ReLU。 \termref{intro:nonlinearity}
+\item \textbf{激活函数}：应用在线性层输出上的函数，扩展模型表达能力。 \termref{intro:nonlinearity}
 \end{enumerate}
 
 \subsubsection{第三组：学会参数}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=21]
-\item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:17-backpropagation}
+\item \textbf{前向传播}：从输入沿计算图得到输出与损失。 \termref{intro:backpropagation}
 \item \textbf{损失函数}：用数字评估预测与目标之间的差距。 \termref{concept:loss}
 \item \textbf{均方误差}：误差平方再取平均，常用于回归。 \termref{concept:loss}
 \item \textbf{交叉熵}：衡量预测概率分布与目标之间差距的常用损失。 \termref{concept:cross-entropy}
-\item \textbf{导数}：衡量函数在某一点的局部变化率。 \termref{intro:16a-gradient-descent}
+\item \textbf{导数}：衡量函数在某一点的局部变化率。 \termref{intro:gradient-descent}
 \item \textbf{偏导数}：多变量函数对某个变量求变化率，其他变量暂时固定。 \termref{concept:gradient}
 \item \textbf{梯度}：将各个参数方向的偏导数组合起来。 \termref{concept:gradient}
 \item \textbf{学习率}：控制每次梯度更新步长的系数。 \termref{concept:gradient-descent}
@@ -114,7 +114,7 @@
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=51]
 \item \textbf{MLP}：把矩阵乘法、偏置和非线性激活逐层组合的前馈网络。 \termref{concept:mlp}
 \item \textbf{全连接层}：本层各输出单元能使用前一层所有输入特征。 \termref{concept:neuron}
-\item \textbf{CNN}：利用局部窗口运算和共享权重处理图像等空间模式的网络。 \termref{intro:19-cnn}
+\item \textbf{CNN}：利用局部窗口运算和共享权重处理图像等空间模式的网络。 \termref{intro:cnn}
 \item \textbf{卷积核}：在图片局部区域滑动的可训练权重小矩阵。 \termref{concept:kernel}
 \item \textbf{步幅}：卷积核在相邻位置移动的距离。 \termref{concept:stride}
 \item \textbf{填充}：在边界或末尾补上占位值：卷积中用于调节输出尺寸与边界处理；序列批处理中把不同长度补齐，并用掩码排除这些位置。 \termref{concept:padding}
@@ -127,7 +127,7 @@
 \subsubsection{第七组：语言变成数字}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=61]
 \item \textbf{Token}：模型分词器定义的文本处理单元，不一定是一个完整词。 \termref{concept:token}
-\item \textbf{Tokenizer}：将文本切成 Token 并映射到整数 ID 的方法。 \termref{intro:20a-tokenizer}
+\item \textbf{Tokenizer}：将文本切成 Token 并映射到整数 ID 的方法。 \termref{intro:tokenization}
 \item \textbf{词表}：允许的 Token 与其 ID 的集合。 \termref{concept:vocabulary}
 \item \textbf{One-hot}：只有对应类别位置为一，其余为零的编码。 \termref{concept:cross-entropy}
 \item \textbf{Embedding}：把离散 Token ID 映射到可学习的稠密向量。 \termref{concept:embedding}
@@ -149,7 +149,7 @@
 \item \textbf{Softmax}：将分数转成非负且总和为一的一组权重。 \termref{concept:softmax}
 \item \textbf{因果掩码}：防止生成位置注意到未来 Token 的约束。 \termref{concept:causal-mask}
 \item \textbf{多头注意力}：用多组可训练投影并行学习不同注意力模式。 \termref{concept:multihead}
-\item \textbf{Transformer}：把注意力、逐位置 MLP、残差和归一化等组合的架构。 \termref{intro:22-transformer-architecture}
+\item \textbf{Transformer}：把注意力、逐位置 MLP、残差和归一化等组合的架构。 \termref{intro:transformer-architecture}
 \end{enumerate}
 
 \subsubsection{第九组：训练与采样生成}
@@ -157,7 +157,7 @@
 \item \textbf{编码器}：用于将输入转成上下文化表示的网络部分。 \termref{elective:original-paper}
 \item \textbf{解码器}：按任务条件产生输出序列的网络部分。 \termref{elective:original-paper}
 \item \textbf{预训练}：通过大规模数据先学习一般的表示和模式。 \termref{concept:pretraining}
-\item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:23c-post-training}
+\item \textbf{微调}：在已有模型权重上针对任务或行为继续训练。 \termref{intro:post-training}
 \item \textbf{监督微调}：利用示范输入输出对继续调整模型。 \termref{concept:sft}
 \item \textbf{RLHF}：用人类反馈相关的偏好信号辅助模型行为优化。 \termref{concept:rlhf}
 \item \textbf{LoRA}：冻结多数基础权重并训练低秩参数的微调方法。 \termref{concept:lora}
@@ -169,7 +169,7 @@
 
 \subsubsection{第十组：大模型应用与边界}
 \begin{enumerate}[leftmargin=2.5em,itemsep=4pt,start=92]
-\item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:23-llm-systems}
+\item \textbf{上下文窗口}：单次处理所允许使用的 Token 长度范围。 \termref{intro:autoregressive-generation}
 \item \textbf{幻觉}：模型生成流畅但事实不可靠或没有证据的内容。 \termref{concept:hallucination-calibration}
 \item \textbf{RAG}：检索外部资料并将结果提供给生成模型。 \termref{concept:rag}
 \item \textbf{向量检索}：通过查询向量和候选向量的相似性寻找内容。 \termref{concept:vector-retrieval}
@@ -177,7 +177,7 @@
 \item \textbf{智能体}：围绕目标选择工具、执行动作并利用结果继续决策的系统。 \termref{concept:agent}
 \item \textbf{工作流}：把多个固定或动态步骤组合成一个业务过程。 \termref{concept:workflow}
 \item \textbf{量化}：用更低数值精度保存或计算部分权重与激活。 \termref{concept:quant}
-\item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:23b-deployment-and-ecosystem}
+\item \textbf{开放权重}：允许获取模型权重；不必然意味着训练代码和数据完全开放。 \termref{intro:training-and-deployment}
 \end{enumerate}
 
 \subsubsection*{不要混淆的五对概念}

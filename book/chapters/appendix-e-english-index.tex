@@ -16,26 +16,26 @@ English & 中文 & 页码 & English & 中文 & 页码\\\midrule
 \bottomrule
 \endfoot
 \addlinespace[2pt]
-{\sffamily\bfseries\color{blue}A}\enspace Activation checkpointing & 激活重计算 & \hyperref[concept:activation-checkpoint]{\pageref*{concept:activation-checkpoint}} & Activation function & 激活函数 & \hyperref[intro:07-functions-relu]{\pageref*{intro:07-functions-relu}}\\
+{\sffamily\bfseries\color{blue}A}\enspace Activation checkpointing & 激活重计算 & \hyperref[concept:activation-checkpoint]{\pageref*{concept:activation-checkpoint}} & Activation function & 激活函数 & \hyperref[intro:nonlinearity]{\pageref*{intro:nonlinearity}}\\
 Adam & Adam 优化器 & \hyperref[app:optimizer-details]{\pageref*{app:optimizer-details}} & AdamW & AdamW 优化器 & \hyperref[concept:adamw]{\pageref*{concept:adamw}}\\
 Agent & 智能体 & \hyperref[concept:agent]{\pageref*{concept:agent}} & Application memory & 应用记忆 & \hyperref[concept:app-memory]{\pageref*{concept:app-memory}}\\
 Associative memory interference & 联想记忆串扰 & \hyperref[concept:memory-interference]{\pageref*{concept:memory-interference}} & Attention with Linear Biases (ALiBi) & 注意力线性偏置 & \hyperref[concept:alibi]{\pageref*{concept:alibi}}\\
 Autoregressive generation & 自回归 & \hyperref[concept:autoregressive]{\pageref*{concept:autoregressive}} &  & & \\
 \addlinespace[2pt]
 {\sffamily\bfseries\color{blue}B}\enspace Backpropagation & 反向传播 & \hyperref[concept:backprop]{\pageref*{concept:backprop}} & Batch size & 批量大小 & \hyperref[concept:batch-size]{\pageref*{concept:batch-size}}\\
-Bias & 偏置 & \hyperref[intro:10-mlp]{\pageref*{intro:10-mlp}} & BOS/EOS & 开始与结束标记 & \hyperref[concept:bos-eos]{\pageref*{concept:bos-eos}}\\
+Bias & 偏置 & \hyperref[intro:mlp]{\pageref*{intro:mlp}} & BOS/EOS & 开始与结束标记 & \hyperref[concept:bos-eos]{\pageref*{concept:bos-eos}}\\
 Byte pair encoding (BPE) & 字节对编码 & \hyperref[concept:bpe]{\pageref*{concept:bpe}} &  & & \\
 \addlinespace[2pt]
 {\sffamily\bfseries\color{blue}C}\enspace Causal mask & 因果掩码 & \hyperref[concept:causal-mask]{\pageref*{concept:causal-mask}} & Chain-of-thought (CoT) prompting & 思维链提示 & \hyperref[concept:cot-prompt]{\pageref*{concept:cot-prompt}}\\
 Chat template & 聊天模板 & \hyperref[concept:chat-template]{\pageref*{concept:chat-template}} & Context & 上下文 & \hyperref[concept:context]{\pageref*{concept:context}}\\
-Context window & 上下文窗口 & \hyperref[intro:23-llm-systems]{\pageref*{intro:23-llm-systems}} & Continuous batching & 连续批处理 & \hyperref[concept:continuous-batching]{\pageref*{concept:continuous-batching}}\\
+Context window & 上下文窗口 & \hyperref[intro:autoregressive-generation]{\pageref*{intro:autoregressive-generation}} & Continuous batching & 连续批处理 & \hyperref[concept:continuous-batching]{\pageref*{concept:continuous-batching}}\\
 Contrastive Language-Image Pretraining (CLIP) & 图文对比学习 & \hyperref[concept:clip]{\pageref*{concept:clip}} & Convolution kernel & 卷积核 & \hyperref[concept:kernel]{\pageref*{concept:kernel}}\\
-Convolutional neural network & 卷积神经网络 & \hyperref[intro:19-cnn]{\pageref*{intro:19-cnn}} & Cosine similarity & 余弦相似度 & \hyperref[concept:cosine-similarity]{\pageref*{concept:cosine-similarity}}\\
+Convolutional neural network & 卷积神经网络 & \hyperref[intro:cnn]{\pageref*{intro:cnn}} & Cosine similarity & 余弦相似度 & \hyperref[concept:cosine-similarity]{\pageref*{concept:cosine-similarity}}\\
 Cross-attention & 交叉注意力 & \hyperref[concept:cross-attention]{\pageref*{concept:cross-attention}} & Cross-correlation & 互相关 & \hyperref[concept:cross-correlation]{\pageref*{concept:cross-correlation}}\\
 Cross-entropy & 交叉熵 & \hyperref[concept:cross-entropy]{\pageref*{concept:cross-entropy}} &  & & \\
 \addlinespace[2pt]
 {\sffamily\bfseries\color{blue}D}\enspace Data augmentation & 数据增强 & \hyperref[concept:data-augmentation]{\pageref*{concept:data-augmentation}} & Decoder & 解码器 & \hyperref[elective:original-paper]{\pageref*{elective:original-paper}}\\
-Delta rule & Delta 更新规则 & \hyperref[concept:delta-rule]{\pageref*{concept:delta-rule}} & Derivative & 导数 & \hyperref[intro:16a-gradient-descent]{\pageref*{intro:16a-gradient-descent}}\\
+Delta rule & Delta 更新规则 & \hyperref[concept:delta-rule]{\pageref*{concept:delta-rule}} & Derivative & 导数 & \hyperref[intro:gradient-descent]{\pageref*{intro:gradient-descent}}\\
 Dimension & 维度 & \hyperref[concept:vector]{\pageref*{concept:vector}} & Distillation & 蒸馏 & \hyperref[concept:distillation]{\pageref*{concept:distillation}}\\
 Dot product & 点积 & \hyperref[concept:dot-product]{\pageref*{concept:dot-product}} & Dropout & 随机失活 & \hyperref[concept:dropout]{\pageref*{concept:dropout}}\\
 \addlinespace[2pt]
@@ -45,7 +45,7 @@ Epoch & 训练轮次 & \hyperref[concept:epoch]{\pageref*{concept:epoch}} & Eval
 Expert router & 专家路由器 & \hyperref[concept:router]{\pageref*{concept:router}} & Exploding gradient & 梯度爆炸 & \hyperref[app:training-diagnostics]{\pageref*{app:training-diagnostics}}\\
 \addlinespace[2pt]
 {\sffamily\bfseries\color{blue}F}\enspace Feature map & 特征图 & \hyperref[concept:feature-map]{\pageref*{concept:feature-map}} & Few-shot prompting & 少样本提示 & \hyperref[concept:few-shot]{\pageref*{concept:few-shot}}\\
-Fine-tuning & 微调 & \hyperref[intro:23c-post-training]{\pageref*{intro:23c-post-training}} & Forward propagation & 前向传播 & \hyperref[intro:17-backpropagation]{\pageref*{intro:17-backpropagation}}\\
+Fine-tuning & 微调 & \hyperref[intro:post-training]{\pageref*{intro:post-training}} & Forward propagation & 前向传播 & \hyperref[intro:backpropagation]{\pageref*{intro:backpropagation}}\\
 Fully connected layer & 全连接层 & \hyperref[concept:neuron]{\pageref*{concept:neuron}} & Function & 函数 & \hyperref[concept:function]{\pageref*{concept:function}}\\
 \addlinespace[2pt]
 {\sffamily\bfseries\color{blue}G}\enspace Generalization & 泛化 & \hyperref[concept:generalization]{\pageref*{concept:generalization}} & Gradient & 梯度 & \hyperref[concept:gradient]{\pageref*{concept:gradient}}\\
@@ -73,10 +73,10 @@ Model & 模型 & \hyperref[concept:model]{\pageref*{concept:model}} & Model Cont
 Multi-head attention & 多头注意力 & \hyperref[concept:multihead]{\pageref*{concept:multihead}} & Multi-head latent attention (MLA) & 多头潜在注意力 & \hyperref[concept:mla]{\pageref*{concept:mla}}\\
 Multi-layer perceptron & 多层感知机 & \hyperref[concept:mlp]{\pageref*{concept:mlp}} & Multi-query attention (MQA) & 多查询注意力 & \hyperref[concept:mqa]{\pageref*{concept:mqa}}\\
 \addlinespace[2pt]
-{\sffamily\bfseries\color{blue}N}\enspace Nonlinearity & 非线性 & \hyperref[intro:07-functions-relu]{\pageref*{intro:07-functions-relu}} & Norm & 范数 & \hyperref[concept:vector-length]{\pageref*{concept:vector-length}}\\
+{\sffamily\bfseries\color{blue}N}\enspace Nonlinearity & 非线性 & \hyperref[intro:nonlinearity]{\pageref*{intro:nonlinearity}} & Norm & 范数 & \hyperref[concept:vector-length]{\pageref*{concept:vector-length}}\\
 Normalization & 归一化 & \hyperref[concept:pre-norm]{\pageref*{concept:pre-norm}} &  & & \\
 \addlinespace[2pt]
-{\sffamily\bfseries\color{blue}O}\enspace One-hot encoding & 独热编码 & \hyperref[concept:cross-entropy]{\pageref*{concept:cross-entropy}} & Open weights & 开放权重 & \hyperref[intro:23b-deployment-and-ecosystem]{\pageref*{intro:23b-deployment-and-ecosystem}}\\
+{\sffamily\bfseries\color{blue}O}\enspace One-hot encoding & 独热编码 & \hyperref[concept:cross-entropy]{\pageref*{concept:cross-entropy}} & Open weights & 开放权重 & \hyperref[intro:training-and-deployment]{\pageref*{intro:training-and-deployment}}\\
 Optimizer & 优化器 & \hyperref[concept:optimizer]{\pageref*{concept:optimizer}} & Outer product & 外积 & \hyperref[concept:outer-product]{\pageref*{concept:outer-product}}\\
 Output head & 输出头 & \hyperref[concept:output-head]{\pageref*{concept:output-head}} & Overfitting & 过拟合 & \hyperref[concept:overfitting]{\pageref*{concept:overfitting}}\\
 \addlinespace[2pt]
@@ -108,10 +108,10 @@ SwiGLU & SwiGLU 门控 & \hyperref[concept:swiglu]{\pageref*{concept:swiglu}} & 
 {\sffamily\bfseries\color{blue}T}\enspace Task contract & 任务契约 & \hyperref[concept:task-contract]{\pageref*{concept:task-contract}} & Teacher forcing & 教师强制 & \hyperref[concept:teacher-forcing]{\pageref*{concept:teacher-forcing}}\\
 Temperature & 温度 & \hyperref[concept:sampling]{\pageref*{concept:sampling}} & Test set & 测试集 & \hyperref[concept:test-set]{\pageref*{concept:test-set}}\\
 Test-time compute & 测试时计算 & \hyperref[concept:test-time-compute]{\pageref*{concept:test-time-compute}} & Time step & 时间步 & \hyperref[concept:time-step]{\pageref*{concept:time-step}}\\
-Token & 词元 & \hyperref[concept:token]{\pageref*{concept:token}}、\hyperref[experiment:real-chinese-tokenizer]{\pageref*{experiment:real-chinese-tokenizer}} & Tokenizer & 分词器 & \hyperref[intro:20a-tokenizer]{\pageref*{intro:20a-tokenizer}}、\hyperref[experiment:real-chinese-tokenizer]{\pageref*{experiment:real-chinese-tokenizer}}\\
+Token & 词元 & \hyperref[concept:token]{\pageref*{concept:token}}、\hyperref[experiment:real-chinese-tokenizer]{\pageref*{experiment:real-chinese-tokenizer}} & Tokenizer & 分词器 & \hyperref[intro:tokenization]{\pageref*{intro:tokenization}}、\hyperref[experiment:real-chinese-tokenizer]{\pageref*{experiment:real-chinese-tokenizer}}\\
 Tool calling & 工具调用 & \hyperref[concept:tool-calling]{\pageref*{concept:tool-calling}}、\hyperref[elective:real-function-call]{\pageref*{elective:real-function-call}}、\hyperref[sec:agent-safety]{\pageref*{sec:agent-safety}} & Top-k sampling & Top-k 采样 & \hyperref[concept:sampling]{\pageref*{concept:sampling}}\\
 Top-p sampling & Top-p 采样 & \hyperref[concept:sampling]{\pageref*{concept:sampling}} & Training & 训练 & \hyperref[concept:training]{\pageref*{concept:training}}\\
-Training set & 训练集 & \hyperref[concept:training-set]{\pageref*{concept:training-set}} & Transformer & Transformer 架构 & \hyperref[intro:22-transformer-architecture]{\pageref*{intro:22-transformer-architecture}}\\
+Training set & 训练集 & \hyperref[concept:training-set]{\pageref*{concept:training-set}} & Transformer & Transformer 架构 & \hyperref[intro:transformer-architecture]{\pageref*{intro:transformer-architecture}}\\
 Transpose & 转置 & \hyperref[concept:transpose]{\pageref*{concept:transpose}} &  & & \\
 \addlinespace[2pt]
 {\sffamily\bfseries\color{blue}U}\enspace Underfitting & 欠拟合 & \hyperref[concept:underfitting]{\pageref*{concept:underfitting}} &  & & \\

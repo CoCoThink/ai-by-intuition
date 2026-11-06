@@ -23,6 +23,20 @@ def validate_keys(data):
     if len(set(keys))!=len(keys):raise ValueError('Duplicate exercise keys')
     if any({'legacy_id','legacy_answer_anchor'} & r.keys() for r in data):
         raise ValueError('Retired exercise ID fields must not return')
+    for row in data:
+        if 'slug' in row and not re.fullmatch(r'(?:review:)?[a-z][a-z0-9]*(?:-[a-z0-9]+)*',row['slug']):
+            raise ValueError('Exercise slugs must use semantic names without chapter-number prefixes')
+        if re.search(r':\d',row.get('owner','')):
+            raise ValueError('Exercise owners must use semantic labels without chapter-number prefixes')
+        if any('exercise:linked-' in row.get(field,'') for field in ('question','hint','solution')):
+            raise ValueError('Retired chapter-number exercise aliases must not return; use the canonical semantic key')
+
+def validate_answer(row):
+    """Keep optional clues separate from worked answers, without fixed headings."""
+    if not row.get('question') or len(row.get('hint','').strip())<6 or not row.get('solution','').strip():
+        raise ValueError(f"{row['id']}: question, optional hint and worked answer are required")
+    if re.search(r'\\textbf\{(?:第一步|解答|解题过程|核对)：\}|完整解答|\\small',row['solution']):
+        raise ValueError(f"{row['id']}: use a worked answer without the retired answer template")
 
 def validate_progression(data,chapter_slugs):
     """Readers meet a basic task before longer calculations and transfer tasks."""
@@ -54,17 +68,12 @@ def load_exercises():
                   owners.get(r['owner'],appendix_owners.get(r['owner'])))
         if expected!=r['slug']:raise ValueError(f"{r['id']}: wrong ownership")
         if r['difficulty'] not in ('基础','标准','挑战') or not 1<=r['minutes']<=60:raise ValueError(f"{r['id']}: invalid difficulty/time")
-        if any(ord(c)<32 and c!='\n' for key in ('question','solution') for c in r[key]):raise ValueError(f"{r['id']}: control character")
-        if not r['question'] or r['solution'].count(r'\textbf{第一步：}')!=1:raise ValueError(f"{r['id']}: missing first step/solution")
-        if not re.search(r'\\textbf\{(?:解答|解题过程)：\}',r['solution']) or re.search(r'完整解答|\\small',r['solution']):
-            raise ValueError(f"{r['id']}: answer label must be 解答 or 解题过程, without legacy size/label variants")
+        validate_answer(r)
+        if any(ord(c)<32 and c!='\n' for key in ('question','hint','solution') for c in r[key]):raise ValueError(f"{r['id']}: control character")
         if re.search(r'\\\][。，]',r['solution']+r['question']):raise ValueError(f"{r['id']}: display math followed by orphan punctuation")
         if re.search(r'(?<!-)--(?=[A-Za-z])',r['solution']+r['question']):raise ValueError(f"{r['id']}: write command-line flags as -{{}}-flag to avoid the TeX en-dash ligature")
-        step=re.search(r'\\textbf\{第一步：\}(.*?)\\textbf\{(?:解答|解题过程)：\}(\s*\\textbf\{[^}]*：\})?',r['solution'],re.S)
-        if not step or not step[1].rstrip().endswith(r'\par\nobreak') or step[2]:
-            raise ValueError(f"{r['id']}: first step must end with \\par\\nobreak before one answer label")
         if r.get('part_review') and (r['part_review'] not in PARTS or not r.get('review_prompt')):raise ValueError(f"{r['id']}: missing review prompt/part")
-    validate_progression(data,(set(titles)-{'00-guide'})|set(APPENDIX_PRACTICE))
+    validate_progression(data,(set(titles)-{'prologue'})|set(APPENDIX_PRACTICE))
     by_key={r['key']:r for r in data}
     for part in PARTS:
         reviews=[r for r in data if r.get('part_review')==part]
@@ -91,14 +100,13 @@ def group_heading(row, titles):
     if row['slug'] in APPENDIX_PRACTICE:
         label,title=APPENDIX_PRACTICE[row['slug']]
         return title, r'正文第~\pageref*{'+label+r'}~页'
-    if row['slug']=='00-guide':
-        return '序章', r'自测第~\pageref*{check:00-guide}~页'
+    if row['slug']=='prologue':
+        return '序章', r'自测第~\pageref*{check:prologue}~页'
     return r'第~\ref*{'+row['owner']+r'}~章 · '+titles[row['slug']], r'正文第~\pageref*{'+row['owner']+r'}~页'
 
 def linked_solution(row):
-    """The first-step label links back to its question; no per-item page line is printed."""
-    marker=r'\textbf{第一步：}'
-    body=row['solution'].replace(marker,r'\hyperref[exercise:'+row['key']+r']{'+marker+'}',1)
+    """Keep short runnable programs with their lead-in, without imposing prose structure."""
+    body=row['solution']
     # Short runnable programs stay together; the preceding nobreak keeps their lead-in.
     return body.replace(r'\begin{verbatim}',r'\begin{samepage}\begin{verbatim}').replace(
         r'\end{verbatim}',r'\end{verbatim}\end{samepage}')
@@ -111,10 +119,10 @@ def render():
               r'\subsection{按章练习与累积复习：C、R 两种任务}',r'\label{app:exercise-bank}',
               'C 题按章排列；R 题按部分排列，连接多个章节，不计入末章题号。',
               '章内按“基础、标准、挑战”排列，同档内按知识依赖排序。初读先做基础题；标准题用于完整计算与迁移；挑战题及扩展路径按需完成。R 题保留综合任务，每部分先给出一道基础热身题入口。预计耗时是逐题估计，不是要求连续完成的学习时长。',
-              r'各组标题给出章号与正文页码；每题标明解答页码、难度和预计耗时。两类题的第一步和解答均在附录 D.1，第~\pageref*{app:answers}~页起。']
+              r'各组标题给出章号与正文页码；每题标明提示入口、解答页码、难度和预计耗时。提示与解答均在附录 D.1，第~\pageref*{app:answers}~页起。']
     answer=[r'% Generated by scripts/generate_exercise_bank.py; edit book/exercises.json.',
             r'\subsection{按章练习与累积复习参考答案}',r'\phantomsection\label{app:answers}',
-            '先遮住解题过程，只读第一步；独立完成后再核对结果、单位与形状。各组标题给出题目起始页，电子版点击“第一步”可回到原题。']
+            '每组先列可选提示，随后给出参考答案。遇到困难时可先看提示；独立完成后再比较推导、结果与形状。电子版点击提示或答案的题号可回到原题。']
     current=None
     for row in regular+cumulative:
         review=row.get('part_review');slug=('review:'+review) if review else row['slug'];identifier=row['id']
@@ -125,16 +133,19 @@ def render():
             question += [r'\Needspace{6\baselineskip}',r'\subsubsection*{'+title+r'\enspace{\mdseries\footnotesize（'+entry+r'）}}',
                          r'\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]']
             answer += [r'\Needspace{6\baselineskip}',r'\subsubsection*{'+title+r'\enspace{\mdseries\footnotesize（'+first+r'）}}',
-                       r'\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]'];current=slug
+                       r'\begin{answerhints}']
+            group=[r for r in regular+cumulative if ('review:'+r['part_review'] if r.get('part_review') else r['slug'])==slug]
+            answer += [r'\item[\hyperref[exercise:'+r['key']+']{'+r['id']+r'}] \leavevmode\phantomsection\label{hint:'+r['key']+'}'+r['hint'] for r in group]
+            answer += [r'\end{answerhints}',r'\begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]'];current=slug
         alias=r'\label{exercise:'+row['key']+'}'
-        meta=r'\hyperref[solution:'+identifier+r']{解答第~\pageref*{solution:'+identifier+r'}~页}'
+        meta=r'\hyperref[hint:'+row['key']+r']{提示} · \hyperref[solution:'+identifier+r']{解答第~\pageref*{solution:'+identifier+r'}~页}'
         # Start the item paragraph before placing anchors: a vertical-mode
         # phantomsection can stay on the previous page when the first line moves.
         question += [r'\item[\textbf{'+identifier+r'.}] \leavevmode\phantomsection\label{exercise:'+identifier+'}'+alias+r'\exercisemeta{'+row['difficulty']+'}{'+str(row['minutes'])+'}{'+meta+'}'+row['question']]
         if row.get('warmup_key'):
             warmup=next(r for r in regular if r['key']==row['warmup_key'])
             question[-1]+=r'\par 可先做\hyperref[exercise:'+warmup['key']+r']{基础热身 '+warmup['id']+r'}。'
-        answer += [r'\item[\textbf{'+identifier+r'.}] \leavevmode\phantomsection\label{solution:'+identifier+r'}\label{solution:'+row['key']+'}'+linked_solution(row)]
+        answer += [r'\item[\textbf{\hyperref[exercise:'+row['key']+']{'+identifier+r'.}}] \leavevmode\phantomsection\label{solution:'+identifier+r'}\label{solution:'+row['key']+'}'+linked_solution(row)]
     question.append(r'\end{enumerate}');answer.append(r'\end{enumerate}')
     reviews=[r'% Generated by scripts/generate_exercise_bank.py; edit book/exercises.json.']
     for part in PARTS:
@@ -153,5 +164,5 @@ def main():
         if args.check:
             if not path.exists() or path.read_text()!=text:raise SystemExit(f'Stale exercise output: {path}')
         else:path.write_text(text)
-    data,_,_=load_exercises();print(f'Exercise bank QA: {len(data)-18} chapter C questions + 18 independent R reviews; one linked first step and one answer label each')
+    data,_,_=load_exercises();print(f'Exercise bank QA: {len(data)-18} chapter C questions + 18 independent R reviews; separate optional hints and worked answers')
 if __name__=='__main__':main()

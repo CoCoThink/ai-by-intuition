@@ -1,6 +1,6 @@
 \chapterrule
 \section{三个位置一起训练：从交叉熵到共享参数更新}
-\label{intro:22c-language-training}
+\label{intro:language-model-training}
 \chaptercompass{三个位置怎样联合训练同一套参数？}{按三位置平均损失，沿完整计算图反传并统一更新。}{$\Pi:3\times5\to L\to\nabla_\theta L$}{Embedding、位置、Q/K/V、FFN、输出头共同更新}
 上一章已经用\textbf{同一组初始参数}得到三个位置的词表概率。
 本章从这三个位置的预测误差出发，在\textbf{一次前向和一次反向传播}中共同训练完整网络。
@@ -428,7 +428,7 @@ x\ \longrightarrow\ \mu=\tfrac13\sum_i x_i
 \subsection{\texorpdfstring{{\symboliconfont ★}}{★}选读：回到上下文缺口，去掉 Attention 会怎样？}
 \label{experiment:context-training}
 \subsubsection*{第一级：有无前文读取通路}
-复用第~\ref*{intro:21a-context-gap}~章的两条冲突样本，
+复用第~\ref*{intro:context-gap}~章的两条冲突样本，
 只监督相同位置的“花”，目标依前文分别为“开了／谢了”。
 主线三位置训练用于核对完整计算图；本实验专门检验跨位置信息的作用。
 
@@ -517,7 +517,7 @@ z=wc+b,\quad p(+1)=\frac{1}{1+e^{-z}}.
 运行 \texttt{python3 scripts/attention\_selection\_demo.py} 可复算损失、查询权重
 与交换记录顺序后的预测，并用有限差分核对全部 $10$ 个可训练标量的梯度。
 
-\chapterchecktasks{22c-language-training}{理解与复算}{
+\chapterchecktasks{language-model-training}{理解与复算}{
 \item \textbf{对齐：}完整 ID 为 $[2,4,5,3]$，输入 $[2,4,5]$；列出三位置的下一 Token 目标，并区别因果掩码与损失掩码。\chapterinlinehint{先错位对齐目标，再分别追踪可见性和计损位置。}
 \item \textbf{手算：}三个位置平均交叉熵；某位置正确类概率为 $0.3$，该类 logit 的梯度是多少？若只计两位置呢？\chapterinlinehint{先求单位置 $p-y$，再除以有效位置数。}
 \item \textbf{找错：}同学为更新输出头先改了 $W_{\rm out}$，再拿新权重反传得到 $W_Q$ 梯度，称为“同一次同步更新”。问题在哪里？\chapterinlinehint{给计算图中的全部权重标记本次使用的快照。}

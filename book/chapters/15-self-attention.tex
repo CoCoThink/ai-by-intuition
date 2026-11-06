@@ -1,9 +1,9 @@
 \chapterrule
 \section{从单 Query 到批量 Self-Attention}
 % This chapter continues the local 2D QKV illustration, not the 5x3 fixture.
-\label{intro:11-softmax-memory}
+\label{intro:self-attention}
 
-\phantomsection\label{intro:12-self-attention-matrices}
+\phantomsection\label{intro:self-attention-matrices}
 \phantomsection\label{concept:self-attention}
 
 
@@ -11,7 +11,7 @@
 $W_V=I_2$ 得到了\textbf{不对称}的匹配分数。
 这里保持同一套投影与输入，先在不缩放、不加因果掩码的条件下复核最后一条 Query，
 再\textbf{对所有行并行归一化和读取 Value}。
-相比\hyperref[intro:21c-naive-attention]{更早的未投影例子}，
+相比\hyperref[intro:attention-qkv]{更早的未投影例子}，
 现在 Key 已经由独立的矩阵生成。
 
 \subsection{回忆最后一条 Query 的读取结果}
@@ -143,13 +143,13 @@ Y_{\rm causal}=A_{\rm causal}V
 对照上一节，前两行的读出从 $(0.788,0.788)$、$(0.578,0.845)$
 变成了只含前缀信息的结果。
 
-\textbf{训练时为什么需要它？}以\hyperref[intro:20b-task-contract]{预测任务}的主线为例：
+\textbf{训练时为什么需要它？}以\hyperref[intro:language-model-task]{预测任务}的主线为例：
 输入 $[2,4,5]$、目标 $[4,5,3]$，位置 1 的目标“花”正是位置 2 的输入。
 第一行若能读到第二列，就能直接抄到答案，训练损失下降却没有学会预测；
 生成时也没有未来 Token 可读。
 因果掩码让一次前向同时为全部位置计分，又让每行只用前缀。
 每行至少保留对角线上的自身，所以每行 Softmax 的分母都大于零，
-沿用\hyperref[intro:20c-classification-loss]{分类损失章的减最大值技巧}，稳定实现只对\textbf{每行可见的分数}减去最大值。
+沿用\hyperref[intro:classification-loss]{分类损失章的减最大值技巧}，稳定实现只对\textbf{每行可见的分数}减去最大值。
 若别的掩码（如填充位置）把某一行全部遮住，分母为零，需要实现另行处理。
 
 
@@ -185,7 +185,7 @@ $\phi(XW_1)W_2$ 对每个 Token 行再施加非线性；
 $AV$ 则按当前 Q/K 的匹配结果\textbf{在 Token 行之间读取}。
 语言模型中的这次跨行读取还要配合上面的因果掩码，只读当前位置及以前的行。
 
-\chapterchecktasks{11-softmax-memory}{理解与复算}{
+\chapterchecktasks{self-attention}{理解与复算}{
 \item \textbf{形状：}输入 $Q:3\times2,K:4\times2,V:4\times3$。写出分数矩阵 $QK^\top$、逐行 Softmax 和最终输出的形状。\chapterinlinehint{依次核对转置、逐行归一化与乘 Value。}
 \item \textbf{手算：}仅两条 Key，匹配分数相同，Softmax 权重分别是多少？若 Value 是 $(1,0)$ 与 $(0,1)$，输出是什么？\chapterinlinehint{先利用分数相等的对称性，再加权求和。}
 \item \textbf{预测：}只把同一行中的第一个匹配分数增大，保持第二个不变，Softmax 第一权重变化方向是什么？两者都加同一个常数呢？\chapterinlinehint{比较指数比值，并检查共同平移能否约去。}

@@ -186,8 +186,13 @@
 % Editorial clues stay in source; reader hints and results are in Appendix D.
 \newcommand{\chapterinlinehint}[1]{}
 \newcommand{\exercisemeta}[3]{{\footnotesize\color{muted}〔#3 · #1 · 约 #2 分钟〕}\enspace}
+\newenvironment{answerhints}{%
+  \par\smallskip\begingroup\small
+  \noindent{\sffamily\bfseries 可选提示}\par\nobreak
+  \begin{description}[leftmargin=4.8em,labelsep=.7em,itemsep=1pt,parsep=0pt]
+}{\end{description}\endgroup\smallskip}
 % Varied chapter self-checks: tasks are explicit, not three predetermined types.
-% Keep the same check:<slug> / answer:<slug> anchors as the legacy form.
+% Semantic check:<slug> / answer:<slug> anchors stay stable across chapter moves.
 \newcommand{\chapterchecktasks}[3]{%
 \par\Needspace{4\baselineskip}%
 \markright{\chapterrunning}%

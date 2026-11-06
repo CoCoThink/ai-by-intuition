@@ -426,7 +426,7 @@ def check_forward_appendix_link(reader, path, labels):
     number,folio,_,dest=labels[target][:4]
     actual_page=reader.get_destination_page_number(reader.named_destinations[dest])+1
     if actual_page!=int(folio):return [f'{target}: label/destination page mismatch']
-    source=reader.get_destination_page_number(reader.named_destinations[labels['intro:22b-token-to-output'][3]])
+    source=reader.get_destination_page_number(reader.named_destinations[labels['intro:transformer-forward-pass'][3]])
     page=reader.pages[source]
     xml=subprocess.check_output(['pdftotext','-f',str(source+1),'-l',str(source+1),
                                  '-bbox-layout',str(path),'-'])
@@ -684,16 +684,15 @@ def check_pdf(path, aux, used):
             value,start=argument(args,start);fields.append(value)
         if len(fields)>=4:labels[match[1]]=fields
     for primary,legacy in (
-        ('intro:00-functions','intro:16-loss-gradient'),
-        ('intro:21c-naive-attention','intro:21b-why-attention'),
-        ('intro:23c-post-training','intro:23cc-test-time-compute'),
-        ('intro:04-key-value-outer-product','intro:06-better-linear-memory'),
-        ('intro:09-nonlinearity-and-memory','intro:13-capacity'),
-        ('check:00-functions','check:16-loss-analytic'),
-        ('check:21c-naive-attention','check:21b-why-attention'),
-        ('check:23c-post-training','check:23cc-test-time-compute'),
-        ('check:04-key-value-outer-product','check:06-better-linear-memory'),
-        ('check:09-nonlinearity-and-memory','check:13-capacity'),
+        ('intro:attention-qkv','intro:why-attention'),
+        ('intro:post-training','intro:test-time-compute'),
+        ('intro:key-value-outer-product','intro:delta-memory'),
+        ('intro:nonlinear-memory','intro:memory-capacity'),
+        ('check:functions-and-loss','check:loss-analytic'),
+        ('check:attention-qkv','check:why-attention'),
+        ('check:post-training','check:test-time-compute'),
+        ('check:key-value-outer-product','check:delta-memory'),
+        ('check:nonlinear-memory','check:memory-capacity'),
     ):
         if primary not in labels or legacy not in labels or labels[primary][3]!=labels[legacy][3]:
             failures.append(f'Merged compatibility link resolves to a different destination: {primary}/{legacy}')

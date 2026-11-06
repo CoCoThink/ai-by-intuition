@@ -73,12 +73,18 @@ def source_layout_errors(main, sources):
     return errors
 
 
+def semantic_anchor_errors(body):
+    if re.search(r'\b(?:intro|check|answer):\d|\bexercise:linked-|\\chapter(?:checktasks|practicejump)\{\d',body):
+        return ['Chapter labels and practice slugs must use semantic names without chapter-number prefixes']
+    return []
+
+
 def ten_step_errors(body):
     # The targets can both exist and still point to the wrong kind of lesson.
     match=re.search(r'\\item \\textbf\{选择训练或生成\}：(.*?)(?=\\end\{enumerate\})',body,re.S)
     if not match:return ['Missing training/generation fork in step 10']
     targets=re.findall(r'\\ref\*?\{([^}]+)\}',match[1])
-    if targets!=['intro:22c-language-training','intro:23-llm-systems']:
+    if targets!=['intro:language-model-training','intro:autoregressive-generation']:
         return [f'Step 10 must link TRAINING then GENERATION, found {targets}']
     return []
 
@@ -236,18 +242,17 @@ def validate_contract():
     require(len(groups)==CHAPTER_COUNT+1,'One unnumbered prelude must have a self-check')
     allchecks=[slug for g in groups for slug in g['checks']]
     require(len(set(allchecks))==len(allchecks),'Repeated self-check slug')
-    # Merged legacy chapter links must resolve to the same numbered chapter,
+    # Section links must resolve to the chapter that contains their content,
     # and each part map must contain one entry per actual chapter.
     owners,_=lesson_metadata()
-    for primary,legacy in (
-        ('00-functions','16-loss-gradient'),
-        ('21c-naive-attention','21b-why-attention'),
-        ('23c-post-training','23cc-test-time-compute'),
-        ('04-key-value-outer-product','06-better-linear-memory'),
-        ('09-nonlinearity-and-memory','13-capacity'),
+    for primary,local in (
+        ('attention-qkv','why-attention'),
+        ('post-training','test-time-compute'),
+        ('key-value-outer-product','delta-memory'),
+        ('nonlinear-memory','memory-capacity'),
     ):
-        require(owners.get('intro:'+primary)==owners.get('intro:'+legacy)==primary,
-                f'{legacy}: old chapter link is not owned by merged chapter {primary}')
+        require(owners.get('intro:'+primary)==owners.get('intro:'+local)==primary,
+                f'{local}: section link is not owned by chapter {primary}')
     part_maps=(BOOK/'part-maps.tex').read_text()
     entries=re.findall(r'\\mapchapter\{([^}]+)\}',part_maps)
     mapped=[owners.get('intro:'+entry) for entry in entries]
@@ -268,6 +273,7 @@ def validate_contract():
               'part-reviews':(BOOK/'part-reviews.tex').read_text()}
     for p in (BOOK/'figures').glob('*.tex'):combined['figures/'+p.name]=uncomment(p.read_text())
     for name,body in combined.items():
+        errors.extend(f'{name}: {e}' for e in semantic_anchor_errors(body))
         errors.extend(f'{name}: {e}' for e in notation_errors(body))
         errors.extend(f'{name}: {e}' for e in ending_order_errors(body))
     for name in ('appendix-a-symbols','15-self-attention',
@@ -275,7 +281,7 @@ def validate_contract():
         body=sources[name].replace(r'\mathcal{M}','')
         require(not re.search(r'(?<![A-Za-z])M(?![A-Za-z])',body),f'{name}: KV/memory counts must use T_k, not M')
     require('d_h' not in sources['29-modern-transformers'],'Modern head widths must use d_k; d_h is the RNN state width')
-    require(not re.search(r'(?<![A-Za-z])N(?![A-Za-z_])', sources['24-post-training-and-inference'].split(r'\label{intro:23cc-test-time-compute}',1)[1]),
+    require(not re.search(r'(?<![A-Za-z])N(?![A-Za-z_])', sources['24-post-training-and-inference'].split(r'\label{intro:test-time-compute}',1)[1]),
             'Test-time candidate counts must use n')
     for name in ('33-linear-associative-memory','34-nonlinear-memory'):
         require(not re.search(r'(?<![A-Za-z\\])S(?![A-Za-z])', sources[name]),
@@ -307,7 +313,7 @@ def validate_contract():
     require('训练资料从哪里来' not in sources['23-pretraining-and-icl'] and
             '训练数据工程' in sources['28-training-and-deployment'] and
             'concept:pretraining-data' not in sources['22-real-models'],'Data cleaning must be outside ICL chapter')
-    require(lesson_metadata()[0].get('intro:23cc-test-time-compute')=='23c-post-training' and
+    require(lesson_metadata()[0].get('intro:test-time-compute')=='post-training' and
             '冻结参数' in sources['24-post-training-and-inference'],
             'Training feedback and fixed-weight verification must share a chapter with an explicit boundary')
     for marker in ('concept:bos-eos','concept:prefill-decode','concept:autoregressive'):
@@ -337,16 +343,16 @@ def validate_contract():
     require(len([r for r in data if r.get('part_review')])==18,'Nine parts need two cumulative exercises each')
     exercises={r['key']:r for r in data}
     for key,slug in (
-            ('local-derivative-change','16-loss-gradient'),
-            ('synchronous-gradient-step','16-loss-gradient'),
-            ('mini-batch-gradient-average','16-loss-gradient'),
-            ('local-chain-gradient','17-backpropagation'),
-            ('branch-gradient-sum','17-backpropagation'),
-            ('relu-blocked-gradient','17-backpropagation'),
-            ('zero-loss-generalization','18-generalization'),
-            ('matrix-single-entry','03-matrix-multiplication'),
-            ('matrix-batch-calculation','03-matrix-multiplication'),
-            ('convolution-shared-kernel','19-cnn')):
+            ('local-derivative-change','gradient-descent'),
+            ('synchronous-gradient-step','gradient-descent'),
+            ('mini-batch-gradient-average','gradient-descent'),
+            ('local-chain-gradient','backpropagation'),
+            ('branch-gradient-sum','backpropagation'),
+            ('relu-blocked-gradient','backpropagation'),
+            ('zero-loss-generalization','generalization'),
+            ('matrix-single-entry','matrix-multiplication'),
+            ('matrix-batch-calculation','matrix-multiplication'),
+            ('convolution-shared-kernel','cnn')):
         require(key in exercises and exercises[key]['slug']==slug,f'Missing prerequisite exercise: {key} in {slug}')
     for name,body in combined.items():errors.extend(f'{name}: {e}' for e in visible_exercise_errors(body,[r['id'] for r in data]))
     aliases={}
@@ -370,7 +376,9 @@ def validate_contract():
     errors.extend(validate_navigation())
     # Self-check/answer bijection follows the actual learning goals of each chapter.
     ans=sources['appendix-d-self-check-solutions']
-    require(ans.count(r'\par\Needspace{8\baselineskip}')==len(allchecks),'Every answer heading must keep its first answer')
+    require(not re.search(r'\\textbf\{(?:第一步|解答|解题过程|核对)：\}',ans),
+            'Self-check solutions must not reintroduce the retired answer template')
+    require(ans.count(r'\par\Needspace{8\baselineskip}')==len(allchecks),'Every answer heading must stay with its optional hints')
     for name,body in sources.items():
         for m in re.finditer(r'\\chapterchecktasks\{',body):
             slug,e=argument(body,m.end()-1);_,e=argument(body,e);questions,_=argument(body,e)
@@ -380,8 +388,8 @@ def validate_contract():
             marker=r'\label{answer:'+slug+'}'
             require(marker in ans,f'{slug}: missing self-check answers')
             if marker in ans:
-                section=ans.split(marker,1)[1].split(r'\item[',1)[0]
-                ids=re.findall(r'\\answerpiece\{([^}]+)\}',section)
+                section=ans.split(marker,1)[1].split(r'\item[\textbf{',1)[0]
+                ids=re.findall(r'\\checkanswer\{([^}]+)\}',section)
                 require(ids==[str(i) for i in range(1,count+1)],f'{slug}: answer numbering differs from questions: {ids}')
     # Canonical glossary defines its own count; both generated indices must match.
     from generate_bilingual_glossary import generate,entries,EXTRA_REFERENCES
@@ -474,7 +482,7 @@ def self_test():
                                 {**sources,'continuation':r'\subsection{More}'})
     assert source_layout_errors(layout.replace('appendix-a-formulas','appendix-b-formulas'),sources)
     assert source_layout_errors(layout+r'\input{chapters/02-second}',sources)
-    from generate_exercise_bank import printed_regular,validate_keys,validate_progression
+    from generate_exercise_bank import printed_regular,validate_keys,validate_progression,validate_answer
     progression=[dict(slug='first',difficulty='基础'),dict(slug='first',difficulty='标准')]
     validate_progression(progression,{'first'})
     for invalid,required in ((progression[::-1],{'first'}),
@@ -489,20 +497,35 @@ def self_test():
     validate_keys([dict(key='matrix-single-entry'),dict(key='branch-gradient-sum')])
     for invalid in ([dict(key='same-key'),dict(key='same-key')], [dict(id='C-001')],
                     [dict(key='matrix-single-entry',legacy_id='retired')],
-                    [dict(key='matrix-single-entry',legacy_answer_anchor='retired')]):
+                    [dict(key='matrix-single-entry',legacy_answer_anchor='retired')],
+                    [dict(key='matrix-single-entry',slug='99-obsolete')],
+                    [dict(key='matrix-single-entry',owner='intro:99-obsolete')],
+                    [dict(key='matrix-single-entry',question=r'\label{exercise:linked-99-obsolete}')]):
         try:validate_keys(invalid)
         except ValueError:pass
         else:raise AssertionError('Missing/duplicate keys and retired fields must be rejected')
+    assert not semantic_anchor_errors(r'\label{intro:dot-product}\chapterchecktasks{vectors}')
+    assert semantic_anchor_errors(r'\label{intro:99-obsolete}')
+    assert semantic_anchor_errors(r'\hyperref[answer:99-obsolete]{解答}')
+    assert semantic_anchor_errors(r'\chapterchecktasks{99-obsolete}')
+    assert semantic_anchor_errors(r'\label{exercise:linked-99-obsolete}')
+    worked=dict(id='C-001',question='计算题。',hint='先展开两个因子的乘积。',solution=r'\textbf{展开与合并：}$(x+1)^2=x^2+2x+1$。')
+    validate_answer(worked)
+    for changes in (dict(hint=''),dict(solution=''),dict(solution=r'\textbf{第一步：}展开。\textbf{解题过程：}计算。'),
+                    dict(solution=worked['solution']+r'\textbf{核对：}相等。')):
+        try:validate_answer({**worked,**changes})
+        except ValueError:pass
+        else:raise AssertionError('Empty hints/answers and the retired fixed template must be rejected')
     rows=[dict(id='C-001',slug='first'),dict(id='C-002',slug='second')]
     assert [r['id'] for r in printed_regular(rows,{'first':'A','second':'B'})]==['C-001','C-002']
     try:printed_regular(rows,{'second':'B','first':'A'})
     except ValueError:pass
     else:raise AssertionError('Storage-contiguous IDs must not hide noncontiguous printed chapter order')
-    good=r'\item \textbf{选择训练或生成}：训练见第~\ref*{intro:22c-language-training}~章；生成见第~\ref*{intro:23-llm-systems}~章。\end{enumerate}'
+    good=r'\item \textbf{选择训练或生成}：训练见第~\ref*{intro:language-model-training}~章；生成见第~\ref*{intro:autoregressive-generation}~章。\end{enumerate}'
     assert not ten_step_errors(good)
     # Regression: every target exists, yet the roles are wrong (the old CI miss).
-    assert ten_step_errors(good.replace('intro:22c-language-training','intro:23a-from-toy-to-gpt'))
-    assert ten_step_errors(good.replace('intro:23-llm-systems','intro:22c-language-training'))
+    assert ten_step_errors(good.replace('intro:language-model-training','intro:real-models'))
+    assert ten_step_errors(good.replace('intro:autoregressive-generation','intro:language-model-training'))
     assert not notation_errors(r'\widehat{y}_i+\Pi_{1,4}')
     for bad in (r'\vect a^\top\cdot\vect b^\top',r'\vect{q}_i^\top\cdot\vect{k}_j^\top',
                 r'\|\vect a^\top\|',r'\|\vect{k}^\top\|^2'):

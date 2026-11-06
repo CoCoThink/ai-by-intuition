@@ -1,13 +1,13 @@
 \chapterrule
 \section{非线性检索：从 MLP 视角到记忆容量}
-\phantomsection\label{intro:09-nonlinearity-and-memory}
-\label{intro:13-capacity}
+\phantomsection\label{intro:nonlinear-memory}
+\label{intro:memory-capacity}
 
 上一章的两种线性写法都只在写入端减少串扰，读取时所有非零匹配仍按原值参与输出。
 本章转到读取端：先把多条 Key、Value 堆成矩阵，再让权重随匹配强弱非线性变化。
 
 \subsection{把 Key 和 Value 堆成矩阵：从匹配到读出}
-\phantomsection\label{intro:08-stacking-key-value}
+\phantomsection\label{intro:stacking-key-value}
 设 Query $\vect{x}^\top:1\times d_k$，$T_k$ 条 Key 按行排成
 $K:T_k\times d_k$，Value 按行排成 $V:T_k\times d_v$。
 一次查询经过三步：
@@ -107,7 +107,7 @@ MLP 的参数在训练中更新；Attention 的 Key/Value 往往由当前上下�
 
 
 \subsection{线性层、MLP 与 Attention 的统一检索视角}
-\phantomsection\label{intro:14-summary}
+\phantomsection\label{intro:memory-summary}
 采用行向量 $\vect{x}^\top:1\times d_k$，
 以及逐行堆叠的 $K:T_k\times d_k$、$V:T_k\times d_v$：
 
@@ -192,8 +192,8 @@ Softmax 对每条查询重新归一化，所以它的读出随上下文逐条计
 % Start the complete self-check on the closing page, rather than leaving only
 % its final question above the part exit on a sparse continuation page.
 \Needspace{18\baselineskip}
-\chapterchecktasks{09-nonlinearity-and-memory}{理解、手算与判断}{
-\label{check:13-capacity}
+\chapterchecktasks{nonlinear-memory}{理解、手算与判断}{
+\label{check:memory-capacity}
 \item\textbf{手算：}本章 $\vect{x}^\top K^\top=(1,-0.2)$，$V=\begin{bmatrix}2&1\\0&3\end{bmatrix}$，用 $\relu$ 处理匹配分数后输出什么？\chapterinlinehint{先逐项做 ReLU，再按行加权 Value。}
 \item\textbf{比较：}若不做 ReLU，直接将 $(1,-0.2)$ 右乘 $V$，输出如何改变？这说明非线性作用在哪里？\chapterinlinehint{保留原负权重重算，再对照中间匹配向量。}
 \item\textbf{预测：}当相似度在 $[0,1]$ 内时，提高幂次会怎样影响严格小于 $1$ 的匹配？恰为 $1$ 的匹配呢？\chapterinlinehint{分别观察单位区间内部与端点的幂。}

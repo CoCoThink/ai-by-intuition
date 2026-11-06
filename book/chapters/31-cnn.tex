@@ -1,6 +1,6 @@
 \chapterrule
 \section{CNN：怎样用局部连接与参数共享处理图片？}
-\label{intro:19-cnn}
+\label{intro:cnn}
 
 文本有顺序，图片则同时具有宽度、高度和局部空间关系。
 CNN 利用这种结构，让同一组特征检测规则在图像不同位置重复工作。
@@ -121,7 +121,7 @@ y=1+1+(-1)=\boxed{1}.
 \]
 CNN 的关键是局部连接与权重共享：同一组参数可以检测不同位置的相似图案。
 
-\chapterchecktasks{19-cnn}{理解与复算}{
+\chapterchecktasks{cnn}{理解与复算}{
 \item \textbf{比较：}同一卷积核在多个空间位置共享参数，与把整张图片展平成向量后使用全连接层相比，节省了什么？\chapterinlinehint{比较空间位置增多时，独立权重组数如何变化。}
 \item \textbf{手算：}$3\times3$ 卷积核、输入 $3$ 通道、输出 $8$ 通道，不计偏置共有多少权重？\chapterinlinehint{按核面积、输入通道、输出通道三项相乘。}
 \item \textbf{预测：}保持核宽、通道数和步长不变，输入图像宽高各增大一倍，卷积参数量与输出位置数分别怎样变化？\chapterinlinehint{分别追踪权重形状与输出网格面积。}

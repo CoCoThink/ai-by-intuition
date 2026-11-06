@@ -132,8 +132,8 @@ def scaling_example_errors(body):
 
 def validate_pedagogy(main, sources):
     errors=route_prerequisite_errors(main,sources,[
-        ('intro:20b-task-contract','intro:20c-classification-loss'),
-        ('intro:21a-context-gap','intro:21c-naive-attention')])
+        ('intro:language-model-task','intro:classification-loss'),
+        ('intro:context-gap','intro:attention-qkv')])
     errors.extend(f'09-tokenization: {error}'
                   for error in bpe_comparison_errors(sources['09-tokenization']))
     errors.extend(f'10-language-model-task: {error}'

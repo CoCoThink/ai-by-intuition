@@ -1,6 +1,6 @@
 \chapterrule
 \section{训练好了，模型怎样逐词生成文字？}
-\label{intro:23-llm-systems}
+\label{intro:autoregressive-generation}
 
 \begin{idea}
 \noindent\emph{从概率分布到连续的文字输出}\par
@@ -32,7 +32,7 @@ p=(0.6,\ 0.3,\ 0.1).
 生成时没有现成的后续答案：模型必须先为当前前缀选出一个 Token，
 把它接到输入末尾，才能继续预测。
 
-取第~\ref*{intro:22c-language-training}~章训练 $20$ 步后的全部参数，此后不再更新。
+取第~\ref*{intro:language-model-training}~章训练 $20$ 步后的全部参数，此后不再更新。
 只给 Prompt“春天”（ID $2$），每一步取最后位置分数最高的 ID：
 \begin{center}\small
 \tagpdfsetup{table/header-rows={1}}
@@ -45,7 +45,7 @@ $3$ & $[2,4,5]$ & $3$“。” & $0.5829$\\\bottomrule
 \end{center}
 三步依次接出“花”“开了”“。”，复现了训练句子。
 第 $3$ 步最后一个 Query 的读取权重为 $(0.1188,0.3256,0.5556)$，
-与第~\ref*{intro:22c-language-training}~章 Attention 表中第 $20$ 步的第三行相同：
+与第~\ref*{intro:language-model-training}~章 Attention 表中第 $20$ 步的第三行相同：
 因果掩码让第 $t$ 行只依赖前 $t$ 个 Token，
 所以训练时并行算出的各行，正是逐词生成时每一步的最后一行。
 区别在于训练的输入来自数据，生成的输入来自上一步的选择。
@@ -158,7 +158,7 @@ Prompt 的多个位置可组成较大的矩阵乘法；单请求逐 Token Decode
 \phantomsection\label{concept:gqa}
 分组查询注意力（GQA）让一组 Query 头共享一组 K/V 头。
 需要保存的 K/V 头更少，既节省缓存容量，也减少解码时读取 K/V 的数据量。
-第~\ref*{intro:22d-modern-transformers}~章把这种动机换成真实配置的字节估算。
+第~\ref*{intro:modern-transformers}~章把这种动机换成真实配置的字节估算。
 
 \subsection{上下文窗口保存本次计算可见的信息}
 
@@ -173,7 +173,7 @@ $P_{\rm pos}$ 没有这一行，前向计算无法进行；
 这些是应用层的策略，不能误认为模型参数在对话中被永久改写。
 \end{boundarybox}
 
-\chapterchecktasks{23-llm-systems}{理解与复算}{
+\chapterchecktasks{autoregressive-generation}{理解与复算}{
 \item \textbf{预测（先不计算）：}沿用本章 logits $(2,1,0)$。温度从 $\tau=1$ 降到 $0.5$，最小候选 C 的概率变大还是变小？温度趋于很大时，三个候选分别趋于多少？\chapterinlinehint{比较除以温度后的分数差，再看极限分布。}
 \item \textbf{手算：}四候选概率为 $(0.5,0.3,0.15,0.05)$。（a）Top-$p$ 阈值为 $0.8$，保留哪几个、归一化后各多少？（b）Top-$k$ 取 $k=3$，归一化后各多少？两组保留集合相同吗？\chapterinlinehint{先求两种保留集合，再分别除以保留概率和。}
 \item \textbf{找错：}同学说：“训练一次能并行预测三个位置，生成时也能一次把未知的整句话并行写出来。”指出漏洞，说明因果掩码 和已知输入在训练／生成中的不同作用。\chapterinlinehint{区分已知训练序列与尚未生成的前缀。}

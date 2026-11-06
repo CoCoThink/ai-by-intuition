@@ -90,7 +90,7 @@ def rendered_navigation() -> str:
 def rendered_source_map() -> str:
     """Map stable entry labels and practice slugs to actual compilation inputs."""
     main = uncomment((BOOK / 'main.tex').read_text())
-    lines = ['| 当前章文件 | 入口与兼容标签 | 习题归属键（`slug`） |',
+    lines = ['| 当前章文件 | 入口标签 | 习题归属键（`slug`） |',
              '|---|---|---|']
     for name in re.findall(r'\\input\{chapters/([^}]+)\}', main):
         body = uncomment((BOOK / 'chapters' / (name + '.tex')).read_text())
@@ -127,13 +127,15 @@ def validate_navigation() -> list[str]:
             errors.append(f'Answer heading {slug} must match chapter title: {titles.get(slug)}')
         if slug in seen: errors.append(f'Duplicate answer heading: {slug}')
         seen.add(slug)
-    for match in re.finditer(r'\\answerpiece\{([^}]+)\}\{', answers):
-        _, end = argument(answers, match.end()-1)
-        if end >= len(answers) or answers[end] != '{':
-            errors.append(f'Missing first step at answer item {match[1]}')
-            continue
-        hint, _ = argument(answers, end)
-        if len(hint.strip()) < 6: errors.append(f'First step too short: {match[1]}')
+    for slug in titles:
+        marker=r'\label{answer:'+slug+'}'
+        if marker not in answers:continue
+        section=answers.split(marker,1)[1].split(r'\item[\textbf{',1)[0]
+        ids=re.findall(r'\\checkanswer\{([^}]+)\}',section)
+        hints=re.findall(r'\\label\{hint:'+re.escape(slug)+r':([^}]+)\}',section)
+        if hints!=ids:errors.append(f'{slug}: optional hints must match self-check answer numbers')
+        for hint in re.finditer(r'\\label\{hint:'+re.escape(slug)+r':[^}]+\}([^\n]+)',section):
+            if len(hint[1].strip())<6:errors.append(f'{slug}: optional hint too short')
     if seen != set(titles): errors.append(f'Answer heading coverage mismatch: {seen ^ set(titles)}')
     return errors
 

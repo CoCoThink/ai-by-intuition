@@ -1,7 +1,7 @@
 \chapterrule
 \section{线性联想记忆：写入、串扰与误差修正}
-\label{intro:04-key-value-outer-product}
-\label{intro:06-better-linear-memory}
+\label{intro:key-value-outer-product}
+\label{intro:delta-memory}
 
 \phantomsection\label{concept:outer-product}
 
@@ -54,7 +54,7 @@ $K:T_k\times d_k$、$V:T_k\times d_v$，
 \end{idea}
 
 \subsection{多条记忆：为什么会互相干扰？}
-\phantomsection\label{intro:05-memory-interference}
+\phantomsection\label{intro:memory-interference}
 \phantomsection\label{concept:memory-interference}
 \phantomsection\label{partq:memory}
 对 $T_k$ 条行向量 Key--Value 配对，最直接的写入是外积累加：
@@ -234,8 +234,8 @@ Gated DeltaNet 则加入遗忘门控，调节旧记忆保留多少。
 \noindent\emph{对应迁移练习：}\hyperref[exercise:delta-reverse]{交换写入次序的迁移题}
 交换 A、B 的写入次序，检查被扰动的是否始终是旧 Key。
 
-\chapterchecktasks{04-key-value-outer-product}{理解、手算与判断}{
-\label{check:06-better-linear-memory}
+\chapterchecktasks{key-value-outer-product}{理解、手算与判断}{
+\label{check:delta-memory}
 \item\textbf{形状：}行向量 Key $\vect{k}^\top:1\times2$、Value $\vect{v}^\top:1\times3$。外积写入 $\mathcal{M}=\vect{k} \vect{v}^\top$ 的形状是什么？查询 $\vect{q}^\top:1\times2$ 后 $\vect{q}^\top\mathcal{M}$ 又是什么形状？\chapterinlinehint{先写转置 Key 的形状，再核对内侧维度。}
 \item\textbf{预测：}同一条记忆若把 Key 写入时改为 $\vect{k}'^\top=(0.5,0)$，再以 $\vect{q}^\top=\vect{k}'^\top$ 读取，恢复的 Value 是多少倍？\chapterinlinehint{把写入和读取两次出现的 Key 缩放都算上。}
 \item\textbf{手算：}$\vect{k}_A^\top=(1,0),\vect{k}_B^\top=(0.6,0.8)$；$\vect{v}_A^\top=(1,0),\vect{v}_B^\top=(0,1)$。把两条外积相加，用 $\vect{k}_A^\top$ 查询得到什么？\chapterinlinehint{分别求两条外积，再相加并用查询读取。}

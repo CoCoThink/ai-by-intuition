@@ -1,6 +1,6 @@
 \chapterrule
 \section{从 CNN 到 ViT：如何把图片变成一串 Token？}
-\label{intro:19b-vit}
+\label{intro:vit}
 
 \phantomsection\label{concept:vit}
 
@@ -93,10 +93,10 @@ E_{\rm patch}=X_{\rm patch}W_{\rm patch}
 
 \subsection{第三步：如果只给四行向量，怎么分清图像位置？}
 
-\hyperref[intro:22a-position-multihead]{前文的换位与 Attention 实验}表明：
+\hyperref[intro:position-multihead]{前文的换位与 Attention 实验}表明：
 不含位置信息的 Self-Attention 对输入行置换等变。
 ViT 因此也要标明\textbf{空间位置}。
-例如，第~\ref*{intro:19-cnn}~章图像 $X$ 的左上与右下两块像素完全相同，
+例如，第~\ref*{intro:cnn}~章图像 $X$ 的左上与右下两块像素完全相同，
 经过共享投影会得到相同的行向量，还需要位置信息说明它们各自来自哪里。
 对本章图像 $I$ 算出的 $E_{\rm patch}$，给四行向量加入 $P_{\rm patch}\in\R^{4\times3}$：
 \[
@@ -196,7 +196,7 @@ ViT 输出视觉向量，语言模型根据接入的向量生成文字。
 
 设花图、窗图的向量分别为 $(1,0),(0,1)$，
 “花开了”“窗开了”的文字向量也分别为 $(1,0),(0,1)$。
-取相似度乘数为 2，它就是第~\ref*{intro:23-llm-systems}~章的逆温度 $\beta=1/\tau$（此处 $\tau=0.5$）。
+取相似度乘数为 2，它就是第~\ref*{intro:autoregressive-generation}~章的逆温度 $\beta=1/\tau$（此处 $\tau=0.5$）。
 图片对文字的分数矩阵为
 \[
 Z_{\rm pair}=2I_2,\qquad
@@ -229,7 +229,7 @@ $16\times16\times3=768$ 维。投影宽度若也是 $768$，
 详见\href{https://arxiv.org/abs/2010.11929}{ViT 原始论文}。
 
 
-\chapterchecktasks{19b-vit}{理解与复算}{
+\chapterchecktasks{vit}{理解与复算}{
 \item \textbf{形状：}四个图像 Patch 各投影为三维向量，再加一个 CLS Token。ViT 的输入序列是几行？若使用全局自注意力，分数矩阵什么形状？\chapterinlinehint{先数序列行，再写所有行之间的配对形状。}
 \item \textbf{手算：}若语言模型隐藏宽度为 $6$，视觉投影矩阵应是什么形状？上一题含 CLS 的五条向量经投影后是什么形状？\chapterinlinehint{让视觉特征宽度与语言隐藏宽度对齐。}
 \item \textbf{预测：}固定图像尺寸而把 Patch 边长减半，忽略边界时 Patch 数量约变为多少倍？全局 Attention 的位置配对数又约变为多少倍？\chapterinlinehint{先按面积比算 Patch 数，再算两两配对数。}

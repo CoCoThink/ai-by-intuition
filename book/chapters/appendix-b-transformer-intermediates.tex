@@ -3,7 +3,7 @@
 先用本例练计算链，再查下面的三维 Pre-Norm 主例。
 本例固定 $X=I_2$，只监督第二位置、目标为第二类；
 一个因果头的匹配宽度为 $1$、Value 宽度为 $2$，关闭 Norm 与偏置。
-三维主例保留 LayerNorm，其梯度计算见第~\ref*{intro:22c-language-training}~章。
+三维主例保留 LayerNorm，其梯度计算见第~\ref*{intro:language-model-training}~章。
 取
 \[
 W_Q=\begin{bmatrix}0\\1\end{bmatrix},\quad W_K=\begin{bmatrix}0\\0\end{bmatrix},\quad
@@ -40,7 +40,7 @@ Query 梯度为零来自本次 $K=0$ 的参数点，不表示 Query 永远学不
 \subsection{三维贯通实验：完整参数表与逐层中间值}
 \phantomsection\label{app:transformer-intermediates}
 
-正文\hyperref[intro:22b-token-to-output]{贯通实验}列出了
+正文\hyperref[intro:transformer-forward-pass]{贯通实验}列出了
 $X,A,H,\Pi$ 四张最小矩阵。本附录给出
 对应的参数与中间量，供逐项验算。
 
@@ -165,7 +165,7 @@ F_{\rm mid}=\operatorname{ReLU}(BW_{\rm up})\approx
 .0872&0&.7274&.5417
 \end{bmatrix}.
 \]
-$H=X_{\rm att}+F_{\rm mid}W_{\rm down}$ 为 $3\times3$，完整结果见正文第~\ref*{intro:22b-token-to-output}~章。
+$H=X_{\rm att}+F_{\rm mid}W_{\rm down}$ 为 $3\times3$，完整结果见正文第~\ref*{intro:transformer-forward-pass}~章。
 
 \textbf{输出头与 logits。}
 \[
@@ -188,7 +188,7 @@ Z=HW_{\rm out}\approx
 
 
 \subsubsection*{输出头梯度矩阵}
-第~\ref*{intro:22c-language-training}~章中，$W_{\rm out}$ 的梯度形状为 $3\times5$，
+第~\ref*{intro:language-model-training}~章中，$W_{\rm out}$ 的梯度形状为 $3\times5$，
 十五个元素为：
 \[
 \frac{\partial L}{\partial W_{\rm out}}

@@ -1,7 +1,7 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{下一 Token 预测：训练与生成为何不同？}
-\label{intro:20b-task-contract}
+\label{intro:language-model-task}
 
 下一 Token 预测在\textbf{生成}和\textbf{训练}中用法不同：生成时，模型根据当前上下文预测一个 Token；训练时，一段已知文本可以同时提供多个位置的正确答案。
 先分清这两种场景，再约定任务的输入、目标、输出形状和计分方式。\phantomsection\label{concept:task-contract}
@@ -84,11 +84,11 @@ ID 只是查词表的编号；即使重新编号，输入与目标的文字对�
 这也解释了训练和生成的区别：训练已知整段文本，能评价所有位置；生成没有后续答案，只用提示末尾那行继续预测。
 
 真实 GPT-2 small 的词表有 $50{,}257$ 项，仍沿用下一 Token 目标；
-规模与配置见第~\ref*{intro:23a-from-toy-to-gpt}~章。
+规模与配置见第~\ref*{intro:real-models}~章。
 分数怎样变成概率、怎样与目标比较，将在下一章计算；
 整数 ID 怎样变成可训练的向量，再由 Embedding 一章展开。
 
-\chapterchecktasks{20b-task-contract}{理解与复算}{
+\chapterchecktasks{language-model-task}{理解与复算}{
 \item \textbf{对齐：}完整序列 $[2,4,5,3]$，采用三个输入位置 $[2,4,5]$。列出逐位置的三个下一 Token 目标。\chapterinlinehint{在完整文本中找到每个输入 Token，取它右边紧邻的一项作目标。}
 \item \textbf{形状：}词表大小为 $5$，这条示例的三个位置各输出五类分数。把这些分数组织成矩阵后是什么形状？\chapterinlinehint{一条位置对应一行，类别数对应列数。}
 \item \textbf{找错：}同学让第一个位置直接读取第二个位置的“花”，再预测第一个位置的下一 Token。哪里发生信息泄漏？\chapterinlinehint{先写出第一个位置的目标，再检查它是否已出现在预测所用的输入中。}

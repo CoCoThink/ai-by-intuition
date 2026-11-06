@@ -22,7 +22,7 @@ X=E[\mathrm{IDs}]+P_{\rm pos}.
 \]
 这里 $T$ 表示输入 Token 数，$d$ 是隐藏宽度，
 $h$ 是投影输出宽度。
-\hyperref[intro:04-key-value-outer-product]{联想记忆部分}同样使用行向量，
+\hyperref[intro:key-value-outer-product]{联想记忆部分}同样使用行向量，
 写入为 $\mathcal{M}=\sum_i \vect{k}_i\vect{v}_i^\top$，
 读取为 $\vect{x}^\top\mathcal{M}$；无需另外切换方向。
 
@@ -52,7 +52,7 @@ L=-\frac1T\sum_{i=1}^{T}\ln p_\theta(y_i\mid x_{\le i}).
 这条损失假设所有 $T$ 个位置参与平均；
 若使用损失掩码，应按\textbf{实际计分位置数}归一化。
 \textbf{Q/K/V、FFN、输出头都能获得共享训练梯度}；
-本书的统一数值实验请回查第~\ref*{intro:22b-token-to-output}、\ref*{intro:22c-language-training}~章的原始算例。
+本书的统一数值实验请回查第~\ref*{intro:transformer-forward-pass}、\ref*{intro:language-model-training}~章的原始算例。
 
 \par\smallskip
 读公式先核对三个问题：是哪组输入、输出形状是什么、

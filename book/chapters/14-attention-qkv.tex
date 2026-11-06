@@ -1,8 +1,8 @@
 \Needspace{13\baselineskip}
 \chapterrule
 \section{Attention：从直接读取到 Q/K/V 分工}
-\label{intro:21c-naive-attention}
-\label{intro:21b-why-attention}
+\label{intro:attention-qkv}
+\label{intro:why-attention}
 \phantomsection\label{concept:attention}
 
 \begin{idea}
@@ -143,7 +143,7 @@ AV_{\text{乙}}=\begin{bmatrix}-1/2\\1/2\end{bmatrix}.
 选择性读取保住了答案的符号；有限 Softmax 权重仍混入另一条记录，读出幅度是原值的一半。
 
 接收完整历史的 RNN 或固定窗口 MLP 也能解决这个小任务。
-这里的匹配来自固定名字编码；怎样通过训练学到匹配，见第~\ref*{intro:22c-language-training}~章
+这里的匹配来自固定名字编码；怎样通过训练学到匹配，见第~\ref*{intro:language-model-training}~章
 \hyperref[experiment:attention-selection]{记录查询训练对照}（第~\pageref*{experiment:attention-selection}~页）的均匀读取与学习 Q/K 结果。
 下面用三个二维输入继续拆解匹配分数的来源。
 
@@ -343,8 +343,8 @@ $(0.665,\;0.090\times2+0.245+0.665)=(0.665,1.090)$。
 \hyperref[experiment:attention-selection]{第~\ref*{experiment:attention-selection}~节的记录查询对照}
 将检验 Q/K 怎样学会按查询选择记录。
 
-\chapterchecktasks{21c-naive-attention}{理解、手算与判断}{
-\label{check:21b-why-attention}
+\chapterchecktasks{attention-qkv}{理解、手算与判断}{
+\label{check:why-attention}
 \item\textbf{手算：}本章 $\vect x_1^\top=(1,0),\vect x_2^\top=(0,1),\vect x_3^\top=(1,1)$。计算 $S=XX^\top$ 的第一行和第三行，标出 $S_{13}$ 与 $S_{31}$；再按三行分数判断各行哪些位置得到最大权重，注意并列。\chapterinlinehint{让对应输入行分别与所有输入行做点积，再比较同一行的分数。}
 \item\textbf{预测：}对每一行分开做 Softmax 后，$A_{13}$ 与 $A_{31}$ 还一定相等吗？请先比较两行的分母。\chapterinlinehint{将两个相同分子与各自行的分母对照。}
 \item\textbf{找错：}同学说“直接点积能自定义‘我如何问’和‘别人如何被问’这两套不同视角”。这一零参数方案缺少什么？\chapterinlinehint{检查提问与匹配是否使用两套可训练矩阵。}
