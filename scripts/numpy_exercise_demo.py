@@ -10,10 +10,108 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import re
+import sys
 
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+
+def check_extended_programs(exercises):
+    """Audit printed programs using derivatives, shape controls and interventions."""
+    def program(key):
+        return printed_program(exercises, key)
+
+    batch = program('mini-batch-gradient-average')
+    fn, theta, x, y = (batch[k] for k in ('batch_loss_grad', 'theta', 'x', 'y'))
+    assert np.allclose(batch['updated'], [1.1, .1])
+    for i in range(2):
+        delta = np.eye(2)[i] * 1e-5
+        numerical = (fn(theta+delta, x, y)[0]-fn(theta-delta, x, y)[0])/2e-5
+        assert np.isclose(numerical, batch['gradient'][i])
+    assert np.allclose(fn(theta, np.tile(x, 2), np.tile(y, 2))[1], batch['gradient'])
+
+    matrix = program('matrix-batch-calculation')
+    multiply = matrix['multiply']
+    assert np.array_equal(matrix['y'], [[-2, 2], [5, 4]])
+    assert np.array_equal(multiply(np.ones((2, 3)), np.arange(3.)[:, None]), [[3], [3]])
+    changed = matrix['x'].copy(); changed[0] = 0
+    assert np.array_equal(multiply(changed, matrix['w'])[1], matrix['y'][1])
+    try:
+        multiply(np.zeros((2, 3)), np.zeros((2, 1)))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('incompatible dimensions accepted')
+
+    mlp = program('mlp-linear-composition')
+    objective, x, w1, w2 = (mlp[k] for k in ('mlp_loss_grad', 'x', 'w1', 'w2'))
+    assert mlp['loss'] == 8.5
+    assert np.array_equal(mlp['g1'], [[16, 2, 0], [8, 1, 0]])
+    assert np.array_equal(mlp['g2'], [[8, 2], [4, 1], [0, 0]])
+    for parameter, analytical in ((w1, mlp['g1']), (w2, mlp['g2'])):
+        for index in np.ndindex(parameter.shape):
+            old = parameter[index]
+            parameter[index] = old + 1e-5
+            plus = objective(x, w1, w2)[0]
+            parameter[index] = old - 1e-5
+            minus = objective(x, w1, w2)[0]
+            parameter[index] = old
+            assert abs((plus-minus)/2e-5-analytical[index]) < 1e-7
+    assert np.allclose(np.maximum(-x @ w1, 0) @ w2, [1, 1])
+
+    embedding = program('embedding-input-change')
+    gradient = embedding['gradient']
+    assert np.array_equal(gradient[3], [0, 2, 0])
+    assert np.array_equal(gradient[4], [4, 0, 0])
+    assert not np.any(gradient[:3])
+    table = embedding['table']; saved = table.copy()
+    assert np.array_equal(embedding['output'], table[[4, 3, 4]])
+    embedding['lookup_and_grad'](table, [5, 4, 5], embedding['upstream'])
+    assert np.array_equal(table, saved)
+
+    block = program('causal-input-change')
+    from scripts.teaching_reference import forward
+    for ids, name in (([2, 4, 5], 'before'), ([2, 4, 4], 'after')):
+        reference = forward(block['p'], ids, targets=None)
+        for actual, key in zip(block[name], ('a', 'h', 'probs')):
+            assert np.allclose(actual, reference[key])
+    for before, after in zip(block['before'], block['after']):
+        assert np.allclose(before[:2], after[:2])
+    assert block['after'][2][2].argmax()+1 == 4
+    assert np.isclose(block['after'][2][2, 3], .7212, atol=5e-5)
+    try:
+        block['block']([2, 4, 5, 3], block['p'])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('missing fourth position accepted')
+
+    icl = program('icl-query-transfer')
+    keys, values, head = (icl[k] for k in ('keys', 'values', 'head'))
+    originals = [a.copy() for a in (keys, values, head)]
+    for query, weights, probabilities in ((icl['qc'], icl['wc'], icl['pc']),
+                                         (icl['qa'], icl['wa'], icl['pa'])):
+        new_w, new_p = icl['distribution'](query, keys, values[::-1], head)
+        assert np.allclose(new_w, weights) and np.allclose(new_p, probabilities[::-1])
+    assert np.isclose(icl['pc'][1], .982014, atol=5e-7)
+    assert np.isclose(icl['pa'][0], .924142, atol=5e-7)
+    assert all(np.array_equal(a,b) for a,b in zip((keys,values,head), originals))
+
+    conv = program('convolution-shared-kernel')
+    assert np.array_equal(conv['before'], [[0, -1], [-1, 0]])
+    assert np.array_equal(conv['delta'], [[-1, 0], [0, 1]])
+
+    memory = program('memory-outer-shape')
+    keys, values, write = (memory[k] for k in ('keys', 'values', 'outer_memory'))
+    assert memory['memory'].shape == (2, 3)
+    assert np.array_equal(memory['memory'], keys.T @ values)
+    assert np.array_equal(memory['readout'], [1, 2, 3])
+    assert np.array_equal(write(keys[::-1], values[::-1]), memory['memory'])
+    assert np.array_equal(np.array([1, 0]) @ write(keys, values[::-1]), [4, 5, 6])
+    print('8 further printed NumPy programs: finite differences, repeated IDs, '
+          'canonical Block, ICL, pixel interventions and rectangular memory passed')
 
 
 def printed_program(exercises, key):
@@ -27,6 +125,7 @@ def printed_program(exercises, key):
 
 def run_checks():
     exercises = {r['key']: r for r in json.loads((ROOT / 'book/exercises.json').read_text())}
+    check_extended_programs(exercises)
     ce = printed_program(exercises, 'one-hot-gradient-target')
     objective, z, ids = ce['loss_grad'], ce['z'], ce['ids']
     loss, gradient = objective(z, ids)

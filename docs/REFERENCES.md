@@ -84,5 +84,5 @@
 | [arxiv.org/abs/1604.06174](https://arxiv.org/abs/1604.06174) | 2026-11-06 | 已核对第 4 节及算法 1 的分段保存与反向重计算 |
 | [arxiv.org/abs/1711.05101](https://arxiv.org/abs/1711.05101) | 2026-11-06 | 已核对第 2 节的自适应梯度更新与解耦权重衰减 |
 | [arxiv.org/abs/2309.06180](https://arxiv.org/abs/2309.06180) | 2026-11-06 | 已核对第 2.3 节的逐轮批处理与第 4 节的分页 KV 缓存管理 |
-| [proceedings.mlr.press/v202/leviathan23a.html](https://proceedings.mlr.press/v202/leviathan23a.html) | 2026-11-06 | 已核对第 2 节的草稿、并行验证、拒绝后校正及保持采样分布的条件 |
+| [proceedings.mlr.press/v202/leviathan23a.html](https://proceedings.mlr.press/v202/leviathan23a.html) | 2026-11-06 | 已核对第 2 节的精确接受与校正，以及第 3.1、3.3 节在独立接受率假设下的期望产出与计入草稿耗时的加速比 |
 | [arxiv.org/abs/2403.02310](https://arxiv.org/abs/2403.02310) | 2026-11-06 | 已核对分块 Prefill、与 Decode 混排以及逐轮 Token 预算的调度机制 |

@@ -126,7 +126,11 @@ def agent_intro_errors(pages):
 
 def exercise_code_errors(pages, exercises):
     """Each short runnable answer must be readable on one actual PDF page."""
-    normalized=[re.sub(r'\s+','',page).replace('−','-') for page in pages]
+    def canonical(text):
+        # PDF math fonts encode M/V as mathematical-alphabet Unicode letters.
+        # Compare their textual content while retaining the page boundary.
+        return re.sub(r'\s+','',normalize('NFKC',text)).replace('−','-')
+    normalized=[canonical(page) for page in pages]
     errors=[]
     for row in exercises:
         for code in re.findall(r'\\begin\{verbatim\}(.*?)\\end\{verbatim\}',row['solution'],re.S):
@@ -136,7 +140,8 @@ def exercise_code_errors(pages, exercises):
             source_prefix=re.sub(r'\\par\\nobreak\s*$','',source_prefix)
             source_prefix=re.sub(r'\\Needspace\{[^}]*\}','',source_prefix)
             intro=re.sub(r'\\[A-Za-z]+','',source_prefix)
-            intro=re.sub(r'[{}$^_\s]+','',intro)[-24:]
+            intro=canonical(re.sub(r'[{}$^_\s]+','',intro))[-24:]
+            lines=[canonical(line) for line in lines]
             matches=[i+1 for i,page in enumerate(normalized)
                      if intro and intro in page and all(line in page for line in lines)]
             if len(matches)!=1:
@@ -767,6 +772,12 @@ def self_test():
     assert not exercise_code_errors(['Lead-in sentence is sufficiently long here.'+program],[exercise])
     assert exercise_code_errors(['Lead-in sentence is sufficiently long here.import numpy as np\nx = np.eye(2)','assert x.shape == (2, 2)'],[exercise])
     assert exercise_code_errors(['Lead-in sentence is sufficiently long here.import numpy as np'],[exercise])
+    math_exercise={'id':'C-test-math','solution':
+                   r'下面的状态为 $\mathcal M=V$，查询读出 $(1,2,3)$。\par\nobreak'
+                   '\\begin{verbatim}\n'+program+'\n\\end{verbatim}'}
+    math_intro='下面的状态为 ℳ=𝑉，查询读出 (1,2,3)。'
+    assert not exercise_code_errors([math_intro+program],[math_exercise])
+    assert exercise_code_errors([math_intro,program],[math_exercise])
     note='计算机怎样避免指数溢出？'
     result='1.3133'
     ending='这种 LogSumExp 写法避免先算极小概率再取对数，减少下溢风险。'

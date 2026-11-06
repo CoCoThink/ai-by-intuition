@@ -23,7 +23,9 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-007.}] \leavevmode\phantomsection\label{exercise:C-007}\label{exercise:local-derivative-change}\exercisemeta{基础}{4}{\hyperref[solution:C-007]{解答第~\pageref*{solution:C-007}~页}}\textbf{【局部变化】} 令 $L(w)=\tfrac12(w-3)^2$，当前 $w=1$。求 $L'(1)$，再用它估计 $w$ 增加 $0.1$ 时损失的变化量。直接代入 $w=1.1$ 核对：估计值为什么不必完全相等？
 \item[\textbf{C-008.}] \leavevmode\phantomsection\label{exercise:C-008}\label{exercise:synchronous-gradient-step}\exercisemeta{基础}{4}{\hyperref[solution:C-008]{解答第~\pageref*{solution:C-008}~页}}\textbf{【同步更新】} 对三点 $(-1,-1),(0,2),(1,2)$ 的均方损失，已知 $\partial L/\partial w=\tfrac43w-2$、$\partial L/\partial b=2b-2$。从 $(w,b)=(1,1)$ 出发，以 $\eta=0.3$ 同步更新一次。新参数是多少？代入 $L=\tfrac23(w-\tfrac32)^2+(b-1)^2+\tfrac12$，比较更新前后的损失。
-\item[\textbf{C-009.}] \leavevmode\phantomsection\label{exercise:C-009}\label{exercise:mini-batch-gradient-average}\exercisemeta{基础}{5}{\hyperref[solution:C-009]{解答第~\pageref*{solution:C-009}~页}}\textbf{【小批次梯度】} 从三点训练集中抽出 $(-1,-1)$ 与 $(1,2)$，用同一组当前参数 $(w,b)=(1,0)$。每个样本的损失为 $\ell_i=(wx_i+b-y_i)^2$，梯度为 $(2(wx_i+b-y_i)x_i,\,2(wx_i+b-y_i))$。分别算两个样本的梯度，再求批次平均梯度，以 $\eta=0.1$ 更新一次。算第二个样本时是否先更新参数？
+\item[\textbf{C-009.}] \leavevmode\phantomsection\label{exercise:C-009}\label{exercise:mini-batch-gradient-average}\exercisemeta{标准}{20}{\hyperref[solution:C-009]{解答第~\pageref*{solution:C-009}~页}}\textbf{【NumPy 从零实现／梯度验收】}从三点训练集中抽出 $(-1,-1)$ 与 $(1,2)$，初值 $(w,b)=(1,0)$。
+每个样本损失为 $(wx_i+b-y_i)^2$。先手算批次平均梯度，再用 NumPy 实现平均损失、两项梯度和一次 $\eta=0.1$ 的同步更新，不用自动微分。
+用中心差分检查 $w,b$ 两项导数；把批次复制一遍，平均梯度应怎样变化？
 \item[\textbf{C-010.}] \leavevmode\phantomsection\label{exercise:C-010}\label{exercise:quadratic-gradient-transfer}\exercisemeta{标准}{10}{\hyperref[solution:C-010]{解答第~\pageref*{solution:C-010}~页}}\textbf{【迁移】} 对同一三点损失 $L(w,b)=\tfrac23(w-\tfrac32)^2+(b-1)^2+\tfrac12$，改从 $(w,b)=(0,3)$ 出发、学习率 $\eta=0.3$。求两项梯度、更新后参数与损失。再把学习率分别改为 $1.2$ 和 $0.9$，判断两个参数方向各自收敛还是发散。
 \item[\textbf{C-011.}] \leavevmode\phantomsection\label{exercise:C-011}\label{exercise:iterative-method-choice}\exercisemeta{标准}{8}{\hyperref[solution:C-011]{解答第~\pageref*{solution:C-011}~页}}\textbf{方法选择：}本章能直接求出最优 $w,b$，为什么仍演示梯度下降？样本多时，改用随机样本或小批次估计梯度，主要减少哪部分计算，又会带来什么波动？
 \end{enumerate}
@@ -64,7 +66,9 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \subsubsection*{第~\ref*{intro:03-matrix-multiplication}~章 · 矩阵乘法到底在算什么？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:03-matrix-multiplication}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-029.}] \leavevmode\phantomsection\label{exercise:C-029}\label{exercise:matrix-single-entry}\exercisemeta{基础}{3}{\hyperref[solution:C-029]{解答第~\pageref*{solution:C-029}~页}}\textbf{【一个元素】} 令 $A=\begin{bmatrix}1&2\\3&0\end{bmatrix}$、$B=\begin{bmatrix}2&-1&1\\1&3&0\end{bmatrix}$。先写 $AB$ 的形状，再只计算第 $1$ 行第 $2$ 列与第 $2$ 行第 $3$ 列。各用了左侧哪一行与右侧哪一列？
-\item[\textbf{C-030.}] \leavevmode\phantomsection\label{exercise:C-030}\label{exercise:matrix-batch-calculation}\exercisemeta{基础}{4}{\hyperref[solution:C-030]{解答第~\pageref*{solution:C-030}~页}}\textbf{【整批计算】} 两行输入共用 $W$：$X=\begin{bmatrix}1&-1\\2&1\end{bmatrix}$、$W=\begin{bmatrix}1&2\\3&0\end{bmatrix}$。求 $Y=XW$，再分别逐行计算核对。若只把 $X$ 的第一行改成 $(0,0)$，$Y$ 的第二行是否改变？
+\item[\textbf{C-030.}] \leavevmode\phantomsection\label{exercise:C-030}\label{exercise:matrix-batch-calculation}\exercisemeta{标准}{15}{\hyperref[solution:C-030]{解答第~\pageref*{solution:C-030}~页}}\textbf{【NumPy 从零实现／矩阵乘法】}两行输入共用 $W$：$X=\begin{bmatrix}1&-1\\2&1\end{bmatrix}$、$W=\begin{bmatrix}1&2\\3&0\end{bmatrix}$。
+先手算 $Y=XW$，再仅用数组索引与三个循环实现任意相容二维矩阵的乘法，不调用 \texttt{@}、\texttt{dot} 或 \texttt{matmul}。
+交付输出、形状检查和一项干预：只改第一行输入，第二行输出是否改变？
 \item[\textbf{C-031.}] \leavevmode\phantomsection\label{exercise:C-031}\label{exercise:matrix-shape-correction}\exercisemeta{标准}{5}{\hyperref[solution:C-031]{解答第~\pageref*{solution:C-031}~页}}\textbf{【纠错】} 已知 $A:3\times2$、$B:5\times2$、$C:5\times4$。有人写成“先算 $AB$，再乘 $C$，得到 $3\times4$”。指出其中\textbf{第一处矩阵形状错误}，改成维度正确的表达式，并写出每一步结果及最终结果转置后的形状。
 \item[\textbf{C-032.}] \leavevmode\phantomsection\label{exercise:C-032}\label{exercise:batch-matrix-sharing}\exercisemeta{标准}{8}{\hyperref[solution:C-032]{解答第~\pageref*{solution:C-032}~页}}\textbf{比较：}批量输入 $X:5\times2$ 都使用同一个 $W:2\times3$。从逐行点积与整体矩阵乘法两个角度解释结果为何都是 $5\times3$。
 \item[\textbf{C-033.}] \leavevmode\phantomsection\label{exercise:C-033}\label{exercise:gram-asymmetry}\exercisemeta{标准}{10}{\hyperref[solution:C-033]{解答第~\pageref*{solution:C-033}~页}}\textbf{【手算】} 取三行两列、各行互不正交的输入 $X=\begin{bmatrix}1&2\\0&1\\1&-1\end{bmatrix}$。先求 $G=XX^\top$ 并验证 $G^\top=G$；再插入非对称矩阵 $W=\begin{bmatrix}1&1\\0&1\end{bmatrix}$，求 $S=XWX^\top$，判断它是否对称，并用转置规则说明原因。
@@ -75,7 +79,9 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \item[\textbf{C-034.}] \leavevmode\phantomsection\label{exercise:C-034}\label{exercise:mlp-activation-forward}\exercisemeta{基础}{5}{\hyperref[solution:C-034]{解答第~\pageref*{solution:C-034}~页}}\textbf{【小网络前向】} 输入 $\vect x^\top=(1,-2)$，取 $W_1=\begin{bmatrix}2&-1\\1&1\end{bmatrix}$、隐藏偏置 $\vect b_1^\top=(1,0)$、$W_2=\begin{bmatrix}2\\-1\end{bmatrix}$、输出偏置 $b_2=0.5$。按 $\vect z^\top=\vect x^\top W_1+\vect b_1^\top$、$\vect h^\top=\relu(\vect z^\top)$、$\widehat{y}=\vect h^\top W_2+b_2$ 算出三步结果。
 \item[\textbf{C-035.}] \leavevmode\phantomsection\label{exercise:C-035}\label{exercise:mlp-parameter-count}\exercisemeta{基础}{4}{\hyperref[solution:C-035]{解答第~\pageref*{solution:C-035}~页}}\textbf{【参数与批次】} 两层 MLP 的宽度为 $2\to3\to1$，每层均有偏置。写出两组权重矩阵与偏置的形状，数出全部可训练参数。若一次输入从 $1$ 个样本改为 $5$ 个样本，参数量和输出形状各怎样变？
 \item[\textbf{C-036.}] \leavevmode\phantomsection\label{exercise:C-036}\label{exercise:mlp-negative-activation}\exercisemeta{标准}{8}{\hyperref[solution:C-036]{解答第~\pageref*{solution:C-036}~页}}\textbf{【手算】} 给定输入行向量 $(2,1)$，上投影 $\begin{bmatrix}1&0&1\\0&1&-3\end{bmatrix}$，下投影 $\begin{bmatrix}2&0\\0&1\\1&1\end{bmatrix}$。不计偏置，算 ReLU 前后的隐藏向量及最终 FFN 输出；若去掉 ReLU，输出变成什么？
-\item[\textbf{C-037.}] \leavevmode\phantomsection\label{exercise:C-037}\label{exercise:mlp-linear-composition}\exercisemeta{标准}{8}{\hyperref[solution:C-037]{解答第~\pageref*{solution:C-037}~页}}\textbf{比较：}去掉两层中间的 ReLU 后，$xW_1W_2$ 能合并为怎样的一层运算？为何保留 ReLU 时一般不能照做？
+\item[\textbf{C-037.}] \leavevmode\phantomsection\label{exercise:C-037}\label{exercise:mlp-linear-composition}\exercisemeta{挑战}{35}{\hyperref[solution:C-037]{解答第~\pageref*{solution:C-037}~页}}\textbf{【NumPy 从零实现／反传与反例】}无偏置 MLP 取 $x=(2,1)$、$W_1=\begin{bmatrix}1&0&1\\0&1&-3\end{bmatrix}$、$W_2=\begin{bmatrix}2&0\\0&1\\1&1\end{bmatrix}$，输出 $f=\relu(xW_1)W_2$，损失 $L=\tfrac12\|f\|^2$。
+实现前向及两张权重的解析梯度，用中心差分检查全部 $12$ 个偏导，不用自动微分。
+去掉 ReLU 后能否合并两层？用保留 ReLU 的正负输入反例说明为什么不能普遍合并。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:20a-tokenizer}~章 · Token 与 ID：文字怎样进入数字世界？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20a-tokenizer}~页）}}
@@ -109,7 +115,10 @@ C 题按章排列；R 题按部分排列，连接多个章节，不计入末章�
 \subsubsection*{第~\ref*{intro:20-embeddings}~章 · Embedding：让 Token ID 变成可训练的向量\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:20-embeddings}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-048.}] \leavevmode\phantomsection\label{exercise:C-048}\label{exercise:embedding-shape}\exercisemeta{基础}{3}{\hyperref[solution:C-048]{解答第~\pageref*{solution:C-048}~页}}\phantomsection\label{exercise:linked-20-embeddings}  \textbf{【回忆】} 小词表只有四个 \conceptlink{token}{Token}，嵌入维度为 3。嵌入矩阵 $E$ 的形状是多少？一个 Token ID 对应的向量是几维？
-\item[\textbf{C-049.}] \leavevmode\phantomsection\label{exercise:C-049}\label{exercise:embedding-input-change}\exercisemeta{标准}{6}{\hyperref[solution:C-049]{解答第~\pageref*{solution:C-049}~页}}\textbf{【迁移】}沿用正文的 $5\times3$ Embedding 表，保持参数不变，把输入 $[2,4,5]$ 改为 $[5,4,5]$。已知 $E[4]=(-0.3,1.1,0.2)$、$E[5]=(0.15,-0.2,1.25)$，写出新的三行查表结果。与原输入相比，哪一行查表结果变了？这一步是否更新了 Embedding 参数？
+\item[\textbf{C-049.}] \leavevmode\phantomsection\label{exercise:C-049}\label{exercise:embedding-input-change}\exercisemeta{标准}{20}{\hyperref[solution:C-049]{解答第~\pageref*{solution:C-049}~页}}\textbf{【NumPy 从零实现／查表与梯度累加】}沿用正文 $5\times3$ 的初始 Embedding，输入由 $[2,4,5]$ 改为 $[5,4,5]$。
+可从 \path{scripts/teaching_reference.py} 导入 \texttt{parameters} 读取原表，不调用现成 Embedding 层。
+实现查表；再设三个位置传回的梯度为 $(1,0,-1),(0,2,0),(3,0,1)$，累加成整张表的梯度。
+解释重复 ID 为何应相加，以及查表与参数更新各改变了什么。
 \item[\textbf{C-050.}] \leavevmode\phantomsection\label{exercise:C-050}\label{exercise:embedding-update}\exercisemeta{标准}{5}{\hyperref[solution:C-050]{解答第~\pageref*{solution:C-050}~页}}\textbf{手算与辨析：}已知 $E[4]$ 的第一坐标为 $-0.3$，该坐标的损失梯度为 $0.257642$，学习率为 $0.04$。沿负梯度更新一次，得到多少？如果只把输入中的 ID 4 换成 ID 5，不运行参数更新，$E[4]$ 会被改写吗？
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -183,8 +192,11 @@ $Y'=A'V$；列出三行权重和三行输出，检查形状。 再用 NumPy 编�
 \subsubsection*{第~\ref*{intro:22b-token-to-output}~章 · 三维贯通实验：从 Token ID 到三个位置的输出概率\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:22b-token-to-output}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-074.}] \leavevmode\phantomsection\label{exercise:C-074}\label{exercise:probability-row-greedy}\exercisemeta{基础}{2}{\hyperref[solution:C-074]{解答第~\pageref*{solution:C-074}~页}}\textbf{【读一行概率】} 输出概率矩阵的最后一行为 $(0.05,0.15,0.10,0.60,0.10)$，五列依次对应词表 ID $1$ 到 $5$。若选择概率最大的 Token，应得到哪个 ID？
-\item[\textbf{C-075.}] \leavevmode\phantomsection\label{exercise:C-075}\label{exercise:causal-input-change}\exercisemeta{标准}{8}{\hyperref[solution:C-075]{解答第~\pageref*{solution:C-075}~页}}\textbf{反事实：}沿用三维主例的初始参数，只把第三个输入由 ID 5 换成 ID 4，得到 $[2,4,4]$。（a）$A$、$H$、$\Pi$ 的第 1、2 行会变吗？第 3 行呢？（b）若输入改为四个 Token $[2,4,5,3]$，$X$、$A$、$H$、$\Pi$ 应是什么形状？主例参数还缺哪一项？
-\item[\textbf{C-076.}] \leavevmode\phantomsection\label{exercise:C-076}\label{exercise:output-head-only-training}\exercisemeta{标准}{10}{\hyperref[solution:C-076]{解答第~\pageref*{solution:C-076}~页}}\textbf{【实验】}先预测：只训练输出头 $W_{\rm out}$、冻结其余八组参数，20 步后三个位置能否全部预测正确？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-only Wout} 核对，并与完整训练的第 20 步比较。
+\item[\textbf{C-075.}] \leavevmode\phantomsection\label{exercise:C-075}\label{exercise:output-head-only-training}\exercisemeta{标准}{10}{\hyperref[solution:C-075]{解答第~\pageref*{solution:C-075}~页}}\textbf{【实验】}先预测：只训练输出头 $W_{\rm out}$、冻结其余八组参数，20 步后三个位置能否全部预测正确？再运行 \texttt{python3 scripts/teaching\_trace.py -{}-only Wout} 核对，并与完整训练的第 20 步比较。
+\item[\textbf{C-076.}] \leavevmode\phantomsection\label{exercise:C-076}\label{exercise:causal-input-change}\exercisemeta{挑战}{40}{\hyperref[solution:C-076]{解答第~\pageref*{solution:C-076}~页}}\textbf{【NumPy 从零实现／因果 Block】}仅从 \path{scripts/teaching_reference.py} 导入 \texttt{parameters}，读取三维主例初值。
+自行实现逐行 LayerNorm、因果 Attention、两次残差、ReLU FFN 和词表 Softmax；不调用已有前向函数或网络层。
+比较输入 $[2,4,5]$ 与 $[2,4,4]$ 的 $A,H,\Pi$，验收前两行不变，并报告第三行最高概率 ID。
+再解释为何现有位置表无法直接处理 $[2,4,5,3]$，写出扩展位置表后各张量的形状。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:22c-language-training}~章 · 三个位置一起训练：从交叉熵到共享参数更新\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:22c-language-training}~页）}}
@@ -219,7 +231,9 @@ $Y'=A'V$；列出三行权重和三行输出，检查形状。 再用 NumPy 编�
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-093.}] \leavevmode\phantomsection\label{exercise:C-093}\label{exercise:icl-context-budget}\exercisemeta{基础}{2}{\hyperref[solution:C-093]{解答第~\pageref*{solution:C-093}~页}}\textbf{【示例占多少上下文】} 一次冻结模型参数的 ICL 请求，原任务占 $8$ 个 Token，后来加了两条示例，每条各占 $6$ 个 Token。不另计分隔符，本次输入总长是多少？
 \item[\textbf{C-094.}] \leavevmode\phantomsection\label{exercise:C-094}\label{exercise:prompt-or-training}\exercisemeta{标准}{8}{\hyperref[solution:C-094]{解答第~\pageref*{solution:C-094}~页}}\textbf{方案：}一份用户授权的季度报告需要按固定字段输出。只改格式、不读新资料与必须读取最新报告这两种目标，分别考虑 Prompt、SFT 与检索工具的作用。
-\item[\textbf{C-095.}] \leavevmode\phantomsection\label{exercise:C-095}\label{exercise:icl-query-transfer}\exercisemeta{标准}{8}{\hyperref[solution:C-095]{解答第~\pageref*{solution:C-095}~页}}\textbf{【手算】} 沿用第~\ref*{intro:23aa-pretraining-icl}~章的二维读取：$K=V=I_2$、$W_{\rm out}=5I_2$，分数为 $s=qK^\top/\sqrt2$。（a）末尾查询换成 $q_C=(0,\sqrt2\ln9)$，求权重、读出与 $\Pr(D)$；（b）若查询尺度减半为 $q_A=(\sqrt2\ln3,0)$，$\Pr(B)$ 变为多少？
+\item[\textbf{C-095.}] \leavevmode\phantomsection\label{exercise:C-095}\label{exercise:icl-query-transfer}\exercisemeta{挑战}{25}{\hyperref[solution:C-095]{解答第~\pageref*{solution:C-095}~页}}\textbf{【NumPy 从零实现／冻结参数实验】}沿用正文二维读取，$K=V=I_2$、$W_{\rm out}=5I_2$，分数为 $s=qK^\top/\sqrt2$。
+分别取 $q_C=(0,\sqrt2\ln9)$、$q_A=(\sqrt2\ln3,0)$，实现缩放点积、Softmax、读取与输出头，求两类概率。
+再交换两条示例的 Value、保留 Key 和查询，预测并运行核对输出如何改变；用程序确认参数未被更新。
 \end{enumerate}
 \Needspace{6\baselineskip}
 \subsubsection*{第~\ref*{intro:23c-post-training}~章 · 怎样改进回答：训练反馈与推理时计算\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:23c-post-training}~页）}}
@@ -307,7 +321,9 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 \subsubsection*{第~\ref*{intro:19-cnn}~章 · CNN：怎样用局部连接与参数共享处理图片？\enspace{\mdseries\footnotesize（正文第~\pageref*{intro:19-cnn}~页）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-125.}] \leavevmode\phantomsection\label{exercise:C-125}\label{exercise:convolution-output-shape}\exercisemeta{基础}{3}{\hyperref[solution:C-125]{解答第~\pageref*{solution:C-125}~页}}\phantomsection\label{exercise:linked-19-cnn}  \textbf{【手算】} $4\times4$ 图片上使用 $2\times2$ 卷积核，stride 为 1、padding 为 0，输出图像宽高是多少？如果卷积核只有一个输入通道和一个输出通道，权重有几个？
-\item[\textbf{C-126.}] \leavevmode\phantomsection\label{exercise:C-126}\label{exercise:convolution-shared-kernel}\exercisemeta{基础}{5}{\hyperref[solution:C-126]{解答第~\pageref*{solution:C-126}~页}}\textbf{【滑动同一个核】} 单通道图像 $X=\begin{bmatrix}1&2&0\\0&1&3\\2&1&1\end{bmatrix}$，卷积核 $K=\begin{bmatrix}1&0\\0&-1\end{bmatrix}$，步长为 $1$、无填充、无偏置。按本章逐项相乘后求和的约定（不翻转核），算出输出第一行的两个数。两个位置一共用了几组独立权重？
+\item[\textbf{C-126.}] \leavevmode\phantomsection\label{exercise:C-126}\label{exercise:convolution-shared-kernel}\exercisemeta{标准}{20}{\hyperref[solution:C-126]{解答第~\pageref*{solution:C-126}~页}}\textbf{【NumPy 从零实现／滑窗干预】}单通道 $X=\begin{bmatrix}1&2&0\\0&1&3\\2&1&1\end{bmatrix}$，核 $K=\begin{bmatrix}1&0\\0&-1\end{bmatrix}$，步长为 $1$、无填充、无偏置，不翻转核。
+先手算输出第一行，再用循环与 NumPy 实现完整二维互相关，不调用卷积库。
+把输入中心像素增加 $1$，预测输出哪些项会变、各变多少，再运行核对；说明权重共享与局部感受野怎样同时体现。
 \item[\textbf{C-127.}] \leavevmode\phantomsection\label{exercise:C-127}\label{exercise:pooling-detail-loss}\exercisemeta{标准}{5}{\hyperref[solution:C-127]{解答第~\pageref*{solution:C-127}~页}}\textbf{方案：}图像分类时，何时可能使用池化减小空间分辨率？指出它可能丢失的一类细节信息。
 \end{enumerate}
 \Needspace{6\baselineskip}
@@ -322,7 +338,9 @@ Key 在 $n=5$。点积里的相对旋转角是多少个 $\theta$？
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
 \item[\textbf{C-131.}] \leavevmode\phantomsection\label{exercise:C-131}\label{exercise:memory-single-write}\exercisemeta{基础}{5}{\hyperref[solution:C-131]{解答第~\pageref*{solution:C-131}~页}}\textbf{【写入再读出】} 只存一条记忆，$\vect k^\top=(0.6,0.8)$、$\vect v^\top=(2,-1)$。算出 $\mathcal{M}=\vect k\vect v^\top$ 与 $\vect k^\top\mathcal{M}$。再用结合律解释，为什么单位 Key 读回自己的 Value？
 \item[\textbf{C-132.}] \leavevmode\phantomsection\label{exercise:C-132}\label{exercise:memory-cross-talk}\exercisemeta{标准}{6}{\hyperref[solution:C-132]{解答第~\pageref*{solution:C-132}~页}}\textbf{【找出串扰】} 取 $\vect k_A^\top=(1,0)$、$\vect k_B^\top=(0.6,0.8)$、$\vect v_A^\top=(1,0)$、$\vect v_B^\top=(0,1)$。将两条外积相加写入 $\mathcal{M}$，求 $\vect k_A^\top\mathcal{M}$。哪一项来自 B？再写出一般的交叉项，解释 Key 不正交时为什么会串扰。
-\item[\textbf{C-133.}] \leavevmode\phantomsection\label{exercise:C-133}\label{exercise:memory-outer-shape}\exercisemeta{标准}{5}{\hyperref[solution:C-133]{解答第~\pageref*{solution:C-133}~页}}\textbf{找错：}设 Key $\vect{k}^\top:1\times2$、Value $\vect{v}^\top:1\times3$。同学把 $\mathcal{M}$ 写成 $\vect{v}^\top\vect{k}$，仍称它是按行向量约定可供 $\vect{q}^\top\mathcal{M}$ 查询的状态。说明为何形状或方向不匹配；若 $d_k=d_v$，$\vect{v}^\top\vect{k}$ 又是什么？
+\item[\textbf{C-133.}] \leavevmode\phantomsection\label{exercise:C-133}\label{exercise:memory-outer-shape}\exercisemeta{标准}{20}{\hyperref[solution:C-133]{解答第~\pageref*{solution:C-133}~页}}\textbf{【NumPy 从零实现／非方阵记忆】}取两条 Key $K=I_2$、Value $V=\begin{bmatrix}1&2&3\\4&5&6\end{bmatrix}$，按行向量约定用外积累加写入 $\mathcal M$。
+不用现成记忆模块，实现写入与 $q=(1,0)$ 的读取；与 $K^\top V$ 比较。
+再试图改用 $v^\top k$，说明它在本题为何无法相乘；即使键和值等宽，得到的又是什么？
 \item[\textbf{C-134.}] \leavevmode\phantomsection\label{exercise:C-134}\label{exercise:memory-write-strategies}\exercisemeta{标准}{8}{\hyperref[solution:C-134]{解答第~\pageref*{solution:C-134}~页}}\textbf{【写入策略】} 比较“让 Key 更接近正交”与“每次按当前读出误差做 Delta 修正”：它们分别怎样减小串扰？若两条 Key 不正交，把每条记忆各修正一次，能否保证两条都同时读准？还可以怎样继续求解？
 \item[\textbf{C-135.}] \leavevmode\phantomsection\label{exercise:C-135}\label{exercise:delta-write-order}\exercisemeta{挑战}{30}{\hyperref[solution:C-135]{解答第~\pageref*{solution:C-135}~页}}\phantomsection\label{exercise:delta-reverse}
 \textbf{【NumPy 从零实现／迁移】} 沿用第~\ref*{intro:06-better-linear-memory}~章 Delta 规则：
@@ -370,7 +388,7 @@ $\partial L/\partial W_V$ 的 $2\times2$ 数值矩阵。
 \Needspace{6\baselineskip}
 \subsubsection*{累积复习 · 矩阵\enspace{\mdseries\footnotesize（本部分第~\pageref*{part:matrices}~页起）}}
 \begin{enumerate}[label={},leftmargin=4.8em,itemsep=4pt]
-\item[\textbf{R-03.}] \leavevmode\phantomsection\label{exercise:R-03}\label{exercise:review-matrix-shapes}\exercisemeta{标准}{10}{\hyperref[solution:R-03]{解答第~\pageref*{solution:R-03}~页}}\textbf{【累积复习】}三个样本各有两维特征，矩阵网络宽度 $2\to4\to2$。逐层写形状，并向同学解释参数共享与相同输出的区别。\par 可先做\hyperref[exercise:matrix-batch-calculation]{基础热身 C-030}。
+\item[\textbf{R-03.}] \leavevmode\phantomsection\label{exercise:R-03}\label{exercise:review-matrix-shapes}\exercisemeta{标准}{10}{\hyperref[solution:R-03]{解答第~\pageref*{solution:R-03}~页}}\textbf{【累积复习】}三个样本各有两维特征，矩阵网络宽度 $2\to4\to2$。逐层写形状，并向同学解释参数共享与相同输出的区别。\par 可先做\hyperref[exercise:matrix-single-entry]{基础热身 C-029}。
 \item[\textbf{R-04.}] \leavevmode\phantomsection\label{exercise:R-04}\label{exercise:review-matrix-nonlinearity}\exercisemeta{标准}{15}{\hyperref[solution:R-04]{解答第~\pageref*{solution:R-04}~页}}\textbf{【累积复习】}写十行以内代码比较 $X(W_1W_2)$ 与 $(XW_1)W_2$；再在中间插入 ReLU，构造不相等的反例。
 \end{enumerate}
 \Needspace{6\baselineskip}

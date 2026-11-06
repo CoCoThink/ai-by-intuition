@@ -116,14 +116,36 @@ $\partial h_{d+1}/\partial h_1=a^d$。
 递推训练困难与路径比较分别见\hyperref[source:rnn-training]{RNN 训练论文}
 和\hyperref[source:attention-original]{Transformer 原论文}。
 
-\textbf{接着用记录查询检验选择能力。}
-设两份前文分别记录“花：$+1$，窗：$-1$”和“花：$-1$，窗：$+1$”，
-最后都问“花的值是多少”。两个值的平均数都为零，答案却相反；
-需要保留名字和值的绑定，再按查询取出对应值。
+\Needspace{12\baselineskip}
+\subsection{当场检验：两条记录、两个查询}
+\label{experiment:record-query-handcalc}
+
+设记录甲为“花：$+1$，窗：$-1$”，记录乙把两个值交换。
+分别查询“花”和“窗”。这里直接编码记录名：花为 $(1,0)$、窗为 $(0,1)$，
+不经过主线词表或 Embedding；两份记录的名字与排列相同，只有值不同。
+把两个查询和两个记录名都按“花、窗”排成 $U=I_2$，
+固定匹配规则为名字向量点积乘 $\ln3$，不训练参数：
+\[
+S=(\ln3)UU^\top=\begin{bmatrix}\ln3&0\\0&\ln3\end{bmatrix},\qquad
+A=\softmax_{\rm row}(S)=\begin{bmatrix}3/4&1/4\\1/4&3/4\end{bmatrix}.
+\]
+$A:2\times2$ 的行对应查询，列对应记录；同名记录拿到 $3/4$ 的权重。
+两份记录各自的值都是 $2\times1$ 的列，读出为
+\[
+V_{\text{甲}}=\begin{bmatrix}1\\-1\end{bmatrix},\quad
+AV_{\text{甲}}=\begin{bmatrix}1/2\\-1/2\end{bmatrix};\qquad
+V_{\text{乙}}=\begin{bmatrix}-1\\1\end{bmatrix},\quad
+AV_{\text{乙}}=\begin{bmatrix}-1/2\\1/2\end{bmatrix}.
+\]
+例如查询“花”时，甲读出 $(3/4)\times1+(1/4)\times(-1)=1/2$，乙读出 $-1/2$；
+按正负判别，两份记录的答案都能区分。
+均匀读取的矩阵每项都是 $1/2$，乘任一份值都得到 $(0,0)^\top$。
+选择性读取保住了答案的符号；有限 Softmax 权重仍混入另一条记录，读出幅度是原值的一半。
+
 接收完整历史的 RNN 或固定窗口 MLP 也能解决这个小任务。
-Attention 把记录分开保留后，仍要学会按名字匹配；
-\hyperref[experiment:attention-selection]{记录查询训练对照}会比较均匀读取与学习 Q/K 的结果。
-下面先计算匹配分数怎样从输入产生。
+这里的匹配来自固定名字编码；怎样通过训练学到匹配，见第~\ref*{intro:22c-language-training}~章
+\hyperref[experiment:attention-selection]{记录查询训练对照}（第~\pageref*{experiment:attention-selection}~页）的均匀读取与学习 Q/K 结果。
+下面用三个二维输入继续拆解匹配分数的来源。
 
 \subsection{分数从哪里来？三个二维输入的零参数读取}
 

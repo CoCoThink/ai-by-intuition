@@ -519,6 +519,55 @@ def check_feedback_examples():
     print('Feedback examples: zero-event probability bound, uniform baseline, activation bytes and PPO clipping passed')
 
 
+def check_immediate_retrieval_and_serving():
+    """Audit the printed two-record read and the new service calculations."""
+    source=(ROOT/'book/chapters/14-attention-qkv.tex').read_text()
+    section=source.split(r'\label{experiment:record-query-handcalc}',1)[1].split(r'\subsection{',1)[0]
+    def matrix(body):
+        def scalar(value):
+            if value==r'\ln3':return np.log(3)
+            if '/' in value:
+                n,d=value.split('/');return float(n)/float(d)
+            return float(value)
+        return np.array([[scalar(v) for v in row.split('&')]
+                         for row in body.split(r'\\')])
+    score,attention,va,ya,vb,yb=[matrix(s) for s in re.findall(
+        r'\\begin\{bmatrix\}(.*?)\\end\{bmatrix\}',section,re.S)]
+    weights=np.exp(score-score.max(axis=1,keepdims=True))
+    weights/=weights.sum(axis=1,keepdims=True)
+    assert np.allclose(weights,attention)
+    assert np.allclose(weights@va,ya) and np.allclose(weights@vb,yb)
+    assert np.allclose(np.full((2,2),.5)@va,0)
+    assert np.allclose(np.full((2,2),.5)@vb,0)
+    deployment=(ROOT/'book/chapters/28-training-and-deployment.tex').read_text()
+    alpha=float(re.search(r'接受率均为 \$\\alpha=([\d.]+)',deployment)[1])
+    k=int(re.search(r'草稿长度 \$k=(\d+)',deployment)[1])
+    # Enumerate the capped geometric distribution, independently of the tail sum.
+    probabilities=[alpha**j*(1-alpha) for j in range(k)]+[alpha**k]
+    expectation=np.dot(np.arange(1,k+2),probabilities)
+    assert np.isclose(sum(probabilities),1) and f'{expectation:.4f}' in deployment
+    assert np.isclose(expectation,sum(alpha**j for j in range(k+1)))
+    assert f'{expectation/(1+k*.05):.2f}' in deployment
+    # Two service slots, one exclusive Prefill round, lengths A=1, B=4, C=2.
+    expected_static=[('A','B'),('B',),('B',),('B',),('P',),('C',),('C',)]
+    expected_dynamic=[('A','B'),('P',),('B','C'),('B','C'),('B',)]
+    for schedule, first_c, last_b, end in ((expected_static,6,4,7),(expected_dynamic,3,5,5)):
+        assert {name:sum(row.count(name) for row in schedule) for name in 'ABC'}==dict(A=1,B=4,C=2)
+        assert next(i for i,row in enumerate(schedule,1) if 'C' in row)==first_c
+        assert max(i for i,row in enumerate(schedule,1) if 'B' in row)==last_b
+        assert len(schedule)==end
+    table=deployment.split(r'\label{concept:continuous-batching}',1)[1].split(r'\end{tabularx}',1)[0]
+    rows=re.findall(r'^(\d+) & (.*?) & (.*?)\\\\',table,re.M)
+    assert [int(r[0]) for r in rows]==list(range(1,8))
+    for col,schedule in ((1,expected_static),(2,expected_dynamic)):
+        for i,row in enumerate(rows):
+            actual=tuple(name for name in 'ABC' if name+' 第' in row[col])
+            if 'Prefill' in row[col]:actual=('P',)
+            assert actual==(schedule[i] if i<len(schedule) else ()),(i,col,actual)
+    print('Immediate examples QA: two-record selection, all seven scheduling rows, '
+          'speculative expectation and conditional speedup passed')
+
+
 def check_scaling_budget():
     """Recompute the assumed FLOP example and the separately reported Chinchilla ratio."""
     source=(ROOT/'book/chapters/30-evaluating-new-models.tex').read_text()
@@ -737,6 +786,7 @@ def main():
     check_attention_maxima()
     check_distance_reading()
     check_feedback_examples()
+    check_immediate_retrieval_and_serving()
     check_scaling_budget()
     check_review_followups()
     check_model_comparison()

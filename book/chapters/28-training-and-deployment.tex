@@ -79,15 +79,6 @@ FP32 表示每个数用 $32$ bit，也就是 $4$ 字节保存。
 它减少激活保存量，参数、梯度和优化器状态仍按原方案存储；
 方法来源见\hyperref[source:activation-checkpoint]{激活重计算论文}。
 
-\subsubsection*{优化设置也影响单位计算能学到多少}
-主线用固定学习率的梯度下降来显示每项更新。
-大规模训练还需记录\textbf{学习率调度}：Warmup 在开头逐步提高学习率，
-之后按选定曲线衰减；例如先从 $10^{-5}$ 逐步升到 $10^{-3}$，再逐渐降到 $10^{-4}$。
-调度需要与批次、总步数和损失曲线一起检查。
-Adam 用梯度的一阶与二阶历史调整更新，AdamW 则把权重衰减与自适应梯度项分开处理；
-完整手算见\hyperref[app:optimizer-details]{附录 A 的优化器选读}，
-解耦依据见\hyperref[source:adamw]{AdamW 原论文}。
-
 \subsubsection*{再按瓶颈选择并行方式}
 多张设备共同完成训练，叫作\textbf{分布式训练}。怎样分，要先看遇到哪个瓶颈。
 
@@ -191,9 +182,28 @@ BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
 \subsubsection*{服务调度：谁先算，缓存放哪里？}
 \phantomsection\label{concept:continuous-batching}%
 \textbf{连续批处理}在每轮生成后移走已完成的请求，再将新请求加入可用位置。
-例如一批 A、B 分别还需生成 $1$、$4$ 个 Token，C 已在等待：
-第一轮 A 完成后，就可接纳 C 的 Prefill；C 准备好后与 B 一同 Decode，
-无须等 B 全部结束。
+\begin{samepage}
+设设备每轮最多处理两条请求，A、B 已完成 Prefill，分别还需生成 $1$、$4$ 个 Token；
+C 等待加入，需一轮单独的 Prefill，再生成 $2$ 个 Token。
+下表每个时间格都记作一轮；Prefill 与 Decode 的真实耗时可以不同，这里先比较调度次序。
+\begin{center}\small
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabularx}{\linewidth}{@{}cXX@{}}
+\toprule
+轮次 & 等整批结束再接 C & 完成一条就接 C\\\midrule
+1 & A 第 1 个（完成）、B 第 1 个 & A 第 1 个（完成）、B 第 1 个\\
+2 & B 第 2 个，另一位置空闲 & C 的 Prefill；B 等待\\
+3 & B 第 3 个 & B 第 2 个、C 第 1 个\\
+4 & B 第 4 个（完成） & B 第 3 个、C 第 2 个（完成）\\
+5 & C 的 Prefill & B 第 4 个（完成）\\
+6 & C 第 1 个 & 全部完成\\
+7 & C 第 2 个（完成） & 全部完成\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\end{samepage}
+C 的首个生成 Token 从第 $6$ 轮提前到第 $3$ 轮，全部完成从第 $7$ 轮提前到第 $5$ 轮；
+代价是第 $2$ 轮插入 Prefill，B 完成从第 $4$ 轮推迟到第 $5$ 轮。
 这是请求调度的变化；每条请求内部仍按自身前缀自回归生成。
 长 Prompt 的 Prefill 还可能占住设备，使正在 Decode 的请求等待，
 可将 Prefill 分块并设置每轮 Token 预算，在首 Token 延迟与生成间隔之间取舍，
@@ -203,6 +213,7 @@ BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
 \textbf{PagedAttention}把 KV Cache 分成固定大小的块，
 通过块表把请求的逻辑位置映射到可分散存放的物理块，按需分配与回收。
 例如每块放 $4$ 个位置，长度为 $9$ 的请求占 $3$ 块，最后一块尚有 $3$ 个空位；
+共分配 $3\times4=12$ 个位置，利用率为 $9/12=75\%$。
 无需从一开始预留整条最大长度的连续缓存。
 它改善缓存的分配和碎片问题，每个已缓存位置的 K/V 数值仍需空间。
 连续批处理与分页缓存的配合见\hyperref[source:paged-attention]{vLLM/PagedAttention 论文}。
@@ -211,9 +222,29 @@ BF16 具有与 FP32 相同宽度的指数位，因此动态范围较大，
 \textbf{投机解码}先由较小的草稿模型连续提出若干 Token，
 再由目标模型一次并行计算这些候选位置的概率，并按接受规则保留一个前缀。
 若在中途拒绝，就丢弃后面的草稿，并从校正后的分布补出一个 Token。
+若草稿全部接受，目标模型还可利用最后一个候选之后的分布再生成一个 Token，
+所以草稿长为 $k$ 时，一轮产出为 $1$ 到 $k+1$ 个 Token。
 采用\hyperref[source:speculative-decoding]{原论文的精确接受与校正规则}时，
 可以保持目标采样分布；直接照收草稿或只比较最高分，得不到这个结论。
-收益取决于接受率、草稿开销和批处理负载，还需额外存放草稿模型。
+\begin{example}
+\noindent\emph{草稿长为四，每轮平均能产出多少？}\par
+假定各步接受事件相互独立、接受率均为 $\alpha=0.8$，草稿长度 $k=4$；
+忽略序列结束与输出长度截断。第一项产出总会有；第二项要求首个草稿被接受，概率 $0.8$；
+第三项要求前两个都被接受，概率 $0.8^2$，依此类推。
+把“第 $j$ 项产出是否存在”的概率相加，得到每轮目标模型前向的期望产出
+\[
+\begin{aligned}
+\mathbb E[N]&=1+0.8+0.8^2+0.8^3+0.8^4\\
+&=\frac{1-0.8^5}{1-0.8}=\boxed{3.3616}\ \text{个 Token}.
+\end{aligned}
+\]
+一般式为 $\mathbb E[N]=\sum_{j=0}^{k}\alpha^j=(1-\alpha^{k+1})/(1-\alpha)$（$\alpha<1$）；
+$\alpha=1$ 时恰为 $k+1$。
+若每个草稿步骤耗时为一次普通目标 Decode 的 $0.05$，并且这一轮并行验证与一次普通目标 Decode 同样久，
+则总耗时约为 $1+4\times0.05=1.2$ 份，理想加速比为 $3.3616/1.2\approx2.80$。
+这样就把每轮产出与墙钟加速分开了；批处理负载、验证耗时和额外草稿模型存储仍需实测。
+接受率假设及耗时模型见\hyperref[source:speculative-decoding]{原论文的生成数量与耗时分析}。
+\end{example}
 这些方案分别改变调度、缓存管理和解码计算，评测时应同时报告吞吐、
 首 Token 延迟及生成间隔的分位数，检查高负载下的等待是否可接受。
 
@@ -328,7 +359,7 @@ LoRA & 在微调阶段用低秩增量参数，减少需要训练的参数量\\
 \end{center}
 
 % Keep this closing block with the self-check so the part-end page is not a sparse tail.
-\Needspace{15\baselineskip}
+\Needspace{24\baselineskip}
 \subsubsection*{从权重到服务：工具链各管哪一段？}
 
 常见工作链是：模型权重 $\to$ 推理引擎 $\to$ 接口服务 $\to$ 应用与工具。

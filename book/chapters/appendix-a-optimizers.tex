@@ -117,7 +117,7 @@ w_1=(1-0.1\times0.05)\times2-0.1\times1
 \textbf{拆开看：}原权重缩小 $0.01$，再沿自适应方向更新 $0.1$。
 没有衰减时，同一自适应方向得到 $1.90$。
 这与直接把 $\lambda w$ 塞进 Adam 梯度的做法不同；
-后者会改变动量和方差的历史统计。
+后者会改变动量和方差的历史统计；解耦依据见\hyperref[source:adamw]{AdamW 原论文}。
 \end{example}
 
 Warmup、后续衰减和 AdamW 解耦权重衰减是\textbf{不同维度的选择}：

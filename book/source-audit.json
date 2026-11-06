@@ -619,7 +619,7 @@
     "final_url": "https://proceedings.mlr.press/v202/leviathan23a.html",
     "checked_utc": "2026-11-06",
     "method": "Primary source content review: https://arxiv.org/html/2211.17192v2",
-    "result": "已核对第 2 节的草稿、并行验证、拒绝后校正及保持采样分布的条件"
+    "result": "已核对第 2 节的精确接受与校正，以及第 3.1、3.3 节在独立接受率假设下的期望产出与计入草稿耗时的加速比"
   },
   {
     "url": "https://arxiv.org/abs/2403.02310",
